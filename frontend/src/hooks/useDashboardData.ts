@@ -152,10 +152,12 @@ export const useDashboardData = () => {
 
       console.log("[Dashboard] Loading data for date:", formattedDate);
 
-      // Only fetch active/current reservations, exclude COMPLETED (past) reservations
-      const activeStatuses = "PENDING,CONFIRMED,CHECKED_IN";
+      // Fetch all statuses including COMPLETED for displaying past reservations
+      // We'll filter out COMPLETED when calculating counts to match Gingr's "Expected" totals
+      const allStatuses = "PENDING,CONFIRMED,CHECKED_IN,COMPLETED,CANCELLED,NO_SHOW";
 
       // Fetch reservations with pagination (up to 2 pages = 1000 reservations)
+      // Include date filter to get reservations for a reasonable window around the selected date
       console.log("[Dashboard] Fetching reservations...");
       let allReservations: any[] = [];
       for (let page = 1; page <= 2; page++) {
@@ -164,7 +166,8 @@ export const useDashboardData = () => {
           500,
           "startDate",
           "asc",
-          activeStatuses
+          allStatuses, // Fetch all statuses for display
+          formattedDate // Pass the selected date to filter reservations
         );
         console.log(`[Dashboard] Page ${page} response:`, pageResponse);
 
@@ -212,20 +215,50 @@ export const useDashboardData = () => {
       console.log("[Dashboard] Enhanced reservations with vaccination icons");
 
       // Calculate metrics using local timezone dates
+
       const checkIns = enhancedReservations.filter((res: any) => {
+        if (res.status === 'CANCELLED') return false;
         const startDateStr = getLocalDateString(res.startDate);
         return startDateStr === formattedDate;
       }).length;
 
       const checkOuts = enhancedReservations.filter((res: any) => {
+        if (res.status === 'CANCELLED') return false;
         const endDateStr = getLocalDateString(res.endDate);
         return endDateStr === formattedDate;
       }).length;
 
+      // Debug: Check service data
+      const sampleWithService = enhancedReservations.find(
+        (r: any) => r.service
+      );
+      const sampleWithoutService = enhancedReservations.find(
+        (r: any) => !r.service
+      );
+      console.log("[Dashboard] Service data check:", {
+        totalReservations: enhancedReservations.length,
+        withService: enhancedReservations.filter((r: any) => r.service).length,
+        withoutService: enhancedReservations.filter((r: any) => !r.service)
+          .length,
+        sampleWithService: sampleWithService
+          ? {
+              pet: sampleWithService.pet?.name,
+              service: sampleWithService.service?.name,
+              category: sampleWithService.service?.serviceCategory,
+            }
+          : "none",
+        sampleWithoutService: sampleWithoutService
+          ? {
+              pet: sampleWithoutService.pet?.name,
+              serviceId: sampleWithoutService.serviceId,
+            }
+          : "none",
+      });
+
       const overnight = enhancedReservations.filter((res: any) => {
+        if (res.status === 'CANCELLED') return false;
         // Only count boarding reservations as overnight, not day camp
-        // If service is null (orphaned serviceId), assume BOARDING for backwards compatibility
-        const serviceCategory = res.service?.serviceCategory || "BOARDING";
+        const serviceCategory = res.service?.serviceCategory;
         if (serviceCategory !== "BOARDING") return false;
 
         const startDateStr = getLocalDateString(res.startDate);
