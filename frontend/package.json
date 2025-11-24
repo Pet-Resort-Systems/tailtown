@@ -12,7 +12,7 @@
     "@fullcalendar/timegrid": "^6.1.17",
     "@mui/icons-material": "^5.14.19",
     "@mui/material": "^5.14.20",
-    "@mui/system": "^5.14.20",
+    "@mui/system": "^7.3.5",
     "@mui/x-date-pickers": "^8.19.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^14.2.1",
