@@ -15,7 +15,7 @@ const prisma = new PrismaClient();
  */
 export const getAllTemplates = async (req: Request, res: Response) => {
   try {
-    const tenantId = req.headers['x-tenant-id'] as string;
+    const tenantId = (req as any).tenantId;
     const { active } = req.query;
 
     const where: any = { tenantId };
@@ -49,7 +49,7 @@ export const getAllTemplates = async (req: Request, res: Response) => {
 export const getTemplateById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.headers['x-tenant-id'] as string;
+    const tenantId = (req as any).tenantId;
 
     const template = await prisma.serviceAgreementTemplate.findFirst({
       where: { id, tenantId }
@@ -81,7 +81,7 @@ export const getTemplateById = async (req: Request, res: Response) => {
  */
 export const getDefaultTemplate = async (req: Request, res: Response) => {
   try {
-    const tenantId = req.headers['x-tenant-id'] as string;
+    const tenantId = (req as any).tenantId;
 
     const template = await prisma.serviceAgreementTemplate.findFirst({
       where: { 
@@ -117,7 +117,7 @@ export const getDefaultTemplate = async (req: Request, res: Response) => {
  */
 export const createTemplate = async (req: Request, res: Response) => {
   try {
-    const tenantId = req.headers['x-tenant-id'] as string;
+    const tenantId = (req as any).tenantId;
     const { name, content, isDefault } = req.body;
 
     // If this is set as default, unset other defaults
@@ -158,7 +158,7 @@ export const createTemplate = async (req: Request, res: Response) => {
 export const updateTemplate = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.headers['x-tenant-id'] as string;
+    const tenantId = (req as any).tenantId;
     const { name, content, isActive, isDefault } = req.body;
 
     // Verify template exists and belongs to tenant
@@ -211,7 +211,7 @@ export const updateTemplate = async (req: Request, res: Response) => {
 export const deleteTemplate = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.headers['x-tenant-id'] as string;
+    const tenantId = (req as any).tenantId;
 
     // Verify template exists and belongs to tenant
     const existing = await prisma.serviceAgreementTemplate.findFirst({
@@ -248,7 +248,7 @@ export const deleteTemplate = async (req: Request, res: Response) => {
  */
 export const createAgreement = async (req: Request, res: Response) => {
   try {
-    const tenantId = req.headers['x-tenant-id'] as string;
+    const tenantId = (req as any).tenantId;
     const {
       checkInId,
       agreementText,
@@ -323,7 +323,7 @@ export const createAgreement = async (req: Request, res: Response) => {
 export const getAgreementByCheckIn = async (req: Request, res: Response) => {
   try {
     const { checkInId } = req.params;
-    const tenantId = req.headers['x-tenant-id'] as string;
+    const tenantId = (req as any).tenantId;
 
     const agreement = await prisma.serviceAgreement.findFirst({
       where: { 
