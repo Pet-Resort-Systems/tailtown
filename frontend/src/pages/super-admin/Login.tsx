@@ -1,12 +1,11 @@
 /**
  * Super Admin Login Page
- * 
+ *
  * Secure login for platform administrators.
  * Separate from regular staff/customer authentication.
  */
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
 import {
   Container,
   Box,
@@ -17,36 +16,35 @@ import {
   Typography,
   Alert,
   InputAdornment,
-  IconButton
-} from '@mui/material';
+  IconButton,
+} from "@mui/material";
 import {
   Visibility,
   VisibilityOff,
-  AdminPanelSettings as AdminIcon
-} from '@mui/icons-material';
-import { useSuperAdmin } from '../../contexts/SuperAdminContext';
+  AdminPanelSettings as AdminIcon,
+} from "@mui/icons-material";
+import { useSuperAdmin } from "../../contexts/SuperAdminContext";
 
 const SuperAdminLogin: React.FC = () => {
-  const navigate = useNavigate();
   const { login } = useSuperAdmin();
-  
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
       await login(email, password);
       // Force full page reload to ensure all tokens are properly set
-      window.location.href = '/super-admin/dashboard';
+      window.location.href = "/super-admin/dashboard";
     } catch (err: any) {
-      setError(err.message || 'Login failed. Please check your credentials.');
+      setError(err.message || "Login failed. Please check your credentials.");
       setLoading(false);
     }
   };
@@ -54,20 +52,20 @@ const SuperAdminLogin: React.FC = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        py: 4
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        py: 4,
       }}
     >
       <Container maxWidth="sm">
         <Card elevation={8}>
           <CardContent sx={{ p: 4 }}>
             {/* Header */}
-            <Box sx={{ textAlign: 'center', mb: 4 }}>
-              <AdminIcon sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />
+            <Box sx={{ textAlign: "center", mb: 4 }}>
+              <AdminIcon sx={{ fontSize: 60, color: "primary.main", mb: 2 }} />
               <Typography variant="h4" gutterBottom fontWeight="bold">
                 Super Admin Portal
               </Typography>
@@ -101,7 +99,7 @@ const SuperAdminLogin: React.FC = () => {
               <TextField
                 fullWidth
                 label="Password"
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -118,7 +116,7 @@ const SuperAdminLogin: React.FC = () => {
                         {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
-                  )
+                  ),
                 }}
               />
 
@@ -130,16 +128,24 @@ const SuperAdminLogin: React.FC = () => {
                 disabled={loading}
                 sx={{ mb: 2 }}
               >
-                {loading ? 'Signing In...' : 'Sign In'}
+                {loading ? "Signing In..." : "Sign In"}
               </Button>
             </form>
 
             {/* Security Notice */}
-            <Box sx={{ mt: 4, p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
-              <Typography variant="caption" color="text.secondary" display="block">
+            <Box sx={{ mt: 4, p: 2, bgcolor: "grey.50", borderRadius: 1 }}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                display="block"
+              >
                 🔒 Secure Super Admin Access
               </Typography>
-              <Typography variant="caption" color="text.secondary" display="block">
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                display="block"
+              >
                 All login attempts are logged and monitored.
               </Typography>
             </Box>
@@ -150,7 +156,7 @@ const SuperAdminLogin: React.FC = () => {
         <Typography
           variant="caption"
           color="white"
-          sx={{ display: 'block', textAlign: 'center', mt: 2 }}
+          sx={{ display: "block", textAlign: "center", mt: 2 }}
         >
           Tailtown Pet Resort Management System
         </Typography>

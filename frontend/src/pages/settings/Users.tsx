@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { 
-  Container, 
-  Typography, 
-  Box, 
-  Paper, 
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  Container,
+  Typography,
+  Box,
+  Paper,
   Button,
   Table,
   TableBody,
@@ -27,38 +27,47 @@ import {
   SelectChangeEvent,
   Tabs,
   Tab,
-  FormHelperText,
-  LinearProgress
-} from '@mui/material';
-import { 
+  LinearProgress,
+} from "@mui/material";
+import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
   ArrowBack as ArrowBackIcon,
   Person as PersonIcon,
-  Schedule as ScheduleIcon
-} from '@mui/icons-material';
-import { Link } from 'react-router-dom';
-import staffService, { Staff } from '../../services/staffService';
-import { CircularProgress, Alert, Snackbar } from '@mui/material';
-import StaffSchedulingTabs from '../../components/staff/StaffSchedulingTabs';
-import { validatePassword, getPasswordStrength } from '../../utils/passwordValidator';
+  Schedule as ScheduleIcon,
+} from "@mui/icons-material";
+import { Link } from "react-router-dom";
+import staffService, { Staff } from "../../services/staffService";
+import { CircularProgress, Alert, Snackbar } from "@mui/material";
+import StaffSchedulingTabs from "../../components/staff/StaffSchedulingTabs";
+import {
+  validatePassword,
+  getPasswordStrength,
+} from "../../utils/passwordValidator";
 
 // Available roles, departments, and positions
-const roles = ['Administrator', 'Manager', 'Staff', 'Instructor'];
-const departments = ['Management', 'Front Desk', 'Grooming', 'Training', 'Kennel', 'Veterinary'];
+const roles = ["Administrator", "Manager", "Staff", "Instructor"];
+const departments = [
+  "Management",
+  "Front Desk",
+  "Grooming",
+  "Training",
+  "Kennel",
+  "Veterinary",
+];
 const positions = [
-  'General Manager',
-  'Front Desk Manager',
-  'Front Desk Associate',
-  'Lead Groomer',
-  'Groomer',
-  'Dog Trainer',
-  'Instructor',
-  'Kennel Manager',
-  'Kennel Technician',
-  'Veterinarian',
-  'Vet Technician'
+  "General Manager",
+  "Front Desk Manager",
+  "Front Desk Associate",
+  "Lead Groomer",
+  "Groomer",
+  "Dog Trainer",
+  "Instructor",
+  "Kennel Manager",
+  "Kennel Technician",
+  "Veterinarian",
+  "Vet Technician",
 ];
 
 interface FormDataType extends Staff {
@@ -71,65 +80,69 @@ const Users: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [editingUser, setEditingUser] = useState<Staff | null>(null);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error",
+  });
   const [dialogTabValue, setDialogTabValue] = useState(0);
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   const [formData, setFormData] = useState<FormDataType>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    role: '',
-    department: '',
-    position: '',
-    status: 'Active',
-    hireDate: '',
-    phone: '',
-    address: '',
-    city: '',
-    state: '',
-    zipCode: ''
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "",
+    department: "",
+    position: "",
+    status: "Active",
+    hireDate: "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "",
+    zipCode: "",
   });
 
   const handleOpenDialog = (user?: any) => {
     if (user) {
       setEditingUser(user);
       setFormData({
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        email: user.email || '',
-        password: user.password || '',
-        confirmPassword: user.password || '',
-        role: user.role || '',
-        department: user.department || '',
-        position: user.position || '',
-        status: user.status || 'Active',
-        hireDate: user.hireDate || '',
-        phone: user.phone || '',
-        address: user.address || '',
-        city: user.city || '',
-        state: user.state || '',
-        zipCode: user.zipCode || ''
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+        password: user.password || "",
+        confirmPassword: user.password || "",
+        role: user.role || "",
+        department: user.department || "",
+        position: user.position || "",
+        status: user.status || "Active",
+        hireDate: user.hireDate || "",
+        phone: user.phone || "",
+        address: user.address || "",
+        city: user.city || "",
+        state: user.state || "",
+        zipCode: user.zipCode || "",
       });
     } else {
       setEditingUser(null);
       setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        role: '',
-        department: '',
-        position: '',
-        status: 'Active',
-        hireDate: new Date().toISOString().split('T')[0],
-        phone: '',
-        address: '',
-        city: '',
-        state: '',
-        zipCode: ''
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        role: "",
+        department: "",
+        position: "",
+        status: "Active",
+        hireDate: new Date().toISOString().split("T")[0],
+        phone: "",
+        address: "",
+        city: "",
+        state: "",
+        zipCode: "",
       });
     }
     setOpenDialog(true);
@@ -148,14 +161,14 @@ const Users: React.FC = () => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
-    
+
     // Validate password in real-time
-    if (name === 'password' && value) {
+    if (name === "password" && value) {
       const validation = validatePassword(value);
       setPasswordErrors(validation.errors);
-    } else if (name === 'password' && !value) {
+    } else if (name === "password" && !value) {
       setPasswordErrors([]);
     }
   };
@@ -164,7 +177,7 @@ const Users: React.FC = () => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -176,8 +189,8 @@ const Users: React.FC = () => {
       setUsers(staffData);
       setError(null);
     } catch (err) {
-      console.error('Failed to load staff members:', err);
-      setError('Failed to load staff members. Please try again.');
+      console.error("Failed to load staff members:", err);
+      setError("Failed to load staff members. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -187,7 +200,7 @@ const Users: React.FC = () => {
     loadStaffMembers();
   }, [loadStaffMembers]);
 
-  const showSnackbar = (message: string, severity: 'success' | 'error') => {
+  const showSnackbar = (message: string, severity: "success" | "error") => {
     setSnackbar({ open: true, message, severity });
   };
 
@@ -200,14 +213,17 @@ const Users: React.FC = () => {
     if (!editingUser && formData.password) {
       const validation = validatePassword(formData.password);
       if (!validation.isValid) {
-        showSnackbar(`Password validation failed: ${validation.errors.join(', ')}`, 'error');
+        showSnackbar(
+          `Password validation failed: ${validation.errors.join(", ")}`,
+          "error"
+        );
         return;
       }
     }
-    
+
     // Validate passwords match for new users or when changing password
     if (!editingUser && formData.password !== formData.confirmPassword) {
-      showSnackbar('Passwords do not match', 'error');
+      showSnackbar("Passwords do not match", "error");
       return;
     }
 
@@ -221,54 +237,58 @@ const Users: React.FC = () => {
         if (!dataToUpdate.password) {
           delete dataToUpdate.password;
         }
-        
+
         // Update existing user
         await staffService.updateStaff(editingUser.id, dataToUpdate);
-        showSnackbar('Staff member updated successfully', 'success');
+        showSnackbar("Staff member updated successfully", "success");
       } else {
         // Add new user
         await staffService.createStaff(dataToSave as Staff);
-        showSnackbar('Staff member added successfully', 'success');
+        showSnackbar("Staff member added successfully", "success");
       }
-      
+
       // Reload staff members to get the updated list
       await loadStaffMembers();
       handleCloseDialog();
     } catch (err) {
-      console.error('Error saving staff member:', err);
-      showSnackbar('Failed to save staff member. Please try again.', 'error');
+      console.error("Error saving staff member:", err);
+      showSnackbar("Failed to save staff member. Please try again.", "error");
     }
   };
 
   const handleDeleteUser = async (userId: string) => {
     try {
       await staffService.deleteStaff(userId);
-      showSnackbar('Staff member deleted successfully', 'success');
+      showSnackbar("Staff member deleted successfully", "success");
       await loadStaffMembers();
     } catch (err) {
-      console.error('Error deleting staff member:', err);
-      showSnackbar('Failed to delete staff member. Please try again.', 'error');
+      console.error("Error deleting staff member:", err);
+      showSnackbar("Failed to delete staff member. Please try again.", "error");
     }
   };
 
   return (
     <Container maxWidth="lg">
       <Box sx={{ mt: 4, mb: 4 }}>
-        <Snackbar 
-          open={snackbar.open} 
-          autoHideDuration={6000} 
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={6000}
           onClose={handleSnackbarClose}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
-          <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+          <Alert
+            onClose={handleSnackbarClose}
+            severity={snackbar.severity}
+            sx={{ width: "100%" }}
+          >
             {snackbar.message}
           </Alert>
         </Snackbar>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-          <Button 
-            component={Link} 
-            to="/settings" 
+        <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+          <Button
+            component={Link}
+            to="/settings"
             startIcon={<ArrowBackIcon />}
             sx={{ mr: 2 }}
           >
@@ -278,25 +298,34 @@ const Users: React.FC = () => {
             User Management
           </Typography>
         </Box>
-        
+
         <Paper sx={{ p: 3, mb: 3 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 3,
+            }}
+          >
             <Typography variant="h6">Employees</Typography>
-            <Button 
-              variant="contained" 
+            <Button
+              variant="contained"
               startIcon={<AddIcon />}
               onClick={() => handleOpenDialog()}
             >
               Add Employee
             </Button>
           </Box>
-          
+
           {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+            <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
               <CircularProgress />
             </Box>
           ) : error ? (
-            <Alert severity="error" sx={{ my: 2 }}>{error}</Alert>
+            <Alert severity="error" sx={{ my: 2 }}>
+              {error}
+            </Alert>
           ) : (
             <TableContainer>
               <Table>
@@ -315,50 +344,63 @@ const Users: React.FC = () => {
                 <TableBody>
                   {users.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={7} align="center">No staff members found</TableCell>
-                    </TableRow>
-                  ) : users.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell>{user.firstName} {user.lastName}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>{user.phone || '-'}</TableCell>
-                      <TableCell>
-                        <Chip 
-                          label={user.role} 
-                          color={
-                            user.role === 'Administrator' ? 'primary' : 
-                            user.role === 'Manager' ? 'secondary' : 'default'
-                          }
-                          size="small"
-                        />
-                      </TableCell>
-                      <TableCell>{user.department}</TableCell>
-                      <TableCell>{user.position}</TableCell>
-                      <TableCell>
-                        <Chip 
-                          label={user.status} 
-                          color={user.status === 'Active' ? 'success' : 'error'}
-                          size="small"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <IconButton 
-                          size="small" 
-                          color="primary"
-                          onClick={() => handleOpenDialog(user)}
-                        >
-                          <EditIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton 
-                          size="small" 
-                          color="error"
-                          onClick={() => user.id ? handleDeleteUser(user.id) : undefined}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
+                      <TableCell colSpan={7} align="center">
+                        No staff members found
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : (
+                    users.map((user) => (
+                      <TableRow key={user.id}>
+                        <TableCell>
+                          {user.firstName} {user.lastName}
+                        </TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>{user.phone || "-"}</TableCell>
+                        <TableCell>
+                          <Chip
+                            label={user.role}
+                            color={
+                              user.role === "Administrator"
+                                ? "primary"
+                                : user.role === "Manager"
+                                ? "secondary"
+                                : "default"
+                            }
+                            size="small"
+                          />
+                        </TableCell>
+                        <TableCell>{user.department}</TableCell>
+                        <TableCell>{user.position}</TableCell>
+                        <TableCell>
+                          <Chip
+                            label={user.status}
+                            color={
+                              user.status === "Active" ? "success" : "error"
+                            }
+                            size="small"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <IconButton
+                            size="small"
+                            color="primary"
+                            onClick={() => handleOpenDialog(user)}
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton
+                            size="small"
+                            color="error"
+                            onClick={() =>
+                              user.id ? handleDeleteUser(user.id) : undefined
+                            }
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -367,41 +409,43 @@ const Users: React.FC = () => {
       </Box>
 
       {/* Add/Edit User Dialog */}
-      <Dialog 
-        open={openDialog} 
+      <Dialog
+        open={openDialog}
         onClose={handleCloseDialog}
         maxWidth={dialogTabValue === 0 ? "xs" : "md"}
         fullWidth
       >
         <DialogTitle sx={{ pb: 1 }}>
-          {editingUser ? `Edit Employee: ${editingUser.firstName} ${editingUser.lastName}` : 'Add New Employee'}
+          {editingUser
+            ? `Edit Employee: ${editingUser.firstName} ${editingUser.lastName}`
+            : "Add New Employee"}
         </DialogTitle>
         <DialogContent sx={{ pt: 1 }}>
           {editingUser && (
-            <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
-              <Tabs 
-                value={dialogTabValue} 
-                onChange={handleTabChange} 
+            <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
+              <Tabs
+                value={dialogTabValue}
+                onChange={handleTabChange}
                 aria-label="staff dialog tabs"
               >
-                <Tab 
-                  icon={<PersonIcon fontSize="small" />} 
-                  label="Basic Information" 
-                  id="staff-tab-0" 
-                  aria-controls="staff-tabpanel-0" 
+                <Tab
+                  icon={<PersonIcon fontSize="small" />}
+                  label="Basic Information"
+                  id="staff-tab-0"
+                  aria-controls="staff-tabpanel-0"
                   iconPosition="start"
                 />
-                <Tab 
-                  icon={<ScheduleIcon fontSize="small" />} 
-                  label="Availability" 
-                  id="staff-tab-1" 
-                  aria-controls="staff-tabpanel-1" 
+                <Tab
+                  icon={<ScheduleIcon fontSize="small" />}
+                  label="Availability"
+                  id="staff-tab-1"
+                  aria-controls="staff-tabpanel-1"
                   iconPosition="start"
                 />
               </Tabs>
             </Box>
           )}
-          
+
           {/* Basic Information Tab */}
           <Box
             role="tabpanel"
@@ -512,13 +556,15 @@ const Users: React.FC = () => {
                 </Grid>
 
                 <Divider sx={{ my: 1 }} />
-                <Typography variant="subtitle2" sx={{ mt: 1, mb: 0.5 }}>Security</Typography>
-                
+                <Typography variant="subtitle2" sx={{ mt: 1, mb: 0.5 }}>
+                  Security
+                </Typography>
+
                 <Grid container spacing={1}>
                   <Grid item xs={6}>
                     <TextField
                       name="password"
-                      label={editingUser ? 'New Password' : 'Password'}
+                      label={editingUser ? "New Password" : "Password"}
                       type="password"
                       value={formData.password}
                       onChange={handleInputChange}
@@ -527,20 +573,33 @@ const Users: React.FC = () => {
                       margin="dense"
                       required={!editingUser}
                       error={passwordErrors.length > 0}
-                      helperText={editingUser ? 'Leave blank to keep current' : ''}
+                      helperText={
+                        editingUser ? "Leave blank to keep current" : ""
+                      }
                     />
                     {formData.password && (
                       <Box sx={{ mt: 0.5 }}>
                         {passwordErrors.length > 0 ? (
                           <Box>
                             {passwordErrors.map((error, index) => (
-                              <Typography key={index} variant="caption" color="error" display="block">
+                              <Typography
+                                key={index}
+                                variant="caption"
+                                color="error"
+                                display="block"
+                              >
                                 • {error}
                               </Typography>
                             ))}
                           </Box>
                         ) : (
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                            }}
+                          >
                             <LinearProgress
                               variant="determinate"
                               value={100}
@@ -548,13 +607,22 @@ const Users: React.FC = () => {
                                 flexGrow: 1,
                                 height: 4,
                                 borderRadius: 2,
-                                backgroundColor: '#e0e0e0',
-                                '& .MuiLinearProgress-bar': {
-                                  backgroundColor: getPasswordStrength(formData.password).color
-                                }
+                                backgroundColor: "#e0e0e0",
+                                "& .MuiLinearProgress-bar": {
+                                  backgroundColor: getPasswordStrength(
+                                    formData.password
+                                  ).color,
+                                },
                               }}
                             />
-                            <Typography variant="caption" sx={{ color: getPasswordStrength(formData.password).color, fontWeight: 'bold' }}>
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                color: getPasswordStrength(formData.password)
+                                  .color,
+                                fontWeight: "bold",
+                              }}
+                            >
                               {getPasswordStrength(formData.password).label}
                             </Typography>
                           </Box>
@@ -573,14 +641,24 @@ const Users: React.FC = () => {
                       size="small"
                       margin="dense"
                       required={!editingUser}
-                      error={formData.confirmPassword !== '' && formData.password !== formData.confirmPassword}
-                      helperText={formData.confirmPassword !== '' && formData.password !== formData.confirmPassword ? 'Passwords do not match' : ''}
+                      error={
+                        formData.confirmPassword !== "" &&
+                        formData.password !== formData.confirmPassword
+                      }
+                      helperText={
+                        formData.confirmPassword !== "" &&
+                        formData.password !== formData.confirmPassword
+                          ? "Passwords do not match"
+                          : ""
+                      }
                     />
                   </Grid>
                 </Grid>
 
                 <Divider sx={{ my: 1 }} />
-                <Typography variant="subtitle2" sx={{ mt: 1, mb: 0.5 }}>Job Information</Typography>
+                <Typography variant="subtitle2" sx={{ mt: 1, mb: 0.5 }}>
+                  Job Information
+                </Typography>
 
                 <Grid container spacing={1}>
                   <Grid item xs={6}>
@@ -593,8 +671,10 @@ const Users: React.FC = () => {
                         onChange={handleSelectChange}
                         required
                       >
-                        {roles.map(role => (
-                          <MenuItem key={role} value={role}>{role}</MenuItem>
+                        {roles.map((role) => (
+                          <MenuItem key={role} value={role}>
+                            {role}
+                          </MenuItem>
                         ))}
                       </Select>
                     </FormControl>
@@ -609,8 +689,10 @@ const Users: React.FC = () => {
                         onChange={handleSelectChange}
                         required
                       >
-                        {departments.map(dept => (
-                          <MenuItem key={dept} value={dept}>{dept}</MenuItem>
+                        {departments.map((dept) => (
+                          <MenuItem key={dept} value={dept}>
+                            {dept}
+                          </MenuItem>
                         ))}
                       </Select>
                     </FormControl>
@@ -625,8 +707,10 @@ const Users: React.FC = () => {
                         onChange={handleSelectChange}
                         required
                       >
-                        {positions.map(pos => (
-                          <MenuItem key={pos} value={pos}>{pos}</MenuItem>
+                        {positions.map((pos) => (
+                          <MenuItem key={pos} value={pos}>
+                            {pos}
+                          </MenuItem>
                         ))}
                       </Select>
                     </FormControl>
@@ -665,7 +749,7 @@ const Users: React.FC = () => {
               </Box>
             )}
           </Box>
-          
+
           {/* Availability Tab */}
           {editingUser && (
             <Box
@@ -675,21 +759,26 @@ const Users: React.FC = () => {
               aria-labelledby="staff-tab-1"
             >
               {dialogTabValue === 1 && editingUser.id && (
-                <StaffSchedulingTabs staffId={editingUser.id} onSave={loadStaffMembers} />
+                <StaffSchedulingTabs
+                  staffId={editingUser.id}
+                  onSave={loadStaffMembers}
+                />
               )}
             </Box>
           )}
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={handleCloseDialog} size="small">Close</Button>
+          <Button onClick={handleCloseDialog} size="small">
+            Close
+          </Button>
           {dialogTabValue === 0 && (
-            <Button 
-              onClick={handleSubmit} 
-              variant="contained" 
+            <Button
+              onClick={handleSubmit}
+              variant="contained"
               color="primary"
               size="small"
             >
-              {editingUser ? 'Update' : 'Add'}
+              {editingUser ? "Update" : "Add"}
             </Button>
           )}
         </DialogActions>

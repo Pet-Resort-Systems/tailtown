@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from "react";
 import {
   Container,
   Typography,
@@ -14,14 +14,14 @@ import {
   CardContent,
   Grid,
   Chip,
-} from '@mui/material';
+} from "@mui/material";
 import {
   CreditCard as CreditCardIcon,
   Money as CashIcon,
   Receipt as CheckIcon,
   Settings as SettingsIcon,
   Save as SaveIcon,
-} from '@mui/icons-material';
+} from "@mui/icons-material";
 
 interface PaymentMethodConfig {
   id: string;
@@ -36,39 +36,40 @@ interface PaymentMethodConfig {
 const PaymentMethods: React.FC = () => {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodConfig[]>([
     {
-      id: 'CASH',
-      name: 'Cash',
+      id: "CASH",
+      name: "Cash",
       enabled: true,
       icon: <CashIcon />,
-      description: 'Accept cash payments at the front desk',
+      description: "Accept cash payments at the front desk",
       requiresSetup: false,
       setupComplete: true,
     },
     {
-      id: 'CHECK',
-      name: 'Check',
+      id: "CHECK",
+      name: "Check",
       enabled: true,
       icon: <CheckIcon />,
-      description: 'Accept check payments from customers',
+      description: "Accept check payments from customers",
       requiresSetup: false,
       setupComplete: true,
     },
     {
-      id: 'CREDIT_CARD',
-      name: 'Credit Card (CardConnect)',
+      id: "CREDIT_CARD",
+      name: "Credit Card (CardConnect)",
       enabled: true,
       icon: <CreditCardIcon />,
-      description: 'Process credit card payments via CardConnect merchant service',
+      description:
+        "Process credit card payments via CardConnect merchant service",
       requiresSetup: true,
       setupComplete: false,
     },
   ]);
 
   const [cardConnectConfig, setCardConnectConfig] = useState({
-    merchantId: '',
-    apiUsername: '',
-    apiPassword: '',
-    siteUrl: 'https://fts.cardconnect.com',
+    merchantId: "",
+    apiUsername: "",
+    apiPassword: "",
+    siteUrl: "https://fts.cardconnect.com",
     testMode: true,
   });
 
@@ -76,8 +77,8 @@ const PaymentMethods: React.FC = () => {
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   const handleTogglePaymentMethod = (methodId: string) => {
-    setPaymentMethods(prev =>
-      prev.map(method =>
+    setPaymentMethods((prev) =>
+      prev.map((method) =>
         method.id === methodId
           ? { ...method, enabled: !method.enabled }
           : method
@@ -88,24 +89,28 @@ const PaymentMethods: React.FC = () => {
 
   const handleSaveSettings = () => {
     // In production, this would save to the backend
-    console.log('Saving payment methods:', paymentMethods);
-    console.log('CardConnect config:', cardConnectConfig);
-    
+    console.log("Saving payment methods:", paymentMethods);
+    console.log("CardConnect config:", cardConnectConfig);
+
     setSaveSuccess(true);
     setTimeout(() => setSaveSuccess(false), 3000);
   };
 
   const handleSaveCardConnectConfig = () => {
     // Validate and save CardConnect configuration
-    if (!cardConnectConfig.merchantId || !cardConnectConfig.apiUsername || !cardConnectConfig.apiPassword) {
-      alert('Please fill in all required CardConnect fields');
+    if (
+      !cardConnectConfig.merchantId ||
+      !cardConnectConfig.apiUsername ||
+      !cardConnectConfig.apiPassword
+    ) {
+      alert("Please fill in all required CardConnect fields");
       return;
     }
 
     // Update the Credit Card method to show setup is complete
-    setPaymentMethods(prev =>
-      prev.map(method =>
-        method.id === 'CREDIT_CARD'
+    setPaymentMethods((prev) =>
+      prev.map((method) =>
+        method.id === "CREDIT_CARD"
           ? { ...method, setupComplete: true }
           : method
       )
@@ -117,7 +122,7 @@ const PaymentMethods: React.FC = () => {
   };
 
   const getEnabledCount = () => {
-    return paymentMethods.filter(m => m.enabled).length;
+    return paymentMethods.filter((m) => m.enabled).length;
   };
 
   return (
@@ -146,7 +151,7 @@ const PaymentMethods: React.FC = () => {
                   {getEnabledCount()} of {paymentMethods.length} methods enabled
                 </Typography>
               </Grid>
-              <Grid item xs={12} md={6} sx={{ textAlign: { md: 'right' } }}>
+              <Grid item xs={12} md={6} sx={{ textAlign: { md: "right" } }}>
                 <Button
                   variant="contained"
                   startIcon={<SaveIcon />}
@@ -166,7 +171,8 @@ const PaymentMethods: React.FC = () => {
             Available Payment Methods
           </Typography>
           <Typography variant="body2" color="text.secondary" paragraph>
-            Enable or disable payment methods for your business. Disabled methods will not appear in checkout.
+            Enable or disable payment methods for your business. Disabled
+            methods will not appear in checkout.
           </Typography>
 
           <Divider sx={{ my: 2 }} />
@@ -175,27 +181,36 @@ const PaymentMethods: React.FC = () => {
             <Box key={method.id}>
               <Box
                 sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
                   py: 2,
                 }}
               >
-                <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                <Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
                   <Box
                     sx={{
                       mr: 2,
-                      color: method.enabled ? 'primary.main' : 'text.disabled',
+                      color: method.enabled ? "primary.main" : "text.disabled",
                     }}
                   >
                     {method.icon}
                   </Box>
                   <Box sx={{ flex: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        mb: 0.5,
+                      }}
+                    >
                       <Typography
                         variant="subtitle1"
                         sx={{
-                          color: method.enabled ? 'text.primary' : 'text.disabled',
+                          color: method.enabled
+                            ? "text.primary"
+                            : "text.disabled",
                         }}
                       >
                         {method.name}
@@ -204,7 +219,11 @@ const PaymentMethods: React.FC = () => {
                         <Chip label="Active" size="small" color="success" />
                       )}
                       {method.requiresSetup && !method.setupComplete && (
-                        <Chip label="Setup Required" size="small" color="warning" />
+                        <Chip
+                          label="Setup Required"
+                          size="small"
+                          color="warning"
+                        />
                       )}
                       {method.requiresSetup && method.setupComplete && (
                         <Chip label="Configured" size="small" color="info" />
@@ -216,12 +235,14 @@ const PaymentMethods: React.FC = () => {
                   </Box>
                 </Box>
 
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   {method.requiresSetup && (
                     <Button
                       size="small"
                       startIcon={<SettingsIcon />}
-                      onClick={() => setShowCardConnectSetup(!showCardConnectSetup)}
+                      onClick={() =>
+                        setShowCardConnectSetup(!showCardConnectSetup)
+                      }
                     >
                       Configure
                     </Button>
@@ -234,29 +255,30 @@ const PaymentMethods: React.FC = () => {
                         color="primary"
                       />
                     }
-                    label={method.enabled ? 'Enabled' : 'Disabled'}
+                    label={method.enabled ? "Enabled" : "Disabled"}
                   />
                 </Box>
               </Box>
 
               {/* CardConnect Setup Panel */}
-              {method.id === 'CREDIT_CARD' && showCardConnectSetup && (
+              {method.id === "CREDIT_CARD" && showCardConnectSetup && (
                 <Box
                   sx={{
                     ml: 5,
                     mb: 2,
                     p: 3,
-                    bgcolor: 'grey.50',
+                    bgcolor: "grey.50",
                     borderRadius: 1,
-                    border: '1px solid',
-                    borderColor: 'grey.300',
+                    border: "1px solid",
+                    borderColor: "grey.300",
                   }}
                 >
                   <Typography variant="h6" gutterBottom>
                     CardConnect Configuration
                   </Typography>
                   <Typography variant="body2" color="text.secondary" paragraph>
-                    Enter your CardConnect merchant service credentials to enable credit card processing.
+                    Enter your CardConnect merchant service credentials to
+                    enable credit card processing.
                   </Typography>
 
                   <Grid container spacing={2}>
@@ -265,7 +287,10 @@ const PaymentMethods: React.FC = () => {
                         label="Merchant ID"
                         value={cardConnectConfig.merchantId}
                         onChange={(e) =>
-                          setCardConnectConfig({ ...cardConnectConfig, merchantId: e.target.value })
+                          setCardConnectConfig({
+                            ...cardConnectConfig,
+                            merchantId: e.target.value,
+                          })
                         }
                         fullWidth
                         required
@@ -277,7 +302,10 @@ const PaymentMethods: React.FC = () => {
                         label="API Username"
                         value={cardConnectConfig.apiUsername}
                         onChange={(e) =>
-                          setCardConnectConfig({ ...cardConnectConfig, apiUsername: e.target.value })
+                          setCardConnectConfig({
+                            ...cardConnectConfig,
+                            apiUsername: e.target.value,
+                          })
                         }
                         fullWidth
                         required
@@ -290,7 +318,10 @@ const PaymentMethods: React.FC = () => {
                         type="password"
                         value={cardConnectConfig.apiPassword}
                         onChange={(e) =>
-                          setCardConnectConfig({ ...cardConnectConfig, apiPassword: e.target.value })
+                          setCardConnectConfig({
+                            ...cardConnectConfig,
+                            apiPassword: e.target.value,
+                          })
                         }
                         fullWidth
                         required
@@ -302,7 +333,10 @@ const PaymentMethods: React.FC = () => {
                         label="Site URL"
                         value={cardConnectConfig.siteUrl}
                         onChange={(e) =>
-                          setCardConnectConfig({ ...cardConnectConfig, siteUrl: e.target.value })
+                          setCardConnectConfig({
+                            ...cardConnectConfig,
+                            siteUrl: e.target.value,
+                          })
                         }
                         fullWidth
                         size="small"
@@ -315,7 +349,10 @@ const PaymentMethods: React.FC = () => {
                           <Switch
                             checked={cardConnectConfig.testMode}
                             onChange={(e) =>
-                              setCardConnectConfig({ ...cardConnectConfig, testMode: e.target.checked })
+                              setCardConnectConfig({
+                                ...cardConnectConfig,
+                                testMode: e.target.checked,
+                              })
                             }
                           />
                         }
@@ -323,7 +360,13 @@ const PaymentMethods: React.FC = () => {
                       />
                     </Grid>
                     <Grid item xs={12}>
-                      <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          gap: 1,
+                          justifyContent: "flex-end",
+                        }}
+                      >
                         <Button onClick={() => setShowCardConnectSetup(false)}>
                           Cancel
                         </Button>
@@ -339,8 +382,9 @@ const PaymentMethods: React.FC = () => {
 
                   <Alert severity="info" sx={{ mt: 2 }}>
                     <Typography variant="body2">
-                      <strong>Note:</strong> Contact CardConnect support to obtain your merchant credentials.
-                      Test mode uses the UAT environment for development and testing.
+                      <strong>Note:</strong> Contact CardConnect support to
+                      obtain your merchant credentials. Test mode uses the UAT
+                      environment for development and testing.
                     </Typography>
                   </Alert>
                 </Box>
@@ -352,20 +396,23 @@ const PaymentMethods: React.FC = () => {
         </Paper>
 
         {/* Help Section */}
-        <Paper sx={{ p: 3, mt: 3, bgcolor: 'info.light' }}>
+        <Paper sx={{ p: 3, mt: 3, bgcolor: "info.light" }}>
           <Typography variant="h6" gutterBottom>
             Payment Method Guidelines
           </Typography>
           <Typography variant="body2" paragraph>
-            <strong>Cash:</strong> No setup required. Staff can accept cash payments at the front desk.
+            <strong>Cash:</strong> No setup required. Staff can accept cash
+            payments at the front desk.
           </Typography>
           <Typography variant="body2" paragraph>
-            <strong>Check:</strong> No setup required. Ensure you have a check acceptance policy in place.
+            <strong>Check:</strong> No setup required. Ensure you have a check
+            acceptance policy in place.
           </Typography>
           <Typography variant="body2" paragraph>
-            <strong>Credit Card (CardConnect):</strong> Requires merchant account setup with CardConnect.
-            Contact CardConnect to obtain your merchant ID and API credentials. PCI compliance is required
-            for credit card processing.
+            <strong>Credit Card (CardConnect):</strong> Requires merchant
+            account setup with CardConnect. Contact CardConnect to obtain your
+            merchant ID and API credentials. PCI compliance is required for
+            credit card processing.
           </Typography>
         </Paper>
       </Box>
