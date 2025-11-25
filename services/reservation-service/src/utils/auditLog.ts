@@ -1,44 +1,43 @@
 /**
  * Audit Logging Utility
- * 
+ *
  * Tracks all tenant actions for compliance and debugging
  */
 
-import { PrismaClient } from '@prisma/client';
-import { Request } from 'express';
-
-const prisma = new PrismaClient();
+import { Request } from "express";
+import { prisma } from "../config/prisma";
+import { logger } from "./logger";
 
 export enum AuditAction {
   // Customer actions
-  CUSTOMER_CREATED = 'customer.created',
-  CUSTOMER_UPDATED = 'customer.updated',
-  CUSTOMER_DELETED = 'customer.deleted',
-  CUSTOMER_VIEWED = 'customer.viewed',
-  
+  CUSTOMER_CREATED = "customer.created",
+  CUSTOMER_UPDATED = "customer.updated",
+  CUSTOMER_DELETED = "customer.deleted",
+  CUSTOMER_VIEWED = "customer.viewed",
+
   // Pet actions
-  PET_CREATED = 'pet.created',
-  PET_UPDATED = 'pet.updated',
-  PET_DELETED = 'pet.deleted',
-  
+  PET_CREATED = "pet.created",
+  PET_UPDATED = "pet.updated",
+  PET_DELETED = "pet.deleted",
+
   // Reservation actions
-  RESERVATION_CREATED = 'reservation.created',
-  RESERVATION_UPDATED = 'reservation.updated',
-  RESERVATION_CANCELLED = 'reservation.cancelled',
-  
+  RESERVATION_CREATED = "reservation.created",
+  RESERVATION_UPDATED = "reservation.updated",
+  RESERVATION_CANCELLED = "reservation.cancelled",
+
   // Authentication actions
-  LOGIN_SUCCESS = 'auth.login.success',
-  LOGIN_FAILED = 'auth.login.failed',
-  LOGOUT = 'auth.logout',
-  PASSWORD_RESET = 'auth.password_reset',
-  
+  LOGIN_SUCCESS = "auth.login.success",
+  LOGIN_FAILED = "auth.login.failed",
+  LOGOUT = "auth.logout",
+  PASSWORD_RESET = "auth.password_reset",
+
   // Admin actions
-  SETTINGS_UPDATED = 'admin.settings.updated',
-  USER_ROLE_CHANGED = 'admin.user.role_changed',
-  
+  SETTINGS_UPDATED = "admin.settings.updated",
+  USER_ROLE_CHANGED = "admin.user.role_changed",
+
   // System actions
-  RATE_LIMIT_HIT = 'system.rate_limit.hit',
-  ERROR_OCCURRED = 'system.error.occurred',
+  RATE_LIMIT_HIT = "system.rate_limit.hit",
+  ERROR_OCCURRED = "system.error.occurred",
 }
 
 export interface AuditLogEntry {
@@ -62,14 +61,14 @@ class AuditLogger {
     try {
       // In production, this would write to a dedicated audit_logs table
       // For now, we'll log to console and could extend to database
-      
+
       const logEntry = {
         ...entry,
         timestamp: entry.timestamp || new Date(),
       };
 
-      // Log to console (structured logging)
-      console.log('[AUDIT]', JSON.stringify(logEntry));
+      // Log to structured logger
+      logger.info("[AUDIT]", logEntry);
 
       // TODO: Write to database
       // await prisma.auditLog.create({ data: logEntry });
@@ -78,7 +77,7 @@ class AuditLogger {
       // await sendToAuditService(logEntry);
     } catch (error) {
       // Never let audit logging break the application
-      console.error('[AUDIT ERROR]', error);
+      logger.error("[AUDIT ERROR]", { error });
     }
   }
 
@@ -93,7 +92,7 @@ class AuditLogger {
     changes?: Record<string, any>
   ): Promise<void> {
     const entry: AuditLogEntry = {
-      tenantId: (req as any).tenantId || 'unknown',
+      tenantId: (req as any).tenantId || "unknown",
       userId: (req as any).user?.id,
       action,
       resourceType,
@@ -105,7 +104,7 @@ class AuditLogger {
         query: req.query,
       },
       ipAddress: req.ip,
-      userAgent: req.headers['user-agent'],
+      userAgent: req.headers["user-agent"],
       timestamp: new Date(),
     };
 
@@ -126,7 +125,7 @@ class AuditLogger {
       tenantId,
       userId,
       action,
-      resourceType: 'customer',
+      resourceType: "customer",
       resourceId: customerId,
       changes,
       timestamp: new Date(),
@@ -209,7 +208,7 @@ class AuditLogger {
   }): Promise<AuditLogEntry[]> {
     // TODO: Implement database query
     // For now, return empty array
-    console.log('[AUDIT QUERY]', filters);
+    logger.debug("[AUDIT QUERY]", filters);
     return [];
   }
 
@@ -254,7 +253,7 @@ class AuditLogger {
     endDate: Date
   ): Promise<Record<string, number>> {
     // TODO: Implement aggregation
-    console.log('[AUDIT SUMMARY]', { tenantId, startDate, endDate });
+    logger.debug("[AUDIT SUMMARY]", { tenantId, startDate, endDate });
     return {};
   }
 }
@@ -268,7 +267,7 @@ export const auditLogger = new AuditLogger();
 export function auditMiddleware() {
   return async (req: Request, res: any, next: any) => {
     // Skip health checks and monitoring endpoints
-    if (req.path.includes('/health') || req.path.includes('/monitoring')) {
+    if (req.path.includes("/health") || req.path.includes("/monitoring")) {
       return next();
     }
 
@@ -281,16 +280,18 @@ export function auditMiddleware() {
       if (res.statusCode >= 200 && res.statusCode < 300) {
         let action: AuditAction | undefined;
 
-        if (req.method === 'POST') {
+        if (req.method === "POST") {
           action = AuditAction.CUSTOMER_CREATED; // Generic, should be more specific
-        } else if (req.method === 'PUT' || req.method === 'PATCH') {
+        } else if (req.method === "PUT" || req.method === "PATCH") {
           action = AuditAction.CUSTOMER_UPDATED; // Generic
-        } else if (req.method === 'DELETE') {
+        } else if (req.method === "DELETE") {
           action = AuditAction.CUSTOMER_DELETED; // Generic
         }
 
         if (action) {
-          auditLogger.logFromRequest(req, action).catch(console.error);
+          auditLogger
+            .logFromRequest(req, action)
+            .catch((err) => logger.error("Audit log error", { error: err }));
         }
       }
 

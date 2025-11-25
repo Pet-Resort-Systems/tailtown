@@ -2319,3 +2319,114 @@ enum ReportCardStatus {
   VIEWED
   ARCHIVED
 }
+
+// ============================================
+// DAYCARE PASS SYSTEM MODELS
+// ============================================
+
+// Tenant-configurable pass packages (settings per tenant)
+model DaycarePassPackage {
+  id                  String                @id @default(uuid())
+  tenantId            String
+  name                String                // e.g., "5-Day Pass", "10-Day Pass", "20-Day Pass"
+  description         String?
+  passCount           Int                   // Number of daycare days included (5, 10, 20)
+  price               Float                 // Total package price (e.g., $135 for 5 passes at 10% off)
+  regularPricePerDay  Float                 // Reference: what single daycare costs (for display)
+  discountPercent     Float                 // e.g., 10.0 for 10% discount
+  validityDays        Int                   // Days until expiration from purchase (e.g., 90, 180, 365)
+  isActive            Boolean               @default(true)
+  sortOrder           Int                   @default(0)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  
+  // Relations
+  customerPasses      CustomerDaycarePass[]
+
+  @@unique([tenantId, name], map: "daycare_pass_packages_tenant_name_unique")
+  @@index([tenantId, isActive], map: "daycare_pass_packages_tenant_active_idx")
+  @@map("daycare_pass_packages")
+}
+
+// Customer's purchased pass with balance tracking
+model CustomerDaycarePass {
+  id                  String                  @id @default(uuid())
+  tenantId            String
+  customerId          String
+  packageId           String
+  package             DaycarePassPackage      @relation(fields: [packageId], references: [id])
+  
+  // Balance tracking
+  passesPurchased     Int                     // Original number of passes (e.g., 10)
+  passesRemaining     Int                     // Current balance (decrements on use)
+  passesUsed          Int                     @default(0) // For quick reference
+  
+  // Pricing at time of purchase (in case package prices change)
+  purchasePrice       Float                   // What customer paid
+  pricePerPass        Float                   // purchasePrice / passesPurchased
+  
+  // Dates
+  purchasedAt         DateTime                @default(now())
+  expiresAt           DateTime                // purchasedAt + package.validityDays
+  
+  // Status
+  status              DaycarePassStatus       @default(ACTIVE)
+  
+  // Payment reference (optional - links to invoice/payment)
+  invoiceId           String?
+  paymentId           String?
+  notes               String?
+  
+  // Audit
+  createdBy           String?                 // Staff who sold the pass
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+  
+  // Relations
+  redemptions         DaycarePassRedemption[]
+
+  @@index([tenantId, customerId], map: "customer_daycare_passes_tenant_customer_idx")
+  @@index([tenantId, customerId, status], map: "customer_daycare_passes_tenant_customer_status_idx")
+  @@index([tenantId, expiresAt], map: "customer_daycare_passes_tenant_expires_idx")
+  @@map("customer_daycare_passes")
+}
+
+// Audit trail for pass usage
+model DaycarePassRedemption {
+  id                  String              @id @default(uuid())
+  tenantId            String
+  customerPassId      String
+  customerPass        CustomerDaycarePass @relation(fields: [customerPassId], references: [id])
+  
+  // What was redeemed
+  petId               String              // Which pet used the pass
+  reservationId       String?             // Link to daycare reservation if applicable
+  checkInId           String?             // Link to check-in record if applicable
+  
+  // Snapshot at redemption time
+  passesBeforeUse     Int                 // Balance before this redemption
+  passesAfterUse      Int                 // Balance after (passesBeforeUse - 1)
+  
+  // Metadata
+  redeemedAt          DateTime            @default(now())
+  redeemedBy          String?             // Staff who processed the redemption
+  notes               String?
+  
+  // For refunds/reversals
+  isReversed          Boolean             @default(false)
+  reversedAt          DateTime?
+  reversedBy          String?
+  reversalReason      String?
+
+  @@index([tenantId, customerPassId], map: "daycare_pass_redemptions_tenant_pass_idx")
+  @@index([tenantId, petId], map: "daycare_pass_redemptions_tenant_pet_idx")
+  @@index([tenantId, redeemedAt], map: "daycare_pass_redemptions_tenant_date_idx")
+  @@map("daycare_pass_redemptions")
+}
+
+enum DaycarePassStatus {
+  ACTIVE      // Has remaining balance and not expired
+  EXHAUSTED   // All passes used
+  EXPIRED     // Past expiration date with unused passes
+  CANCELLED   // Manually cancelled (refund scenario)
+}

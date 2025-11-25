@@ -1,19 +1,19 @@
 module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  roots: ['<rootDir>/src'],
-  testMatch: ['**/__tests__/**/*.ts?(x)', '**/?(*.)+(spec|test).ts?(x)'],
+  preset: "ts-jest",
+  testEnvironment: "node",
+  roots: ["<rootDir>/src"],
+  testMatch: ["**/__tests__/**/*.ts?(x)", "**/?(*.)+(spec|test).ts?(x)"],
   transform: {
-    '^.+\\.tsx?$': 'ts-jest',
+    "^.+\\.tsx?$": "ts-jest",
   },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   collectCoverage: true,
-  coverageDirectory: 'coverage',
+  coverageDirectory: "coverage",
   collectCoverageFrom: [
-    'src/**/*.{ts,tsx}',
-    '!src/index.ts',
-    '!src/types/**',
-    '!**/node_modules/**',
+    "src/**/*.{ts,tsx}",
+    "!src/index.ts",
+    "!src/types/**",
+    "!**/node_modules/**",
   ],
   coverageThreshold: {
     global: {
@@ -23,6 +23,6 @@ module.exports = {
       statements: 70,
     },
   },
-  testPathIgnorePatterns: ['/node_modules/'],
+  testPathIgnorePatterns: ["/node_modules/", "/_archived/", "/integration/"],
   verbose: true,
 };

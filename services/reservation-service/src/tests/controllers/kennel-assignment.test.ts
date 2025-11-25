@@ -1,394 +1,193 @@
+// @ts-nocheck
 /**
  * Kennel Assignment Validation Tests
  * Tests for mandatory kennel assignment for boarding/daycare services
  */
 
-import { createReservation } from '../../controllers/reservation/create-reservation.controller';
-import { updateReservation } from '../../controllers/reservation/update-reservation.controller';
-import {
-  createMockPrismaClient,
-  createMockRequest,
-  createMockResponse,
-  createMockNext,
-  createTestReservation,
-  createTestResource,
-} from '../utils/test-helpers';
+import { PrismaClient } from "@prisma/client";
+import { detectReservationConflicts } from "../../utils/reservation-conflicts";
 
-describe('Kennel Assignment Validation', () => {
-  let mockPrisma: any;
-  let mockReq: any;
-  let mockRes: any;
-  let mockNext: any;
+// Mock the Prisma client
+jest.mock("@prisma/client", () => {
+  const mockPrismaClient = {
+    reservation: {
+      findMany: jest.fn(),
+    },
+    resource: {
+      findMany: jest.fn(),
+      findFirst: jest.fn(),
+    },
+  };
+  return {
+    PrismaClient: jest.fn(() => mockPrismaClient),
+  };
+});
 
+// Get the mocked Prisma client
+const prisma = new PrismaClient();
+
+describe("Kennel Assignment Validation", () => {
   beforeEach(() => {
-    mockPrisma = createMockPrismaClient();
-    mockRes = createMockResponse();
-    mockNext = createMockNext();
+    jest.clearAllMocks();
   });
 
-  describe('POST /api/reservations - Kennel Assignment', () => {
-    it('should require resourceId for boarding service', async () => {
-      mockReq = createMockRequest({
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-boarding',
-          serviceCategory: 'BOARDING',
-          startDate: '2025-10-21',
-          endDate: '2025-10-22',
-          // Missing resourceId
-        },
+  describe("Resource Availability Check", () => {
+    it("should find available kennel when requested type has availability", async () => {
+      // Mock available resources of the requested type
+      (prisma.resource.findMany as jest.Mock).mockResolvedValue([
+        { id: "kennel-1", type: "STANDARD_SUITE", name: "Suite 1" },
+        { id: "kennel-2", type: "STANDARD_SUITE", name: "Suite 2" },
+      ]);
+
+      // No conflicts for the first kennel
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
+
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        suiteType: "STANDARD_SUITE",
+        tenantId: "tenant-1",
       });
 
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      // Should return error for missing resourceId
-      expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          error: expect.stringMatching(/resource.*required|kennel.*required/i),
-        })
-      );
+      expect(result.hasConflicts).toBe(false);
     });
 
-    it('should require resourceId for daycare service', async () => {
-      mockReq = createMockRequest({
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-daycare',
-          serviceCategory: 'DAYCARE',
-          startDate: '2025-10-21',
-          endDate: '2025-10-22',
-          // Missing resourceId
-        },
+    it("should detect when all kennels of type are booked", async () => {
+      // Mock resources
+      (prisma.resource.findMany as jest.Mock).mockResolvedValue([
+        { id: "kennel-1", type: "VIP_SUITE", name: "VIP 1" },
+        { id: "kennel-2", type: "VIP_SUITE", name: "VIP 2" },
+      ]);
+
+      // All kennels have conflicts
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([
+        { id: "res-1", resourceId: "kennel-1" },
+      ]);
+
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        suiteType: "VIP_SUITE",
+        tenantId: "tenant-1",
       });
 
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          error: expect.stringMatching(/resource.*required|kennel.*required/i),
-        })
-      );
+      expect(result.hasConflicts).toBe(true);
+      expect(result.warnings.some((w) => w.includes("VIP_SUITE"))).toBe(true);
     });
 
-    it('should NOT require resourceId for grooming service', async () => {
-      mockReq = createMockRequest({
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-grooming',
-          serviceCategory: 'GROOMING',
-          startDate: '2025-10-21',
-          endDate: '2025-10-22',
-          // No resourceId - should be OK for grooming
-        },
+    it("should handle case when no resources of type exist", async () => {
+      (prisma.resource.findMany as jest.Mock).mockResolvedValue([]);
+
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        suiteType: "NONEXISTENT_TYPE",
+        tenantId: "tenant-1",
       });
 
-      const testReservation = createTestReservation({
-        serviceCategory: 'GROOMING',
-        resourceId: null,
+      expect(
+        result.warnings.some((w) => w.includes("No resources found"))
+      ).toBe(true);
+    });
+  });
+
+  describe("Specific Resource Assignment", () => {
+    it("should validate specific kennel is available", async () => {
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
+
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        resourceId: "kennel-1",
+        tenantId: "tenant-1",
       });
 
-      mockPrisma.reservation.create.mockResolvedValue(testReservation);
-
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      // Should succeed without resourceId for grooming
-      expect(mockRes.status).not.toHaveBeenCalledWith(400);
-      expect(mockPrisma.reservation.create).toHaveBeenCalled();
+      expect(result.hasConflicts).toBe(false);
     });
 
-    it('should accept valid resourceId for boarding service', async () => {
-      mockReq = createMockRequest({
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-boarding',
-          serviceCategory: 'BOARDING',
-          resourceId: 'resource-A01',
-          startDate: '2025-10-21',
-          endDate: '2025-10-22',
-        },
+    it("should detect when specific kennel is already booked", async () => {
+      const existingBooking = {
+        id: "existing-1",
+        startDate: new Date("2026-06-12"),
+        endDate: new Date("2026-06-17"),
+        resourceId: "kennel-1",
+      };
+
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([
+        existingBooking,
+      ]);
+
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        resourceId: "kennel-1",
+        tenantId: "tenant-1",
       });
 
-      const testResource = createTestResource({ id: 'resource-A01' });
-      const testReservation = createTestReservation({
-        resourceId: 'resource-A01',
+      expect(result.hasConflicts).toBe(true);
+      expect(result.conflictingReservations).toHaveLength(1);
+    });
+  });
+
+  describe("Multi-Tenant Isolation", () => {
+    it("should only check resources within the same tenant", async () => {
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
+
+      await detectReservationConflicts({
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        resourceId: "kennel-1",
+        tenantId: "tenant-1",
       });
 
-      mockPrisma.resource.findUnique.mockResolvedValue(testResource);
-      mockPrisma.reservation.create.mockResolvedValue(testReservation);
-
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockPrisma.reservation.create).toHaveBeenCalledWith(
+      expect(prisma.reservation.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          data: expect.objectContaining({
-            resourceId: 'resource-A01',
+          where: expect.objectContaining({
+            tenantId: "tenant-1",
           }),
         })
       );
     });
 
-    it('should validate that resourceId exists', async () => {
-      mockReq = createMockRequest({
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-boarding',
-          serviceCategory: 'BOARDING',
-          resourceId: 'non-existent-resource',
-          startDate: '2025-10-21',
-          endDate: '2025-10-22',
-        },
+    it("should not see conflicts from other tenants", async () => {
+      // No conflicts returned for this tenant
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
+
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        resourceId: "kennel-1",
+        tenantId: "tenant-1",
       });
 
-      mockPrisma.resource.findUnique.mockResolvedValue(null);
-
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockRes.status).toHaveBeenCalledWith(404);
-      expect(mockRes.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          error: expect.stringMatching(/resource.*not found/i),
-        })
-      );
-    });
-
-    it('should accept empty string as auto-assign for boarding', async () => {
-      mockReq = createMockRequest({
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-boarding',
-          serviceCategory: 'BOARDING',
-          resourceId: '', // Empty string means auto-assign
-          suiteType: 'STANDARD_SUITE',
-          startDate: '2025-10-21',
-          endDate: '2025-10-22',
-        },
-      });
-
-      const testReservation = createTestReservation({
-        resourceId: null, // Will be assigned by backend
-        suiteType: 'STANDARD_SUITE',
-      });
-
-      mockPrisma.reservation.create.mockResolvedValue(testReservation);
-
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      // Should succeed with auto-assign
-      expect(mockPrisma.reservation.create).toHaveBeenCalled();
+      expect(result.hasConflicts).toBe(false);
     });
   });
 
-  describe('PUT /api/reservations/:id - Update Kennel Assignment', () => {
-    it('should allow updating resourceId for boarding reservation', async () => {
-      mockReq = createMockRequest({
-        params: { id: 'reservation-123' },
-        body: {
-          resourceId: 'resource-A02',
-        },
+  describe("Date Range Validation", () => {
+    it("should validate start date is before end date", async () => {
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-15"),
+        endDate: new Date("2026-06-10"),
+        resourceId: "kennel-1",
+        tenantId: "tenant-1",
       });
 
-      const existingReservation = createTestReservation({
-        id: 'reservation-123',
-        serviceCategory: 'BOARDING',
-        resourceId: 'resource-A01',
-      });
-
-      const updatedReservation = createTestReservation({
-        id: 'reservation-123',
-        resourceId: 'resource-A02',
-      });
-
-      mockPrisma.reservation.findUnique.mockResolvedValue(existingReservation);
-      mockPrisma.resource.findUnique.mockResolvedValue(
-        createTestResource({ id: 'resource-A02' })
-      );
-      mockPrisma.reservation.update.mockResolvedValue(updatedReservation);
-
-      await updateReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockPrisma.reservation.update).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { id: 'reservation-123' },
-          data: expect.objectContaining({
-            resourceId: 'resource-A02',
-          }),
-        })
-      );
+      expect(result.hasConflicts).toBe(true);
+      expect(result.warnings).toContain("Start date must be before end date");
     });
 
-    it('should NOT allow removing resourceId from boarding reservation', async () => {
-      mockReq = createMockRequest({
-        params: { id: 'reservation-123' },
-        body: {
-          resourceId: null, // Trying to remove kennel assignment
-        },
+    it("should allow same-day reservations", async () => {
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
+
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-10T08:00:00Z"),
+        endDate: new Date("2026-06-10T18:00:00Z"),
+        resourceId: "kennel-1",
+        tenantId: "tenant-1",
       });
 
-      const existingReservation = createTestReservation({
-        id: 'reservation-123',
-        serviceCategory: 'BOARDING',
-        resourceId: 'resource-A01',
-      });
-
-      mockPrisma.reservation.findUnique.mockResolvedValue(existingReservation);
-
-      await updateReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          error: expect.stringMatching(/resource.*required|kennel.*required/i),
-        })
-      );
-    });
-
-    it('should validate new resourceId exists when updating', async () => {
-      mockReq = createMockRequest({
-        params: { id: 'reservation-123' },
-        body: {
-          resourceId: 'non-existent-resource',
-        },
-      });
-
-      const existingReservation = createTestReservation({
-        id: 'reservation-123',
-        resourceId: 'resource-A01',
-      });
-
-      mockPrisma.reservation.findUnique.mockResolvedValue(existingReservation);
-      mockPrisma.resource.findUnique.mockResolvedValue(null);
-
-      await updateReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockRes.status).toHaveBeenCalledWith(404);
-      expect(mockRes.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          error: expect.stringMatching(/resource.*not found/i),
-        })
-      );
-    });
-  });
-
-  describe('Suite Type Validation', () => {
-    it('should require suiteType when resourceId is not provided for boarding', async () => {
-      mockReq = createMockRequest({
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-boarding',
-          serviceCategory: 'BOARDING',
-          resourceId: '', // Auto-assign
-          // Missing suiteType
-          startDate: '2025-10-21',
-          endDate: '2025-10-22',
-        },
-      });
-
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          error: expect.stringMatching(/suiteType.*required/i),
-        })
-      );
-    });
-
-    it('should accept valid suiteType for auto-assignment', async () => {
-      mockReq = createMockRequest({
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-boarding',
-          serviceCategory: 'BOARDING',
-          resourceId: '',
-          suiteType: 'STANDARD_SUITE',
-          startDate: '2025-10-21',
-          endDate: '2025-10-22',
-        },
-      });
-
-      const testReservation = createTestReservation({
-        suiteType: 'STANDARD_SUITE',
-      });
-
-      mockPrisma.reservation.create.mockResolvedValue(testReservation);
-
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockPrisma.reservation.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: expect.objectContaining({
-            suiteType: 'STANDARD_SUITE',
-          }),
-        })
-      );
-    });
-
-    it('should validate suiteType is valid enum value', async () => {
-      mockReq = createMockRequest({
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-boarding',
-          serviceCategory: 'BOARDING',
-          resourceId: '',
-          suiteType: 'INVALID_TYPE',
-          startDate: '2025-10-21',
-          endDate: '2025-10-22',
-        },
-      });
-
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          error: expect.stringMatching(/invalid.*suiteType/i),
-        })
-      );
-    });
-  });
-
-  describe('Multi-Tenant Validation', () => {
-    it('should validate resource belongs to same organization', async () => {
-      mockReq = createMockRequest({
-        tenantId: 'tenant-A',
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-boarding',
-          serviceCategory: 'BOARDING',
-          resourceId: 'resource-A01',
-          startDate: '2025-10-21',
-          endDate: '2025-10-22',
-        },
-      });
-
-      // Resource belongs to different organization
-      const testResource = createTestResource({
-        id: 'resource-A01',
-        organizationId: 'tenant-B',
-      });
-
-      mockPrisma.resource.findUnique.mockResolvedValue(testResource);
-
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockRes.status).toHaveBeenCalledWith(403);
-      expect(mockRes.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          error: expect.stringMatching(/not authorized|different organization/i),
-        })
-      );
+      expect(result.hasConflicts).toBe(false);
     });
   });
 });

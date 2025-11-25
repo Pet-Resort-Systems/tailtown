@@ -8,88 +8,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Customer {
-  id               String                  @id @default(uuid())
-  tenantId         String                  @default("dev")
-  email            String
-  firstName        String
-  lastName         String
-  phone            String?
-  alternatePhone   String?
-  address          String?
-  city             String?
-  state            String?
-  zipCode          String?
-  notes            String?
-  portalEnabled    Boolean                 @default(true)
-  preferredContact ContactMethod            @default(EMAIL)
-  emergencyContact String?
-  emergencyPhone   String?
-  vatTaxId         String?
-  referralSource   String?
-  tags             String[]                @default([])
-  isActive         Boolean                 @default(true)
-  createdAt        DateTime                @default(now())
-  updatedAt        DateTime                @updatedAt
-  documents        Document[]
-  invoices         Invoice[]
-  notifications    NotificationPreference?
-  payments         Payment[]
-  pets             Pet[]
-  reservations     Reservation[]
+// Customer model removed - access via Customer Service API
+// Use customerServiceClient.getCustomer(customerId, tenantId) instead
 
-  @@index([firstName, lastName], map: "customers_name_search_idx")
-  @@index([email], map: "customers_email_search_idx")
-  @@index([phone], map: "customers_phone_search_idx")
-  @@unique([tenantId, email], map: "customers_tenant_email_unique")
-  @@index([tenantId, lastName, firstName], map: "customers_tenant_name_idx")
-  @@index([tenantId, email], map: "customers_tenant_email_idx")
-  @@unique([tenantId, id], map: "customers_tenant_id_unique")
-  @@map("customers")
-}
-
-model Pet {
-  id                 String          @id @default(uuid())
-  tenantId           String          @default("dev")
-  name               String
-  type               PetType
-  breed              String?
-  color              String?
-  birthdate          DateTime?
-  weight             Float?
-  gender             Gender?
-  isNeutered         Boolean         @default(false)
-  microchipNumber    String?
-  rabiesTagNumber    String?
-  specialNeeds       String?
-  foodNotes          String?
-  medicationNotes    String?
-  behaviorNotes      String?
-  allergies          String?
-  idealPlayGroup     PlayGroupType?
-  vaccinationStatus  Json?
-  vaccineExpirations Json?
-  vetName            String?
-  vetPhone           String?
-  profilePhoto       String?
-  petIcons           Json?           // Array of icon IDs for quick visual reference
-  iconNotes          Json?           // Custom notes for generic flag icons
-  isActive           Boolean         @default(true)
-  lastCheckIn        DateTime?
-  createdAt          DateTime        @default(now())
-  updatedAt          DateTime        @updatedAt
-  customerId         String
-  checkIns           CheckIn[]
-  medicalRecords     MedicalRecord[]
-  owner              Customer        @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  reservations       Reservation[]
-
-  @@index([customerId], map: "pets_customer_id_idx")
-  @@index([isActive, type], map: "pets_active_type_idx")
-  @@index([lastCheckIn], map: "pets_last_checkin_idx")
-  @@index([tenantId, customerId], map: "pets_tenant_customer_idx")
-  @@map("pets")
-}
+// Pet model removed - access via Customer Service API
+// Use customerServiceClient.getPet(petId, tenantId) instead
 
 model Reservation {
   id                 String             @id @default(uuid())
@@ -115,16 +38,16 @@ model Reservation {
   externalId         String?            // ID from external system (Gingr, etc.) for migration tracking
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
-  customerId         String
-  petId              String
+  customerId         String              // Foreign key only - fetch via customerServiceClient.getCustomer()
+  petId              String              // Foreign key only - fetch via customerServiceClient.getPet()
   serviceId          String
   resourceId         String?
   staffAssignedId    String?
   checkIns           CheckIn[]
   invoice            Invoice?
   addOnServices      ReservationAddOn[]
-  customer           Customer           @relation(fields: [customerId], references: [id])
-  pet                Pet                @relation(fields: [petId], references: [id])
+  // customer relation removed - use customerServiceClient.getCustomer(customerId, tenantId)
+  // pet relation removed - use customerServiceClient.getPet(petId, tenantId)
   resource           Resource?          @relation(fields: [resourceId], references: [id])
   service            Service            @relation(fields: [serviceId], references: [id])
   staffAssigned      Staff?             @relation(fields: [staffAssignedId], references: [id])
@@ -371,7 +294,7 @@ model Invoice {
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
   lineItems     InvoiceLineItem[]
-  customer      Customer          @relation(fields: [customerId], references: [id])
+  // customer relation removed - use customerServiceClient.getCustomer(customerId, tenantId)
   reservation   Reservation?      @relation(fields: [tenantId, reservationId], references: [tenantId, id])
   payments      Payment[]
 
@@ -415,7 +338,7 @@ model Payment {
   notes           String?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
-  customer        Customer      @relation(fields: [customerId], references: [id])
+  // customer relation removed - use customerServiceClient.getCustomer(customerId, tenantId)
   invoice         Invoice       @relation(fields: [invoiceId], references: [id])
 
   @@index([customerId, paymentDate], map: "payments_customer_date_idx")
@@ -438,7 +361,7 @@ model Document {
   uploaded    DateTime @default(now())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  customer    Customer @relation(fields: [customerId], references: [id])
+  // customer relation removed - use customerServiceClient.getCustomer(customerId, tenantId)
 
   @@index([tenantId, customerId], map: "documents_tenant_customer_idx")
   @@map("documents")
@@ -456,7 +379,7 @@ model NotificationPreference {
   checkinNotifications Boolean  @default(true)
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
-  customer             Customer @relation(fields: [tenantId, customerId], references: [tenantId, id], onDelete: Cascade)
+  // customer relation removed - use customerServiceClient.getCustomer(customerId, tenantId)
 
   @@unique([tenantId, customerId], map: "notification_preferences_tenant_customer_unique")
   @@map("notification_preferences")
@@ -489,7 +412,7 @@ model CheckIn {
   belongings          CheckInBelonging[]
   medications         CheckInMedication[]
   agreement           ServiceAgreement?
-  pet                 Pet                 @relation(fields: [petId], references: [id])
+  // pet relation removed - use customerServiceClient.getPet(petId, tenantId)
   reservation         Reservation?        @relation(fields: [reservationId], references: [id])
   template            CheckInTemplate?    @relation(fields: [templateId], references: [id])
 
@@ -658,7 +581,7 @@ model MedicalRecord {
   verifiedDate   DateTime?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
-  pet            Pet       @relation(fields: [petId], references: [id], onDelete: Cascade)
+  // pet relation removed - use customerServiceClient.getPet(petId, tenantId)
 
   @@index([tenantId, petId, recordType], map: "medical_records_tenant_pet_type_idx")
   @@map("medical_records")

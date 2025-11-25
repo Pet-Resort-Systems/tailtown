@@ -1,10 +1,11 @@
 /**
  * Monitoring and Metrics Utility
- * 
+ *
  * Tracks key performance indicators and system health metrics
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from "express";
+import { logger } from "./logger";
 
 // Metrics storage
 interface Metrics {
@@ -83,7 +84,7 @@ class MonitoringService {
   requestTracker() {
     return (req: Request, res: Response, next: NextFunction) => {
       const startTime = Date.now();
-      const tenantId = (req as any).tenantId || 'unknown';
+      const tenantId = (req as any).tenantId || "unknown";
       const endpoint = `${req.method} ${req.path}`;
 
       // Track request
@@ -92,20 +93,20 @@ class MonitoringService {
       this.incrementMap(this.metrics.requests.byEndpoint, endpoint);
 
       // Track response
-      res.on('finish', () => {
+      res.on("finish", () => {
         const duration = Date.now() - startTime;
-        
+
         // Track response time
         this.recordResponseTime(duration);
-        
+
         // Track status code
         this.incrementMap(this.metrics.requests.byStatus, res.statusCode);
-        
+
         // Track rate limit hits
         if (res.statusCode === 429) {
           this.recordRateLimitHit(tenantId);
         }
-        
+
         // Track errors
         if (res.statusCode >= 400) {
           this.recordError(`HTTP ${res.statusCode}`, tenantId);
@@ -121,9 +122,11 @@ class MonitoringService {
    */
   private recordResponseTime(duration: number) {
     this.metrics.responseTimes.samples.push(duration);
-    
+
     // Keep only last N samples
-    if (this.metrics.responseTimes.samples.length > this.MAX_RESPONSE_TIME_SAMPLES) {
+    if (
+      this.metrics.responseTimes.samples.length > this.MAX_RESPONSE_TIME_SAMPLES
+    ) {
       this.metrics.responseTimes.samples.shift();
     }
   }
@@ -134,8 +137,8 @@ class MonitoringService {
   recordRateLimitHit(tenantId: string) {
     this.metrics.rateLimits.hits++;
     this.incrementMap(this.metrics.rateLimits.byTenant, tenantId);
-    
-    console.warn(`[MONITORING] Rate limit hit for tenant: ${tenantId}`);
+
+    logger.warn(`[MONITORING] Rate limit hit for tenant: ${tenantId}`);
   }
 
   /**
@@ -144,13 +147,13 @@ class MonitoringService {
   recordError(error: string, tenantId?: string) {
     this.metrics.errors.total++;
     this.incrementMap(this.metrics.errors.byType, error);
-    
+
     this.metrics.errors.recent.push({
       timestamp: new Date(),
       error,
       tenant: tenantId,
     });
-    
+
     // Keep only last N errors
     if (this.metrics.errors.recent.length > this.MAX_RECENT_ERRORS) {
       this.metrics.errors.recent.shift();
@@ -162,11 +165,11 @@ class MonitoringService {
    */
   recordDatabaseQuery(duration: number) {
     this.metrics.database.queries++;
-    
+
     // Track slow queries (>100ms)
     if (duration > 100) {
       this.metrics.database.slowQueries++;
-      console.warn(`[MONITORING] Slow query detected: ${duration}ms`);
+      logger.warn(`[MONITORING] Slow query detected: ${duration}ms`);
     }
   }
 
@@ -182,18 +185,21 @@ class MonitoringService {
    * Calculate response time percentiles
    */
   private calculatePercentiles() {
-    const samples = [...this.metrics.responseTimes.samples].sort((a, b) => a - b);
-    
+    const samples = [...this.metrics.responseTimes.samples].sort(
+      (a, b) => a - b
+    );
+
     if (samples.length === 0) return;
 
-    const p50Index = Math.floor(samples.length * 0.50);
+    const p50Index = Math.floor(samples.length * 0.5);
     const p95Index = Math.floor(samples.length * 0.95);
     const p99Index = Math.floor(samples.length * 0.99);
 
     this.metrics.responseTimes.p50 = samples[p50Index] || 0;
     this.metrics.responseTimes.p95 = samples[p95Index] || 0;
     this.metrics.responseTimes.p99 = samples[p99Index] || 0;
-    this.metrics.responseTimes.avg = samples.reduce((a, b) => a + b, 0) / samples.length;
+    this.metrics.responseTimes.avg =
+      samples.reduce((a, b) => a + b, 0) / samples.length;
   }
 
   /**
@@ -236,9 +242,12 @@ class MonitoringService {
    * Get health status
    */
   private getHealthStatus() {
-    const errorRate = this.metrics.errors.total / Math.max(this.metrics.requests.total, 1);
+    const errorRate =
+      this.metrics.errors.total / Math.max(this.metrics.requests.total, 1);
     const p95 = this.metrics.responseTimes.p95;
-    const slowQueryRate = this.metrics.database.slowQueries / Math.max(this.metrics.database.queries, 1);
+    const slowQueryRate =
+      this.metrics.database.slowQueries /
+      Math.max(this.metrics.database.queries, 1);
 
     const issues = [];
 
@@ -255,7 +264,7 @@ class MonitoringService {
     }
 
     return {
-      status: issues.length === 0 ? 'healthy' : 'degraded',
+      status: issues.length === 0 ? "healthy" : "degraded",
       issues,
     };
   }
@@ -263,51 +272,67 @@ class MonitoringService {
   /**
    * Check if alerts should be triggered
    */
-  checkAlerts(): Array<{ type: string; message: string; severity: 'warning' | 'critical' }> {
+  checkAlerts(): Array<{
+    type: string;
+    message: string;
+    severity: "warning" | "critical";
+  }> {
     const alerts = [];
 
     // High error rate
-    const errorRate = this.metrics.errors.total / Math.max(this.metrics.requests.total, 1);
-    if (errorRate > 0.10) {
+    const errorRate =
+      this.metrics.errors.total / Math.max(this.metrics.requests.total, 1);
+    if (errorRate > 0.1) {
       alerts.push({
-        type: 'high_error_rate',
-        message: `Error rate is ${(errorRate * 100).toFixed(2)}% (threshold: 10%)`,
-        severity: 'critical' as const,
+        type: "high_error_rate",
+        message: `Error rate is ${(errorRate * 100).toFixed(
+          2
+        )}% (threshold: 10%)`,
+        severity: "critical" as const,
       });
     } else if (errorRate > 0.05) {
       alerts.push({
-        type: 'elevated_error_rate',
-        message: `Error rate is ${(errorRate * 100).toFixed(2)}% (threshold: 5%)`,
-        severity: 'warning' as const,
+        type: "elevated_error_rate",
+        message: `Error rate is ${(errorRate * 100).toFixed(
+          2
+        )}% (threshold: 5%)`,
+        severity: "warning" as const,
       });
     }
 
     // Slow response times
     if (this.metrics.responseTimes.p95 > 1000) {
       alerts.push({
-        type: 'slow_response_times',
+        type: "slow_response_times",
         message: `P95 response time is ${this.metrics.responseTimes.p95}ms (threshold: 1000ms)`,
-        severity: 'warning' as const,
+        severity: "warning" as const,
       });
     }
 
     // High rate limit hits
-    const rateLimitRate = this.metrics.rateLimits.hits / Math.max(this.metrics.requests.total, 1);
-    if (rateLimitRate > 0.20) {
+    const rateLimitRate =
+      this.metrics.rateLimits.hits / Math.max(this.metrics.requests.total, 1);
+    if (rateLimitRate > 0.2) {
       alerts.push({
-        type: 'high_rate_limit_hits',
-        message: `${(rateLimitRate * 100).toFixed(2)}% of requests are rate limited`,
-        severity: 'warning' as const,
+        type: "high_rate_limit_hits",
+        message: `${(rateLimitRate * 100).toFixed(
+          2
+        )}% of requests are rate limited`,
+        severity: "warning" as const,
       });
     }
 
     // Database issues
-    const slowQueryRate = this.metrics.database.slowQueries / Math.max(this.metrics.database.queries, 1);
-    if (slowQueryRate > 0.10) {
+    const slowQueryRate =
+      this.metrics.database.slowQueries /
+      Math.max(this.metrics.database.queries, 1);
+    if (slowQueryRate > 0.1) {
       alerts.push({
-        type: 'slow_queries',
-        message: `${(slowQueryRate * 100).toFixed(2)}% of queries are slow (>100ms)`,
-        severity: 'warning' as const,
+        type: "slow_queries",
+        message: `${(slowQueryRate * 100).toFixed(
+          2
+        )}% of queries are slow (>100ms)`,
+        severity: "warning" as const,
       });
     }
 

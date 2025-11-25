@@ -1,8 +1,6 @@
-import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
-import { logger } from '../utils/logger';
-
-const prisma = new PrismaClient();
+import { Request, Response } from "express";
+import { prisma } from "../config/prisma";
+import { logger } from "../utils/logger";
 
 /**
  * Check-In Controller
@@ -15,19 +13,19 @@ const prisma = new PrismaClient();
  */
 export const getAllCheckIns = async (req: Request, res: Response) => {
   try {
-    const tenantId = req.headers['x-tenant-id'] as string;
+    const tenantId = req.headers["x-tenant-id"] as string;
     const { petId, reservationId, startDate, endDate } = req.query;
 
     const where: any = { tenantId };
-    
+
     if (petId) {
       where.petId = petId as string;
     }
-    
+
     if (reservationId) {
       where.reservationId = reservationId as string;
     }
-    
+
     if (startDate || endDate) {
       where.checkInTime = {};
       if (startDate) {
@@ -41,55 +39,51 @@ export const getAllCheckIns = async (req: Request, res: Response) => {
     const checkIns = await prisma.checkIn.findMany({
       where,
       include: {
-        pet: {
-          select: {
-            id: true,
-            name: true,
-            type: true,
-            breed: true
-          }
-        },
+        // pet relation removed - use customerServiceClient.getPet(petId, tenantId) if needed
         reservation: {
           select: {
             id: true,
             startDate: true,
             endDate: true,
-            status: true
-          }
+            status: true,
+          },
         },
         template: {
           select: {
             id: true,
-            name: true
-          }
+            name: true,
+          },
         },
         responses: {
           include: {
             question: {
               select: {
                 questionText: true,
-                questionType: true
-              }
-            }
-          }
+                questionType: true,
+              },
+            },
+          },
         },
         medications: true,
         belongings: true,
-        agreement: true
+        agreement: true,
       },
-      orderBy: { checkInTime: 'desc' }
+      orderBy: { checkInTime: "desc" },
     });
 
     res.json({
-      status: 'success',
+      status: "success",
       results: checkIns.length,
-      data: checkIns
+      data: checkIns,
     });
   } catch (error: any) {
-    logger.error('Error fetching check-ins', { tenantId: req.headers['x-tenant-id'], error: error.message });
+    logger.error("Error fetching check-ins", {
+      tenantId: req.headers["x-tenant-id"],
+      error: error.message,
+    });
     res.status(500).json({
-      status: 'error',
-      message: 'Failed to fetch check-ins'
+      status: "error",
+      message: "Failed to fetch check-ins",
     });
   }
 };
@@ -101,59 +95,63 @@ export const getAllCheckIns = async (req: Request, res: Response) => {
 export const getCheckInById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.headers['x-tenant-id'] as string;
+    const tenantId = req.headers["x-tenant-id"] as string;
 
     const checkIn = await prisma.checkIn.findFirst({
       where: { id, tenantId },
       include: {
-        pet: true,
+        // pet relation removed - use customerServiceClient.getPet(petId, tenantId) if needed
         reservation: true,
         template: {
           include: {
             sections: {
               include: {
                 questions: {
-                  orderBy: { order: 'asc' }
-                }
+                  orderBy: { order: "asc" },
+                },
               },
-              orderBy: { order: 'asc' }
-            }
-          }
+              orderBy: { order: "asc" },
+            },
+          },
         },
         responses: {
           include: {
-            question: true
-          }
+            question: true,
+          },
         },
         medications: {
-          orderBy: { medicationName: 'asc' }
+          orderBy: { medicationName: "asc" },
         },
         belongings: {
-          orderBy: { itemType: 'asc' }
+          orderBy: { itemType: "asc" },
         },
         agreement: true,
         activities: {
-          orderBy: { timestamp: 'desc' }
-        }
-      }
+          orderBy: { timestamp: "desc" },
+        },
+      },
     });
 
     if (!checkIn) {
       return res.status(404).json({
-        status: 'error',
-        message: 'Check-in not found'
+        status: "error",
+        message: "Check-in not found",
       });
     }
 
     res.json({
-      status: 'success',
-      data: checkIn
+      status: "success",
+      data: checkIn,
     });
   } catch (error: any) {
-    logger.error('Error fetching check-in', { checkInId: req.params.id, tenantId: req.headers['x-tenant-id'], error: error.message });
+    logger.error("Error fetching check-in", {
+      checkInId: req.params.id,
+      tenantId: req.headers["x-tenant-id"],
+      error: error.message,
+    });
     res.status(500).json({
-      status: 'error',
-      message: 'Failed to fetch check-in'
+      status: "error",
+      message: "Failed to fetch check-in",
     });
   }
 };
@@ -164,7 +162,7 @@ export const getCheckInById = async (req: Request, res: Response) => {
  */
 export const createCheckIn = async (req: Request, res: Response) => {
   try {
-    const tenantId = req.headers['x-tenant-id'] as string;
+    const tenantId = req.headers["x-tenant-id"] as string;
     const {
       petId,
       customerId,
@@ -174,14 +172,14 @@ export const createCheckIn = async (req: Request, res: Response) => {
       checkInNotes,
       responses,
       medications,
-      belongings
+      belongings,
     } = req.body;
 
     // Validate required fields
     if (!petId) {
       return res.status(400).json({
-        status: 'error',
-        message: 'Pet ID is required'
+        status: "error",
+        message: "Pet ID is required",
       });
     }
 
@@ -197,61 +195,71 @@ export const createCheckIn = async (req: Request, res: Response) => {
         checkInNotes,
         checkInTime: new Date(),
         // Create responses
-        responses: responses ? {
-          create: responses.map((response: any) => ({
-            questionId: response.questionId,
-            response: response.response
-          }))
-        } : undefined,
+        responses: responses
+          ? {
+              create: responses.map((response: any) => ({
+                questionId: response.questionId,
+                response: response.response,
+              })),
+            }
+          : undefined,
         // Create medications
-        medications: medications ? {
-          create: medications.map((med: any) => ({
-            medicationName: med.medicationName,
-            dosage: med.dosage,
-            frequency: med.frequency,
-            administrationMethod: med.administrationMethod,
-            timeOfDay: med.timeOfDay,
-            withFood: med.withFood || false,
-            specialInstructions: med.specialInstructions,
-            startDate: med.startDate ? new Date(med.startDate) : undefined,
-            endDate: med.endDate ? new Date(med.endDate) : undefined,
-            prescribingVet: med.prescribingVet,
-            notes: med.notes
-          }))
-        } : undefined,
+        medications: medications
+          ? {
+              create: medications.map((med: any) => ({
+                medicationName: med.medicationName,
+                dosage: med.dosage,
+                frequency: med.frequency,
+                administrationMethod: med.administrationMethod,
+                timeOfDay: med.timeOfDay,
+                withFood: med.withFood || false,
+                specialInstructions: med.specialInstructions,
+                startDate: med.startDate ? new Date(med.startDate) : undefined,
+                endDate: med.endDate ? new Date(med.endDate) : undefined,
+                prescribingVet: med.prescribingVet,
+                notes: med.notes,
+              })),
+            }
+          : undefined,
         // Create belongings
-        belongings: belongings ? {
-          create: belongings.map((item: any) => ({
-            itemType: item.itemType,
-            description: item.description,
-            quantity: item.quantity || 1,
-            color: item.color,
-            brand: item.brand,
-            notes: item.notes
-          }))
-        } : undefined
+        belongings: belongings
+          ? {
+              create: belongings.map((item: any) => ({
+                itemType: item.itemType,
+                description: item.description,
+                quantity: item.quantity || 1,
+                color: item.color,
+                brand: item.brand,
+                notes: item.notes,
+              })),
+            }
+          : undefined,
       },
       include: {
-        pet: true,
+        // pet relation removed - use customerServiceClient.getPet(petId, tenantId) if needed
         responses: {
           include: {
-            question: true
-          }
+            question: true,
+          },
         },
         medications: true,
-        belongings: true
-      }
+        belongings: true,
+      },
     });
 
     res.status(201).json({
-      status: 'success',
-      data: checkIn
+      status: "success",
+      data: checkIn,
     });
   } catch (error: any) {
-    logger.error('Error creating check-in', { petId: req.body.petId, tenantId: req.headers['x-tenant-id'], error: error.message });
+    logger.error("Error creating check-in", {
+      petId: req.body.petId,
+      tenantId: req.headers["x-tenant-id"],
+      error: error.message,
+    });
     res.status(500).json({
-      status: 'error',
-      message: 'Failed to create check-in'
+      status: "error",
+      message: "Failed to create check-in",
     });
   }
 };
@@ -263,7 +271,7 @@ export const createCheckIn = async (req: Request, res: Response) => {
 export const updateCheckIn = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.headers['x-tenant-id'] as string;
+    const tenantId = req.headers["x-tenant-id"] as string;
     const {
       checkInNotes,
       checkOutNotes,
@@ -274,18 +282,18 @@ export const updateCheckIn = async (req: Request, res: Response) => {
       medicationNotes,
       behaviorDuringStay,
       photosTaken,
-      photosShared
+      photosShared,
     } = req.body;
 
     // Verify check-in exists and belongs to tenant
     const existing = await prisma.checkIn.findFirst({
-      where: { id, tenantId }
+      where: { id, tenantId },
     });
 
     if (!existing) {
       return res.status(404).json({
-        status: 'error',
-        message: 'Check-in not found'
+        status: "error",
+        message: "Check-in not found",
       });
     }
 
@@ -301,30 +309,34 @@ export const updateCheckIn = async (req: Request, res: Response) => {
         medicationNotes,
         behaviorDuringStay,
         photosTaken,
-        photosShared
+        photosShared,
       },
       include: {
-        pet: true,
+        // pet relation removed - use customerServiceClient.getPet(petId, tenantId) if needed
         responses: {
           include: {
-            question: true
-          }
+            question: true,
+          },
         },
         medications: true,
         belongings: true,
-        agreement: true
-      }
+        agreement: true,
+      },
     });
 
     res.json({
-      status: 'success',
-      data: checkIn
+      status: "success",
+      data: checkIn,
     });
   } catch (error: any) {
-    logger.error('Error updating check-in', { checkInId: req.params.id, tenantId: req.headers['x-tenant-id'], error: error.message });
+    logger.error("Error updating check-in", {
+      checkInId: req.params.id,
+      tenantId: req.headers["x-tenant-id"],
+      error: error.message,
+    });
     res.status(500).json({
-      status: 'error',
-      message: 'Failed to update check-in'
+      status: "error",
+      message: "Failed to update check-in",
     });
   }
 };
@@ -336,18 +348,18 @@ export const updateCheckIn = async (req: Request, res: Response) => {
 export const addMedication = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.headers['x-tenant-id'] as string;
+    const tenantId = req.headers["x-tenant-id"] as string;
     const medicationData = req.body;
 
     // Verify check-in exists and belongs to tenant
     const checkIn = await prisma.checkIn.findFirst({
-      where: { id, tenantId }
+      where: { id, tenantId },
     });
 
     if (!checkIn) {
       return res.status(404).json({
-        status: 'error',
-        message: 'Check-in not found'
+        status: "error",
+        message: "Check-in not found",
       });
     }
 
@@ -361,22 +373,30 @@ export const addMedication = async (req: Request, res: Response) => {
         timeOfDay: medicationData.timeOfDay,
         withFood: medicationData.withFood || false,
         specialInstructions: medicationData.specialInstructions,
-        startDate: medicationData.startDate ? new Date(medicationData.startDate) : undefined,
-        endDate: medicationData.endDate ? new Date(medicationData.endDate) : undefined,
+        startDate: medicationData.startDate
+          ? new Date(medicationData.startDate)
+          : undefined,
+        endDate: medicationData.endDate
+          ? new Date(medicationData.endDate)
+          : undefined,
         prescribingVet: medicationData.prescribingVet,
-        notes: medicationData.notes
-      }
+        notes: medicationData.notes,
+      },
     });
 
     res.status(201).json({
-      status: 'success',
-      data: medication
+      status: "success",
+      data: medication,
     });
   } catch (error: any) {
-    logger.error('Error adding medication', { checkInId: req.params.id, tenantId: req.headers['x-tenant-id'], error: error.message });
+    logger.error("Error adding medication", {
+      checkInId: req.params.id,
+      tenantId: req.headers["x-tenant-id"],
+      error: error.message,
+    });
     res.status(500).json({
-      status: 'error',
-      message: 'Failed to add medication'
+      status: "error",
+      message: "Failed to add medication",
     });
   }
 };
@@ -388,18 +408,18 @@ export const addMedication = async (req: Request, res: Response) => {
 export const updateMedication = async (req: Request, res: Response) => {
   try {
     const { checkInId, medicationId } = req.params;
-    const tenantId = req.headers['x-tenant-id'] as string;
+    const tenantId = req.headers["x-tenant-id"] as string;
     const medicationData = req.body;
 
     // Verify check-in exists and belongs to tenant
     const checkIn = await prisma.checkIn.findFirst({
-      where: { id: checkInId, tenantId }
+      where: { id: checkInId, tenantId },
     });
 
     if (!checkIn) {
       return res.status(404).json({
-        status: 'error',
-        message: 'Check-in not found'
+        status: "error",
+        message: "Check-in not found",
       });
     }
 
@@ -413,22 +433,31 @@ export const updateMedication = async (req: Request, res: Response) => {
         timeOfDay: medicationData.timeOfDay,
         withFood: medicationData.withFood,
         specialInstructions: medicationData.specialInstructions,
-        startDate: medicationData.startDate ? new Date(medicationData.startDate) : undefined,
-        endDate: medicationData.endDate ? new Date(medicationData.endDate) : undefined,
+        startDate: medicationData.startDate
+          ? new Date(medicationData.startDate)
+          : undefined,
+        endDate: medicationData.endDate
+          ? new Date(medicationData.endDate)
+          : undefined,
         prescribingVet: medicationData.prescribingVet,
-        notes: medicationData.notes
-      }
+        notes: medicationData.notes,
+      },
     });
 
     res.json({
-      status: 'success',
-      data: medication
+      status: "success",
+      data: medication,
     });
   } catch (error: any) {
-    logger.error('Error updating medication', { checkInId: req.params.checkInId, medicationId: req.params.medicationId, tenantId: req.headers['x-tenant-id'], error: error.message });
+    logger.error("Error updating medication", {
+      checkInId: req.params.checkInId,
+      medicationId: req.params.medicationId,
+      tenantId: req.headers["x-tenant-id"],
+      error: error.message,
+    });
     res.status(500).json({
-      status: 'error',
-      message: 'Failed to update medication'
+      status: "error",
+      message: "Failed to update medication",
     });
   }
 };
@@ -442,18 +471,21 @@ export const deleteMedication = async (req: Request, res: Response) => {
     const { medicationId } = req.params;
 
     await prisma.checkInMedication.delete({
-      where: { id: medicationId }
+      where: { id: medicationId },
     });
 
     res.json({
-      status: 'success',
-      message: 'Medication deleted successfully'
+      status: "success",
+      message: "Medication deleted successfully",
     });
   } catch (error: any) {
-    logger.error('Error deleting medication', { medicationId: req.params.medicationId, error: error.message });
+    logger.error("Error deleting medication", {
+      medicationId: req.params.medicationId,
+      error: error.message,
+    });
     res.status(500).json({
-      status: 'error',
-      message: 'Failed to delete medication'
+      status: "error",
+      message: "Failed to delete medication",
     });
   }
 };
@@ -471,19 +503,22 @@ export const returnBelonging = async (req: Request, res: Response) => {
       where: { id: belongingId },
       data: {
         returnedAt: new Date(),
-        returnedBy
-      }
+        returnedBy,
+      },
     });
 
     res.json({
-      status: 'success',
-      data: belonging
+      status: "success",
+      data: belonging,
     });
   } catch (error: any) {
-    logger.error('Error marking belonging as returned', { belongingId: req.params.belongingId, error: error.message });
+    logger.error("Error marking belonging as returned", {
+      belongingId: req.params.belongingId,
+      error: error.message,
+    });
     res.status(500).json({
-      status: 'error',
-      message: 'Failed to mark belonging as returned'
+      status: "error",
+      message: "Failed to mark belonging as returned",
     });
   }
 };

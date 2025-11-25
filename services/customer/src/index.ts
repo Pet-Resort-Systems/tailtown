@@ -59,6 +59,7 @@ import businessSettingsRoutes from "./routes/business-settings.routes";
 import messagingRoutes from "./routes/messaging.routes";
 import waitlistRoutes from "./routes/waitlist.routes";
 import reportCardRoutes from "./routes/reportCard.routes";
+import daycarePassRoutes from "./routes/daycare-pass.routes";
 import { systemRoutes } from "./routes/system.routes";
 import { errorHandler } from "./middleware/error.middleware";
 import {
@@ -542,6 +543,9 @@ app.use("/api/waitlist", requireTenant, waitlistRoutes);
 
 // Report Card Routes (authenticated)
 app.use("/api/report-cards", requireTenant, reportCardRoutes);
+
+// Daycare Pass Routes (authenticated)
+app.use("/api/daycare-passes", requireTenant, daycarePassRoutes);
 
 // Serve uploaded icons statically
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
