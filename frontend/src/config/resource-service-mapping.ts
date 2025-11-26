@@ -23,13 +23,13 @@ export const RESOURCE_SERVICE_MAPPINGS: ResourceServiceMapping[] = [
   // Dog Boarding - Indoor Suite (Junior & Queen kennels)
   {
     resourceType: "JUNIOR_KENNEL",
-    serviceName: "Indoor Suite",
+    serviceName: "Boarding | Indoor Suite",
     serviceCategory: "BOARDING",
     description: "Standard indoor boarding for small to medium dogs",
   },
   {
     resourceType: "QUEEN_KENNEL",
-    serviceName: "Indoor Suite",
+    serviceName: "Boarding | Indoor Suite",
     serviceCategory: "BOARDING",
     description: "Standard indoor boarding for medium to large dogs",
   },
@@ -37,7 +37,7 @@ export const RESOURCE_SERVICE_MAPPINGS: ResourceServiceMapping[] = [
   // Dog Boarding - King Suite
   {
     resourceType: "KING_KENNEL",
-    serviceName: "King Suite",
+    serviceName: "Boarding | King Suite",
     serviceCategory: "BOARDING",
     description: "Premium boarding with extra space for large dogs",
   },
@@ -45,7 +45,7 @@ export const RESOURCE_SERVICE_MAPPINGS: ResourceServiceMapping[] = [
   // Dog Boarding - VIP Suite
   {
     resourceType: "VIP_ROOM",
-    serviceName: "VIP Suite",
+    serviceName: "Boarding | VIP Suite",
     serviceCategory: "BOARDING",
     description: "Luxury private room with premium amenities",
   },
@@ -53,7 +53,7 @@ export const RESOURCE_SERVICE_MAPPINGS: ResourceServiceMapping[] = [
   // Cat Boarding
   {
     resourceType: "CAT_CONDO",
-    serviceName: "Cat Boarding",
+    serviceName: "Boarding | Cat Cabana",
     serviceCategory: "BOARDING",
     description: "Comfortable condo for feline guests",
   },
@@ -61,13 +61,13 @@ export const RESOURCE_SERVICE_MAPPINGS: ResourceServiceMapping[] = [
   // Daycare
   {
     resourceType: "DAY_CAMP_FULL",
-    serviceName: "Day Camp Full Day",
+    serviceName: "Day Camp | Full Day",
     serviceCategory: "DAYCARE",
     description: "Full day of supervised play and socialization",
   },
   {
     resourceType: "DAY_CAMP_HALF",
-    serviceName: "Day Camp Half Day",
+    serviceName: "Day Camp | Half Day",
     serviceCategory: "DAYCARE",
     description: "Half day of supervised play and socialization",
   },
