@@ -236,6 +236,8 @@ model Resource {
   type                ResourceType
   description         String?
   capacity            Int                    @default(1)
+  price               Float?                 // Nightly/daily rate for this resource
+  taxable             Boolean                @default(true)
   isActive            Boolean                @default(true)
   notes               String?
   createdAt           DateTime               @default(now())
@@ -724,6 +726,20 @@ enum InvoiceStatus {
 }
 
 enum ResourceType {
+  // Dog Boarding Kennels
+  JUNIOR_KENNEL      // Maps to Indoor Suite service
+  QUEEN_KENNEL       // Maps to Indoor Suite service
+  KING_KENNEL        // Maps to King Suite service
+  VIP_ROOM           // Maps to VIP Suite service
+  
+  // Cat Boarding
+  CAT_CONDO          // Maps to Cat Boarding service
+  
+  // Daycare
+  DAY_CAMP_FULL      // Maps to Day Camp Full Day service
+  DAY_CAMP_HALF      // Maps to Day Camp Half Day service
+  
+  // Legacy types (kept for backward compatibility)
   KENNEL
   RUN
   SUITE
