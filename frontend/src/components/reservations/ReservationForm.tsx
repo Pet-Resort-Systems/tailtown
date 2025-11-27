@@ -436,6 +436,35 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
     loadInitialData();
   }, [initialData, serviceCategories]);
 
+  // Auto-select service when resource type is set and services are loaded
+  // This handles the case where services load after the resource is fetched
+  useEffect(() => {
+    if (
+      preSelectedResource?.type &&
+      services.length > 0 &&
+      !selectedService &&
+      !serviceAutoSelected
+    ) {
+      const resourceType = preSelectedResource.type;
+      if (shouldAutoSelectService(resourceType)) {
+        const serviceName = getServiceNameForResourceType(resourceType);
+        if (serviceName) {
+          const matchingService = services.find(
+            (s: Service) => s.name === serviceName
+          );
+          if (matchingService) {
+            console.log(
+              "Auto-selecting service (delayed) based on resource type:",
+              serviceName
+            );
+            setSelectedService(matchingService.id);
+            setServiceAutoSelected(true);
+          }
+        }
+      }
+    }
+  }, [preSelectedResource, services, selectedService, serviceAutoSelected]);
+
   /**
    * Handle customer selection change
    * Loads the selected customer's pets and updates the form state
