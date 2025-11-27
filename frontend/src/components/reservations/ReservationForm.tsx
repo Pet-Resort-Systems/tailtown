@@ -117,7 +117,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
   onClose,
 }) => {
   // Responsive hooks
-  const { isMobile, isTablet } = useResponsive();
+  const { isMobile } = useResponsive();
 
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [pets, setPets] = useState<Pet[]>([]);

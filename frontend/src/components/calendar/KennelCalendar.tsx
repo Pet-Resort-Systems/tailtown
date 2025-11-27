@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { Box, Dialog, DialogTitle, DialogContent, Alert } from "@mui/material";
 import { reservationService } from "../../services/reservationService";
 import { reservationApi } from "../../services/api";
-import { formatDateToYYYYMMDD } from "../../utils/dateUtils";
+// formatDateToYYYYMMDD imported but used in useKennelData
 import {
   useKennelData,
   ExtendedResource,
@@ -92,8 +92,6 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
         break;
 
       case "month":
-        // Get the first day of the month
-        const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
         // Get the last day of the month
         const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
