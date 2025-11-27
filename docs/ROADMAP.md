@@ -7,12 +7,15 @@
 
 ### Priority 0: IMMEDIATE (Do This Week)
 
+- 🟡 **Ordering Process Review** - Review and improve the reservation/booking flow (IN PROGRESS)
+- ❌ **Online Customer Booking Portal** - Customer-facing booking interface
 - 🟡 **Sentry Error Tracking** - Code ready, needs DSN configured
 - ✅ **Per-Tenant Rate Limiting** - COMPLETED (v1.2.8)
 - ✅ **Prisma Connection Pooling** - COMPLETED (v1.2.8)
 - ✅ **Redis Caching Phase 1** - COMPLETED (v1.2.8)
+- ✅ **Calendar Resource Display & Auto-Selection** - COMPLETED (Nov 26, 2025)
 
-**Status**: 3/4 complete (75%) - Sentry code ready, needs DSN
+**Status**: 4/7 complete (57%) - Calendar fixes done, ordering review in progress
 
 ### Priority 1: CRITICAL (Do This Month)
 
@@ -29,11 +32,77 @@
 
 **Status**: 3/10 complete (30%) - Service boundaries, load testing, daycare passes done!
 
+### Recently Completed (Nov 26, 2025)
+
+- ✅ **Calendar Resource Display Fix** - All 104 resources now display correctly
+- ✅ **Service Auto-Selection** - Reservation form auto-selects correct service based on kennel type
+- ✅ **ResourceType Enum Alignment** - Both services now support JUNIOR_KENNEL, QUEEN_KENNEL, KING_KENNEL, VIP_ROOM, CAT_CONDO, DAY_CAMP_FULL, DAY_CAMP_HALF
+- ✅ **Kennel Size Display** - Calendar correctly shows Junior/Queen/King labels based on resource type
+
 ---
 
 ## Priority 0: IMMEDIATE (Do This Week) 🔴
 
-### 1. ~~Sentry Error Tracking~~ 🟡 CODE READY
+### 1. Ordering Process Review
+
+**Effort**: 2-3 days  
+**Impact**: Core business functionality, customer experience
+
+Review and improve the current reservation/booking flow:
+
+- Audit current booking workflow (staff-side)
+- Identify pain points and friction
+- Review service selection process
+- Review date/time selection
+- Review resource (kennel/suite) assignment
+- Review pricing calculation and display
+- Review confirmation and notification flow
+- Document improvements needed
+
+---
+
+### 2. Online Customer Booking Portal
+
+**Effort**: 2-3 weeks  
+**Impact**: Revenue growth, customer convenience, reduced staff workload
+
+Build customer-facing booking interface:
+
+**Phase 1 - Core Booking**:
+
+- Customer login/registration
+- Service selection (boarding, daycare, grooming)
+- Date/time selection with availability check
+- Pet selection (from customer's pets)
+- Price quote display
+- Booking confirmation
+
+**Phase 2 - Enhanced Features**:
+
+- Add-on services selection
+- Special requests/notes
+- Deposit/payment integration
+- Email/SMS confirmations
+- Booking modification/cancellation
+
+**Phase 3 - Customer Account**:
+
+- View upcoming reservations
+- View past reservations
+- Update pet information
+- View/purchase daycare passes
+- View account balance
+
+**Technical Considerations**:
+
+- Public-facing routes (no staff auth required)
+- Customer authentication (separate from staff)
+- Rate limiting for public endpoints
+- Mobile-responsive design
+
+---
+
+### 3. ~~Sentry Error Tracking~~ 🟡 CODE READY
 
 **Status**: Code implemented, just needs configuration
 
@@ -684,5 +753,5 @@ True multi-tenant architecture:
 
 ---
 
-**Last Updated**: November 24, 2025  
+**Last Updated**: November 26, 2025  
 **Based on**: Senior Dev Review (Nov 7, 2025)

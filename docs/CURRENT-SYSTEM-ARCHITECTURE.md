@@ -1,6 +1,6 @@
 # Tailtown Current System Architecture
 
-**Last Updated**: November 7, 2025 - 11:08 PM PST  
+**Last Updated**: November 26, 2025  
 **Status**: ✅ Production - All Systems Operational  
 **Architecture**: Microservices with HTTP Communication, Redis Caching, Sentry Monitoring
 
@@ -185,6 +185,7 @@ Request: https://brangro.canicloud.com/dashboard
 ## 📊 Data Isolation
 
 ### Tenant-Specific Data
+
 Every major table includes `tenantId` for data isolation:
 
 ```sql
@@ -203,7 +204,9 @@ SELECT * FROM products WHERE tenant_id = 'brangro';
 ```
 
 ### Controllers Using Proper Tenant Context
+
 ✅ **All 13 controllers updated** (Nov 5, 2025):
+
 - products.controller.ts
 - groomerAppointment.controller.ts
 - checklist.controller.ts
@@ -350,10 +353,10 @@ Total: 18 test cases
 server {
     listen 443 ssl http2;
     server_name brangro.canicloud.com;
-    
+
     ssl_certificate /etc/letsencrypt/live/canicloud.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/canicloud.com/privkey.pem;
-    
+
     # Frontend (static files)
     # External: https://brangro.canicloud.com
     # Internal: http://localhost:3000 (on server)
@@ -365,7 +368,7 @@ server {
         proxy_set_header Host $host;
         proxy_cache_bypass $http_upgrade;
     }
-    
+
     # Backend APIs
     # External: https://brangro.canicloud.com/api
     # Internal: http://localhost:4004 (on server)
@@ -385,6 +388,7 @@ server {
 ## 📦 Technology Stack
 
 ### Frontend
+
 - **Framework**: React 18.2.0
 - **Language**: TypeScript 4.9.5
 - **UI Library**: Material-UI 5.x
@@ -394,6 +398,7 @@ server {
 - **Build Tool**: Create React App
 
 ### Backend
+
 - **Runtime**: Node.js 18+
 - **Framework**: Express.js 4.x
 - **Language**: TypeScript 5.x
@@ -404,6 +409,7 @@ server {
 - **Validation**: express-validator
 
 ### Infrastructure
+
 - **Server**: Oracle Cloud (129.212.178.244)
 - **OS**: Ubuntu 22.04 LTS
 - **Process Manager**: PM2
@@ -413,42 +419,69 @@ server {
 
 ---
 
-## 🔄 Recent Updates (November 5, 2025)
+## 🔄 Recent Updates
 
-### Code Cleanup Session
+### November 26, 2025 - Calendar & Resource Type Fixes
+
+**ResourceType Enum Expansion**:
+
+- ✅ Added new resource types to both services' Prisma schemas:
+  - `JUNIOR_KENNEL` - Maps to "Boarding | Indoor Suite"
+  - `QUEEN_KENNEL` - Maps to "Boarding | Indoor Suite"
+  - `KING_KENNEL` - Maps to "Boarding | King Suite"
+  - `VIP_ROOM` - Maps to "Boarding | VIP Suite"
+  - `CAT_CONDO` - Maps to "Boarding | Cat Cabana"
+  - `DAY_CAMP_FULL` - Maps to "Day Camp | Full Day"
+  - `DAY_CAMP_HALF` - Maps to "Day Camp | Half Day"
+
+**Calendar Improvements**:
+
+- ✅ Fixed calendar to display all 104 resources (was showing 0)
+- ✅ Removed hardcoded `type=KENNEL` filter from frontend
+- ✅ Added resource-to-service mapping for auto-selection
+- ✅ Fixed kennel size display (Junior/Queen/King labels)
+
+**Database Data Fix**:
+
+- ✅ Trimmed trailing spaces from service names in database
+- ✅ Fixed service name matching for auto-selection
+
+### November 5-7, 2025 - Code Cleanup & Security
+
+**Code Cleanup Session**:
+
 - ✅ Fixed 13 controllers for proper tenant context (86+ functions)
 - ✅ Removed debug console.log statements
 - ✅ Cleaned up 6 unused icon imports
 - ✅ Added error handling for profile photos
 - ✅ Added JSDoc documentation
 
-### Authentication Improvements
+**Authentication Improvements**:
+
 - ✅ Added `optionalAuth` middleware
 - ✅ Removed 'default-user' fallback
 - ✅ Fixed JWT token storage in frontend
 - ✅ Auto-send JWT with all API requests
 - ✅ Require authentication for announcement dismissals
 
-### Testing Infrastructure
+**Testing Infrastructure**:
+
 - ✅ Created tenant middleware tests (8 cases)
 - ✅ Created auth middleware tests (10 cases)
 - ✅ Total: 18 test cases with full coverage
-
-### Deployments Today
-- Frontend: 11 deployments
-- Backend: 5 deployments
-- All services healthy ✅
 
 ---
 
 ## 📊 Production Metrics
 
 ### Tenant Overview (Nov 5, 2025)
+
 - **Production Tenant**: Tailtown (your business)
 - **Demo Tenant**: BranGro (customer demos)
 - **Dev Tenant**: Dev (local development)
 
 ### Tailtown Tenant (Production - YOUR BUSINESS)
+
 - **Status**: 🔴 **CRITICAL - PRODUCTION**
 - **Purpose**: Real business operations
 - **Data**: Real customers, pets, reservations
@@ -456,6 +489,7 @@ server {
 - **Use For**: Daily operations, real testing
 
 ### BranGro Tenant (Demo Site)
+
 - **Status**: 🟡 **DEMO - NON-CRITICAL**
 - **Purpose**: Customer demos, feature testing
 - **Data**: Mock/demo data
@@ -467,10 +501,12 @@ server {
 - **Use For**: Sales demos, safe testing, training
 
 ### System Health
+
 - **Uptime**: 99.9%
 - **Active Tenants**: 3 (tailtown, brangro, dev)
 
 ### Performance
+
 - **API Response Time**: < 200ms average
 - **Page Load Time**: < 2s
 - **Database Queries**: Optimized with indexes
@@ -493,11 +529,13 @@ server {
 For detailed information about tenant purposes and usage, see [TENANT-STRATEGY.md](TENANT-STRATEGY.md).
 
 ### Quick Reference
+
 - **Tailtown**: 🔴 Production (your business, real data)
 - **BranGro**: 🟡 Demo (customer demos, mock data)
 - **Dev**: 🟢 Development (local testing, safe to break)
 
 ### Development Workflow
+
 ```
 Dev → BranGro → Tailtown → Future Customer Tenants
 ```
@@ -547,6 +585,7 @@ Dev → BranGro → Tailtown → Future Customer Tenants
 ```
 
 ### Retry Logic
+
 ```typescript
 // Exponential backoff: 1s → 2s → 4s
 const delays = [1000, 2000, 4000];
@@ -605,12 +644,14 @@ GET /api/products?tenantId=dev
 ```
 
 ### Cache Invalidation
+
 ```typescript
 // On product create/update/delete
 await invalidateCache(`products:${tenantId}:*`);
 ```
 
 ### Redis Configuration
+
 - **Host**: localhost:6379
 - **Connection**: Persistent with auto-reconnect
 - **Fallback**: Graceful degradation if Redis unavailable
@@ -652,6 +693,7 @@ Application Error Occurs
 ```
 
 ### Sentry Features Configured
+
 - ✅ Error capture with context
 - ✅ Performance monitoring
 - ✅ User context tracking
@@ -660,6 +702,7 @@ Application Error Occurs
 - ✅ Environment filtering (dev/prod)
 
 ### Configuration
+
 - **DSN**: Configured per environment
 - **Sample Rate**: 100% (errors), 10% (performance)
 - **Environment**: dev/staging/production
@@ -672,6 +715,7 @@ Application Error Occurs
 ### Implemented Security Features
 
 **Authentication & Authorization**:
+
 - ✅ Rate limiting (5 attempts/15 min)
 - ✅ Account lockout (5 failed attempts, 15 min)
 - ✅ Short-lived access tokens (8 hours)
@@ -679,12 +723,14 @@ Application Error Occurs
 - ✅ JWT validation on all protected routes
 
 **Input Validation**:
+
 - ✅ Zod schemas for all inputs
 - ✅ SQL injection prevention (Prisma ORM)
 - ✅ XSS protection (sanitization)
 - ✅ CSRF protection
 
 **Security Headers**:
+
 - ✅ COEP (Cross-Origin-Embedder-Policy)
 - ✅ COOP (Cross-Origin-Opener-Policy)
 - ✅ CORP (Cross-Origin-Resource-Policy)
@@ -693,6 +739,7 @@ Application Error Occurs
 - ✅ X-Content-Type-Options
 
 **Testing**:
+
 - ✅ 380+ security tests
 - ✅ OWASP Top 10 coverage
 - ✅ Security score: 95/100
@@ -702,6 +749,7 @@ Application Error Occurs
 ## 📝 Next Steps
 
 ### Immediate
+
 - ✅ ~~Microservice communication~~ (DONE Nov 7)
 - ✅ ~~Redis caching~~ (DONE Nov 7)
 - ✅ ~~Security hardening~~ (DONE Nov 7)
@@ -709,12 +757,14 @@ Application Error Occurs
 - Implement automated backups
 
 ### Short Term
+
 - Add more endpoints to Redis cache
 - Configure Sentry DSN for production
 - Implement circuit breaker pattern
 - Add distributed tracing (OpenTelemetry)
 
 ### Long Term
+
 - Database split (separate DBs per service)
 - Kubernetes deployment
 - Multi-region support
@@ -723,5 +773,5 @@ Application Error Occurs
 ---
 
 **Document Status**: ✅ Current and Accurate  
-**Last Verified**: November 7, 2025 - 11:08 PM PST  
+**Last Verified**: November 26, 2025  
 **Maintained By**: Development Team
