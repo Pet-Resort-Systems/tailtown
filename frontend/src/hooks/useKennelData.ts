@@ -328,10 +328,21 @@ export const useKennelData = ({
     loadReservations();
   }, [loadKennelsAndAvailability, loadReservations]);
 
+  // Derive room size from type (e.g., JUNIOR_KENNEL -> JUNIOR, QUEEN_KENNEL -> QUEEN)
+  const getRoomSizeFromType = (type: string | undefined): string => {
+    if (!type) return "JUNIOR";
+    if (type.includes("JUNIOR")) return "JUNIOR";
+    if (type.includes("QUEEN")) return "QUEEN";
+    if (type.includes("KING")) return "KING";
+    if (type.includes("VIP")) return "VIP";
+    if (type.includes("CAT")) return "CAT";
+    return "JUNIOR";
+  };
+
   // Filter kennels based on room size filter
   const filteredKennels = kennels.filter((kennel) => {
     if (kennelTypeFilter === "ALL") return true;
-    const roomSize = kennel.size || "JUNIOR";
+    const roomSize = kennel.size || getRoomSizeFromType(kennel.type);
     return roomSize === kennelTypeFilter;
   });
 
