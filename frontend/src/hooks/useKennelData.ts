@@ -1,9 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { resourceService, type Resource } from "../services/resourceService";
-import {
-  reservationService,
-  Reservation as BaseReservation,
-} from "../services/reservationService";
+import { Reservation as BaseReservation } from "../services/reservationService";
 import { formatDateToYYYYMMDD } from "../utils/dateUtils";
 import { reservationApi } from "../services/api";
 import { sortByRoomAndNumber, sortBySuiteNumber } from "../utils/sortingUtils";
@@ -47,8 +44,6 @@ interface UseKennelDataReturn {
   loading: boolean;
   error: string | null;
   availabilityData: any;
-  fetchingAvailability: boolean;
-  availabilityError: string | null;
   refreshData: () => void;
 }
 
@@ -69,11 +64,6 @@ export const useKennelData = ({
 
   // State for resource availability data from backend API
   const [availabilityData, setAvailabilityData] = useState<any>(null);
-  const [fetchingAvailability, setFetchingAvailability] =
-    useState<boolean>(false);
-  const [availabilityError, setAvailabilityError] = useState<string | null>(
-    null
-  );
 
   // Function to load kennels and availability data
   const loadKennelsAndAvailability = useCallback(async () => {
@@ -351,8 +341,6 @@ export const useKennelData = ({
     loading,
     error,
     availabilityData,
-    fetchingAvailability,
-    availabilityError,
     refreshData: loadKennelsAndAvailability,
   };
 };
