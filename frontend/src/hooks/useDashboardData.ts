@@ -154,7 +154,8 @@ export const useDashboardData = () => {
 
       // Fetch all statuses including COMPLETED for displaying past reservations
       // We'll filter out COMPLETED when calculating counts to match Gingr's "Expected" totals
-      const allStatuses = "PENDING,CONFIRMED,CHECKED_IN,COMPLETED,CANCELLED,NO_SHOW";
+      const allStatuses =
+        "PENDING,CONFIRMED,CHECKED_IN,COMPLETED,CANCELLED,NO_SHOW";
 
       // Fetch reservations with pagination (up to 2 pages = 1000 reservations)
       // Include date filter to get reservations for a reasonable window around the selected date
@@ -217,13 +218,13 @@ export const useDashboardData = () => {
       // Calculate metrics using local timezone dates
 
       const checkIns = enhancedReservations.filter((res: any) => {
-        if (res.status === 'CANCELLED') return false;
+        if (res.status === "CANCELLED") return false;
         const startDateStr = getLocalDateString(res.startDate);
         return startDateStr === formattedDate;
       }).length;
 
       const checkOuts = enhancedReservations.filter((res: any) => {
-        if (res.status === 'CANCELLED') return false;
+        if (res.status === "CANCELLED") return false;
         const endDateStr = getLocalDateString(res.endDate);
         return endDateStr === formattedDate;
       }).length;
@@ -256,7 +257,8 @@ export const useDashboardData = () => {
       });
 
       const overnight = enhancedReservations.filter((res: any) => {
-        if (res.status === 'CANCELLED') return false;
+        // Only count CHECKED_IN reservations as overnight (matches Gingr)
+        if (res.status !== "CHECKED_IN") return false;
         // Only count boarding reservations as overnight, not day camp
         const serviceCategory = res.service?.serviceCategory;
         if (serviceCategory !== "BOARDING") return false;
