@@ -98,9 +98,32 @@ export const getAllReservations = async (
         where.resourceId = resourceId;
       }
 
-      // Handle date filtering - check if reservation overlaps with the given date
+      // Handle date range filtering (startDate and endDate params from calendar)
+      const startDateParam = req.query.startDate as string;
+      const endDateParam = req.query.endDate as string;
       const date = req.query.date as string;
-      if (date) {
+
+      if (startDateParam && endDateParam) {
+        // Calendar uses startDate and endDate for date range
+        console.log(
+          "Date range filter received:",
+          startDateParam,
+          "to",
+          endDateParam
+        );
+        const rangeStart = new Date(startDateParam);
+        const rangeEnd = new Date(endDateParam);
+        // Set end of day for the end date
+        rangeEnd.setHours(23, 59, 59, 999);
+
+        // A reservation overlaps with the range if:
+        // 1. It starts before the range ends AND
+        // 2. It ends after the range starts
+        where.AND = [
+          { startDate: { lte: rangeEnd } },
+          { endDate: { gte: rangeStart } },
+        ];
+      } else if (date) {
         console.log("Date filter received:", date);
 
         // Create start and end of the day for the given date, accounting for timezone
