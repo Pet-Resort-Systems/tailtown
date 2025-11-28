@@ -15,6 +15,8 @@ import request from "supertest";
 import { prisma } from "../../controllers/reservation/utils/prisma-helpers";
 import { format, addDays, subDays } from "date-fns";
 
+// SKIPPED: These are integration tests that require the app to be running
+// TODO: Refactor to use mocked app or run in CI with test server
 describe.skip("Reservation Date Filtering", () => {
   let testTenantId: string;
   let testCustomerId: string;
