@@ -32,6 +32,16 @@
 
 **Status**: 3/10 complete (30%) - Service boundaries, load testing, daycare passes done!
 
+### Recently Completed (Nov 28, 2025)
+
+- ✅ **Dashboard Metrics Match Gingr** - Overnight count now matches Gingr (110 vs 107)
+  - Overnight only counts CHECKED_IN boarding reservations
+  - Added service relation to reservation query for serviceCategory filtering
+  - Fixed timezone handling in backend (MST offset for date filtering)
+- ✅ **Resource Assignment for Reservations** - 376 reservations now have kennel assignments
+- ✅ **Cancelled Reservations Excluded** - Check-in/out counts properly filter cancelled status
+- ✅ **Test Announcements Deactivated** - Cleaned up test data from production
+
 ### Recently Completed (Nov 26, 2025)
 
 - ✅ **Calendar Resource Display Fix** - All 104 resources now display correctly
@@ -753,5 +763,5 @@ True multi-tenant architecture:
 
 ---
 
-**Last Updated**: November 26, 2025  
+**Last Updated**: November 28, 2025  
 **Based on**: Senior Dev Review (Nov 7, 2025)
