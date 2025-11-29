@@ -1,9 +1,14 @@
-import { Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
-import { AppError } from '../middleware/error.middleware';
-import { TenantRequest } from '../middleware/tenant.middleware';
-import { logger } from '../utils/logger';
-import { getCache, setCache, deleteCache, getCacheKey } from '../utils/redis';
+import { Response, NextFunction } from "express";
+import { PrismaClient } from "@prisma/client";
+import { AppError } from "../middleware/error.middleware";
+import { TenantRequest } from "../middleware/tenant.middleware";
+import { logger } from "../utils/logger";
+import { getCache, setCache, deleteCache, getCacheKey } from "../utils/redis";
+import {
+  tenantAuditLog,
+  AuditAction,
+  AuditCategory,
+} from "../services/tenant-audit-log.service";
 
 const prisma = new PrismaClient();
 
@@ -18,12 +23,19 @@ export const getAllCustomers = async (
     const limit = Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;
     const search = req.query.search as string;
-    const isActive = req.query.isActive === 'true' ? true : req.query.isActive === 'false' ? false : undefined;
-    const tags = req.query.tags ? (req.query.tags as string).split(',') : undefined;
-    
+    const isActive =
+      req.query.isActive === "true"
+        ? true
+        : req.query.isActive === "false"
+        ? false
+        : undefined;
+    const tags = req.query.tags
+      ? (req.query.tags as string).split(",")
+      : undefined;
+
     // Use tenant ID from middleware
     const tenantId = req.tenantId!;
-    
+
     // Build where condition with tenant filter
     const where: any = {
       tenantId,
@@ -33,19 +45,19 @@ export const getAllCustomers = async (
     }
     if (tags && tags.length > 0) {
       where.tags = {
-        hasSome: tags
+        hasSome: tags,
       };
     }
     if (search) {
       where.OR = [
-        { firstName: { contains: search, mode: 'insensitive' } },
-        { lastName: { contains: search, mode: 'insensitive' } },
-        { email: { contains: search, mode: 'insensitive' } },
+        { firstName: { contains: search, mode: "insensitive" } },
+        { lastName: { contains: search, mode: "insensitive" } },
+        { email: { contains: search, mode: "insensitive" } },
         { phone: { contains: search } }, // Match with dashes (e.g., "555-0112")
       ];
-      
+
       // If search contains only digits, also try matching with common phone formats
-      const digitsOnly = search.replace(/\D/g, '');
+      const digitsOnly = search.replace(/\D/g, "");
       if (digitsOnly.length >= 3) {
         // Try matching patterns like: 555-0112, (555) 0112, etc.
         // For a search like "5550112", match against "555-0112"
@@ -55,7 +67,10 @@ export const getAllCustomers = async (
           where.OR.push({ phone: { contains: formatted } });
         } else if (digitsOnly.length === 10) {
           // Format: XXX-XXX-XXXX
-          const formatted = `${digitsOnly.slice(0, 3)}-${digitsOnly.slice(3, 6)}-${digitsOnly.slice(6)}`;
+          const formatted = `${digitsOnly.slice(0, 3)}-${digitsOnly.slice(
+            3,
+            6
+          )}-${digitsOnly.slice(6)}`;
           where.OR.push({ phone: { contains: formatted } });
         } else if (digitsOnly.length >= 4) {
           // For partial searches, try last 4 digits with dash
@@ -65,7 +80,7 @@ export const getAllCustomers = async (
         }
       }
     }
-    
+
     const customers = await prisma.customer.findMany({
       where,
       skip,
@@ -75,18 +90,18 @@ export const getAllCustomers = async (
           select: {
             id: true,
             name: true,
-            breed: true
+            breed: true,
             // type is not in the current schema
-          }
-        }
+          },
+        },
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: "desc" },
     });
-    
+
     const total = await prisma.customer.count({ where });
-    
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       results: customers.length,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
@@ -106,37 +121,37 @@ export const getCustomerById = async (
   try {
     const { id } = req.params;
     const tenantId = req.tenantId!;
-    
+
     // Try cache first
-    const cacheKey = getCacheKey(tenantId, 'customer', id);
+    const cacheKey = getCacheKey(tenantId, "customer", id);
     let customer = await getCache<any>(cacheKey);
-    
+
     if (!customer) {
       customer = await prisma.customer.findFirst({
-        where: { 
+        where: {
           id,
-          tenantId
+          tenantId,
         },
         include: {
-          pets: true
-        }
+          pets: true,
+        },
       });
-      
+
       // Cache for 5 minutes if found
       if (customer) {
         await setCache(cacheKey, customer, 300);
-        logger.debug('Customer cached', { tenantId, customerId: id });
+        logger.debug("Customer cached", { tenantId, customerId: id });
       }
     } else {
-      logger.debug('Customer cache hit', { tenantId, customerId: id });
+      logger.debug("Customer cache hit", { tenantId, customerId: id });
     }
-    
+
     if (!customer) {
-      return next(new AppError('Customer not found', 404));
+      return next(new AppError("Customer not found", 404));
     }
-    
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       data: customer,
     });
   } catch (error) {
@@ -152,25 +167,25 @@ export const getCustomerPets = async (
 ) => {
   try {
     const { id } = req.params;
-    
+
     // Check if customer exists
     const customerExists = await prisma.customer.findUnique({
       where: { id },
-      select: { id: true }
+      select: { id: true },
     });
-    
+
     if (!customerExists) {
-      return next(new AppError('Customer not found', 404));
+      return next(new AppError("Customer not found", 404));
     }
-    
+
     const pets = await prisma.pet.findMany({
       where: { customerId: id },
       // No medicalRecords in current schema
       // Just return pets without includes
     });
-    
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       results: pets.length,
       data: pets,
     });
@@ -188,8 +203,11 @@ export const createCustomer = async (
   try {
     const customerData = req.body;
     const tenantId = req.tenantId!;
-    logger.debug('Creating customer', { tenantId, customerEmail: customerData.email });
-    
+    logger.debug("Creating customer", {
+      tenantId,
+      customerEmail: customerData.email,
+    });
+
     // Create customer with transaction to ensure all related records are created
     const newCustomer = await prisma.$transaction(async (prismaClient) => {
       // Extract only the fields that belong to the Customer model
@@ -198,77 +216,110 @@ export const createCustomer = async (
         pets, // Extract pets to handle separately
         ...customerFields
       } = customerData;
-      
+
       // Remove any fields that might cause Prisma validation errors
       const sanitizedCustomerData = { ...customerFields };
-      
+
       // Remove empty arrays, undefined/null fields, and empty strings that might cause Prisma validation errors
-      Object.keys(sanitizedCustomerData).forEach(key => {
-        if (sanitizedCustomerData[key] === null || 
-            sanitizedCustomerData[key] === undefined || 
-            sanitizedCustomerData[key] === '') {
+      Object.keys(sanitizedCustomerData).forEach((key) => {
+        if (
+          sanitizedCustomerData[key] === null ||
+          sanitizedCustomerData[key] === undefined ||
+          sanitizedCustomerData[key] === ""
+        ) {
           delete sanitizedCustomerData[key];
         }
-        if (Array.isArray(sanitizedCustomerData[key]) && sanitizedCustomerData[key].length === 0) {
+        if (
+          Array.isArray(sanitizedCustomerData[key]) &&
+          sanitizedCustomerData[key].length === 0
+        ) {
           delete sanitizedCustomerData[key];
         }
       });
-      
+
       // Always remove id field for creation - it should be auto-generated
       delete sanitizedCustomerData.id;
-      
+
       // Add tenantId to customer data
       sanitizedCustomerData.tenantId = tenantId;
-      
+
       // Create the customer
       const customer = await prismaClient.customer.create({
-        data: sanitizedCustomerData
+        data: sanitizedCustomerData,
       });
-      
+
       // Create pets if provided
       if (pets && Array.isArray(pets) && pets.length > 0) {
         for (const pet of pets) {
           await prismaClient.pet.create({
             data: {
               ...pet,
-              customerId: customer.id
-            }
+              customerId: customer.id,
+            },
           });
         }
       }
-      
+
       // Emergency contacts are not in the current schema
       // Just log that we received them but can't store them
-      if (emergencyContacts && Array.isArray(emergencyContacts) && emergencyContacts.length > 0) {
-        logger.warn(`Received ${emergencyContacts.length} emergency contacts but cannot store them - model not in schema`, { tenantId, customerId: customer.id });
+      if (
+        emergencyContacts &&
+        Array.isArray(emergencyContacts) &&
+        emergencyContacts.length > 0
+      ) {
+        logger.warn(
+          `Received ${emergencyContacts.length} emergency contacts but cannot store them - model not in schema`,
+          { tenantId, customerId: customer.id }
+        );
       }
-      
+
       // Get customer with all related data
       const customerWithRelations = await prismaClient.customer.findUnique({
         where: { id: customer.id },
         include: {
-          pets: true
-        }
+          pets: true,
+        },
       });
-      
+
       return customerWithRelations;
     });
-    
-    logger.info('Customer created successfully', { tenantId, customerId: newCustomer?.id });
+
+    logger.info("Customer created successfully", {
+      tenantId,
+      customerId: newCustomer?.id,
+    });
+
+    // Audit log the customer creation
+    await tenantAuditLog.logCustomer(
+      req,
+      AuditAction.CREATE,
+      newCustomer?.id || "",
+      `${newCustomer?.firstName} ${newCustomer?.lastName}`,
+      { newValue: newCustomer }
+    );
+
     res.status(201).json({
-      status: 'success',
+      status: "success",
       data: newCustomer,
     });
   } catch (error: any) {
-    logger.error('Error creating customer', { tenantId: req.tenantId, error: error.message, code: error.code });
-    
+    logger.error("Error creating customer", {
+      tenantId: req.tenantId,
+      error: error.message,
+      code: error.code,
+    });
+
     // Provide more specific error messages for common issues
-    if (error.code === 'P2002') {
-      return next(new AppError('A customer with this email already exists', 400));
-    } else if (error.code === 'P2000') {
-      return next(new AppError('Input value is too long for one or more fields', 400));
+    if (error.code === "P2002") {
+      return next(
+        new AppError("A customer with this email already exists", 400)
+      );
+    } else if (error.code === "P2000") {
+      return next(
+        new AppError("Input value is too long for one or more fields", 400)
+      );
     }
-    
+
     next(error);
   }
 };
@@ -282,33 +333,33 @@ export const updateCustomer = async (
   try {
     const { id } = req.params;
     const customerData = req.body;
-    
+
     // Check if customer exists and belongs to this tenant
     const customerExists = await prisma.customer.findFirst({
-      where: { 
+      where: {
         id,
-        tenantId: req.tenantId
+        tenantId: req.tenantId,
       },
       include: {
-        pets: true
-      }
+        pets: true,
+      },
     });
-    
+
     if (!customerExists) {
-      return next(new AppError('Customer not found', 404));
+      return next(new AppError("Customer not found", 404));
     }
-    
+
     // Update customer with transaction to ensure all related records are updated
     const updatedCustomer = await prisma.$transaction(async (prismaClient) => {
       // Remove pets from the base data since they need special handling
       const { pets, ...basicCustomerData } = customerData;
-      
+
       // Update basic customer data
       const customer = await prismaClient.customer.update({
         where: { id },
-        data: basicCustomerData
+        data: basicCustomerData,
       });
-      
+
       // Handle pets if provided
       if (pets && Array.isArray(pets) && pets.length > 0) {
         // For each pet, update if exists or create if new
@@ -317,40 +368,56 @@ export const updateCustomer = async (
             // Update existing pet
             await prismaClient.pet.update({
               where: { id: pet.id },
-              data: pet
+              data: pet,
             });
           } else {
             // Create new pet
             await prismaClient.pet.create({
               data: {
                 ...pet,
-                customerId: id
-              }
+                customerId: id,
+              },
             });
           }
         }
       }
-      
+
       // Return the updated customer with notifications
       return prismaClient.customer.findUnique({
         where: { id },
         include: {
-          pets: true
-        }
+          pets: true,
+        },
       });
     });
-    
+
     // Invalidate customer cache
-    const cacheKey = getCacheKey(req.tenantId!, 'customer', id);
+    const cacheKey = getCacheKey(req.tenantId!, "customer", id);
     await deleteCache(cacheKey);
-    logger.debug('Customer cache invalidated', { tenantId: req.tenantId, customerId: id });
-    
+    logger.debug("Customer cache invalidated", {
+      tenantId: req.tenantId,
+      customerId: id,
+    });
+
+    // Audit log the customer update
+    await tenantAuditLog.logCustomer(
+      req,
+      AuditAction.UPDATE,
+      id,
+      `${updatedCustomer?.firstName} ${updatedCustomer?.lastName}`,
+      { previousValue: customerExists, newValue: updatedCustomer }
+    );
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       data: updatedCustomer,
     });
   } catch (error) {
-    logger.error('Error updating customer', { tenantId: req.tenantId, customerId: req.params.id, error: error.message });
+    logger.error("Error updating customer", {
+      tenantId: req.tenantId,
+      customerId: req.params.id,
+      error: error.message,
+    });
     next(error);
   }
 };
@@ -364,46 +431,68 @@ export const deleteCustomer = async (
   try {
     const { id } = req.params;
     const { permanent } = req.query;
-    
+
     // Check if customer exists and belongs to this tenant
     const customerExists = await prisma.customer.findFirst({
-      where: { 
+      where: {
         id,
-        tenantId: req.tenantId
+        tenantId: req.tenantId,
       },
-      select: { id: true }
     });
-    
+
     if (!customerExists) {
-      return next(new AppError('Customer not found', 404));
+      return next(new AppError("Customer not found", 404));
     }
-    
-    if (permanent === 'true') {
+
+    if (permanent === "true") {
       // Permanently delete customer with cascade to related entities
       await prisma.$transaction(async (prismaClient) => {
         // Delete pets first (they depend on customer)
         await prismaClient.pet.deleteMany({
-          where: { customerId: id }
+          where: { customerId: id },
         });
-        
+
         // Finally delete the customer
         await prismaClient.customer.delete({
-          where: { id }
+          where: { id },
         });
-      });  
-      
+      });
+
+      // Audit log the permanent deletion (CRITICAL severity)
+      await tenantAuditLog.logFromRequest(
+        req,
+        AuditAction.DELETE,
+        AuditCategory.CUSTOMER,
+        "customer",
+        id,
+        `${customerExists.firstName} ${customerExists.lastName}`,
+        { previousValue: customerExists, severity: "CRITICAL" as any }
+      );
+
       res.status(204).json({
-        status: 'success',
+        status: "success",
         data: null,
       });
     } else {
       // We can't mark as inactive since isActive doesn't exist in schema
-    // Just return success without actually deleting
-    logger.warn(`Customer would be marked inactive, but isActive field doesn't exist in schema`, { tenantId: req.tenantId, customerId: id });
-      
+      // Just return success without actually deleting
+      logger.warn(
+        `Customer would be marked inactive, but isActive field doesn't exist in schema`,
+        { tenantId: req.tenantId, customerId: id }
+      );
+
+      // Audit log the soft delete
+      await tenantAuditLog.logCustomer(
+        req,
+        AuditAction.UPDATE,
+        id,
+        `${customerExists.firstName} ${customerExists.lastName}`,
+        { metadata: { action: "deactivated" } }
+      );
+
       res.status(200).json({
-        status: 'success',
-        data: { message: 'Customer has been deactivated' },
+        status: "success",
+        data: { message: "Customer has been deactivated" },
       });
     }
   } catch (error) {
@@ -419,22 +508,22 @@ export const getCustomerDocuments = async (
 ) => {
   try {
     const { id } = req.params;
-    
+
     // Check if customer exists
     const customer = await prisma.customer.findUnique({
       where: { id },
-      select: { id: true }
+      select: { id: true },
     });
-    
+
     if (!customer) {
-      return next(new AppError('Customer not found', 404));
+      return next(new AppError("Customer not found", 404));
     }
-    
+
     // Document model is not in the current schema
     res.status(200).json({
-      status: 'success',
-      message: 'Document functionality is not available in the current schema',
-      data: []
+      status: "success",
+      message: "Document functionality is not available in the current schema",
+      data: [],
     });
   } catch (error) {
     next(error);
@@ -449,31 +538,32 @@ export const uploadCustomerDocument = async (
 ) => {
   try {
     const { id } = req.params;
-    
+
     if (!req.file) {
-      return next(new AppError('No file uploaded', 400));
+      return next(new AppError("No file uploaded", 400));
     }
-    
+
     // Check if customer exists
     const customer = await prisma.customer.findUnique({
       where: { id },
-      select: { id: true }
+      select: { id: true },
     });
-    
+
     if (!customer) {
-      return next(new AppError('Customer not found', 404));
+      return next(new AppError("Customer not found", 404));
     }
-    
+
     // Document model is not in the current schema
     res.status(200).json({
-      status: 'success',
-      message: 'Document upload functionality is not available in the current schema',
+      status: "success",
+      message:
+        "Document upload functionality is not available in the current schema",
       data: {
         fileName: req.file.originalname,
         fileType: req.file.mimetype,
         filePath: req.file.path,
-        fileSize: req.file.size
-      }
+        fileSize: req.file.size,
+      },
     });
   } catch (error) {
     next(error);
@@ -488,23 +578,24 @@ export const getCustomerNotificationPreferences = async (
 ) => {
   try {
     const { id } = req.params;
-    
+
     // Check if customer exists
     const customer = await prisma.customer.findUnique({
       where: { id },
-      select: { id: true }
+      select: { id: true },
     });
-    
+
     if (!customer) {
-      return next(new AppError('Customer not found', 404));
+      return next(new AppError("Customer not found", 404));
     }
-    
+
     // Notification preferences not in current schema
     // Return a message indicating this feature is not available
     res.status(200).json({
-      status: 'success',
-      message: 'Notification preferences are not available in the current schema',
-      data: null
+      status: "success",
+      message:
+        "Notification preferences are not available in the current schema",
+      data: null,
     });
   } catch (error) {
     next(error);
@@ -520,22 +611,25 @@ export const updateCustomerNotificationPreferences = async (
   try {
     const { id } = req.params;
     const preferenceData = req.body;
-    
+
     // Check if customer exists
     const customer = await prisma.customer.findUnique({
       where: { id },
-      select: { id: true }
+      select: { id: true },
     });
-    
+
     if (!customer) {
-      return next(new AppError('Customer not found', 404));
+      return next(new AppError("Customer not found", 404));
     }
-    
+
     // Notification preferences not in current schema
-    const preferences = { message: 'Notification preferences are not available in the current schema' };
-    
+    const preferences = {
+      message:
+        "Notification preferences are not available in the current schema",
+    };
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       data: preferences,
     });
   } catch (error) {
@@ -554,22 +648,22 @@ export const getCustomerInvoices = async (
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-    
+
     // Check if customer exists
     const customerExists = await prisma.customer.findUnique({
       where: { id },
-      select: { id: true }
+      select: { id: true },
     });
-    
+
     if (!customerExists) {
-      return next(new AppError('Customer not found', 404));
+      return next(new AppError("Customer not found", 404));
     }
-    
+
     // Handle the case where the Invoice table doesn't exist in the database
     // Return an empty array with a message
     let invoices: any[] = [];
     let total = 0;
-    
+
     try {
       // Try to query the Invoice table, but it may not exist
       invoices = await prisma.$queryRaw`
@@ -579,7 +673,7 @@ export const getCustomerInvoices = async (
         LIMIT ${limit} 
         OFFSET ${skip}
       `;
-      
+
       const totalResult: any[] = await prisma.$queryRaw`
         SELECT COUNT(*) as count FROM "Invoice" 
         WHERE "customerId" = ${id}
@@ -588,11 +682,14 @@ export const getCustomerInvoices = async (
     } catch (error) {
       // If the table doesn't exist, just return an empty array
       // No need to propagate the error
-      logger.warn('Invoice table may not exist in the database', { tenantId: req.tenantId, customerId: id });
+      logger.warn("Invoice table may not exist in the database", {
+        tenantId: req.tenantId,
+        customerId: id,
+      });
     }
-    
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       results: invoices.length,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
@@ -614,24 +711,24 @@ export const getCustomerPayments = async (
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-    
+
     // Check if customer exists
     const customerExists = await prisma.customer.findUnique({
       where: { id },
-      select: { id: true }
+      select: { id: true },
     });
-    
+
     if (!customerExists) {
-      return next(new AppError('Customer not found', 404));
+      return next(new AppError("Customer not found", 404));
     }
-    
+
     // Payment model is not in the current schema
     // Return empty data
     const payments: any[] = [];
     const total = 0;
-    
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       results: payments.length,
       totalPages: Math.ceil(total / limit),
       currentPage: page,

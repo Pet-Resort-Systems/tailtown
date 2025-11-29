@@ -60,6 +60,7 @@ import messagingRoutes from "./routes/messaging.routes";
 import waitlistRoutes from "./routes/waitlist.routes";
 import reportCardRoutes from "./routes/reportCard.routes";
 import daycarePassRoutes from "./routes/daycare-pass.routes";
+import auditLogRoutes from "./routes/audit-log.routes";
 import { systemRoutes } from "./routes/system.routes";
 import { errorHandler } from "./middleware/error.middleware";
 import {
@@ -461,6 +462,15 @@ app.use(
   authenticate,
   requireTenantAdmin,
   reportRoutes
+);
+
+// Audit Log Routes (admin only - for compliance and security)
+app.use(
+  "/api/audit-logs",
+  requireTenant,
+  authenticate,
+  requireTenantAdmin,
+  auditLogRoutes
 );
 
 // ============================================

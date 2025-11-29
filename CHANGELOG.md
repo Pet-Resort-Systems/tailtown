@@ -5,6 +5,54 @@ All notable changes to the Tailtown Pet Resort Management System will be documen
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.2] - 2025-11-29
+
+### 🔒 Audit Logging for Sensitive Operations
+
+Implemented comprehensive audit logging for compliance and security.
+
+#### New Features
+
+- **TenantAuditLog Model**: New Prisma model with comprehensive fields:
+
+  - Who: userId, userEmail, userName, userRole
+  - What: action, category, entityType, entityId, entityName
+  - Changes: previousValue, newValue, changedFields
+  - Context: ipAddress, userAgent, requestMethod, requestPath
+  - Severity: INFO, WARNING, CRITICAL
+
+- **Audit Log Service** (`tenant-audit-log.service.ts`):
+
+  - Convenience methods: `logCustomer()`, `logPet()`, `logReservation()`, `logPayment()`, `logStaff()`, `logAuth()`, `logSettings()`
+  - Query methods: `query()`, `getEntityAuditTrail()`, `getUserActivity()`, `getActivitySummary()`, `getCriticalEvents()`, `getFailedLogins()`
+  - Automatic sensitive data sanitization (passwords, tokens, etc.)
+
+- **Admin UI** (`/admin/audit-logs`):
+
+  - Filter by category, action, severity, date range
+  - Search by user or entity name
+  - Expandable rows showing changed fields
+  - Detail dialog with before/after values
+  - Pagination support
+
+- **Controllers Updated**:
+  - Customer: CREATE, UPDATE, DELETE operations logged
+  - Reservation: CREATE, UPDATE, DELETE operations logged
+  - DELETE operations marked as CRITICAL severity
+
+#### Files Changed
+
+- `services/customer/prisma/schema.prisma` - Added TenantAuditLog model
+- `services/customer/src/services/tenant-audit-log.service.ts` - New service
+- `services/customer/src/controllers/audit-log.controller.ts` - New controller
+- `services/customer/src/routes/audit-log.routes.ts` - New routes
+- `services/customer/src/controllers/customer.controller.ts` - Added audit logging
+- `services/customer/src/controllers/reservation.controller.ts` - Added audit logging
+- `frontend/src/services/auditLogService.ts` - New frontend service
+- `frontend/src/pages/admin/AuditLogs.tsx` - New admin page
+
+---
+
 ## [1.6.1] - 2025-11-29
 
 ### 🏨 Customer Booking Portal - Kennel Size Selection

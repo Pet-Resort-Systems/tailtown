@@ -163,6 +163,9 @@ const DaycarePassManagement = lazy(
   () => import("./pages/admin/DaycarePassManagement")
 );
 
+// Lazy loaded pages - Audit Logs
+const AuditLogs = lazy(() => import("./pages/admin/AuditLogs"));
+
 // Lazy loaded pages - Products/POS
 const Products = lazy(() => import("./pages/products/Products"));
 
@@ -644,6 +647,12 @@ const AppRoutes = () => {
                 <Navigate to="/login" />
               )
             }
+          />
+
+          {/* Audit Logs Route */}
+          <Route
+            path="/admin/audit-logs"
+            element={isAuthenticated ? <AuditLogs /> : <Navigate to="/login" />}
           />
 
           {/* Products/POS Routes */}

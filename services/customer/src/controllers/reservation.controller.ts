@@ -1,6 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { PrismaClient, ReservationStatus } from "@prisma/client";
 import { AppError } from "../middleware/error.middleware";
+import {
+  tenantAuditLog,
+  AuditAction,
+  AuditCategory,
+  AuditSeverity,
+} from "../services/tenant-audit-log.service";
 
 const prisma = new PrismaClient();
 
@@ -757,6 +763,17 @@ export const createReservation = async (
 
       console.log("Backend: Successfully created reservation:", newReservation);
 
+      // Audit log the reservation creation
+      await tenantAuditLog.logReservation(
+        req,
+        AuditAction.CREATE,
+        newReservation.id,
+        `${newReservation.pet?.name || "Unknown"} - ${
+          newReservation.startDate
+        }`,
+        { newValue: newReservation }
+      );
+
       res.status(201).json({
         status: "success",
         data: newReservation,
@@ -978,6 +995,12 @@ export const updateReservation = async (
 
     console.log("Backend: Final update data:", reservationData);
 
+    // Get existing reservation for audit log
+    const existingReservation = await prisma.reservation.findUnique({
+      where: { id },
+      include: { customer: true, pet: true, resource: true },
+    });
+
     // Update the reservation
     const updatedReservation = await prisma.reservation.update({
       where: { id },
@@ -988,6 +1011,17 @@ export const updateReservation = async (
         resource: true,
       },
     });
+
+    // Audit log the reservation update
+    await tenantAuditLog.logReservation(
+      req,
+      AuditAction.UPDATE,
+      id,
+      `${updatedReservation.pet?.name || "Unknown"} - ${
+        updatedReservation.startDate
+      }`,
+      { previousValue: existingReservation, newValue: updatedReservation }
+    );
 
     res.status(200).json({
       status: "success",
@@ -1007,9 +1041,28 @@ export const deleteReservation = async (
   try {
     const { id } = req.params;
 
+    // Get reservation before deletion for audit log
+    const existingReservation = await prisma.reservation.findUnique({
+      where: { id },
+      include: { customer: true, pet: true, resource: true },
+    });
+
     await prisma.reservation.delete({
       where: { id },
     });
+
+    // Audit log the reservation deletion (CRITICAL)
+    if (existingReservation) {
+      await tenantAuditLog.logReservation(
+        req,
+        AuditAction.DELETE,
+        id,
+        `${existingReservation.pet?.name || "Unknown"} - ${
+          existingReservation.startDate
+        }`,
+        { previousValue: existingReservation, severity: AuditSeverity.CRITICAL }
+      );
+    }
 
     res.status(204).json({
       status: "success",

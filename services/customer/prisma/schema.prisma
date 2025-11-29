@@ -1646,6 +1646,61 @@ model AuditLog {
   @@map("audit_logs")
 }
 
+// ============================================
+// TENANT AUDIT LOGS (Per-tenant activity tracking)
+// ============================================
+
+// Tracks all sensitive operations within a tenant for compliance
+// Retention: 7 years per GDPR/compliance requirements
+model TenantAuditLog {
+  id            String      @id @default(uuid())
+  tenantId      String      @map("tenant_id")
+  
+  // Who performed the action
+  userId        String?     @map("user_id")        // Staff user ID
+  userEmail     String?     @map("user_email")     // Denormalized for historical record
+  userName      String?     @map("user_name")      // Denormalized for historical record
+  userRole      String?     @map("user_role")      // Role at time of action
+  
+  // What action was performed
+  action        String                              // CREATE, UPDATE, DELETE, VIEW, LOGIN, etc.
+  category      String                              // CUSTOMER, PET, RESERVATION, PAYMENT, AUTH, SETTINGS
+  
+  // What resource was affected
+  entityType    String      @map("entity_type")    // customer, pet, reservation, payment, etc.
+  entityId      String?     @map("entity_id")      // ID of affected resource
+  entityName    String?     @map("entity_name")    // Denormalized name for readability
+  
+  // Change details
+  previousValue Json?       @map("previous_value") // State before change (for updates/deletes)
+  newValue      Json?       @map("new_value")      // State after change (for creates/updates)
+  changedFields String[]    @map("changed_fields") // List of fields that changed
+  
+  // Request context
+  ipAddress     String?     @map("ip_address")
+  userAgent     String?     @map("user_agent")
+  requestMethod String?     @map("request_method") // GET, POST, PUT, DELETE
+  requestPath   String?     @map("request_path")   // API endpoint
+  
+  // Additional metadata
+  metadata      Json?                              // Any additional context
+  severity      String      @default("INFO")       // INFO, WARNING, CRITICAL
+  
+  // Timestamps
+  createdAt     DateTime    @default(now()) @map("created_at")
+  
+  // Indexes for efficient querying
+  @@index([tenantId], map: "idx_tenant_audit_tenant")
+  @@index([tenantId, createdAt], map: "idx_tenant_audit_tenant_date")
+  @@index([tenantId, userId], map: "idx_tenant_audit_user")
+  @@index([tenantId, category], map: "idx_tenant_audit_category")
+  @@index([tenantId, action], map: "idx_tenant_audit_action")
+  @@index([tenantId, entityType, entityId], map: "idx_tenant_audit_entity")
+  @@index([createdAt], map: "idx_tenant_audit_created")
+  @@index([severity], map: "idx_tenant_audit_severity")
+  @@map("tenant_audit_logs")
+}
+
 model ImpersonationSession {
   id            String      @id @default(uuid())
   superAdminId  String      @map("super_admin_id")
