@@ -1,13 +1,23 @@
-import { TenantRequest } from '../middleware/tenant.middleware';
-import { Request, Response, NextFunction } from 'express';
-import { PrismaClient, Prisma } from '@prisma/client';
-import { AppError } from '../middleware/error.middleware';
-import bcrypt from 'bcrypt';
-import { validatePasswordOrThrow } from '../utils/passwordValidator';
-import { generateToken, generateRefreshToken, verifyRefreshToken } from '../utils/jwt';
-import { logger } from '../utils/logger';
-import fs from 'fs';
-import path from 'path';
+import { TenantRequest } from "../middleware/tenant.middleware";
+import { Request, Response, NextFunction } from "express";
+import { PrismaClient, Prisma } from "@prisma/client";
+import { AppError } from "../middleware/error.middleware";
+import bcrypt from "bcrypt";
+import { validatePasswordOrThrow } from "../utils/passwordValidator";
+import {
+  generateToken,
+  generateRefreshToken,
+  verifyRefreshToken,
+} from "../utils/jwt";
+import { logger } from "../utils/logger";
+import {
+  tenantAuditLog,
+  AuditAction,
+  AuditCategory,
+  AuditSeverity,
+} from "../services/tenant-audit-log.service";
+import fs from "fs";
+import path from "path";
 
 // Extend the Express Request type to include user information and tenant context
 interface AuthenticatedRequest extends Request {
@@ -31,13 +41,18 @@ export const getAllStaff = async (
     const limit = Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;
     const search = req.query.search as string;
-    const isActive = req.query.isActive === 'true' ? true : req.query.isActive === 'false' ? false : undefined;
+    const isActive =
+      req.query.isActive === "true"
+        ? true
+        : req.query.isActive === "false"
+        ? false
+        : undefined;
     const role = req.query.role as string;
     const department = req.query.department as string;
-    
+
     // Build where condition
     const where: any = {
-      tenantId: (req as any).tenantId // Filter by tenant
+      tenantId: (req as any).tenantId, // Filter by tenant
     };
     if (isActive !== undefined) {
       where.isActive = isActive;
@@ -52,13 +67,13 @@ export const getAllStaff = async (
     }
     if (search) {
       where.OR = [
-        { firstName: { contains: search, mode: 'insensitive' } },
-        { lastName: { contains: search, mode: 'insensitive' } },
-        { email: { contains: search, mode: 'insensitive' } },
-        { position: { contains: search, mode: 'insensitive' } }
+        { firstName: { contains: search, mode: "insensitive" } },
+        { lastName: { contains: search, mode: "insensitive" } },
+        { email: { contains: search, mode: "insensitive" } },
+        { position: { contains: search, mode: "insensitive" } },
       ];
     }
-    
+
     const staff = await prisma.staff.findMany({
       where,
       skip,
@@ -83,13 +98,13 @@ export const getAllStaff = async (
         updatedAt: true,
         // Exclude password and other sensitive fields
       } as any,
-      orderBy: { lastName: 'asc' }
+      orderBy: { lastName: "asc" },
     });
-    
+
     const total = await prisma.staff.count({ where });
-    
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       results: staff.length,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
@@ -108,11 +123,11 @@ export const getStaffById = async (
 ) => {
   try {
     const { id } = req.params;
-    
+
     const staff = await prisma.staff.findFirst({
-      where: { 
+      where: {
         id,
-        tenantId: (req as any).tenantId
+        tenantId: (req as any).tenantId,
       },
       select: {
         id: true,
@@ -134,15 +149,15 @@ export const getStaffById = async (
         createdAt: true,
         updatedAt: true,
         // Exclude password and other sensitive fields
-      } as any
+      } as any,
     });
-    
+
     if (!staff) {
-      return next(new AppError('Staff member not found', 404));
+      return next(new AppError("Staff member not found", 404));
     }
-    
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       data: staff,
     });
   } catch (error) {
@@ -158,38 +173,38 @@ export const createStaff = async (
 ) => {
   try {
     const staffData = req.body;
-    const tenantId = (req.tenantId);
-    
+    const tenantId = req.tenantId;
+
     // Check if email already exists
     const existingStaff = await prisma.staff.findUnique({
       where: { tenantId_email: { tenantId, email: staffData.email } },
-      select: { id: true }
+      select: { id: true },
     });
-    
+
     if (existingStaff) {
-      return next(new AppError('Email already in use', 400));
+      return next(new AppError("Email already in use", 400));
     }
-    
+
     // Validate and hash the password
     if (!staffData.password) {
-      return next(new AppError('Password is required', 400));
+      return next(new AppError("Password is required", 400));
     }
-    
+
     // Validate password strength
     try {
       validatePasswordOrThrow(staffData.password);
     } catch (error: any) {
       return next(new AppError(error.message, 400));
     }
-    
+
     const hashedPassword = await bcrypt.hash(staffData.password, 10);
-    
+
     // Create staff member
     const newStaff = await prisma.staff.create({
       data: {
         ...staffData,
         tenantId,
-        password: hashedPassword
+        password: hashedPassword,
       },
       select: {
         id: true,
@@ -209,11 +224,20 @@ export const createStaff = async (
         createdAt: true,
         updatedAt: true,
         // Exclude password and other sensitive fields
-      } as any
+      } as any,
     });
-    
+
+    // Audit log staff creation (WARNING severity - sensitive operation)
+    await tenantAuditLog.logStaff(
+      req,
+      AuditAction.CREATE,
+      newStaff.id as string,
+      `${newStaff.firstName} ${newStaff.lastName}`,
+      { newValue: newStaff, metadata: { role: newStaff.role } }
+    );
+
     res.status(201).json({
-      status: 'success',
+      status: "success",
       data: newStaff,
     });
   } catch (error) {
@@ -230,17 +254,16 @@ export const updateStaff = async (
   try {
     const { id } = req.params;
     const staffData = req.body;
-    
-    // Check if staff exists
+
+    // Check if staff exists and get current state for audit
     const existingStaff = await prisma.staff.findUnique({
       where: { id },
-      select: { id: true }
     });
-    
+
     if (!existingStaff) {
-      return next(new AppError('Staff member not found', 404));
+      return next(new AppError("Staff member not found", 404));
     }
-    
+
     // If updating email, check if it's already in use by another staff in the same tenant
     if (staffData.email) {
       const tenantId = (req as any).tenantId;
@@ -248,16 +271,18 @@ export const updateStaff = async (
         where: {
           email: staffData.email,
           tenantId,
-          id: { not: id }
+          id: { not: id },
         },
-        select: { id: true }
+        select: { id: true },
       });
-      
+
       if (emailInUse) {
-        return next(new AppError('Email already in use by another staff member', 400));
+        return next(
+          new AppError("Email already in use by another staff member", 400)
+        );
       }
     }
-    
+
     // If updating password, validate and hash it
     if (staffData.password) {
       // Validate password strength
@@ -266,10 +291,10 @@ export const updateStaff = async (
       } catch (error: any) {
         return next(new AppError(error.message, 400));
       }
-      
+
       staffData.password = await bcrypt.hash(staffData.password, 10);
     }
-    
+
     // Update staff member
     const updatedStaff = await prisma.staff.update({
       where: { id },
@@ -292,11 +317,22 @@ export const updateStaff = async (
         createdAt: true,
         updatedAt: true,
         // Exclude password and other sensitive fields
-      } as any
+      } as any,
     });
-    
+
+    // Audit log staff update (WARNING severity - sensitive operation)
+    // Sanitize existing staff to remove password before logging
+    const { password: _, ...sanitizedExisting } = existingStaff;
+    await tenantAuditLog.logStaff(
+      req,
+      AuditAction.UPDATE,
+      id,
+      `${updatedStaff.firstName} ${updatedStaff.lastName}`,
+      { previousValue: sanitizedExisting, newValue: updatedStaff }
+    );
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       data: updatedStaff,
     });
   } catch (error) {
@@ -312,24 +348,35 @@ export const deleteStaff = async (
 ) => {
   try {
     const { id } = req.params;
-    
-    // Check if staff exists
+
+    // Check if staff exists and get full record for audit
     const existingStaff = await prisma.staff.findUnique({
       where: { id },
-      select: { id: true }
     });
-    
+
     if (!existingStaff) {
-      return next(new AppError('Staff member not found', 404));
+      return next(new AppError("Staff member not found", 404));
     }
-    
+
     // Delete staff member
     await prisma.staff.delete({
-      where: { id }
+      where: { id },
     });
-    
+
+    // Audit log staff deletion (CRITICAL severity)
+    const { password: _, ...sanitizedStaff } = existingStaff;
+    await tenantAuditLog.logFromRequest(
+      req,
+      AuditAction.DELETE,
+      AuditCategory.STAFF,
+      "staff",
+      id,
+      `${existingStaff.firstName} ${existingStaff.lastName}`,
+      { previousValue: sanitizedStaff, severity: AuditSeverity.CRITICAL }
+    );
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       data: null,
     });
   } catch (error) {
@@ -345,87 +392,116 @@ export const loginStaff = async (
 ) => {
   try {
     const { email, password } = req.body;
-    const tenantId = (req.tenantId);
-    
+    const tenantId = req.tenantId;
+
     if (!email || !password) {
-      return next(new AppError('Please provide email and password', 400));
+      return next(new AppError("Please provide email and password", 400));
     }
-    
+
     // Find staff by email
     const staff = await prisma.staff.findUnique({
-      where: { tenantId_email: { tenantId, email } }
+      where: { tenantId_email: { tenantId, email } },
     });
-    
+
     if (!staff || !staff.isActive) {
-      return next(new AppError('Invalid credentials or inactive account', 401));
+      // Audit log failed login attempt
+      await tenantAuditLog.logAuth(
+        req,
+        AuditAction.LOGIN_FAILED,
+        undefined,
+        email,
+        {
+          metadata: { reason: !staff ? "user_not_found" : "inactive_account" },
+          success: false,
+        }
+      );
+      return next(new AppError("Invalid credentials or inactive account", 401));
     }
-    
+
     // Check if account is locked
-    if ((staff as any).lockedUntil && new Date((staff as any).lockedUntil) > new Date()) {
+    if (
+      (staff as any).lockedUntil &&
+      new Date((staff as any).lockedUntil) > new Date()
+    ) {
       return res.status(423).json({
-        status: 'error',
-        message: 'Account is locked due to too many failed login attempts. Please try again later.',
-        code: 'ACCOUNT_LOCKED',
-        lockedUntil: (staff as any).lockedUntil
+        status: "error",
+        message:
+          "Account is locked due to too many failed login attempts. Please try again later.",
+        code: "ACCOUNT_LOCKED",
+        lockedUntil: (staff as any).lockedUntil,
       });
     }
-    
+
     // DEVELOPMENT MODE: Bypass password verification for testing
-    const isDev = process.env.NODE_ENV !== 'production';
-    const isPasswordCorrect = isDev ? true : await bcrypt.compare(password, (staff as any).password);
-    
+    const isDev = process.env.NODE_ENV !== "production";
+    const isPasswordCorrect = isDev
+      ? true
+      : await bcrypt.compare(password, (staff as any).password);
+
     if (!isPasswordCorrect) {
       // Increment failed login attempts
       const failedAttempts = ((staff as any).failedLoginAttempts || 0) + 1;
       const updates: any = {
         failedLoginAttempts: failedAttempts,
-        lastFailedLogin: new Date()
+        lastFailedLogin: new Date(),
       };
-      
+
       // Lock account after 5 failed attempts (15 minutes lockout)
       if (failedAttempts >= 5) {
         updates.lockedUntil = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
       }
-      
+
       await prisma.staff.update({
         where: { id: staff.id },
-        data: updates
+        data: updates,
       });
-      
-      return next(new AppError('Invalid credentials', 401));
+
+      // Audit log failed login (wrong password)
+      await tenantAuditLog.logAuth(
+        req,
+        AuditAction.LOGIN_FAILED,
+        staff.id,
+        email,
+        {
+          metadata: { reason: "invalid_password", failedAttempts },
+          success: false,
+        }
+      );
+
+      return next(new AppError("Invalid credentials", 401));
     }
-    
+
     // Update last login time and reset failed attempts on successful login
     await prisma.staff.update({
       where: { id: staff.id },
-      data: { 
+      data: {
         lastLogin: new Date(),
         failedLoginAttempts: 0,
         lockedUntil: null,
-        lastFailedLogin: null
-      } as any
+        lastFailedLogin: null,
+      } as any,
     });
-    
+
     // Generate JWT access token
     const accessToken = generateToken({
       id: staff.id,
       email: staff.email,
       role: staff.role,
-      tenantId
+      tenantId,
     });
-    
+
     // Generate refresh token
     const refreshToken = generateRefreshToken({ id: staff.id });
-    
+
     // Store refresh token in database
     await prisma.refreshToken.create({
       data: {
         token: refreshToken,
         staffId: staff.id,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
-      }
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+      },
     });
-    
+
     // Create a new object without sensitive fields
     const staffData = {
       id: staff.id,
@@ -441,14 +517,19 @@ export const loginStaff = async (
       // Cast to any to access fields not recognized by TypeScript yet
       position: (staff as any).position,
       department: (staff as any).department,
-      hireDate: (staff as any).hireDate
+      hireDate: (staff as any).hireDate,
     };
-    
+
+    // Audit log successful login
+    await tenantAuditLog.logAuth(req, AuditAction.LOGIN, staff.id, email, {
+      success: true,
+    });
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       data: staffData,
       token: accessToken,
-      refreshToken: refreshToken
+      refreshToken: refreshToken,
     });
   } catch (error) {
     next(error);
@@ -463,31 +544,33 @@ export const requestPasswordReset = async (
 ) => {
   try {
     const { email } = req.body;
-    
+
     if (!email) {
-      return next(new AppError('Please provide email', 400));
+      return next(new AppError("Please provide email", 400));
     }
-    
+
     // Find staff by email
     const staff = await prisma.staff.findFirst({
-      where: { email }
+      where: { email },
     });
-    
+
     if (!staff || !staff.isActive) {
       // For security reasons, don't reveal if the email exists or not
       return res.status(200).json({
-        status: 'success',
-        message: 'If your email is registered, you will receive a password reset link'
+        status: "success",
+        message:
+          "If your email is registered, you will receive a password reset link",
       });
     }
-    
+
     // Generate reset token (random string)
-    const resetToken = Math.random().toString(36).substring(2, 15) + 
-                      Math.random().toString(36).substring(2, 15);
-    
+    const resetToken =
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15);
+
     // Set token expiry to 1 hour from now
     const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000);
-    
+
     // Save token to database
     await prisma.staff.update({
       where: { id: staff.id },
@@ -495,22 +578,23 @@ export const requestPasswordReset = async (
         // Explicitly cast the data object to any to bypass type checking
         // since we've added fields to the schema that aren't yet recognized by the Prisma client
         resetToken,
-        resetTokenExpiry
-      } as any
+        resetTokenExpiry,
+      } as any,
     });
-    
+
     // TODO: Send email with reset link
     // Reset link format: https://app.tailtown.com/reset-password?token={resetToken}
-    if (process.env.NODE_ENV === 'development') {
-      logger.debug('Password reset token generated', { 
-        email: staff.email, 
-        resetLink: `http://localhost:3000/reset-password?token=${resetToken}` 
+    if (process.env.NODE_ENV === "development") {
+      logger.debug("Password reset token generated", {
+        email: staff.email,
+        resetLink: `http://localhost:3000/reset-password?token=${resetToken}`,
       });
     }
-    
+
     res.status(200).json({
-      status: 'success',
-      message: 'If your email is registered, you will receive a password reset link'
+      status: "success",
+      message:
+        "If your email is registered, you will receive a password reset link",
     });
   } catch (error) {
     next(error);
@@ -525,11 +609,11 @@ export const resetPassword = async (
 ) => {
   try {
     const { token, password } = req.body;
-    
+
     if (!token || !password) {
-      return next(new AppError('Please provide token and new password', 400));
+      return next(new AppError("Please provide token and new password", 400));
     }
-    
+
     // Find staff by reset token and check if token is still valid
     const staff = await prisma.staff.findFirst({
       where: {
@@ -537,25 +621,25 @@ export const resetPassword = async (
         // since we've added fields to the schema that aren't yet recognized by the Prisma client
         resetToken: token,
         resetTokenExpiry: {
-          gt: new Date()
-        }
-      } as any
+          gt: new Date(),
+        },
+      } as any,
     });
-    
+
     if (!staff) {
-      return next(new AppError('Invalid or expired token', 400));
+      return next(new AppError("Invalid or expired token", 400));
     }
-    
+
     // Validate password strength
     try {
       validatePasswordOrThrow(password);
     } catch (error: any) {
       return next(new AppError(error.message, 400));
     }
-    
+
     // Hash the new password
     const hashedPassword = await bcrypt.hash(password, 10);
-    
+
     // Update password and clear reset token
     await prisma.staff.update({
       where: { id: staff.id },
@@ -564,13 +648,13 @@ export const resetPassword = async (
         // since we've added fields to the schema that aren't yet recognized by the Prisma client
         password: hashedPassword,
         resetToken: null,
-        resetTokenExpiry: null
-      } as any
+        resetTokenExpiry: null,
+      } as any,
     });
-    
+
     res.status(200).json({
-      status: 'success',
-      message: 'Password has been reset successfully'
+      status: "success",
+      message: "Password has been reset successfully",
     });
   } catch (error) {
     next(error);
@@ -587,19 +671,16 @@ export const getStaffAvailability = async (
 ) => {
   try {
     const { staffId } = req.params;
-    
+
     const availability = await prisma.staffAvailability.findMany({
       where: { staffId },
-      orderBy: [
-        { dayOfWeek: 'asc' },
-        { startTime: 'asc' }
-      ]
+      orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
     });
-    
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       results: availability.length,
-      data: availability
+      data: availability,
     });
   } catch (error) {
     next(error);
@@ -615,45 +696,61 @@ export const createStaffAvailability = async (
   try {
     const { staffId } = req.params;
     const availabilityData = req.body;
-    
+
     // Validate required fields
-    if (availabilityData.dayOfWeek === undefined || !availabilityData.startTime || !availabilityData.endTime) {
-      return next(new AppError('Day of week, start time, and end time are required', 400));
+    if (
+      availabilityData.dayOfWeek === undefined ||
+      !availabilityData.startTime ||
+      !availabilityData.endTime
+    ) {
+      return next(
+        new AppError("Day of week, start time, and end time are required", 400)
+      );
     }
-    
+
     // Prepare data for creation
     const createData: any = {
       staffId,
       dayOfWeek: Number(availabilityData.dayOfWeek),
       startTime: availabilityData.startTime,
       endTime: availabilityData.endTime,
-      isAvailable: availabilityData.isAvailable !== undefined ? Boolean(availabilityData.isAvailable) : true,
-      isRecurring: availabilityData.isRecurring !== undefined ? Boolean(availabilityData.isRecurring) : true
+      isAvailable:
+        availabilityData.isAvailable !== undefined
+          ? Boolean(availabilityData.isAvailable)
+          : true,
+      isRecurring:
+        availabilityData.isRecurring !== undefined
+          ? Boolean(availabilityData.isRecurring)
+          : true,
       // Note: 'notes' field is not in the Prisma schema
     };
-    
+
     // Handle date fields if present
     if (availabilityData.effectiveFrom) {
       createData.effectiveFrom = new Date(availabilityData.effectiveFrom);
     }
-    
+
     if (availabilityData.effectiveUntil) {
       createData.effectiveUntil = new Date(availabilityData.effectiveUntil);
     }
-    
-    logger.debug('Creating staff availability', { tenantId: (req as any).tenantId, staffId, dayOfWeek: availabilityData.dayOfWeek });
-    
+
+    logger.debug("Creating staff availability", {
+      tenantId: (req as any).tenantId,
+      staffId,
+      dayOfWeek: availabilityData.dayOfWeek,
+    });
+
     // Create availability record
     const newAvailability = await prisma.staffAvailability.create({
-      data: createData
+      data: createData,
     });
-    
+
     res.status(201).json({
-      status: 'success',
-      data: newAvailability
+      status: "success",
+      data: newAvailability,
     });
   } catch (error) {
-    console.error('Error creating staff availability:', error);
+    console.error("Error creating staff availability:", error);
     next(error);
   }
 };
@@ -667,66 +764,76 @@ export const updateStaffAvailability = async (
   try {
     const { id } = req.params;
     const availabilityData = req.body;
-    
+
     // Check if availability exists
     const existingAvailability = await prisma.staffAvailability.findUnique({
-      where: { id }
+      where: { id },
     });
-    
+
     if (!existingAvailability) {
-      return next(new AppError('Availability record not found', 404));
+      return next(new AppError("Availability record not found", 404));
     }
-    
+
     // Prepare data for update
     const updateData: any = {};
-    
+
     // Handle basic fields
     if (availabilityData.dayOfWeek !== undefined) {
       updateData.dayOfWeek = Number(availabilityData.dayOfWeek);
     }
-    
+
     if (availabilityData.startTime) {
       updateData.startTime = availabilityData.startTime;
     }
-    
+
     if (availabilityData.endTime) {
       updateData.endTime = availabilityData.endTime;
     }
-    
+
     if (availabilityData.isAvailable !== undefined) {
       updateData.isAvailable = Boolean(availabilityData.isAvailable);
     }
-    
+
     if (availabilityData.isRecurring !== undefined) {
       updateData.isRecurring = Boolean(availabilityData.isRecurring);
     }
-    
+
     // Note: 'notes' field is not in the Prisma schema
     // Removed notes field handling
-    
+
     // Handle date fields
     if (availabilityData.effectiveFrom !== undefined) {
-      updateData.effectiveFrom = availabilityData.effectiveFrom ? new Date(availabilityData.effectiveFrom) : null;
+      updateData.effectiveFrom = availabilityData.effectiveFrom
+        ? new Date(availabilityData.effectiveFrom)
+        : null;
     }
-    
+
     if (availabilityData.effectiveUntil !== undefined) {
-      updateData.effectiveUntil = availabilityData.effectiveUntil ? new Date(availabilityData.effectiveUntil) : null;
+      updateData.effectiveUntil = availabilityData.effectiveUntil
+        ? new Date(availabilityData.effectiveUntil)
+        : null;
     }
-    
-    logger.debug('Updating staff availability', { availabilityId: id, tenantId: (req as any).tenantId });
-    
+
+    logger.debug("Updating staff availability", {
+      availabilityId: id,
+      tenantId: (req as any).tenantId,
+    });
+
     // Update availability
     const updatedAvailability = await prisma.staffAvailability.update({
       where: { id },
-      data: updateData
+      data: updateData,
     });
-    
+
     res.status(200).json({
-      status: 'success',
-      data: updatedAvailability
+      status: "success",
+      data: updatedAvailability,
     });
   } catch (error: any) {
-    logger.error('Error updating staff availability', { availabilityId: req.params.id, error: error.message });
+    logger.error("Error updating staff availability", {
+      availabilityId: req.params.id,
+      error: error.message,
+    });
     next(error);
   }
 };
@@ -739,24 +846,24 @@ export const deleteStaffAvailability = async (
 ) => {
   try {
     const { id } = req.params;
-    
+
     // Check if availability exists
     const existingAvailability = await prisma.staffAvailability.findUnique({
-      where: { id }
+      where: { id },
     });
-    
+
     if (!existingAvailability) {
-      return next(new AppError('Availability record not found', 404));
+      return next(new AppError("Availability record not found", 404));
     }
-    
+
     // Delete availability
     await prisma.staffAvailability.delete({
-      where: { id }
+      where: { id },
     });
-    
+
     res.status(200).json({
-      status: 'success',
-      message: 'Availability record deleted successfully'
+      status: "success",
+      message: "Availability record deleted successfully",
     });
   } catch (error) {
     next(error);
@@ -774,22 +881,22 @@ export const getStaffTimeOff = async (
   try {
     const { staffId } = req.params;
     const status = req.query.status as string;
-    
+
     // Build where condition
     const where: any = { staffId };
     if (status) {
       where.status = status;
     }
-    
+
     const timeOff = await prisma.staffTimeOff.findMany({
       where,
-      orderBy: { startDate: 'asc' }
+      orderBy: { startDate: "asc" },
     });
-    
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       results: timeOff.length,
-      data: timeOff
+      data: timeOff,
     });
   } catch (error) {
     next(error);
@@ -805,48 +912,57 @@ export const createStaffTimeOff = async (
   try {
     const { staffId } = req.params;
     const timeOffData = req.body;
-    
+
     // Validate required fields
     if (!timeOffData.startDate || !timeOffData.endDate || !timeOffData.type) {
-      return next(new AppError('Start date, end date, and type are required', 400));
+      return next(
+        new AppError("Start date, end date, and type are required", 400)
+      );
     }
-    
+
     // Prepare data for creation
     const createData: any = {
       staffId,
       startDate: new Date(timeOffData.startDate),
       endDate: new Date(timeOffData.endDate),
       type: timeOffData.type,
-      status: timeOffData.status || 'PENDING',
-      reason: timeOffData.reason || null
+      status: timeOffData.status || "PENDING",
+      reason: timeOffData.reason || null,
     };
-    
+
     // Handle optional fields
     if (timeOffData.notes) {
       createData.notes = timeOffData.notes;
     }
-    
+
     if (timeOffData.approvedById) {
       createData.approvedById = timeOffData.approvedById;
     }
-    
+
     if (timeOffData.approvedDate) {
       createData.approvedDate = new Date(timeOffData.approvedDate);
     }
-    
-    logger.debug('Creating staff time off', { tenantId: (req as any).tenantId, staffId, type: timeOffData.type });
-    
+
+    logger.debug("Creating staff time off", {
+      tenantId: (req as any).tenantId,
+      staffId,
+      type: timeOffData.type,
+    });
+
     // Create time off record
     const newTimeOff = await prisma.staffTimeOff.create({
-      data: createData
+      data: createData,
     });
-    
+
     res.status(201).json({
-      status: 'success',
-      data: newTimeOff
+      status: "success",
+      data: newTimeOff,
     });
   } catch (error: any) {
-    logger.error('Error creating staff time off', { staffId: req.params.staffId, error: error.message });
+    logger.error("Error creating staff time off", {
+      staffId: req.params.staffId,
+      error: error.message,
+    });
     next(error);
   }
 };
@@ -860,68 +976,76 @@ export const updateStaffTimeOff = async (
   try {
     const { id } = req.params;
     const timeOffData = req.body;
-    
+
     // Check if time off exists
     const existingTimeOff = await prisma.staffTimeOff.findUnique({
-      where: { id }
+      where: { id },
     });
-    
+
     if (!existingTimeOff) {
-      return next(new AppError('Time off record not found', 404));
+      return next(new AppError("Time off record not found", 404));
     }
-    
+
     // Prepare data for update
     const updateData: any = {};
-    
+
     // Handle basic fields
     if (timeOffData.type !== undefined) {
       updateData.type = timeOffData.type;
     }
-    
+
     if (timeOffData.status !== undefined) {
       updateData.status = timeOffData.status;
     }
-    
+
     if (timeOffData.reason !== undefined) {
       updateData.reason = timeOffData.reason;
     }
-    
+
     if (timeOffData.notes !== undefined) {
       updateData.notes = timeOffData.notes;
     }
-    
+
     // Handle date fields
     if (timeOffData.startDate) {
       updateData.startDate = new Date(timeOffData.startDate);
     }
-    
+
     if (timeOffData.endDate) {
       updateData.endDate = new Date(timeOffData.endDate);
     }
-    
+
     // Handle approval fields
     if (timeOffData.approvedById !== undefined) {
       updateData.approvedById = timeOffData.approvedById;
     }
-    
+
     if (timeOffData.approvedDate !== undefined) {
-      updateData.approvedDate = timeOffData.approvedDate ? new Date(timeOffData.approvedDate) : null;
+      updateData.approvedDate = timeOffData.approvedDate
+        ? new Date(timeOffData.approvedDate)
+        : null;
     }
-    
-    logger.debug('Updating staff time off', { timeOffId: id, tenantId: (req as any).tenantId });
-    
+
+    logger.debug("Updating staff time off", {
+      timeOffId: id,
+      tenantId: (req as any).tenantId,
+    });
+
     // Update time off
     const updatedTimeOff = await prisma.staffTimeOff.update({
       where: { id },
-      data: updateData
+      data: updateData,
     });
-    
+
     res.status(200).json({
-      status: 'success',
-      data: updatedTimeOff
+      status: "success",
+      data: updatedTimeOff,
     });
   } catch (error: any) {
-    logger.error('Error updating staff time off', { timeOffId: req.params.id, error: error.message });
+    logger.error("Error updating staff time off", {
+      timeOffId: req.params.id,
+      error: error.message,
+    });
     next(error);
   }
 };
@@ -934,24 +1058,24 @@ export const deleteStaffTimeOff = async (
 ) => {
   try {
     const { id } = req.params;
-    
+
     // Check if time off exists
     const existingTimeOff = await prisma.staffTimeOff.findUnique({
-      where: { id }
+      where: { id },
     });
-    
+
     if (!existingTimeOff) {
-      return next(new AppError('Time off record not found', 404));
+      return next(new AppError("Time off record not found", 404));
     }
-    
+
     // Delete time off
     await prisma.staffTimeOff.delete({
-      where: { id }
+      where: { id },
     });
-    
+
     res.status(200).json({
-      status: 'success',
-      message: 'Time off record deleted successfully'
+      status: "success",
+      message: "Time off record deleted successfully",
     });
   } catch (error) {
     next(error);
@@ -966,19 +1090,21 @@ export const getAvailableStaff = async (
 ) => {
   try {
     const { date, startTime, endTime, specialties } = req.query;
-    
+
     if (!date || !startTime || !endTime) {
-      return next(new AppError('Date, start time, and end time are required', 400));
+      return next(
+        new AppError("Date, start time, and end time are required", 400)
+      );
     }
-    
+
     const searchDate = new Date(date as string);
     const dayOfWeek = searchDate.getDay(); // 0-6 for Sunday-Saturday
-    
+
     // Process specialties parameter
     let specialtiesArray: string[] = [];
     if (specialties) {
       if (Array.isArray(specialties)) {
-        specialtiesArray = specialties.map(s => String(s));
+        specialtiesArray = specialties.map((s) => String(s));
       } else {
         specialtiesArray = [String(specialties)];
       }
@@ -989,59 +1115,61 @@ export const getAvailableStaff = async (
       where: {
         isActive: true,
         // Include staff with matching specialties if provided
-        ...(specialtiesArray.length > 0 ? {
-          specialties: {
-            hasSome: specialtiesArray
-          }
-        } : {}),
+        ...(specialtiesArray.length > 0
+          ? {
+              specialties: {
+                hasSome: specialtiesArray,
+              },
+            }
+          : {}),
         // Include staff who have availability for this day and time
         availability: {
           some: {
             dayOfWeek,
             isAvailable: true,
             startTime: {
-              lte: startTime as string
+              lte: startTime as string,
             },
             endTime: {
-              gte: endTime as string
+              gte: endTime as string,
             },
             // Use AND condition with nested OR conditions for date ranges
             AND: [
               {
                 OR: [
                   { effectiveFrom: null },
-                  { effectiveFrom: { lte: searchDate } }
-                ]
+                  { effectiveFrom: { lte: searchDate } },
+                ],
               },
               {
                 OR: [
                   { effectiveUntil: null },
-                  { effectiveUntil: { gte: searchDate } }
-                ]
-              }
-            ]
-          }
+                  { effectiveUntil: { gte: searchDate } },
+                ],
+              },
+            ],
+          },
         },
         // Exclude staff who have time off on this day
         NOT: {
           timeOff: {
             some: {
-              status: 'APPROVED',
+              status: "APPROVED",
               startDate: { lte: searchDate },
-              endDate: { gte: searchDate }
-            }
-          }
-        }
+              endDate: { gte: searchDate },
+            },
+          },
+        },
       },
       include: {
-        availability: true
-      }
+        availability: true,
+      },
     });
-    
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       results: availableStaff.length,
-      data: availableStaff
+      data: availableStaff,
     });
   } catch (error) {
     next(error);
@@ -1069,15 +1197,15 @@ const hasScheduleConflict = async (
     staffId,
     date: {
       gte: startOfDay,
-      lte: endOfDay
+      lte: endOfDay,
     },
     // Time overlap: existing.endTime > new.startTime AND existing.startTime < new.endTime
     endTime: {
-      gt: startTime
+      gt: startTime,
     },
     startTime: {
-      lt: endTime
-    }
+      lt: endTime,
+    },
   };
 
   if (tenantId) {
@@ -1101,36 +1229,36 @@ export const getStaffSchedules = async (
   try {
     const { staffId } = req.params;
     const { startDate, endDate } = req.query;
-    
+
     let whereClause: any = { staffId };
-    
+
     if (startDate && endDate) {
       // Convert string dates to DateTime objects
       const startDateTime = new Date(startDate as string);
       const endDateTime = new Date(endDate as string);
-      
+
       // Set the time to the beginning and end of the day to include all schedules
       startDateTime.setHours(0, 0, 0, 0);
       endDateTime.setHours(23, 59, 59, 999);
-      
+
       whereClause.date = {
         gte: startDateTime,
-        lte: endDateTime
+        lte: endDateTime,
       };
     }
-    
+
     const schedules = await prisma.staffSchedule.findMany({
       where: whereClause,
-      orderBy: { date: 'asc' }
+      orderBy: { date: "asc" },
     });
-    
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       results: schedules.length,
-      data: schedules
+      data: schedules,
     });
   } catch (error) {
-    console.error('Error fetching staff schedules:', error);
+    console.error("Error fetching staff schedules:", error);
     next(error);
   }
 };
@@ -1142,10 +1270,10 @@ export const testSchedulesEndpoint = async (
   next: NextFunction
 ) => {
   res.status(200).json({
-    status: 'success',
-    message: 'Test endpoint working',
+    status: "success",
+    message: "Test endpoint working",
     query: req.query,
-    params: req.params
+    params: req.params,
   });
 };
 
@@ -1156,31 +1284,31 @@ export const getAllSchedules = async (
   next: NextFunction
 ) => {
   try {
-    logger.debug('getAllSchedules called', { 
+    logger.debug("getAllSchedules called", {
       tenantId: (req as any).tenantId,
-      startDate: req.query.startDate, 
-      endDate: req.query.endDate 
+      startDate: req.query.startDate,
+      endDate: req.query.endDate,
     });
-    
+
     const { startDate, endDate } = req.query;
-    
+
     let whereClause: any = {};
-    
+
     if (startDate && endDate) {
       // Convert string dates to DateTime objects
       const startDateTime = new Date(startDate as string);
       const endDateTime = new Date(endDate as string);
-      
+
       // Set the time to the beginning and end of the day to include all schedules
       startDateTime.setHours(0, 0, 0, 0);
       endDateTime.setHours(23, 59, 59, 999);
-      
+
       whereClause.date = {
         gte: startDateTime,
-        lte: endDateTime
+        lte: endDateTime,
       };
     }
-    
+
     const schedules = await prisma.staffSchedule.findMany({
       where: whereClause,
       include: {
@@ -1190,20 +1318,20 @@ export const getAllSchedules = async (
             firstName: true,
             lastName: true,
             position: true,
-            department: true
-          }
-        }
+            department: true,
+          },
+        },
       },
-      orderBy: { date: 'asc' }
+      orderBy: { date: "asc" },
     });
-    
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       results: schedules.length,
-      data: schedules
+      data: schedules,
     });
   } catch (error) {
-    console.error('Error fetching all schedules:', error);
+    console.error("Error fetching all schedules:", error);
     next(error);
   }
 };
@@ -1216,17 +1344,20 @@ export const createStaffSchedule = async (
 ) => {
   try {
     const { staffId } = req.params;
-    const { date, startTime, endTime, status, notes, location, role } = req.body;
-    
+    const { date, startTime, endTime, status, notes, location, role } =
+      req.body;
+
     // Validate required fields
     if (!date || !startTime || !endTime) {
-      return next(new AppError('Date, start time, and end time are required', 400));
+      return next(
+        new AppError("Date, start time, and end time are required", 400)
+      );
     }
-    
+
     // Check if staff exists
     const staff = await prisma.staff.findUnique({ where: { id: staffId } });
     if (!staff) {
-      return next(new AppError('Staff not found', 404));
+      return next(new AppError("Staff not found", 404));
     }
 
     const scheduleDate = new Date(date);
@@ -1241,9 +1372,14 @@ export const createStaffSchedule = async (
     );
 
     if (conflict) {
-      return next(new AppError('This staff member already has a shift during this time', 400));
+      return next(
+        new AppError(
+          "This staff member already has a shift during this time",
+          400
+        )
+      );
     }
-    
+
     // Create the schedule
     const newSchedule = await prisma.staffSchedule.create({
       data: {
@@ -1251,20 +1387,23 @@ export const createStaffSchedule = async (
         date: scheduleDate,
         startTime,
         endTime,
-        status: status || 'SCHEDULED',
+        status: status || "SCHEDULED",
         notes,
         location,
         role,
-        createdById: req.user?.id
-      }
+        createdById: req.user?.id,
+      },
     });
-    
+
     res.status(201).json({
-      status: 'success',
-      data: newSchedule
+      status: "success",
+      data: newSchedule,
     });
   } catch (error: any) {
-    logger.error('Error creating staff schedule', { staffId: req.params.staffId, error: error.message });
+    logger.error("Error creating staff schedule", {
+      staffId: req.params.staffId,
+      error: error.message,
+    });
     next(error);
   }
 };
@@ -1277,12 +1416,15 @@ export const updateStaffSchedule = async (
 ) => {
   try {
     const { scheduleId } = req.params;
-    const { date, startTime, endTime, status, notes, location, role } = req.body;
-    
+    const { date, startTime, endTime, status, notes, location, role } =
+      req.body;
+
     // Check if schedule exists
-    const schedule = await prisma.staffSchedule.findUnique({ where: { id: scheduleId } });
+    const schedule = await prisma.staffSchedule.findUnique({
+      where: { id: scheduleId },
+    });
     if (!schedule) {
-      return next(new AppError('Schedule not found', 404));
+      return next(new AppError("Schedule not found", 404));
     }
 
     const newDate = date ? new Date(date) : schedule.date;
@@ -1300,9 +1442,14 @@ export const updateStaffSchedule = async (
     );
 
     if (conflict) {
-      return next(new AppError('This staff member already has a shift during this time', 400));
+      return next(
+        new AppError(
+          "This staff member already has a shift during this time",
+          400
+        )
+      );
     }
-    
+
     // Update the schedule
     const updatedSchedule = await prisma.staffSchedule.update({
       where: { id: scheduleId },
@@ -1314,16 +1461,19 @@ export const updateStaffSchedule = async (
         notes,
         location,
         role,
-        updatedById: req.user?.id
-      }
+        updatedById: req.user?.id,
+      },
     });
-    
+
     res.status(200).json({
-      status: 'success',
-      data: updatedSchedule
+      status: "success",
+      data: updatedSchedule,
     });
   } catch (error: any) {
-    logger.error('Error updating staff schedule', { scheduleId: req.params.scheduleId, error: error.message });
+    logger.error("Error updating staff schedule", {
+      scheduleId: req.params.scheduleId,
+      error: error.message,
+    });
     next(error);
   }
 };
@@ -1336,22 +1486,27 @@ export const deleteStaffSchedule = async (
 ) => {
   try {
     const { scheduleId } = req.params;
-    
+
     // Check if schedule exists
-    const schedule = await prisma.staffSchedule.findUnique({ where: { id: scheduleId } });
+    const schedule = await prisma.staffSchedule.findUnique({
+      where: { id: scheduleId },
+    });
     if (!schedule) {
-      return next(new AppError('Schedule not found', 404));
+      return next(new AppError("Schedule not found", 404));
     }
-    
+
     // Delete the schedule
     await prisma.staffSchedule.delete({ where: { id: scheduleId } });
-    
+
     res.status(200).json({
-      status: 'success',
-      message: 'Schedule deleted successfully'
+      status: "success",
+      message: "Schedule deleted successfully",
     });
   } catch (error: any) {
-    logger.error('Error deleting staff schedule', { scheduleId: req.params.scheduleId, error: error.message });
+    logger.error("Error deleting staff schedule", {
+      scheduleId: req.params.scheduleId,
+      error: error.message,
+    });
     next(error);
   }
 };
@@ -1364,20 +1519,32 @@ export const bulkCreateSchedules = async (
 ) => {
   try {
     const { schedules } = req.body;
-    
+
     if (!schedules || !Array.isArray(schedules) || schedules.length === 0) {
-      return next(new AppError('Valid schedules array is required', 400));
+      return next(new AppError("Valid schedules array is required", 400));
     }
-    
+
     // Process each schedule
     const createdSchedules = await prisma.$transaction(async (tx) => {
       const results: any[] = [];
 
       for (const schedule of schedules) {
-        const { staffId, date, startTime, endTime, status, notes, location, role } = schedule;
+        const {
+          staffId,
+          date,
+          startTime,
+          endTime,
+          status,
+          notes,
+          location,
+          role,
+        } = schedule;
 
         if (!staffId || !date || !startTime || !endTime) {
-          throw new AppError('Each schedule must include staffId, date, startTime, and endTime', 400);
+          throw new AppError(
+            "Each schedule must include staffId, date, startTime, and endTime",
+            400
+          );
         }
 
         const scheduleDate = new Date(date);
@@ -1404,12 +1571,12 @@ export const bulkCreateSchedules = async (
             date: scheduleDate,
             startTime,
             endTime,
-            status: status || 'SCHEDULED',
+            status: status || "SCHEDULED",
             notes,
             location,
             role,
-            createdById: req.user?.id
-          }
+            createdById: req.user?.id,
+          },
         });
 
         results.push(newSchedule);
@@ -1417,16 +1584,16 @@ export const bulkCreateSchedules = async (
 
       return results;
     });
-    
+
     res.status(201).json({
-      status: 'success',
+      status: "success",
       results: createdSchedules.length,
-      data: createdSchedules
+      data: createdSchedules,
     });
   } catch (error: any) {
-    logger.error('Error creating bulk schedules', { 
-      count: req.body.schedules?.length, 
-      error: error.message 
+    logger.error("Error creating bulk schedules", {
+      count: req.body.schedules?.length,
+      error: error.message,
     });
     next(error);
   }
@@ -1440,34 +1607,38 @@ export const uploadProfilePhoto = async (
 ) => {
   try {
     const { id } = req.params;
-    
+
     if (!req.file) {
-      return next(new AppError('No file uploaded', 400));
+      return next(new AppError("No file uploaded", 400));
     }
-    
+
     // Get the staff member
     const staff = await prisma.staff.findUnique({
       where: { id },
     });
-    
+
     if (!staff) {
       // Delete the uploaded file if staff not found
       fs.unlinkSync(req.file.path);
-      return next(new AppError('Staff member not found', 404));
+      return next(new AppError("Staff member not found", 404));
     }
-    
+
     // Delete old photo if exists
     if (staff.profilePhoto) {
-      const oldPhotoPath = path.join(__dirname, '../../uploads/profile-photos', path.basename(staff.profilePhoto));
+      const oldPhotoPath = path.join(
+        __dirname,
+        "../../uploads/profile-photos",
+        path.basename(staff.profilePhoto)
+      );
       if (fs.existsSync(oldPhotoPath)) {
         fs.unlinkSync(oldPhotoPath);
       }
     }
-    
+
     // Generate relative URL for the uploaded photo
     // Frontend will use current origin to load it
     const photoUrl = `/uploads/profile-photos/${req.file.filename}`;
-    
+
     // Update staff with new photo URL
     const updatedStaff = await prisma.staff.update({
       where: { id },
@@ -1484,10 +1655,10 @@ export const uploadProfilePhoto = async (
         lastLogin: true,
       },
     });
-    
+
     res.status(200).json({
-      status: 'success',
-      message: 'Profile photo uploaded successfully',
+      status: "success",
+      message: "Profile photo uploaded successfully",
       data: updatedStaff,
     });
   } catch (error) {
@@ -1507,24 +1678,28 @@ export const deleteProfilePhoto = async (
 ) => {
   try {
     const { id } = req.params;
-    
+
     // Get the staff member
     const staff = await prisma.staff.findUnique({
       where: { id },
     });
-    
+
     if (!staff) {
-      return next(new AppError('Staff member not found', 404));
+      return next(new AppError("Staff member not found", 404));
     }
-    
+
     // Delete photo file if exists
     if (staff.profilePhoto) {
-      const photoPath = path.join(__dirname, '../../uploads/profile-photos', path.basename(staff.profilePhoto));
+      const photoPath = path.join(
+        __dirname,
+        "../../uploads/profile-photos",
+        path.basename(staff.profilePhoto)
+      );
       if (fs.existsSync(photoPath)) {
         fs.unlinkSync(photoPath);
       }
     }
-    
+
     // Update staff to remove photo URL
     const updatedStaff = await prisma.staff.update({
       where: { id },
@@ -1541,10 +1716,10 @@ export const deleteProfilePhoto = async (
         lastLogin: true,
       },
     });
-    
+
     res.status(200).json({
-      status: 'success',
-      message: 'Profile photo deleted successfully',
+      status: "success",
+      message: "Profile photo deleted successfully",
       data: updatedStaff,
     });
   } catch (error) {
@@ -1560,64 +1735,68 @@ export const refreshAccessToken = async (
 ) => {
   try {
     const { refreshToken } = req.body;
-    
+
     if (!refreshToken) {
-      return next(new AppError('Refresh token is required', 400));
+      return next(new AppError("Refresh token is required", 400));
     }
-    
+
     // Verify refresh token
     let decoded;
     try {
       decoded = verifyRefreshToken(refreshToken);
     } catch (error) {
-      return next(new AppError('Invalid or expired refresh token', 401));
+      return next(new AppError("Invalid or expired refresh token", 401));
     }
-    
+
     // Check if refresh token exists in database and is not revoked
     const storedToken = await prisma.refreshToken.findUnique({
       where: { token: refreshToken },
-      include: { staff: true }
+      include: { staff: true },
     });
-    
-    if (!storedToken || storedToken.isRevoked || storedToken.expiresAt < new Date()) {
-      return next(new AppError('Invalid or expired refresh token', 401));
+
+    if (
+      !storedToken ||
+      storedToken.isRevoked ||
+      storedToken.expiresAt < new Date()
+    ) {
+      return next(new AppError("Invalid or expired refresh token", 401));
     }
-    
+
     // Check if staff is still active
     if (!storedToken.staff.isActive) {
-      return next(new AppError('Account is inactive', 401));
+      return next(new AppError("Account is inactive", 401));
     }
-    
+
     // Revoke old refresh token (token rotation)
     await prisma.refreshToken.update({
       where: { id: storedToken.id },
-      data: { isRevoked: true }
+      data: { isRevoked: true },
     });
-    
+
     // Generate new access token
     const newAccessToken = generateToken({
       id: storedToken.staff.id,
       email: storedToken.staff.email,
       role: storedToken.staff.role,
-      tenantId: storedToken.staff.tenantId
+      tenantId: storedToken.staff.tenantId,
     });
-    
+
     // Generate new refresh token
     const newRefreshToken = generateRefreshToken({ id: storedToken.staff.id });
-    
+
     // Store new refresh token
     await prisma.refreshToken.create({
       data: {
         token: newRefreshToken,
         staffId: storedToken.staff.id,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
-      }
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+      },
     });
-    
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       token: newAccessToken,
-      refreshToken: newRefreshToken
+      refreshToken: newRefreshToken,
     });
   } catch (error) {
     next(error);
