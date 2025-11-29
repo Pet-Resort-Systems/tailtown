@@ -124,14 +124,87 @@ async function syncReservations(tenantId, gingrClient) {
 
   for (const reservation of reservations) {
     try {
-      // Find customer and pet
-      const customer = await prisma.customer.findFirst({
-        where: { tenantId, externalId: reservation.owner.id },
+      // Find or create customer
+      let customer = await prisma.customer.findFirst({
+        where: { tenantId, externalId: String(reservation.owner.id) },
       });
 
-      const pet = await prisma.pet.findFirst({
-        where: { tenantId, externalId: reservation.animal.id + "-tailtown" },
+      if (!customer && reservation.owner) {
+        // Create customer on-the-fly
+        const owner = reservation.owner;
+        const email = owner.email || `gingr-${owner.id}@tailtown.placeholder`;
+
+        try {
+          customer = await prisma.customer.create({
+            data: {
+              tenantId,
+              externalId: String(owner.id),
+              firstName: owner.first_name || "",
+              lastName: owner.last_name || "",
+              email: email,
+              phone: owner.primary_phone || owner.secondary_phone || null,
+              notes: "Auto-synced from Gingr (incremental)",
+              isActive: true,
+            },
+          });
+          console.log(
+            `  Created customer: ${owner.first_name} ${owner.last_name}`
+          );
+        } catch (e) {
+          // Handle duplicate email
+          if (e.code === "P2002") {
+            customer = await prisma.customer.create({
+              data: {
+                tenantId,
+                externalId: String(owner.id),
+                firstName: owner.first_name || "",
+                lastName: owner.last_name || "",
+                email: `gingr-dup-${owner.id}@tailtown.placeholder`,
+                phone: owner.primary_phone || owner.secondary_phone || null,
+                notes: "Auto-synced from Gingr (incremental, duplicate email)",
+                isActive: true,
+              },
+            });
+            console.log(
+              `  Created customer (dup email): ${owner.first_name} ${owner.last_name}`
+            );
+          } else {
+            throw e;
+          }
+        }
+      }
+
+      // Find or create pet
+      const petExtId = reservation.animal.id + "-tailtown";
+      let pet = await prisma.pet.findFirst({
+        where: { tenantId, externalId: petExtId },
       });
+
+      if (!pet && reservation.animal && customer) {
+        // Create pet on-the-fly
+        const animal = reservation.animal;
+        const petType = animal.species?.toLowerCase() === "cat" ? "CAT" : "DOG";
+
+        try {
+          pet = await prisma.pet.create({
+            data: {
+              tenantId,
+              externalId: petExtId,
+              name: animal.name || "Unknown",
+              type: petType,
+              breed: animal.breed || null,
+              isActive: true,
+              notes: "Auto-synced from Gingr (incremental)",
+              owner: { connect: { id: customer.id } },
+            },
+          });
+          console.log(`  Created pet: ${animal.name}`);
+        } catch (e) {
+          console.log(
+            `  Error creating pet ${animal.name}: ${e.message?.slice(0, 100)}`
+          );
+        }
+      }
 
       if (!customer || !pet) {
         skipped++;
