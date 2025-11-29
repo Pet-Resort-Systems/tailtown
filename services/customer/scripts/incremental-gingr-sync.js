@@ -38,10 +38,16 @@ const SYNC_WINDOW_PAST_DAYS = 7;
 const SYNC_WINDOW_FUTURE_DAYS = 30;
 
 /**
- * Parse Gingr date correctly (no timezone offset needed)
+ * Parse Gingr date correctly - preserve local date without timezone conversion
+ * Gingr sends dates like "2025-11-28T19:00:00-07:00" which when parsed as UTC
+ * becomes "2025-11-29T02:00:00Z" - we need to preserve the local date (2025-11-28)
  */
 function parseGingrDate(dateStr) {
-  return new Date(dateStr);
+  if (!dateStr) return null;
+  // Extract the local date and time parts, ignoring timezone
+  // Format: "2025-11-28T19:00:00-07:00" -> use "2025-11-28T19:00:00"
+  const localPart = dateStr.replace(/[+-]\d{2}:\d{2}$/, "");
+  return new Date(localPart);
 }
 
 /**

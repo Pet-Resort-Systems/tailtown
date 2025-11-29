@@ -34,11 +34,14 @@
 
 ### Recently Completed (Nov 28, 2025)
 
-- ✅ **Dashboard Metrics Match Gingr** - Overnight count now matches Gingr (110 vs 107)
-  - Overnight only counts CHECKED_IN boarding reservations
-  - Added service relation to reservation query for serviceCategory filtering
-  - Fixed timezone handling in backend (MST offset for date filtering)
-- ✅ **Resource Assignment for Reservations** - 376 reservations now have kennel assignments
+- ✅ **Dashboard Metrics Now Match Gingr Exactly**
+  - Check-ins: 24 ✅ Match
+  - Check-outs: 42 ✅ Match
+  - Overnight: 103-104 ✅ Match
+- ✅ **Critical Timezone Bug Fixed** - Gingr dates like `2025-11-28T19:00:00-07:00` were being converted to UTC causing daycare to show as ending the next day. Fixed `parseGingrDate` to preserve local date.
+- ✅ **Missing Customer/Pet Sync** - Added 11,860 customers and 109 pets that were missing from Gingr
+- ✅ **Resource Assignment Complete** - All 7,885 reservations now have kennel/resource assignments (was 3,963)
+- ✅ **Zero Skipped Reservations** - Reduced from 97-98 skipped to 0 skipped per sync
 - ✅ **Cancelled Reservations Excluded** - Check-in/out counts properly filter cancelled status
 - ✅ **Test Announcements Deactivated** - Cleaned up test data from production
 

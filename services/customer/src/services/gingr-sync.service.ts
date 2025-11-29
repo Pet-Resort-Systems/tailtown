@@ -406,11 +406,15 @@ export class GingrSyncService {
           },
         });
 
-        // Parse Gingr dates correctly - they come with timezone info already
-        // Gingr sends dates like "2025-11-17T13:00:00-07:00" which already includes the timezone
-        // Just parse as-is, no offset needed
+        // Parse Gingr dates correctly - preserve local date without timezone conversion
+        // Gingr sends dates like "2025-11-28T19:00:00-07:00" which when parsed as UTC
+        // becomes "2025-11-29T02:00:00Z" - we need to preserve the local date (2025-11-28)
         const parseGingrDate = (dateStr: string): Date => {
-          return new Date(dateStr);
+          if (!dateStr) return new Date();
+          // Extract the local date and time parts, ignoring timezone
+          // Format: "2025-11-28T19:00:00-07:00" -> use "2025-11-28T19:00:00"
+          const localPart = dateStr.replace(/[+-]\d{2}:\d{2}$/, "");
+          return new Date(localPart);
         };
 
         // Determine service based on resource type (new approach - Nov 2025)
