@@ -6,15 +6,16 @@
 
 ## 📊 Last Updated Tracking
 
-| Document                       | Last Updated | Last Reviewed | Next Review | Trigger                                     |
-| ------------------------------ | ------------ | ------------- | ----------- | ------------------------------------------- |
-| DISASTER-RECOVERY-PLAN.md      | 2025-11-07   | 2025-11-07    | 2026-02-07  | DigitalOcean backups enabled                |
-| CURRENT-SYSTEM-ARCHITECTURE.md | 2025-11-26   | 2025-11-26    | 2026-02-26  | ResourceType enum expansion, calendar fixes |
-| SECURITY-CHECKLIST.md          | 2025-11-07   | 2025-11-07    | 2026-02-07  | Security implementation                     |
-| DEVELOPMENT-BEST-PRACTICES.md  | 2025-11-07   | 2025-11-07    | 2026-02-07  | Best practices added                        |
-| TESTING-STRATEGY.md            | 2025-10-30   | 2025-10-30    | 2026-01-30  | Test updates                                |
-| ROADMAP.md                     | 2025-11-26   | 2025-11-26    | 2026-02-26  | Calendar & auto-selection fixes completed   |
-| DEPLOYMENT-TROUBLESHOOTING.md  | 2025-11-26   | 2025-11-26    | 2026-02-26  | Added database data quality issues          |
+| Document                       | Last Updated | Last Reviewed | Next Review | Trigger                                   |
+| ------------------------------ | ------------ | ------------- | ----------- | ----------------------------------------- |
+| DISASTER-RECOVERY-PLAN.md      | 2025-11-07   | 2025-11-07    | 2026-02-07  | DigitalOcean backups enabled              |
+| CURRENT-SYSTEM-ARCHITECTURE.md | 2025-11-29   | 2025-11-29    | 2026-02-29  | Audit logging, customer portal added      |
+| SYSTEM-FEATURES-OVERVIEW.md    | 2025-11-29   | 2025-11-29    | 2026-02-29  | Booking portal, audit logging, mobile app |
+| SECURITY-CHECKLIST.md          | 2025-11-07   | 2025-11-07    | 2026-02-07  | Security implementation                   |
+| DEVELOPMENT-BEST-PRACTICES.md  | 2025-11-07   | 2025-11-07    | 2026-02-07  | Best practices added                      |
+| TESTING-STRATEGY.md            | 2025-10-30   | 2025-10-30    | 2026-01-30  | Test updates                              |
+| ROADMAP.md                     | 2025-11-29   | 2025-11-29    | 2026-02-29  | Cleaned up, moved completed to CHANGELOG  |
+| DEPLOYMENT-TROUBLESHOOTING.md  | 2025-11-26   | 2025-11-26    | 2026-02-26  | Added database data quality issues        |
 
 ---
 

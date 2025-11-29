@@ -1,7 +1,7 @@
 # Tailtown Pet Resort Management System - Features Overview
 
-**Date:** October 29, 2025  
-**Version:** 1.0  
+**Date:** November 29, 2025  
+**Version:** 1.6.3  
 **Status:** Production Ready
 
 ---
@@ -20,6 +20,10 @@ Tailtown is a comprehensive pet resort management system designed for high-volum
 - Reporting & Analytics
 - Staff Management
 - Gingr Data Migration
+- **Online Customer Booking Portal** (v1.6.1-1.6.3)
+- **Customer Account Management** (v1.6.3)
+- **Audit Logging & Compliance** (v1.6.2)
+- **Mobile Web App for Staff** (v1.5.x)
 
 ---
 
@@ -932,9 +936,86 @@ Multi-day pass system allowing pet resorts to sell discounted daycare packages t
 
 ---
 
+## 🌐 Online Customer Booking Portal (v1.6.1-1.6.3)
+
+Public-facing booking interface at `/book` for customers to make reservations without staff assistance.
+
+### Core Booking Flow
+
+- **Service Selection**: Browse boarding, daycare, grooming, training
+- **Kennel/Room Selection**: Junior, Queen, King, VIP suites with pricing
+- **Date/Time Selection**: Real-time availability checking
+- **Pet Selection**: Choose from customer's registered pets
+- **Add-On Services**: Extra services like baths, playtime, medications
+- **Payment Integration**: Deposit/full payment processing
+- **Booking Confirmation**: Order number and summary
+
+### Customer Account Portal (`/my-account`)
+
+- **Upcoming Reservations**: View and cancel future bookings
+- **Reservation History**: Past stays with details
+- **My Pets**: Add/edit pet information, feeding/medication instructions
+- **Daycare Passes**: View active passes, purchase new ones
+- **Account Balance**: View balance, pending charges, invoices
+
+### Technical Features
+
+- Mobile-responsive design
+- Separate customer authentication (not staff auth)
+- Public routes (no staff login required)
+- SEO optimized with meta tags
+
+---
+
+## 🔒 Audit Logging System (v1.6.2)
+
+Comprehensive audit logging for compliance and security.
+
+### What's Logged
+
+- **Data Modifications**: CREATE, UPDATE, DELETE on customers, pets, reservations, staff
+- **Authentication Events**: LOGIN, LOGIN_FAILED with failure reasons
+- **User Context**: Who (user ID, email, role), When (timestamp), Where (IP, user agent)
+- **Change Tracking**: Before/after values, changed fields
+
+### Severity Levels
+
+- **INFO**: Normal operations (logins, reads)
+- **WARNING**: Sensitive operations (staff changes, updates)
+- **CRITICAL**: Destructive operations (deletions)
+
+### Admin Interface (`/admin/audit-logs`)
+
+- Filter by category, action, severity, date range
+- Search by user or entity name
+- Expandable rows showing changed fields
+- Detail dialog with before/after comparison
+- Pagination support
+
+### Data Model
+
+- `TenantAuditLog` Prisma model with 7-year retention policy
+- Automatic sensitive data sanitization (passwords, tokens)
+
+---
+
+## 📱 Mobile Web App for Staff (v1.5.x)
+
+Mobile-optimized interface for staff at `/mobile` routes.
+
+### Features
+
+- **Daily Checklists**: Task management with completion tracking
+- **Team Chat**: Real-time messaging between staff
+- **My Schedule**: View assigned shifts and reservations
+- **Pet Report Cards**: Create photo-rich report cards for customers
+- **Quick Actions**: Fast check-in/check-out workflows
+
+---
+
 **System Status:** ✅ Production Ready  
-**Last Updated:** November 24, 2025  
-**Version:** 1.5.0  
+**Last Updated:** November 29, 2025  
+**Version:** 1.6.3  
 **Branch:** main
 
 ---
