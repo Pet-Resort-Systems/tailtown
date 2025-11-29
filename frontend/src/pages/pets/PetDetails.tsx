@@ -28,6 +28,7 @@ import VaccineComplianceBadge from "../../components/pets/VaccineComplianceBadge
 import { SelectChangeEvent } from "@mui/material/Select";
 import { Pet, petService } from "../../services/petService";
 import { customerService } from "../../services/customerService";
+import { getApiBaseUrl } from "../../services/api";
 import referenceDataService, {
   Breed,
   Veterinarian,
@@ -110,7 +111,6 @@ const PetDetails = () => {
     severity: "success" as "success" | "error",
   });
 
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [photoTimestamp, setPhotoTimestamp] = useState<number>(Date.now());
 
   const [pet, setPet] = useState<
@@ -155,8 +155,6 @@ const PetDetails = () => {
       setBreeds(breedsData);
       setVets(vetsData);
       setTemperamentTypes(temperamentsData);
-
-      console.log("Loaded veterinarians:", vetsData.length);
 
       if (!isNewPet) {
         // Load existing pet data
@@ -219,22 +217,9 @@ const PetDetails = () => {
 
           petData.vaccinationStatus = vaccinationStatus;
           petData.vaccineExpirations = vaccineExpirations;
-
-          console.log("Populated vaccination data from medical records:", {
-            vaccinationStatus,
-            vaccineExpirations,
-            today: today.toISOString().split("T")[0],
-          });
         }
 
         setPet(petData);
-
-        console.log("Loaded pet data:", {
-          name: petData.name,
-          vetName: petData.vetName,
-          vetPhone: petData.vetPhone,
-          veterinarianId: petData.veterinarianId,
-        });
 
         // Load the specific owner for this pet
         if (petData.customerId) {
@@ -242,25 +227,14 @@ const PetDetails = () => {
             const ownerData = await customerService.getCustomerById(
               petData.customerId
             );
-            console.log("Loaded customer data:", ownerData);
             setPetOwner(ownerData);
 
             // Auto-populate veterinarian from customer's preferred vet if pet has no vet
-            console.log("Checking auto-fill conditions:");
-            console.log("- pet.veterinarianId:", petData.veterinarianId);
-            console.log("- pet.vetName:", petData.vetName);
-            console.log("- owner.veterinarianId:", ownerData.veterinarianId);
-
             if (
               !petData.veterinarianId &&
               !petData.vetName &&
               ownerData.veterinarianId
             ) {
-              console.log(
-                "Auto-populating veterinarian from customer:",
-                ownerData.veterinarianId
-              );
-
               // Find the veterinarian in our list
               const customerVet = vetsData.find(
                 (v) => v.id === ownerData.veterinarianId
@@ -269,15 +243,10 @@ const PetDetails = () => {
                 petData.veterinarianId = customerVet.id;
                 petData.vetName = customerVet.name;
                 petData.vetPhone = customerVet.phone || null;
-                console.log("Auto-filled veterinarian:", customerVet.name);
-              } else {
-                console.log("Customer veterinarian not found in vets list");
               }
-            } else {
-              console.log("Auto-fill conditions not met");
             }
-          } catch (err) {
-            console.error("Error loading pet owner:", err);
+          } catch {
+            // Error loading pet owner - continue without owner data
           }
         }
 
@@ -287,8 +256,8 @@ const PetDetails = () => {
             id!
           );
           setSelectedTemperaments(petTemperaments.map((t) => t.temperament));
-        } catch (err) {
-          console.log("No temperaments found for pet");
+        } catch {
+          // No temperaments found for pet - this is expected for new pets
         }
       } else {
         // For new pets, load customers for the dropdown (with search capability)
@@ -502,18 +471,11 @@ const PetDetails = () => {
             <Avatar
               src={
                 pet.profilePhoto
-                  ? // Use dynamic origin for production, localhost for dev
-                    `${
-                      process.env.NODE_ENV === "production"
-                        ? window.location.origin
-                        : process.env.REACT_APP_API_URL ||
-                          "http://localhost:4004"
-                    }${pet.profilePhoto}?t=${photoTimestamp}`
+                  ? `${getApiBaseUrl()}${pet.profilePhoto}?t=${photoTimestamp}`
                   : undefined
               }
               alt={pet.name || "Pet"}
               onError={(e) => {
-                console.error("Error loading image:", e);
                 // Reset image source on error and try a direct path without query parameters
                 const imgElement = e.target as HTMLImageElement;
                 const originalSrc = imgElement.src;
@@ -567,13 +529,9 @@ const PetDetails = () => {
 
                       // Create a local cached URL to display immediately
                       if (updatedPet.profilePhoto) {
-                        // Use dynamic origin for production, localhost for dev
-                        const imageUrl = `${
-                          process.env.NODE_ENV === "production"
-                            ? window.location.origin
-                            : process.env.REACT_APP_API_URL ||
-                              "http://localhost:4004"
-                        }${updatedPet.profilePhoto}`;
+                        const imageUrl = `${getApiBaseUrl()}${
+                          updatedPet.profilePhoto
+                        }`;
 
                         // Preload the image to ensure it's in browser cache
                         const preloadImg = new Image();
@@ -889,7 +847,6 @@ const PetDetails = () => {
                     return null;
                   })()}
                   onChange={(_, newValue) => {
-                    console.log("Veterinarian changed:", newValue);
                     if (typeof newValue === "string") {
                       // Free text entry - no veterinarian link
                       setPet((prev) => ({
