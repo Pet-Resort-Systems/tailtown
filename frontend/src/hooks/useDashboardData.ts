@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { reservationService } from "../services/reservationService";
 import { logger } from "../utils/logger";
-import { getTenantTimezone } from "../config";
 import { enhanceReservationsWithVaccinationIcons } from "../utils/vaccinationIconUtils";
 
 interface DashboardMetrics {
@@ -74,20 +73,15 @@ export const useDashboardData = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date()); // Always default to today
 
   /**
-   * Convert UTC date to local date string in tenant's timezone
-   * This ensures dates are compared in the business's local time, not UTC
+   * Extract date string from ISO date
+   * Dates from Gingr are stored as local time (no timezone conversion needed)
+   * Just extract the YYYY-MM-DD portion directly
    */
-  const getLocalDateString = useCallback((utcDateString: string): string => {
-    const date = new Date(utcDateString);
-    const timezone = getTenantTimezone();
-
-    // Format date in tenant's timezone
-    const localDate = new Date(
-      date.toLocaleString("en-US", { timeZone: timezone })
-    );
-    return `${localDate.getFullYear()}-${String(
-      localDate.getMonth() + 1
-    ).padStart(2, "0")}-${String(localDate.getDate()).padStart(2, "0")}`;
+  const getLocalDateString = useCallback((dateString: string): string => {
+    // Dates are stored as local time in ISO format (e.g., "2025-11-28T19:00:00.000Z")
+    // The "Z" is misleading - it's actually local time, not UTC
+    // Just extract the date portion directly
+    return dateString.split("T")[0];
   }, []);
 
   /**
