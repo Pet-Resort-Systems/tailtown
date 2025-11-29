@@ -8,9 +8,10 @@
 ### Priority 0: IMMEDIATE (Do This Week)
 
 - ❌ **Online Customer Booking Portal** - Customer-facing booking interface
+- ❌ **Fix Multi-Pet Room Reservations** - Core booking functionality
 - 🟡 **Sentry Error Tracking** - Code ready, needs DSN configured
 
-**Status**: Ordering process review complete (v1.6.0). Focus on customer booking portal.
+**Status**: Ordering process review complete (v1.6.0). Focus on customer booking portal and multi-pet reservations.
 
 ### Priority 1: CRITICAL (Do This Month)
 
@@ -20,9 +21,8 @@
 - 🟡 **SendGrid/Twilio** - Code ready, needs API keys configured
 - ❌ **Grooming Calendar Testing** - Not started
 - ❌ **Loyalty/Coupons Testing** - Not started
-- ❌ **Fix Multi-Pet Room Reservations** - Not started
 
-**Status**: 0/7 remaining - Previous items moved to CHANGELOG.md
+**Status**: 0/6 remaining - Previous items moved to CHANGELOG.md
 
 ---
 
@@ -69,7 +69,22 @@ Build customer-facing booking interface:
 
 ---
 
-### 2. Sentry Error Tracking 🟡 CODE READY
+### 2. Fix Multi-Pet Room Reservations
+
+**Effort**: 3-5 days  
+**Impact**: Core booking functionality
+
+Fix multi-pet same-room reservation issues:
+
+- Multiple pets in same reservation/room
+- Room capacity validation
+- Check-in process for multiple pets
+- Billing accuracy for shared rooms
+- Kennel card generation for each pet
+
+---
+
+### 3. Sentry Error Tracking 🟡 CODE READY
 
 **Status**: Code implemented, just needs configuration (15 minutes)
 
@@ -81,7 +96,7 @@ Build customer-facing booking interface:
 
 ## Priority 1: CRITICAL (Do This Month) 🟠
 
-### 3. Staging Environment
+### 4. Staging Environment
 
 **Effort**: 1 week  
 **Impact**: Prevents production bugs
@@ -97,7 +112,7 @@ Set up proper staging environment:
 
 **Why**: Currently deploying directly to production. High risk of bugs affecting customers.
 
-### 4. Audit Logging for Sensitive Operations
+### 5. Audit Logging for Sensitive Operations
 
 **Effort**: 1 week  
 **Impact**: Required for compliance and security
@@ -113,7 +128,7 @@ Implement comprehensive audit logging:
 
 **Why**: No record of who did what. Required for GDPR, security investigations, and customer support.
 
-### 5. Increase Test Coverage
+### 6. Increase Test Coverage
 
 **Effort**: 2 weeks  
 **Impact**: Reduces production bugs
@@ -132,7 +147,7 @@ Expand automated testing:
 
 **Why**: Current test coverage is insufficient for production SaaS application.
 
-### 6. SendGrid and Twilio Configuration
+### 7. SendGrid and Twilio Configuration
 
 **Effort**: 2-4 hours  
 **Impact**: Production-ready notifications
@@ -146,7 +161,7 @@ Configure production email and SMS:
 - Delivery tracking and logging
 - Bounce and complaint handling
 
-### 7. Grooming Calendar Testing
+### 8. Grooming Calendar Testing
 
 **Effort**: 1-2 days  
 **Impact**: Validates grooming functionality
@@ -159,7 +174,7 @@ Test and fix grooming calendar functionality:
 - Time slot management
 - Conflict detection
 
-### 8. Loyalty Rewards & Coupons Testing
+### 9. Loyalty Rewards & Coupons Testing
 
 **Effort**: 1-2 days  
 **Impact**: Validates marketing features
@@ -171,19 +186,6 @@ Test loyalty and coupon systems:
 - Expiration date handling
 - Usage limit enforcement
 - Loyalty points accrual and redemption
-
-### 9. Fix Multi-Pet Room Reservations
-
-**Effort**: 3-5 days  
-**Impact**: Core booking functionality
-
-Fix multi-pet same-room reservation issues:
-
-- Multiple pets in same reservation/room
-- Room capacity validation
-- Check-in process for multiple pets
-- Billing accuracy for shared rooms
-- Kennel card generation for each pet
 
 ---
 
