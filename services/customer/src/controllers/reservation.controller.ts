@@ -490,29 +490,43 @@ export const createReservation = async (
     console.log("Backend: Requires suite type:", requiresSuiteType);
     console.log("Backend: Provided suite type:", suiteType);
 
-    // If service requires a suite type but none was provided, use STANDARD_SUITE as default
+    // If service requires a suite type but none was provided, use JUNIOR_KENNEL as default
     // Validate and normalize the suite type based on service requirements
     let finalSuiteType = suiteType;
     if (requiresSuiteType) {
-      const validSuiteTypes = [
+      // New resource types (Nov 2025)
+      const validResourceTypes = [
+        "JUNIOR_KENNEL",
+        "QUEEN_KENNEL",
+        "KING_KENNEL",
+        "VIP_ROOM",
+        "CAT_CONDO",
+        "DAY_CAMP_FULL",
+        "DAY_CAMP_HALF",
+      ];
+
+      // Legacy suite types (for backward compatibility)
+      const legacySuiteTypes = [
         "VIP_SUITE",
         "STANDARD_PLUS_SUITE",
         "STANDARD_SUITE",
       ];
 
+      const allValidTypes = [...validResourceTypes, ...legacySuiteTypes];
+
       if (!suiteType) {
         console.warn(
           "Backend: No suiteType provided for a service that requires one"
         );
-        finalSuiteType = "STANDARD_SUITE"; // Default
+        finalSuiteType = "JUNIOR_KENNEL"; // Default to Junior Kennel
         console.log(`Backend: Using default suite type: ${finalSuiteType}`);
-      } else if (!validSuiteTypes.includes(suiteType)) {
+      } else if (!allValidTypes.includes(suiteType)) {
         console.warn(
-          `Backend: Invalid suiteType provided: "${suiteType}". Valid types are: ${validSuiteTypes.join(
+          `Backend: Invalid suiteType provided: "${suiteType}". Valid types are: ${allValidTypes.join(
             ", "
           )}`
         );
-        finalSuiteType = "STANDARD_SUITE"; // Default
+        finalSuiteType = "JUNIOR_KENNEL"; // Default to Junior Kennel
         console.log(
           `Backend: Using default suite type: ${finalSuiteType} instead of invalid type: ${suiteType}`
         );
