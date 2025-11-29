@@ -5,6 +5,52 @@ All notable changes to the Tailtown Pet Resort Management System will be documen
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2025-11-28
+
+### 🎯 Dashboard & Gingr Sync Accuracy
+
+Major fixes to ensure dashboard metrics match Gingr exactly and improve data synchronization reliability.
+
+#### Dashboard Metrics - 100% Match with Gingr
+
+- **Check-ins**: Now matches Gingr exactly (24 = 24)
+- **Check-outs**: Now matches Gingr exactly (42 = 42)
+- **Overnight**: Now matches Gingr exactly (103 = 103)
+
+#### Critical Bug Fixes
+
+- **Timezone Bug Fixed**: Gingr dates like `2025-11-28T19:00:00-07:00` were being converted to UTC, causing daycare reservations to show as ending the next day. Fixed `parseGingrDate` to preserve local date.
+- **Tenant Isolation Bug Fixed**: `getAllReservations` was returning data from ALL tenants. Added `tenantId` filtering for proper data isolation.
+- **Frontend Date Logic**: Simplified to extract date directly from ISO string without timezone conversion.
+
+#### Gingr Sync Improvements
+
+- **Auto-Create Customers/Pets**: Incremental sync now creates missing customers and pets on-the-fly during hourly sync (previously required nightly full sync, causing 24-hour delays).
+- **Missing Data Sync**: Added 11,860 customers and 109 pets that were missing from Gingr.
+- **Resource Assignment**: All 8,048+ reservations now have corrected dates and kennel/resource assignments.
+- **Zero Skipped Reservations**: Reduced from 97-98 skipped to 0 skipped per sync.
+
+#### Ordering Process Review ✅
+
+- Audited current booking workflow (staff-side)
+- Reviewed service selection, date/time selection, resource assignment
+- Reviewed pricing calculation and confirmation flow
+- Calendar resource display and auto-selection working correctly
+
+#### Other Fixes
+
+- **Cancelled Reservations Excluded**: Check-in/out counts properly filter cancelled status
+- **Test Announcements Deactivated**: Cleaned up test data from production
+
+#### Files Changed
+
+- `services/customer/scripts/incremental-gingr-sync.js` - Fixed date parsing, added auto-create
+- `services/customer/src/services/gingr-sync.service.ts` - Fixed date parsing
+- `services/customer/src/controllers/reservation.controller.ts` - Added tenantId filtering
+- `frontend/src/hooks/useDashboardData.ts` - Simplified date extraction
+
+---
+
 ## [1.5.0] - 2025-11-24
 
 ### 🎫 Multi-Day Daycare Passes

@@ -7,20 +7,13 @@
 
 ### Priority 0: IMMEDIATE (Do This Week)
 
-- 🟡 **Ordering Process Review** - Review and improve the reservation/booking flow (IN PROGRESS)
 - ❌ **Online Customer Booking Portal** - Customer-facing booking interface
 - 🟡 **Sentry Error Tracking** - Code ready, needs DSN configured
-- ✅ **Per-Tenant Rate Limiting** - COMPLETED (v1.2.8)
-- ✅ **Prisma Connection Pooling** - COMPLETED (v1.2.8)
-- ✅ **Redis Caching Phase 1** - COMPLETED (v1.2.8)
-- ✅ **Calendar Resource Display & Auto-Selection** - COMPLETED (Nov 26, 2025)
 
-**Status**: 4/7 complete (57%) - Calendar fixes done, ordering review in progress
+**Status**: Ordering process review complete (v1.6.0). Focus on customer booking portal.
 
 ### Priority 1: CRITICAL (Do This Month)
 
-- ✅ **Service-to-Service APIs** - COMPLETED (Nov 24, 2025)
-- ✅ **Load Testing** - COMPLETED (v1.2.8) - 947 req/s with 200 concurrent users
 - ❌ **Staging Environment** - Not started
 - ❌ **Audit Logging** - Not started
 - 🟡 **Test Coverage** - Partially complete (tenant isolation done)
@@ -28,55 +21,14 @@
 - ❌ **Grooming Calendar Testing** - Not started
 - ❌ **Loyalty/Coupons Testing** - Not started
 - ❌ **Fix Multi-Pet Room Reservations** - Not started
-- ✅ **Multi-Day Passes** - COMPLETED (Nov 24, 2025)
 
-**Status**: 3/10 complete (30%) - Service boundaries, load testing, daycare passes done!
-
-### Recently Completed (Nov 28, 2025)
-
-- ✅ **Dashboard Metrics Now Match Gingr 100%**
-  - Check-ins: 24 ✅ Exact Match
-  - Check-outs: 42 ✅ Exact Match
-  - Overnight: 103 ✅ Exact Match
-- ✅ **Critical Timezone Bug Fixed** - Gingr dates like `2025-11-28T19:00:00-07:00` were being converted to UTC causing daycare to show as ending the next day. Fixed `parseGingrDate` to preserve local date.
-- ✅ **Tenant Isolation Bug Fixed** - `getAllReservations` was returning data from ALL tenants. Added `tenantId` filtering for proper data isolation.
-- ✅ **Incremental Sync Auto-Creates Customers/Pets** - New customers and pets from Gingr are now created on-the-fly during hourly sync (previously required nightly full sync, causing 24-hour delays).
-- ✅ **Missing Customer/Pet Sync** - Added 11,860 customers and 109 pets that were missing from Gingr
-- ✅ **Resource Assignment Complete** - All 8,048+ reservations now have corrected dates and kennel/resource assignments
-- ✅ **Zero Skipped Reservations** - Reduced from 97-98 skipped to 0 skipped per sync
-- ✅ **Cancelled Reservations Excluded** - Check-in/out counts properly filter cancelled status
-- ✅ **Test Announcements Deactivated** - Cleaned up test data from production
-
-### Recently Completed (Nov 26, 2025)
-
-- ✅ **Calendar Resource Display Fix** - All 104 resources now display correctly
-- ✅ **Service Auto-Selection** - Reservation form auto-selects correct service based on kennel type
-- ✅ **ResourceType Enum Alignment** - Both services now support JUNIOR_KENNEL, QUEEN_KENNEL, KING_KENNEL, VIP_ROOM, CAT_CONDO, DAY_CAMP_FULL, DAY_CAMP_HALF
-- ✅ **Kennel Size Display** - Calendar correctly shows Junior/Queen/King labels based on resource type
+**Status**: 0/7 remaining - Previous items moved to CHANGELOG.md
 
 ---
 
 ## Priority 0: IMMEDIATE (Do This Week) 🔴
 
-### 1. Ordering Process Review
-
-**Effort**: 2-3 days  
-**Impact**: Core business functionality, customer experience
-
-Review and improve the current reservation/booking flow:
-
-- Audit current booking workflow (staff-side)
-- Identify pain points and friction
-- Review service selection process
-- Review date/time selection
-- Review resource (kennel/suite) assignment
-- Review pricing calculation and display
-- Review confirmation and notification flow
-- Document improvements needed
-
----
-
-### 2. Online Customer Booking Portal
+### 1. Online Customer Booking Portal
 
 **Effort**: 2-3 weeks  
 **Impact**: Revenue growth, customer convenience, reduced staff workload
@@ -117,33 +69,19 @@ Build customer-facing booking interface:
 
 ---
 
-### 3. ~~Sentry Error Tracking~~ 🟡 CODE READY
+### 2. Sentry Error Tracking 🟡 CODE READY
 
-**Status**: Code implemented, just needs configuration
-
-**Already Done**:
-
-- ✅ Sentry SDK installed in customer service
-- ✅ Error tracking configured (`services/customer/src/utils/sentry.ts`)
-- ✅ Performance monitoring (10% sample rate)
-- ✅ CPU profiling integration
-- ✅ Error filtering for non-critical issues
-
-**Remaining** (15 minutes):
+**Status**: Code implemented, just needs configuration (15 minutes)
 
 - Create Sentry account ($26/month)
 - Add `SENTRY_DSN` to production `.env`
 - Add to reservation service (copy from customer service)
 
-_Items 2-4 completed in v1.2.8 - see [CHANGELOG.md](../CHANGELOG.md)_
-
 ---
 
-## Priority 1: CRITICAL (Do This Month - Before 100 Tenants)
+## Priority 1: CRITICAL (Do This Month) 🟠
 
-_Items 5-6 completed - see [CHANGELOG.md](../CHANGELOG.md) v1.2.8 and v1.4.0_
-
-### 7. Staging Environment
+### 3. Staging Environment
 
 **Effort**: 1 week  
 **Impact**: Prevents production bugs
@@ -159,7 +97,7 @@ Set up proper staging environment:
 
 **Why**: Currently deploying directly to production. High risk of bugs affecting customers.
 
-### 8. Audit Logging for Sensitive Operations
+### 4. Audit Logging for Sensitive Operations
 
 **Effort**: 1 week  
 **Impact**: Required for compliance and security
@@ -175,7 +113,7 @@ Implement comprehensive audit logging:
 
 **Why**: No record of who did what. Required for GDPR, security investigations, and customer support.
 
-### 9. Increase Test Coverage
+### 5. Increase Test Coverage
 
 **Effort**: 2 weeks  
 **Impact**: Reduces production bugs
@@ -194,7 +132,7 @@ Expand automated testing:
 
 **Why**: Current test coverage is insufficient for production SaaS application.
 
-### 10. SendGrid and Twilio Configuration
+### 6. SendGrid and Twilio Configuration
 
 **Effort**: 2-4 hours  
 **Impact**: Production-ready notifications
@@ -208,7 +146,7 @@ Configure production email and SMS:
 - Delivery tracking and logging
 - Bounce and complaint handling
 
-### 11. Grooming Calendar Testing
+### 7. Grooming Calendar Testing
 
 **Effort**: 1-2 days  
 **Impact**: Validates grooming functionality
@@ -221,7 +159,7 @@ Test and fix grooming calendar functionality:
 - Time slot management
 - Conflict detection
 
-### 12. Loyalty Rewards & Coupons Testing
+### 8. Loyalty Rewards & Coupons Testing
 
 **Effort**: 1-2 days  
 **Impact**: Validates marketing features
@@ -234,7 +172,7 @@ Test loyalty and coupon systems:
 - Usage limit enforcement
 - Loyalty points accrual and redemption
 
-### 13. Fix Multi-Pet Room Reservations
+### 9. Fix Multi-Pet Room Reservations
 
 **Effort**: 3-5 days  
 **Impact**: Core booking functionality
@@ -247,41 +185,11 @@ Fix multi-pet same-room reservation issues:
 - Billing accuracy for shared rooms
 - Kennel card generation for each pet
 
-### 14. ~~Multi-Day Passes (Daycare Packages)~~ ✅ COMPLETED (Nov 24, 2025)
-
-**Status**: Backend API complete, ready for frontend integration
-
-**Completed**:
-
-- ✅ Database models (DaycarePassPackage, CustomerDaycarePass, DaycarePassRedemption)
-- ✅ Tenant-configurable packages (pass count, price, discount, validity days)
-- ✅ Purchase passes for customers
-- ✅ Balance tracking with automatic status updates
-- ✅ Auto-redeem endpoint for check-in flow
-- ✅ Expiration handling
-- ✅ Redemption reversal for refunds
-- ✅ Full audit trail
-
-**API Endpoints**:
-
-- `GET /api/daycare-passes/packages` - List packages (settings)
-- `POST /api/daycare-passes/packages` - Create package
-- `GET /api/daycare-passes/check/:customerId` - Check available passes
-- `POST /api/daycare-passes/purchase` - Purchase pass
-- `POST /api/daycare-passes/auto-redeem` - Auto-redeem during check-in
-- `POST /api/daycare-passes/:passId/redeem` - Manual redeem
-
-**Remaining** (frontend):
-
-- Settings UI for package management
-- Customer pass display in profile
-- Check-in flow integration
-
 ---
 
 ## Priority 2: HIGH (Do This Quarter - Before 1,000 Tenants)
 
-### 15. API Gateway Implementation
+### 10. API Gateway Implementation
 
 **Effort**: 2 weeks  
 **Impact**: Centralized API management and security
@@ -297,7 +205,7 @@ Implement API Gateway (Kong or Tyk):
 
 **Why**: Need centralized control over API traffic, versioning, and security as we scale.
 
-### 16. Message Queue for Async Operations
+### 11. Message Queue for Async Operations
 
 **Effort**: 1 week  
 **Impact**: Improves response times and reliability
@@ -314,7 +222,7 @@ Implement message queue (BullMQ, RabbitMQ, or AWS SQS):
 
 **Why**: Currently blocking requests for async operations. Users wait for emails to send.
 
-### 17. Database Read Replicas
+### 12. Database Read Replicas
 
 **Effort**: 1 week  
 **Impact**: Scales read-heavy workload
@@ -329,7 +237,7 @@ Set up PostgreSQL read replicas:
 
 **Why**: Read-heavy workload (reports, dashboards) will overwhelm primary database.
 
-### 18. Blue-Green Deployment
+### 13. Blue-Green Deployment
 
 **Effort**: 1 week  
 **Impact**: Zero-downtime deployments
@@ -345,7 +253,7 @@ Implement blue-green deployment:
 
 **Why**: Current deployments cause downtime. Need zero-downtime deploys for SaaS.
 
-### 19. Prometheus + Grafana Monitoring
+### 14. Prometheus + Grafana Monitoring
 
 **Effort**: 1 week  
 **Impact**: Comprehensive system observability
@@ -362,7 +270,7 @@ Set up monitoring stack:
 
 **Why**: Currently no visibility into system performance. Need metrics before issues occur.
 
-### 20. Request ID Tracking
+### 15. Request ID Tracking
 
 **Effort**: 1 hour  
 **Impact**: Better debugging across services
@@ -375,7 +283,7 @@ Implement distributed tracing:
 - Include in error reports
 - Better debugging capabilities
 
-### 21. Optimize Prisma Queries
+### 16. Optimize Prisma Queries
 
 **Effort**: 8 hours  
 **Impact**: Significant performance improvement
@@ -389,7 +297,7 @@ Fix N+1 query problems:
 - Implement query result caching
 - Monitor slow queries
 
-### 22. Reservation Service - Performance Optimization
+### 17. Reservation Service - Performance Optimization
 
 **Effort**: 1-2 weeks  
 **Impact**: Faster availability checks
@@ -402,7 +310,7 @@ Optimize reservation service queries:
 - Optimize batch operations
 - Add query performance monitoring
 
-### 23. Reservation Service - Test Coverage Expansion
+### 18. Reservation Service - Test Coverage Expansion
 
 **Effort**: 2-3 weeks  
 **Impact**: Reduces bugs in critical service
@@ -414,7 +322,7 @@ Expand test coverage from 21% to 70%+:
 - Integration tests for invoices, payments, check-ins
 - Performance benchmarks
 
-### 24. Notification System Testing
+### 19. Notification System Testing
 
 **Effort**: 1 week  
 **Impact**: Ensures reliable notifications
@@ -427,7 +335,7 @@ Audit and fix notification system:
 - Notification preferences
 - Delivery logs and tracking
 
-### 25. Code Optimization and Cleanup
+### 20. Code Optimization and Cleanup
 
 **Effort**: 1-2 weeks  
 **Impact**: Improves maintainability
@@ -450,7 +358,7 @@ _Completed items in [CHANGELOG.md](../CHANGELOG.md) v1.2.8: Console.log removal,
 
 ## Priority 3: MEDIUM (SaaS Readiness - Before 10,000 Tenants)
 
-### 25. Redis Caching - Phase 2
+### 21. Redis Caching - Phase 2
 
 **Effort**: 1-2 weeks
 
@@ -463,7 +371,7 @@ Expand Redis caching beyond tenant lookups:
 - Cache warming strategies
 - Cache hit rate monitoring
 
-### 26. Feature Flags System
+### 22. Feature Flags System
 
 **Effort**: 1 week
 
@@ -476,7 +384,7 @@ Implement feature flag management:
 - Flag audit logging
 - A/B testing capabilities
 
-### 27. Service Module Toggles
+### 23. Service Module Toggles
 
 **Effort**: 1 week
 
