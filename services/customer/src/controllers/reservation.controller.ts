@@ -57,8 +57,13 @@ export const getAllReservations = async (
     const limit = Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
+    // Get tenant ID from request (set by tenant middleware)
+    const tenantId =
+      (req as any).tenantId || (process.env.NODE_ENV !== "production" && "dev");
+
     // Build where clause based on query parameters
-    let where: any = {};
+    // CRITICAL: Always filter by tenantId for data isolation
+    let where: any = { tenantId };
 
     try {
       // Handle multiple status values
