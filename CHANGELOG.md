@@ -5,6 +5,65 @@ All notable changes to the Tailtown Pet Resort Management System will be documen
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.3] - 2025-11-29
+
+### 👤 Customer Account Portal (Phase 3)
+
+Added customer-facing account management portal at `/my-account`.
+
+#### New Features
+
+- **Customer Dashboard** (`/my-account`):
+
+  - Tabbed interface for account management
+  - Mobile-responsive design
+  - Customer authentication integration
+
+- **View Upcoming Reservations**:
+
+  - List of future reservations with status
+  - Reservation details (pet, dates, room, price)
+  - Cancel reservation (24+ hours before)
+
+- **View Past Reservations**:
+
+  - Reservation history with load more
+  - Status indicators (completed, cancelled, no-show)
+
+- **My Pets Management**:
+
+  - View all pets with details
+  - Add new pets
+  - Edit pet information (name, breed, weight, notes)
+  - Feeding and medication instructions
+
+- **Daycare Passes**:
+
+  - View active passes with remaining days
+  - Progress bar for usage
+  - Purchase new passes
+  - View expired/used passes
+
+- **Account Balance**:
+  - Current balance display
+  - Pending charges
+  - Outstanding invoices with pay button
+  - Payment history
+
+#### Files Changed
+
+- `frontend/src/services/customerAccountService.ts` - New service
+- `frontend/src/pages/booking/CustomerDashboard.tsx` - Main dashboard
+- `frontend/src/pages/booking/account/UpcomingReservations.tsx` - Upcoming tab
+- `frontend/src/pages/booking/account/PastReservations.tsx` - History tab
+- `frontend/src/pages/booking/account/MyPets.tsx` - Pets management
+- `frontend/src/pages/booking/account/DaycarePasses.tsx` - Passes tab
+- `frontend/src/pages/booking/account/AccountBalance.tsx` - Balance tab
+- `services/customer/src/controllers/reservation.controller.ts` - Added endpoints
+- `services/customer/src/routes/reservation.routes.ts` - Added routes
+
+---
+
 ## [1.6.2] - 2025-11-29
 
 ### 🔒 Audit Logging for Sensitive Operations
@@ -38,6 +97,8 @@ Implemented comprehensive audit logging for compliance and security.
 - **Controllers Updated**:
   - Customer: CREATE, UPDATE, DELETE operations logged
   - Reservation: CREATE, UPDATE, DELETE operations logged
+  - Staff: CREATE, UPDATE, DELETE operations logged
+  - Authentication: LOGIN, LOGIN_FAILED events logged
   - DELETE operations marked as CRITICAL severity
 
 #### Files Changed
@@ -48,6 +109,7 @@ Implemented comprehensive audit logging for compliance and security.
 - `services/customer/src/routes/audit-log.routes.ts` - New routes
 - `services/customer/src/controllers/customer.controller.ts` - Added audit logging
 - `services/customer/src/controllers/reservation.controller.ts` - Added audit logging
+- `services/customer/src/controllers/staff.controller.ts` - Added audit logging + auth events
 - `frontend/src/services/auditLogService.ts` - New frontend service
 - `frontend/src/pages/admin/AuditLogs.tsx` - New admin page
 

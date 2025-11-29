@@ -188,6 +188,9 @@ const Waitlist = lazy(() => import("./pages/waitlist/Waitlist"));
 
 // Public Booking Portal
 const BookingPortal = lazy(() => import("./pages/booking/BookingPortal"));
+const CustomerDashboard = lazy(
+  () => import("./pages/booking/CustomerDashboard")
+);
 
 // Mobile Pages
 const MobileDashboard = lazy(() => import("./pages/mobile/MobileDashboard"));
@@ -259,6 +262,7 @@ const AppRoutes = () => {
 
         {/* Public Booking Portal - No authentication required */}
         <Route path="/book" element={<BookingPortal />} />
+        <Route path="/my-account" element={<CustomerDashboard />} />
 
         {/* Auth Routes */}
         <Route element={<AuthLayout />}>

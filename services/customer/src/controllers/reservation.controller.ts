@@ -284,6 +284,78 @@ export const getReservationsByCustomer = async (
   }
 };
 
+// Get upcoming reservations for a customer
+export const getUpcomingReservationsByCustomer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { customerId } = req.params;
+    const now = new Date();
+
+    const reservations = await prisma.reservation.findMany({
+      where: {
+        customerId,
+        startDate: { gte: now },
+        status: { notIn: ["CANCELLED", "COMPLETED", "CHECKED_OUT", "NO_SHOW"] },
+      },
+      orderBy: { startDate: "asc" },
+      include: {
+        pet: true,
+        resource: true,
+      },
+    });
+
+    res.status(200).json({
+      status: "success",
+      data: reservations,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get past reservations for a customer
+export const getPastReservationsByCustomer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { customerId } = req.params;
+    const limit = Number(req.query.limit) || 20;
+    const now = new Date();
+
+    const reservations = await prisma.reservation.findMany({
+      where: {
+        customerId,
+        OR: [
+          { endDate: { lt: now } },
+          {
+            status: {
+              in: ["COMPLETED", "CHECKED_OUT", "CANCELLED", "NO_SHOW"],
+            },
+          },
+        ],
+      },
+      take: limit,
+      orderBy: { startDate: "desc" },
+      include: {
+        pet: true,
+        resource: true,
+      },
+    });
+
+    res.status(200).json({
+      status: "success",
+      data: reservations,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Get reservations by pet
 export const getReservationsByPet = async (
   req: Request,

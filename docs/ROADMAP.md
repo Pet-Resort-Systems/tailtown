@@ -54,13 +54,13 @@ Build customer-facing booking interface:
 - ❌ Email/SMS confirmations (needs SendGrid/Twilio keys)
 - ❌ Booking modification/cancellation
 
-**Phase 3 - Customer Account** ❌:
+**Phase 3 - Customer Account** ✅:
 
-- ❌ View upcoming reservations
-- ❌ View past reservations
-- ❌ Update pet information
-- ❌ View/purchase daycare passes
-- ❌ View account balance
+- ✅ View upcoming reservations
+- ✅ View past reservations
+- ✅ Update pet information
+- ✅ View/purchase daycare passes
+- ✅ View account balance
 
 **Technical Considerations**:
 
