@@ -7,11 +7,11 @@
 
 ### Priority 0: IMMEDIATE (Do This Week)
 
-- ❌ **Online Customer Booking Portal** - Customer-facing booking interface
+- 🟡 **Online Customer Booking Portal** - Kennel selection added (v1.6.1), needs testing
 - ❌ **Fix Multi-Pet Room Reservations** - Core booking functionality
 - 🟡 **Sentry Error Tracking** - Code ready, needs DSN configured
 
-**Status**: Ordering process review complete (v1.6.0). Focus on customer booking portal and multi-pet reservations.
+**Status**: Booking portal updated with kennel size selection (v1.6.1). Focus on testing and multi-pet reservations.
 
 ### Priority 1: CRITICAL (Do This Month)
 
@@ -28,44 +28,46 @@
 
 ## Priority 0: IMMEDIATE (Do This Week) 🔴
 
-### 1. Online Customer Booking Portal
+### 1. Online Customer Booking Portal 🟡
 
 **Effort**: 2-3 weeks  
-**Impact**: Revenue growth, customer convenience, reduced staff workload
+**Impact**: Revenue growth, customer convenience, reduced staff workload  
+**Status**: Phase 1 & 2 mostly complete (v1.6.1), needs testing
 
 Build customer-facing booking interface:
 
-**Phase 1 - Core Booking**:
+**Phase 1 - Core Booking** ✅:
 
-- Customer login/registration
-- Service selection (boarding, daycare, grooming)
-- Date/time selection with availability check
-- Pet selection (from customer's pets)
-- Price quote display
-- Booking confirmation
+- ✅ Customer login/registration
+- ✅ Service selection (boarding, daycare, grooming)
+- ✅ Date/time selection with availability check
+- ✅ Pet selection (from customer's pets)
+- ✅ Price quote display
+- ✅ Booking confirmation
+- ✅ **Kennel/Room size selection** (v1.6.1) - Junior/Queen/King/VIP suites
 
-**Phase 2 - Enhanced Features**:
+**Phase 2 - Enhanced Features** 🟡:
 
-- Add-on services selection
-- Special requests/notes
-- Deposit/payment integration
-- Email/SMS confirmations
-- Booking modification/cancellation
+- ✅ Add-on services selection
+- ✅ Special requests/notes
+- ✅ Deposit/payment integration
+- ❌ Email/SMS confirmations (needs SendGrid/Twilio keys)
+- ❌ Booking modification/cancellation
 
-**Phase 3 - Customer Account**:
+**Phase 3 - Customer Account** ❌:
 
-- View upcoming reservations
-- View past reservations
-- Update pet information
-- View/purchase daycare passes
-- View account balance
+- ❌ View upcoming reservations
+- ❌ View past reservations
+- ❌ Update pet information
+- ❌ View/purchase daycare passes
+- ❌ View account balance
 
 **Technical Considerations**:
 
-- Public-facing routes (no staff auth required)
-- Customer authentication (separate from staff)
-- Rate limiting for public endpoints
-- Mobile-responsive design
+- ✅ Public-facing routes (no staff auth required)
+- ✅ Customer authentication (separate from staff)
+- ❌ Rate limiting for public endpoints
+- ✅ Mobile-responsive design
 
 ---
 

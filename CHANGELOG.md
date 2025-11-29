@@ -5,6 +5,42 @@ All notable changes to the Tailtown Pet Resort Management System will be documen
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.1] - 2025-11-29
+
+### 🏨 Customer Booking Portal - Kennel Size Selection
+
+Updated the customer booking portal to support the new kennel/resource type system.
+
+#### New Features
+
+- **Kennel Selection Step**: Boarding services now show a room selection step with:
+
+  - Junior Suite ($45/night) - Small dogs under 25 lbs
+  - Queen Suite ($55/night) - Medium dogs 25-50 lbs
+  - King Suite ($65/night) - Large dogs 50+ lbs
+  - VIP Suite ($85/night) - Luxury with extra amenities
+  - Real-time availability counts for each room type
+
+- **Dynamic Booking Flow**:
+  - Boarding services: Service → **Room Selection** → Date/Time → Pets → Add-Ons → Info → Review
+  - Non-boarding services: Service → Date/Time → Pets → Add-Ons → Info → Review
+
+#### Backend Updates
+
+- **New Resource Types Supported**: `JUNIOR_KENNEL`, `QUEEN_KENNEL`, `KING_KENNEL`, `VIP_ROOM`, `CAT_CONDO`, `DAY_CAMP_FULL`, `DAY_CAMP_HALF`
+- **Backward Compatibility**: Legacy types (`VIP_SUITE`, `STANDARD_PLUS_SUITE`, `STANDARD_SUITE`) still accepted
+- **Default Changed**: New bookings default to `JUNIOR_KENNEL` instead of `STANDARD_SUITE`
+
+#### Files Changed
+
+- `frontend/src/pages/booking/steps/KennelSelection.tsx` - New component
+- `frontend/src/pages/booking/BookingPortal.tsx` - Dynamic step flow
+- `frontend/src/pages/booking/steps/ServiceSelection.tsx` - Pass service category
+- `frontend/src/pages/booking/steps/ReviewBooking.tsx` - Send resourceType to backend
+- `services/customer/src/controllers/reservation.controller.ts` - Accept new resource types
+
+---
+
 ## [1.6.0] - 2025-11-28
 
 ### 🎯 Dashboard & Gingr Sync Accuracy
