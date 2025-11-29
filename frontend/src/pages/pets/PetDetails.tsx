@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Typography,
   Container,
@@ -6,7 +6,6 @@ import {
   Paper,
   Button,
   Avatar,
-  Chip,
   Divider,
   TextField,
   FormControl,
@@ -20,42 +19,42 @@ import {
   Snackbar,
   Autocomplete,
   FormGroup,
-  FormLabel
-} from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
-import VaccinationStatus from '../../components/VaccinationStatus';
-import PetIconSelector from '../../components/pets/PetIconSelector';
-import EmojiPetIconSelector from '../../components/pets/EmojiPetIconSelector';
-import PetIconDisplay from '../../components/pets/PetIconDisplay';
-import EmojiIconDisplay from '../../components/customers/EmojiIconDisplay';
-import VaccineComplianceBadge from '../../components/pets/VaccineComplianceBadge';
-import { SelectChangeEvent } from '@mui/material/Select';
-import { Pet, petService } from '../../services/petService';
-import { customerService } from '../../services/customerService';
-import referenceDataService, { Breed, Veterinarian, TemperamentType } from '../../services/referenceDataService';
-
+  FormLabel,
+} from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
+import VaccinationStatus from "../../components/VaccinationStatus";
+import EmojiPetIconSelector from "../../components/pets/EmojiPetIconSelector";
+import VaccineComplianceBadge from "../../components/pets/VaccineComplianceBadge";
+import { SelectChangeEvent } from "@mui/material/Select";
+import { Pet, petService } from "../../services/petService";
+import { customerService } from "../../services/customerService";
+import referenceDataService, {
+  Breed,
+  Veterinarian,
+  TemperamentType,
+} from "../../services/referenceDataService";
 
 /**
  * Map vaccination data from lowercase keys to component-expected capitalized keys
  */
 export const mapVaccinationData = (vaccinationStatus: any) => {
   if (!vaccinationStatus) return {};
-  
+
   const mapped: any = {};
   const keyMap: { [key: string]: string } = {
-    'rabies': 'Rabies',
-    'dhpp': 'DHPP', 
-    'bordetella': 'Bordetella',
-    'fvrcp': 'FVRCP',
-    'canine_influenza': 'Influenza',
-    'feline_leukemia': 'Lepto' // Map to existing Lepto field
+    rabies: "Rabies",
+    dhpp: "DHPP",
+    bordetella: "Bordetella",
+    fvrcp: "FVRCP",
+    canine_influenza: "Influenza",
+    feline_leukemia: "Lepto", // Map to existing Lepto field
   };
-  
+
   Object.entries(vaccinationStatus).forEach(([key, value]) => {
     const mappedKey = keyMap[key] || key;
     mapped[mappedKey] = value;
   });
-  
+
   return mapped;
 };
 
@@ -64,22 +63,22 @@ export const mapVaccinationData = (vaccinationStatus: any) => {
  */
 export const mapVaccinationExpirations = (vaccineExpirations: any) => {
   if (!vaccineExpirations) return {};
-  
+
   const mapped: any = {};
   const keyMap: { [key: string]: string } = {
-    'rabies': 'Rabies',
-    'dhpp': 'DHPP',
-    'bordetella': 'Bordetella', 
-    'fvrcp': 'FVRCP',
-    'canine_influenza': 'Influenza',
-    'feline_leukemia': 'Lepto' // Map to existing Lepto field
+    rabies: "Rabies",
+    dhpp: "DHPP",
+    bordetella: "Bordetella",
+    fvrcp: "FVRCP",
+    canine_influenza: "Influenza",
+    feline_leukemia: "Lepto", // Map to existing Lepto field
   };
-  
+
   Object.entries(vaccineExpirations).forEach(([key, value]) => {
     const mappedKey = keyMap[key] || key;
     mapped[mappedKey] = value;
   });
-  
+
   return mapped;
 };
 
@@ -90,8 +89,8 @@ export const mapVaccinationExpirations = (vaccineExpirations: any) => {
 const PetDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const isNewPet = id === 'new';
-  
+  const isNewPet = id === "new";
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -99,16 +98,26 @@ const PetDetails = () => {
   const [petOwner, setPetOwner] = useState<any | null>(null);
   const [breeds, setBreeds] = useState<Breed[]>([]);
   const [vets, setVets] = useState<Veterinarian[]>([]);
-  const [temperamentTypes, setTemperamentTypes] = useState<TemperamentType[]>([]);
-  const [selectedTemperaments, setSelectedTemperaments] = useState<string[]>([]);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
+  const [temperamentTypes, setTemperamentTypes] = useState<TemperamentType[]>(
+    []
+  );
+  const [selectedTemperaments, setSelectedTemperaments] = useState<string[]>(
+    []
+  );
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error",
+  });
 
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [photoTimestamp, setPhotoTimestamp] = useState<number>(Date.now());
 
-  const [pet, setPet] = useState<Omit<Pet, 'id' | 'createdAt' | 'updatedAt' | 'medicalRecords'>>({
-    name: '',
-    type: 'DOG',
+  const [pet, setPet] = useState<
+    Omit<Pet, "id" | "createdAt" | "updatedAt" | "medicalRecords">
+  >({
+    name: "",
+    type: "DOG",
     breed: null,
     color: null,
     birthdate: null,
@@ -126,12 +135,12 @@ const PetDetails = () => {
     vetName: null,
     vetPhone: null,
     veterinarianId: null,
-    customerId: '',
+    customerId: "",
     isActive: true,
     petIcons: [],
     iconNotes: {},
     vaccinationStatus: undefined,
-    vaccineExpirations: undefined
+    vaccineExpirations: undefined,
   });
 
   const loadData = useCallback(async () => {
@@ -140,14 +149,14 @@ const PetDetails = () => {
       const [breedsData, vetsData, temperamentsData] = await Promise.all([
         referenceDataService.getBreeds(),
         referenceDataService.getVeterinarians(),
-        referenceDataService.getTemperamentTypes()
+        referenceDataService.getTemperamentTypes(),
       ]);
-      
+
       setBreeds(breedsData);
       setVets(vetsData);
       setTemperamentTypes(temperamentsData);
-      
-      console.log('Loaded veterinarians:', vetsData.length);
+
+      console.log("Loaded veterinarians:", vetsData.length);
 
       if (!isNewPet) {
         // Load existing pet data
@@ -155,112 +164,131 @@ const PetDetails = () => {
 
         // Format the birthdate from ISO to YYYY-MM-DD for the input field
         if (petData.birthdate) {
-          petData.birthdate = new Date(petData.birthdate).toISOString().split('T')[0];
+          petData.birthdate = new Date(petData.birthdate)
+            .toISOString()
+            .split("T")[0];
         }
-        
+
         // Process medical records to populate vaccination status
         if (petData.medicalRecords && petData.medicalRecords.length > 0) {
           const vaccinationStatus: any = {};
           const vaccineExpirations: any = {};
           const today = new Date();
           today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
-          
+
           petData.medicalRecords.forEach((record: any) => {
-            if (record.recordType === 'VACCINATION' && record.description) {
+            if (record.recordType === "VACCINATION" && record.description) {
               // Map vaccine descriptions to field names (use lowercase to match backend)
               const vaccineMap: { [key: string]: string } = {
-                'Rabies vaccination': 'rabies',
-                'DHPP vaccination': 'dhpp',
-                'Bordetella vaccination': 'bordetella',
-                'FVRCP vaccination': 'fvrcp',
-                'Canine Influenza vaccination': 'influenza',
-                'Lepto vaccination': 'lepto',
-                'Leptospirosis vaccination': 'lepto'
+                "Rabies vaccination": "rabies",
+                "DHPP vaccination": "dhpp",
+                "Bordetella vaccination": "bordetella",
+                "FVRCP vaccination": "fvrcp",
+                "Canine Influenza vaccination": "influenza",
+                "Lepto vaccination": "lepto",
+                "Leptospirosis vaccination": "lepto",
               };
-              
+
               const vaccineName = vaccineMap[record.description];
               if (vaccineName) {
                 // Determine status based on expiration date
                 if (record.expirationDate) {
                   const expirationDate = new Date(record.expirationDate);
                   expirationDate.setHours(0, 0, 0, 0);
-                  
+
                   // Set status based on whether vaccine is expired
                   // VaccinationStatus component expects uppercase status values
                   if (expirationDate >= today) {
-                    vaccinationStatus[vaccineName] = { status: 'CURRENT' };
+                    vaccinationStatus[vaccineName] = { status: "CURRENT" };
                   } else {
-                    vaccinationStatus[vaccineName] = { status: 'EXPIRED' };
+                    vaccinationStatus[vaccineName] = { status: "EXPIRED" };
                   }
-                  
-                  vaccineExpirations[vaccineName] = new Date(record.expirationDate).toISOString().split('T')[0];
+
+                  vaccineExpirations[vaccineName] = new Date(
+                    record.expirationDate
+                  )
+                    .toISOString()
+                    .split("T")[0];
                 } else {
                   // No expiration date, mark as current
-                  vaccinationStatus[vaccineName] = { status: 'CURRENT' };
+                  vaccinationStatus[vaccineName] = { status: "CURRENT" };
                 }
               }
             }
           });
-          
+
           petData.vaccinationStatus = vaccinationStatus;
           petData.vaccineExpirations = vaccineExpirations;
-          
-          console.log('Populated vaccination data from medical records:', {
+
+          console.log("Populated vaccination data from medical records:", {
             vaccinationStatus,
             vaccineExpirations,
-            today: today.toISOString().split('T')[0]
+            today: today.toISOString().split("T")[0],
           });
         }
-        
+
         setPet(petData);
-        
-        console.log('Loaded pet data:', {
+
+        console.log("Loaded pet data:", {
           name: petData.name,
           vetName: petData.vetName,
           vetPhone: petData.vetPhone,
-          veterinarianId: petData.veterinarianId
+          veterinarianId: petData.veterinarianId,
         });
-        
+
         // Load the specific owner for this pet
         if (petData.customerId) {
           try {
-            const ownerData = await customerService.getCustomerById(petData.customerId);
-            console.log('Loaded customer data:', ownerData);
+            const ownerData = await customerService.getCustomerById(
+              petData.customerId
+            );
+            console.log("Loaded customer data:", ownerData);
             setPetOwner(ownerData);
-            
+
             // Auto-populate veterinarian from customer's preferred vet if pet has no vet
-            console.log('Checking auto-fill conditions:');
-            console.log('- pet.veterinarianId:', petData.veterinarianId);
-            console.log('- pet.vetName:', petData.vetName);
-            console.log('- owner.veterinarianId:', ownerData.veterinarianId);
-            
-            if (!petData.veterinarianId && !petData.vetName && ownerData.veterinarianId) {
-              console.log('Auto-populating veterinarian from customer:', ownerData.veterinarianId);
-              
+            console.log("Checking auto-fill conditions:");
+            console.log("- pet.veterinarianId:", petData.veterinarianId);
+            console.log("- pet.vetName:", petData.vetName);
+            console.log("- owner.veterinarianId:", ownerData.veterinarianId);
+
+            if (
+              !petData.veterinarianId &&
+              !petData.vetName &&
+              ownerData.veterinarianId
+            ) {
+              console.log(
+                "Auto-populating veterinarian from customer:",
+                ownerData.veterinarianId
+              );
+
               // Find the veterinarian in our list
-              const customerVet = vetsData.find(v => v.id === ownerData.veterinarianId);
+              const customerVet = vetsData.find(
+                (v) => v.id === ownerData.veterinarianId
+              );
               if (customerVet) {
                 petData.veterinarianId = customerVet.id;
                 petData.vetName = customerVet.name;
                 petData.vetPhone = customerVet.phone || null;
-                console.log('Auto-filled veterinarian:', customerVet.name);
+                console.log("Auto-filled veterinarian:", customerVet.name);
               } else {
-                console.log('Customer veterinarian not found in vets list');
+                console.log("Customer veterinarian not found in vets list");
               }
             } else {
-              console.log('Auto-fill conditions not met');
+              console.log("Auto-fill conditions not met");
             }
           } catch (err) {
-            console.error('Error loading pet owner:', err);
+            console.error("Error loading pet owner:", err);
           }
         }
-        
+
         // Load pet temperaments
         try {
-          const petTemperaments = await referenceDataService.getPetTemperaments(id!);
-          setSelectedTemperaments(petTemperaments.map(t => t.temperament));
+          const petTemperaments = await referenceDataService.getPetTemperaments(
+            id!
+          );
+          setSelectedTemperaments(petTemperaments.map((t) => t.temperament));
         } catch (err) {
-          console.log('No temperaments found for pet');
+          console.log("No temperaments found for pet");
         }
       } else {
         // For new pets, load customers for the dropdown (with search capability)
@@ -268,8 +296,8 @@ const PetDetails = () => {
         setCustomers(customersData.data || []);
       }
     } catch (err) {
-      console.error('Error loading data:', err);
-      setError('Failed to load data');
+      console.error("Error loading data:", err);
+      setError("Failed to load data");
     } finally {
       setLoading(false);
     }
@@ -280,8 +308,8 @@ const PetDetails = () => {
 
     // Ensure proper scrolling behavior
     const enableScrolling = () => {
-      document.body.style.overflow = 'auto';
-      document.body.style.height = 'auto';
+      document.body.style.overflow = "auto";
+      document.body.style.height = "auto";
     };
 
     // Enable scrolling when component mounts
@@ -294,24 +322,32 @@ const PetDetails = () => {
   }, [loadData]);
 
   /**
- * Handles changes to text input fields, with special handling for dates and weights.
- * @param e - The change event from the input field
- */
-const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+   * Handles changes to text input fields, with special handling for dates and weights.
+   * @param e - The change event from the input field
+   */
+  const handleTextChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     if (name) {
-      if (name === 'birthdate') {
+      if (name === "birthdate") {
       }
-      setPet(prev => {
-        const newValue = name === 'weight' ? (value ? parseFloat(value) : null) :
-                        name === 'birthdate' ? (value ? value : null) :
-                        value;
-        if (name === 'birthdate') {
-
+      setPet((prev) => {
+        const newValue =
+          name === "weight"
+            ? value
+              ? parseFloat(value)
+              : null
+            : name === "birthdate"
+            ? value
+              ? value
+              : null
+            : value;
+        if (name === "birthdate") {
         }
         return {
           ...prev,
-          [name]: newValue
+          [name]: newValue,
         };
       });
     }
@@ -320,38 +356,39 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
   const handleSelectChange = (e: SelectChangeEvent) => {
     const { name, value } = e.target;
     if (name) {
-      setPet(prev => ({
+      setPet((prev) => ({
         ...prev,
-        [name]: value
+        [name]: value,
       }));
     }
   };
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
-    setPet(prev => ({
+    setPet((prev) => ({
       ...prev,
-      [name]: checked
+      [name]: checked,
     }));
   };
 
   const handleSave = async () => {
-
     try {
       setSaving(true);
-      
+
       if (!pet.name || !pet.customerId) {
         setSnackbar({
           open: true,
-          message: 'Please fill in all required fields',
-          severity: 'error'
+          message: "Please fill in all required fields",
+          severity: "error",
         });
         return;
       }
 
       // Clean up the data before sending
-      const formattedDate = pet.birthdate ? new Date(pet.birthdate).toISOString().split('T')[0] : null;
-      
+      const formattedDate = pet.birthdate
+        ? new Date(pet.birthdate).toISOString().split("T")[0]
+        : null;
+
       const cleanPetData = {
         name: pet.name,
         type: pet.type,
@@ -375,41 +412,46 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
         vaccinationStatus: pet.vaccinationStatus || {},
         vaccineExpirations: pet.vaccineExpirations || {},
         customerId: pet.customerId,
-        isActive: pet.isActive
+        isActive: pet.isActive,
       };
 
       let savedPetId = id;
-      
+
       if (isNewPet) {
-        const newPet = await petService.createPet(cleanPetData as Omit<Pet, 'id'>);
+        const newPet = await petService.createPet(
+          cleanPetData as Omit<Pet, "id">
+        );
         savedPetId = newPet.id;
       } else {
         await petService.updatePet(id!, cleanPetData);
       }
-      
+
       // Save temperaments
       if (savedPetId && selectedTemperaments.length > 0) {
         try {
-          await referenceDataService.updatePetTemperaments(savedPetId, selectedTemperaments);
+          await referenceDataService.updatePetTemperaments(
+            savedPetId,
+            selectedTemperaments
+          );
         } catch (err) {
-          console.error('Error saving temperaments:', err);
+          console.error("Error saving temperaments:", err);
         }
       }
 
       setSnackbar({
         open: true,
-        message: `Pet ${isNewPet ? 'created' : 'updated'} successfully`,
-        severity: 'success'
+        message: `Pet ${isNewPet ? "created" : "updated"} successfully`,
+        severity: "success",
       });
 
       // Navigate back to pets list after successful save
-      navigate('/pets');
+      navigate("/pets");
     } catch (err) {
-      console.error('Error saving pet:', err);
+      console.error("Error saving pet:", err);
       setSnackbar({
         open: true,
-        message: `Error ${isNewPet ? 'creating' : 'updating'} pet`,
-        severity: 'error'
+        message: `Error ${isNewPet ? "creating" : "updating"} pet`,
+        severity: "error",
       });
     } finally {
       setSaving(false);
@@ -419,7 +461,14 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
   if (loading) {
     return (
       <Container maxWidth="lg">
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "50vh",
+          }}
+        >
           <CircularProgress />
         </Box>
       </Container>
@@ -429,7 +478,9 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
   if (error) {
     return (
       <Container maxWidth="lg">
-        <Alert severity="error" sx={{ mt: 4 }}>{error}</Alert>
+        <Alert severity="error" sx={{ mt: 4 }}>
+          {error}
+        </Alert>
       </Container>
     );
   }
@@ -437,56 +488,60 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
   return (
     <Container maxWidth="lg">
       <Box sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
           <Typography variant="h4">
-            {isNewPet ? 'New Pet' : pet.name}
+            {isNewPet ? "New Pet" : pet.name}
           </Typography>
           {!isNewPet && id && (
             <VaccineComplianceBadge petId={id} showDetails={true} />
           )}
         </Box>
-        
+
         <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
-
-
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
             <Avatar
-              src={pet.profilePhoto ? 
-                // Use dynamic origin for production, localhost for dev
-                `${process.env.NODE_ENV === 'production' ? window.location.origin : (process.env.REACT_APP_API_URL || 'http://localhost:4004')}${pet.profilePhoto}?t=${photoTimestamp}` : 
-                undefined
+              src={
+                pet.profilePhoto
+                  ? // Use dynamic origin for production, localhost for dev
+                    `${
+                      process.env.NODE_ENV === "production"
+                        ? window.location.origin
+                        : process.env.REACT_APP_API_URL ||
+                          "http://localhost:4004"
+                    }${pet.profilePhoto}?t=${photoTimestamp}`
+                  : undefined
               }
-              alt={pet.name || 'Pet'}
+              alt={pet.name || "Pet"}
               onError={(e) => {
-                console.error('Error loading image:', e);
+                console.error("Error loading image:", e);
                 // Reset image source on error and try a direct path without query parameters
                 const imgElement = e.target as HTMLImageElement;
                 const originalSrc = imgElement.src;
-                
+
                 // Only try the fallback once to avoid infinite loops
-                if (originalSrc.includes('?')) {
-                  const baseUrl = originalSrc.split('?')[0];
+                if (originalSrc.includes("?")) {
+                  const baseUrl = originalSrc.split("?")[0];
                   imgElement.src = baseUrl;
                 } else {
                   // If fallback failed too, clear the src
-                  imgElement.src = '';
+                  imgElement.src = "";
                 }
               }}
               sx={{
                 width: 150,
                 height: 150,
-                border: '2px solid #e0e0e0',
-                '& img': {
-                  objectFit: 'cover',
-                  width: '100%',
-                  height: '100%'
-                }
+                border: "2px solid #e0e0e0",
+                "& img": {
+                  objectFit: "cover",
+                  width: "100%",
+                  height: "100%",
+                },
               }}
             />
             <Box>
               <input
                 accept="image/*"
-                style={{ display: 'none' }}
+                style={{ display: "none" }}
                 id="photo-upload"
                 type="file"
                 onChange={async (e) => {
@@ -496,41 +551,53 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
                     if (file.size > 5 * 1024 * 1024) {
                       setSnackbar({
                         open: true,
-                        message: 'File size too large. Please upload an image under 5MB.',
-                        severity: 'error'
+                        message:
+                          "File size too large. Please upload an image under 5MB.",
+                        severity: "error",
                       });
                       return;
                     }
 
                     try {
                       setSaving(true);
-                      const updatedPet = await petService.uploadPetPhoto(id, file);
-                      
+                      const updatedPet = await petService.uploadPetPhoto(
+                        id,
+                        file
+                      );
+
                       // Create a local cached URL to display immediately
                       if (updatedPet.profilePhoto) {
                         // Use dynamic origin for production, localhost for dev
-                        const imageUrl = `${process.env.NODE_ENV === 'production' ? window.location.origin : (process.env.REACT_APP_API_URL || 'http://localhost:4004')}${updatedPet.profilePhoto}`;
-                        
+                        const imageUrl = `${
+                          process.env.NODE_ENV === "production"
+                            ? window.location.origin
+                            : process.env.REACT_APP_API_URL ||
+                              "http://localhost:4004"
+                        }${updatedPet.profilePhoto}`;
+
                         // Preload the image to ensure it's in browser cache
                         const preloadImg = new Image();
                         preloadImg.src = imageUrl;
-                        
-                        setPet(prev => ({ ...prev, profilePhoto: updatedPet.profilePhoto }));
+
+                        setPet((prev) => ({
+                          ...prev,
+                          profilePhoto: updatedPet.profilePhoto,
+                        }));
                       }
-                      
+
                       // Update timestamp to force image refresh
                       setPhotoTimestamp(Date.now());
                       setSnackbar({
                         open: true,
-                        message: 'Photo uploaded successfully',
-                        severity: 'success'
+                        message: "Photo uploaded successfully",
+                        severity: "success",
                       });
                     } catch (error) {
-                      console.error('Error uploading photo:', error);
+                      console.error("Error uploading photo:", error);
                       setSnackbar({
                         open: true,
-                        message: 'Error uploading photo',
-                        severity: 'error'
+                        message: "Error uploading photo",
+                        severity: "error",
                       });
                     } finally {
                       setSaving(false);
@@ -544,23 +611,33 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
                   component="span"
                   disabled={saving || isNewPet}
                 >
-                  {pet.profilePhoto ? 'Change Photo' : 'Add Photo'}
+                  {pet.profilePhoto ? "Change Photo" : "Add Photo"}
                 </Button>
               </label>
               {isNewPet && (
-                <Typography variant="caption" color="textSecondary" sx={{ display: 'block', mt: 1 }}>
+                <Typography
+                  variant="caption"
+                  color="textSecondary"
+                  sx={{ display: "block", mt: 1 }}
+                >
                   You can add a photo after creating the pet
                 </Typography>
               )}
             </Box>
           </Box>
 
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 2 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" },
+              gap: 2,
+            }}
+          >
             <FormControl fullWidth required>
               <TextField
                 label="Name"
                 name="name"
-                value={pet.name || ''}
+                value={pet.name || ""}
                 onChange={handleTextChange}
                 required
               />
@@ -570,7 +647,7 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
               <InputLabel>Type</InputLabel>
               <Select
                 name="type"
-                value={pet.type || 'DOG'}
+                value={pet.type || "DOG"}
                 label="Type"
                 onChange={handleSelectChange}
               >
@@ -582,14 +659,19 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
 
             <FormControl fullWidth>
               <Autocomplete<Breed, false, false, true>
-                options={breeds.filter(b => b.species === pet.type)}
-                getOptionLabel={(option) => typeof option === 'string' ? option : option.name}
-                value={breeds.find(b => b.name === pet.breed) || null}
+                options={breeds.filter((b) => b.species === pet.type)}
+                getOptionLabel={(option) =>
+                  typeof option === "string" ? option : option.name
+                }
+                value={breeds.find((b) => b.name === pet.breed) || null}
                 onChange={(_, newValue) => {
-                  if (typeof newValue === 'string') {
-                    setPet(prev => ({ ...prev, breed: newValue }));
+                  if (typeof newValue === "string") {
+                    setPet((prev) => ({ ...prev, breed: newValue }));
                   } else {
-                    setPet(prev => ({ ...prev, breed: newValue?.name || null }));
+                    setPet((prev) => ({
+                      ...prev,
+                      breed: newValue?.name || null,
+                    }));
                   }
                 }}
                 renderInput={(params) => (
@@ -601,8 +683,11 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
                 )}
                 freeSolo
                 onInputChange={(_, newInputValue) => {
-                  if (newInputValue && !breeds.find(b => b.name === newInputValue)) {
-                    setPet(prev => ({ ...prev, breed: newInputValue }));
+                  if (
+                    newInputValue &&
+                    !breeds.find((b) => b.name === newInputValue)
+                  ) {
+                    setPet((prev) => ({ ...prev, breed: newInputValue }));
                   }
                 }}
               />
@@ -612,7 +697,7 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
               <TextField
                 label="Color"
                 name="color"
-                value={pet.color || ''}
+                value={pet.color || ""}
                 onChange={handleTextChange}
               />
             </FormControl>
@@ -622,7 +707,7 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
                 label="Weight (lbs)"
                 name="weight"
                 type="number"
-                value={pet.weight || ''}
+                value={pet.weight || ""}
                 onChange={handleTextChange}
               />
             </FormControl>
@@ -632,7 +717,7 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
                 label="Birthdate"
                 name="birthdate"
                 type="date"
-                value={pet.birthdate || ''}
+                value={pet.birthdate || ""}
                 onChange={handleTextChange}
                 InputLabelProps={{ shrink: true }}
               />
@@ -642,7 +727,7 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
               <InputLabel>Gender</InputLabel>
               <Select
                 name="gender"
-                value={pet.gender || ''}
+                value={pet.gender || ""}
                 label="Gender"
                 onChange={handleSelectChange}
               >
@@ -651,12 +736,14 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
               </Select>
             </FormControl>
 
-            <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+            <Box
+              sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}
+            >
               <FormControl fullWidth>
                 <TextField
                   label="Microchip Number"
                   name="microchipNumber"
-                  value={pet.microchipNumber || ''}
+                  value={pet.microchipNumber || ""}
                   onChange={handleTextChange}
                 />
               </FormControl>
@@ -665,7 +752,7 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
                 <TextField
                   label="Rabies Tag Number"
                   name="rabiesTagNumber"
-                  value={pet.rabiesTagNumber || ''}
+                  value={pet.rabiesTagNumber || ""}
                   onChange={handleTextChange}
                 />
               </FormControl>
@@ -682,18 +769,27 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
               label="Neutered/Spayed"
             />
           </Box>
-          
+
           <Divider sx={{ my: 2 }} />
-          
-          <Typography variant="h6" gutterBottom>Owner Information</Typography>
+
+          <Typography variant="h6" gutterBottom>
+            Owner Information
+          </Typography>
           <Box sx={{ mb: 2 }}>
             {isNewPet ? (
               <Autocomplete
                 options={customers}
-                getOptionLabel={(option) => `${option.firstName} ${option.lastName}${option.email ? ` (${option.email})` : ''}`}
-                value={customers.find(c => c.id === pet.customerId) || null}
+                getOptionLabel={(option) =>
+                  `${option.firstName} ${option.lastName}${
+                    option.email ? ` (${option.email})` : ""
+                  }`
+                }
+                value={customers.find((c) => c.id === pet.customerId) || null}
                 onChange={(_, newValue) => {
-                  setPet(prev => ({ ...prev, customerId: newValue?.id || '' }));
+                  setPet((prev) => ({
+                    ...prev,
+                    customerId: newValue?.id || "",
+                  }));
                 }}
                 renderInput={(params) => (
                   <TextField
@@ -710,14 +806,18 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
                 <Typography variant="body2" color="text.secondary" gutterBottom>
                   Owner
                 </Typography>
-                <Paper sx={{ p: 2, bgcolor: 'grey.50' }}>
+                <Paper sx={{ p: 2, bgcolor: "grey.50" }}>
                   <Typography variant="body1">
                     {petOwner
                       ? `${petOwner.firstName} ${petOwner.lastName}`
-                      : 'Loading owner information...'}
+                      : "Loading owner information..."}
                   </Typography>
                   {petOwner?.email && (
-                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mt: 0.5 }}
+                    >
                       {petOwner.email}
                     </Typography>
                   )}
@@ -727,16 +827,23 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
                     </Typography>
                   )}
                 </Paper>
-                <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-                  Owner cannot be changed after pet creation. To transfer ownership, please contact support.
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ mt: 1, display: "block" }}
+                >
+                  Owner cannot be changed after pet creation. To transfer
+                  ownership, please contact support.
                 </Typography>
               </Box>
             )}
           </Box>
-          
+
           <Divider sx={{ my: 2 }} />
-          
-          <Typography variant="h6" gutterBottom>Additional Information</Typography>
+
+          <Typography variant="h6" gutterBottom>
+            Additional Information
+          </Typography>
 
           {/* Pet Icons Selector */}
           <EmojiPetIconSelector
@@ -744,27 +851,37 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
             onChange={(icons) => setPet({ ...pet, petIcons: icons })}
           />
 
-          <Box sx={{ display: 'grid', gap: 2 }}>
+          <Box sx={{ display: "grid", gap: 2 }}>
             {/* Medical Information */}
-            <Typography variant="h6" gutterBottom>Medical Information</Typography>
-            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Medical Information
+            </Typography>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" },
+                gap: 2,
+              }}
+            >
               <FormControl fullWidth>
                 <Autocomplete<Veterinarian, false, false, true>
                   options={vets}
                   loading={vets.length === 0}
                   getOptionLabel={(option) => {
-                    if (typeof option === 'string') return option;
-                    return option.name || '';
+                    if (typeof option === "string") return option;
+                    return option.name || "";
                   }}
                   value={(() => {
                     // First try to find by veterinarianId (linked)
                     if (pet.veterinarianId) {
-                      const foundVet = vets.find(v => v.id === pet.veterinarianId);
+                      const foundVet = vets.find(
+                        (v) => v.id === pet.veterinarianId
+                      );
                       if (foundVet) return foundVet;
                     }
                     // Then try to match by vetName (legacy)
                     if (pet.vetName) {
-                      const foundVet = vets.find(v => v.name === pet.vetName);
+                      const foundVet = vets.find((v) => v.name === pet.vetName);
                       if (foundVet) return foundVet;
                       // If not found in list, return the name as string for freeSolo
                       return pet.vetName;
@@ -772,21 +889,31 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
                     return null;
                   })()}
                   onChange={(_, newValue) => {
-                    console.log('Veterinarian changed:', newValue);
-                    if (typeof newValue === 'string') {
+                    console.log("Veterinarian changed:", newValue);
+                    if (typeof newValue === "string") {
                       // Free text entry - no veterinarian link
-                      setPet(prev => ({ ...prev, vetName: newValue, vetPhone: null, veterinarianId: null }));
+                      setPet((prev) => ({
+                        ...prev,
+                        vetName: newValue,
+                        vetPhone: null,
+                        veterinarianId: null,
+                      }));
                     } else if (newValue) {
                       // Selected from list - save the link
-                      setPet(prev => ({ 
-                        ...prev, 
-                        vetName: newValue.name, 
+                      setPet((prev) => ({
+                        ...prev,
+                        vetName: newValue.name,
                         vetPhone: newValue.phone || null,
-                        veterinarianId: newValue.id
+                        veterinarianId: newValue.id,
                       }));
                     } else {
                       // Cleared
-                      setPet(prev => ({ ...prev, vetName: null, vetPhone: null, veterinarianId: null }));
+                      setPet((prev) => ({
+                        ...prev,
+                        vetName: null,
+                        vetPhone: null,
+                        veterinarianId: null,
+                      }));
                     }
                   }}
                   renderInput={(params) => (
@@ -794,7 +921,11 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
                       {...params}
                       label="Veterinarian"
                       placeholder="Type to search or enter custom name..."
-                      helperText={vets.length > 0 ? `${vets.length} veterinarians available` : 'Loading veterinarians...'}
+                      helperText={
+                        vets.length > 0
+                          ? `${vets.length} veterinarians available`
+                          : "Loading veterinarians..."
+                      }
                     />
                   )}
                   renderOption={(props, option) => (
@@ -804,7 +935,9 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
                         {option.phone && (
                           <Typography variant="caption" color="textSecondary">
                             {option.phone}
-                            {option.city && option.state && ` • ${option.city}, ${option.state}`}
+                            {option.city &&
+                              option.state &&
+                              ` • ${option.city}, ${option.state}`}
                           </Typography>
                         )}
                       </Box>
@@ -813,13 +946,15 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
                   freeSolo
                   filterOptions={(options, state) => {
                     // Limit to first 100 results for performance
-                    const filtered = options.filter(option =>
-                      option.name.toLowerCase().includes(state.inputValue.toLowerCase())
+                    const filtered = options.filter((option) =>
+                      option.name
+                        .toLowerCase()
+                        .includes(state.inputValue.toLowerCase())
                     );
                     return filtered.slice(0, 100);
                   }}
                   isOptionEqualToValue={(option, value) => {
-                    if (typeof value === 'string') return option.name === value;
+                    if (typeof value === "string") return option.name === value;
                     return option.id === value.id;
                   }}
                 />
@@ -829,44 +964,49 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
                 <TextField
                   label="Veterinarian Phone"
                   name="vetPhone"
-                  value={pet.vetPhone || ''}
+                  value={pet.vetPhone || ""}
                   onChange={handleTextChange}
                   helperText="Auto-filled when selecting from list"
                 />
               </FormControl>
             </Box>
-            
+
             {/* Vaccination Status */}
             <Box sx={{ mt: 2 }}>
               <VaccinationStatus
-                petType={pet.type || 'DOG'}
+                petType={pet.type || "DOG"}
                 vaccinationStatus={mapVaccinationData(pet.vaccinationStatus)}
-                vaccineExpirations={mapVaccinationExpirations(pet.vaccineExpirations)}
+                vaccineExpirations={mapVaccinationExpirations(
+                  pet.vaccineExpirations
+                )}
                 onVaccinationStatusChange={(key, value) => {
                   // Map back to lowercase when saving
                   const lowercaseKey = key.toLowerCase();
-                  setPet(prev => ({
-                    ...prev,
-                    vaccinationStatus: {
-                      ...(prev.vaccinationStatus || {}),
-                      [lowercaseKey]: value
-                    }
-                  } as any));
+                  setPet(
+                    (prev) =>
+                      ({
+                        ...prev,
+                        vaccinationStatus: {
+                          ...(prev.vaccinationStatus || {}),
+                          [lowercaseKey]: value,
+                        },
+                      } as any)
+                  );
                 }}
                 onVaccineExpirationChange={(key, value) => {
                   // Map back to lowercase when saving
                   const lowercaseKey = key.toLowerCase();
-                  setPet(prev => ({
+                  setPet((prev) => ({
                     ...prev,
                     vaccineExpirations: {
                       ...(prev.vaccineExpirations || {}),
-                      [lowercaseKey]: value
-                    }
+                      [lowercaseKey]: value,
+                    },
                   }));
                 }}
               />
             </Box>
-            
+
             {/* Temperament Section */}
             <Box sx={{ mt: 2 }}>
               <FormLabel component="legend">Temperament</FormLabel>
@@ -879,9 +1019,14 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
                         checked={selectedTemperaments.includes(temp.name)}
                         onChange={(e) => {
                           if (e.target.checked) {
-                            setSelectedTemperaments(prev => [...prev, temp.name]);
+                            setSelectedTemperaments((prev) => [
+                              ...prev,
+                              temp.name,
+                            ]);
                           } else {
-                            setSelectedTemperaments(prev => prev.filter(t => t !== temp.name));
+                            setSelectedTemperaments((prev) =>
+                              prev.filter((t) => t !== temp.name)
+                            );
                           }
                         }}
                       />
@@ -892,12 +1037,12 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
               </FormGroup>
             </Box>
 
-            <Box sx={{ display: 'grid', gap: 2 }}>
+            <Box sx={{ display: "grid", gap: 2 }}>
               <FormControl fullWidth>
                 <TextField
                   label="Allergies"
                   name="allergies"
-                  value={pet.allergies || ''}
+                  value={pet.allergies || ""}
                   onChange={handleTextChange}
                   multiline
                   rows={2}
@@ -908,7 +1053,7 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
                 <TextField
                   label="Medication Notes"
                   name="medicationNotes"
-                  value={pet.medicationNotes || ''}
+                  value={pet.medicationNotes || ""}
                   onChange={handleTextChange}
                   multiline
                   rows={2}
@@ -919,7 +1064,7 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
                 <TextField
                   label="Food Notes"
                   name="foodNotes"
-                  value={pet.foodNotes || ''}
+                  value={pet.foodNotes || ""}
                   onChange={handleTextChange}
                   multiline
                   rows={2}
@@ -930,7 +1075,7 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
                 <TextField
                   label="Special Needs"
                   name="specialNeeds"
-                  value={pet.specialNeeds || ''}
+                  value={pet.specialNeeds || ""}
                   onChange={handleTextChange}
                   multiline
                   rows={2}
@@ -941,7 +1086,7 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
                 <TextField
                   label="Behavior Notes"
                   name="behaviorNotes"
-                  value={pet.behaviorNotes || ''}
+                  value={pet.behaviorNotes || ""}
                   onChange={handleTextChange}
                   multiline
                   rows={2}
@@ -951,19 +1096,25 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
           </Box>
         </Paper>
 
-        <Box sx={{ mt: 3, display: 'flex', gap: 2 }}>
+        <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
           <Button
             variant="contained"
             color="primary"
             onClick={handleSave}
             disabled={saving}
           >
-            {saving ? <CircularProgress size={24} /> : (isNewPet ? 'Create Pet' : 'Save Changes')}
+            {saving ? (
+              <CircularProgress size={24} />
+            ) : isNewPet ? (
+              "Create Pet"
+            ) : (
+              "Save Changes"
+            )}
           </Button>
           <Button
             variant="outlined"
             color="secondary"
-            onClick={() => navigate('/pets')}
+            onClick={() => navigate("/pets")}
             disabled={saving}
           >
             Cancel
@@ -973,12 +1124,12 @@ const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaEl
         <Snackbar
           open={snackbar.open}
           autoHideDuration={6000}
-          onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
         >
           <Alert
-            onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+            onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
             severity={snackbar.severity}
-            sx={{ width: '100%' }}
+            sx={{ width: "100%" }}
           >
             {snackbar.message}
           </Alert>
