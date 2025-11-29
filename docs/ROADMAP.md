@@ -7,71 +7,28 @@
 
 ### Priority 0: IMMEDIATE (Do This Week)
 
-- 🟡 **Online Customer Booking Portal** - Kennel selection added (v1.6.1), needs testing
 - ❌ **Fix Multi-Pet Room Reservations** - Core booking functionality
 - 🟡 **Sentry Error Tracking** - Code ready, needs DSN configured
+- 🟡 **Booking Portal Testing** - Phase 1-3 complete, needs E2E testing
 
-**Status**: Booking portal updated with kennel size selection (v1.6.1). Focus on testing and multi-pet reservations.
+**Status**: Customer booking portal complete (v1.6.3). Focus on multi-pet reservations and testing.
 
 ### Priority 1: CRITICAL (Do This Month)
 
 - ❌ **Staging Environment** - Not started
-- ✅ **Audit Logging** - COMPLETED (v1.6.2)
 - 🟡 **Test Coverage** - Partially complete (tenant isolation done)
 - 🟡 **SendGrid/Twilio** - Code ready, needs API keys configured
 - ❌ **Grooming Calendar Testing** - Not started
 - ❌ **Loyalty/Coupons Testing** - Not started
+- ❌ **Rate Limiting** - For public booking endpoints
 
-**Status**: 1/6 complete - Audit logging implemented
+**Status**: 0/6 complete
 
 ---
 
 ## Priority 0: IMMEDIATE (Do This Week) 🔴
 
-### 1. Online Customer Booking Portal 🟡
-
-**Effort**: 2-3 weeks  
-**Impact**: Revenue growth, customer convenience, reduced staff workload  
-**Status**: Phase 1 & 2 mostly complete (v1.6.1), needs testing
-
-Build customer-facing booking interface:
-
-**Phase 1 - Core Booking** ✅:
-
-- ✅ Customer login/registration
-- ✅ Service selection (boarding, daycare, grooming)
-- ✅ Date/time selection with availability check
-- ✅ Pet selection (from customer's pets)
-- ✅ Price quote display
-- ✅ Booking confirmation
-- ✅ **Kennel/Room size selection** (v1.6.1) - Junior/Queen/King/VIP suites
-
-**Phase 2 - Enhanced Features** 🟡:
-
-- ✅ Add-on services selection
-- ✅ Special requests/notes
-- ✅ Deposit/payment integration
-- ❌ Email/SMS confirmations (needs SendGrid/Twilio keys)
-- ❌ Booking modification/cancellation
-
-**Phase 3 - Customer Account** ✅:
-
-- ✅ View upcoming reservations
-- ✅ View past reservations
-- ✅ Update pet information
-- ✅ View/purchase daycare passes
-- ✅ View account balance
-
-**Technical Considerations**:
-
-- ✅ Public-facing routes (no staff auth required)
-- ✅ Customer authentication (separate from staff)
-- ❌ Rate limiting for public endpoints
-- ✅ Mobile-responsive design
-
----
-
-### 2. Fix Multi-Pet Room Reservations
+### 1. Fix Multi-Pet Room Reservations
 
 **Effort**: 3-5 days  
 **Impact**: Core booking functionality
@@ -86,7 +43,7 @@ Fix multi-pet same-room reservation issues:
 
 ---
 
-### 3. Sentry Error Tracking 🟡 CODE READY
+### 2. Sentry Error Tracking 🟡 CODE READY
 
 **Status**: Code implemented, just needs configuration (15 minutes)
 
@@ -98,7 +55,7 @@ Fix multi-pet same-room reservation issues:
 
 ## Priority 1: CRITICAL (Do This Month) 🟠
 
-### 4. Staging Environment
+### 3. Staging Environment
 
 **Effort**: 1 week  
 **Impact**: Prevents production bugs
@@ -114,31 +71,7 @@ Set up proper staging environment:
 
 **Why**: Currently deploying directly to production. High risk of bugs affecting customers.
 
-### 5. Audit Logging for Sensitive Operations ✅
-
-**Effort**: 1 week  
-**Impact**: Required for compliance and security  
-**Status**: COMPLETED (v1.6.2)
-
-Implement comprehensive audit logging:
-
-- ✅ Log all data modifications (create, update, delete)
-- ✅ Track user actions (who, what, when, where)
-- ✅ Log authentication events
-- ✅ Log permission changes
-- ✅ Create audit log viewer for admins (`/admin/audit-logs`)
-- ✅ Retention policy (7 years for compliance) - TenantAuditLog model
-
-**Implementation**:
-
-- `TenantAuditLog` Prisma model with comprehensive fields
-- `tenant-audit-log.service.ts` - Service with convenience methods
-- Audit logging added to Customer and Reservation controllers
-- Admin UI at `/admin/audit-logs` with filtering and search
-
-**Why**: No record of who did what. Required for GDPR, security investigations, and customer support.
-
-### 6. Increase Test Coverage
+### 4. Increase Test Coverage
 
 **Effort**: 2 weeks  
 **Impact**: Reduces production bugs
@@ -157,7 +90,7 @@ Expand automated testing:
 
 **Why**: Current test coverage is insufficient for production SaaS application.
 
-### 7. SendGrid and Twilio Configuration
+### 5. SendGrid and Twilio Configuration
 
 **Effort**: 2-4 hours  
 **Impact**: Production-ready notifications
@@ -171,7 +104,7 @@ Configure production email and SMS:
 - Delivery tracking and logging
 - Bounce and complaint handling
 
-### 8. Grooming Calendar Testing
+### 6. Grooming Calendar Testing
 
 **Effort**: 1-2 days  
 **Impact**: Validates grooming functionality
@@ -184,7 +117,7 @@ Test and fix grooming calendar functionality:
 - Time slot management
 - Conflict detection
 
-### 9. Loyalty Rewards & Coupons Testing
+### 7. Loyalty Rewards & Coupons Testing
 
 **Effort**: 1-2 days  
 **Impact**: Validates marketing features
@@ -201,7 +134,7 @@ Test loyalty and coupon systems:
 
 ## Priority 2: HIGH (Do This Quarter - Before 1,000 Tenants)
 
-### 10. API Gateway Implementation
+### 8. API Gateway Implementation
 
 **Effort**: 2 weeks  
 **Impact**: Centralized API management and security
@@ -217,7 +150,7 @@ Implement API Gateway (Kong or Tyk):
 
 **Why**: Need centralized control over API traffic, versioning, and security as we scale.
 
-### 11. Message Queue for Async Operations
+### 9. Message Queue for Async Operations
 
 **Effort**: 1 week  
 **Impact**: Improves response times and reliability
