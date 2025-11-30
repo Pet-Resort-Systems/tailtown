@@ -412,6 +412,28 @@ app.use("/monitoring", monitoringRoutes);
 // ============================================
 // PUBLIC API ROUTES (MUST BE FIRST - no authentication required)
 // ============================================
+// Customer lookup for booking portal login (public, rate-limited)
+import { lookupCustomerByEmail } from "./controllers/customer.controller";
+
+const customerLookupLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: process.env.NODE_ENV === "production" ? 10 : 100, // Higher limit for dev/test
+  message: {
+    success: false,
+    error: "Too many lookup attempts, please try again later",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.post(
+  "/api/customers/lookup",
+  requireTenant,
+  customerLookupLimiter,
+  requireJsonContentType,
+  lookupCustomerByEmail
+);
+
 // Announcement Routes (GET is public, write requires admin - auth handled in routes)
 app.use("/api/announcements", requireTenant, announcementRoutes);
 

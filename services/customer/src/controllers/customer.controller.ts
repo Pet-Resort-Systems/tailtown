@@ -738,3 +738,78 @@ export const getCustomerPayments = async (
     next(error);
   }
 };
+
+/**
+ * Public customer lookup by email - for booking portal login
+ * Returns minimal info to prevent data leakage
+ * Rate limited to prevent enumeration attacks
+ */
+export const lookupCustomerByEmail = async (
+  req: TenantRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email } = req.body;
+    const tenantId = req.tenantId!;
+
+    if (!email || typeof email !== "string") {
+      return next(new AppError("Email is required", 400));
+    }
+
+    // Normalize email
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Find customer by email
+    const customer = await prisma.customer.findFirst({
+      where: {
+        tenantId,
+        email: {
+          equals: normalizedEmail,
+          mode: "insensitive",
+        },
+        isActive: true,
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        portalEnabled: true,
+      },
+    });
+
+    if (!customer) {
+      return res.status(404).json({
+        success: false,
+        error: "Customer not found",
+        message: "No customer found with this email address",
+      });
+    }
+
+    if (customer.portalEnabled === false) {
+      return res.status(403).json({
+        success: false,
+        error: "Portal access disabled",
+        message:
+          "Your account does not have portal access. Please contact the business.",
+      });
+    }
+
+    // Return customer data for booking portal
+    res.status(200).json({
+      success: true,
+      data: {
+        id: customer.id,
+        firstName: customer.firstName,
+        lastName: customer.lastName,
+        email: customer.email,
+        phone: customer.phone,
+      },
+    });
+  } catch (error) {
+    logger.error("Customer lookup error", { error });
+    next(error);
+  }
+};

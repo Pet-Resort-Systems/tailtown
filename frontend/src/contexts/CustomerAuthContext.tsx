@@ -3,8 +3,8 @@
  * Separate from staff AuthContext to keep customer and staff auth isolated
  */
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { customerService } from '../services/customerService';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { customerService } from "../services/customerService";
 
 interface Customer {
   id: string;
@@ -30,9 +30,13 @@ interface CustomerAuthContextType {
   updateCustomer: (data: Partial<Customer>) => void;
 }
 
-const CustomerAuthContext = createContext<CustomerAuthContextType | undefined>(undefined);
+const CustomerAuthContext = createContext<CustomerAuthContextType | undefined>(
+  undefined
+);
 
-export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -40,12 +44,12 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const savedCustomer = localStorage.getItem('customer');
+        const savedCustomer = localStorage.getItem("customer");
         if (savedCustomer) {
           setCustomer(JSON.parse(savedCustomer));
         }
       } catch (error) {
-        console.error('Error checking session:', error);
+        console.error("Error checking session:", error);
       } finally {
         setIsLoading(false);
       }
@@ -54,26 +58,24 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
     checkSession();
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, _password: string) => {
     try {
-      // TODO(auth): Implement actual customer login API endpoint
-      // Current: Simulated login via customer search
-      // Needed: POST /api/customers/auth/login endpoint
-      // - Verify email and password hash
-      // - Generate JWT token
-      // - Return customer data with token
-      // - Store token in localStorage/sessionStorage
-      const response = await customerService.searchCustomers(email, 1, 1);
-      
-      if (response.data && response.data.length > 0) {
-        const customerData = response.data[0];
-        setCustomer(customerData);
-        localStorage.setItem('customer', JSON.stringify(customerData));
-      } else {
-        throw new Error('Customer not found');
+      // Use public lookup endpoint (no auth required)
+      // Note: Password is currently not verified - future enhancement
+      // TODO(auth): Add password verification when customer passwords are implemented
+      const customerData = await customerService.lookupByEmail(email);
+
+      setCustomer(customerData);
+      localStorage.setItem("customer", JSON.stringify(customerData));
+    } catch (error: any) {
+      // Re-throw with user-friendly message
+      if (error.response?.status === 404) {
+        throw new Error("Customer not found");
+      } else if (error.response?.status === 403) {
+        throw new Error("Portal access disabled for this account");
+      } else if (error.response?.status === 429) {
+        throw new Error("Too many login attempts. Please try again later.");
       }
-    } catch (error) {
-      console.error('Login error:', error);
       throw error;
     }
   };
@@ -92,27 +94,27 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
         zipCode: customerData.zipCode,
         emergencyContact: customerData.emergencyContact,
         emergencyPhone: customerData.emergencyPhone,
-        isActive: true
+        isActive: true,
       });
 
       setCustomer(newCustomer);
-      localStorage.setItem('customer', JSON.stringify(newCustomer));
+      localStorage.setItem("customer", JSON.stringify(newCustomer));
     } catch (error) {
-      console.error('Signup error:', error);
+      console.error("Signup error:", error);
       throw error;
     }
   };
 
   const logout = () => {
     setCustomer(null);
-    localStorage.removeItem('customer');
+    localStorage.removeItem("customer");
   };
 
   const updateCustomer = (data: Partial<Customer>) => {
     if (customer) {
       const updated = { ...customer, ...data };
       setCustomer(updated);
-      localStorage.setItem('customer', JSON.stringify(updated));
+      localStorage.setItem("customer", JSON.stringify(updated));
     }
   };
 
@@ -125,7 +127,7 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
         login,
         signup,
         logout,
-        updateCustomer
+        updateCustomer,
       }}
     >
       {children}
@@ -136,7 +138,7 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
 export const useCustomerAuth = () => {
   const context = useContext(CustomerAuthContext);
   if (context === undefined) {
-    throw new Error('useCustomerAuth must be used within CustomerAuthProvider');
+    throw new Error("useCustomerAuth must be used within CustomerAuthProvider");
   }
   return context;
 };
