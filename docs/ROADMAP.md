@@ -16,13 +16,13 @@
 ### Priority 1: CRITICAL (Do This Month)
 
 - ❌ **Staging Environment** - Not started
-- ✅ **Test Coverage** - Phase 1 complete (50% coverage, 822 tests)
+- 🟡 **Test Coverage Phase 2** - Phase 1 complete (v1.6.4), targeting 70%+
 - 🟡 **SendGrid/Twilio** - Code ready, needs API keys configured
 - ❌ **Grooming Calendar Testing** - Not started
 - ❌ **Loyalty/Coupons Testing** - Not started
 - ❌ **Rate Limiting** - For public booking endpoints
 
-**Status**: 1/6 complete
+**Status**: 0/6 complete (Phase 1 items moved to changelog)
 
 ---
 
@@ -71,21 +71,12 @@ Set up proper staging environment:
 
 **Why**: Currently deploying directly to production. High risk of bugs affecting customers.
 
-### 4. Increase Test Coverage
+### 4. Increase Test Coverage - Phase 2
 
-**Effort**: 2 weeks  
-**Impact**: Reduces production bugs  
-**Status**: ✅ Phase 1 Complete - Reservation service at 50% coverage (822 tests)
+**Effort**: 1-2 weeks  
+**Impact**: Reduces production bugs
 
-_Updated Nov 29, 2025: Expanded from 8% to 50% coverage_
-
-**Completed**:
-
-- ✅ Tenant isolation tests for reservation service
-- ✅ Controller tests (reservation, resource, check-in, error-tracking)
-- ✅ Route tests (all major routes covered)
-- ✅ Utility tests (monitoring, logger, prisma-helpers)
-- ✅ Middleware tests (catchAsync, tenant isolation)
+_Phase 1 complete (v1.6.4): Reservation service at 50% coverage with 822 tests_
 
 **Remaining**:
 
@@ -262,30 +253,7 @@ Optimize reservation service queries:
 - Optimize batch operations
 - Add query performance monitoring
 
-### 18. Reservation Service - Test Coverage Expansion
-
-**Effort**: 2-3 weeks  
-**Impact**: Reduces bugs in critical service  
-**Status**: ✅ Phase 1 Complete (50% coverage achieved)
-
-_Updated Nov 29, 2025: Expanded from 8% to 50% coverage with 822 passing tests_
-
-**Completed**:
-
-- ✅ Unit tests for controllers (reservation, resource, check-in, error-tracking)
-- ✅ Route tests (reservation, resource, check-in, monitoring, error-tracking)
-- ✅ Utility tests (monitoring, logger, prisma-helpers, customer-service client)
-- ✅ Middleware tests (catchAsync, tenant isolation)
-- ✅ Schema validation tests
-- ✅ Tenant isolation verification
-
-**Remaining for 70%+**:
-
-- Integration tests for invoices and payments
-- Create/update reservation controller integration tests
-- Performance benchmarks
-
-### 19. Notification System Testing
+### 18. Notification System Testing
 
 **Effort**: 1 week  
 **Impact**: Ensures reliable notifications
@@ -298,23 +266,12 @@ Audit and fix notification system:
 - Notification preferences
 - Delivery logs and tracking
 
-### 20. Code Optimization and Cleanup
+### 19. Code Optimization and Cleanup
 
-**Effort**: 1-2 weeks  
-**Impact**: Improves maintainability  
-**Status**: 🟡 In Progress
+**Effort**: 1 week  
+**Impact**: Improves maintainability
 
-_Completed items in [CHANGELOG.md](../CHANGELOG.md) v1.2.8: Console.log removal, structured logging, AppError standardization_
-
-**Completed**:
-
-- ✅ `staff.controller.ts` (1804 lines) → Split into 6 modules (all <500 lines)
-  - staff-crud.controller.ts, staff-auth.controller.ts
-  - staff-availability.controller.ts, staff-time-off.controller.ts
-  - staff-schedule.controller.ts, staff-profile.controller.ts
-- ✅ `reservation.controller.ts` (1388 lines) → Split into 4 modules (all <500 lines)
-  - reservation-queries.controller.ts, reservation-crud.controller.ts
-  - reservation-extras.controller.ts, utils/order-number.ts
+_Completed: staff.controller.ts and reservation.controller.ts refactored (v1.6.5)_
 
 **Remaining**:
 
@@ -330,7 +287,7 @@ _Completed items in [CHANGELOG.md](../CHANGELOG.md) v1.2.8: Console.log removal,
 
 ## Priority 3: MEDIUM (SaaS Readiness - Before 10,000 Tenants)
 
-### 21. Redis Caching - Phase 2
+### 20. Redis Caching - Phase 2
 
 **Effort**: 1-2 weeks
 
@@ -343,7 +300,7 @@ Expand Redis caching beyond tenant lookups:
 - Cache warming strategies
 - Cache hit rate monitoring
 
-### 22. Feature Flags System
+### 21. Feature Flags System
 
 **Effort**: 1 week
 
@@ -356,7 +313,7 @@ Implement feature flag management:
 - Flag audit logging
 - A/B testing capabilities
 
-### 23. Service Module Toggles
+### 22. Service Module Toggles
 
 **Effort**: 1 week
 
@@ -368,7 +325,7 @@ Enable/disable service modules per tenant:
 - Retail Inventory toggle
 - Report Card System toggle
 
-### 28. Tenant Onboarding Automation
+### 23. Tenant Onboarding Automation
 
 **Effort**: 2 weeks
 
@@ -381,7 +338,7 @@ Automate new tenant setup:
 - Payment setup
 - Onboarding wizard
 
-### 29. Billing & Subscription Management
+### 24. Billing & Subscription Management
 
 **Effort**: 2-3 weeks
 
@@ -394,7 +351,7 @@ Implement SaaS billing:
 - Payment method management
 - Billing portal
 
-### 30. Tenant Analytics Dashboard
+### 25. Tenant Analytics Dashboard
 
 **Effort**: 1 week
 
@@ -406,7 +363,7 @@ Per-tenant analytics:
 - User activity tracking
 - Custom reports
 
-### 31. Multi-Timezone Support
+### 26. Multi-Timezone Support
 
 **Effort**: 1 week
 
@@ -418,7 +375,7 @@ Full timezone support:
 - Timezone-aware scheduling
 - Display in user's local time
 
-### 32. Advanced Reporting System
+### 27. Advanced Reporting System
 
 **Effort**: 2 weeks
 
@@ -431,7 +388,7 @@ Enhanced reporting capabilities:
 - Report templates
 - Data visualization
 
-### 33. Mobile App Development
+### 28. Mobile App Development
 
 **Effort**: 3-4 months
 
@@ -448,7 +405,7 @@ Native mobile applications:
 
 ## Priority 4: LOW (Long-Term Architecture - After 1,000 Tenants)
 
-### 34. Database Per Service (Microservices)
+### 29. Database Per Service (Microservices)
 
 **Effort**: 4-6 weeks  
 **Impact**: True microservices independence
@@ -464,7 +421,7 @@ Separate databases for each service:
 
 **Why**: Shared database prevents independent scaling and deployment. Critical at 1,000+ tenants.
 
-### 35. Split Monolithic Services
+### 30. Split Monolithic Services
 
 **Effort**: 2-3 months  
 **Impact**: Better scalability and team autonomy
@@ -481,7 +438,7 @@ Break customer service into domain services:
 
 **Why**: Customer service is too large (10 domains). Hard to scale specific features.
 
-### 36. Database Partitioning
+### 31. Database Partitioning
 
 **Effort**: 2-3 weeks  
 **Impact**: Faster queries at massive scale
@@ -496,7 +453,7 @@ Implement PostgreSQL partitioning:
 
 **Why**: At 10,000+ tenants, queries scan millions of rows. Partitioning makes queries fast.
 
-### 37. Kubernetes Migration
+### 32. Kubernetes Migration
 
 **Effort**: 1-2 months  
 **Impact**: Enterprise-grade orchestration
@@ -512,7 +469,7 @@ Migrate to Kubernetes:
 
 **Why**: Need enterprise-grade orchestration for 1,000+ tenants.
 
-### 38. Chaos Engineering
+### 33. Chaos Engineering
 
 **Effort**: 2-3 weeks  
 **Impact**: Validates system resilience
@@ -532,7 +489,7 @@ Implement chaos testing:
 
 ## Priority 5: FUTURE (After 10,000 Tenants)
 
-### 39. AI-Powered Features
+### 34. AI-Powered Features
 
 **Effort**: 2-3 months
 
@@ -544,7 +501,7 @@ Machine learning capabilities:
 - Demand forecasting
 - Smart scheduling
 
-### 40. Advanced Integration Platform
+### 35. Advanced Integration Platform
 
 **Effort**: 1-2 months
 
@@ -557,7 +514,7 @@ Third-party integrations:
 - REST API documentation
 - GraphQL API
 
-### 41. White-Label Solution
+### 36. White-Label Solution
 
 **Effort**: 2-3 months
 
@@ -569,7 +526,7 @@ Customizable branding:
 - Branded mobile apps
 - Custom terms and privacy policy
 
-### 42. Multi-Language Support
+### 37. Multi-Language Support
 
 **Effort**: 1-2 months
 
@@ -581,7 +538,7 @@ Internationalization:
 - Currency localization
 - Date/time format localization
 
-### 43. Advanced Security Features
+### 38. Advanced Security Features
 
 **Effort**: 2 weeks
 
@@ -594,7 +551,7 @@ Enhanced security:
 - Security alerts
 - Compliance certifications (SOC 2, HIPAA)
 
-### 44. Database Per Tenant
+### 39. Database Per Tenant
 
 **Effort**: 3-4 months  
 **Impact**: Ultimate tenant isolation
@@ -648,5 +605,5 @@ True multi-tenant architecture:
 
 ---
 
-**Last Updated**: November 28, 2025  
+**Last Updated**: November 29, 2025  
 **Based on**: Senior Dev Review (Nov 7, 2025)

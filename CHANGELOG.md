@@ -5,6 +5,30 @@ All notable changes to the Tailtown Pet Resort Management System will be documen
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.5] - 2025-11-29
+
+### 🔧 Code Optimization - Controller Refactoring
+
+Refactored large controller files into modular, maintainable modules (all files now <500 lines).
+
+#### Customer Service - staff.controller.ts (1804 → 6 modules)
+
+- `staff-crud.controller.ts` (333 lines) - CRUD operations
+- `staff-auth.controller.ts` (381 lines) - Authentication
+- `staff-availability.controller.ts` (321 lines) - Availability management
+- `staff-time-off.controller.ts` (231 lines) - Time off management
+- `staff-schedule.controller.ts` (461 lines) - Schedule management
+- `staff-profile.controller.ts` (146 lines) - Profile photos
+
+#### Customer Service - reservation.controller.ts (1388 → 4 modules)
+
+- `reservation-queries.controller.ts` (415 lines) - Read operations
+- `reservation-crud.controller.ts` (491 lines) - Create, update, delete
+- `reservation-extras.controller.ts` (211 lines) - Revenue and add-ons
+- `utils/order-number.ts` (53 lines) - Order number generation
+
+---
+
 ## [1.6.4] - 2025-11-29
 
 ### 🧪 Reservation Service Test Coverage Expansion
