@@ -9,7 +9,7 @@
 
 - ❌ **Fix Multi-Pet Room Reservations** - Core booking functionality
 - ✅ **Sentry Error Tracking** - Backend complete, frontend deferred
-- 🟡 **Booking Portal Testing** - Phase 1-3 complete, needs E2E testing
+- ✅ **Booking Portal Testing** - E2E tests complete (Playwright)
 
 **Status**: Customer booking portal complete (v1.6.3). Focus on multi-pet reservations and testing.
 
