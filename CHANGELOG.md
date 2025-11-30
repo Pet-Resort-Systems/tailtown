@@ -9,29 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 📊 Sentry Error Tracking Integration
 
-Completed Sentry integration for production error monitoring.
+Completed Sentry integration for production error monitoring. **Backend is live in production.**
 
-**Backend (`customer-service`):**
+**Backend (`customer-service`) - ✅ DEPLOYED:**
 
 - Integrated `captureException` into error middleware for 5xx errors
 - User context (id, email, tenantId) attached to errors
 - Request breadcrumbs for debugging
-- Already had: initialization, performance monitoring, profiling
+- Performance monitoring and profiling integrations
+- DSN configured in production `.env`
+- Errors now visible at https://sentry.io
 
-**Frontend:**
+**Frontend - ⏸️ DEFERRED:**
 
-- Added `@sentry/react` package
-- Created `utils/sentry.ts` with same API as backend
-- Initialized in `index.tsx`
-- Browser tracing and session replay integrations
-- Error filtering for common non-critical errors
+- Code ready (`@sentry/react`, `utils/sentry.ts`, `index.tsx`)
+- Blocked by Node.js version on production (needs v20+)
+- Will deploy when production Node.js is upgraded
 
 **Configuration:**
 
 - Backend: `SENTRY_DSN`, `SENTRY_ENABLED`, `SENTRY_RELEASE`
 - Frontend: `REACT_APP_SENTRY_DSN`, `REACT_APP_SENTRY_ENABLED`
-
-**Next Step:** Configure DSN in production environment variables.
 
 ---
 

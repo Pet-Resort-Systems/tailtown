@@ -43,20 +43,6 @@ Fix multi-pet same-room reservation issues:
 
 ---
 
-### ~~2. Sentry Error Tracking~~ ✅ COMPLETE
-
-**Status**: Backend monitoring live in production (Nov 30, 2025)
-
-- ✅ Sentry account created
-- ✅ Backend DSN configured and capturing errors
-- ✅ Error middleware integrated with user context
-- ⏸️ Frontend deferred (Node.js upgrade needed on prod)
-- 🔧 Reservation service (future)
-
-> See [CHANGELOG v1.6.10](../CHANGELOG.md#1610---2025-11-30) for details
-
----
-
 ## Priority 1: CRITICAL (Do This Month) 🟠
 
 ### 3. Staging Environment
