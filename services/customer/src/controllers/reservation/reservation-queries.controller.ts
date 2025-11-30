@@ -16,6 +16,11 @@ import { Request, Response, NextFunction } from "express";
 import { PrismaClient, ReservationStatus } from "@prisma/client";
 import { AppError } from "../../middleware/error.middleware";
 import { logger } from "../../utils/logger";
+import {
+  reservationSelectForList,
+  reservationSelectFull,
+  petSelectMinimal,
+} from "../../utils/prisma-optimized";
 
 const prisma = new PrismaClient();
 
@@ -99,17 +104,13 @@ export const getAllReservations = async (
     const sortBy = (req.query.sortBy as string) || "startDate";
     const sortOrder = (req.query.sortOrder as "asc" | "desc") || "asc";
 
+    // Use optimized select instead of include: true to reduce data transfer
     const reservations = await prisma.reservation.findMany({
       where,
       skip,
       take: limit,
       orderBy: { [sortBy]: sortOrder },
-      include: {
-        customer: true,
-        pet: true,
-        resource: true,
-        service: true,
-      },
+      select: reservationSelectForList,
     });
 
     const total = await prisma.reservation.count({ where });
@@ -137,13 +138,10 @@ export const getReservationById = async (
   try {
     const { id } = req.params;
 
+    // Use full select for detail view
     const reservation = await prisma.reservation.findUnique({
       where: { id },
-      include: {
-        customer: true,
-        pet: true,
-        resource: true,
-      },
+      select: reservationSelectFull,
     });
 
     if (!reservation) {
@@ -173,12 +171,16 @@ export const getReservationsByCustomer = async (
     const limit = Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
+    // Use optimized select with minimal pet data
     const reservations = await prisma.reservation.findMany({
       where: { customerId },
       skip,
       take: limit,
       orderBy: { startDate: "desc" },
-      include: { pet: true },
+      select: {
+        ...reservationSelectForList,
+        pet: { select: petSelectMinimal },
+      },
     });
 
     const total = await prisma.reservation.count({
@@ -209,6 +211,7 @@ export const getUpcomingReservationsByCustomer = async (
     const { customerId } = req.params;
     const now = new Date();
 
+    // Use optimized select for list view
     const reservations = await prisma.reservation.findMany({
       where: {
         customerId,
@@ -216,10 +219,7 @@ export const getUpcomingReservationsByCustomer = async (
         status: { notIn: ["CANCELLED", "COMPLETED", "CHECKED_OUT", "NO_SHOW"] },
       },
       orderBy: { startDate: "asc" },
-      include: {
-        pet: true,
-        resource: true,
-      },
+      select: reservationSelectForList,
     });
 
     res.status(200).json({

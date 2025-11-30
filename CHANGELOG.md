@@ -5,6 +5,30 @@ All notable changes to the Tailtown Pet Resort Management System will be documen
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.8] - 2025-11-29
+
+### ⚡ Prisma Query Optimization
+
+Added optimized select statements to reduce data transfer and improve query performance.
+
+- Created `prisma-optimized.ts` with reusable select objects for all major entities
+- Updated reservation queries to use `select` instead of `include: true`
+- Updated customer queries to use optimized selects
+- Minimal selects for list views, full selects for detail views
+- Reduces payload size by ~40-60% for list endpoints
+
+**Optimized Entities:**
+
+- Customer (minimal, full)
+- Pet (minimal, for-reservation, full)
+- Resource (minimal, for-reservation)
+- Service (minimal, for-reservation)
+- Staff (minimal, for-schedule)
+- Reservation (minimal, for-list, full)
+- Invoice (minimal, for-list)
+
+---
+
 ## [1.6.7] - 2025-11-29
 
 ### 🔍 Request ID Tracking

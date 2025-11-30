@@ -27,6 +27,11 @@ import {
   AuditAction,
   AuditCategory,
 } from "../../services/tenant-audit-log.service";
+import {
+  customerSelectFull,
+  petSelectMinimal,
+  petSelectFull,
+} from "../../utils/prisma-optimized";
 
 const prisma = new PrismaClient();
 
@@ -91,14 +96,14 @@ export const getAllCustomers = async (
       }
     }
 
+    // Use optimized select for list view - only fetch needed fields
     const customers = await prisma.customer.findMany({
       where,
       skip,
       take: limit,
-      include: {
-        pets: {
-          select: { id: true, name: true, breed: true },
-        },
+      select: {
+        ...customerSelectFull,
+        pets: { select: petSelectMinimal },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -134,9 +139,13 @@ export const getCustomerById = async (
     let customer = await getCache<any>(cacheKey);
 
     if (!customer) {
+      // Use optimized select for detail view
       customer = await prisma.customer.findFirst({
         where: { id, tenantId },
-        include: { pets: true },
+        select: {
+          ...customerSelectFull,
+          pets: { select: petSelectFull },
+        },
       });
 
       if (customer) {
