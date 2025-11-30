@@ -8,7 +8,7 @@
 ### Priority 0: IMMEDIATE (Do This Week)
 
 - ❌ **Fix Multi-Pet Room Reservations** - Core booking functionality
-- 🟡 **Sentry Error Tracking** - Code ready, needs DSN configured
+- ✅ **Sentry Error Tracking** - Backend complete, frontend deferred
 - 🟡 **Booking Portal Testing** - Phase 1-3 complete, needs E2E testing
 
 **Status**: Customer booking portal complete (v1.6.3). Focus on multi-pet reservations and testing.
@@ -43,13 +43,17 @@ Fix multi-pet same-room reservation issues:
 
 ---
 
-### 2. Sentry Error Tracking 🟡 CODE READY
+### ~~2. Sentry Error Tracking~~ ✅ COMPLETE
 
-**Status**: Code implemented, just needs configuration (15 minutes)
+**Status**: Backend monitoring live in production (Nov 30, 2025)
 
-- Create Sentry account ($26/month)
-- Add `SENTRY_DSN` to production `.env`
-- Add to reservation service (copy from customer service)
+- ✅ Sentry account created
+- ✅ Backend DSN configured and capturing errors
+- ✅ Error middleware integrated with user context
+- ⏸️ Frontend deferred (Node.js upgrade needed on prod)
+- 🔧 Reservation service (future)
+
+> See [CHANGELOG v1.6.10](../CHANGELOG.md#1610---2025-11-30) for details
 
 ---
 
@@ -539,5 +543,5 @@ True multi-tenant architecture:
 
 ---
 
-**Last Updated**: November 29, 2025  
+**Last Updated**: November 30, 2025  
 **Based on**: Senior Dev Review (Nov 7, 2025)
