@@ -34,7 +34,11 @@ jest.mock("../../controllers/resource/resource.controller", () => ({
   updateResource: jest.fn((req, res) =>
     res.json({ status: "success", data: {} })
   ),
-  deleteResource: jest.fn((req, res) => res.status(204).send()),
+  deleteResource: jest.fn((req, res) =>
+    res
+      .status(200)
+      .json({ status: "success", message: "Resource deleted successfully" })
+  ),
   getResourceAvailability: jest.fn((req, res) =>
     res.json({ status: "success", data: { isAvailable: true } })
   ),
@@ -142,10 +146,10 @@ describe("Resource Routes", () => {
       expect(deleteResource).toHaveBeenCalled();
     });
 
-    it("should return 204 on success", async () => {
+    it("should return 200 on success", async () => {
       const response = await request(app).delete("/api/resources/res-123");
 
-      expect(response.status).toBe(204);
+      expect(response.status).toBe(200);
     });
   });
 

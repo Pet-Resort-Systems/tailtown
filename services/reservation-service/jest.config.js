@@ -20,10 +20,10 @@ module.exports = {
   ],
   coverageThreshold: {
     global: {
-      branches: 35,
-      functions: 45,
-      lines: 42,
-      statements: 42,
+      branches: 40,
+      functions: 50,
+      lines: 48,
+      statements: 48,
     },
   },
   testPathIgnorePatterns: ["/node_modules/", "/_archived/", "/integration/"],
