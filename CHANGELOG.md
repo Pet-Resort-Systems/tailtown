@@ -5,6 +5,46 @@ All notable changes to the Tailtown Pet Resort Management System will be documen
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.4] - 2025-11-29
+
+### 🧪 Reservation Service Test Coverage Expansion
+
+Expanded test coverage from 8% to 50% with 822 passing tests.
+
+#### Coverage Metrics
+
+| Metric     | Before | After  | Change  |
+| ---------- | ------ | ------ | ------- |
+| Statements | 7.74%  | 49.5%  | +41.76% |
+| Branches   | 6.87%  | 41.19% | +34.32% |
+| Functions  | 5.61%  | 54.48% | +48.87% |
+| Lines      | 8%     | 49.44% | +41.44% |
+| Tests      | 88     | 822    | +734    |
+
+#### New Test Files
+
+- `resource.controller.integration.test.ts` - Resource CRUD operations
+- `reservation.controller.test.ts` - Extended reservation tests
+- `check-in-template.controller.extended.test.ts` - Check-in template tests
+- `service-agreement.controller.extended.test.ts` - Service agreement tests
+- `get-errors.controller.test.ts` - Error tracking tests
+- `resolve-error.controller.test.ts` - Error resolution tests
+- `monitoring.routes.test.ts` - Monitoring endpoints
+- `error-tracking.routes.test.ts` - Error tracking routes
+- `customer-service.client.test.ts` - Customer service client
+- `prisma-helpers.test.ts` - Database helper functions
+
+#### Key Areas Covered
+
+- Controller tests (reservation, resource, check-in, error-tracking)
+- Route tests (all major routes)
+- Utility tests (monitoring, logger, prisma-helpers)
+- Middleware tests (catchAsync, tenant isolation)
+- Schema validation tests
+- Tenant isolation verification
+
+---
+
 ## [1.6.3] - 2025-11-29
 
 ### 👤 Customer Account Portal (Phase 3)
