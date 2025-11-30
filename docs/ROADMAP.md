@@ -301,19 +301,26 @@ Audit and fix notification system:
 ### 20. Code Optimization and Cleanup
 
 **Effort**: 1-2 weeks  
-**Impact**: Improves maintainability
-**Status**: Partially complete
+**Impact**: Improves maintainability  
+**Status**: 🟡 In Progress
 
 _Completed items in [CHANGELOG.md](../CHANGELOG.md) v1.2.8: Console.log removal, structured logging, AppError standardization_
+
+**Completed**:
+
+- ✅ `staff.controller.ts` (1804 lines) → Split into 6 modules (all <500 lines)
+  - staff-crud.controller.ts, staff-auth.controller.ts
+  - staff-availability.controller.ts, staff-time-off.controller.ts
+  - staff-schedule.controller.ts, staff-profile.controller.ts
 
 **Remaining**:
 
 - Refactor large controller files (>500 lines):
-  - `staff.controller.ts` (1625 lines) - CRITICAL
-  - `reservation.controller.ts` (1065 lines)
+  - `reservation.controller.ts` (1387 lines) - Customer service
   - `reportCard.controller.ts` (855 lines)
   - `reports.controller.ts` (842 lines)
-  - `resource.controller.ts` (830 lines)
+  - `resource.controller.ts` (830 lines) - Customer service
+  - `customer.controller.ts` (815 lines)
 - Remove unused code and variables
 - Optimize imports and dependencies
 
