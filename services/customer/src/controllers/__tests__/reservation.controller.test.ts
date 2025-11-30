@@ -9,7 +9,7 @@
  */
 
 import { Request, Response, NextFunction } from "express";
-import { getAllReservations } from "../reservation.controller";
+import { getAllReservations } from "../reservation";
 
 // Mock Prisma
 jest.mock("@prisma/client", () => {

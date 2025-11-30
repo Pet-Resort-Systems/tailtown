@@ -1,19 +1,22 @@
 import { Router } from "express";
 import {
+  // Query operations
   getAllReservations,
   getReservationById,
-  createReservation,
-  updateReservation,
-  deleteReservation,
   getReservationsByCustomer,
   getUpcomingReservationsByCustomer,
   getPastReservationsByCustomer,
   getReservationsByPet,
   getReservationsByDateRange,
   getReservationsByStatus,
+  // CRUD operations
+  createReservation,
+  updateReservation,
+  deleteReservation,
+  // Extras
   getTodayRevenue,
   addAddOnsToReservation,
-} from "../controllers/reservation.controller";
+} from "../controllers/reservation";
 
 const router = Router();
 
