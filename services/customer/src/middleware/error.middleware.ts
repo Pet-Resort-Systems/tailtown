@@ -8,6 +8,7 @@
 
 import { Request, Response, NextFunction } from "express";
 import { logger as appLogger } from "../utils/logger";
+import { captureException, setUser, addBreadcrumb } from "../utils/sentry";
 
 /**
  * Standardized error types
@@ -339,6 +340,39 @@ export const errorHandler = (
 
   if (err.name === "ValidationError") {
     err = AppError.validationError(err.message, err.details || err.errors);
+  }
+
+  // Capture error in Sentry for server errors (5xx)
+  if (err.statusCode >= 500) {
+    // Set user context if available
+    const user = (req as any).user;
+    const tenantId = (req as any).tenantId;
+    if (user || tenantId) {
+      setUser({
+        id: user?.id || "anonymous",
+        email: user?.email,
+        tenantId,
+      });
+    }
+
+    // Add request breadcrumb
+    addBreadcrumb(`${req.method} ${req.path}`, "http", {
+      url: req.originalUrl,
+      method: req.method,
+      statusCode: err.statusCode,
+      requestId: req.requestId,
+    });
+
+    // Capture the exception
+    captureException(err, {
+      requestId: req.requestId,
+      tenantId,
+      path: req.path,
+      method: req.method,
+      statusCode: err.statusCode,
+      errorType: err.type,
+      ...err.context,
+    });
   }
 
   if (process.env.NODE_ENV === "development") {

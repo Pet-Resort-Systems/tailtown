@@ -5,6 +5,36 @@ All notable changes to the Tailtown Pet Resort Management System will be documen
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.10] - 2025-11-30
+
+### 📊 Sentry Error Tracking Integration
+
+Completed Sentry integration for production error monitoring.
+
+**Backend (`customer-service`):**
+
+- Integrated `captureException` into error middleware for 5xx errors
+- User context (id, email, tenantId) attached to errors
+- Request breadcrumbs for debugging
+- Already had: initialization, performance monitoring, profiling
+
+**Frontend:**
+
+- Added `@sentry/react` package
+- Created `utils/sentry.ts` with same API as backend
+- Initialized in `index.tsx`
+- Browser tracing and session replay integrations
+- Error filtering for common non-critical errors
+
+**Configuration:**
+
+- Backend: `SENTRY_DSN`, `SENTRY_ENABLED`, `SENTRY_RELEASE`
+- Frontend: `REACT_APP_SENTRY_DSN`, `REACT_APP_SENTRY_ENABLED`
+
+**Next Step:** Configure DSN in production environment variables.
+
+---
+
 ## [1.6.9] - 2025-11-29
 
 ### 🚩 Feature Flags & Service Module Toggles

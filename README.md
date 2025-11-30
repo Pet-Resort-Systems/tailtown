@@ -5,7 +5,7 @@
 
 **Status:** 🟢 **LIVE IN PRODUCTION**  
 **Production URL:** https://canicloud.com (multi-tenant subdomains)  
-**Version:** 1.6.9  
+**Version:** 1.6.10  
 **Last Updated:** November 29, 2025  
 **Codebase:** ~199,000 lines of TypeScript
 
