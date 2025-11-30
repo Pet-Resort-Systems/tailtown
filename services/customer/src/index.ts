@@ -96,6 +96,10 @@ app.set("trust proxy", 1);
 app.set("etag", false); // Disable ETag generation to reduce header size
 app.set("x-powered-by", false); // Remove unnecessary headers
 
+// Request ID middleware - MUST be first to ensure all requests have an ID
+import { requestIdMiddleware } from "./middleware/requestId.middleware";
+app.use(requestIdMiddleware);
+
 // Request logging middleware
 app.use((req, res, next) => {
   // Request logging handled by Morgan middleware

@@ -10,12 +10,16 @@ import morgan from "morgan";
 import compression from "compression";
 import rateLimit from "express-rate-limit";
 import { logger } from "./logger";
+import { requestIdMiddleware } from "../middleware/requestId.middleware";
 
 /**
  * Create and configure an Express service with standard middleware
  */
 export function createService(options: { name: string; version: string }) {
   const app = express();
+
+  // Request ID middleware - MUST be first to ensure all requests have an ID
+  app.use(requestIdMiddleware);
 
   // Apply standard middleware
   // Enable gzip compression for all responses

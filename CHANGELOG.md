@@ -5,6 +5,21 @@ All notable changes to the Tailtown Pet Resort Management System will be documen
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.7] - 2025-11-29
+
+### 🔍 Request ID Tracking
+
+Added distributed tracing with request IDs for better debugging across services.
+
+- Added `requestId.middleware.ts` to both customer and reservation services
+- Auto-generates UUID for each request if not present
+- Passes through existing request ID from upstream services (X-Request-ID header)
+- Includes request ID in all error responses
+- Adds X-Request-ID to response headers for client correlation
+- Helper function `getRequestIdHeaders()` for service-to-service calls
+
+---
+
 ## [1.6.6] - 2025-11-29
 
 ### 🔧 Code Optimization - Controller Refactoring (Phase 2)
