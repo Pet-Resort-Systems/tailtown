@@ -312,11 +312,13 @@ _Completed items in [CHANGELOG.md](../CHANGELOG.md) v1.2.8: Console.log removal,
   - staff-crud.controller.ts, staff-auth.controller.ts
   - staff-availability.controller.ts, staff-time-off.controller.ts
   - staff-schedule.controller.ts, staff-profile.controller.ts
+- ✅ `reservation.controller.ts` (1388 lines) → Split into 4 modules (all <500 lines)
+  - reservation-queries.controller.ts, reservation-crud.controller.ts
+  - reservation-extras.controller.ts, utils/order-number.ts
 
 **Remaining**:
 
 - Refactor large controller files (>500 lines):
-  - `reservation.controller.ts` (1387 lines) - Customer service
   - `reportCard.controller.ts` (855 lines)
   - `reports.controller.ts` (842 lines)
   - `resource.controller.ts` (830 lines) - Customer service
