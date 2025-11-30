@@ -280,4 +280,148 @@ describe("Reservation Controller", () => {
       expect(petValid).toBe(true);
     });
   });
+
+  describe("getReservationById - Extended Tests", () => {
+    it("should include customer and pet details in response", async () => {
+      mockRequest.params = { id: "reservation-1" };
+
+      const mockReservation = {
+        id: "reservation-1",
+        customerId: "customer-1",
+        petId: "pet-1",
+        resourceId: "resource-1",
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        status: "CONFIRMED",
+        organizationId: "tenant-1",
+        customer: {
+          id: "customer-1",
+          firstName: "John",
+          lastName: "Doe",
+        },
+        pet: {
+          id: "pet-1",
+          name: "Buddy",
+        },
+      };
+
+      (prisma.reservation.findFirst as jest.Mock).mockResolvedValue(
+        mockReservation
+      );
+
+      await getReservationById(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext
+      );
+
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: "success",
+          data: expect.objectContaining({
+            reservation: expect.objectContaining({
+              id: "reservation-1",
+            }),
+          }),
+        })
+      );
+    });
+
+    it("should enforce tenant isolation", async () => {
+      mockRequest.params = { id: "reservation-1" };
+      (mockRequest as any).tenantId = "tenant-2";
+
+      (prisma.reservation.findFirst as jest.Mock).mockResolvedValue(null);
+
+      await expect(
+        getReservationById(
+          mockRequest as Request,
+          mockResponse as Response,
+          mockNext
+        )
+      ).rejects.toThrow();
+
+      expect(prisma.reservation.findFirst).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            tenantId: "tenant-2",
+          }),
+        })
+      );
+    });
+  });
+
+  describe("deleteReservation - Extended Tests", () => {
+    it("should delete associated add-ons before reservation", async () => {
+      mockRequest.params = { id: "reservation-1" };
+
+      const mockReservation = {
+        id: "reservation-1",
+        customerId: "customer-1",
+        petId: "pet-1",
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        status: "PENDING",
+        organizationId: "tenant-1",
+      };
+
+      (prisma.reservation.findFirst as jest.Mock).mockResolvedValue(
+        mockReservation
+      );
+      (prisma.reservationAddOn.deleteMany as jest.Mock).mockResolvedValue({
+        count: 2,
+      });
+      (prisma.reservation.delete as jest.Mock).mockResolvedValue(
+        mockReservation
+      );
+
+      await deleteReservation(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext
+      );
+
+      expect(prisma.reservationAddOn.deleteMany).toHaveBeenCalledWith({
+        where: { reservationId: "reservation-1" },
+      });
+      expect(prisma.reservation.delete).toHaveBeenCalled();
+    });
+
+    it("should return success message on deletion", async () => {
+      mockRequest.params = { id: "reservation-1" };
+
+      const mockReservation = {
+        id: "reservation-1",
+        customerId: "customer-1",
+        petId: "pet-1",
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        status: "CANCELLED",
+        organizationId: "tenant-1",
+      };
+
+      (prisma.reservation.findFirst as jest.Mock).mockResolvedValue(
+        mockReservation
+      );
+      (prisma.reservationAddOn.deleteMany as jest.Mock).mockResolvedValue({
+        count: 0,
+      });
+      (prisma.reservation.delete as jest.Mock).mockResolvedValue(
+        mockReservation
+      );
+
+      await deleteReservation(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext
+      );
+
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: "success",
+          message: expect.stringContaining("deleted"),
+        })
+      );
+    });
+  });
 });
