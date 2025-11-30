@@ -61,6 +61,7 @@ import waitlistRoutes from "./routes/waitlist.routes";
 import reportCardRoutes from "./routes/reportCard.routes";
 import daycarePassRoutes from "./routes/daycare-pass.routes";
 import auditLogRoutes from "./routes/audit-log.routes";
+import featureFlagsRoutes from "./routes/feature-flags.routes";
 import { systemRoutes } from "./routes/system.routes";
 import { errorHandler } from "./middleware/error.middleware";
 import {
@@ -498,6 +499,9 @@ app.use(
   requireTenantAdmin,
   auditLogRoutes
 );
+
+// Feature Flags Routes (tenant context required, some routes need auth)
+app.use("/api/feature-flags", requireTenant, featureFlagsRoutes);
 
 // ============================================
 // STAFF ROUTES (require authentication)

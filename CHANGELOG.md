@@ -5,6 +5,50 @@ All notable changes to the Tailtown Pet Resort Management System will be documen
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.9] - 2025-11-29
+
+### 🚩 Feature Flags & Service Module Toggles
+
+Implemented a comprehensive feature flag system for per-tenant feature management.
+
+**Database Schema:**
+
+- `FeatureFlag` - Global flag definitions with rollout percentage support
+- `TenantFeatureFlag` - Per-tenant overrides with audit trail
+
+**Service (`feature-flag.service.ts`):**
+
+- Redis-cached flag lookups (5 min TTL)
+- Per-tenant and per-user overrides
+- Gradual rollout support (percentage-based)
+- Predefined service module and feature flags
+
+**Middleware (`feature-flag.middleware.ts`):**
+
+- `requireFeature(key)` - Protect routes by feature flag
+- `requireServiceModule(key)` - Protect routes by service module
+- `attachFeatureFlags` - Attach all flags to request
+
+**API Endpoints (`/api/feature-flags`):**
+
+- `GET /` - Get all flags for tenant
+- `GET /service-modules` - Get service module flags
+- `GET /:key` - Check specific flag
+- Admin endpoints for managing flags
+
+**Predefined Service Modules:**
+
+- `boarding_daycare`, `grooming_services`, `training_classes`
+- `point_of_sale`, `retail_inventory`, `report_cards`
+
+**Predefined Features:**
+
+- `ai_recommendations`, `ai_pricing`, `ai_churn_prediction`
+- `advanced_reports`, `customer_portal`, `mobile_checkin`
+- `sms_notifications`, `email_marketing`
+
+---
+
 ## [1.6.8] - 2025-11-29
 
 ### ⚡ Prisma Query Optimization
