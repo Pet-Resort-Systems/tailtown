@@ -3,7 +3,7 @@
  * API endpoints for all reports
  */
 
-import express from 'express';
+import express from "express";
 import {
   getDailySales,
   getWeeklySales,
@@ -26,8 +26,8 @@ import {
   getStaffPerformance,
   getResourceUtilization,
   getBookingPatterns,
-  getCapacityAnalysis
-} from '../controllers/reports.controller';
+  getCapacityAnalysis,
+} from "../controllers/reports";
 
 const router = express.Router();
 
@@ -41,7 +41,7 @@ const router = express.Router();
  * @query   date (YYYY-MM-DD)
  * @access  Private
  */
-router.get('/sales/daily', getDailySales);
+router.get("/sales/daily", getDailySales);
 
 /**
  * @route   GET /api/reports/sales/weekly
@@ -49,7 +49,7 @@ router.get('/sales/daily', getDailySales);
  * @query   startDate, endDate (YYYY-MM-DD)
  * @access  Private
  */
-router.get('/sales/weekly', getWeeklySales);
+router.get("/sales/weekly", getWeeklySales);
 
 /**
  * @route   GET /api/reports/sales/monthly
@@ -57,7 +57,7 @@ router.get('/sales/weekly', getWeeklySales);
  * @query   year, month
  * @access  Private
  */
-router.get('/sales/monthly', getMonthlySales);
+router.get("/sales/monthly", getMonthlySales);
 
 /**
  * @route   GET /api/reports/sales/ytd
@@ -65,7 +65,7 @@ router.get('/sales/monthly', getMonthlySales);
  * @query   year
  * @access  Private
  */
-router.get('/sales/ytd', getYTDSales);
+router.get("/sales/ytd", getYTDSales);
 
 /**
  * @route   GET /api/reports/sales/top-customers
@@ -73,7 +73,7 @@ router.get('/sales/ytd', getYTDSales);
  * @query   startDate, endDate, limit (optional, default 10)
  * @access  Private
  */
-router.get('/sales/top-customers', getTopCustomersReport);
+router.get("/sales/top-customers", getTopCustomersReport);
 
 // ============================================================================
 // Tax Reports
@@ -85,7 +85,7 @@ router.get('/sales/top-customers', getTopCustomersReport);
  * @query   year, month
  * @access  Private
  */
-router.get('/tax/monthly', getMonthlyTax);
+router.get("/tax/monthly", getMonthlyTax);
 
 /**
  * @route   GET /api/reports/tax/quarterly
@@ -93,7 +93,7 @@ router.get('/tax/monthly', getMonthlyTax);
  * @query   year, quarter (1-4)
  * @access  Private
  */
-router.get('/tax/quarterly', getQuarterlyTax);
+router.get("/tax/quarterly", getQuarterlyTax);
 
 /**
  * @route   GET /api/reports/tax/annual
@@ -101,7 +101,7 @@ router.get('/tax/quarterly', getQuarterlyTax);
  * @query   year
  * @access  Private
  */
-router.get('/tax/annual', getAnnualTax);
+router.get("/tax/annual", getAnnualTax);
 
 /**
  * @route   GET /api/reports/tax/breakdown
@@ -109,7 +109,7 @@ router.get('/tax/annual', getAnnualTax);
  * @query   startDate, endDate
  * @access  Private
  */
-router.get('/tax/breakdown', getTaxBreakdownReport);
+router.get("/tax/breakdown", getTaxBreakdownReport);
 
 // ============================================================================
 // Financial Reports
@@ -121,7 +121,7 @@ router.get('/tax/breakdown', getTaxBreakdownReport);
  * @query   startDate, endDate
  * @access  Private
  */
-router.get('/financial/revenue', getRevenue);
+router.get("/financial/revenue", getRevenue);
 
 /**
  * @route   GET /api/reports/financial/profit-loss
@@ -129,14 +129,14 @@ router.get('/financial/revenue', getRevenue);
  * @query   startDate, endDate
  * @access  Private
  */
-router.get('/financial/profit-loss', getProfitLoss);
+router.get("/financial/profit-loss", getProfitLoss);
 
 /**
  * @route   GET /api/reports/financial/outstanding
  * @desc    Get outstanding balances report
  * @access  Private
  */
-router.get('/financial/outstanding', getOutstanding);
+router.get("/financial/outstanding", getOutstanding);
 
 /**
  * @route   GET /api/reports/financial/refunds
@@ -144,7 +144,7 @@ router.get('/financial/outstanding', getOutstanding);
  * @query   startDate, endDate
  * @access  Private
  */
-router.get('/financial/refunds', getRefunds);
+router.get("/financial/refunds", getRefunds);
 
 // ============================================================================
 // Customer Reports
@@ -156,7 +156,7 @@ router.get('/financial/refunds', getRefunds);
  * @query   startDate, endDate
  * @access  Private
  */
-router.get('/customers/acquisition', getCustomerAcquisition);
+router.get("/customers/acquisition", getCustomerAcquisition);
 
 /**
  * @route   GET /api/reports/customers/retention
@@ -164,7 +164,7 @@ router.get('/customers/acquisition', getCustomerAcquisition);
  * @query   startDate, endDate
  * @access  Private
  */
-router.get('/customers/retention', getCustomerRetention);
+router.get("/customers/retention", getCustomerRetention);
 
 /**
  * @route   GET /api/reports/customers/lifetime-value
@@ -172,14 +172,14 @@ router.get('/customers/retention', getCustomerRetention);
  * @query   limit (optional)
  * @access  Private
  */
-router.get('/customers/lifetime-value', getCustomerLifetimeValue);
+router.get("/customers/lifetime-value", getCustomerLifetimeValue);
 
 /**
  * @route   GET /api/reports/customers/demographics
  * @desc    Get customer demographics report
  * @access  Private
  */
-router.get('/customers/demographics', getCustomerDemographics);
+router.get("/customers/demographics", getCustomerDemographics);
 
 /**
  * @route   GET /api/reports/customers/inactive
@@ -187,7 +187,7 @@ router.get('/customers/demographics', getCustomerDemographics);
  * @query   days (optional, default 90)
  * @access  Private
  */
-router.get('/customers/inactive', getInactiveCustomers);
+router.get("/customers/inactive", getInactiveCustomers);
 
 // ============================================================================
 // Operational Reports
@@ -199,7 +199,7 @@ router.get('/customers/inactive', getInactiveCustomers);
  * @query   startDate, endDate
  * @access  Private
  */
-router.get('/operations/staff', getStaffPerformance);
+router.get("/operations/staff", getStaffPerformance);
 
 /**
  * @route   GET /api/reports/operations/resources
@@ -207,7 +207,7 @@ router.get('/operations/staff', getStaffPerformance);
  * @query   startDate, endDate
  * @access  Private
  */
-router.get('/operations/resources', getResourceUtilization);
+router.get("/operations/resources", getResourceUtilization);
 
 /**
  * @route   GET /api/reports/operations/bookings
@@ -215,7 +215,7 @@ router.get('/operations/resources', getResourceUtilization);
  * @query   startDate, endDate
  * @access  Private
  */
-router.get('/operations/bookings', getBookingPatterns);
+router.get("/operations/bookings", getBookingPatterns);
 
 /**
  * @route   GET /api/reports/operations/capacity
@@ -223,6 +223,6 @@ router.get('/operations/bookings', getBookingPatterns);
  * @query   startDate, endDate
  * @access  Private
  */
-router.get('/operations/capacity', getCapacityAnalysis);
+router.get("/operations/capacity", getCapacityAnalysis);
 
 export default router;

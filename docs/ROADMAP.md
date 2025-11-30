@@ -269,17 +269,13 @@ Audit and fix notification system:
 ### 19. Code Optimization and Cleanup
 
 **Effort**: 1 week  
-**Impact**: Improves maintainability
+**Impact**: Improves maintainability  
+**Status**: ✅ COMPLETE
 
-_Completed: staff.controller.ts and reservation.controller.ts refactored (v1.6.5)_
+_All large controller files refactored into modular files <500 lines (v1.6.6)_
 
 **Remaining**:
 
-- Refactor large controller files (>500 lines):
-  - `reportCard.controller.ts` (855 lines)
-  - `reports.controller.ts` (842 lines)
-  - `resource.controller.ts` (830 lines) - Customer service
-  - `customer.controller.ts` (815 lines)
 - Remove unused code and variables
 - Optimize imports and dependencies
 

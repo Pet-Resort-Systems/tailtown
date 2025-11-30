@@ -5,9 +5,41 @@ All notable changes to the Tailtown Pet Resort Management System will be documen
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.6] - 2025-11-29
+
+### 🔧 Code Optimization - Controller Refactoring (Phase 2)
+
+Completed refactoring of all remaining large controller files.
+
+#### Customer Service - customer.controller.ts (815 → 2 modules)
+
+- `customer-crud.controller.ts` (491 lines) - CRUD operations
+- `customer-extras.controller.ts` (249 lines) - Documents, notifications, billing
+
+#### Customer Service - resource.controller.ts (830 → 2 modules)
+
+- `resource-crud.controller.ts` (268 lines) - CRUD operations
+- `resource-availability.controller.ts` (295 lines) - Availability operations
+
+#### Customer Service - reports.controller.ts (842 → 5 modules)
+
+- `reports-sales.controller.ts` (186 lines) - Sales reports
+- `reports-tax.controller.ts` (166 lines) - Tax reports
+- `reports-financial.controller.ts` (145 lines) - Financial reports
+- `reports-customer.controller.ts` (181 lines) - Customer reports
+- `reports-operations.controller.ts` (167 lines) - Operations reports
+
+#### Customer Service - reportCard.controller.ts (855 → 3 modules)
+
+- `reportCard-crud.controller.ts` (222 lines) - CRUD operations
+- `reportCard-photos.controller.ts` (127 lines) - Photo operations
+- `reportCard-bulk.controller.ts` (217 lines) - Bulk operations
+
+---
+
 ## [1.6.5] - 2025-11-29
 
-### 🔧 Code Optimization - Controller Refactoring
+### 🔧 Code Optimization - Controller Refactoring (Phase 1)
 
 Refactored large controller files into modular, maintainable modules (all files now <500 lines).
 

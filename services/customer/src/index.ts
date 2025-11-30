@@ -413,7 +413,7 @@ app.use("/monitoring", monitoringRoutes);
 // PUBLIC API ROUTES (MUST BE FIRST - no authentication required)
 // ============================================
 // Customer lookup for booking portal login (public, rate-limited)
-import { lookupCustomerByEmail } from "./controllers/customer.controller";
+import { lookupCustomerByEmail } from "./controllers/customer";
 
 const customerLookupLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
