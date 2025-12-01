@@ -22,8 +22,7 @@ import {
 import { Add as AddIcon, Remove as RemoveIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useShoppingCart } from '../../contexts/ShoppingCartContext';
-import { serviceManagement } from '../../services/serviceManagement';
-import { reservationService, Reservation } from '../../services/reservationService';
+import { reservationService } from '../../services/reservationService';
 import addonService, { AddOnService } from '../../services/addonService';
 
 interface AddOnSelectionDialogProps {

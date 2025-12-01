@@ -24,7 +24,6 @@ import {
   CalendarToday as CalendarIcon,
   Pets as PetsIcon,
   AttachMoney as MoneyIcon,
-  Person as PersonIcon,
   Home as HomeIcon,
   Notes as NotesIcon,
   ExpandMore as ExpandMoreIcon,

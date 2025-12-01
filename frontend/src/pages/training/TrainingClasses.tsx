@@ -25,8 +25,6 @@ import {
   CircularProgress,
   Tooltip,
   Grid,
-  Tabs,
-  Tab,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -40,7 +38,6 @@ import { useNavigate } from "react-router-dom";
 import { DatePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { format } from "date-fns";
 import schedulingService from "../../services/schedulingService";
 import { customerService } from "../../services/customerService";
 import { petService } from "../../services/petService";
@@ -98,8 +95,11 @@ const TrainingClasses: React.FC = () => {
   });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     loadClasses();
-  }, [filters]);
+  },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  [filters]);
 
   const loadClasses = async () => {
     try {

@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { AppError, handleApiError } from '../utils/errorHandling';
-import { AxiosInstance, AxiosRequestConfig } from 'axios';
+import { AxiosInstance } from 'axios';
 
 /**
  * Pagination metadata

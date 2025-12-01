@@ -1,10 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Formik, Form, Field, FormikHelpers, FormikErrors, FormikTouched } from 'formik';
-import * as Yup from 'yup';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Formik,
+  Form,
+  Field,
+  FormikHelpers,
+  FormikErrors,
+  FormikTouched,
+} from "formik";
+import * as Yup from "yup";
 import {
   Box,
-  Paper,
   Typography,
   TextField,
   Button,
@@ -17,7 +23,7 @@ import {
   CardContent,
   IconButton,
   InputAdornment,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Person as PersonIcon,
   Email as EmailIcon,
@@ -28,9 +34,9 @@ import {
   VisibilityOff,
   PhotoCamera as PhotoCameraIcon,
   Delete as DeleteIcon,
-} from '@mui/icons-material';
-import { useAuth } from '../../contexts/AuthContext';
-import api from '../../services/api';
+} from "@mui/icons-material";
+import { useAuth } from "../../contexts/AuthContext";
+import api from "../../services/api";
 
 interface ProfileFormValues {
   firstName: string;
@@ -46,30 +52,33 @@ interface PasswordFormValues {
 }
 
 const ProfileSchema = Yup.object().shape({
-  firstName: Yup.string().required('First name is required'),
-  lastName: Yup.string().required('Last name is required'),
-  email: Yup.string().email('Invalid email').required('Email is required'),
+  firstName: Yup.string().required("First name is required"),
+  lastName: Yup.string().required("Last name is required"),
+  email: Yup.string().email("Invalid email").required("Email is required"),
   phone: Yup.string(),
 });
 
 const PasswordSchema = Yup.object().shape({
-  currentPassword: Yup.string().required('Current password is required'),
+  currentPassword: Yup.string().required("Current password is required"),
   newPassword: Yup.string()
-    .min(8, 'Password must be at least 8 characters')
-    .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .matches(/[0-9]/, 'Password must contain at least one number')
-    .matches(/[^a-zA-Z0-9]/, 'Password must contain at least one special character')
-    .required('New password is required'),
+    .min(8, "Password must be at least 8 characters")
+    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .matches(/[0-9]/, "Password must contain at least one number")
+    .matches(
+      /[^a-zA-Z0-9]/,
+      "Password must contain at least one special character"
+    )
+    .required("New password is required"),
   confirmPassword: Yup.string()
-    .oneOf([Yup.ref('newPassword')], 'Passwords must match')
-    .required('Please confirm your password'),
+    .oneOf([Yup.ref("newPassword")], "Passwords must match")
+    .required("Please confirm your password"),
 });
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
   const navigate = useNavigate();
-  
+
   const [loading, setLoading] = useState(true);
   const [profileSuccess, setProfileSuccess] = useState<string | null>(null);
   const [profileError, setProfileError] = useState<string | null>(null);
@@ -83,10 +92,10 @@ const Profile = () => {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
   const [profileData, setProfileData] = useState<ProfileFormValues>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
   });
 
   /**
@@ -94,19 +103,24 @@ const Profile = () => {
    * @param profilePhoto - Relative path to profile photo
    * @returns Full URL to profile photo or undefined if invalid
    */
-  const getProfilePhotoUrl = (profilePhoto: string | null | undefined): string | undefined => {
+  const getProfilePhotoUrl = (
+    profilePhoto: string | null | undefined
+  ): string | undefined => {
     if (!profilePhoto) return undefined;
-    
+
     try {
-      const baseUrl = process.env.NODE_ENV === 'production' 
-        ? window.location.origin 
-        : (process.env.REACT_APP_API_URL || 'http://localhost:4004');
-      
+      const baseUrl =
+        process.env.NODE_ENV === "production"
+          ? window.location.origin
+          : process.env.REACT_APP_API_URL || "http://localhost:4004";
+
       // Ensure profilePhoto starts with /
-      const path = profilePhoto.startsWith('/') ? profilePhoto : `/${profilePhoto}`;
+      const path = profilePhoto.startsWith("/")
+        ? profilePhoto
+        : `/${profilePhoto}`;
       return `${baseUrl}${path}`;
     } catch (error) {
-      console.error('Error constructing profile photo URL:', error);
+      console.error("Error constructing profile photo URL:", error);
       return undefined;
     }
   };
@@ -119,21 +133,21 @@ const Profile = () => {
           const response = await api.get(`/api/staff/${user.id}`);
           // Backend returns { status: 'success', data: staff }
           const freshData = response.data.data || response.data;
-          
+
           // Update local state
           setProfileData({
-            firstName: freshData.firstName || '',
-            lastName: freshData.lastName || '',
-            email: freshData.email || '',
-            phone: freshData.phone || '',
+            firstName: freshData.firstName || "",
+            lastName: freshData.lastName || "",
+            email: freshData.email || "",
+            phone: freshData.phone || "",
           });
-          
+
           // Set profile photo if exists - construct full URL
           if (freshData.profilePhoto) {
             const fullPhotoUrl = getProfilePhotoUrl(freshData.profilePhoto);
             setProfilePhoto(fullPhotoUrl || null);
           }
-          
+
           // Update user context with fresh data
           if (updateUser) {
             updateUser({
@@ -147,14 +161,14 @@ const Profile = () => {
           }
         }
       } catch (error) {
-        console.error('Error fetching profile:', error);
+        console.error("Error fetching profile:", error);
         // Fallback to cached user data
         if (user) {
           setProfileData({
-            firstName: user.firstName || '',
-            lastName: user.lastName || '',
-            email: user.email || '',
-            phone: user.phone || '',
+            firstName: user.firstName || "",
+            lastName: user.lastName || "",
+            email: user.email || "",
+            phone: user.phone || "",
           });
         }
       } finally {
@@ -163,6 +177,7 @@ const Profile = () => {
     };
 
     fetchProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
   const handleProfileSubmit = async (
@@ -188,10 +203,14 @@ const Profile = () => {
         });
       }
 
-      setProfileSuccess('Profile updated successfully!');
+      setProfileSuccess("Profile updated successfully!");
     } catch (error: any) {
-      console.error('Profile update error:', error);
-      const message = error.response?.data?.error || error.response?.data?.message || error.message || 'Failed to update profile';
+      console.error("Profile update error:", error);
+      const message =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to update profile";
       setProfileError(message);
     } finally {
       setSubmitting(false);
@@ -202,19 +221,19 @@ const Profile = () => {
     const file = event.target.files?.[0];
     if (file) {
       // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setProfileError('Please select an image file');
+      if (!file.type.startsWith("image/")) {
+        setProfileError("Please select an image file");
         return;
       }
-      
+
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        setProfileError('Image size must be less than 5MB');
+        setProfileError("Image size must be less than 5MB");
         return;
       }
-      
+
       setPhotoFile(file);
-      
+
       // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -226,32 +245,37 @@ const Profile = () => {
 
   const handlePhotoUpload = async () => {
     if (!photoFile) return;
-    
+
     try {
       setProfileError(null);
       const formData = new FormData();
-      formData.append('photo', photoFile);
-      
-      const response = await api.post(`/api/staff/${user?.id}/photo`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      
-      const photoPath = response.data.data?.profilePhoto || response.data.profilePhoto;
+      formData.append("photo", photoFile);
+
+      const response = await api.post(
+        `/api/staff/${user?.id}/photo`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      const photoPath =
+        response.data.data?.profilePhoto || response.data.profilePhoto;
       const fullPhotoUrl = getProfilePhotoUrl(photoPath);
       setProfilePhoto(fullPhotoUrl || null);
       setPhotoPreview(null);
       setPhotoFile(null);
-      setProfileSuccess('Profile photo updated successfully!');
-      
+      setProfileSuccess("Profile photo updated successfully!");
+
       // Update user context with the relative path (backend format)
       if (updateUser) {
         updateUser({ profilePhoto: photoPath });
       }
     } catch (error: any) {
-      console.error('Photo upload error:', error);
-      const message = error.response?.data?.message || 'Failed to upload photo';
+      console.error("Photo upload error:", error);
+      const message = error.response?.data?.message || "Failed to upload photo";
       setProfileError(message);
     }
   };
@@ -260,18 +284,18 @@ const Profile = () => {
     try {
       setProfileError(null);
       await api.delete(`/api/staff/${user?.id}/photo`);
-      
+
       setProfilePhoto(null);
       setPhotoPreview(null);
       setPhotoFile(null);
-      setProfileSuccess('Profile photo removed successfully!');
-      
+      setProfileSuccess("Profile photo removed successfully!");
+
       // Update user context
       if (updateUser) {
         updateUser({ profilePhoto: null });
       }
     } catch (error: any) {
-      const message = error.response?.data?.message || 'Failed to remove photo';
+      const message = error.response?.data?.message || "Failed to remove photo";
       setProfileError(message);
     }
   };
@@ -285,15 +309,16 @@ const Profile = () => {
       setPasswordSuccess(null);
 
       // Change password via API
-      await api.post('/staff/change-password', {
+      await api.post("/staff/change-password", {
         currentPassword: values.currentPassword,
         newPassword: values.newPassword,
       });
 
-      setPasswordSuccess('Password changed successfully!');
+      setPasswordSuccess("Password changed successfully!");
       resetForm();
     } catch (error: any) {
-      const message = error.response?.data?.message || 'Failed to change password';
+      const message =
+        error.response?.data?.message || "Failed to change password";
       setPasswordError(message);
     } finally {
       setSubmitting(false);
@@ -302,37 +327,47 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "400px",
+        }}
+      >
         <CircularProgress />
       </Box>
     );
   }
 
   return (
-    <Box sx={{ maxWidth: 1200, mx: 'auto', p: 3 }}>
+    <Box sx={{ maxWidth: 1200, mx: "auto", p: 3 }}>
       {/* Header with Photo */}
-      <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 3 }}>
-        <Box sx={{ position: 'relative' }}>
+      <Box sx={{ mb: 4, display: "flex", alignItems: "center", gap: 3 }}>
+        <Box sx={{ position: "relative" }}>
           <Avatar
-            key={profilePhoto || 'no-photo'}
+            key={profilePhoto || "no-photo"}
             src={photoPreview || profilePhoto || undefined}
             sx={{
               width: 120,
               height: 120,
-              bgcolor: 'primary.main',
-              fontSize: '2.5rem',
-              border: '4px solid',
-              borderColor: 'background.paper',
+              bgcolor: "primary.main",
+              fontSize: "2.5rem",
+              border: "4px solid",
+              borderColor: "background.paper",
               boxShadow: 3,
             }}
           >
             {!photoPreview && !profilePhoto && (
-              <>{user?.firstName?.[0]}{user?.lastName?.[0]}</>
+              <>
+                {user?.firstName?.[0]}
+                {user?.lastName?.[0]}
+              </>
             )}
           </Avatar>
           <input
             accept="image/*"
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
             id="profile-photo-upload"
             type="file"
             onChange={handlePhotoChange}
@@ -341,13 +376,13 @@ const Profile = () => {
             <IconButton
               component="span"
               sx={{
-                position: 'absolute',
+                position: "absolute",
                 bottom: 0,
                 right: 0,
-                bgcolor: 'primary.main',
-                color: 'white',
-                '&:hover': {
-                  bgcolor: 'primary.dark',
+                bgcolor: "primary.main",
+                color: "white",
+                "&:hover": {
+                  bgcolor: "primary.dark",
                 },
                 boxShadow: 2,
               }}
@@ -367,7 +402,7 @@ const Profile = () => {
             Manage your account settings and preferences
           </Typography>
           {photoPreview && (
-            <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
+            <Box sx={{ mt: 2, display: "flex", gap: 1 }}>
               <Button
                 size="small"
                 variant="contained"
@@ -408,7 +443,9 @@ const Profile = () => {
         <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 3 }}
+              >
                 <PersonIcon color="primary" />
                 <Typography variant="h6">Profile Information</Typography>
               </Box>
@@ -509,10 +546,16 @@ const Profile = () => {
                       color="primary"
                       fullWidth
                       disabled={isSubmitting}
-                      startIcon={isSubmitting ? <CircularProgress size={20} /> : <SaveIcon />}
+                      startIcon={
+                        isSubmitting ? (
+                          <CircularProgress size={20} />
+                        ) : (
+                          <SaveIcon />
+                        )
+                      }
                       sx={{ mt: 3 }}
                     >
-                      {isSubmitting ? 'Saving...' : 'Save Changes'}
+                      {isSubmitting ? "Saving..." : "Save Changes"}
                     </Button>
                   </Form>
                 )}
@@ -525,7 +568,9 @@ const Profile = () => {
         <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 3 }}
+              >
                 <LockIcon color="primary" />
                 <Typography variant="h6">Change Password</Typography>
               </Box>
@@ -544,9 +589,9 @@ const Profile = () => {
 
               <Formik
                 initialValues={{
-                  currentPassword: '',
-                  newPassword: '',
-                  confirmPassword: '',
+                  currentPassword: "",
+                  newPassword: "",
+                  confirmPassword: "",
                 }}
                 validationSchema={PasswordSchema}
                 onSubmit={handlePasswordSubmit}
@@ -565,21 +610,32 @@ const Profile = () => {
                       as={TextField}
                       name="currentPassword"
                       label="Current Password"
-                      type={showCurrentPassword ? 'text' : 'password'}
+                      type={showCurrentPassword ? "text" : "password"}
                       fullWidth
                       margin="normal"
                       variant="outlined"
-                      error={touched.currentPassword && Boolean(errors.currentPassword)}
-                      helperText={touched.currentPassword && errors.currentPassword}
+                      error={
+                        touched.currentPassword &&
+                        Boolean(errors.currentPassword)
+                      }
+                      helperText={
+                        touched.currentPassword && errors.currentPassword
+                      }
                       disabled={isSubmitting}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">
                             <IconButton
-                              onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                              onClick={() =>
+                                setShowCurrentPassword(!showCurrentPassword)
+                              }
                               edge="end"
                             >
-                              {showCurrentPassword ? <VisibilityOff /> : <Visibility />}
+                              {showCurrentPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
                             </IconButton>
                           </InputAdornment>
                         ),
@@ -590,7 +646,7 @@ const Profile = () => {
                       as={TextField}
                       name="newPassword"
                       label="New Password"
-                      type={showNewPassword ? 'text' : 'password'}
+                      type={showNewPassword ? "text" : "password"}
                       fullWidth
                       margin="normal"
                       variant="outlined"
@@ -601,10 +657,16 @@ const Profile = () => {
                         endAdornment: (
                           <InputAdornment position="end">
                             <IconButton
-                              onClick={() => setShowNewPassword(!showNewPassword)}
+                              onClick={() =>
+                                setShowNewPassword(!showNewPassword)
+                              }
                               edge="end"
                             >
-                              {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                              {showNewPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
                             </IconButton>
                           </InputAdornment>
                         ),
@@ -615,21 +677,32 @@ const Profile = () => {
                       as={TextField}
                       name="confirmPassword"
                       label="Confirm New Password"
-                      type={showConfirmPassword ? 'text' : 'password'}
+                      type={showConfirmPassword ? "text" : "password"}
                       fullWidth
                       margin="normal"
                       variant="outlined"
-                      error={touched.confirmPassword && Boolean(errors.confirmPassword)}
-                      helperText={touched.confirmPassword && errors.confirmPassword}
+                      error={
+                        touched.confirmPassword &&
+                        Boolean(errors.confirmPassword)
+                      }
+                      helperText={
+                        touched.confirmPassword && errors.confirmPassword
+                      }
                       disabled={isSubmitting}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">
                             <IconButton
-                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                              onClick={() =>
+                                setShowConfirmPassword(!showConfirmPassword)
+                              }
                               edge="end"
                             >
-                              {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                              {showConfirmPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
                             </IconButton>
                           </InputAdornment>
                         ),
@@ -638,16 +711,32 @@ const Profile = () => {
 
                     {/* Password Requirements */}
                     <Box sx={{ mt: 2, mb: 2 }}>
-                      <Typography variant="caption" color="text.secondary" component="div">
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        component="div"
+                      >
                         Password must contain:
                       </Typography>
-                      <Typography variant="caption" color="text.secondary" component="div">
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        component="div"
+                      >
                         • At least 8 characters
                       </Typography>
-                      <Typography variant="caption" color="text.secondary" component="div">
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        component="div"
+                      >
                         • One uppercase and lowercase letter
                       </Typography>
-                      <Typography variant="caption" color="text.secondary" component="div">
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        component="div"
+                      >
                         • One number and one special character
                       </Typography>
                     </Box>
@@ -658,10 +747,18 @@ const Profile = () => {
                       color="primary"
                       fullWidth
                       disabled={isSubmitting}
-                      startIcon={isSubmitting ? <CircularProgress size={20} /> : <LockIcon />}
+                      startIcon={
+                        isSubmitting ? (
+                          <CircularProgress size={20} />
+                        ) : (
+                          <LockIcon />
+                        )
+                      }
                       sx={{ mt: 3 }}
                     >
-                      {isSubmitting ? 'Changing Password...' : 'Change Password'}
+                      {isSubmitting
+                        ? "Changing Password..."
+                        : "Change Password"}
                     </Button>
                   </Form>
                 )}
@@ -684,21 +781,21 @@ const Profile = () => {
                     Account Type
                   </Typography>
                   <Typography variant="body1">
-                    {user?.role || 'Staff'}
+                    {user?.role || "Staff"}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} sm={4}>
                   <Typography variant="body2" color="text.secondary">
                     Status
                   </Typography>
-                  <Typography 
+                  <Typography
                     variant="body1"
-                    sx={{ 
-                      color: user?.isActive ? 'success.main' : 'error.main',
-                      fontWeight: 'medium'
+                    sx={{
+                      color: user?.isActive ? "success.main" : "error.main",
+                      fontWeight: "medium",
                     }}
                   >
-                    {user?.isActive ? 'Active' : 'Inactive'}
+                    {user?.isActive ? "Active" : "Inactive"}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} sm={4}>
@@ -706,7 +803,9 @@ const Profile = () => {
                     Last Login
                   </Typography>
                   <Typography variant="body1">
-                    {user?.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'Just now'}
+                    {user?.lastLogin
+                      ? new Date(user.lastLogin).toLocaleString()
+                      : "Just now"}
                   </Typography>
                 </Grid>
               </Grid>

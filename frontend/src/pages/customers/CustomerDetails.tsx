@@ -18,7 +18,6 @@ import {
   InputAdornment,
   Tabs,
   Tab,
-  Divider,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -26,7 +25,6 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import PersonIcon from "@mui/icons-material/Person";
 import PetsIcon from "@mui/icons-material/Pets";

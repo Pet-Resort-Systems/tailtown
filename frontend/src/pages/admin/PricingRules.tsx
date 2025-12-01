@@ -50,8 +50,6 @@ import {
   AnyPricingRule,
   PricingRuleType,
   PricingAdjustmentType,
-  Season,
-  DayOfWeek,
   Holiday
 } from '../../types/dynamicPricing';
 import { formatCurrency } from '../../utils/formatters';

@@ -5,9 +5,7 @@
 import { depositService } from '../depositService';
 import {
   DepositRule,
-  DepositRuleConditions,
-  RefundPolicyType,
-  DEFAULT_DEPOSIT_RULES
+  DepositRuleConditions
 } from '../../types/deposit';
 
 describe('Deposit Service', () => {

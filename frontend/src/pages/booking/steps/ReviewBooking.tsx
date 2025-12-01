@@ -28,9 +28,6 @@ import {
   AttachMoney as MoneyIcon,
 } from "@mui/icons-material";
 import { useCustomerAuth } from "../../../contexts/CustomerAuthContext";
-import { serviceManagement } from "../../../services/serviceManagement";
-import { petService } from "../../../services/petService";
-import addonService from "../../../services/addonService";
 import { reservationService } from "../../../services/reservationService";
 import {
   paymentService,

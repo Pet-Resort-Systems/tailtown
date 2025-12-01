@@ -24,8 +24,11 @@ const CheckInComplete: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     loadCheckIn();
-  }, [checkInId]);
+  },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  [checkInId]);
 
   const loadCheckIn = async () => {
     try {

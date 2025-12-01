@@ -15,7 +15,6 @@ import {
   SuiteAvailability,
   PetInSuite,
   MultiPetPricingType,
-  TieredPricing,
   PricingBreakdown
 } from '../types/multiPet';
 

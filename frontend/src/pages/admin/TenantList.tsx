@@ -35,7 +35,6 @@ import {
   Delete as DeleteIcon,
   Visibility as ViewIcon,
   Business as BusinessIcon,
-  People as PeopleIcon,
   CalendarToday as CalendarIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';

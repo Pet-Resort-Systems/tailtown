@@ -20,8 +20,7 @@ import {
 } from '@mui/material';
 import {
   Login as LoginIcon,
-  PersonAdd as SignupIcon,
-  Email as EmailIcon
+  PersonAdd as SignupIcon
 } from '@mui/icons-material';
 import { useCustomerAuth } from '../../contexts/CustomerAuthContext';
 

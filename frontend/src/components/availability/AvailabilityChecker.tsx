@@ -17,10 +17,7 @@ import {
   Grid,
   Alert,
   CircularProgress,
-  Paper,
-  Stepper,
-  Step,
-  StepLabel
+  Paper
 } from '@mui/material';
 import {
   Search as SearchIcon,

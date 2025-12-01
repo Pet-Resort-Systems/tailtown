@@ -5,7 +5,6 @@ import {
   Box,
   Button,
   IconButton,
-  Chip,
   Table,
   TableBody,
   TableCell,

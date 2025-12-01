@@ -21,7 +21,6 @@ import {
   WbSunny as DaycareIcon,
   ContentCut as GroomingIcon,
   School as TrainingIcon,
-  ArrowForward as ArrowForwardIcon,
   CheckCircle as CheckCircleIcon,
 } from "@mui/icons-material";
 import { serviceManagement } from "../../../services/serviceManagement";
@@ -52,8 +51,11 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
   const [selectedService, setSelectedService] = useState<Service | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     loadServices();
-  }, []);
+  },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  []);
 
   const loadServices = async () => {
     try {

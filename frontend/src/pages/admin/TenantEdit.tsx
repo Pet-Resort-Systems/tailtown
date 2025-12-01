@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { ArrowBack as BackIcon } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { tenantService, Tenant, UpdateTenantDto } from '../../services/tenantService';
+import { tenantService, UpdateTenantDto } from '../../services/tenantService';
 
 const TenantEdit: React.FC = () => {
   const navigate = useNavigate();

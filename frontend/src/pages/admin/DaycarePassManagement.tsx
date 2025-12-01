@@ -65,8 +65,11 @@ export const DaycarePassManagement: React.FC = () => {
   const [showInactive, setShowInactive] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     loadPackages();
-  }, [showInactive]);
+  },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  [showInactive]);
 
   const loadPackages = async () => {
     try {

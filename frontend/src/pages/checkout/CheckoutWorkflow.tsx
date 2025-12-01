@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Container,
   Box,
@@ -11,21 +11,21 @@ import {
   Typography,
   CircularProgress,
   Alert,
-} from '@mui/material';
-import { reservationService } from '../../services/reservationService';
-import checkInService from '../../services/checkInService';
-import FinalInvoiceReview from '../../components/checkout/FinalInvoiceReview';
-import ReturnBelongings from '../../components/checkout/ReturnBelongings';
-import ReturnMedications from '../../components/checkout/ReturnMedications';
-import FinalPayment from '../../components/checkout/FinalPayment';
-import CheckoutComplete from '../../components/checkout/CheckoutComplete';
+} from "@mui/material";
+import { reservationService } from "../../services/reservationService";
+import checkInService from "../../services/checkInService";
+import FinalInvoiceReview from "../../components/checkout/FinalInvoiceReview";
+import ReturnBelongings from "../../components/checkout/ReturnBelongings";
+import ReturnMedications from "../../components/checkout/ReturnMedications";
+import FinalPayment from "../../components/checkout/FinalPayment";
+import CheckoutComplete from "../../components/checkout/CheckoutComplete";
 
 const steps = [
-  'Review Invoice',
-  'Return Belongings',
-  'Return Medications',
-  'Final Payment',
-  'Complete'
+  "Review Invoice",
+  "Return Belongings",
+  "Return Medications",
+  "Final Payment",
+  "Complete",
 ];
 
 interface CheckoutData {
@@ -42,13 +42,13 @@ interface CheckoutData {
 const CheckoutWorkflow: React.FC = () => {
   const { reservationId } = useParams<{ reservationId: string }>();
   const navigate = useNavigate();
-  
+
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [checkoutData, setCheckoutData] = useState<CheckoutData>({
-    reservationId: reservationId || '',
+    reservationId: reservationId || "",
     checkInId: null,
     invoice: null,
     belongings: [],
@@ -63,21 +63,25 @@ const CheckoutWorkflow: React.FC = () => {
     const loadData = async () => {
       try {
         if (!reservationId) {
-          setError('No reservation ID provided');
+          setError("No reservation ID provided");
           setLoading(false);
           return;
         }
 
         // Load reservation with invoice
-        const reservation = await reservationService.getReservationById(reservationId);
-        
+        const reservation = await reservationService.getReservationById(
+          reservationId
+        );
+
         // Load check-in data if exists
         let checkInData = null;
         try {
-          const checkIns = await checkInService.getCheckInsByReservation(reservationId);
+          const checkIns = await checkInService.getCheckInsByReservation(
+            reservationId
+          );
           checkInData = checkIns && checkIns.length > 0 ? checkIns[0] : null;
         } catch (err) {
-          console.log('No check-in data found, continuing without it');
+          console.log("No check-in data found, continuing without it");
         }
 
         setCheckoutData({
@@ -87,16 +91,17 @@ const CheckoutWorkflow: React.FC = () => {
           belongings: checkInData?.belongings || [],
           medications: checkInData?.medications || [],
         });
-        
+
         setLoading(false);
       } catch (err: any) {
-        console.error('Error loading checkout data:', err);
-        setError(err.message || 'Failed to load checkout data');
+        console.error("Error loading checkout data:", err);
+        setError(err.message || "Failed to load checkout data");
         setLoading(false);
       }
     };
 
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reservationId]);
 
   const handleNext = () => {
@@ -138,17 +143,17 @@ const CheckoutWorkflow: React.FC = () => {
       ...checkoutData,
       finalPayment: paymentData,
     });
-    
+
     try {
       // Update reservation status to CHECKED_OUT
       await reservationService.updateReservation(reservationId!, {
-        status: 'CHECKED_OUT',
+        status: "CHECKED_OUT",
       });
-      
+
       handleNext();
     } catch (err: any) {
-      console.error('Error completing checkout:', err);
-      setError(err.message || 'Failed to complete checkout');
+      console.error("Error completing checkout:", err);
+      setError(err.message || "Failed to complete checkout");
     }
   };
 
@@ -205,7 +210,14 @@ const CheckoutWorkflow: React.FC = () => {
   if (loading) {
     return (
       <Container maxWidth="md">
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "400px",
+          }}
+        >
           <CircularProgress />
         </Box>
       </Container>
@@ -217,7 +229,7 @@ const CheckoutWorkflow: React.FC = () => {
       <Container maxWidth="md">
         <Box sx={{ mt: 4 }}>
           <Alert severity="error">{error}</Alert>
-          <Button sx={{ mt: 2 }} onClick={() => navigate('/reservations')}>
+          <Button sx={{ mt: 2 }} onClick={() => navigate("/reservations")}>
             Back to Reservations
           </Button>
         </Box>

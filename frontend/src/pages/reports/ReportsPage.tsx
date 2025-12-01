@@ -22,12 +22,8 @@ import {
 } from '@mui/material';
 import {
   Assessment as ReportsIcon,
-  TrendingUp as SalesIcon,
-  AttachMoney as FinancialIcon,
-  People as CustomerIcon,
   Pets as PetIcon,
   Campaign as MarketingIcon,
-  Business as OperationalIcon,
   Build as ServiceIcon,
   GetApp as ExportIcon,
 } from '@mui/icons-material';

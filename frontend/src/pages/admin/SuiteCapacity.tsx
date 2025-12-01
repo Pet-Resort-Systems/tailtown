@@ -36,16 +36,14 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   Save as SaveIcon,
-  Pets as PetsIcon,
-  AttachMoney as MoneyIcon
+  Pets as PetsIcon
 } from '@mui/icons-material';
 import { multiPetService } from '../../services/multiPetService';
 import {
   SuiteCapacityConfig,
   SuiteCapacity,
   SuiteCapacityType,
-  MultiPetPricingType,
-  TieredPricing
+  MultiPetPricingType
 } from '../../types/multiPet';
 
 export const SuiteCapacityPage: React.FC = () => {

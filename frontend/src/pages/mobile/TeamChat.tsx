@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   List,
@@ -20,50 +20,64 @@ import {
   DialogTitle,
   DialogContent,
   Fab,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Send as SendIcon,
   ArrowBack as BackIcon,
   Add as AddIcon,
   Person as PersonIcon,
   Group as GroupIcon,
-} from '@mui/icons-material';
-import { MobileHeader } from '../../components/mobile/MobileHeader';
-import { BottomNav } from '../../components/mobile/BottomNav';
-import { useAuth } from '../../contexts/AuthContext';
-import messagingService, { Channel, Message } from '../../services/messagingService';
-import { Staff } from '../../services/staffService';
+} from "@mui/icons-material";
+import { MobileHeader } from "../../components/mobile/MobileHeader";
+import { BottomNav } from "../../components/mobile/BottomNav";
+import { useAuth } from "../../contexts/AuthContext";
+import messagingService, {
+  Channel,
+  Message,
+} from "../../services/messagingService";
+import { Staff } from "../../services/staffService";
 
-type ViewMode = 'channels' | 'chat' | 'staff-directory';
+type ViewMode = "channels" | "chat" | "staff-directory";
 
 const TeamChat: React.FC = () => {
   const { user } = useAuth();
-  const [viewMode, setViewMode] = useState<ViewMode>('channels');
+  const [viewMode, setViewMode] = useState<ViewMode>("channels");
   const [tabValue, setTabValue] = useState(0);
   const [channels, setChannels] = useState<Channel[]>([]);
   const [selectedChannel, setSelectedChannel] = useState<Channel | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState('');
+  const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [staffDirectory, setStaffDirectory] = useState<Staff[]>([]);
   const [showStaffDialog, setShowStaffDialog] = useState(false);
   const [sendingMessage, setSendingMessage] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    fetchChannels();
-    fetchStaffDirectory();
-  }, []);
+  useEffect(
+    () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      fetchChannels();
+      fetchStaffDirectory();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   useEffect(() => {
     if (selectedChannel) {
       fetchMessages(selectedChannel.id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedChannel]);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+  useEffect(
+    () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      scrollToBottom();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [messages]
+  );
 
   const fetchChannels = async () => {
     try {
@@ -71,7 +85,7 @@ const TeamChat: React.FC = () => {
       const channelData = await messagingService.getChannels();
       setChannels(channelData);
     } catch (error) {
-      console.error('Error fetching channels:', error);
+      console.error("Error fetching channels:", error);
     } finally {
       setLoading(false);
     }
@@ -81,10 +95,10 @@ const TeamChat: React.FC = () => {
     try {
       const staff = await messagingService.getStaffDirectory();
       // Filter out current user and inactive staff
-      const activeStaff = staff.filter(s => s.id !== user?.id && s.isActive);
+      const activeStaff = staff.filter((s) => s.id !== user?.id && s.isActive);
       setStaffDirectory(activeStaff);
     } catch (error) {
-      console.error('Error fetching staff directory:', error);
+      console.error("Error fetching staff directory:", error);
     }
   };
 
@@ -97,12 +111,12 @@ const TeamChat: React.FC = () => {
       // Refresh channels to update unread count
       fetchChannels();
     } catch (error) {
-      console.error('Error fetching messages:', error);
+      console.error("Error fetching messages:", error);
     }
   };
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleSendMessage = async () => {
@@ -110,21 +124,24 @@ const TeamChat: React.FC = () => {
 
     try {
       setSendingMessage(true);
-      const message = await messagingService.sendMessage(selectedChannel.id, newMessage.trim());
-      setMessages(prev => [...prev, message]);
-      setNewMessage('');
+      const message = await messagingService.sendMessage(
+        selectedChannel.id,
+        newMessage.trim()
+      );
+      setMessages((prev) => [...prev, message]);
+      setNewMessage("");
       // Refresh channels to update last message
       fetchChannels();
     } catch (error) {
-      console.error('Error sending message:', error);
-      alert('Failed to send message. Please try again.');
+      console.error("Error sending message:", error);
+      alert("Failed to send message. Please try again.");
     } finally {
       setSendingMessage(false);
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
@@ -133,20 +150,22 @@ const TeamChat: React.FC = () => {
   const handleBack = () => {
     setSelectedChannel(null);
     setMessages([]);
-    setViewMode('channels');
+    setViewMode("channels");
   };
 
   const handleStartDirectMessage = async (staff: Staff) => {
     try {
       setLoading(true);
       setShowStaffDialog(false);
-      const channel = await messagingService.getOrCreateDirectMessage(staff.id!);
+      const channel = await messagingService.getOrCreateDirectMessage(
+        staff.id!
+      );
       setSelectedChannel(channel);
-      setViewMode('chat');
+      setViewMode("chat");
       await fetchMessages(channel.id);
     } catch (error) {
-      console.error('Error starting direct message:', error);
-      alert('Failed to start conversation. Please try again.');
+      console.error("Error starting direct message:", error);
+      alert("Failed to start conversation. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -164,10 +183,10 @@ const TeamChat: React.FC = () => {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Just now';
+    if (diffMins < 1) return "Just now";
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays === 1) return 'Yesterday';
+    if (diffDays === 1) return "Yesterday";
     if (diffDays < 7) return `${diffDays}d ago`;
     return messageDate.toLocaleDateString();
   };
@@ -176,7 +195,14 @@ const TeamChat: React.FC = () => {
     return (
       <Box>
         <MobileHeader title="Team Chat" showNotifications />
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "50vh",
+          }}
+        >
           <CircularProgress />
         </Box>
       </Box>
@@ -184,16 +210,21 @@ const TeamChat: React.FC = () => {
   }
 
   // Channel list view
-  if (viewMode === 'channels') {
+  if (viewMode === "channels") {
     // Direct messages are PRIVATE channels with names starting with "dm-"
-    const groupChannels = channels.filter(c => !c.name.startsWith('dm-'));
-    const directChannels = channels.filter(c => c.name.startsWith('dm-'));
+    const groupChannels = channels.filter((c) => !c.name.startsWith("dm-"));
+    const directChannels = channels.filter((c) => c.name.startsWith("dm-"));
 
     return (
       <Box sx={{ pb: 8 }}>
         <MobileHeader title="Team Chat" showNotifications />
-        
-        <Tabs value={tabValue} onChange={handleTabChange} variant="fullWidth" sx={{ borderBottom: 1, borderColor: 'divider' }}>
+
+        <Tabs
+          value={tabValue}
+          onChange={handleTabChange}
+          variant="fullWidth"
+          sx={{ borderBottom: 1, borderColor: "divider" }}
+        >
           <Tab icon={<GroupIcon />} label="Channels" />
           <Tab icon={<PersonIcon />} label="Direct" />
         </Tabs>
@@ -205,13 +236,22 @@ const TeamChat: React.FC = () => {
                 <ListItemButton
                   onClick={() => {
                     setSelectedChannel(channel);
-                    setViewMode('chat');
+                    setViewMode("chat");
                   }}
                   sx={{ py: 2, px: 2 }}
                 >
                   <ListItemAvatar>
-                    <Badge badgeContent={channel.unreadCount} color="error" max={99}>
-                      <Avatar sx={{ bgcolor: channel.color || 'primary.light', fontSize: '1.5rem' }}>
+                    <Badge
+                      badgeContent={channel.unreadCount}
+                      color="error"
+                      max={99}
+                    >
+                      <Avatar
+                        sx={{
+                          bgcolor: channel.color || "primary.light",
+                          fontSize: "1.5rem",
+                        }}
+                      >
                         {channel.icon || channel.displayName.charAt(0)}
                       </Avatar>
                     </Badge>
@@ -220,27 +260,38 @@ const TeamChat: React.FC = () => {
                     primary={channel.displayName}
                     secondary={
                       <>
-                        <Typography component="span" variant="body2" color="text.primary">
-                          {channel.lastMessage?.content || 'No messages yet'}
+                        <Typography
+                          component="span"
+                          variant="body2"
+                          color="text.primary"
+                        >
+                          {channel.lastMessage?.content || "No messages yet"}
                         </Typography>
-                        {channel.lastMessage && ` — ${formatMessageTime(channel.lastMessage.createdAt)}`}
+                        {channel.lastMessage &&
+                          ` — ${formatMessageTime(
+                            channel.lastMessage.createdAt
+                          )}`}
                       </>
                     }
-                    primaryTypographyProps={{ fontWeight: channel.unreadCount > 0 ? 600 : 400 }}
+                    primaryTypographyProps={{
+                      fontWeight: channel.unreadCount > 0 ? 600 : 400,
+                    }}
                     secondaryTypographyProps={{
-                      component: 'span',
-                      variant: 'body2',
+                      component: "span",
+                      variant: "body2",
                       sx: {
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        display: '-webkit-box',
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        display: "-webkit-box",
                         WebkitLineClamp: 1,
-                        WebkitBoxOrient: 'vertical',
+                        WebkitBoxOrient: "vertical",
                       },
                     }}
                   />
                 </ListItemButton>
-                {index < groupChannels.length - 1 && <Divider variant="inset" component="li" />}
+                {index < groupChannels.length - 1 && (
+                  <Divider variant="inset" component="li" />
+                )}
               </React.Fragment>
             ))}
           </List>
@@ -254,13 +305,17 @@ const TeamChat: React.FC = () => {
                   <ListItemButton
                     onClick={() => {
                       setSelectedChannel(channel);
-                      setViewMode('chat');
+                      setViewMode("chat");
                     }}
                     sx={{ py: 2, px: 2 }}
                   >
                     <ListItemAvatar>
-                      <Badge badgeContent={channel.unreadCount} color="error" max={99}>
-                        <Avatar sx={{ bgcolor: 'primary.main' }}>
+                      <Badge
+                        badgeContent={channel.unreadCount}
+                        color="error"
+                        max={99}
+                      >
+                        <Avatar sx={{ bgcolor: "primary.main" }}>
                           {channel.displayName.charAt(0)}
                         </Avatar>
                       </Badge>
@@ -269,49 +324,69 @@ const TeamChat: React.FC = () => {
                       primary={channel.displayName}
                       secondary={
                         <>
-                          <Typography component="span" variant="body2" color="text.primary">
-                            {channel.lastMessage?.content || 'No messages yet'}
+                          <Typography
+                            component="span"
+                            variant="body2"
+                            color="text.primary"
+                          >
+                            {channel.lastMessage?.content || "No messages yet"}
                           </Typography>
-                          {channel.lastMessage && ` — ${formatMessageTime(channel.lastMessage.createdAt)}`}
+                          {channel.lastMessage &&
+                            ` — ${formatMessageTime(
+                              channel.lastMessage.createdAt
+                            )}`}
                         </>
                       }
-                      primaryTypographyProps={{ fontWeight: channel.unreadCount > 0 ? 600 : 400 }}
+                      primaryTypographyProps={{
+                        fontWeight: channel.unreadCount > 0 ? 600 : 400,
+                      }}
                       secondaryTypographyProps={{
-                        component: 'span',
-                        variant: 'body2',
+                        component: "span",
+                        variant: "body2",
                         sx: {
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          display: '-webkit-box',
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          display: "-webkit-box",
                           WebkitLineClamp: 1,
-                          WebkitBoxOrient: 'vertical',
+                          WebkitBoxOrient: "vertical",
                         },
                       }}
                     />
                   </ListItemButton>
-                  {index < directChannels.length - 1 && <Divider variant="inset" component="li" />}
+                  {index < directChannels.length - 1 && (
+                    <Divider variant="inset" component="li" />
+                  )}
                 </React.Fragment>
               ))}
             </List>
-            
+
             <Fab
               color="primary"
               aria-label="new message"
-              sx={{ position: 'fixed', bottom: 80, right: 16 }}
+              sx={{ position: "fixed", bottom: 80, right: 16 }}
               onClick={() => setShowStaffDialog(true)}
             >
               <AddIcon />
             </Fab>
 
-            <Dialog open={showStaffDialog} onClose={() => setShowStaffDialog(false)} fullWidth maxWidth="sm">
+            <Dialog
+              open={showStaffDialog}
+              onClose={() => setShowStaffDialog(false)}
+              fullWidth
+              maxWidth="sm"
+            >
               <DialogTitle>Start a Conversation</DialogTitle>
               <DialogContent>
                 <List>
                   {staffDirectory.map((staff) => (
-                    <ListItemButton key={staff.id} onClick={() => handleStartDirectMessage(staff)}>
+                    <ListItemButton
+                      key={staff.id}
+                      onClick={() => handleStartDirectMessage(staff)}
+                    >
                       <ListItemAvatar>
-                        <Avatar sx={{ bgcolor: 'primary.main' }}>
-                          {staff.firstName.charAt(0)}{staff.lastName.charAt(0)}
+                        <Avatar sx={{ bgcolor: "primary.main" }}>
+                          {staff.firstName.charAt(0)}
+                          {staff.lastName.charAt(0)}
                         </Avatar>
                       </ListItemAvatar>
                       <ListItemText
@@ -333,21 +408,29 @@ const TeamChat: React.FC = () => {
 
   // Chat view
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', pb: 0 }}>
+    <Box
+      sx={{ display: "flex", flexDirection: "column", height: "100vh", pb: 0 }}
+    >
       {/* Chat Header */}
       <Paper
         elevation={1}
         sx={{
           p: 2,
-          display: 'flex',
-          alignItems: 'center',
+          display: "flex",
+          alignItems: "center",
           borderRadius: 0,
         }}
       >
         <IconButton edge="start" onClick={handleBack} sx={{ mr: 1 }}>
           <BackIcon />
         </IconButton>
-        <Avatar sx={{ bgcolor: selectedChannel?.color || 'primary.light', mr: 2, fontSize: '1.2rem' }}>
+        <Avatar
+          sx={{
+            bgcolor: selectedChannel?.color || "primary.light",
+            mr: 2,
+            fontSize: "1.2rem",
+          }}
+        >
           {selectedChannel?.icon || selectedChannel?.displayName.charAt(0)}
         </Avatar>
         <Box sx={{ flexGrow: 1 }}>
@@ -366,32 +449,44 @@ const TeamChat: React.FC = () => {
       <Box
         sx={{
           flexGrow: 1,
-          overflowY: 'auto',
+          overflowY: "auto",
           p: 2,
-          backgroundColor: '#f5f5f5',
+          backgroundColor: "#f5f5f5",
         }}
       >
         {messages.map((message) => {
           const isCurrentUser = message.senderId === user?.id;
           const senderName = `${message.sender.firstName} ${message.sender.lastName}`;
-          
+
           return (
             <Box
               key={message.id}
               sx={{
-                display: 'flex',
-                justifyContent: isCurrentUser ? 'flex-end' : 'flex-start',
+                display: "flex",
+                justifyContent: isCurrentUser ? "flex-end" : "flex-start",
                 mb: 2,
               }}
             >
               {!isCurrentUser && (
-                <Avatar sx={{ width: 32, height: 32, mr: 1, fontSize: '0.875rem', bgcolor: 'secondary.main' }}>
-                  {message.sender.firstName.charAt(0)}{message.sender.lastName.charAt(0)}
+                <Avatar
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    mr: 1,
+                    fontSize: "0.875rem",
+                    bgcolor: "secondary.main",
+                  }}
+                >
+                  {message.sender.firstName.charAt(0)}
+                  {message.sender.lastName.charAt(0)}
                 </Avatar>
               )}
-              <Box sx={{ maxWidth: '70%' }}>
+              <Box sx={{ maxWidth: "70%" }}>
                 {!isCurrentUser && (
-                  <Typography variant="caption" sx={{ ml: 1, color: 'text.secondary' }}>
+                  <Typography
+                    variant="caption"
+                    sx={{ ml: 1, color: "text.secondary" }}
+                  >
                     {senderName}
                   </Typography>
                 )}
@@ -399,25 +494,30 @@ const TeamChat: React.FC = () => {
                   elevation={1}
                   sx={{
                     p: 1.5,
-                    backgroundColor: isCurrentUser ? 'primary.main' : 'white',
-                    color: isCurrentUser ? 'white' : 'text.primary',
+                    backgroundColor: isCurrentUser ? "primary.main" : "white",
+                    color: isCurrentUser ? "white" : "text.primary",
                     borderRadius: 2,
                     borderTopLeftRadius: !isCurrentUser ? 0 : 2,
                     borderTopRightRadius: isCurrentUser ? 0 : 2,
                   }}
                 >
-                  <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{message.content}</Typography>
+                  <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
+                    {message.content}
+                  </Typography>
                 </Paper>
                 <Typography
                   variant="caption"
                   sx={{
                     ml: 1,
-                    color: 'text.secondary',
-                    display: 'block',
+                    color: "text.secondary",
+                    display: "block",
                     mt: 0.5,
                   }}
                 >
-                  {new Date(message.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                  {new Date(message.createdAt).toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "2-digit",
+                  })}
                 </Typography>
               </Box>
             </Box>
@@ -433,7 +533,7 @@ const TeamChat: React.FC = () => {
           p: 1.5,
           borderRadius: 0,
           borderTop: 1,
-          borderColor: 'divider',
+          borderColor: "divider",
         }}
       >
         <TextField
@@ -459,7 +559,7 @@ const TeamChat: React.FC = () => {
             ),
           }}
           sx={{
-            '& .MuiOutlinedInput-root': {
+            "& .MuiOutlinedInput-root": {
               borderRadius: 3,
             },
           }}

@@ -5,7 +5,7 @@
  * working hours validation, and time off integration
  */
 
-import { format, parseISO, isWithinInterval } from 'date-fns';
+import { parseISO, isWithinInterval } from 'date-fns';
 
 // These tests validate the availability checking logic
 // The actual implementation is in GroomerSelector component

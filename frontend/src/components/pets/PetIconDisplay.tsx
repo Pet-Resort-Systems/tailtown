@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Tooltip, Typography } from '@mui/material';
-import { ALL_PET_ICONS, getIconById } from '../../constants/petIcons';
+import { getIconById } from '../../constants/petIcons';
 
 interface PetIconDisplayProps {
   iconIds: string[];

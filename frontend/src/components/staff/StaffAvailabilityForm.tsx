@@ -9,7 +9,6 @@ import {
   Select,
   MenuItem,
   TextField,
-  Divider,
   IconButton,
   Paper,
   Table,
@@ -22,7 +21,7 @@ import {
   SelectChangeEvent,
   CircularProgress
 } from '@mui/material';
-import { Add as AddIcon, Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import staffService, { StaffAvailability } from '../../services/staffService';
 
 interface StaffAvailabilityFormProps {

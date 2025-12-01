@@ -13,11 +13,8 @@ import {
   CircularProgress,
   Alert,
   Divider,
-  Checkbox,
-  FormControlLabel,
   InputAdornment,
 } from '@mui/material';
-import { paymentService } from '../../services/paymentService';
 import { customerService } from '../../services/customerService';
 import { invoiceService } from '../../services/invoiceService';
 

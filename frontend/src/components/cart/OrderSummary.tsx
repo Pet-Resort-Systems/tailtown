@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-import { useShoppingCart, CartItem } from '../../contexts/ShoppingCartContext';
+import { useShoppingCart } from '../../contexts/ShoppingCartContext';
 
 // Define the props interface
 interface OrderSummaryProps {

@@ -11,7 +11,6 @@
 
 import { customerApi } from './api';
 import {
-  PricingRule,
   AnyPricingRule,
   PriceCalculationRequest,
   PriceCalculationResult,
@@ -24,7 +23,7 @@ import {
   Season,
   DayOfWeek
 } from '../types/dynamicPricing';
-import { getDayOfWeekName, isWeekend as isWeekendUtil, getMonth } from '../utils/dateUtils';
+import { getDayOfWeekName, isWeekend as isWeekendUtil } from '../utils/dateUtils';
 
 export const dynamicPricingService = {
   /**

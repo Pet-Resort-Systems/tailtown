@@ -42,6 +42,7 @@ const ClassEnrollments: React.FC = () => {
     if (classId) {
       loadData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classId]);
 
   const loadData = async () => {

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Container,
   Box,
@@ -18,12 +18,17 @@ import {
   IconButton,
   Snackbar,
   Alert,
-  SelectChangeEvent
-} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import { serviceManagement } from '../../services/serviceManagement';
-import { Service, ServiceCategory, AddOnService, DepositType } from '../../types/service';
+  SelectChangeEvent,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import { serviceManagement } from "../../services/serviceManagement";
+import {
+  Service,
+  ServiceCategory,
+  AddOnService,
+  DepositType,
+} from "../../types/service";
 
 interface AddOnFormData {
   name: string;
@@ -42,33 +47,33 @@ const ServiceDetails: React.FC = () => {
   const isNewService = !id;
 
   const [service, setService] = useState<Partial<Service>>({
-    name: '',
-    description: '',
+    name: "",
+    description: "",
     serviceCategory: ServiceCategory.DAYCARE,
     price: 0,
     duration: 0, // Explicitly set to 0
     requiresStaff: false,
     isActive: true,
-    notes: '',
+    notes: "",
     availableAddOns: [],
     depositRequired: false,
     depositType: undefined,
-    depositAmount: undefined
+    depositAmount: undefined,
   });
 
   const [loading, setLoading] = useState(!isNewService);
   const [saving, setSaving] = useState(false);
   const [newAddOn, setNewAddOn] = useState<AddOnFormData>({
-    name: '',
-    description: '',
+    name: "",
+    description: "",
     price: 0,
-    duration: 0
+    duration: 0,
   });
   const [showAddOnForm, setShowAddOnForm] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
-    message: '',
-    severity: 'success' as 'success' | 'error' | 'warning'
+    message: "",
+    severity: "success" as "success" | "error" | "warning",
   });
 
   const loadService = useCallback(async () => {
@@ -76,35 +81,37 @@ const ServiceDetails: React.FC = () => {
       // Try to load the service with includeDeleted=true to handle deleted services
       const response = await serviceManagement.getServiceById(id!, true);
       setService(response.data);
-      
+
       // If the service is inactive, show a warning
       if (response.data && !response.data.isActive) {
         setSnackbar({
           open: true,
-          message: 'This service has been deactivated and is not available for booking',
-          severity: 'warning'
+          message:
+            "This service has been deactivated and is not available for booking",
+          severity: "warning",
         });
       }
-      
+
       setLoading(false);
     } catch (err: any) {
       // If service not found, navigate back to services list
-      const errorMessage = err.message || 'Failed to load service';
-      
+      const errorMessage = err.message || "Failed to load service";
+
       setSnackbar({
         open: true,
         message: errorMessage,
-        severity: 'error'
+        severity: "error",
       });
-      
+
       // Redirect back to services list after a short delay
       setTimeout(() => {
-        navigate('/services');
+        navigate("/services");
       }, 2000);
-      
+
       setLoading(false);
     }
-  }, [id, isNewService, navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, navigate]);
 
   useEffect(() => {
     if (!isNewService) {
@@ -116,7 +123,7 @@ const ServiceDetails: React.FC = () => {
     const { name, value, type } = e.target;
     setService((prev: Partial<Service>) => ({
       ...prev,
-      [name]: type === 'number' ? Number(value) : value
+      [name]: type === "number" ? Number(value) : value,
     }));
   };
 
@@ -124,7 +131,7 @@ const ServiceDetails: React.FC = () => {
     const { name, checked } = e.target;
     setService((prev: Partial<Service>) => ({
       ...prev,
-      [name]: checked
+      [name]: checked,
     }));
   };
 
@@ -135,7 +142,7 @@ const ServiceDetails: React.FC = () => {
   const handleCategoryChange = (event: SelectChangeEvent<ServiceCategory>) => {
     setService((prev: Partial<Service>) => ({
       ...prev,
-      serviceCategory: event.target.value as ServiceCategory
+      serviceCategory: event.target.value as ServiceCategory,
     }));
   };
 
@@ -143,20 +150,20 @@ const ServiceDetails: React.FC = () => {
     const { name, value, type } = e.target;
     setNewAddOn((prev: AddOnFormData) => ({
       ...prev,
-      [name]: type === 'number' ? Number(value) : value
+      [name]: type === "number" ? Number(value) : value,
     }));
   };
 
   const handleAddAddOn = () => {
     setService((prev: Partial<Service>) => ({
       ...prev,
-      availableAddOns: [...(prev.availableAddOns || []), newAddOn]
+      availableAddOns: [...(prev.availableAddOns || []), newAddOn],
     }));
     setNewAddOn({
-      name: '',
-      description: '',
+      name: "",
+      description: "",
       price: 0,
-      duration: 0
+      duration: 0,
     });
     setShowAddOnForm(false);
   };
@@ -164,21 +171,23 @@ const ServiceDetails: React.FC = () => {
   const handleRemoveAddOn = (index: number) => {
     setService((prev: Partial<Service>) => ({
       ...prev,
-      availableAddOns: prev.availableAddOns?.filter((_: AddOnService, i: number) => i !== index)
+      availableAddOns: prev.availableAddOns?.filter(
+        (_: AddOnService, i: number) => i !== index
+      ),
     }));
   };
 
   const handleSave = async () => {
     try {
       setSaving(true);
-      console.log('Saving service:', service);
-      
+      console.log("Saving service:", service);
+
       // Always ensure isActive is set to true when saving
       const serviceToSave = {
         ...service,
-        isActive: service.isActive !== undefined ? service.isActive : true
+        isActive: service.isActive !== undefined ? service.isActive : true,
       };
-      
+
       if (isNewService) {
         await serviceManagement.createService(serviceToSave as Service);
       } else {
@@ -192,31 +201,33 @@ const ServiceDetails: React.FC = () => {
           isActive: serviceToSave.isActive,
           requiresStaff: serviceToSave.requiresStaff,
           notes: serviceToSave.notes,
-          availableAddOns: serviceToSave.availableAddOns
+          availableAddOns: serviceToSave.availableAddOns,
         });
       }
-      
+
       setSnackbar({
         open: true,
-        message: `Service ${isNewService ? 'created' : 'updated'} successfully`,
-        severity: 'success'
+        message: `Service ${isNewService ? "created" : "updated"} successfully`,
+        severity: "success",
       });
-      navigate('/services');
+      navigate("/services");
     } catch (err: any) {
       // Show the specific error message if available
-      const errorMessage = err.message || `Failed to ${isNewService ? 'create' : 'update'} service`;
-      
+      const errorMessage =
+        err.message ||
+        `Failed to ${isNewService ? "create" : "update"} service`;
+
       setSnackbar({
         open: true,
         message: errorMessage,
-        severity: 'error'
+        severity: "error",
       });
       setSaving(false);
     }
   };
 
   const handleCancel = () => {
-    navigate('/services');
+    navigate("/services");
   };
 
   const handleSnackbarClose = () => {
@@ -226,7 +237,14 @@ const ServiceDetails: React.FC = () => {
   if (loading) {
     return (
       <Container maxWidth="lg">
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "50vh",
+          }}
+        >
           <Typography>Loading service...</Typography>
         </Box>
       </Container>
@@ -237,7 +255,7 @@ const ServiceDetails: React.FC = () => {
     <Container maxWidth="lg">
       <Box sx={{ py: 4 }}>
         <Typography variant="h4" component="h1" sx={{ mb: 4 }}>
-          {isNewService ? 'New Service' : 'Edit Service'}
+          {isNewService ? "New Service" : "Edit Service"}
         </Typography>
 
         <Grid container spacing={3}>
@@ -276,7 +294,10 @@ const ServiceDetails: React.FC = () => {
                       label="Category"
                     >
                       {Object.values(ServiceCategory)
-                        .filter((category: ServiceCategory) => category !== ServiceCategory.TRAINING)
+                        .filter(
+                          (category: ServiceCategory) =>
+                            category !== ServiceCategory.TRAINING
+                        )
                         .map((category: ServiceCategory) => (
                           <MenuItem key={category} value={category}>
                             {category}
@@ -295,7 +316,7 @@ const ServiceDetails: React.FC = () => {
                     value={service.price}
                     onChange={handleInputChange}
                     InputProps={{
-                      startAdornment: '$'
+                      startAdornment: "$",
                     }}
                   />
                 </Grid>
@@ -320,7 +341,12 @@ const ServiceDetails: React.FC = () => {
                     }
                     label="Require Deposit"
                   />
-                  <Typography variant="caption" color="text.secondary" display="block" sx={{ ml: 4, mt: -1 }}>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                    sx={{ ml: 4, mt: -1 }}
+                  >
                     Customers must pay a deposit when booking this service
                   </Typography>
                 </Grid>
@@ -338,13 +364,20 @@ const ServiceDetails: React.FC = () => {
                               ...prev,
                               depositType,
                               // Reset deposit amount when type changes
-                              depositAmount: depositType === DepositType.PERCENTAGE ? 50 : (prev.price || 0) * 0.5
+                              depositAmount:
+                                depositType === DepositType.PERCENTAGE
+                                  ? 50
+                                  : (prev.price || 0) * 0.5,
                             }));
                           }}
                           label="Deposit Type"
                         >
-                          <MenuItem value={DepositType.PERCENTAGE}>Percentage of Price</MenuItem>
-                          <MenuItem value={DepositType.FIXED_AMOUNT}>Fixed Dollar Amount</MenuItem>
+                          <MenuItem value={DepositType.PERCENTAGE}>
+                            Percentage of Price
+                          </MenuItem>
+                          <MenuItem value={DepositType.FIXED_AMOUNT}>
+                            Fixed Dollar Amount
+                          </MenuItem>
                         </Select>
                       </FormControl>
                     </Grid>
@@ -352,23 +385,44 @@ const ServiceDetails: React.FC = () => {
                     <Grid item xs={12} sm={6}>
                       <TextField
                         fullWidth
-                        label={service.depositType === DepositType.PERCENTAGE ? 'Deposit Percentage' : 'Deposit Amount'}
+                        label={
+                          service.depositType === DepositType.PERCENTAGE
+                            ? "Deposit Percentage"
+                            : "Deposit Amount"
+                        }
                         name="depositAmount"
                         type="number"
                         value={service.depositAmount || 0}
                         onChange={handleInputChange}
                         InputProps={{
-                          startAdornment: service.depositType === DepositType.PERCENTAGE ? '' : '$',
-                          endAdornment: service.depositType === DepositType.PERCENTAGE ? '%' : '',
+                          startAdornment:
+                            service.depositType === DepositType.PERCENTAGE
+                              ? ""
+                              : "$",
+                          endAdornment:
+                            service.depositType === DepositType.PERCENTAGE
+                              ? "%"
+                              : "",
                           inputProps: {
                             min: 0,
-                            max: service.depositType === DepositType.PERCENTAGE ? 100 : undefined
-                          }
+                            max:
+                              service.depositType === DepositType.PERCENTAGE
+                                ? 100
+                                : undefined,
+                          },
                         }}
                         helperText={
                           service.depositType === DepositType.PERCENTAGE
-                            ? `Deposit: $${((service.price || 0) * (service.depositAmount || 0) / 100).toFixed(2)}`
-                            : `${((service.depositAmount || 0) / (service.price || 1) * 100).toFixed(0)}% of service price`
+                            ? `Deposit: $${(
+                                ((service.price || 0) *
+                                  (service.depositAmount || 0)) /
+                                100
+                              ).toFixed(2)}`
+                            : `${(
+                                ((service.depositAmount || 0) /
+                                  (service.price || 1)) *
+                                100
+                              ).toFixed(0)}% of service price`
                         }
                       />
                     </Grid>
@@ -380,56 +434,94 @@ const ServiceDetails: React.FC = () => {
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                  <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                    <Typography variant="body2" sx={{ minWidth: '60px' }}>Duration:</Typography>
+                  <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+                    <Typography variant="body2" sx={{ minWidth: "60px" }}>
+                      Duration:
+                    </Typography>
                     <TextField
                       label="Hours"
                       type="number"
                       InputProps={{ inputProps: { min: 0 } }}
-                      value={service.duration !== undefined ? Math.floor(service.duration / 60) : 0}
+                      value={
+                        service.duration !== undefined
+                          ? Math.floor(service.duration / 60)
+                          : 0
+                      }
                       onChange={(e) => {
                         const hours = parseInt(e.target.value) || 0;
-                        const minutes = service.duration !== undefined ? (service.duration % 60) : 0;
-                        setService(prev => ({
+                        const minutes =
+                          service.duration !== undefined
+                            ? service.duration % 60
+                            : 0;
+                        setService((prev) => ({
                           ...prev,
-                          duration: (hours * 60) + minutes
+                          duration: hours * 60 + minutes,
                         }));
                       }}
                       size="small"
-                      sx={{ width: '100px' }}
+                      sx={{ width: "100px" }}
                     />
                     <TextField
                       label="Min"
                       select
-                      value={String(service.duration !== undefined ? (service.duration % 60) : 0)}
+                      value={String(
+                        service.duration !== undefined
+                          ? service.duration % 60
+                          : 0
+                      )}
                       onChange={(e) => {
                         const minutes = parseInt(e.target.value) || 0;
-                        const hours = service.duration !== undefined ? Math.floor(service.duration / 60) : 0;
-                        setService(prev => ({
+                        const hours =
+                          service.duration !== undefined
+                            ? Math.floor(service.duration / 60)
+                            : 0;
+                        setService((prev) => ({
                           ...prev,
-                          duration: (hours * 60) + minutes
+                          duration: hours * 60 + minutes,
                         }));
                       }}
                       size="small"
-                      sx={{ width: '100px' }}
+                      sx={{ width: "100px" }}
                     >
-                      <MenuItem key={0} value={0}>0</MenuItem>
-                      <MenuItem key={5} value={5}>5</MenuItem>
-                      <MenuItem key={10} value={10}>10</MenuItem>
-                      <MenuItem key={15} value={15}>15</MenuItem>
-                      <MenuItem key={20} value={20}>20</MenuItem>
-                      <MenuItem key={25} value={25}>25</MenuItem>
-                      <MenuItem key={30} value={30}>30</MenuItem>
-                      <MenuItem key={35} value={35}>35</MenuItem>
-                      <MenuItem key={40} value={40}>40</MenuItem>
-                      <MenuItem key={45} value={45}>45</MenuItem>
-                      <MenuItem key={50} value={50}>50</MenuItem>
-                      <MenuItem key={55} value={55}>55</MenuItem>
+                      <MenuItem key={0} value={0}>
+                        0
+                      </MenuItem>
+                      <MenuItem key={5} value={5}>
+                        5
+                      </MenuItem>
+                      <MenuItem key={10} value={10}>
+                        10
+                      </MenuItem>
+                      <MenuItem key={15} value={15}>
+                        15
+                      </MenuItem>
+                      <MenuItem key={20} value={20}>
+                        20
+                      </MenuItem>
+                      <MenuItem key={25} value={25}>
+                        25
+                      </MenuItem>
+                      <MenuItem key={30} value={30}>
+                        30
+                      </MenuItem>
+                      <MenuItem key={35} value={35}>
+                        35
+                      </MenuItem>
+                      <MenuItem key={40} value={40}>
+                        40
+                      </MenuItem>
+                      <MenuItem key={45} value={45}>
+                        45
+                      </MenuItem>
+                      <MenuItem key={50} value={50}>
+                        50
+                      </MenuItem>
+                      <MenuItem key={55} value={55}>
+                        55
+                      </MenuItem>
                     </TextField>
                   </Box>
                 </Grid>
-
-
 
                 <Grid item xs={12}>
                   <TextField
@@ -481,7 +573,14 @@ const ServiceDetails: React.FC = () => {
 
           <Grid item xs={12} md={4}>
             <Paper sx={{ p: 3 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 2,
+                }}
+              >
                 <Typography variant="h6">Add-On Services</Typography>
                 {!showAddOnForm && (
                   <Button
@@ -495,7 +594,15 @@ const ServiceDetails: React.FC = () => {
               </Box>
 
               {showAddOnForm && (
-                <Box sx={{ mb: 3, p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
+                <Box
+                  sx={{
+                    mb: 3,
+                    p: 2,
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: 1,
+                  }}
+                >
                   <Grid container spacing={2}>
                     <Grid item xs={12}>
                       <TextField
@@ -527,7 +634,7 @@ const ServiceDetails: React.FC = () => {
                         onChange={handleAddOnInputChange}
                         size="small"
                         InputProps={{
-                          startAdornment: '$'
+                          startAdornment: "$",
                         }}
                       />
                     </Grid>
@@ -543,7 +650,13 @@ const ServiceDetails: React.FC = () => {
                       />
                     </Grid>
                     <Grid item xs={12}>
-                      <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          gap: 1,
+                          justifyContent: "flex-end",
+                        }}
+                      >
                         <Button
                           size="small"
                           onClick={() => setShowAddOnForm(false)}
@@ -566,50 +679,52 @@ const ServiceDetails: React.FC = () => {
 
               <Divider sx={{ my: 2 }} />
 
-              {service.availableAddOns?.map((addOn: AddOnService, index: number) => (
-                <Box
-                  key={index}
-                  sx={{
-                    p: 2,
-                    mb: 1,
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    borderRadius: 1,
-                    position: 'relative'
-                  }}
-                >
-                  <IconButton
-                    size="small"
-                    sx={{ position: 'absolute', top: 8, right: 8 }}
-                    onClick={() => handleRemoveAddOn(index)}
+              {service.availableAddOns?.map(
+                (addOn: AddOnService, index: number) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      p: 2,
+                      mb: 1,
+                      border: "1px solid",
+                      borderColor: "divider",
+                      borderRadius: 1,
+                      position: "relative",
+                    }}
                   >
-                    <DeleteIcon />
-                  </IconButton>
-                  <Typography variant="subtitle1">{addOn.name}</Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    {addOn.description}
-                  </Typography>
-                  <Box sx={{ mt: 1 }}>
-                    <Typography variant="body2">
-                      ${addOn.price} • {addOn.duration} min
+                    <IconButton
+                      size="small"
+                      sx={{ position: "absolute", top: 8, right: 8 }}
+                      onClick={() => handleRemoveAddOn(index)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                    <Typography variant="subtitle1">{addOn.name}</Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {addOn.description}
                     </Typography>
+                    <Box sx={{ mt: 1 }}>
+                      <Typography variant="body2">
+                        ${addOn.price} • {addOn.duration} min
+                      </Typography>
+                    </Box>
                   </Box>
-                </Box>
-              ))}
+                )
+              )}
             </Paper>
           </Grid>
         </Grid>
 
-        <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-          <Button onClick={handleCancel}>
-            Cancel
-          </Button>
+        <Box
+          sx={{ mt: 4, display: "flex", gap: 2, justifyContent: "flex-end" }}
+        >
+          <Button onClick={handleCancel}>Cancel</Button>
           <Button
             variant="contained"
             onClick={handleSave}
             disabled={saving || !service.name}
           >
-            {saving ? 'Saving...' : 'Save'}
+            {saving ? "Saving..." : "Save"}
           </Button>
         </Box>
       </Box>
@@ -622,7 +737,7 @@ const ServiceDetails: React.FC = () => {
         <Alert
           onClose={handleSnackbarClose}
           severity={snackbar.severity}
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
         >
           {snackbar.message}
         </Alert>

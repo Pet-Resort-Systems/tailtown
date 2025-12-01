@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Box,
   TextField,
-  Button,
   Paper,
   Typography,
   IconButton,
@@ -10,7 +9,6 @@ import {
   Chip
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
 import { CheckInBelonging } from '../../services/checkInService';
 
 interface BelongingsFormProps {

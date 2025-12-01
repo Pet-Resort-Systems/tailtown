@@ -3,7 +3,6 @@
  * Tests API endpoint paths and ensures frontend-backend consistency
  */
 
-import axios from 'axios';
 import {
   getSalesDailyReport,
   getSalesWeeklyReport,
