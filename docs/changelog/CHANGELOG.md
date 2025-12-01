@@ -9,6 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## [1.6.12] - 2025-12-01
+
+### Added
+
+- **Staging Environment** - Complete staging infrastructure for pre-production testing
+  - Staging URL: https://staging.tailtown.canicloud.com
+  - Separate database (`tailtown_staging`) with anonymized production data
+  - PM2 config: `ecosystem.staging.config.js` (ports 5000, 5003, 5004)
+  - Nginx config: `config/nginx/tailtown-staging.conf`
+  - GitHub Actions: `.github/workflows/deploy-staging.yml`
+  - Documentation: `docs/STAGING-ENVIRONMENT.md`
+  - SSL certificate (valid until March 2026)
+  - Data anonymization (emails → `@staging.test`, phones → `555-XXXX`)
+
+### Fixed
+
+- **Production Data Cleanup** - Removed duplicate records from Gingr import
+  - Deleted 11,860 placeholder customers (`@tailtown.placeholder`)
+  - Deduplicated 11,779 customers with same email
+  - Deduplicated 18,431 pets with same name+customer
+  - Final counts: 11,902 customers, 18,458 pets (was 35,541 / 36,889)
+
 ## [1.6.11] - 2025-11-30
 
 ### Added
