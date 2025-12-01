@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the nginx reverse proxy configuration for Tailtown, which routes API requests to the appropriate backend services.
+This document describes the nginx reverse proxy configuration for Tailtown, which routes API requests to the appropriate backend services and provides API Gateway functionality.
 
 ## Service Architecture
 
@@ -10,9 +10,24 @@ This document describes the nginx reverse proxy configuration for Tailtown, whic
 - **Customer Service**: Node.js/Express on port 4004
 - **Reservation Service**: Node.js/Express on port 4003
 
+## API Gateway Features (Added Nov 30, 2025)
+
+Nginx now provides API Gateway functionality:
+
+| Feature                      | Configuration                                                      |
+| ---------------------------- | ------------------------------------------------------------------ |
+| **Per-Tenant Rate Limiting** | `limit_req_zone $tenant_id zone=tenant_api_limit:10m rate=100r/s`  |
+| **Per-IP Rate Limiting**     | `limit_req_zone $binary_remote_addr zone=api_limit:10m rate=10r/s` |
+| **API Versioning**           | `/api/v1/*` rewrites to `/api/*`                                   |
+| **Login Rate Limiting**      | 5 requests per 15 minutes                                          |
+| **Booking Rate Limiting**    | 2 requests per second                                              |
+
+See [architecture/API-GATEWAY.md](architecture/API-GATEWAY.md) for full documentation.
+
 ## Nginx Configuration
 
-**Location**: `/etc/nginx/sites-enabled/tailtown`
+**Location**: `/etc/nginx/sites-enabled/tailtown`  
+**Source**: `config/nginx/tailtown.conf`
 
 ### Customer Service Routes (Port 4004)
 
@@ -183,11 +198,12 @@ More specific routes must be defined BEFORE general routes in nginx configuratio
 
 ## Version History
 
+- **November 30, 2025**: Added API Gateway features (rate limiting, versioning, analytics)
 - **November 22, 2025**: Fixed announcements routing, added critical port configuration notes
 - **November 21, 2025**: Added waitlist, products, analytics, reports, training-classes routes
 - **Initial**: Basic customer-service and reservation-service routing
 
 ---
 
-**Last Updated**: November 22, 2025  
+**Last Updated**: November 30, 2025  
 **Maintainer**: Development Team

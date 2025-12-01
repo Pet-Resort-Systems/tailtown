@@ -234,11 +234,43 @@ SELECT * FROM products WHERE tenant_id = 'brangro';
 ### Request Processing Pipeline
 
 ```
-Incoming Request
+Incoming Request (https://tailtown.canicloud.com/api/...)
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────┐
+│  NGINX (API Gateway Layer)                                   │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │  Rate Limiting                                          ││
+│  │  - Per-tenant: 100 req/s (tenant_api_limit)            ││
+│  │  - Per-IP: 10 req/s (api_limit)                        ││
+│  │  - Login: 5 req/15min (login_limit)                    ││
+│  │  - Booking: 2 req/s (booking_limit)                    ││
+│  └─────────────────────────────────────────────────────────┘│
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │  API Versioning                                         ││
+│  │  - /api/v1/* → /api/* (rewrite)                        ││
+│  │  - X-API-Version header added                          ││
+│  │  - X-Tenant-ID extracted from subdomain                ││
+│  └─────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────┘
     │
     ▼
 ┌─────────────────────────────────┐
-│  1. extractTenantContext        │  ← Identifies tenant from subdomain
+│  1. correlationId()             │  ← Generates X-Request-ID
+│     - Creates unique request ID │
+│     - Enables distributed trace │
+└─────────────────────────────────┘
+    │
+    ▼
+┌─────────────────────────────────┐
+│  2. apiVersionHeaders()         │  ← Adds version info
+│     - X-API-Version: v1         │
+│     - X-API-Deprecated: false   │
+└─────────────────────────────────┘
+    │
+    ▼
+┌─────────────────────────────────┐
+│  3. extractTenantContext        │  ← Identifies tenant from subdomain
 │     - Subdomain detection       │
 │     - Tenant lookup             │
 │     - Validation                │
@@ -246,7 +278,15 @@ Incoming Request
     │
     ▼
 ┌─────────────────────────────────┐
-│  2. optionalAuth (if needed)    │  ← Extracts user from JWT if present
+│  4. apiAnalytics()              │  ← Tracks metrics to Redis
+│     - Request count per tenant  │
+│     - Response times (P50/P95)  │
+│     - Error rates by endpoint   │
+└─────────────────────────────────┘
+    │
+    ▼
+┌─────────────────────────────────┐
+│  5. optionalAuth (if needed)    │  ← Extracts user from JWT if present
 │     - Parse Authorization       │
 │     - Verify JWT                │
 │     - Attach user to req        │
@@ -255,7 +295,7 @@ Incoming Request
     │
     ▼
 ┌─────────────────────────────────┐
-│  3. authenticate (if required)  │  ← Requires valid JWT
+│  6. authenticate (if required)  │  ← Requires valid JWT
 │     - Parse Authorization       │
 │     - Verify JWT                │
 │     - Attach user to req        │
@@ -264,19 +304,31 @@ Incoming Request
     │
     ▼
 ┌─────────────────────────────────┐
-│  4. requireTenant (if needed)   │  ← Ensures tenant context exists
+│  7. requireTenant (if needed)   │  ← Ensures tenant context exists
 │     - Check req.tenantId        │
 │     - 400 if missing            │
 └─────────────────────────────────┘
     │
     ▼
 ┌─────────────────────────────────┐
-│  5. Controller                  │  ← Business logic
+│  8. Controller                  │  ← Business logic
 │     - Access req.tenantId       │
 │     - Access req.user           │
 │     - Process request           │
 └─────────────────────────────────┘
 ```
+
+### API Gateway Features (Added Nov 30, 2025)
+
+| Feature                      | Implementation     | Details                  |
+| ---------------------------- | ------------------ | ------------------------ |
+| **API Versioning**           | Nginx rewrite      | `/api/v1/*` → `/api/*`   |
+| **Per-Tenant Rate Limiting** | Nginx + Express    | 100 req/s per tenant     |
+| **Request Correlation**      | Express middleware | X-Request-ID header      |
+| **API Analytics**            | Redis              | Metrics, latency, errors |
+| **Enhanced Logging**         | Express middleware | Structured JSON logs     |
+
+See [API-GATEWAY.md](architecture/API-GATEWAY.md) for full documentation.
 
 ---
 
