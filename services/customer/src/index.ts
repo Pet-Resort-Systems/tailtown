@@ -80,6 +80,7 @@ import {
 } from "./middleware/auth.middleware";
 import { requireJsonContentType } from "./middleware/content-type.middleware";
 import { monitoring } from "./utils/monitoring";
+import { prometheusMetrics } from "./utils/prometheus";
 import { auditMiddleware } from "./utils/auditLog";
 import monitoringRoutes from "./routes/monitoring.routes";
 
@@ -409,6 +410,7 @@ app.use("/api", extractTenantContext);
 
 // Monitoring and audit logging (after tenant context is available)
 app.use(monitoring.requestTracker());
+app.use(prometheusMetrics.httpMetricsMiddleware());
 app.use(auditMiddleware());
 
 // Monitoring routes (accessible without authentication for health checks)
