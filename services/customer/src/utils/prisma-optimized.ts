@@ -49,7 +49,6 @@ export const petSelectMinimal = {
   name: true,
   type: true,
   breed: true,
-  photoUrl: true,
 } as const;
 
 /** Pet fields for reservation context */
@@ -59,7 +58,6 @@ export const petSelectForReservation = {
   type: true,
   breed: true,
   weight: true,
-  photoUrl: true,
   specialNeeds: true,
   feedingInstructions: true,
   medicationInstructions: true,
@@ -159,7 +157,6 @@ export const reservationSelectMinimal = {
   startDate: true,
   endDate: true,
   status: true,
-  totalPrice: true,
 } as const;
 
 /** Reservation with minimal related data for list views */
@@ -169,7 +166,6 @@ export const reservationSelectForList = {
   startDate: true,
   endDate: true,
   status: true,
-  totalPrice: true,
   notes: true,
   customer: { select: customerSelectMinimal },
   pet: { select: petSelectMinimal },
@@ -186,7 +182,6 @@ export const reservationSelectFull = {
   checkInTime: true,
   checkOutTime: true,
   status: true,
-  totalPrice: true,
   depositAmount: true,
   depositPaid: true,
   notes: true,
