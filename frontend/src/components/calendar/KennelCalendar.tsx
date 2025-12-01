@@ -138,6 +138,7 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
 
         return (
           (res.resourceId === kennelId ||
+            res.resource?.id === kennelId ||
             res.kennelId === kennelId ||
             res.suiteId === kennelId) &&
           checkDate >= resStartDate &&
