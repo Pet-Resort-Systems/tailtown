@@ -1,24 +1,40 @@
 /**
  * Monitoring Routes
- * 
+ *
  * Endpoints for viewing metrics and health status
+ * Includes Prometheus-compatible /metrics endpoint
  */
 
-import { Router } from 'express';
-import { monitoring } from '../utils/monitoring';
+import { Router } from "express";
+import { monitoring } from "../utils/monitoring";
+import { prometheusMetrics } from "../utils/prometheus";
 
 const router = Router();
+
+/**
+ * GET /monitoring/prometheus
+ * Prometheus-compatible metrics endpoint
+ */
+router.get("/prometheus", (req, res) => {
+  try {
+    const metrics = prometheusMetrics.generateMetrics();
+    res.set("Content-Type", "text/plain; version=0.0.4; charset=utf-8");
+    res.send(metrics);
+  } catch (error) {
+    res.status(500).send("# Error generating metrics\n");
+  }
+});
 
 /**
  * GET /monitoring/metrics
  * Get current metrics
  */
-router.get('/metrics', (req, res) => {
+router.get("/metrics", (req, res) => {
   try {
     const metrics = monitoring.getMetrics();
     res.json(metrics);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to retrieve metrics' });
+    res.status(500).json({ error: "Failed to retrieve metrics" });
   }
 });
 
@@ -26,7 +42,7 @@ router.get('/metrics', (req, res) => {
  * GET /monitoring/health
  * Get health status
  */
-router.get('/health', (req, res) => {
+router.get("/health", (req, res) => {
   try {
     const metrics = monitoring.getMetrics();
     res.json({
@@ -37,7 +53,7 @@ router.get('/health', (req, res) => {
       health: metrics.health,
     });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to retrieve health status' });
+    res.status(500).json({ error: "Failed to retrieve health status" });
   }
 });
 
@@ -45,7 +61,7 @@ router.get('/health', (req, res) => {
  * GET /monitoring/alerts
  * Get active alerts
  */
-router.get('/alerts', (req, res) => {
+router.get("/alerts", (req, res) => {
   try {
     const alerts = monitoring.checkAlerts();
     res.json({
@@ -54,7 +70,7 @@ router.get('/alerts', (req, res) => {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to retrieve alerts' });
+    res.status(500).json({ error: "Failed to retrieve alerts" });
   }
 });
 
@@ -62,7 +78,7 @@ router.get('/alerts', (req, res) => {
  * GET /monitoring/dashboard
  * HTML dashboard for viewing metrics
  */
-router.get('/dashboard', (req, res) => {
+router.get("/dashboard", (req, res) => {
   const metrics = monitoring.getMetrics();
   const alerts = monitoring.checkAlerts();
 
@@ -134,24 +150,36 @@ router.get('/dashboard', (req, res) => {
   <div class="container">
     <h1>🔍 Tailtown Monitoring Dashboard</h1>
     
-    ${alerts.length > 0 ? `
+    ${
+      alerts.length > 0
+        ? `
     <div class="card" style="margin-bottom: 20px;">
       <h2>⚠️ Active Alerts (${alerts.length})</h2>
-      ${alerts.map(alert => `
+      ${alerts
+        .map(
+          (alert) => `
         <div class="alert ${alert.severity}">
           <strong>${alert.type}</strong>: ${alert.message}
         </div>
-      `).join('')}
+      `
+        )
+        .join("")}
     </div>
-    ` : ''}
+    `
+        : ""
+    }
     
     <div class="grid">
       <div class="card">
         <h2>System Health</h2>
         <div class="metric">
-          <span class="status-badge ${metrics.health.status}">${metrics.health.status.toUpperCase()}</span>
+          <span class="status-badge ${
+            metrics.health.status
+          }">${metrics.health.status.toUpperCase()}</span>
         </div>
-        <div class="label">Uptime: ${Math.floor(process.uptime() / 3600)}h ${Math.floor((process.uptime() % 3600) / 60)}m</div>
+        <div class="label">Uptime: ${Math.floor(
+          process.uptime() / 3600
+        )}h ${Math.floor((process.uptime() % 3600) / 60)}m</div>
       </div>
       
       <div class="card">
@@ -162,15 +190,24 @@ router.get('/dashboard', (req, res) => {
       
       <div class="card">
         <h2>Error Rate</h2>
-        <div class="metric ${(metrics.errors.total / Math.max(metrics.requests.total, 1)) > 0.05 ? 'error' : 'success'}">
-          ${((metrics.errors.total / Math.max(metrics.requests.total, 1)) * 100).toFixed(2)}%
+        <div class="metric ${
+          metrics.errors.total / Math.max(metrics.requests.total, 1) > 0.05
+            ? "error"
+            : "success"
+        }">
+          ${(
+            (metrics.errors.total / Math.max(metrics.requests.total, 1)) *
+            100
+          ).toFixed(2)}%
         </div>
         <div class="label">${metrics.errors.total} errors</div>
       </div>
       
       <div class="card">
         <h2>Response Time (P95)</h2>
-        <div class="metric ${metrics.responseTimes.p95 > 1000 ? 'warning' : 'success'}">
+        <div class="metric ${
+          metrics.responseTimes.p95 > 1000 ? "warning" : "success"
+        }">
           ${metrics.responseTimes.p95}ms
         </div>
         <div class="label">Avg: ${metrics.responseTimes.avg}ms</div>
@@ -178,10 +215,15 @@ router.get('/dashboard', (req, res) => {
       
       <div class="card">
         <h2>Rate Limit Hits</h2>
-        <div class="metric ${metrics.rateLimits.hits > 0 ? 'warning' : 'success'}">
+        <div class="metric ${
+          metrics.rateLimits.hits > 0 ? "warning" : "success"
+        }">
           ${metrics.rateLimits.hits.toLocaleString()}
         </div>
-        <div class="label">${((metrics.rateLimits.hits / Math.max(metrics.requests.total, 1)) * 100).toFixed(2)}% of requests</div>
+        <div class="label">${(
+          (metrics.rateLimits.hits / Math.max(metrics.requests.total, 1)) *
+          100
+        ).toFixed(2)}% of requests</div>
       </div>
       
       <div class="card">
@@ -202,9 +244,12 @@ router.get('/dashboard', (req, res) => {
             ${Object.entries(metrics.requests.byTenant)
               .sort((a, b) => b[1] - a[1])
               .slice(0, 10)
-              .map(([tenant, count]) => `
+              .map(
+                ([tenant, count]) => `
                 <tr><td>${tenant}</td><td>${count}</td></tr>
-              `).join('')}
+              `
+              )
+              .join("")}
           </tbody>
         </table>
       </div>
@@ -219,15 +264,20 @@ router.get('/dashboard', (req, res) => {
             ${Object.entries(metrics.requests.byEndpoint)
               .sort((a, b) => b[1] - a[1])
               .slice(0, 10)
-              .map(([endpoint, count]) => `
+              .map(
+                ([endpoint, count]) => `
                 <tr><td>${endpoint}</td><td>${count}</td></tr>
-              `).join('')}
+              `
+              )
+              .join("")}
           </tbody>
         </table>
       </div>
     </div>
     
-    ${metrics.errors.recent.length > 0 ? `
+    ${
+      metrics.errors.recent.length > 0
+        ? `
     <div class="card">
       <h2>Recent Errors</h2>
       <table>
@@ -235,17 +285,23 @@ router.get('/dashboard', (req, res) => {
           <tr><th>Time</th><th>Error</th><th>Tenant</th></tr>
         </thead>
         <tbody>
-          ${metrics.errors.recent.map(err => `
+          ${metrics.errors.recent
+            .map(
+              (err) => `
             <tr>
               <td>${new Date(err.timestamp).toLocaleTimeString()}</td>
               <td>${err.error}</td>
-              <td>${err.tenant || 'N/A'}</td>
+              <td>${err.tenant || "N/A"}</td>
             </tr>
-          `).join('')}
+          `
+            )
+            .join("")}
         </tbody>
       </table>
     </div>
-    ` : ''}
+    `
+        : ""
+    }
   </div>
   
   <button class="refresh" onclick="location.reload()">🔄 Refresh</button>
@@ -265,13 +321,15 @@ router.get('/dashboard', (req, res) => {
  * POST /monitoring/reset
  * Reset metrics (for testing)
  */
-router.post('/reset', (req, res) => {
-  if (process.env.NODE_ENV === 'production') {
-    return res.status(403).json({ error: 'Cannot reset metrics in production' });
+router.post("/reset", (req, res) => {
+  if (process.env.NODE_ENV === "production") {
+    return res
+      .status(403)
+      .json({ error: "Cannot reset metrics in production" });
   }
 
   monitoring.reset();
-  res.json({ message: 'Metrics reset successfully' });
+  res.json({ message: "Metrics reset successfully" });
 });
 
 export default router;

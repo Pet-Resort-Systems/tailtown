@@ -5,6 +5,8 @@
 
 import axios from 'axios';
 
+import { paymentService, CardPaymentRequest } from '../paymentService';
+
 // Mock axios first
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -18,8 +20,6 @@ jest.mock('../api', () => ({
     }
   }
 }));
-
-import { paymentService, CardPaymentRequest } from '../paymentService';
 
 const validPaymentRequest: CardPaymentRequest = {
   amount: 100.00,

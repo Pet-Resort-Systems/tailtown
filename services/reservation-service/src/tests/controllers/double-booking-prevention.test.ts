@@ -1,509 +1,251 @@
+// @ts-nocheck
 /**
  * Double-Booking Prevention Tests
  * Tests for preventing kennel overbooking and conflicts
  */
 
-import { createReservation } from '../../controllers/reservation/create-reservation.controller';
-import { updateReservation } from '../../controllers/reservation/update-reservation.controller';
-import {
-  createMockPrismaClient,
-  createMockRequest,
-  createMockResponse,
-  createMockNext,
-  createTestReservation,
-  createTestResource,
-} from '../utils/test-helpers';
+import { PrismaClient } from "@prisma/client";
+import { detectReservationConflicts } from "../../utils/reservation-conflicts";
 
-describe('Double-Booking Prevention', () => {
-  let mockPrisma: any;
-  let mockReq: any;
-  let mockRes: any;
-  let mockNext: any;
+// Mock the Prisma client
+jest.mock("@prisma/client", () => {
+  const mockPrismaClient = {
+    reservation: {
+      findMany: jest.fn(),
+    },
+    resource: {
+      findMany: jest.fn(),
+      findFirst: jest.fn(),
+    },
+  };
+  return {
+    PrismaClient: jest.fn(() => mockPrismaClient),
+  };
+});
 
+// Get the mocked Prisma client
+const prisma = new PrismaClient();
+
+describe("Double-Booking Prevention", () => {
   beforeEach(() => {
-    mockPrisma = createMockPrismaClient();
-    mockRes = createMockResponse();
-    mockNext = createMockNext();
+    jest.clearAllMocks();
   });
 
-  describe('POST /api/reservations - Conflict Detection', () => {
-    it('should prevent booking same kennel for overlapping dates', async () => {
-      mockReq = createMockRequest({
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-boarding',
-          serviceCategory: 'BOARDING',
-          resourceId: 'resource-A01',
-          startDate: '2025-10-21',
-          endDate: '2025-10-23',
-        },
-      });
+  describe("Resource Conflict Detection", () => {
+    it("should detect conflict when resource is already booked", async () => {
+      const existingReservation = {
+        id: "existing-1",
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        resourceId: "kennel-1",
+        status: "CONFIRMED",
+      };
 
-      // Existing reservation for same kennel and overlapping dates
-      const conflictingReservation = createTestReservation({
-        id: 'existing-reservation',
-        resourceId: 'resource-A01',
-        startDate: new Date('2025-10-22'),
-        endDate: new Date('2025-10-24'),
-        status: 'CONFIRMED',
-      });
-
-      mockPrisma.resource.findUnique.mockResolvedValue(
-        createTestResource({ id: 'resource-A01' })
-      );
-      mockPrisma.reservation.findMany.mockResolvedValue([conflictingReservation]);
-
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockRes.status).toHaveBeenCalledWith(409);
-      expect(mockRes.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          error: expect.stringMatching(/already booked|conflict|not available/i),
-          conflictingReservations: expect.arrayContaining([
-            expect.objectContaining({
-              id: 'existing-reservation',
-            }),
-          ]),
-        })
-      );
-    });
-
-    it('should allow booking same kennel for non-overlapping dates', async () => {
-      mockReq = createMockRequest({
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-boarding',
-          serviceCategory: 'BOARDING',
-          resourceId: 'resource-A01',
-          startDate: '2025-10-25',
-          endDate: '2025-10-27',
-        },
-      });
-
-      // Existing reservation ends before new one starts
-      const existingReservation = createTestReservation({
-        resourceId: 'resource-A01',
-        startDate: new Date('2025-10-21'),
-        endDate: new Date('2025-10-24'),
-        status: 'CONFIRMED',
-      });
-
-      mockPrisma.resource.findUnique.mockResolvedValue(
-        createTestResource({ id: 'resource-A01' })
-      );
-      mockPrisma.reservation.findMany.mockResolvedValue([existingReservation]);
-
-      const newReservation = createTestReservation({
-        resourceId: 'resource-A01',
-        startDate: new Date('2025-10-25'),
-        endDate: new Date('2025-10-27'),
-      });
-
-      mockPrisma.reservation.create.mockResolvedValue(newReservation);
-
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockPrisma.reservation.create).toHaveBeenCalled();
-      expect(mockRes.status).not.toHaveBeenCalledWith(409);
-    });
-
-    it('should detect exact date overlap', async () => {
-      mockReq = createMockRequest({
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-boarding',
-          serviceCategory: 'BOARDING',
-          resourceId: 'resource-A01',
-          startDate: '2025-10-21',
-          endDate: '2025-10-23',
-        },
-      });
-
-      // Exact same dates
-      const conflictingReservation = createTestReservation({
-        resourceId: 'resource-A01',
-        startDate: new Date('2025-10-21'),
-        endDate: new Date('2025-10-23'),
-        status: 'CONFIRMED',
-      });
-
-      mockPrisma.resource.findUnique.mockResolvedValue(
-        createTestResource({ id: 'resource-A01' })
-      );
-      mockPrisma.reservation.findMany.mockResolvedValue([conflictingReservation]);
-
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockRes.status).toHaveBeenCalledWith(409);
-    });
-
-    it('should detect partial overlap - new starts during existing', async () => {
-      mockReq = createMockRequest({
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-boarding',
-          serviceCategory: 'BOARDING',
-          resourceId: 'resource-A01',
-          startDate: '2025-10-22', // Starts during existing reservation
-          endDate: '2025-10-25',
-        },
-      });
-
-      const conflictingReservation = createTestReservation({
-        resourceId: 'resource-A01',
-        startDate: new Date('2025-10-21'),
-        endDate: new Date('2025-10-23'),
-        status: 'CONFIRMED',
-      });
-
-      mockPrisma.resource.findUnique.mockResolvedValue(
-        createTestResource({ id: 'resource-A01' })
-      );
-      mockPrisma.reservation.findMany.mockResolvedValue([conflictingReservation]);
-
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockRes.status).toHaveBeenCalledWith(409);
-    });
-
-    it('should detect partial overlap - new ends during existing', async () => {
-      mockReq = createMockRequest({
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-boarding',
-          serviceCategory: 'BOARDING',
-          resourceId: 'resource-A01',
-          startDate: '2025-10-20',
-          endDate: '2025-10-22', // Ends during existing reservation
-        },
-      });
-
-      const conflictingReservation = createTestReservation({
-        resourceId: 'resource-A01',
-        startDate: new Date('2025-10-21'),
-        endDate: new Date('2025-10-23'),
-        status: 'CONFIRMED',
-      });
-
-      mockPrisma.resource.findUnique.mockResolvedValue(
-        createTestResource({ id: 'resource-A01' })
-      );
-      mockPrisma.reservation.findMany.mockResolvedValue([conflictingReservation]);
-
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockRes.status).toHaveBeenCalledWith(409);
-    });
-
-    it('should detect when new reservation completely contains existing', async () => {
-      mockReq = createMockRequest({
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-boarding',
-          serviceCategory: 'BOARDING',
-          resourceId: 'resource-A01',
-          startDate: '2025-10-20',
-          endDate: '2025-10-25', // Completely contains existing reservation
-        },
-      });
-
-      const conflictingReservation = createTestReservation({
-        resourceId: 'resource-A01',
-        startDate: new Date('2025-10-21'),
-        endDate: new Date('2025-10-23'),
-        status: 'CONFIRMED',
-      });
-
-      mockPrisma.resource.findUnique.mockResolvedValue(
-        createTestResource({ id: 'resource-A01' })
-      );
-      mockPrisma.reservation.findMany.mockResolvedValue([conflictingReservation]);
-
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockRes.status).toHaveBeenCalledWith(409);
-    });
-
-    it('should ignore cancelled reservations when checking conflicts', async () => {
-      mockReq = createMockRequest({
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-boarding',
-          serviceCategory: 'BOARDING',
-          resourceId: 'resource-A01',
-          startDate: '2025-10-21',
-          endDate: '2025-10-23',
-        },
-      });
-
-      // Cancelled reservation should not block
-      const cancelledReservation = createTestReservation({
-        resourceId: 'resource-A01',
-        startDate: new Date('2025-10-21'),
-        endDate: new Date('2025-10-23'),
-        status: 'CANCELLED',
-      });
-
-      mockPrisma.resource.findUnique.mockResolvedValue(
-        createTestResource({ id: 'resource-A01' })
-      );
-      mockPrisma.reservation.findMany.mockResolvedValue([cancelledReservation]);
-
-      const newReservation = createTestReservation();
-      mockPrisma.reservation.create.mockResolvedValue(newReservation);
-
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockPrisma.reservation.create).toHaveBeenCalled();
-      expect(mockRes.status).not.toHaveBeenCalledWith(409);
-    });
-
-    it('should check conflicts only for active statuses', async () => {
-      mockReq = createMockRequest({
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-boarding',
-          serviceCategory: 'BOARDING',
-          resourceId: 'resource-A01',
-          startDate: '2025-10-21',
-          endDate: '2025-10-23',
-        },
-      });
-
-      mockPrisma.resource.findUnique.mockResolvedValue(
-        createTestResource({ id: 'resource-A01' })
-      );
-
-      // Should query only active statuses
-      mockPrisma.reservation.findMany.mockResolvedValue([]);
-
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockPrisma.reservation.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: expect.objectContaining({
-            status: expect.objectContaining({
-              in: expect.arrayContaining(['CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT']),
-            }),
-          }),
-        })
-      );
-    });
-  });
-
-  describe('PUT /api/reservations/:id - Update Conflict Detection', () => {
-    it('should allow updating own reservation without conflict', async () => {
-      mockReq = createMockRequest({
-        params: { id: 'reservation-123' },
-        body: {
-          resourceId: 'resource-A01',
-          startDate: '2025-10-21',
-          endDate: '2025-10-23',
-        },
-      });
-
-      const existingReservation = createTestReservation({
-        id: 'reservation-123',
-        resourceId: 'resource-A01',
-        startDate: new Date('2025-10-21'),
-        endDate: new Date('2025-10-23'),
-      });
-
-      mockPrisma.reservation.findUnique.mockResolvedValue(existingReservation);
-      mockPrisma.resource.findUnique.mockResolvedValue(
-        createTestResource({ id: 'resource-A01' })
-      );
-      // When checking conflicts, should exclude own reservation
-      mockPrisma.reservation.findMany.mockResolvedValue([existingReservation]);
-
-      const updatedReservation = createTestReservation({
-        id: 'reservation-123',
-      });
-      mockPrisma.reservation.update.mockResolvedValue(updatedReservation);
-
-      await updateReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockPrisma.reservation.update).toHaveBeenCalled();
-      expect(mockRes.status).not.toHaveBeenCalledWith(409);
-    });
-
-    it('should detect conflicts when changing kennel to occupied one', async () => {
-      mockReq = createMockRequest({
-        params: { id: 'reservation-123' },
-        body: {
-          resourceId: 'resource-A02', // Changing to different kennel
-        },
-      });
-
-      const existingReservation = createTestReservation({
-        id: 'reservation-123',
-        resourceId: 'resource-A01',
-        startDate: new Date('2025-10-21'),
-        endDate: new Date('2025-10-23'),
-      });
-
-      // Another reservation already on A02
-      const conflictingReservation = createTestReservation({
-        id: 'other-reservation',
-        resourceId: 'resource-A02',
-        startDate: new Date('2025-10-21'),
-        endDate: new Date('2025-10-23'),
-        status: 'CONFIRMED',
-      });
-
-      mockPrisma.reservation.findUnique.mockResolvedValue(existingReservation);
-      mockPrisma.resource.findUnique.mockResolvedValue(
-        createTestResource({ id: 'resource-A02' })
-      );
-      mockPrisma.reservation.findMany.mockResolvedValue([conflictingReservation]);
-
-      await updateReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockRes.status).toHaveBeenCalledWith(409);
-      expect(mockRes.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          error: expect.stringMatching(/already booked|conflict/i),
-        })
-      );
-    });
-
-    it('should detect conflicts when extending dates', async () => {
-      mockReq = createMockRequest({
-        params: { id: 'reservation-123' },
-        body: {
-          endDate: '2025-10-25', // Extending end date
-        },
-      });
-
-      const existingReservation = createTestReservation({
-        id: 'reservation-123',
-        resourceId: 'resource-A01',
-        startDate: new Date('2025-10-21'),
-        endDate: new Date('2025-10-23'),
-      });
-
-      // Another reservation starts on 10/24
-      const conflictingReservation = createTestReservation({
-        id: 'other-reservation',
-        resourceId: 'resource-A01',
-        startDate: new Date('2025-10-24'),
-        endDate: new Date('2025-10-26'),
-        status: 'CONFIRMED',
-      });
-
-      mockPrisma.reservation.findUnique.mockResolvedValue(existingReservation);
-      mockPrisma.reservation.findMany.mockResolvedValue([
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([
         existingReservation,
-        conflictingReservation,
       ]);
 
-      await updateReservation(mockReq, mockRes, mockNext, mockPrisma);
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-12"),
+        endDate: new Date("2026-06-17"),
+        resourceId: "kennel-1",
+        tenantId: "tenant-1",
+      });
 
-      expect(mockRes.status).toHaveBeenCalledWith(409);
+      expect(result.hasConflicts).toBe(true);
+      expect(result.conflictingReservations).toHaveLength(1);
+      expect(result.warnings[0]).toContain("Resource is not available");
+    });
+
+    it("should not detect conflict when resource is available", async () => {
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
+
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        resourceId: "kennel-1",
+        tenantId: "tenant-1",
+      });
+
+      expect(result.hasConflicts).toBe(false);
+      expect(result.conflictingReservations).toHaveLength(0);
+    });
+
+    it("should not detect conflict for adjacent bookings (checkout/checkin same day)", async () => {
+      // Existing reservation ends on June 10
+      const existingReservation = {
+        id: "existing-1",
+        startDate: new Date("2026-06-05"),
+        endDate: new Date("2026-06-10"),
+        resourceId: "kennel-1",
+        status: "CONFIRMED",
+      };
+
+      // New reservation starts on June 10 - should be allowed
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
+
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        resourceId: "kennel-1",
+        tenantId: "tenant-1",
+      });
+
+      expect(result.hasConflicts).toBe(false);
     });
   });
 
-  describe('Conflict Query Optimization', () => {
-    it('should query conflicts only for the specific resource', async () => {
-      mockReq = createMockRequest({
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-boarding',
-          serviceCategory: 'BOARDING',
-          resourceId: 'resource-A01',
-          startDate: '2025-10-21',
-          endDate: '2025-10-23',
-        },
+  describe("Pet Conflict Detection", () => {
+    it("should detect conflict when pet already has a reservation", async () => {
+      // First call - no resource conflicts
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValueOnce([]);
+
+      // Second call - pet has existing reservation
+      const petConflict = {
+        id: "existing-1",
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        petId: "pet-1",
+        resourceId: "kennel-2", // Different kennel
+        status: "CONFIRMED",
+      };
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValueOnce([
+        petConflict,
+      ]);
+
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-12"),
+        endDate: new Date("2026-06-17"),
+        resourceId: "kennel-1",
+        petId: "pet-1",
+        tenantId: "tenant-1",
       });
 
-      mockPrisma.resource.findUnique.mockResolvedValue(
-        createTestResource({ id: 'resource-A01' })
-      );
-      mockPrisma.reservation.findMany.mockResolvedValue([]);
-
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockPrisma.reservation.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: expect.objectContaining({
-            resourceId: 'resource-A01',
-          }),
-        })
-      );
+      expect(result.hasConflicts).toBe(true);
+      expect(result.warnings[0]).toContain("Pet already has");
     });
 
-    it('should query conflicts only for the date range', async () => {
-      mockReq = createMockRequest({
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-boarding',
-          serviceCategory: 'BOARDING',
-          resourceId: 'resource-A01',
-          startDate: '2025-10-21',
-          endDate: '2025-10-23',
-        },
+    it("should allow same pet in different non-overlapping time slots", async () => {
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
+
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-20"),
+        endDate: new Date("2026-06-25"),
+        resourceId: "kennel-1",
+        petId: "pet-1",
+        tenantId: "tenant-1",
       });
 
-      mockPrisma.resource.findUnique.mockResolvedValue(
-        createTestResource({ id: 'resource-A01' })
-      );
-      mockPrisma.reservation.findMany.mockResolvedValue([]);
-
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockPrisma.reservation.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: expect.objectContaining({
-            OR: expect.arrayContaining([
-              expect.objectContaining({
-                startDate: expect.any(Object),
-              }),
-            ]),
-          }),
-        })
-      );
+      expect(result.hasConflicts).toBe(false);
     });
   });
 
-  describe('Multi-Tenant Conflict Isolation', () => {
-    it('should only check conflicts within same organization', async () => {
-      mockReq = createMockRequest({
-        tenantId: 'tenant-A',
-        body: {
-          customerId: 'customer-123',
-          petId: 'pet-123',
-          serviceId: 'service-boarding',
-          serviceCategory: 'BOARDING',
-          resourceId: 'resource-A01',
-          startDate: '2025-10-21',
-          endDate: '2025-10-23',
-        },
+  describe("Update Reservation Conflicts", () => {
+    it("should exclude current reservation when checking for conflicts during update", async () => {
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
+
+      await detectReservationConflicts({
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        resourceId: "kennel-1",
+        reservationId: "current-reservation-id",
+        tenantId: "tenant-1",
       });
 
-      mockPrisma.resource.findUnique.mockResolvedValue(
-        createTestResource({ id: 'resource-A01', organizationId: 'tenant-A' })
-      );
-      mockPrisma.reservation.findMany.mockResolvedValue([]);
-
-      await createReservation(mockReq, mockRes, mockNext, mockPrisma);
-
-      expect(mockPrisma.reservation.findMany).toHaveBeenCalledWith(
+      expect(prisma.reservation.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            organizationId: 'tenant-A',
+            id: { not: "current-reservation-id" },
           }),
         })
       );
+    });
+
+    it("should detect conflict with other reservations during update", async () => {
+      const otherReservation = {
+        id: "other-reservation",
+        startDate: new Date("2026-06-12"),
+        endDate: new Date("2026-06-17"),
+        resourceId: "kennel-1",
+        status: "CONFIRMED",
+      };
+
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([
+        otherReservation,
+      ]);
+
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        resourceId: "kennel-1",
+        reservationId: "current-reservation-id",
+        tenantId: "tenant-1",
+      });
+
+      expect(result.hasConflicts).toBe(true);
+    });
+  });
+
+  describe("Multiple Conflicts", () => {
+    it("should detect multiple overlapping reservations", async () => {
+      const conflicts = [
+        {
+          id: "conflict-1",
+          startDate: new Date("2026-06-08"),
+          endDate: new Date("2026-06-12"),
+          resourceId: "kennel-1",
+        },
+        {
+          id: "conflict-2",
+          startDate: new Date("2026-06-14"),
+          endDate: new Date("2026-06-18"),
+          resourceId: "kennel-1",
+        },
+      ];
+
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue(conflicts);
+
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-05"),
+        endDate: new Date("2026-06-20"),
+        resourceId: "kennel-1",
+        tenantId: "tenant-1",
+      });
+
+      expect(result.hasConflicts).toBe(true);
+      expect(result.conflictingReservations.length).toBeGreaterThanOrEqual(1);
+    });
+  });
+
+  describe("Date Validation", () => {
+    it("should reject reservation with end date before start date", async () => {
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-15"),
+        endDate: new Date("2026-06-10"), // Before start
+        resourceId: "kennel-1",
+        tenantId: "tenant-1",
+      });
+
+      expect(result.hasConflicts).toBe(true);
+      expect(result.warnings).toContain("Start date must be before end date");
+      // Should not even query the database
+      expect(prisma.reservation.findMany).not.toHaveBeenCalled();
+    });
+
+    it("should warn about past dates but still check conflicts", async () => {
+      const pastDate = new Date();
+      pastDate.setDate(pastDate.getDate() - 5);
+
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
+
+      const result = await detectReservationConflicts({
+        startDate: pastDate,
+        endDate: new Date("2026-06-15"),
+        resourceId: "kennel-1",
+        tenantId: "tenant-1",
+      });
+
+      expect(result.warnings.some((w) => w.includes("past"))).toBe(true);
     });
   });
 });

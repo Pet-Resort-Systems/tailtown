@@ -236,6 +236,8 @@ model Resource {
   type                ResourceType
   description         String?
   capacity            Int                    @default(1)
+  price               Float?                 // Nightly/daily rate for this resource
+  taxable             Boolean                @default(true)
   isActive            Boolean                @default(true)
   notes               String?
   createdAt           DateTime               @default(now())
@@ -724,6 +726,20 @@ enum InvoiceStatus {
 }
 
 enum ResourceType {
+  // Dog Boarding Kennels
+  JUNIOR_KENNEL      // Maps to Indoor Suite service
+  QUEEN_KENNEL       // Maps to Indoor Suite service
+  KING_KENNEL        // Maps to King Suite service
+  VIP_ROOM           // Maps to VIP Suite service
+  
+  // Cat Boarding
+  CAT_CONDO          // Maps to Cat Boarding service
+  
+  // Daycare
+  DAY_CAMP_FULL      // Maps to Day Camp Full Day service
+  DAY_CAMP_HALF      // Maps to Day Camp Half Day service
+  
+  // Legacy types (kept for backward compatibility)
   KENNEL
   RUN
   SUITE
@@ -1630,6 +1646,61 @@ model AuditLog {
   @@map("audit_logs")
 }
 
+// ============================================
+// TENANT AUDIT LOGS (Per-tenant activity tracking)
+// ============================================
+
+// Tracks all sensitive operations within a tenant for compliance
+// Retention: 7 years per GDPR/compliance requirements
+model TenantAuditLog {
+  id            String      @id @default(uuid())
+  tenantId      String      @map("tenant_id")
+  
+  // Who performed the action
+  userId        String?     @map("user_id")        // Staff user ID
+  userEmail     String?     @map("user_email")     // Denormalized for historical record
+  userName      String?     @map("user_name")      // Denormalized for historical record
+  userRole      String?     @map("user_role")      // Role at time of action
+  
+  // What action was performed
+  action        String                              // CREATE, UPDATE, DELETE, VIEW, LOGIN, etc.
+  category      String                              // CUSTOMER, PET, RESERVATION, PAYMENT, AUTH, SETTINGS
+  
+  // What resource was affected
+  entityType    String      @map("entity_type")    // customer, pet, reservation, payment, etc.
+  entityId      String?     @map("entity_id")      // ID of affected resource
+  entityName    String?     @map("entity_name")    // Denormalized name for readability
+  
+  // Change details
+  previousValue Json?       @map("previous_value") // State before change (for updates/deletes)
+  newValue      Json?       @map("new_value")      // State after change (for creates/updates)
+  changedFields String[]    @map("changed_fields") // List of fields that changed
+  
+  // Request context
+  ipAddress     String?     @map("ip_address")
+  userAgent     String?     @map("user_agent")
+  requestMethod String?     @map("request_method") // GET, POST, PUT, DELETE
+  requestPath   String?     @map("request_path")   // API endpoint
+  
+  // Additional metadata
+  metadata      Json?                              // Any additional context
+  severity      String      @default("INFO")       // INFO, WARNING, CRITICAL
+  
+  // Timestamps
+  createdAt     DateTime    @default(now()) @map("created_at")
+  
+  // Indexes for efficient querying
+  @@index([tenantId], map: "idx_tenant_audit_tenant")
+  @@index([tenantId, createdAt], map: "idx_tenant_audit_tenant_date")
+  @@index([tenantId, userId], map: "idx_tenant_audit_user")
+  @@index([tenantId, category], map: "idx_tenant_audit_category")
+  @@index([tenantId, action], map: "idx_tenant_audit_action")
+  @@index([tenantId, entityType, entityId], map: "idx_tenant_audit_entity")
+  @@index([createdAt], map: "idx_tenant_audit_created")
+  @@index([severity], map: "idx_tenant_audit_severity")
+  @@map("tenant_audit_logs")
+}
+
 model ImpersonationSession {
   id            String      @id @default(uuid())
   superAdminId  String      @map("super_admin_id")
@@ -2318,4 +2389,187 @@ enum ReportCardStatus {
   SENT
   VIEWED
   ARCHIVED
+}
+
+// ============================================
+// DAYCARE PASS SYSTEM MODELS
+// ============================================
+
+// Tenant-configurable pass packages (settings per tenant)
+model DaycarePassPackage {
+  id                  String                @id @default(uuid())
+  tenantId            String
+  name                String                // e.g., "5-Day Pass", "10-Day Pass", "20-Day Pass"
+  description         String?
+  passCount           Int                   // Number of daycare days included (5, 10, 20)
+  price               Float                 // Total package price (e.g., $135 for 5 passes at 10% off)
+  regularPricePerDay  Float                 // Reference: what single daycare costs (for display)
+  discountPercent     Float                 // e.g., 10.0 for 10% discount
+  validityDays        Int                   // Days until expiration from purchase (e.g., 90, 180, 365)
+  isActive            Boolean               @default(true)
+  sortOrder           Int                   @default(0)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  
+  // Relations
+  customerPasses      CustomerDaycarePass[]
+
+  @@unique([tenantId, name], map: "daycare_pass_packages_tenant_name_unique")
+  @@index([tenantId, isActive], map: "daycare_pass_packages_tenant_active_idx")
+  @@map("daycare_pass_packages")
+}
+
+// Customer's purchased pass with balance tracking
+model CustomerDaycarePass {
+  id                  String                  @id @default(uuid())
+  tenantId            String
+  customerId          String
+  packageId           String
+  package             DaycarePassPackage      @relation(fields: [packageId], references: [id])
+  
+  // Balance tracking
+  passesPurchased     Int                     // Original number of passes (e.g., 10)
+  passesRemaining     Int                     // Current balance (decrements on use)
+  passesUsed          Int                     @default(0) // For quick reference
+  
+  // Pricing at time of purchase (in case package prices change)
+  purchasePrice       Float                   // What customer paid
+  pricePerPass        Float                   // purchasePrice / passesPurchased
+  
+  // Dates
+  purchasedAt         DateTime                @default(now())
+  expiresAt           DateTime                // purchasedAt + package.validityDays
+  
+  // Status
+  status              DaycarePassStatus       @default(ACTIVE)
+  
+  // Payment reference (optional - links to invoice/payment)
+  invoiceId           String?
+  paymentId           String?
+  notes               String?
+  
+  // Audit
+  createdBy           String?                 // Staff who sold the pass
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+  
+  // Relations
+  redemptions         DaycarePassRedemption[]
+
+  @@index([tenantId, customerId], map: "customer_daycare_passes_tenant_customer_idx")
+  @@index([tenantId, customerId, status], map: "customer_daycare_passes_tenant_customer_status_idx")
+  @@index([tenantId, expiresAt], map: "customer_daycare_passes_tenant_expires_idx")
+  @@map("customer_daycare_passes")
+}
+
+// Audit trail for pass usage
+model DaycarePassRedemption {
+  id                  String              @id @default(uuid())
+  tenantId            String
+  customerPassId      String
+  customerPass        CustomerDaycarePass @relation(fields: [customerPassId], references: [id])
+  
+  // What was redeemed
+  petId               String              // Which pet used the pass
+  reservationId       String?             // Link to daycare reservation if applicable
+  checkInId           String?             // Link to check-in record if applicable
+  
+  // Snapshot at redemption time
+  passesBeforeUse     Int                 // Balance before this redemption
+  passesAfterUse      Int                 // Balance after (passesBeforeUse - 1)
+  
+  // Metadata
+  redeemedAt          DateTime            @default(now())
+  redeemedBy          String?             // Staff who processed the redemption
+  notes               String?
+  
+  // For refunds/reversals
+  isReversed          Boolean             @default(false)
+  reversedAt          DateTime?
+  reversedBy          String?
+  reversalReason      String?
+
+  @@index([tenantId, customerPassId], map: "daycare_pass_redemptions_tenant_pass_idx")
+  @@index([tenantId, petId], map: "daycare_pass_redemptions_tenant_pet_idx")
+  @@index([tenantId, redeemedAt], map: "daycare_pass_redemptions_tenant_date_idx")
+  @@map("daycare_pass_redemptions")
+}
+
+enum DaycarePassStatus {
+  ACTIVE      // Has remaining balance and not expired
+  EXHAUSTED   // All passes used
+  EXPIRED     // Past expiration date with unused passes
+  CANCELLED   // Manually cancelled (refund scenario)
+}
+
+// ============================================
+// FEATURE FLAGS & SERVICE MODULES
+// ============================================
+
+// Global feature flag definitions (system-wide)
+model FeatureFlag {
+  id              String              @id @default(uuid())
+  
+  // Flag identification
+  key             String              @unique  // e.g., "grooming_services", "ai_recommendations"
+  name            String                       // Human-readable name
+  description     String?                      // What this flag controls
+  
+  // Flag type and category
+  category        FeatureFlagCategory @default(FEATURE)
+  
+  // Default state (can be overridden per tenant)
+  defaultEnabled  Boolean             @default(false)
+  
+  // Rollout configuration
+  rolloutPercent  Int                 @default(0)  // 0-100 for gradual rollout
+  
+  // Metadata
+  isActive        Boolean             @default(true)  // Can disable flag entirely
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  
+  // Relations
+  tenantOverrides TenantFeatureFlag[]
+  
+  @@index([key])
+  @@index([category, isActive])
+  @@map("feature_flags")
+}
+
+// Per-tenant feature flag overrides
+model TenantFeatureFlag {
+  id              String      @id @default(uuid())
+  tenantId        String
+  featureFlagId   String
+  featureFlag     FeatureFlag @relation(fields: [featureFlagId], references: [id], onDelete: Cascade)
+  
+  // Override state
+  enabled         Boolean     @default(true)
+  
+  // Optional: per-user overrides (JSON array of user IDs)
+  userOverrides   Json?       // { "enabled": ["userId1"], "disabled": ["userId2"] }
+  
+  // Audit
+  enabledBy       String?     // Staff ID who enabled
+  enabledAt       DateTime?
+  disabledBy      String?     // Staff ID who disabled
+  disabledAt      DateTime?
+  
+  // Metadata
+  notes           String?     // Why this was enabled/disabled
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  @@unique([tenantId, featureFlagId])
+  @@index([tenantId])
+  @@index([featureFlagId])
+  @@map("tenant_feature_flags")
+}
+
+enum FeatureFlagCategory {
+  SERVICE_MODULE  // Core service modules (grooming, training, etc.)
+  FEATURE         // General features (AI, reports, etc.)
+  BETA            // Beta/experimental features
+  INTEGRATION     // Third-party integrations
 }

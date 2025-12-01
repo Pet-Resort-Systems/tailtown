@@ -1,36 +1,37 @@
 /**
  * Enhanced Error Handling Middleware
- * 
+ *
  * This middleware provides consistent error handling across the application.
  * It handles different types of errors, formats responses appropriately,
  * and provides detailed logging with proper context.
  */
 
-import { Request, Response, NextFunction } from 'express';
-import { logger as appLogger } from '../utils/logger';
+import { Request, Response, NextFunction } from "express";
+import { logger as appLogger } from "../utils/logger";
+import { captureException, setUser, addBreadcrumb } from "../utils/sentry";
 
 /**
  * Standardized error types
  */
 export enum ErrorType {
   // Client errors (4xx)
-  VALIDATION_ERROR = 'VALIDATION_ERROR',
-  AUTHENTICATION_ERROR = 'AUTHENTICATION_ERROR',
-  AUTHORIZATION_ERROR = 'AUTHORIZATION_ERROR',
-  RESOURCE_NOT_FOUND = 'RESOURCE_NOT_FOUND',
-  RESOURCE_CONFLICT = 'RESOURCE_CONFLICT',
-  BAD_REQUEST = 'BAD_REQUEST',
-  RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
-  
+  VALIDATION_ERROR = "VALIDATION_ERROR",
+  AUTHENTICATION_ERROR = "AUTHENTICATION_ERROR",
+  AUTHORIZATION_ERROR = "AUTHORIZATION_ERROR",
+  RESOURCE_NOT_FOUND = "RESOURCE_NOT_FOUND",
+  RESOURCE_CONFLICT = "RESOURCE_CONFLICT",
+  BAD_REQUEST = "BAD_REQUEST",
+  RATE_LIMIT_EXCEEDED = "RATE_LIMIT_EXCEEDED",
+
   // Server errors (5xx)
-  SERVER_ERROR = 'SERVER_ERROR',
-  DATABASE_ERROR = 'DATABASE_ERROR',
-  EXTERNAL_SERVICE_ERROR = 'EXTERNAL_SERVICE_ERROR',
-  SCHEMA_ERROR = 'SCHEMA_ERROR',
-  
+  SERVER_ERROR = "SERVER_ERROR",
+  DATABASE_ERROR = "DATABASE_ERROR",
+  EXTERNAL_SERVICE_ERROR = "EXTERNAL_SERVICE_ERROR",
+  SCHEMA_ERROR = "SCHEMA_ERROR",
+
   // Special cases
-  SCHEMA_ALIGNMENT_ERROR = 'SCHEMA_ALIGNMENT_ERROR',
-  MULTI_TENANT_ERROR = 'MULTI_TENANT_ERROR'
+  SCHEMA_ALIGNMENT_ERROR = "SCHEMA_ALIGNMENT_ERROR",
+  MULTI_TENANT_ERROR = "MULTI_TENANT_ERROR",
 }
 
 /**
@@ -50,10 +51,10 @@ export class AppError extends Error {
   type: ErrorType;
   details?: any;
   context?: ErrorContext;
-  
+
   /**
    * Create a new AppError
-   * 
+   *
    * @param message - Error message
    * @param statusCode - HTTP status code
    * @param type - Error type from ErrorType enum
@@ -71,19 +72,23 @@ export class AppError extends Error {
   ) {
     super(message);
     this.statusCode = statusCode;
-    this.status = `${statusCode}`.startsWith('4') ? 'fail' : 'error';
+    this.status = `${statusCode}`.startsWith("4") ? "fail" : "error";
     this.isOperational = isOperational;
     this.type = type;
     this.details = details;
     this.context = context;
-    
+
     Error.captureStackTrace(this, this.constructor);
   }
-  
+
   /**
    * Create a validation error
    */
-  static validationError(message: string, details?: any, context?: ErrorContext): AppError {
+  static validationError(
+    message: string,
+    details?: any,
+    context?: ErrorContext
+  ): AppError {
     return new AppError(
       message,
       400,
@@ -93,11 +98,14 @@ export class AppError extends Error {
       context
     );
   }
-  
+
   /**
    * Create an authentication error
    */
-  static authenticationError(message: string = 'Authentication required', context?: ErrorContext): AppError {
+  static authenticationError(
+    message: string = "Authentication required",
+    context?: ErrorContext
+  ): AppError {
     return new AppError(
       message,
       401,
@@ -107,11 +115,14 @@ export class AppError extends Error {
       context
     );
   }
-  
+
   /**
    * Create an authorization error
    */
-  static authorizationError(message: string = 'Not authorized', context?: ErrorContext): AppError {
+  static authorizationError(
+    message: string = "Not authorized",
+    context?: ErrorContext
+  ): AppError {
     return new AppError(
       message,
       403,
@@ -121,15 +132,19 @@ export class AppError extends Error {
       context
     );
   }
-  
+
   /**
    * Create a not found error
    */
-  static notFoundError(resource: string, id?: string | number, context?: ErrorContext): AppError {
-    const message = id 
+  static notFoundError(
+    resource: string,
+    id?: string | number,
+    context?: ErrorContext
+  ): AppError {
+    const message = id
       ? `${resource} with ID ${id} not found`
       : `${resource} not found`;
-      
+
     return new AppError(
       message,
       404,
@@ -139,11 +154,15 @@ export class AppError extends Error {
       context
     );
   }
-  
+
   /**
    * Create a conflict error
    */
-  static conflictError(message: string, details?: any, context?: ErrorContext): AppError {
+  static conflictError(
+    message: string,
+    details?: any,
+    context?: ErrorContext
+  ): AppError {
     return new AppError(
       message,
       409,
@@ -153,11 +172,16 @@ export class AppError extends Error {
       context
     );
   }
-  
+
   /**
    * Create a database error
    */
-  static databaseError(message: string, details?: any, isOperational: boolean = true, context?: ErrorContext): AppError {
+  static databaseError(
+    message: string,
+    details?: any,
+    isOperational: boolean = true,
+    context?: ErrorContext
+  ): AppError {
     return new AppError(
       message,
       500,
@@ -179,24 +203,24 @@ export const handlePrismaError = (err: any): AppError => {
   const errorCode = err.code;
   const meta = err.meta || {};
   const target = meta.target || [];
-  
+
   switch (errorCode) {
-    case 'P2002': // Unique constraint failed
+    case "P2002": // Unique constraint failed
       return AppError.conflictError(
-        `Duplicate field value: ${Array.isArray(target) ? target.join(', ') : target}`,
+        `Duplicate field value: ${
+          Array.isArray(target) ? target.join(", ") : target
+        }`,
         { prismaError: errorCode, fields: target }
       );
-      
-    case 'P2025': // Record not found
-      return AppError.notFoundError(
-        meta.modelName || 'Record',
-        undefined,
-        { prismaError: errorCode }
-      );
-      
+
+    case "P2025": // Record not found
+      return AppError.notFoundError(meta.modelName || "Record", undefined, {
+        prismaError: errorCode,
+      });
+
     default:
       return AppError.databaseError(
-        'Database operation failed',
+        "Database operation failed",
         { prismaError: errorCode, meta },
         true
       );
@@ -208,25 +232,25 @@ export const handlePrismaError = (err: any): AppError => {
  */
 export const sendErrorDev = (err: any, req: Request, res: Response): void => {
   const statusCode = err.statusCode || 500;
-  
+
   logger.error(`[${req.method}] ${req.path} - ${err.message}`);
-  
+
   if (err.context) {
     logger.debug(`Error context: ${JSON.stringify(err.context)}`);
   }
-  
+
   res.status(statusCode).json({
     success: false,
-    status: err.status || 'error',
+    status: err.status || "error",
     message: err.message,
     error: {
       type: err.type || ErrorType.SERVER_ERROR,
       details: err.details || null,
       stack: err.stack,
-      context: err.context || null
+      context: err.context || null,
     },
-    requestId: req.headers['x-request-id'] || null,
-    timestamp: new Date().toISOString()
+    requestId: req.requestId || null,
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -235,36 +259,40 @@ export const sendErrorDev = (err: any, req: Request, res: Response): void => {
  */
 export const sendErrorProd = (err: any, req: Request, res: Response): void => {
   const statusCode = err.statusCode || 500;
-  
-  logger.error(`[${req.method}] ${req.path} - ${err.type || 'ERROR'}: ${err.message}`);
-  
+
+  logger.error(
+    `[${req.method}] ${req.path} - ${err.type || "ERROR"}: ${err.message}`
+  );
+
   if (err.isOperational) {
     res.status(statusCode).json({
       success: false,
-      status: err.status || 'error',
+      status: err.status || "error",
       message: err.message,
       error: {
-        type: err.type || ErrorType.SERVER_ERROR
+        type: err.type || ErrorType.SERVER_ERROR,
       },
-      requestId: req.headers['x-request-id'] || null,
-      timestamp: new Date().toISOString()
+      requestId: req.requestId || null,
+      timestamp: new Date().toISOString(),
     });
   } else {
-    logger.error(`Unexpected error: ${JSON.stringify({
-      message: err.message,
-      stack: err.stack,
-      details: err.details || null
-    })}`);
-    
+    logger.error(
+      `Unexpected error: ${JSON.stringify({
+        message: err.message,
+        stack: err.stack,
+        details: err.details || null,
+      })}`
+    );
+
     res.status(500).json({
       success: false,
-      status: 'error',
-      message: 'Something went wrong',
+      status: "error",
+      message: "Something went wrong",
       error: {
-        type: ErrorType.SERVER_ERROR
+        type: ErrorType.SERVER_ERROR,
       },
-      requestId: req.headers['x-request-id'] || null,
-      timestamp: new Date().toISOString()
+      requestId: req.requestId || null,
+      timestamp: new Date().toISOString(),
     });
   }
 };
@@ -281,44 +309,73 @@ export const errorHandler = (
   if (res.headersSent) {
     return next(err);
   }
-  
+
   err.statusCode = err.statusCode || 500;
-  err.status = err.status || 'error';
-  
+  err.status = err.status || "error";
+
   if (!err.context) {
     err.context = {};
   }
-  
+
   err.context.requestInfo = {
     method: req.method,
     path: req.path,
     query: req.query,
     headers: {
-      'user-agent': req.headers['user-agent'],
-      'x-request-id': req.headers['x-request-id'],
-      'x-organization-id': req.headers['x-organization-id']
-    }
+      "user-agent": req.headers["user-agent"],
+      "x-request-id": req.requestId,
+      "x-organization-id": req.headers["x-organization-id"],
+    },
   };
-  
-  if (err.code && err.code.startsWith('P')) {
+
+  if (err.code && err.code.startsWith("P")) {
     err = handlePrismaError(err);
   }
-  
-  if (err.type === 'entity.parse.failed') {
-    err = AppError.validationError(
-      'Invalid JSON in request body',
-      { syntaxError: err.message }
-    );
+
+  if (err.type === "entity.parse.failed") {
+    err = AppError.validationError("Invalid JSON in request body", {
+      syntaxError: err.message,
+    });
   }
-  
-  if (err.name === 'ValidationError') {
-    err = AppError.validationError(
-      err.message,
-      err.details || err.errors
-    );
+
+  if (err.name === "ValidationError") {
+    err = AppError.validationError(err.message, err.details || err.errors);
   }
-  
-  if (process.env.NODE_ENV === 'development') {
+
+  // Capture error in Sentry for server errors (5xx)
+  if (err.statusCode >= 500) {
+    // Set user context if available
+    const user = (req as any).user;
+    const tenantId = (req as any).tenantId;
+    if (user || tenantId) {
+      setUser({
+        id: user?.id || "anonymous",
+        email: user?.email,
+        tenantId,
+      });
+    }
+
+    // Add request breadcrumb
+    addBreadcrumb(`${req.method} ${req.path}`, "http", {
+      url: req.originalUrl,
+      method: req.method,
+      statusCode: err.statusCode,
+      requestId: req.requestId,
+    });
+
+    // Capture the exception
+    captureException(err, {
+      requestId: req.requestId,
+      tenantId,
+      path: req.path,
+      method: req.method,
+      statusCode: err.statusCode,
+      errorType: err.type,
+      ...err.context,
+    });
+  }
+
+  if (process.env.NODE_ENV === "development") {
     sendErrorDev(err, req, res);
   } else {
     sendErrorProd(err, req, res);

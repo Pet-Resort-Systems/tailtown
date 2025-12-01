@@ -59,6 +59,9 @@ import businessSettingsRoutes from "./routes/business-settings.routes";
 import messagingRoutes from "./routes/messaging.routes";
 import waitlistRoutes from "./routes/waitlist.routes";
 import reportCardRoutes from "./routes/reportCard.routes";
+import daycarePassRoutes from "./routes/daycare-pass.routes";
+import auditLogRoutes from "./routes/audit-log.routes";
+import featureFlagsRoutes from "./routes/feature-flags.routes";
 import { systemRoutes } from "./routes/system.routes";
 import { errorHandler } from "./middleware/error.middleware";
 import {
@@ -77,6 +80,7 @@ import {
 } from "./middleware/auth.middleware";
 import { requireJsonContentType } from "./middleware/content-type.middleware";
 import { monitoring } from "./utils/monitoring";
+import { prometheusMetrics } from "./utils/prometheus";
 import { auditMiddleware } from "./utils/auditLog";
 import monitoringRoutes from "./routes/monitoring.routes";
 
@@ -93,6 +97,10 @@ app.set("trust proxy", 1);
 // Increase HTTP header limits to prevent 431 errors
 app.set("etag", false); // Disable ETag generation to reduce header size
 app.set("x-powered-by", false); // Remove unnecessary headers
+
+// Request ID middleware - MUST be first to ensure all requests have an ID
+import { requestIdMiddleware } from "./middleware/requestId.middleware";
+app.use(requestIdMiddleware);
 
 // Request logging middleware
 app.use((req, res, next) => {
@@ -402,6 +410,7 @@ app.use("/api", extractTenantContext);
 
 // Monitoring and audit logging (after tenant context is available)
 app.use(monitoring.requestTracker());
+app.use(prometheusMetrics.httpMetricsMiddleware());
 app.use(auditMiddleware());
 
 // Monitoring routes (accessible without authentication for health checks)
@@ -410,6 +419,28 @@ app.use("/monitoring", monitoringRoutes);
 // ============================================
 // PUBLIC API ROUTES (MUST BE FIRST - no authentication required)
 // ============================================
+// Customer lookup for booking portal login (public, rate-limited)
+import { lookupCustomerByEmail } from "./controllers/customer";
+
+const customerLookupLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: process.env.NODE_ENV === "production" ? 10 : 100, // Higher limit for dev/test
+  message: {
+    success: false,
+    error: "Too many lookup attempts, please try again later",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.post(
+  "/api/customers/lookup",
+  requireTenant,
+  customerLookupLimiter,
+  requireJsonContentType,
+  lookupCustomerByEmail
+);
+
 // Announcement Routes (GET is public, write requires admin - auth handled in routes)
 app.use("/api/announcements", requireTenant, announcementRoutes);
 
@@ -461,6 +492,18 @@ app.use(
   requireTenantAdmin,
   reportRoutes
 );
+
+// Audit Log Routes (admin only - for compliance and security)
+app.use(
+  "/api/audit-logs",
+  requireTenant,
+  authenticate,
+  requireTenantAdmin,
+  auditLogRoutes
+);
+
+// Feature Flags Routes (tenant context required, some routes need auth)
+app.use("/api/feature-flags", requireTenant, featureFlagsRoutes);
 
 // ============================================
 // STAFF ROUTES (require authentication)
@@ -542,6 +585,9 @@ app.use("/api/waitlist", requireTenant, waitlistRoutes);
 
 // Report Card Routes (authenticated)
 app.use("/api/report-cards", requireTenant, reportCardRoutes);
+
+// Daycare Pass Routes (authenticated)
+app.use("/api/daycare-passes", requireTenant, daycarePassRoutes);
 
 // Serve uploaded icons statically
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));

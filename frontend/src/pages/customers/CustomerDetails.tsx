@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { 
-  Typography, 
-  Container, 
-  Box, 
-  Paper, 
+import React, { useEffect, useState, useCallback } from "react";
+import {
+  Typography,
+  Container,
+  Box,
+  Paper,
   Button,
   TextField,
   Grid,
@@ -22,20 +22,22 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
-} from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import PersonIcon from '@mui/icons-material/Person';
-import PetsIcon from '@mui/icons-material/Pets';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Customer, customerService } from '../../services/customerService';
-import AccountHistory from '../../components/customers/AccountHistory';
-import CustomerIconSelectorNew from '../../components/customers/CustomerIconSelectorNew';
-import CustomerIconBadges from '../../components/customers/CustomerIconBadges';
+  DialogActions,
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import PersonIcon from "@mui/icons-material/Person";
+import PetsIcon from "@mui/icons-material/Pets";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import { useParams, useNavigate } from "react-router-dom";
+import { Customer, customerService } from "../../services/customerService";
+import AccountHistory from "../../components/customers/AccountHistory";
+import CustomerIconSelectorNew from "../../components/customers/CustomerIconSelectorNew";
+import CustomerIconBadges from "../../components/customers/CustomerIconBadges";
+import CustomerDaycarePasses from "../../components/customers/CustomerDaycarePasses";
+import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -54,49 +56,49 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`customer-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ py: 3 }}>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box sx={{ py: 3 }}>{children}</Box>}
     </div>
   );
 }
 
 // Default empty customer state
 const emptyCustomer: Customer = {
-  id: '',
-  firstName: '',
-  lastName: '',
-  email: '',
-  phone: '',
-  address: '',
-  city: '',
-  state: '',
-  zipCode: '',
-  pets: []
+  id: "",
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  address: "",
+  city: "",
+  state: "",
+  zipCode: "",
+  pets: [],
 };
 
 const CustomerDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const isNewCustomer = !id || id === 'new';
-  
+  const isNewCustomer = !id || id === "new";
+
   // State management
   const [customer, setCustomer] = useState<Customer>(emptyCustomer);
   const [loading, setLoading] = useState<boolean>(true);
   const [editing, setEditing] = useState<boolean>(isNewCustomer);
-  const [snackbar, setSnackbar] = useState({ 
-    open: false, 
-    message: '', 
-    severity: 'success' as 'success' | 'error' 
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error",
   });
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [tabValue, setTabValue] = useState<number>(0);
   const [iconSelectorOpen, setIconSelectorOpen] = useState(false);
-  const [selectedIcons, setSelectedIcons] = useState<string[]>(customer.customerIcons || []);
-  const [iconNotes, setIconNotes] = useState<Record<string, string>>(customer.iconNotes || {});
-  
+  const [selectedIcons, setSelectedIcons] = useState<string[]>(
+    customer.customerIcons || []
+  );
+  const [iconNotes, setIconNotes] = useState<Record<string, string>>(
+    customer.iconNotes || {}
+  );
+
   // Fetch customer data
   const fetchCustomer = useCallback(async () => {
     if (isNewCustomer) {
@@ -104,17 +106,17 @@ const CustomerDetails: React.FC = () => {
       setLoading(false);
       return;
     }
-    
+
     try {
-      const data = await customerService.getCustomerById(id || '');
+      const data = await customerService.getCustomerById(id || "");
       setCustomer(data);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching customer:', error);
+      console.error("Error fetching customer:", error);
       setSnackbar({
         open: true,
-        message: 'Failed to load customer data',
-        severity: 'error'
+        message: "Failed to load customer data",
+        severity: "error",
       });
       setLoading(false);
     }
@@ -133,23 +135,23 @@ const CustomerDetails: React.FC = () => {
       setIconNotes(customer.iconNotes);
     }
   }, [customer.customerIcons, customer.iconNotes]);
-  
+
   // Handle tab changes
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
-  
+
   // Handle form input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const activeElement = document.activeElement;
     const activeElementId = activeElement ? activeElement.id : null;
-    
-    setCustomer(prev => ({
+
+    setCustomer((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    
+
     // Use setTimeout to ensure focus is restored after the state update and re-render
     setTimeout(() => {
       if (activeElementId) {
@@ -160,19 +162,19 @@ const CustomerDetails: React.FC = () => {
       }
     }, 0);
   };
-  
+
   // Handle customer save
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       setLoading(true);
-      
+
       // Include icon fields in customer data
       const customerData = {
         ...customer,
         customerIcons: selectedIcons,
-        iconNotes: iconNotes
+        iconNotes: iconNotes,
       };
 
       if (isNewCustomer) {
@@ -180,53 +182,53 @@ const CustomerDetails: React.FC = () => {
         const newCustomer = await customerService.createCustomer(customerData);
         setSnackbar({
           open: true,
-          message: 'Customer created successfully',
-          severity: 'success'
+          message: "Customer created successfully",
+          severity: "success",
         });
-        
+
         // Check for redirect parameter in URL
         const urlParams = new URLSearchParams(window.location.search);
-        const redirectPath = urlParams.get('redirect');
-        
+        const redirectPath = urlParams.get("redirect");
+
         if (redirectPath) {
           // If there's a redirect parameter, navigate there
           navigate(redirectPath);
         } else {
           // Otherwise, go back to customers list
-          navigate('/customers');
+          navigate("/customers");
         }
       } else {
-        await customerService.updateCustomer(id || '', customerData);
+        await customerService.updateCustomer(id || "", customerData);
         setSnackbar({
           open: true,
-          message: 'Customer updated successfully',
-          severity: 'success'
+          message: "Customer updated successfully",
+          severity: "success",
         });
         setEditing(false);
       }
-      
+
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      let errorMessage = 'Failed to save customer';
-      
+      let errorMessage = "Failed to save customer";
+
       if (error instanceof Error) {
         errorMessage = error.message;
       }
-      
-      setSnackbar({ 
-        open: true, 
-        message: errorMessage, 
-        severity: 'error' 
+
+      setSnackbar({
+        open: true,
+        message: errorMessage,
+        severity: "error",
       });
     }
   };
-  
+
   // Loading state
   if (loading) {
     return (
       <Container maxWidth="lg">
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
           <CircularProgress />
         </Box>
       </Container>
@@ -337,9 +339,18 @@ const CustomerDetails: React.FC = () => {
   // Pet List Component
   const PetsList = () => (
     <>
-      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box
+        sx={{
+          mb: 2,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <Typography variant="subtitle1" color="textSecondary">
-          {customer.pets?.length || 0} {customer.pets?.length === 1 ? 'pet' : 'pets'} associated with this customer
+          {customer.pets?.length || 0}{" "}
+          {customer.pets?.length === 1 ? "pet" : "pets"} associated with this
+          customer
         </Typography>
         <Button
           variant="contained"
@@ -368,26 +379,32 @@ const CustomerDetails: React.FC = () => {
         {customer.pets && customer.pets.length > 0 ? (
           <List>
             {customer.pets
-              .filter((pet: any) => 
-                pet.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                (pet.breed || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-                (pet.type || '').toLowerCase().includes(searchQuery.toLowerCase())
+              .filter(
+                (pet: any) =>
+                  pet.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  (pet.breed || "")
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase()) ||
+                  (pet.type || "")
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase())
               )
               .map((pet: any) => (
                 <ListItem
                   key={pet.id}
                   sx={{
-                    border: '1px solid #e0e0e0',
+                    border: "1px solid #e0e0e0",
                     borderRadius: 1,
                     mb: 1,
-                    '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' }
+                    "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.04)" },
                   }}
                 >
                   <ListItemText
                     primary={pet.name}
                     secondary={
                       <>
-                        {pet.type}{pet.breed ? ` • ${pet.breed}` : ''}
+                        {pet.type}
+                        {pet.breed ? ` • ${pet.breed}` : ""}
                       </>
                     }
                   />
@@ -415,21 +432,27 @@ const CustomerDetails: React.FC = () => {
   return (
     <Container maxWidth="lg">
       <Box sx={{ py: 4 }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mb: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Box sx={{ flexGrow: 1 }}>
               <Typography variant="h5" component="h1">
-                {isNewCustomer ? 'New Customer' : `${customer.firstName} ${customer.lastName}`}
+                {isNewCustomer
+                  ? "New Customer"
+                  : `${customer.firstName} ${customer.lastName}`}
               </Typography>
             </Box>
           </Box>
           {selectedIcons.length > 0 && (
             <Box>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+              <Typography
+                variant="subtitle2"
+                color="text.secondary"
+                gutterBottom
+              >
                 Customer Icons
               </Typography>
-              <CustomerIconBadges 
-                iconIds={selectedIcons} 
+              <CustomerIconBadges
+                iconIds={selectedIcons}
                 iconNotes={iconNotes}
                 size="medium"
               />
@@ -438,14 +461,10 @@ const CustomerDetails: React.FC = () => {
         </Box>
 
         {/* Action Buttons */}
-        <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+        <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
           {editing ? (
             <>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSave}
-              >
+              <Button variant="contained" color="primary" onClick={handleSave}>
                 Save
               </Button>
               <Button
@@ -460,7 +479,7 @@ const CustomerDetails: React.FC = () => {
                 color="secondary"
                 onClick={() => {
                   if (isNewCustomer) {
-                    navigate('/customers');
+                    navigate("/customers");
                   } else {
                     setEditing(false);
                   }
@@ -481,7 +500,7 @@ const CustomerDetails: React.FC = () => {
               <Button
                 variant="outlined"
                 color="secondary"
-                onClick={() => navigate('/customers')}
+                onClick={() => navigate("/customers")}
               >
                 Back to Customers
               </Button>
@@ -491,7 +510,7 @@ const CustomerDetails: React.FC = () => {
 
         {/* Tabs - only show when not editing */}
         {!isNewCustomer && !editing && (
-          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
             <Tabs
               value={tabValue}
               onChange={handleTabChange}
@@ -499,9 +518,22 @@ const CustomerDetails: React.FC = () => {
               variant="scrollable"
               scrollButtons="auto"
             >
-              <Tab icon={<PersonIcon />} iconPosition="start" label="Customer Info" />
+              <Tab
+                icon={<PersonIcon />}
+                iconPosition="start"
+                label="Customer Info"
+              />
               <Tab icon={<PetsIcon />} iconPosition="start" label="Pets" />
-              <Tab icon={<AccountBalanceWalletIcon />} iconPosition="start" label="Account History" />
+              <Tab
+                icon={<ConfirmationNumberIcon />}
+                iconPosition="start"
+                label="Daycare Passes"
+              />
+              <Tab
+                icon={<AccountBalanceWalletIcon />}
+                iconPosition="start"
+                label="Account History"
+              />
             </Tabs>
           </Box>
         )}
@@ -522,9 +554,17 @@ const CustomerDetails: React.FC = () => {
             <TabPanel value={tabValue} index={2}>
               <Box>
                 <Typography variant="h6" gutterBottom>
+                  Daycare Passes
+                </Typography>
+                <CustomerDaycarePasses customerId={id || ""} />
+              </Box>
+            </TabPanel>
+            <TabPanel value={tabValue} index={3}>
+              <Box>
+                <Typography variant="h6" gutterBottom>
                   Account History & Balance
                 </Typography>
-                <AccountHistory customerId={id || ''} />
+                <AccountHistory customerId={id || ""} />
               </Box>
             </TabPanel>
           </>
@@ -557,12 +597,12 @@ const CustomerDetails: React.FC = () => {
         <Snackbar
           open={snackbar.open}
           autoHideDuration={6000}
-          onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
         >
           <Alert
-            onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+            onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
             severity={snackbar.severity}
-            sx={{ width: '100%' }}
+            sx={{ width: "100%" }}
           >
             {snackbar.message}
           </Alert>

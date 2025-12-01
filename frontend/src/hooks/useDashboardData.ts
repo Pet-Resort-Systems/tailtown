@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { reservationService } from "../services/reservationService";
 import { logger } from "../utils/logger";
-import { getTenantTimezone } from "../config";
 import { enhanceReservationsWithVaccinationIcons } from "../utils/vaccinationIconUtils";
 
 interface DashboardMetrics {
@@ -74,20 +73,15 @@ export const useDashboardData = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date()); // Always default to today
 
   /**
-   * Convert UTC date to local date string in tenant's timezone
-   * This ensures dates are compared in the business's local time, not UTC
+   * Extract date string from ISO date
+   * Dates from Gingr are stored as local time (no timezone conversion needed)
+   * Just extract the YYYY-MM-DD portion directly
    */
-  const getLocalDateString = useCallback((utcDateString: string): string => {
-    const date = new Date(utcDateString);
-    const timezone = getTenantTimezone();
-
-    // Format date in tenant's timezone
-    const localDate = new Date(
-      date.toLocaleString("en-US", { timeZone: timezone })
-    );
-    return `${localDate.getFullYear()}-${String(
-      localDate.getMonth() + 1
-    ).padStart(2, "0")}-${String(localDate.getDate()).padStart(2, "0")}`;
+  const getLocalDateString = useCallback((dateString: string): string => {
+    // Dates are stored as local time in ISO format (e.g., "2025-11-28T19:00:00.000Z")
+    // The "Z" is misleading - it's actually local time, not UTC
+    // Just extract the date portion directly
+    return dateString.split("T")[0];
   }, []);
 
   /**
@@ -154,7 +148,8 @@ export const useDashboardData = () => {
 
       // Fetch all statuses including COMPLETED for displaying past reservations
       // We'll filter out COMPLETED when calculating counts to match Gingr's "Expected" totals
-      const allStatuses = "PENDING,CONFIRMED,CHECKED_IN,COMPLETED,CANCELLED,NO_SHOW";
+      const allStatuses =
+        "PENDING,CONFIRMED,CHECKED_IN,COMPLETED,CANCELLED,NO_SHOW";
 
       // Fetch reservations with pagination (up to 2 pages = 1000 reservations)
       // Include date filter to get reservations for a reasonable window around the selected date
@@ -217,13 +212,13 @@ export const useDashboardData = () => {
       // Calculate metrics using local timezone dates
 
       const checkIns = enhancedReservations.filter((res: any) => {
-        if (res.status === 'CANCELLED') return false;
+        if (res.status === "CANCELLED") return false;
         const startDateStr = getLocalDateString(res.startDate);
         return startDateStr === formattedDate;
       }).length;
 
       const checkOuts = enhancedReservations.filter((res: any) => {
-        if (res.status === 'CANCELLED') return false;
+        if (res.status === "CANCELLED") return false;
         const endDateStr = getLocalDateString(res.endDate);
         return endDateStr === formattedDate;
       }).length;
@@ -256,7 +251,8 @@ export const useDashboardData = () => {
       });
 
       const overnight = enhancedReservations.filter((res: any) => {
-        if (res.status === 'CANCELLED') return false;
+        // Only count CHECKED_IN reservations as overnight (matches Gingr)
+        if (res.status !== "CHECKED_IN") return false;
         // Only count boarding reservations as overnight, not day camp
         const serviceCategory = res.service?.serviceCategory;
         if (serviceCategory !== "BOARDING") return false;

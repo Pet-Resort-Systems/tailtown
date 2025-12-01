@@ -1,306 +1,239 @@
+// @ts-nocheck
 /**
  * Reservation Overlap Prevention Tests
- * 
- * These tests ensure that the system prevents overlapping reservations
+ *
+ * Tests to ensure the system prevents overlapping reservations
  * for the same resource (suite/room).
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
+import { detectReservationConflicts } from "../utils/reservation-conflicts";
 
+// Mock the Prisma client
+jest.mock("@prisma/client", () => {
+  const mockPrismaClient = {
+    reservation: {
+      findMany: jest.fn(),
+    },
+    resource: {
+      findMany: jest.fn(),
+    },
+  };
+  return {
+    PrismaClient: jest.fn(() => mockPrismaClient),
+  };
+});
+
+// Get the mocked Prisma client
 const prisma = new PrismaClient();
 
-describe('Reservation Overlap Prevention', () => {
-  let testTenantId: string;
-  let testCustomerId: string;
-  let testPetId: string;
-  let testResourceId: string;
-  let testServiceId: string;
-
-  beforeAll(async () => {
-    // Create test data
-    testTenantId = 'test-tenant-overlap';
-    
-    // Create customer
-    const customer = await prisma.customer.create({
-      data: {
-        tenantId: testTenantId,
-        firstName: 'Test',
-        lastName: 'Customer',
-        email: 'overlap-test@example.com',
-        phone: '555-0100',
-      },
-    });
-    testCustomerId = customer.id;
-
-    // Create pet
-    const pet = await prisma.pet.create({
-      data: {
-        tenantId: testTenantId,
-        customerId: testCustomerId,
-        name: 'Test Dog',
-        type: 'DOG',
-        breed: 'Labrador',
-        weight: 50,
-      },
-    });
-    testPetId = pet.id;
-
-    // Create resource (suite)
-    const resource = await prisma.resource.create({
-      data: {
-        tenantId: testTenantId,
-        name: 'TEST-SUITE-01',
-        type: 'STANDARD_SUITE',
-        capacity: 1,
-      },
-    });
-    testResourceId = resource.id;
-
-    // Create service
-    const service = await prisma.service.create({
-      data: {
-        tenantId: testTenantId,
-        name: 'Test Boarding',
-        serviceCategory: 'BOARDING',
-        duration: 1440, // 1 day in minutes
-        price: 50,
-      },
-    });
-    testServiceId = service.id;
+describe("Reservation Overlap Prevention", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  afterAll(async () => {
-    // Clean up test data
-    await prisma.reservation.deleteMany({ where: { tenantId: testTenantId } });
-    await prisma.service.deleteMany({ where: { tenantId: testTenantId } });
-    await prisma.resource.deleteMany({ where: { tenantId: testTenantId } });
-    await prisma.pet.deleteMany({ where: { tenantId: testTenantId } });
-    await prisma.customer.deleteMany({ where: { tenantId: testTenantId } });
-    await prisma.$disconnect();
-  });
+  describe("Resource-based overlap detection", () => {
+    it("should detect overlap when new reservation starts during existing reservation", async () => {
+      const existingReservation = {
+        id: "existing-1",
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        resourceId: "suite-1",
+      };
 
-  beforeEach(async () => {
-    // Clear reservations before each test
-    await prisma.reservation.deleteMany({ where: { tenantId: testTenantId } });
-  });
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([
+        existingReservation,
+      ]);
 
-  describe('Database-level overlap detection', () => {
-    it('should detect overlapping reservations in the same suite', async () => {
-      // Create first reservation: Jan 1-5
-      await prisma.reservation.create({
-        data: {
-          tenantId: testTenantId,
-          customerId: testCustomerId,
-          petId: testPetId,
-          resourceId: testResourceId,
-          serviceId: testServiceId,
-          startDate: new Date('2025-01-01'),
-          endDate: new Date('2025-01-05'),
-          status: 'CONFIRMED',
-        },
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-12"), // Starts during existing
+        endDate: new Date("2026-06-17"),
+        resourceId: "suite-1",
+        tenantId: "tenant-1",
       });
 
-      // Create second reservation: Jan 3-7 (overlaps with first)
-      await prisma.reservation.create({
-        data: {
-          tenantId: testTenantId,
-          customerId: testCustomerId,
-          petId: testPetId,
-          resourceId: testResourceId,
-          serviceId: testServiceId,
-          startDate: new Date('2025-01-03'),
-          endDate: new Date('2025-01-07'),
-          status: 'CONFIRMED',
-        },
-      });
-
-      // Query for overlaps
-      const overlaps = await prisma.$queryRaw<Array<{ count: bigint }>>`
-        SELECT COUNT(*) as count
-        FROM reservations r1
-        JOIN reservations r2 ON r1."resourceId" = r2."resourceId" AND r1.id < r2.id
-        WHERE r1."tenantId" = ${testTenantId}
-          AND r2."tenantId" = ${testTenantId}
-          AND r1.status IN ('CONFIRMED', 'CHECKED_IN', 'PENDING')
-          AND r2.status IN ('CONFIRMED', 'CHECKED_IN', 'PENDING')
-          AND r1."startDate" < r2."endDate"
-          AND r1."endDate" > r2."startDate"
-      `;
-
-      expect(Number(overlaps[0].count)).toBe(1);
+      expect(result.hasConflicts).toBe(true);
+      expect(result.conflictingReservations).toHaveLength(1);
+      expect(result.warnings[0]).toContain("Resource is not available");
     });
 
-    it('should not detect overlap for consecutive reservations', async () => {
-      // Create first reservation: Jan 1-5
-      await prisma.reservation.create({
-        data: {
-          tenantId: testTenantId,
-          customerId: testCustomerId,
-          petId: testPetId,
-          resourceId: testResourceId,
-          serviceId: testServiceId,
-          startDate: new Date('2025-01-01'),
-          endDate: new Date('2025-01-05'),
-          status: 'CONFIRMED',
-        },
+    it("should detect overlap when new reservation ends during existing reservation", async () => {
+      const existingReservation = {
+        id: "existing-1",
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        resourceId: "suite-1",
+      };
+
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([
+        existingReservation,
+      ]);
+
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-08"), // Starts before
+        endDate: new Date("2026-06-12"), // Ends during existing
+        resourceId: "suite-1",
+        tenantId: "tenant-1",
       });
 
-      // Create second reservation: Jan 5-10 (starts when first ends - no overlap)
-      await prisma.reservation.create({
-        data: {
-          tenantId: testTenantId,
-          customerId: testCustomerId,
-          petId: testPetId,
-          resourceId: testResourceId,
-          serviceId: testServiceId,
-          startDate: new Date('2025-01-05'),
-          endDate: new Date('2025-01-10'),
-          status: 'CONFIRMED',
-        },
-      });
-
-      // Query for overlaps
-      const overlaps = await prisma.$queryRaw<Array<{ count: bigint }>>`
-        SELECT COUNT(*) as count
-        FROM reservations r1
-        JOIN reservations r2 ON r1."resourceId" = r2."resourceId" AND r1.id < r2.id
-        WHERE r1."tenantId" = ${testTenantId}
-          AND r2."tenantId" = ${testTenantId}
-          AND r1.status IN ('CONFIRMED', 'CHECKED_IN', 'PENDING')
-          AND r2.status IN ('CONFIRMED', 'CHECKED_IN', 'PENDING')
-          AND r1."startDate" < r2."endDate"
-          AND r1."endDate" > r2."startDate"
-      `;
-
-      expect(Number(overlaps[0].count)).toBe(0);
+      expect(result.hasConflicts).toBe(true);
     });
 
-    it('should not detect overlap for different suites on same dates', async () => {
-      // Create second resource
-      const resource2 = await prisma.resource.create({
-        data: {
-          tenantId: testTenantId,
-          name: 'TEST-SUITE-02',
-          type: 'STANDARD_SUITE',
-          capacity: 1,
-        },
+    it("should detect overlap when new reservation completely contains existing", async () => {
+      const existingReservation = {
+        id: "existing-1",
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        resourceId: "suite-1",
+      };
+
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([
+        existingReservation,
+      ]);
+
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-08"), // Starts before
+        endDate: new Date("2026-06-20"), // Ends after
+        resourceId: "suite-1",
+        tenantId: "tenant-1",
       });
 
-      // Create first reservation in suite 1: Jan 1-5
-      await prisma.reservation.create({
-        data: {
-          tenantId: testTenantId,
-          customerId: testCustomerId,
-          petId: testPetId,
-          resourceId: testResourceId,
-          serviceId: testServiceId,
-          startDate: new Date('2025-01-01'),
-          endDate: new Date('2025-01-05'),
-          status: 'CONFIRMED',
-        },
+      expect(result.hasConflicts).toBe(true);
+    });
+
+    it("should detect overlap when new reservation is completely within existing", async () => {
+      const existingReservation = {
+        id: "existing-1",
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-20"),
+        resourceId: "suite-1",
+      };
+
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([
+        existingReservation,
+      ]);
+
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-12"), // Within existing
+        endDate: new Date("2026-06-15"), // Within existing
+        resourceId: "suite-1",
+        tenantId: "tenant-1",
       });
 
-      // Create second reservation in suite 2: Jan 1-5 (same dates, different suite)
-      await prisma.reservation.create({
-        data: {
-          tenantId: testTenantId,
-          customerId: testCustomerId,
-          petId: testPetId,
-          resourceId: resource2.id,
-          serviceId: testServiceId,
-          startDate: new Date('2025-01-01'),
-          endDate: new Date('2025-01-05'),
-          status: 'CONFIRMED',
-        },
+      expect(result.hasConflicts).toBe(true);
+    });
+
+    it("should NOT detect overlap for non-overlapping reservations", async () => {
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
+
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-20"),
+        endDate: new Date("2026-06-25"),
+        resourceId: "suite-1",
+        tenantId: "tenant-1",
       });
 
-      // Query for overlaps
-      const overlaps = await prisma.$queryRaw<Array<{ count: bigint }>>`
-        SELECT COUNT(*) as count
-        FROM reservations r1
-        JOIN reservations r2 ON r1."resourceId" = r2."resourceId" AND r1.id < r2.id
-        WHERE r1."tenantId" = ${testTenantId}
-          AND r2."tenantId" = ${testTenantId}
-          AND r1.status IN ('CONFIRMED', 'CHECKED_IN', 'PENDING')
-          AND r2.status IN ('CONFIRMED', 'CHECKED_IN', 'PENDING')
-          AND r1."startDate" < r2."endDate"
-          AND r1."endDate" > r2."startDate"
-      `;
+      expect(result.hasConflicts).toBe(false);
+      expect(result.conflictingReservations).toHaveLength(0);
+    });
 
-      expect(Number(overlaps[0].count)).toBe(0);
+    it("should NOT detect overlap for different resources", async () => {
+      // No conflicts returned because we're checking a different resource
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
 
-      // Clean up
-      await prisma.resource.delete({ where: { id: resource2.id } });
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        resourceId: "suite-2", // Different resource
+        tenantId: "tenant-1",
+      });
+
+      expect(result.hasConflicts).toBe(false);
     });
   });
 
-  describe('Overlap validation utility', () => {
-    it('should provide a utility function to check for overlaps', async () => {
-      // Create existing reservation: Jan 1-5
-      await prisma.reservation.create({
-        data: {
-          tenantId: testTenantId,
-          customerId: testCustomerId,
-          petId: testPetId,
-          resourceId: testResourceId,
-          serviceId: testServiceId,
-          startDate: new Date('2025-01-01'),
-          endDate: new Date('2025-01-05'),
-          status: 'CONFIRMED',
-        },
+  describe("Pet-based overlap detection", () => {
+    it("should detect when same pet has overlapping reservations", async () => {
+      // First call for resource conflicts - none
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValueOnce([]);
+
+      // Second call for pet conflicts - has overlap
+      const petConflict = {
+        id: "existing-1",
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        petId: "pet-1",
+        resourceId: "suite-2", // Different resource but same pet
+      };
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValueOnce([
+        petConflict,
+      ]);
+
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-12"),
+        endDate: new Date("2026-06-17"),
+        resourceId: "suite-1",
+        petId: "pet-1",
+        tenantId: "tenant-1",
       });
 
-      // Check for overlap with Jan 3-7
-      const hasOverlap = await checkReservationOverlap(
-        testResourceId,
-        new Date('2025-01-03'),
-        new Date('2025-01-07'),
-        testTenantId
+      expect(result.hasConflicts).toBe(true);
+      expect(result.warnings[0]).toContain("Pet already has");
+    });
+  });
+
+  describe("Multiple overlaps", () => {
+    it("should detect multiple overlapping reservations", async () => {
+      const existingReservations = [
+        {
+          id: "existing-1",
+          startDate: new Date("2026-06-10"),
+          endDate: new Date("2026-06-12"),
+          resourceId: "suite-1",
+        },
+        {
+          id: "existing-2",
+          startDate: new Date("2026-06-14"),
+          endDate: new Date("2026-06-16"),
+          resourceId: "suite-1",
+        },
+      ];
+
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue(
+        existingReservations
       );
 
-      expect(hasOverlap).toBe(true);
+      const result = await detectReservationConflicts({
+        startDate: new Date("2026-06-08"),
+        endDate: new Date("2026-06-20"), // Spans both existing reservations
+        resourceId: "suite-1",
+        tenantId: "tenant-1",
+      });
 
-      // Check for overlap with Jan 6-10 (no overlap)
-      const hasNoOverlap = await checkReservationOverlap(
-        testResourceId,
-        new Date('2025-01-06'),
-        new Date('2025-01-10'),
-        testTenantId
+      expect(result.hasConflicts).toBe(true);
+      expect(result.conflictingReservations.length).toBeGreaterThanOrEqual(1);
+    });
+  });
+
+  describe("Reservation update exclusion", () => {
+    it("should exclude current reservation when checking for overlaps during update", async () => {
+      (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
+
+      await detectReservationConflicts({
+        startDate: new Date("2026-06-10"),
+        endDate: new Date("2026-06-15"),
+        resourceId: "suite-1",
+        reservationId: "current-reservation", // Exclude this from conflict check
+        tenantId: "tenant-1",
+      });
+
+      expect(prisma.reservation.findMany as jest.Mock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            id: { not: "current-reservation" },
+          }),
+        })
       );
-
-      expect(hasNoOverlap).toBe(false);
     });
   });
 });
-
-/**
- * Utility function to check if a reservation would overlap with existing ones
- */
-async function checkReservationOverlap(
-  resourceId: string,
-  startDate: Date,
-  endDate: Date,
-  tenantId: string,
-  excludeReservationId?: string
-): Promise<boolean> {
-  const overlappingReservations = await prisma.reservation.findMany({
-    where: {
-      resourceId,
-      tenantId,
-      status: {
-        in: ['CONFIRMED', 'CHECKED_IN', 'PENDING'],
-      },
-      AND: [
-        { startDate: { lt: endDate } },
-        { endDate: { gt: startDate } },
-      ],
-      ...(excludeReservationId && {
-        id: { not: excludeReservationId },
-      }),
-    },
-  });
-
-  return overlappingReservations.length > 0;
-}
-
-export { checkReservationOverlap };

@@ -4,7 +4,7 @@
  */
 
 // @ts-nocheck - Mock helpers for unit tests
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 /**
  * Creates a mock Prisma client with defensive programming
@@ -24,14 +24,8 @@ export function createMockPrismaClient() {
       findFirst: jest.fn().mockImplementation(async () => null),
       findUnique: jest.fn().mockImplementation(async () => null),
     },
-    customer: {
-      findFirst: jest.fn().mockImplementation(async () => null),
-      findUnique: jest.fn().mockImplementation(async () => null),
-    },
-    pet: {
-      findFirst: jest.fn().mockImplementation(async () => null),
-      findUnique: jest.fn().mockImplementation(async () => null),
-    },
+    // Note: customer and pet are no longer in Prisma schema
+    // Use createMockCustomerServiceClient() for customer/pet data
     $transaction: jest.fn().mockImplementation(async (callback) => {
       return callback(createMockPrismaClient());
     }),
@@ -43,7 +37,7 @@ export function createMockPrismaClient() {
  */
 export function createMockRequest(overrides = {}) {
   return {
-    tenantId: 'test-tenant-id',
+    tenantId: "test-tenant-id",
     body: {},
     params: {},
     query: {},
@@ -74,15 +68,15 @@ export function createMockNext() {
  */
 export function createTestReservation(overrides = {}) {
   return {
-    id: 'test-reservation-id',
-    customerId: 'test-customer-id',
-    petId: 'test-pet-id',
-    resourceId: 'test-resource-id',
-    startDate: new Date('2025-06-10'),
-    endDate: new Date('2025-06-15'),
-    status: 'CONFIRMED',
-    suiteType: 'STANDARD_SUITE',
-    organizationId: 'test-tenant-id',
+    id: "test-reservation-id",
+    customerId: "test-customer-id",
+    petId: "test-pet-id",
+    resourceId: "test-resource-id",
+    startDate: new Date("2025-06-10"),
+    endDate: new Date("2025-06-15"),
+    status: "CONFIRMED",
+    suiteType: "STANDARD_SUITE",
+    organizationId: "test-tenant-id",
     createdAt: new Date(),
     updatedAt: new Date(),
     ...overrides,
@@ -94,10 +88,10 @@ export function createTestReservation(overrides = {}) {
  */
 export function createTestResource(overrides = {}) {
   return {
-    id: 'test-resource-id',
-    name: 'Test Resource',
-    type: 'STANDARD_SUITE',
-    organizationId: 'test-tenant-id',
+    id: "test-resource-id",
+    name: "Test Resource",
+    type: "STANDARD_SUITE",
+    organizationId: "test-tenant-id",
     createdAt: new Date(),
     updatedAt: new Date(),
     ...overrides,
@@ -109,12 +103,12 @@ export function createTestResource(overrides = {}) {
  */
 export function createTestCustomer(overrides = {}) {
   return {
-    id: 'test-customer-id',
-    firstName: 'Test',
-    lastName: 'Customer',
-    email: 'test@example.com',
-    phone: '123-456-7890',
-    organizationId: 'test-tenant-id',
+    id: "test-customer-id",
+    firstName: "Test",
+    lastName: "Customer",
+    email: "test@example.com",
+    phone: "123-456-7890",
+    organizationId: "test-tenant-id",
     createdAt: new Date(),
     updatedAt: new Date(),
     ...overrides,
@@ -126,14 +120,53 @@ export function createTestCustomer(overrides = {}) {
  */
 export function createTestPet(overrides = {}) {
   return {
-    id: 'test-pet-id',
-    name: 'Test Pet',
-    breed: 'Mixed',
-    size: 'MEDIUM',
-    customerId: 'test-customer-id',
-    organizationId: 'test-tenant-id',
+    id: "test-pet-id",
+    name: "Test Pet",
+    breed: "Mixed",
+    size: "MEDIUM",
+    customerId: "test-customer-id",
+    organizationId: "test-tenant-id",
     createdAt: new Date(),
     updatedAt: new Date(),
     ...overrides,
   };
 }
+
+/**
+ * Creates a mock customerServiceClient for testing
+ * Use this instead of mocking Prisma customer/pet models
+ */
+export function createMockCustomerServiceClient() {
+  return {
+    getCustomer: jest.fn().mockImplementation(async () => createTestCustomer()),
+    getPet: jest.fn().mockImplementation(async () => createTestPet()),
+    getCustomerWithPets: jest.fn().mockImplementation(async () => ({
+      ...createTestCustomer(),
+      pets: [createTestPet()],
+    })),
+    getPetsByCustomer: jest
+      .fn()
+      .mockImplementation(async () => [createTestPet()]),
+    validateCustomerExists: jest.fn().mockImplementation(async () => true),
+    validatePetExists: jest.fn().mockImplementation(async () => true),
+    validatePetBelongsToCustomer: jest
+      .fn()
+      .mockImplementation(async () => true),
+  };
+}
+
+/**
+ * Jest mock setup for customerServiceClient
+ * Call this in your test file's jest.mock() block
+ */
+export const mockCustomerServiceClientModule = {
+  customerServiceClient: {
+    getCustomer: jest.fn(),
+    getPet: jest.fn(),
+    getCustomerWithPets: jest.fn(),
+    getPetsByCustomer: jest.fn(),
+    validateCustomerExists: jest.fn(),
+    validatePetExists: jest.fn(),
+    validatePetBelongsToCustomer: jest.fn(),
+  },
+};

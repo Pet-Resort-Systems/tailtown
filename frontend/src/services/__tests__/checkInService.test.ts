@@ -1,6 +1,8 @@
 import axios from 'axios';
 import checkInService from '../checkInService';
 
+import { reservationApi } from '../api';
+
 // Mock axios
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -14,8 +16,6 @@ jest.mock('../api', () => ({
     delete: jest.fn()
   }
 }));
-
-import { reservationApi } from '../api';
 const mockedReservationApi = reservationApi as jest.Mocked<typeof reservationApi>;
 
 describe('checkInService', () => {

@@ -1,6 +1,7 @@
 # Tailtown Pet Resort Management System - Features Overview
-**Date:** October 29, 2025  
-**Version:** 1.0  
+
+**Date:** November 29, 2025  
+**Version:** 1.6.3  
 **Status:** Production Ready
 
 ---
@@ -10,6 +11,7 @@
 Tailtown is a comprehensive pet resort management system designed for high-volume operations. Built with modern web technologies, it provides end-to-end management of customers, pets, reservations, services, and daily operations.
 
 **Key Capabilities:**
+
 - Customer & Pet Management
 - Reservation & Booking System
 - Calendar & Resource Management
@@ -18,12 +20,17 @@ Tailtown is a comprehensive pet resort management system designed for high-volum
 - Reporting & Analytics
 - Staff Management
 - Gingr Data Migration
+- **Online Customer Booking Portal** (v1.6.1-1.6.3)
+- **Customer Account Management** (v1.6.3)
+- **Audit Logging & Compliance** (v1.6.2)
+- **Mobile Web App for Staff** (v1.5.x)
 
 ---
 
 ## 🏗️ System Architecture
 
 ### Technology Stack
+
 - **Frontend:** React, TypeScript, Material-UI
 - **Backend:** Node.js, Express, TypeScript
 - **Database:** PostgreSQL with Prisma ORM
@@ -31,6 +38,7 @@ Tailtown is a comprehensive pet resort management system designed for high-volum
 - **Ports:** Frontend (3000), Customer Service (4004), Reservation Service (4003)
 
 ### Multi-Tenant Support
+
 - Tenant isolation at database level
 - Subdomain-based tenant identification
 - Secure tenant data separation
@@ -40,13 +48,16 @@ Tailtown is a comprehensive pet resort management system designed for high-volum
 ## 👥 Customer Management
 
 ### Customer Profiles
+
 - **Complete Contact Information**
+
   - Name, email, phone (home, cell, work)
   - Physical address with city, state, zip
   - Emergency contact details
   - Custom notes and preferences
 
 - **Customer Search**
+
   - Search by name, email, or phone
   - Autocomplete suggestions
   - Quick access to customer details
@@ -58,7 +69,9 @@ Tailtown is a comprehensive pet resort management system designed for high-volum
   - Notes and interactions
 
 ### Pet Profiles
+
 - **Comprehensive Pet Information**
+
   - Name, type (dog, cat, etc.), breed
   - Age, weight, gender
   - Spayed/neutered status
@@ -66,6 +79,7 @@ Tailtown is a comprehensive pet resort management system designed for high-volum
   - Profile photos
 
 - **Medical & Behavioral Information**
+
   - Veterinarian details
   - Medications and dosages
   - Allergies and dietary restrictions
@@ -73,6 +87,7 @@ Tailtown is a comprehensive pet resort management system designed for high-volum
   - Behavioral notes and temperament
 
 - **Pet Icons System** 🏥 ⚠️ 🍖
+
   - Visual alerts for medical conditions
   - Behavioral warnings
   - Dietary restrictions
@@ -88,7 +103,9 @@ Tailtown is a comprehensive pet resort management system designed for high-volum
 ## 📅 Reservation & Booking System
 
 ### Reservation Creation
+
 - **Flexible Booking**
+
   - Single or multiple pets per reservation
   - Date range selection (start/end dates)
   - Service type selection
@@ -96,6 +113,7 @@ Tailtown is a comprehensive pet resort management system designed for high-volum
   - Automatic pricing calculation
 
 - **Reservation Types**
+
   - Boarding (overnight stays)
   - Daycare (day visits)
   - Grooming services
@@ -111,18 +129,22 @@ Tailtown is a comprehensive pet resort management system designed for high-volum
   - NO_SHOW - Customer didn't arrive
 
 ### Calendar View
+
 - **Visual Calendar Interface**
+
   - Grid layout showing all kennels/suites
   - Date navigation (day, week, month views)
   - Color-coded reservations
   - Drag-and-drop support (planned)
 
 - **Color Coding**
+
   - 🟠 **Orange:** DAYCARE reservations
   - 🔵 **Blue:** BOARDING reservations
   - Status badges maintain their colors (green, blue, orange, etc.)
 
 - **Kennel/Suite Display**
+
   - Shows pet name and customer name
   - Displays kennel number (A01, A02, etc.)
   - Service type and time
@@ -135,7 +157,9 @@ Tailtown is a comprehensive pet resort management system designed for high-volum
   - Unavailable dates marked
 
 ### Resource Management
+
 - **Suite/Kennel Management**
+
   - Multiple suite types (Standard, Plus, VIP)
   - Capacity tracking
   - Active/inactive status
@@ -151,13 +175,16 @@ Tailtown is a comprehensive pet resort management system designed for high-volum
 ## 🏨 Daily Operations
 
 ### Dashboard
+
 - **At-a-Glance Metrics**
+
   - Check-ins scheduled today
   - Check-outs scheduled today
   - Overnight guests count
   - Revenue tracking (planned)
 
 - **Reservation List**
+
   - Compact, scrollable list (handles 200+ reservations)
   - Two-row layout:
     - Row 1: Pet name (with icons) • Customer name
@@ -166,6 +193,7 @@ Tailtown is a comprehensive pet resort management system designed for high-volum
   - Quick search functionality
 
 - **Search & Filter**
+
   - **Robust Search:** Search by pet name, customer name, kennel, or service
   - **Real-time filtering:** Results update as you type
   - **Filter buttons:** All, Check-Ins, Check-Outs
@@ -177,7 +205,9 @@ Tailtown is a comprehensive pet resort management system designed for high-volum
   - View customer/pet profiles
 
 ### Check-In Workflow
+
 - **Streamlined Check-In Process**
+
   - Verify customer and pet information
   - Confirm reservation details
   - Review medical/behavioral alerts
@@ -191,6 +221,7 @@ Tailtown is a comprehensive pet resort management system designed for high-volum
   - Default templates for common scenarios
 
 ### Check-Out Workflow
+
 - **Efficient Check-Out**
   - Review stay details
   - Calculate final charges
@@ -203,10 +234,13 @@ Tailtown is a comprehensive pet resort management system designed for high-volum
 ## 📸 Pet Report Cards (NEW - v1.2.0)
 
 ### Overview
+
 A comprehensive system for creating and delivering photo-rich report cards to pet parents, keeping them updated about their pets' activities, mood, and well-being.
 
 ### Report Card Creation
+
 - **Mobile-First Design**
+
   - Native camera integration for quick photo capture
   - Take photos directly from mobile device
   - Client-side image compression for faster uploads
@@ -214,6 +248,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
   - <3 minute report creation workflow
 
 - **Activity Tracking**
+
   - Mood rating (1-5 scale with emoji display 😢 to 😄)
   - Energy level rating
   - Appetite rating
@@ -233,7 +268,9 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
   - Custom tags for organization
 
 ### Bulk Operations
+
 - **Efficiency Tools**
+
   - Create multiple report cards at once
   - Apply templates to selected pets
   - Bulk send to all parents
@@ -250,7 +287,9 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
   - Custom templates
 
 ### Delivery & Tracking
+
 - **Multi-Channel Delivery**
+
   - Email with photos and full report
   - SMS with link to view online
   - Delivery status tracking
@@ -265,6 +304,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
   - Staff productivity metrics
 
 ### Mobile App Integration
+
 - **Mobile Features**
   - Dedicated "Reports" tab in bottom navigation
   - Camera icon for quick access
@@ -274,6 +314,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
   - Draft/sent status indicators
 
 ### API Endpoints
+
 - 14 REST endpoints for full CRUD operations
 - Photo upload/delete/reorder
 - Bulk create and send
@@ -282,13 +323,16 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 - Delivery status updates
 
 ### Technical Features
+
 - **Database**
+
   - 2 tables with auto-update triggers
   - Photo count auto-calculation
   - Comprehensive indexes for performance
   - Cascade delete for photos
 
 - **Testing**
+
   - 37+ automated tests
   - Unit tests for all operations
   - Integration tests for workflows
@@ -305,7 +349,9 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 ## 💰 Point of Sale (POS) System
 
 ### Order Management
+
 - **Create Orders**
+
   - Select customer and pets
   - Add services and products
   - Apply discounts
@@ -313,6 +359,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
   - Process payments
 
 - **Service Catalog**
+
   - Boarding services
   - Daycare packages
   - Grooming services
@@ -326,7 +373,9 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
   - Seasonal pricing (planned)
 
 ### Payment Processing
+
 - **Payment Methods**
+
   - Cash
   - Credit/Debit cards
   - Checks
@@ -344,7 +393,9 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 ## 📊 Reporting & Analytics
 
 ### Dashboard Analytics
+
 - **Key Metrics**
+
   - Total customers
   - Total reservations
   - Revenue by period
@@ -358,7 +409,9 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
   - Custom date ranges
 
 ### Service Reports
+
 - **Revenue by Service Type**
+
   - Boarding revenue
   - Daycare revenue
   - Grooming revenue
@@ -371,6 +424,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
   - Visit frequency
 
 ### Occupancy Reports
+
 - **Suite Utilization**
   - Occupancy percentage
   - Peak periods
@@ -382,6 +436,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 ## 👨‍💼 Administration
 
 ### User Management
+
 - **Staff Accounts**
   - Role-based access control
   - Admin, Manager, Staff roles
@@ -389,6 +444,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
   - Activity tracking
 
 ### Service Configuration
+
 - **Service Management**
   - Create/edit services
   - Set pricing
@@ -397,6 +453,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
   - Active/inactive status
 
 ### Resource Configuration
+
 - **Suite/Kennel Setup**
   - Add/edit suites
   - Set suite types
@@ -404,6 +461,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
   - Manage availability
 
 ### System Settings
+
 - **Business Configuration**
   - Business name and contact info
   - Operating hours
@@ -416,7 +474,9 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 ## 🔄 Gingr Migration
 
 ### Data Import
+
 - **Automated Migration**
+
   - Import customers from Gingr
   - Import pets with full details
   - Import reservation history
@@ -424,6 +484,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
   - Preserve external IDs for reference
 
 - **Data Mapping**
+
   - Customer field mapping
   - Pet field mapping
   - Service type mapping
@@ -437,6 +498,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
   - Map Gingr lodging to Tailtown suites
 
 ### Migration Tools
+
 - **Test Connection:** Verify Gingr API access
 - **Preview Data:** See what will be imported
 - **Selective Import:** Choose date ranges
@@ -448,7 +510,9 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 ## 🎨 User Experience
 
 ### Modern Interface
+
 - **Material-UI Design**
+
   - Clean, professional appearance
   - Consistent styling
   - Responsive layout
@@ -461,7 +525,9 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
   - Breadcrumb navigation
 
 ### Visual Indicators
+
 - **Color Coding**
+
   - Service types (DAYCARE/BOARDING)
   - Status badges
   - Priority indicators
@@ -475,6 +541,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
   - Status indicators
 
 ### Accessibility
+
 - **User-Friendly Features**
   - Clear labels and instructions
   - Helpful error messages
@@ -487,6 +554,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 ## 🔍 Search & Discovery
 
 ### Global Search
+
 - **Quick Find**
   - Search customers by name, email, phone
   - Search pets by name
@@ -494,6 +562,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
   - Autocomplete suggestions
 
 ### Dashboard Search
+
 - **Reservation Search**
   - Search by pet name
   - Search by customer name
@@ -508,6 +577,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 ## 📱 Key Workflows
 
 ### New Customer Booking
+
 1. Create customer profile
 2. Add pet(s) with details
 3. Create reservation
@@ -516,6 +586,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 6. Confirm and save
 
 ### Daily Check-In
+
 1. View check-ins on dashboard
 2. Click "Start Check-In"
 3. Verify customer/pet info
@@ -524,6 +595,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 6. Complete check-in
 
 ### Daily Check-Out
+
 1. View check-outs on dashboard
 2. Process check-out
 3. Calculate charges
@@ -532,6 +604,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 6. Complete check-out
 
 ### Walk-In Customer
+
 1. Quick customer search
 2. Select existing or create new
 3. Select pet(s)
@@ -544,6 +617,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 ## 🚀 Performance & Scalability
 
 ### High-Volume Support
+
 - **Designed for 200+ daily reservations**
 - Efficient database queries
 - Optimized rendering
@@ -551,6 +625,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 - Lazy loading
 
 ### Data Management
+
 - **PostgreSQL Database**
   - ACID compliance
   - Transaction support
@@ -558,6 +633,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
   - Backup and recovery
 
 ### Caching & Optimization
+
 - Client-side caching
 - API response optimization
 - Minimal re-renders
@@ -568,7 +644,9 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 ## 🔐 Security
 
 ### Data Protection
+
 - **Tenant Isolation**
+
   - Separate data per tenant
   - Secure tenant identification
   - No cross-tenant access
@@ -580,6 +658,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
   - API key protection
 
 ### Access Control
+
 - Role-based permissions
 - Action-level authorization
 - Audit logging (planned)
@@ -589,24 +668,29 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 ## 📈 Future Enhancements
 
 ### Planned Features
+
 - **Mobile App**
+
   - iOS and Android apps
   - Mobile check-in/out
   - Push notifications
 
 - **Customer Portal**
+
   - Online booking
   - View reservations
   - Update pet information
   - Make payments
 
 - **Advanced Reporting**
+
   - Custom report builder
   - Scheduled reports
   - Export to Excel/PDF
   - Email reports
 
 - **Marketing Tools**
+
   - Email campaigns
   - SMS notifications
   - Loyalty programs
@@ -623,6 +707,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 ## 📊 System Metrics
 
 ### Current Capabilities
+
 - ✅ **Customers:** Unlimited
 - ✅ **Pets:** Unlimited (multiple per customer)
 - ✅ **Reservations:** Handles 200+ per day
@@ -632,6 +717,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 - ✅ **Tenants:** Multi-tenant architecture
 
 ### Performance Benchmarks
+
 - Dashboard load time: < 2 seconds
 - Search response: Real-time (< 100ms)
 - Reservation creation: < 1 second
@@ -642,6 +728,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 ## 🎓 Training & Support
 
 ### Documentation
+
 - ✅ User guides
 - ✅ Technical documentation
 - ✅ API documentation
@@ -649,6 +736,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 - ✅ Troubleshooting guides
 
 ### Support Resources
+
 - Feature overview (this document)
 - Step-by-step workflows
 - Video tutorials (planned)
@@ -660,6 +748,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 ## ✅ Production Readiness
 
 ### Completed Features
+
 - ✅ Customer & Pet Management
 - ✅ Reservation System
 - ✅ Calendar View with Color Coding
@@ -673,12 +762,14 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 - ✅ Multi-Tenant Support
 
 ### In Progress
+
 - 🔄 Advanced Analytics
 - 🔄 Customer Portal
 - 🔄 Mobile App
 - 🔄 Email Notifications
 
 ### Tested & Verified
+
 - ✅ Customer creation and management
 - ✅ Pet profiles with icons
 - ✅ Reservation booking
@@ -695,22 +786,26 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 ### What Makes Tailtown Special
 
 1. **High-Volume Optimized**
+
    - Built for facilities handling 200+ reservations daily
    - Efficient search and filtering
    - Compact, scannable layouts
 
 2. **Visual Intelligence**
+
    - Color-coded service types
    - Pet medical/behavioral icons
    - At-a-glance status indicators
 
 3. **Modern Technology**
+
    - React + TypeScript for reliability
    - Material-UI for professional design
    - PostgreSQL for data integrity
    - Microservices for scalability
 
 4. **Gingr Migration**
+
    - Seamless data import from Gingr
    - Preserve historical data
    - Minimal disruption to operations
@@ -726,6 +821,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 ## 📞 Getting Started
 
 ### For New Users
+
 1. **Setup:** Configure business settings
 2. **Import:** Migrate data from Gingr (if applicable)
 3. **Configure:** Set up services and suites
@@ -733,6 +829,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 5. **Launch:** Start taking reservations!
 
 ### For Administrators
+
 1. **User Management:** Create staff accounts
 2. **Service Setup:** Configure services and pricing
 3. **Resource Setup:** Add suites/kennels
@@ -744,6 +841,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 ## 🏆 Success Metrics
 
 ### Business Impact
+
 - **Operational Efficiency:** Streamlined workflows reduce check-in/out time
 - **Data Accuracy:** Centralized system eliminates duplicate entry
 - **Customer Satisfaction:** Quick access to pet information and history
@@ -751,6 +849,7 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 - **Staff Productivity:** Intuitive interface reduces training time
 
 ### Technical Excellence
+
 - **Reliability:** Stable, tested codebase
 - **Performance:** Fast response times
 - **Scalability:** Handles growth seamlessly
@@ -759,10 +858,165 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 
 ---
 
+## 🎫 Daycare Passes (NEW - v1.5.0)
+
+### Overview
+
+Multi-day pass system allowing pet resorts to sell discounted daycare packages to customers, with automatic balance tracking and redemption.
+
+### Package Management (Admin)
+
+- **Configurable Packages**
+
+  - Create custom packages (5-day, 10-day, 20-day, etc.)
+  - Set discount percentage vs single-day rate
+  - Configure validity period (days until expiration)
+  - Activate/deactivate packages
+  - Sort order for display
+
+- **Pricing**
+  - Regular day rate reference
+  - Package price with automatic discount calculation
+  - Savings preview for customers
+
+### Customer Pass Management
+
+- **Purchase Passes**
+
+  - Staff can purchase passes for customers
+  - Package selection with savings display
+  - Notes for payment reference
+  - Automatic expiration date calculation
+
+- **Balance Tracking**
+
+  - Real-time passes remaining count
+  - Visual progress bar
+  - Expiring soon warnings (30 days)
+  - Status tracking (Active, Exhausted, Expired, Cancelled)
+
+- **Customer Profile Tab**
+  - Summary cards (remaining, active, expiring)
+  - Pass list with balance and status
+  - Expandable redemption history
+  - Purchase dialog
+
+### Redemption System
+
+- **Auto-Redeem**
+
+  - Automatically selects best pass (expiring soonest)
+  - Single API call for check-in integration
+  - Returns pass balance after redemption
+
+- **Manual Redeem**
+
+  - Select specific pass to redeem
+  - Link to reservation/check-in
+  - Add notes
+
+- **Reversal Support**
+  - Undo redemptions for refunds
+  - Reason tracking
+  - Restores pass balance
+
+### Audit Trail
+
+- Complete history of all purchases
+- Every redemption logged with timestamps
+- Staff attribution
+- Reversal tracking
+
+### API Endpoints
+
+- 10 REST endpoints for full CRUD operations
+- Package management (list, create, update, delete)
+- Customer passes (list, purchase, check, redeem, reverse)
+- Auto-redeem for check-in flow
+
+---
+
+## 🌐 Online Customer Booking Portal (v1.6.1-1.6.3)
+
+Public-facing booking interface at `/book` for customers to make reservations without staff assistance.
+
+### Core Booking Flow
+
+- **Service Selection**: Browse boarding, daycare, grooming, training
+- **Kennel/Room Selection**: Junior, Queen, King, VIP suites with pricing
+- **Date/Time Selection**: Real-time availability checking
+- **Pet Selection**: Choose from customer's registered pets
+- **Add-On Services**: Extra services like baths, playtime, medications
+- **Payment Integration**: Deposit/full payment processing
+- **Booking Confirmation**: Order number and summary
+
+### Customer Account Portal (`/my-account`)
+
+- **Upcoming Reservations**: View and cancel future bookings
+- **Reservation History**: Past stays with details
+- **My Pets**: Add/edit pet information, feeding/medication instructions
+- **Daycare Passes**: View active passes, purchase new ones
+- **Account Balance**: View balance, pending charges, invoices
+
+### Technical Features
+
+- Mobile-responsive design
+- Separate customer authentication (not staff auth)
+- Public routes (no staff login required)
+- SEO optimized with meta tags
+
+---
+
+## 🔒 Audit Logging System (v1.6.2)
+
+Comprehensive audit logging for compliance and security.
+
+### What's Logged
+
+- **Data Modifications**: CREATE, UPDATE, DELETE on customers, pets, reservations, staff
+- **Authentication Events**: LOGIN, LOGIN_FAILED with failure reasons
+- **User Context**: Who (user ID, email, role), When (timestamp), Where (IP, user agent)
+- **Change Tracking**: Before/after values, changed fields
+
+### Severity Levels
+
+- **INFO**: Normal operations (logins, reads)
+- **WARNING**: Sensitive operations (staff changes, updates)
+- **CRITICAL**: Destructive operations (deletions)
+
+### Admin Interface (`/admin/audit-logs`)
+
+- Filter by category, action, severity, date range
+- Search by user or entity name
+- Expandable rows showing changed fields
+- Detail dialog with before/after comparison
+- Pagination support
+
+### Data Model
+
+- `TenantAuditLog` Prisma model with 7-year retention policy
+- Automatic sensitive data sanitization (passwords, tokens)
+
+---
+
+## 📱 Mobile Web App for Staff (v1.5.x)
+
+Mobile-optimized interface for staff at `/mobile` routes.
+
+### Features
+
+- **Daily Checklists**: Task management with completion tracking
+- **Team Chat**: Real-time messaging between staff
+- **My Schedule**: View assigned shifts and reservations
+- **Pet Report Cards**: Create photo-rich report cards for customers
+- **Quick Actions**: Fast check-in/check-out workflows
+
+---
+
 **System Status:** ✅ Production Ready  
-**Last Updated:** October 29, 2025  
-**Version:** 1.0  
-**Branch:** sept25-stable
+**Last Updated:** November 29, 2025  
+**Version:** 1.6.3  
+**Branch:** main
 
 ---
 
