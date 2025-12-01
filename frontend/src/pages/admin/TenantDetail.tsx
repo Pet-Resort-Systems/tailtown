@@ -9,7 +9,6 @@ import {
   Divider,
   Grid,
   IconButton,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -38,7 +37,6 @@ import {
   Pets as PetsIcon,
   EventNote as ReservationIcon,
   Storage as StorageIcon,
-  AttachMoney as MoneyIcon,
 } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { tenantService, Tenant, TenantUsage } from '../../services/tenantService';

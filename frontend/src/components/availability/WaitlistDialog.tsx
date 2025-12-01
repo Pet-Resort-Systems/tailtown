@@ -29,7 +29,6 @@ import {
 } from '@mui/icons-material';
 import { availabilityService } from '../../services/availabilityService';
 import { WaitlistRequest, WaitlistEntry } from '../../types/availability';
-import { formatDate } from '../../utils/formatters';
 
 interface WaitlistDialogProps {
   open: boolean;

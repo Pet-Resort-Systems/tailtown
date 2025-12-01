@@ -39,7 +39,7 @@ import {
   Edit,
   Visibility
 } from '@mui/icons-material';
-import { reportCardService, CreateReportCardRequest, ReportCard } from '../../services/reportCardService';
+import { reportCardService, CreateReportCardRequest } from '../../services/reportCardService';
 
 interface PetReportRow {
   petId: string;

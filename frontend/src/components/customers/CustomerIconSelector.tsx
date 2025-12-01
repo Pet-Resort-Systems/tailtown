@@ -9,8 +9,6 @@ import {
   Typography,
   Grid,
   Avatar,
-  ToggleButtonGroup,
-  ToggleButton,
   Paper,
 } from '@mui/material';
 import {

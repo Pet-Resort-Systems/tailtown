@@ -76,6 +76,7 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
 
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customerId]);
 
   const loadData = async () => {

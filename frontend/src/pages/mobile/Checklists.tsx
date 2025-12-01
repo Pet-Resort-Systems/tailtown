@@ -27,7 +27,7 @@ import {
 } from '@mui/icons-material';
 import { MobileHeader } from '../../components/mobile/MobileHeader';
 import { BottomNav } from '../../components/mobile/BottomNav';
-import mobileService, { PendingTask } from '../../services/mobileService';
+import mobileService from '../../services/mobileService';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface ChecklistTask {
@@ -56,8 +56,11 @@ const Checklists: React.FC = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     fetchChecklists();
-  }, []);
+  },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  []);
 
   const fetchChecklists = async () => {
     try {

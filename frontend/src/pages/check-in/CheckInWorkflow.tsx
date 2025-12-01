@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Container,
   Box,
@@ -16,31 +16,29 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  FormControlLabel,
-  Checkbox,
   Grid,
-  Divider
-} from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+  Divider,
+} from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import checkInService, {
   CheckInTemplate,
   CheckInResponse,
   CheckInMedication,
-  CheckInBelonging
-} from '../../services/checkInService';
-import { reservationService } from '../../services/reservationService';
-import MedicationForm from '../../components/check-in/MedicationForm';
-import BelongingsForm from '../../components/check-in/BelongingsForm';
-import SignatureCapture from '../../components/check-in/SignatureCapture';
+  CheckInBelonging,
+} from "../../services/checkInService";
+import { reservationService } from "../../services/reservationService";
+import MedicationForm from "../../components/check-in/MedicationForm";
+import BelongingsForm from "../../components/check-in/BelongingsForm";
+import SignatureCapture from "../../components/check-in/SignatureCapture";
 
 const STEPS = [
-  'Questionnaire',
-  'Medications',
-  'Belongings',
-  'Service Agreement',
-  'Review & Complete'
+  "Questionnaire",
+  "Medications",
+  "Belongings",
+  "Service Agreement",
+  "Review & Complete",
 ];
 
 const CheckInWorkflow: React.FC = () => {
@@ -59,12 +57,13 @@ const CheckInWorkflow: React.FC = () => {
   const [responses, setResponses] = useState<{ [key: string]: any }>({});
   const [medications, setMedications] = useState<CheckInMedication[]>([]);
   const [belongings, setBelongings] = useState<CheckInBelonging[]>([]);
-  const [signature, setSignature] = useState('');
-  const [customerName, setCustomerName] = useState('');
+  const [signature, setSignature] = useState("");
+  const [customerName, setCustomerName] = useState("");
   const [initials, setInitials] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reservationId]);
 
   const loadData = async () => {
@@ -73,9 +72,13 @@ const CheckInWorkflow: React.FC = () => {
       setError(null);
 
       // Load reservation
-      const resData = await reservationService.getReservationById(reservationId!);
+      const resData = await reservationService.getReservationById(
+        reservationId!
+      );
       setReservation(resData);
-      setCustomerName(`${resData.customer?.firstName} ${resData.customer?.lastName}`);
+      setCustomerName(
+        `${resData.customer?.firstName} ${resData.customer?.lastName}`
+      );
 
       // Load check-in template
       const templateData = await checkInService.getDefaultTemplate();
@@ -84,10 +87,9 @@ const CheckInWorkflow: React.FC = () => {
       // Load service agreement template
       const agreementData = await checkInService.getDefaultAgreementTemplate();
       setAgreementTemplate(agreementData.data);
-
     } catch (err: any) {
-      console.error('Error loading check-in data:', err);
-      setError(err.response?.data?.message || 'Failed to load check-in data');
+      console.error("Error loading check-in data:", err);
+      setError(err.response?.data?.message || "Failed to load check-in data");
     } finally {
       setLoading(false);
     }
@@ -96,11 +98,11 @@ const CheckInWorkflow: React.FC = () => {
   const handleNext = () => {
     // Validate current step
     if (activeStep === 0 && !validateQuestionnaire()) {
-      setError('Please answer all required questions');
+      setError("Please answer all required questions");
       return;
     }
     if (activeStep === 3 && !validateAgreement()) {
-      setError('Please complete the service agreement');
+      setError("Please complete the service agreement");
       return;
     }
 
@@ -136,10 +138,12 @@ const CheckInWorkflow: React.FC = () => {
       setError(null);
 
       // Prepare responses array
-      const responseArray: CheckInResponse[] = Object.entries(responses).map(([questionId, response]) => ({
-        questionId,
-        response
-      }));
+      const responseArray: CheckInResponse[] = Object.entries(responses).map(
+        ([questionId, response]) => ({
+          questionId,
+          response,
+        })
+      );
 
       // Create check-in
       const checkInData = {
@@ -147,10 +151,10 @@ const CheckInWorkflow: React.FC = () => {
         customerId: reservation.customerId,
         reservationId: reservation.id,
         templateId: template?.id,
-        checkInBy: 'staff', // TODO: Get from auth context
+        checkInBy: "staff", // TODO: Get from auth context
         responses: responseArray,
         medications,
-        belongings
+        belongings,
       };
 
       const checkInResult = await checkInService.createCheckIn(checkInData);
@@ -162,25 +166,24 @@ const CheckInWorkflow: React.FC = () => {
         initials: Object.entries(initials).map(([section, value]) => ({
           section,
           initials: value,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         })),
         signature,
-        signedBy: customerName
+        signedBy: customerName,
       };
 
       await checkInService.createServiceAgreement(agreementData);
 
       // Update reservation status to CHECKED_IN
       await reservationService.updateReservation(reservationId!, {
-        status: 'CHECKED_IN'
+        status: "CHECKED_IN",
       });
 
       // Success! Navigate to confirmation
       navigate(`/check-in/${checkInResult.data.id}/complete`);
-
     } catch (err: any) {
-      console.error('Error creating check-in:', err);
-      setError(err.response?.data?.message || 'Failed to create check-in');
+      console.error("Error creating check-in:", err);
+      setError(err.response?.data?.message || "Failed to create check-in");
     } finally {
       setSubmitting(false);
     }
@@ -216,23 +219,25 @@ const CheckInWorkflow: React.FC = () => {
   };
 
   const renderQuestion = (question: any) => {
-    const value = responses[question.id] || '';
+    const value = responses[question.id] || "";
 
     switch (question.questionType) {
-      case 'TEXT':
+      case "TEXT":
         return (
           <TextField
             fullWidth
             label={question.questionText}
             value={value}
-            onChange={(e) => setResponses({ ...responses, [question.id]: e.target.value })}
+            onChange={(e) =>
+              setResponses({ ...responses, [question.id]: e.target.value })
+            }
             placeholder={question.placeholder}
             helperText={question.helpText}
             required={question.isRequired}
           />
         );
 
-      case 'LONG_TEXT':
+      case "LONG_TEXT":
         return (
           <TextField
             fullWidth
@@ -240,54 +245,66 @@ const CheckInWorkflow: React.FC = () => {
             rows={3}
             label={question.questionText}
             value={value}
-            onChange={(e) => setResponses({ ...responses, [question.id]: e.target.value })}
+            onChange={(e) =>
+              setResponses({ ...responses, [question.id]: e.target.value })
+            }
             placeholder={question.placeholder}
             helperText={question.helpText}
             required={question.isRequired}
           />
         );
 
-      case 'NUMBER':
+      case "NUMBER":
         return (
           <TextField
             fullWidth
             type="number"
             label={question.questionText}
             value={value}
-            onChange={(e) => setResponses({ ...responses, [question.id]: e.target.value })}
+            onChange={(e) =>
+              setResponses({ ...responses, [question.id]: e.target.value })
+            }
             placeholder={question.placeholder}
             helperText={question.helpText}
             required={question.isRequired}
           />
         );
 
-      case 'YES_NO':
+      case "YES_NO":
         return (
           <FormControl fullWidth required={question.isRequired}>
             <InputLabel>{question.questionText}</InputLabel>
             <Select
               value={value}
-              onChange={(e) => setResponses({ ...responses, [question.id]: e.target.value })}
+              onChange={(e) =>
+                setResponses({ ...responses, [question.id]: e.target.value })
+              }
               label={question.questionText}
             >
               <MenuItem value="yes">Yes</MenuItem>
               <MenuItem value="no">No</MenuItem>
             </Select>
             {question.helpText && (
-              <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ mt: 0.5 }}
+              >
                 {question.helpText}
               </Typography>
             )}
           </FormControl>
         );
 
-      case 'MULTIPLE_CHOICE':
+      case "MULTIPLE_CHOICE":
         return (
           <FormControl fullWidth required={question.isRequired}>
             <InputLabel>{question.questionText}</InputLabel>
             <Select
               value={value}
-              onChange={(e) => setResponses({ ...responses, [question.id]: e.target.value })}
+              onChange={(e) =>
+                setResponses({ ...responses, [question.id]: e.target.value })
+              }
               label={question.questionText}
             >
               {question.options?.choices?.map((choice: string) => (
@@ -297,35 +314,43 @@ const CheckInWorkflow: React.FC = () => {
               ))}
             </Select>
             {question.helpText && (
-              <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ mt: 0.5 }}
+              >
                 {question.helpText}
               </Typography>
             )}
           </FormControl>
         );
 
-      case 'TIME':
+      case "TIME":
         return (
           <TextField
             fullWidth
             type="time"
             label={question.questionText}
             value={value}
-            onChange={(e) => setResponses({ ...responses, [question.id]: e.target.value })}
+            onChange={(e) =>
+              setResponses({ ...responses, [question.id]: e.target.value })
+            }
             helperText={question.helpText}
             required={question.isRequired}
             InputLabelProps={{ shrink: true }}
           />
         );
 
-      case 'DATE':
+      case "DATE":
         return (
           <TextField
             fullWidth
             type="date"
             label={question.questionText}
             value={value}
-            onChange={(e) => setResponses({ ...responses, [question.id]: e.target.value })}
+            onChange={(e) =>
+              setResponses({ ...responses, [question.id]: e.target.value })
+            }
             helperText={question.helpText}
             required={question.isRequired}
             InputLabelProps={{ shrink: true }}
@@ -342,16 +367,22 @@ const CheckInWorkflow: React.FC = () => {
 
     return (
       <Box>
-        <Paper sx={{ p: 3, mb: 3, maxHeight: '400px', overflow: 'auto' }}>
-          <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
+        <Paper sx={{ p: 3, mb: 3, maxHeight: "400px", overflow: "auto" }}>
+          <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
             {agreementTemplate.content
               .replace(/{{CUSTOMER_NAME}}/g, customerName)
-              .replace(/{{PET_NAME}}/g, reservation?.pet?.name || '')
+              .replace(/{{PET_NAME}}/g, reservation?.pet?.name || "")
               .replace(/{{DATE}}/g, new Date().toLocaleDateString())
-              .replace(/{{CHECKIN_DATE}}/g, new Date(reservation?.startDate).toLocaleDateString())
-              .replace(/{{CHECKOUT_DATE}}/g, new Date(reservation?.endDate).toLocaleDateString())
-              .replace(/{{INITIAL_\d+}}/g, '[_____]')
-              .replace(/{{SIGNATURE}}/g, '')}
+              .replace(
+                /{{CHECKIN_DATE}}/g,
+                new Date(reservation?.startDate).toLocaleDateString()
+              )
+              .replace(
+                /{{CHECKOUT_DATE}}/g,
+                new Date(reservation?.endDate).toLocaleDateString()
+              )
+              .replace(/{{INITIAL_\d+}}/g, "[_____]")
+              .replace(/{{SIGNATURE}}/g, "")}
           </Typography>
         </Paper>
 
@@ -365,10 +396,7 @@ const CheckInWorkflow: React.FC = () => {
             sx={{ mb: 3 }}
           />
 
-          <SignatureCapture
-            onSignature={setSignature}
-            label="Sign Below *"
-          />
+          <SignatureCapture onSignature={setSignature} label="Sign Below *" />
         </Paper>
       </Box>
     );
@@ -382,23 +410,35 @@ const CheckInWorkflow: React.FC = () => {
             Check-In Summary
           </Typography>
           <Divider sx={{ my: 2 }} />
-          
+
           <Grid container spacing={2}>
             <Grid item xs={6}>
-              <Typography variant="subtitle2" color="text.secondary">Pet</Typography>
+              <Typography variant="subtitle2" color="text.secondary">
+                Pet
+              </Typography>
               <Typography>{reservation?.pet?.name}</Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="subtitle2" color="text.secondary">Customer</Typography>
+              <Typography variant="subtitle2" color="text.secondary">
+                Customer
+              </Typography>
               <Typography>{customerName}</Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="subtitle2" color="text.secondary">Check-In Date</Typography>
-              <Typography>{new Date(reservation?.startDate).toLocaleDateString()}</Typography>
+              <Typography variant="subtitle2" color="text.secondary">
+                Check-In Date
+              </Typography>
+              <Typography>
+                {new Date(reservation?.startDate).toLocaleDateString()}
+              </Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="subtitle2" color="text.secondary">Check-Out Date</Typography>
-              <Typography>{new Date(reservation?.endDate).toLocaleDateString()}</Typography>
+              <Typography variant="subtitle2" color="text.secondary">
+                Check-Out Date
+              </Typography>
+              <Typography>
+                {new Date(reservation?.endDate).toLocaleDateString()}
+              </Typography>
             </Grid>
           </Grid>
         </Paper>
@@ -433,7 +473,7 @@ const CheckInWorkflow: React.FC = () => {
             Signed by: {customerName}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Signature: {signature ? '✓ Captured' : '✗ Missing'}
+            Signature: {signature ? "✓ Captured" : "✗ Missing"}
           </Typography>
         </Paper>
       </Box>
@@ -443,7 +483,14 @@ const CheckInWorkflow: React.FC = () => {
   if (loading) {
     return (
       <Container>
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "400px",
+          }}
+        >
           <CircularProgress />
         </Box>
       </Container>
@@ -477,12 +524,16 @@ const CheckInWorkflow: React.FC = () => {
         )}
 
         {activeStep === 0 && renderQuestionnaireStep()}
-        {activeStep === 1 && <MedicationForm medications={medications} onChange={setMedications} />}
-        {activeStep === 2 && <BelongingsForm belongings={belongings} onChange={setBelongings} />}
+        {activeStep === 1 && (
+          <MedicationForm medications={medications} onChange={setMedications} />
+        )}
+        {activeStep === 2 && (
+          <BelongingsForm belongings={belongings} onChange={setBelongings} />
+        )}
         {activeStep === 3 && renderAgreementStep()}
         {activeStep === 4 && renderReviewStep()}
 
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
           <Button
             disabled={activeStep === 0}
             onClick={handleBack}
@@ -505,9 +556,15 @@ const CheckInWorkflow: React.FC = () => {
               color="success"
               onClick={handleSubmit}
               disabled={submitting}
-              startIcon={submitting ? <CircularProgress size={20} /> : <CheckCircleIcon />}
+              startIcon={
+                submitting ? (
+                  <CircularProgress size={20} />
+                ) : (
+                  <CheckCircleIcon />
+                )
+              }
             >
-              {submitting ? 'Completing...' : 'Complete Check-In'}
+              {submitting ? "Completing..." : "Complete Check-In"}
             </Button>
           )}
         </Box>

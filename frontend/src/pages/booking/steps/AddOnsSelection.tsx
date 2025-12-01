@@ -14,14 +14,11 @@ import {
   Grid,
   Chip,
   CircularProgress,
-  Alert,
-  Checkbox,
-  FormControlLabel
+  Alert
 } from '@mui/material';
 import {
   ArrowBack as ArrowBackIcon,
   ArrowForward as ArrowForwardIcon,
-  Add as AddIcon,
   CheckCircle as CheckCircleIcon
 } from '@mui/icons-material';
 import addonService, { AddOnService } from '../../../services/addonService';
@@ -45,8 +42,11 @@ const AddOnsSelection: React.FC<AddOnsSelectionProps> = ({
   const [error, setError] = useState('');
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     loadAddOns();
-  }, [bookingData.serviceId]);
+  },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  [bookingData.serviceId]);
 
   const loadAddOns = async () => {
     try {

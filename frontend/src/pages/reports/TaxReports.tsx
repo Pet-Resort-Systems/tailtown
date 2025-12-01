@@ -52,8 +52,11 @@ const TaxReports: React.FC = () => {
   const [reportData, setReportData] = useState<any>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     loadReport();
-  }, [period, selectedYear, selectedMonth, selectedQuarter]);
+  },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  [period, selectedYear, selectedMonth, selectedQuarter]);
 
   const loadReport = async () => {
     try {

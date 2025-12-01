@@ -81,8 +81,11 @@ const CustomIcons: React.FC = () => {
 
   // Load icons on mount
   React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     loadIcons();
-  }, []);
+  },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  []);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

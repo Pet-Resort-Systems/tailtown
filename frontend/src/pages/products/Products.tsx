@@ -37,10 +37,7 @@ import {
   Delete as DeleteIcon,
   Search as SearchIcon,
   Inventory as InventoryIcon,
-  Warning as WarningIcon,
-  AddCircle as AddCircleIcon,
-  RemoveCircle as RemoveCircleIcon,
-  History as HistoryIcon
+  Warning as WarningIcon
 } from '@mui/icons-material';
 
 interface Product {
@@ -114,13 +111,19 @@ const Products: React.FC = () => {
   });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     loadProducts();
     loadCategories();
-  }, []);
+  },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     filterProducts();
-  }, [products, searchQuery, selectedCategory, currentTab]);
+  },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  [products, searchQuery, selectedCategory, currentTab]);
 
   // Helper to get dynamic API URL
   const getApiUrl = () => {

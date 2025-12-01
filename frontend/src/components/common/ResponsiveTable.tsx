@@ -19,8 +19,7 @@ import {
   Card,
   CardContent,
   Typography,
-  Box,
-  Chip
+  Box
 } from '@mui/material';
 import { useResponsive } from '../../utils/responsive';
 

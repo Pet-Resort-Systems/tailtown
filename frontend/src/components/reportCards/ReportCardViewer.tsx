@@ -25,8 +25,7 @@ import {
 import {
   Download,
   Share,
-  Close,
-  ZoomIn
+  Close
 } from '@mui/icons-material';
 import { reportCardService, ReportCard } from '../../services/reportCardService';
 import { format } from 'date-fns';

@@ -39,8 +39,7 @@ import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-  ContentCopy as CopyIcon,
-  Assessment as StatsIcon
+  ContentCopy as CopyIcon
 } from '@mui/icons-material';
 import { couponService } from '../../services/couponService';
 import { Coupon, CouponType, CreateCouponRequest } from '../../types/coupon';

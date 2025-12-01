@@ -17,7 +17,6 @@ import {
   Typography,
   Alert,
   CircularProgress,
-  Chip,
   Paper
 } from '@mui/material';
 import { LocalOffer as CouponIcon, Check as CheckIcon } from '@mui/icons-material';

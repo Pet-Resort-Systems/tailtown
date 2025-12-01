@@ -11,14 +11,13 @@ import {
   Select,
   MenuItem,
   Grid,
-  Typography,
   FormHelperText,
   SelectChangeEvent
 } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { format, parse } from 'date-fns';
-import staffService, { StaffSchedule, ScheduleStatus, Staff } from '../../services/staffService';
+import { StaffSchedule, ScheduleStatus, Staff } from '../../services/staffService';
 
 interface StaffScheduleFormProps {
   open: boolean;

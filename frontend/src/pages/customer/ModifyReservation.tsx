@@ -22,7 +22,6 @@ import {
   Grid,
   Divider,
   Stack,
-  Chip,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -36,8 +35,6 @@ import {
   ArrowBack as BackIcon,
   CalendarToday as CalendarIcon,
   Pets as PetsIcon,
-  AddCircle as AddIcon,
-  RemoveCircle as RemoveIcon,
   CheckCircle as SuccessIcon,
   Info as InfoIcon
 } from '@mui/icons-material';

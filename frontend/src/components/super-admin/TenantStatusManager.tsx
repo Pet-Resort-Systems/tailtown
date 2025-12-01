@@ -28,7 +28,6 @@ import {
   Login as LoginIcon
 } from '@mui/icons-material';
 import axios from 'axios';
-import { useSuperAdmin } from '../../contexts/SuperAdminContext';
 import { useNavigate } from 'react-router-dom';
 
 interface TenantStatusManagerProps {

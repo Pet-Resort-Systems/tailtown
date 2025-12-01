@@ -29,8 +29,7 @@ import {
 } from '@mui/material';
 import {
   TrendingUp as TrendingUpIcon,
-  GetApp as ExportIcon,
-  CalendarToday as CalendarIcon
+  GetApp as ExportIcon
 } from '@mui/icons-material';
 import {
   getSalesDailyReport,
@@ -55,8 +54,11 @@ const SalesReports: React.FC = () => {
 
   // Load report when period or date changes
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     loadReport();
-  }, [period, selectedDate, selectedYear, selectedMonth]);
+  },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  [period, selectedDate, selectedYear, selectedMonth]);
 
   const loadReport = async () => {
     try {

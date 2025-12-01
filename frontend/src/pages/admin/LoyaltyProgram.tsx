@@ -49,12 +49,8 @@ import {
   PointEarningRule,
   RedemptionOption,
   LoyaltyTier,
-  TierLevel,
   PointEarningType,
-  RedemptionType,
-  DEFAULT_EARNING_RULES,
-  DEFAULT_REDEMPTION_OPTIONS,
-  DEFAULT_TIERS
+  RedemptionType
 } from '../../types/loyalty';
 
 export const LoyaltyProgram: React.FC = () => {

@@ -21,16 +21,15 @@ import {
   DialogContent,
   DialogActions
 } from '@mui/material';import SearchIcon from '@mui/icons-material/Search';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import debounce from 'lodash/debounce';
 import { Customer, customerService } from '../../services/customerService';
-import CustomerIconBadges from '../../components/customers/CustomerIconBadges';
 import EmojiIconDisplay from '../../components/customers/EmojiIconDisplay';
 import CustomerIconSelectorNew from '../../components/customers/CustomerIconSelectorNew';
 import { ALL_CUSTOMER_ICONS, getCustomerIconById } from '../../constants/customerIcons';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ClearIcon from '@mui/icons-material/Clear';
-import { Chip, Collapse, IconButton } from '@mui/material';
+import { Chip, Collapse } from '@mui/material';
 
 const Customers = () => {
   const navigate = useNavigate();

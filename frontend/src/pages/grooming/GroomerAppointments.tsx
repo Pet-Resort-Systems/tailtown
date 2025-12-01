@@ -25,7 +25,6 @@ import {
   CircularProgress,
   Tooltip,
   Grid,
-  Autocomplete,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -34,15 +33,12 @@ import {
   PlayArrow as StartIcon,
   CheckCircle as CompleteIcon,
   Cancel as CancelIcon,
-  SwapHoriz as ReassignIcon,
 } from "@mui/icons-material";
-import { DatePicker, TimePicker } from "@mui/x-date-pickers";
+import { DatePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { format } from "date-fns";
 import schedulingService from "../../services/schedulingService";
-import { petService } from "../../services/petService";
-import { customerService } from "../../services/customerService";
 import {
   GroomerAppointment,
   CreateGroomerAppointmentRequest,
@@ -77,8 +73,11 @@ const GroomerAppointments: React.FC = () => {
   });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     loadAppointments();
-  }, [filters]);
+  },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  [filters]);
 
   const loadAppointments = async () => {
     try {

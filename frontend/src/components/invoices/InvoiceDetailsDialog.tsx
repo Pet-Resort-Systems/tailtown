@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   Dialog,
-  DialogTitle,
   DialogContent,
   DialogActions,
   Button,
@@ -20,7 +19,7 @@ import {
   CircularProgress
 } from '@mui/material';
 import { format } from 'date-fns';
-import { Invoice, InvoiceLineItem, Payment } from '../../services/invoiceService';
+import { Invoice } from '../../services/invoiceService';
 import { reservationService, Reservation } from '../../services/reservationService';
 
 // Extended invoice interface with reservation details

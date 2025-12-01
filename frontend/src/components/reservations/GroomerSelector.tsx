@@ -17,7 +17,7 @@ import {
   Alert
 } from '@mui/material';
 import { format, isWithinInterval, parseISO } from 'date-fns';
-import staffService, { Staff, StaffAvailability, StaffTimeOff, StaffSchedule } from '../../services/staffService';
+import staffService, { Staff } from '../../services/staffService';
 
 interface GroomerSelectorProps {
   selectedGroomerId: string;

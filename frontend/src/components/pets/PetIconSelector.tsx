@@ -19,7 +19,6 @@ import {
   FLAG_ICONS,
   ALL_PET_ICONS
 } from '../../constants/petIcons';
-import { PetIcon } from '../../types/petIcons';
 
 interface PetIconSelectorProps {
   selectedIcons: string[];

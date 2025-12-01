@@ -22,8 +22,7 @@ import {
   COMMUNICATION_ICONS,
   SERVICE_ICONS,
   FLAG_ICONS,
-  ALL_CUSTOMER_ICONS,
-  CustomerIcon
+  ALL_CUSTOMER_ICONS
 } from '../../constants/customerIcons';
 
 interface CustomerIconSelectorNewProps {

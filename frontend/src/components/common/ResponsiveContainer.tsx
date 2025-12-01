@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { Box, Container, ContainerProps } from '@mui/material';
+import { Container, ContainerProps } from '@mui/material';
 import { useResponsive, getResponsiveSpacing, getResponsiveMaxWidth } from '../../utils/responsive';
 
 interface ResponsiveContainerProps extends Omit<ContainerProps, 'maxWidth'> {

@@ -35,7 +35,7 @@ import {
   Email as EmailIcon,
   Notifications as NotificationIcon
 } from '@mui/icons-material';
-import messageTemplateService, { MessageTemplate as APITemplate } from '../../../services/messageTemplateService';
+import messageTemplateService from '../../../services/messageTemplateService';
 
 interface Template {
   id: string;

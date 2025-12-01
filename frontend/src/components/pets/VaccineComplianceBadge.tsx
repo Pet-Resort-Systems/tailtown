@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Chip,
@@ -7,20 +7,18 @@ import {
   Alert,
   Typography,
   Collapse,
-  IconButton,
-} from '@mui/material';
+} from "@mui/material";
 import {
   CheckCircle as CheckIcon,
   Warning as WarningIcon,
   Error as ErrorIcon,
-  ExpandMore as ExpandIcon,
-} from '@mui/icons-material';
-import vaccineService from '../../services/vaccineService';
-import { PetVaccineCompliance } from '../../types/vaccine';
+} from "@mui/icons-material";
+import vaccineService from "../../services/vaccineService";
+import { PetVaccineCompliance } from "../../types/vaccine";
 
 interface VaccineComplianceBadgeProps {
   petId: string;
-  serviceType?: 'BOARDING' | 'DAYCARE' | 'GROOMING';
+  serviceType?: "BOARDING" | "DAYCARE" | "GROOMING";
   showDetails?: boolean;
 }
 
@@ -29,13 +27,16 @@ const VaccineComplianceBadge: React.FC<VaccineComplianceBadgeProps> = ({
   serviceType,
   showDetails = false,
 }) => {
-  const [compliance, setCompliance] = useState<PetVaccineCompliance | null>(null);
+  const [compliance, setCompliance] = useState<PetVaccineCompliance | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     loadCompliance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [petId, serviceType]);
 
   const loadCompliance = async () => {
@@ -45,7 +46,7 @@ const VaccineComplianceBadge: React.FC<VaccineComplianceBadgeProps> = ({
       setCompliance(data);
       setError(null);
     } catch (err: any) {
-      setError(err.message || 'Failed to check vaccine compliance');
+      setError(err.message || "Failed to check vaccine compliance");
       console.error(err);
     } finally {
       setLoading(false);
@@ -62,7 +63,7 @@ const VaccineComplianceBadge: React.FC<VaccineComplianceBadgeProps> = ({
 
   if (error || !compliance) {
     return (
-      <Tooltip title={error || 'Unable to check compliance'}>
+      <Tooltip title={error || "Unable to check compliance"}>
         <Chip
           icon={<WarningIcon />}
           label="Unknown"
@@ -74,26 +75,30 @@ const VaccineComplianceBadge: React.FC<VaccineComplianceBadgeProps> = ({
   }
 
   const getStatusColor = () => {
-    if (compliance.isFullyCompliant) return 'success';
-    if (compliance.summary.expired > 0) return 'error';
-    if (compliance.summary.expiringSoon > 0) return 'warning';
-    if (compliance.summary.missing > 0) return 'error';
-    return 'default';
+    if (compliance.isFullyCompliant) return "success";
+    if (compliance.summary.expired > 0) return "error";
+    if (compliance.summary.expiringSoon > 0) return "warning";
+    if (compliance.summary.missing > 0) return "error";
+    return "default";
   };
 
   const getStatusIcon = () => {
     if (compliance.isFullyCompliant) return <CheckIcon />;
-    if (compliance.summary.expired > 0 || compliance.summary.missing > 0) return <ErrorIcon />;
+    if (compliance.summary.expired > 0 || compliance.summary.missing > 0)
+      return <ErrorIcon />;
     if (compliance.summary.expiringSoon > 0) return <WarningIcon />;
     return undefined;
   };
 
   const getStatusLabel = () => {
-    if (compliance.isFullyCompliant) return 'Compliant';
-    if (compliance.summary.missing > 0) return `${compliance.summary.missing} Missing`;
-    if (compliance.summary.expired > 0) return `${compliance.summary.expired} Expired`;
-    if (compliance.summary.expiringSoon > 0) return `${compliance.summary.expiringSoon} Expiring Soon`;
-    return 'Check Required';
+    if (compliance.isFullyCompliant) return "Compliant";
+    if (compliance.summary.missing > 0)
+      return `${compliance.summary.missing} Missing`;
+    if (compliance.summary.expired > 0)
+      return `${compliance.summary.expired} Expired`;
+    if (compliance.summary.expiringSoon > 0)
+      return `${compliance.summary.expiringSoon} Expiring Soon`;
+    return "Check Required";
   };
 
   const getTooltipText = () => {
@@ -108,9 +113,9 @@ const VaccineComplianceBadge: React.FC<VaccineComplianceBadgeProps> = ({
       parts.push(`${compliance.summary.expiringSoon} expiring soon`);
     }
     if (parts.length === 0) {
-      return 'All required vaccines are current';
+      return "All required vaccines are current";
     }
-    return `Vaccine issues: ${parts.join(', ')}`;
+    return `Vaccine issues: ${parts.join(", ")}`;
   };
 
   return (
@@ -122,13 +127,15 @@ const VaccineComplianceBadge: React.FC<VaccineComplianceBadgeProps> = ({
           size="small"
           color={getStatusColor()}
           onClick={showDetails ? () => setExpanded(!expanded) : undefined}
-          sx={{ cursor: showDetails ? 'pointer' : 'default' }}
+          sx={{ cursor: showDetails ? "pointer" : "default" }}
         />
       </Tooltip>
 
       {showDetails && (
         <Collapse in={expanded}>
-          <Box sx={{ mt: 2, p: 2, bgcolor: 'background.paper', borderRadius: 1 }}>
+          <Box
+            sx={{ mt: 2, p: 2, bgcolor: "background.paper", borderRadius: 1 }}
+          >
             <Typography variant="subtitle2" gutterBottom>
               Vaccine Compliance Details
             </Typography>
@@ -139,7 +146,7 @@ const VaccineComplianceBadge: React.FC<VaccineComplianceBadgeProps> = ({
                   Missing Required Vaccines:
                 </Typography>
                 <Typography variant="body2">
-                  {compliance.missingRequired.join(', ')}
+                  {compliance.missingRequired.join(", ")}
                 </Typography>
               </Alert>
             )}
@@ -148,52 +155,63 @@ const VaccineComplianceBadge: React.FC<VaccineComplianceBadgeProps> = ({
               <Box
                 key={result.requirementId}
                 sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                   py: 0.5,
-                  borderBottom: '1px solid',
-                  borderColor: 'divider',
+                  borderBottom: "1px solid",
+                  borderColor: "divider",
                 }}
               >
                 <Box>
                   <Typography variant="body2">
                     {result.vaccineName}
                     {result.isRequired && (
-                      <Chip label="Required" size="small" color="error" sx={{ ml: 1, height: 18 }} />
+                      <Chip
+                        label="Required"
+                        size="small"
+                        color="error"
+                        sx={{ ml: 1, height: 18 }}
+                      />
                     )}
                   </Typography>
                   {result.expirationDate && (
                     <Typography variant="caption" color="text.secondary">
-                      Expires: {new Date(result.expirationDate).toLocaleDateString()}
-                      {result.daysUntilExpiration !== null && result.daysUntilExpiration !== undefined && result.daysUntilExpiration > 0 && (
-                        <> ({result.daysUntilExpiration} days)</>
-                      )}
+                      Expires:{" "}
+                      {new Date(result.expirationDate).toLocaleDateString()}
+                      {result.daysUntilExpiration !== null &&
+                        result.daysUntilExpiration !== undefined &&
+                        result.daysUntilExpiration > 0 && (
+                          <> ({result.daysUntilExpiration} days)</>
+                        )}
                     </Typography>
                   )}
                 </Box>
                 <Chip
-                  label={result.status.replace('_', ' ')}
+                  label={result.status.replace("_", " ")}
                   size="small"
                   color={
-                    result.status === 'CURRENT'
-                      ? 'success'
-                      : result.status === 'EXPIRED'
-                      ? 'error'
-                      : result.status === 'EXPIRING_SOON'
-                      ? 'warning'
-                      : 'default'
+                    result.status === "CURRENT"
+                      ? "success"
+                      : result.status === "EXPIRED"
+                      ? "error"
+                      : result.status === "EXPIRING_SOON"
+                      ? "warning"
+                      : "default"
                   }
                 />
               </Box>
             ))}
 
-            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
+            <Box
+              sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}
+            >
               <Typography variant="caption" color="text.secondary">
                 Total: {compliance.summary.total} vaccines
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                Compliant: {compliance.summary.compliant}/{compliance.summary.required} required
+                Compliant: {compliance.summary.compliant}/
+                {compliance.summary.required} required
               </Typography>
             </Box>
           </Box>
