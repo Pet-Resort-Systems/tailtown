@@ -83,6 +83,13 @@ import { monitoring } from "./utils/monitoring";
 import { prometheusMetrics } from "./utils/prometheus";
 import { auditMiddleware } from "./utils/auditLog";
 import monitoringRoutes from "./routes/monitoring.routes";
+import apiMetricsRoutes from "./routes/api-metrics.routes";
+import {
+  apiAnalytics,
+  apiVersionHeaders,
+  correlationId,
+  enhancedRequestLogging,
+} from "./middleware/apiGateway.middleware";
 
 // Load environment variables
 dotenv.config();
@@ -101,6 +108,10 @@ app.set("x-powered-by", false); // Remove unnecessary headers
 // Request ID middleware - MUST be first to ensure all requests have an ID
 import { requestIdMiddleware } from "./middleware/requestId.middleware";
 app.use(requestIdMiddleware);
+
+// API Gateway middleware - correlation ID and version headers
+app.use(correlationId());
+app.use(apiVersionHeaders());
 
 // Request logging middleware
 app.use((req, res, next) => {
@@ -413,8 +424,15 @@ app.use(monitoring.requestTracker());
 app.use(prometheusMetrics.httpMetricsMiddleware());
 app.use(auditMiddleware());
 
+// API Gateway analytics (tracks metrics to Redis)
+app.use("/api", apiAnalytics());
+app.use("/api", enhancedRequestLogging());
+
 // Monitoring routes (accessible without authentication for health checks)
 app.use("/monitoring", monitoringRoutes);
+
+// API Metrics routes (for viewing API analytics)
+app.use("/api/metrics", apiMetricsRoutes);
 
 // ============================================
 // PUBLIC API ROUTES (MUST BE FIRST - no authentication required)
