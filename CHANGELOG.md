@@ -5,6 +5,40 @@ All notable changes to the Tailtown Pet Resort Management System will be documen
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.11] - 2025-11-30
+
+### 🔧 Production Bug Fixes
+
+Fixed critical production issues affecting the Boarding & Daycare Calendar.
+
+**Issues Fixed:**
+
+1. **Prisma Select Fields Error (500 errors)**
+
+   - Removed non-existent `totalPrice` field from Reservation selects
+   - Removed non-existent `photoUrl` field from Pet selects
+   - Fixed in `services/customer/src/utils/prisma-optimized.ts`
+
+2. **Calendar Not Displaying Reservations**
+
+   - Fixed `isKennelOccupied` function to check `res.resource?.id` in addition to `res.resourceId`
+   - API returns nested `resource.id` but calendar was only checking top-level `resourceId`
+   - Fixed in `frontend/src/components/calendar/KennelCalendar.tsx`
+
+3. **MUI DatePicker Type Errors (Build Failures)**
+   - Fixed TypeScript errors with MUI x-date-pickers v8
+   - Ensured DatePicker values are always `Date` objects or `null`
+   - Upgraded `date-fns` to v3 for compatibility
+   - Fixed in multiple files: `GroomerAppointments.tsx`, `TrainingClasses.tsx`
+
+**Deployment Notes:**
+
+- Customer service rebuilt with Prisma client regeneration
+- Frontend rebuilt and deployed
+- All services restarted via PM2
+
+---
+
 ## [1.6.10] - 2025-11-30
 
 ### 📊 Sentry Error Tracking Integration
