@@ -126,21 +126,19 @@ Test loyalty and coupon systems:
 
 ## Priority 2: HIGH (Do This Quarter - Before 1,000 Tenants)
 
-### 8. API Gateway Implementation
+### ~~8. API Gateway Implementation~~ ✅ COMPLETE
 
-**Effort**: 2 weeks  
-**Impact**: Centralized API management and security
+**Completed**: November 30, 2025  
+**Documentation**: [API-GATEWAY.md](architecture/API-GATEWAY.md)
 
-Implement API Gateway (Kong or Tyk):
+Implemented lightweight API Gateway using Nginx + Express middleware:
 
-- Centralized rate limiting per tenant
-- API versioning support (/v1/, /v2/)
-- Request routing and transformation
-- Authentication centralization
-- Request/response logging
-- API analytics and monitoring
-
-**Why**: Need centralized control over API traffic, versioning, and security as we scale.
+- ✅ Per-tenant rate limiting (100 req/s per tenant)
+- ✅ API versioning support (/api/v1/)
+- ✅ Request correlation IDs for tracing
+- ✅ API analytics tracking (Redis-backed)
+- ✅ Enhanced request logging with tenant context
+- ✅ Public endpoint rate limiting (booking, login)
 
 ### 9. Message Queue for Async Operations
 
@@ -268,7 +266,7 @@ Automate new tenant setup:
 
 Implement SaaS billing:
 
-- Stripe integration
+- Card Connect integration
 - Subscription plans (Free, Pro, Enterprise)
 - Usage-based billing
 - Invoice generation
