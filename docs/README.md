@@ -7,24 +7,29 @@ This directory contains all project-wide documentation for the Tailtown Pet Reso
 ### Project-wide Documentation
 
 - **Main Documentation** (root `/docs/` directory)
+
   - [Current State](./CURRENT_STATE.md) - Overview of the current system state and features
   - [Roadmap](./ROADMAP.md) - Future development plans
   - [Home](./Home.md) - Project introduction and overview
   - [Quick Start](./QUICK-START.md) - 5-minute setup guide
 
 - **Architecture Documentation** (`/docs/architecture/`)
+
   - [Architecture Overview](./architecture/Architecture.md) - System architecture overview
+  - [API Gateway](./architecture/API-GATEWAY.md) - API Gateway implementation (rate limiting, versioning, analytics) ✅ NEW
   - [API Service Layer](./architecture/API-SERVICE-LAYER.md) - API service layer design
   - [SaaS Implementation Progress](./architecture/SaaS-Implementation-Progress.md) - Progress on SaaS implementation
   - [Service Architecture](./architecture/SERVICE-ARCHITECTURE.md) - Microservice architecture documentation
 
 - **Development Guidelines** (`/docs/development/`)
+
   - [Schema Alignment Strategy](./development/SchemaAlignmentStrategy.md) - Database schema management
   - [Express Route Ordering](./development/ExpressRouteOrderingBestPractices.md) - Best practices for Express.js routes
   - [Form Guidelines](./development/FormGuidelines.md) - UI form standards and patterns
   - [Staff Scheduling Implementation](./development/StaffSchedulingImplementation.md) - Staff scheduling features
 
 - **Feature Documentation** (`/docs/features/`)
+
   - [Kennel Calendar](./features/KennelCalendar.md) - Kennel calendar implementation
   - [Reservations](./features/Reservations.md) - Reservation system details
   - [Add-On System](./features/AddOnSystem.md) - Service add-on implementation
@@ -33,11 +38,13 @@ This directory contains all project-wide documentation for the Tailtown Pet Reso
   - [Report Card Deployment](./REPORT-CARD-DEPLOYMENT.md) - Deployment guide for report cards
 
 - **Operations** (`/docs/operations/`)
+
   - [Environment Variables](./operations/Environment-Variables.md) - Documentation of environment variables
   - [DevOps](./operations/DevOps.md) - Deployment and operations guide
   - [Setup Guide](./operations/SETUP.md) - Comprehensive setup instructions for development
 
 - **Developer Tools** (`/mcp-server/`)
+
   - [MCP RAG Server](../mcp-server/README.md) - AI-enhanced code search with semantic indexing
 
 - **Changelog** (`/docs/changelog/`)
@@ -49,6 +56,7 @@ This directory contains all project-wide documentation for the Tailtown Pet Reso
 Service-specific documentation is located in each service's own docs directory:
 
 - **Reservation Service** (`/services/reservation-service/docs/`)
+
   - [Testing Guide](../services/reservation-service/docs/TESTING-GUIDE.md) - Testing patterns and best practices
   - [TypeScript Fixes](../services/reservation-service/docs/TYPESCRIPT-FIXES.md) - TypeScript improvements
   - [Date Conflict Validation](../services/reservation-service/docs/DATE-CONFLICT-VALIDATION.md) - Reservation conflict detection
@@ -59,17 +67,20 @@ Service-specific documentation is located in each service's own docs directory:
 ## Documentation Guidelines
 
 1. **File Naming Conventions**
+
    - Use UPPERCASE for main documentation files (e.g., README.md, SETUP.md)
    - Use kebab-case for specific topic documentation (e.g., api-authentication.md)
    - Use descriptive, consistent prefixes for related documents
 
 2. **Documentation Location**
+
    - Project-wide documentation belongs in `/docs/` and its subdirectories
    - Service-specific documentation belongs in `/services/{service-name}/docs/`
    - Implementation details should be in service-specific docs
    - Architecture and design decisions should be in project-wide docs
 
 3. **Cross-referencing**
+
    - Use relative links when referencing other documentation files
    - Always use the format `[Link Text](./relative/path/to/file.md)`
    - Include section anchors when linking to specific sections: `[Link Text](./file.md#section)`
