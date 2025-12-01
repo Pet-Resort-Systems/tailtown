@@ -68,10 +68,14 @@ Set up proper staging environment:
 
 _Phase 1 complete (v1.6.4): Reservation service at 50% coverage with 822 tests_
 
+**Completed**:
+
+- ✅ Tenant isolation tests for customer service (comprehensive suite)
+- ✅ Authentication/authorization tests (password, JWT, RBAC, lockout)
+- ✅ Security tests (10+ test files covering injection, rate limiting, etc.)
+
 **Remaining**:
 
-- Tenant isolation tests for customer service
-- Authentication/authorization tests
 - Payment processing tests
 - Integration tests between services
 - Target: 70%+ coverage for reservation service
