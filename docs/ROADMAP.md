@@ -190,19 +190,9 @@ Implement blue-green deployment:
 
 **Why**: Current deployments cause downtime. Need zero-downtime deploys for SaaS.
 
-### ~~14. Prometheus + Grafana Monitoring~~ ✅ COMPLETE
+### ~~14. Prometheus + Grafana Monitoring~~ ✅ COMPLETE → [CHANGELOG v1.6.10](../CHANGELOG.md)
 
-**Status**: Implemented (Nov 30, 2025)
-
-- ✅ Prometheus metrics endpoint (`/monitoring/prometheus`)
-- ✅ HTTP metrics (requests, errors, latency histograms)
-- ✅ System metrics (CPU, memory, uptime)
-- ✅ Business metrics (active tenants)
-- ✅ Docker Compose for Prometheus + Grafana
-- ✅ Pre-configured Grafana dashboard
-- ✅ Alerting rules (error rate, response time, memory)
-
-> See `monitoring/README.md` for deployment instructions
+Moved to changelog. See `monitoring/README.md` for deployment instructions.
 
 ### 15. Reservation Service - Performance Optimization
 
