@@ -1,12 +1,12 @@
 /**
  * Super Admin Dashboard
- * 
+ *
  * Main dashboard for super admin portal.
  * Shows platform statistics and quick actions.
  */
 
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   Box,
@@ -14,16 +14,16 @@ import {
   Button,
   Card,
   CardContent,
-  Grid
-} from '@mui/material';
+  Grid,
+} from "@mui/material";
 import {
   Logout as LogoutIcon,
   Business as TenantIcon,
   Assessment as StatsIcon,
-  Monitor as MonitoringIcon
-} from '@mui/icons-material';
-import { useSuperAdmin } from '../../contexts/SuperAdminContext';
-import SystemHealthDashboard from '../../components/super-admin/SystemHealthDashboard';
+  Monitor as MonitoringIcon,
+} from "@mui/icons-material";
+import { useSuperAdmin } from "../../contexts/SuperAdminContext";
+import SystemHealthDashboard from "../../components/super-admin/SystemHealthDashboard";
 
 const SuperAdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -31,13 +31,20 @@ const SuperAdminDashboard: React.FC = () => {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/super-admin/login');
+    navigate("/super-admin/login");
   };
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       {/* Header */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 4,
+        }}
+      >
         <Box>
           <Typography variant="h4" gutterBottom>
             Super Admin Dashboard
@@ -60,8 +67,10 @@ const SuperAdminDashboard: React.FC = () => {
         <Grid item xs={12} md={4}>
           <Card>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <TenantIcon sx={{ fontSize: 40, color: 'primary.main', mr: 2 }} />
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <TenantIcon
+                  sx={{ fontSize: 40, color: "primary.main", mr: 2 }}
+                />
                 <Box>
                   <Typography variant="h6">Tenant Management</Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -71,7 +80,7 @@ const SuperAdminDashboard: React.FC = () => {
               </Box>
               <Button
                 variant="contained"
-                onClick={() => navigate('/admin/tenants')}
+                onClick={() => navigate("/admin/tenants")}
                 fullWidth
               >
                 View Tenants
@@ -83,8 +92,10 @@ const SuperAdminDashboard: React.FC = () => {
         <Grid item xs={12} md={4}>
           <Card>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <StatsIcon sx={{ fontSize: 40, color: 'success.main', mr: 2 }} />
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <StatsIcon
+                  sx={{ fontSize: 40, color: "success.main", mr: 2 }}
+                />
                 <Box>
                   <Typography variant="h6">Platform Analytics</Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -96,10 +107,11 @@ const SuperAdminDashboard: React.FC = () => {
                 variant="contained"
                 fullWidth
                 onClick={() => {
-                  const analyticsUrl = process.env.NODE_ENV === 'production' 
-                    ? `${window.location.origin}/analytics`
-                    : 'http://localhost:3001/analytics';
-                  window.open(analyticsUrl, '_blank');
+                  const analyticsUrl =
+                    process.env.NODE_ENV === "production"
+                      ? `${window.location.origin}/analytics`
+                      : "http://localhost:3001/analytics";
+                  window.open(analyticsUrl, "_blank");
                 }}
               >
                 View Analytics
@@ -111,8 +123,10 @@ const SuperAdminDashboard: React.FC = () => {
         <Grid item xs={12} md={4}>
           <Card>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <MonitoringIcon sx={{ fontSize: 40, color: 'info.main', mr: 2 }} />
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <MonitoringIcon
+                  sx={{ fontSize: 40, color: "info.main", mr: 2 }}
+                />
                 <Box>
                   <Typography variant="h6">System Monitoring</Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -120,19 +134,36 @@ const SuperAdminDashboard: React.FC = () => {
                   </Typography>
                 </Box>
               </Box>
-              <Button
-                variant="contained"
-                color="info"
-                fullWidth
-                onClick={() => {
-                  const monitoringUrl = process.env.NODE_ENV === 'production' 
-                    ? 'http://129.212.178.244:4004/monitoring/dashboard'
-                    : 'http://localhost:4004/monitoring/dashboard';
-                  window.open(monitoringUrl, '_blank');
-                }}
-              >
-                View Dashboard
-              </Button>
+              <Box sx={{ display: "flex", gap: 1 }}>
+                <Button
+                  variant="contained"
+                  color="info"
+                  sx={{ flex: 1 }}
+                  onClick={() => {
+                    const monitoringUrl =
+                      process.env.NODE_ENV === "production"
+                        ? "http://129.212.178.244:4004/monitoring/dashboard"
+                        : "http://localhost:4004/monitoring/dashboard";
+                    window.open(monitoringUrl, "_blank");
+                  }}
+                >
+                  Basic
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="info"
+                  sx={{ flex: 1 }}
+                  onClick={() => {
+                    const grafanaUrl =
+                      process.env.NODE_ENV === "production"
+                        ? "http://129.212.178.244:3030"
+                        : "http://localhost:3030";
+                    window.open(grafanaUrl, "_blank");
+                  }}
+                >
+                  Grafana
+                </Button>
+              </Box>
             </CardContent>
           </Card>
         </Grid>
@@ -164,15 +195,17 @@ const SuperAdminDashboard: React.FC = () => {
       </Box>
 
       {/* System Status Notice */}
-      <Box sx={{ mt: 4, p: 3, bgcolor: 'success.light', borderRadius: 1 }}>
+      <Box sx={{ mt: 4, p: 3, bgcolor: "success.light", borderRadius: 1 }}>
         <Typography variant="h6" gutterBottom>
           🚀 Multi-Tenant Management System - Fully Operational!
         </Typography>
         <Typography variant="body2" sx={{ mb: 1 }}>
-          ✅ Super Admin Authentication • ✅ Tenant Management • ✅ Tenant Cloning • ✅ Gingr Sync (Every 8 Hours)
+          ✅ Super Admin Authentication • ✅ Tenant Management • ✅ Tenant
+          Cloning • ✅ Gingr Sync (Every 8 Hours)
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Create tenants, clone from templates, and manage production accounts with automated Gingr synchronization.
+          Create tenants, clone from templates, and manage production accounts
+          with automated Gingr synchronization.
         </Typography>
       </Box>
     </Container>
