@@ -77,7 +77,7 @@ _Phase 1 complete (v1.6.4): Reservation service at 50% coverage with 822 tests_
 **Remaining**:
 
 - Payment processing tests
-- Integration tests between services
+- ✅ Integration tests between services (customer-service client)
 - Target: 70%+ coverage for reservation service
 
 **Why**: Test coverage is critical for production SaaS reliability.
