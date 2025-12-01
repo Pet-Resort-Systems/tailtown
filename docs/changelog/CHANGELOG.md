@@ -9,9 +9,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## [1.6.11] - 2025-11-30
+
+### Added
+
+- **API Gateway Implementation** - Centralized API management without Kong/Tyk overhead
+  - Per-tenant rate limiting (100 req/s per tenant via Nginx)
+  - Per-IP rate limiting (10 req/s fallback)
+  - API versioning support (`/api/v1/` routes with rewrite)
+  - Request correlation IDs (X-Request-ID, X-Correlation-ID headers)
+  - API analytics tracking (Redis-backed, 30-day retention)
+  - Enhanced request logging with tenant/user context (structured JSON)
+  - Version headers (X-API-Version: v1, X-API-Deprecated: false)
+  - Public endpoint rate limiting (booking: 2 req/s, login: 5 req/15min)
+  - Metrics API endpoints (`GET /api/metrics`, `GET /api/metrics/global`)
+  - Files: `apiGateway.middleware.ts`, `api-metrics.routes.ts`, `config/nginx/tailtown.conf`
+  - Documentation: `docs/architecture/API-GATEWAY.md`
+  - See: [ROADMAP.md](../ROADMAP.md) item #8
+
+### Changed
+
+- Updated `docs/CURRENT-SYSTEM-ARCHITECTURE.md` with new middleware pipeline
+- Updated `docs/API-GATEWAY-DESIGN.md` to reflect implementation
+- Updated `docs/INFRASTRUCTURE-IMPROVEMENTS-SUMMARY.md` with deployment details
+- Updated `docs/NGINX-ROUTING.md` with API Gateway features
+- Updated `docs/README.md` with link to API Gateway documentation
+
 ## [1.2.1] - 2025-11-18
 
 ### Fixed
+
 - **Customer Service Deployment Issues** - Critical fixes for production service crashes
   - Fixed rate limiter IPv6 validation error (`ERR_ERL_KEY_GEN_IPV6`) by using `req.tenantId` instead of `req.ip`
   - Resolved node-fetch ESM compatibility issue by downgrading to v2.x (CommonJS compatible)
@@ -21,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - See: `docs/changelog/2025-11-18-customer-service-deployment-fix.md`
 
 ### Changed
+
 - Downgraded node-fetch from v3+ to v2.x for CommonJS compatibility
 - Updated rate limiter key generation to use tenant-based keys
 - Manual deployment process documented for future emergencies
@@ -28,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.0] - 2025-11-15
 
 ### Added
+
 - **Pet Report Card System** - Photo-rich report cards for pet parents
   - Mobile-first creation interface with native camera integration
   - Activity ratings (mood, energy, appetite, social) with emoji display (😢 to 😄)
@@ -51,6 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - See: `docs/REPORT-CARD-DESIGN.md`, `docs/REPORT-CARD-DEPLOYMENT.md`
 
 ### Changed
+
 - Version bump from 1.1.0 to 1.2.0
 - Updated mobile bottom navigation to 5 tabs (added Reports tab with camera icon)
 - Updated ROADMAP.md with report card completion status
@@ -60,7 +90,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.0] - 2025-11-14
 
 ### Added
+
 - **Mobile Web App MVP** - Progressive Web App for staff mobile access
+
   - Mobile dashboard with stats, schedule, and tasks
   - Checklists page with task management and progress tracking
   - Team chat with channel list and messaging interface
@@ -92,6 +124,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Ready for backend implementation
 
 ### Changed
+
 - Version bump from 1.0.0 to 1.1.0
 - Updated ROADMAP.md with mobile app completion status
 - Updated README.md with mobile app announcement
@@ -99,7 +132,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2025-11-08
 
 ### Added - Infrastructure & Performance
+
 - **Load Testing & Performance** (Nov 8, 2025)
+
   - k6 load testing with 200 concurrent users
   - 198,819 requests processed successfully
   - P95 response time: 2.2ms - 3.1ms (excellent)
@@ -108,6 +143,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Connection pool stress tested
 
 - **Microservice Architecture & Performance** (Nov 7, 2025)
+
   - Service-to-service HTTP communication with retry logic
   - Exponential backoff (3 attempts: 1s, 2s, 4s)
   - Redis caching infrastructure (10-50x performance improvement)
@@ -116,6 +152,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Nginx with HTTPS health endpoints
 
 - **Security Hardening & Testing** (Nov 7, 2025)
+
   - 380+ comprehensive security tests passing
   - OWASP Top 10 coverage complete
   - Rate limiting (5 attempts/15 min)
@@ -127,6 +164,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Security score: 95/100 (up from 40/100)
 
 - **Historical Revenue Import** (Nov 7, 2025)
+
   - Imported $623.2K in historical revenue data
   - 6,133 service bookings imported
   - 1,157 active customers
@@ -134,6 +172,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Revenue analytics and reporting operational
 
 - **Documentation Cleanup** (Nov 5, 2025)
+
   - Archived 21 outdated documents to `docs/archive/`
   - Created master documentation index (DOCUMENTATION-INDEX.md)
   - Rewrote README.md (1451 lines → 200 lines, 86% reduction)
@@ -141,6 +180,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Organized by audience (developers, ops, product)
 
 - **Multi-tenant Bug Fixes** (Nov 5, 2025)
+
   - Fixed critical tenant context bug in products API
   - Fixed login API URL hardcoded to localhost
   - Fixed profile photo not included in user session
@@ -151,28 +191,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 8 frontend deployments, 2 backend deployments
 
 - **PM2 Process Management** (Nov 4, 2025)
+
   - Auto-restart on crashes
   - Load balancing with 2 instances per service
   - Auto-start on server reboot
   - Centralized logging
 
 - **Responsive Layout Improvements** (Nov 4, 2025)
+
   - Flexible layouts without fixed breakpoints
   - Calendar header controls adapt to available space
   - Dashboard date controls wrap gracefully
   - No overlap at any screen size
 
 - **Announcement System** (Nov 1, 2025)
+
   - Staff notifications with priority levels
   - Read/unread tracking
   - Priority badges
 
 - **Contextual Help System** (Nov 1, 2025)
+
   - Tooltips throughout UI
   - Knowledge base with search
   - Context-sensitive help
 
 - **Service Management Tools** (Nov 1, 2025)
+
   - Automated health monitoring script
   - One-command service startup/shutdown scripts
   - Service hang detection and recovery
@@ -191,6 +236,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Time period filtering for all analytics reports
 
 ### Fixed
+
 - Fixed grooming and training calendar functionality
 - Resolved `context.cmdFormatter is not a function` error in FullCalendar
 - Improved service deletion handling to automatically deactivate services with active reservations
@@ -200,6 +246,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.9.0] - 2025-10-31
 
 ### Added - Grooming & Calendar
+
 - **Grooming Calendar with Staff Filtering** (Oct 31, 2025)
   - Groomer filter dropdown (filter by individual or "All Groomers")
   - Smart calendar filtering (assigned appointments show only for specific groomer)
@@ -211,6 +258,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.8.0] - 2025-10-30
 
 ### Added - Security
+
 - **Security Audit** (Oct 30, 2025)
   - Code review completed
   - Authentication bypass removed
@@ -225,6 +273,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.7.0] - 2025-10-26
 
 ### Added - Data Migration
+
 - **Gingr Data Migration** (Oct 26, 2025)
   - 11,785 customers imported with complete profiles
   - 18,390 pets imported with medical info and icons
@@ -241,7 +290,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.6.0] - 2025-10-25
 
 ### Added - POS & Reporting
+
 - **POS Checkout Integration**
+
   - Enhanced add-ons dialog with product tabs
   - Stock validation (prevents over-selling)
   - Automatic inventory deduction on payment
@@ -260,7 +311,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 35+ unit tests for financial accuracy
 
 ### Added - Scheduling & Classes
+
 - **Groomer Assignment System**
+
   - Real-time availability checking
   - Conflict detection and prevention
   - Working hours validation
@@ -282,6 +335,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 65+ unit tests (sessions, enrollment, validation)
 
 ### Added - Icons & Configuration
+
 - **Custom Icon System**
   - 25 icons in 5 categories
   - Customer behavior icons (VIP, New, Regular, Inactive)
@@ -298,7 +352,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Multi-tenancy support and image validation
 
 ### Added - Advanced Features
+
 - **Customer Self-Service Suite** (9 features)
+
   - Customer web booking portal
   - Customer reservation management (40+ tests)
   - Real-time availability checking (35+ tests)
@@ -310,6 +366,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Multi-pet suite bookings (34+ tests)
 
 - **Vaccine Requirement Management**
+
   - Admin API to manage required vaccines (8 endpoints)
   - Multi-tenant support for vaccine policies
   - Different policies per pet type and service type
@@ -324,6 +381,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Checklist templates
 
 ### Added - Testing
+
 - **Comprehensive Test Suite**
   - 200+ new test cases added
   - 470+ total automated tests
@@ -335,12 +393,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 100% endpoint coverage
 
 ### Fixed
+
 - Suite capacity limited to 1 (added multi-pet suite support with validation)
 - Added feeding schedule to kennel cards with weekly dates
 
 ## [0.1.0] - 2025-04-29
 
 ### Added
+
 - Initial version of Tailtown pet care management system
 - Boarding and daycare calendar with grid view
 - Grooming and training calendar views

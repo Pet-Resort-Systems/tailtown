@@ -1,6 +1,6 @@
 # Tailtown Development Roadmap
 
-> **For completed features**, see [CHANGELOG.md](../CHANGELOG.md)  
+> **For completed features**, see [CHANGELOG.md](changelog/CHANGELOG.md)  
 > **Based on**: [Senior Dev Review](./SENIOR-DEV-REVIEW.md) (Nov 7, 2025)
 
 ## 📊 Quick Status Overview
@@ -8,10 +8,13 @@
 ### Priority 0: IMMEDIATE (Do This Week)
 
 - ❌ **Fix Multi-Pet Room Reservations** - Core booking functionality
-- ✅ **Sentry Error Tracking** - Backend complete, frontend deferred
-- ✅ **Booking Portal Testing** - E2E tests complete (Playwright)
 
-**Status**: Customer booking portal complete (v1.6.3). Focus on multi-pet reservations and testing.
+**Status**: Customer booking portal complete (v1.6.3). Focus on multi-pet reservations.
+
+**Completed** → See [CHANGELOG](changelog/CHANGELOG.md):
+
+- ✅ Sentry Error Tracking (backend complete, frontend deferred)
+- ✅ Booking Portal Testing (E2E tests with Playwright)
 
 ### Priority 1: CRITICAL (Do This Month)
 
@@ -20,9 +23,9 @@
 - 🟡 **SendGrid/Twilio** - Code ready, needs API keys configured
 - ❌ **Grooming Calendar Testing** - Not started
 - ❌ **Loyalty/Coupons Testing** - Not started
-- ❌ **Rate Limiting** - For public booking endpoints
+- ✅ **Rate Limiting** - Implemented via API Gateway (v1.6.11)
 
-**Status**: 0/6 complete (Phase 1 items moved to changelog)
+**Status**: 1/6 complete
 
 ---
 
@@ -126,19 +129,9 @@ Test loyalty and coupon systems:
 
 ## Priority 2: HIGH (Do This Quarter - Before 1,000 Tenants)
 
-### ~~8. API Gateway Implementation~~ ✅ COMPLETE
+### ~~8. API Gateway Implementation~~ ✅ COMPLETE → [CHANGELOG v1.6.11](changelog/CHANGELOG.md)
 
-**Completed**: November 30, 2025  
-**Documentation**: [API-GATEWAY.md](architecture/API-GATEWAY.md)
-
-Implemented lightweight API Gateway using Nginx + Express middleware:
-
-- ✅ Per-tenant rate limiting (100 req/s per tenant)
-- ✅ API versioning support (/api/v1/)
-- ✅ Request correlation IDs for tracing
-- ✅ API analytics tracking (Redis-backed)
-- ✅ Enhanced request logging with tenant context
-- ✅ Public endpoint rate limiting (booking, login)
+Moved to changelog. See `docs/architecture/API-GATEWAY.md` for implementation details.
 
 ### 9. Message Queue for Async Operations
 
@@ -494,8 +487,8 @@ True multi-tenant architecture:
 
 ### 100-1,000 Tenants
 
-- 🔧 Service-to-service APIs
-- 🔧 API Gateway
+- ✅ Service-to-service APIs
+- ✅ API Gateway (v1.6.11)
 - 🔧 Message queue
 - 🔧 Read replicas
 - 🔧 Blue-green deployment
