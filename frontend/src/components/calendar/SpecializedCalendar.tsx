@@ -89,6 +89,15 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
         "PENDING,CONFIRMED,CHECKED_IN" // status - include pending reservations too
       );
 
+      console.log("SpecializedCalendar loadReservations response:", {
+        status: response?.status,
+        hasData: !!(response as any)?.data,
+        hasReservations: !!(response as any)?.data?.reservations,
+        isArray: Array.isArray((response as any)?.data?.reservations),
+        reservationsCount: (response as any)?.data?.reservations?.length,
+        rawResponse: response,
+      });
+
       if (
         response?.status === "success" &&
         (response as any)?.data?.reservations &&
