@@ -113,6 +113,16 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
 
         // Filter by service category
         if (serviceCategories && serviceCategories.length > 0) {
+          console.log("Filtering by serviceCategories:", serviceCategories);
+          console.log(
+            "Sample reservations before filter:",
+            reservationsArray.slice(0, 3).map((r: any) => ({
+              id: r.id,
+              serviceCategory: r.service?.serviceCategory,
+              serviceName: r.service?.name,
+            }))
+          );
+
           filteredReservations = filteredReservations.filter(
             (reservation: any) => {
               // Check if the reservation's service category matches any of the specified categories
@@ -132,6 +142,11 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
               // serviceCategory is used in the includes check below
               return serviceCategories.includes(serviceObj.serviceCategory);
             }
+          );
+
+          console.log(
+            "After service category filter:",
+            filteredReservations.length
           );
         }
 
