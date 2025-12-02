@@ -1,10 +1,11 @@
 # Tailtown Quick Start Guide
 
-**Last Updated**: November 3, 2025
+**Last Updated**: December 2, 2025
 
 ## 🚀 Get Started in 5 Minutes
 
 ### Prerequisites
+
 - Node.js 16.x or 18.x
 - Docker Desktop
 - Git
@@ -31,6 +32,7 @@ docker ps | grep postgres || docker start tailtown-postgres
 ```
 
 ### Terminal 1: Customer Service
+
 ```bash
 cd services/customer
 source ~/.nvm/nvm.sh
@@ -39,6 +41,7 @@ npm run dev
 ```
 
 ### Terminal 2: Reservation Service
+
 ```bash
 cd services/reservation-service
 source ~/.nvm/nvm.sh
@@ -47,6 +50,7 @@ PORT=4003 npm run dev
 ```
 
 ### Terminal 3: Frontend
+
 ```bash
 cd frontend
 source ~/.nvm/nvm.sh
@@ -60,6 +64,7 @@ npm start
 ## ✅ Verify Everything Works
 
 ### Check Services
+
 ```bash
 # All should return success
 curl http://localhost:4003/health  # Reservation service
@@ -68,6 +73,7 @@ curl http://localhost:3000         # Frontend (HTML response)
 ```
 
 ### Test Login
+
 1. Open http://localhost:3000
 2. Login with: `admin@tailtown.com` / `bypass`
 3. You should see the dashboard
@@ -77,6 +83,7 @@ curl http://localhost:3000         # Frontend (HTML response)
 ## 🔧 Common Commands
 
 ### Service Status
+
 ```bash
 # Check what's running
 lsof -i :3000  # Frontend
@@ -89,6 +96,7 @@ curl -s http://localhost:4004/health | grep "up" && echo "✅ Customer OK"
 ```
 
 ### Restart Services
+
 ```bash
 # Kill all services
 pkill -f "node"
@@ -101,6 +109,7 @@ source ~/.nvm/nvm.sh && PORT=4003 npm run dev
 ```
 
 ### Database
+
 ```bash
 # Check PostgreSQL
 docker ps | grep postgres
@@ -120,21 +129,22 @@ npx prisma migrate deploy
 
 ## 📍 Key URLs
 
-| Service | URL | Purpose |
-|---------|-----|---------|
-| Frontend | http://localhost:3000 | Main application |
-| Dashboard | http://localhost:3000/dashboard | Home page |
+| Service           | URL                                     | Purpose               |
+| ----------------- | --------------------------------------- | --------------------- |
+| Frontend          | http://localhost:3000                   | Main application      |
+| Dashboard         | http://localhost:3000/dashboard         | Home page             |
 | Grooming Calendar | http://localhost:3000/calendar/grooming | Grooming reservations |
-| Boarding Calendar | http://localhost:3000/calendar | Boarding/daycare |
-| Customer API | http://localhost:4004/api/customers | Customer data |
-| Reservation API | http://localhost:4003/api/reservations | Reservation data |
-| Health Checks | :4003/health, :4004/health | Service status |
+| Boarding Calendar | http://localhost:3000/calendar          | Boarding/daycare      |
+| Customer API      | http://localhost:4004/api/customers     | Customer data         |
+| Reservation API   | http://localhost:4003/api/reservations  | Reservation data      |
+| Health Checks     | :4003/health, :4004/health              | Service status        |
 
 ---
 
 ## 🐛 Troubleshooting
 
 ### Service Won't Start
+
 ```bash
 # 1. Check if port is in use
 lsof -i :4003
@@ -150,6 +160,7 @@ PORT=4003 npm run dev
 ```
 
 ### ERR_CONNECTION_REFUSED
+
 ```bash
 # Service isn't running - start it
 cd services/reservation-service
@@ -157,6 +168,7 @@ source ~/.nvm/nvm.sh && PORT=4003 npm run dev
 ```
 
 ### Database Connection Failed
+
 ```bash
 # Check PostgreSQL is running
 docker ps | grep postgres
@@ -169,6 +181,7 @@ psql -h localhost -p 5433 -U postgres -d customer -c "SELECT 1;"
 ```
 
 ### Frontend Shows Errors
+
 ```bash
 # Clear cache and restart
 cd frontend
@@ -183,6 +196,7 @@ npm start
 The MCP RAG server provides AI-enhanced code search capabilities for Windsurf/Cascade.
 
 ### Quick Setup
+
 ```bash
 # Install Python dependencies
 cd mcp-server
@@ -213,6 +227,7 @@ pip install -r requirements.txt
 ## 🎯 Quick Tasks
 
 ### Create a Grooming Reservation
+
 1. Go to http://localhost:3000/calendar/grooming
 2. Click on a time slot
 3. Fill in customer, pet, and grooming service
@@ -220,12 +235,14 @@ pip install -r requirements.txt
 5. Skip or add services → Redirects to checkout
 
 ### View All Reservations
+
 1. Go to http://localhost:3000/reservations
 2. See list of all reservations
 3. Click status chip to change status
 4. Click reservation to view details
 
 ### Add a New Customer
+
 1. Go to http://localhost:3000/customers
 2. Click "Add Customer" button
 3. Fill in customer details
@@ -236,11 +253,13 @@ pip install -r requirements.txt
 ## ⚡ Development Tips
 
 ### Hot Reload
+
 - Frontend: Auto-reloads on file changes
 - Backend: Uses `ts-node-dev` for auto-restart
 - Database: Requires manual migration after schema changes
 
 ### Debugging
+
 ```bash
 # Enable verbose logging
 DEBUG=* npm run dev
@@ -253,6 +272,7 @@ DEBUG=* npm run dev
 ```
 
 ### Testing API Endpoints
+
 ```bash
 # Get reservations
 curl -H "x-tenant-id: dev" \
@@ -285,6 +305,7 @@ curl -X POST \
 All services should now be running. Open http://localhost:3000 and start exploring!
 
 **Next Steps:**
+
 - Explore the dashboard
 - Create a test reservation
 - Try the grooming calendar
