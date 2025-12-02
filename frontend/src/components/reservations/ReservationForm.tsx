@@ -1494,8 +1494,11 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                       if (service.serviceCategory === "BOARDING") {
                         newEndDate.setDate(newEndDate.getDate() + 1); // Next day
                         newEndDate.setHours(17, 0, 0, 0); // 5:00 PM
+                      } else if (service.serviceCategory === "GROOMING") {
+                        // For GROOMING services, default to 2 hours on same day
+                        newEndDate.setMinutes(newEndDate.getMinutes() + 120);
                       } else {
-                        // For other services (DAYCARE, GROOMING), add the service duration
+                        // For other services (DAYCARE), add the service duration
                         newEndDate.setMinutes(
                           newEndDate.getMinutes() + service.duration
                         );
@@ -1979,6 +1982,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                     if (service?.serviceCategory === "BOARDING") {
                       newEndDate.setDate(newEndDate.getDate() + 1); // Next day
                       newEndDate.setHours(17, 0, 0, 0); // 5:00 PM
+                    } else if (service?.serviceCategory === "GROOMING") {
+                      // For GROOMING services, default to 2 hours on same day
+                      newEndDate.setMinutes(newEndDate.getMinutes() + 120);
                     } else {
                       // For other services, add the service duration in minutes
                       newEndDate.setMinutes(
@@ -2023,6 +2029,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                     if (service?.serviceCategory === "BOARDING") {
                       newEndDate.setDate(newEndDate.getDate() + 1); // Next day
                       newEndDate.setHours(17, 0, 0, 0); // 5:00 PM
+                    } else if (service?.serviceCategory === "GROOMING") {
+                      // For GROOMING services, default to 2 hours on same day
+                      newEndDate.setMinutes(newEndDate.getMinutes() + 120);
                     } else {
                       // For other services, add the service duration in minutes
                       newEndDate.setMinutes(
