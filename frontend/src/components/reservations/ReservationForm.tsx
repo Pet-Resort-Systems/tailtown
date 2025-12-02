@@ -1483,8 +1483,10 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                 // Find the selected service to get its duration
                 if (serviceId) {
                   const service = services.find((s) => s.id === serviceId);
-                  if (service && service.duration) {
-                    setCurrentServiceDuration(service.duration);
+                  if (service) {
+                    if (service.duration) {
+                      setCurrentServiceDuration(service.duration);
+                    }
 
                     // Update end date based on service type
                     if (startDate) {
@@ -1497,7 +1499,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                       } else if (service.serviceCategory === "GROOMING") {
                         // For GROOMING services, default to 2 hours on same day
                         newEndDate.setMinutes(newEndDate.getMinutes() + 120);
-                      } else {
+                      } else if (service.duration) {
                         // For other services (DAYCARE), add the service duration
                         newEndDate.setMinutes(
                           newEndDate.getMinutes() + service.duration
