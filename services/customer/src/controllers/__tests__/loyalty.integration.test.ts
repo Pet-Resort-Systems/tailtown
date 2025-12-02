@@ -171,7 +171,7 @@ describe("Loyalty Controller Integration Tests", () => {
         params: { customerId: addPointsCustomerId },
         body: {
           points: 50,
-          type: "RESERVATION",
+          type: "VISIT",
           description: "Boarding reservation",
         },
       } as unknown as Request;
@@ -239,7 +239,7 @@ describe("Loyalty Controller Integration Tests", () => {
         params: { customerId: redeemCustomerId },
         body: {
           pointsToRedeem: 200,
-          redemptionType: "DISCOUNT",
+          redemptionType: "DISCOUNT_FIXED",
           value: 2,
           description: "$2 off next reservation",
         },
