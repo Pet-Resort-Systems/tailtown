@@ -9,6 +9,64 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## [1.6.14] - 2025-12-01
+
+### Added
+
+- **Setup Wizard for New Tenants** - Complete onboarding wizard for new facilities
+
+  - 11-step wizard: Business Info, Rooms/Kennels, Services, Pricing, Operating Hours, Staff, Payment, Notifications, Branding, Policies, Review
+  - Backend API: `POST /api/onboarding/complete` creates tenant with all resources
+  - Creates tenant, rooms/kennels, services, and staff in one transaction
+  - Progress saved to localStorage (survives browser refresh)
+  - Mobile responsive with Material-UI Stepper
+  - CardConnect payment integration (Stripe excluded per requirements)
+  - SendGrid/Twilio notification configuration
+  - Files: `frontend/src/pages/setup-wizard/`, `services/customer/src/controllers/onboarding.controller.ts`
+
+- **Login Tenant Parameter** - Login page accepts `?tenant=subdomain` for wizard redirect
+  - Sets tenant ID in localStorage automatically
+  - Shows welcome message for new tenants
+
+## [1.6.13] - 2025-12-01
+
+### Fixed
+
+- **Dashboard Overnight Count** - Fixed overnight count showing 0
+
+  - Added `serviceCategory` to API response for service data
+  - Dashboard now correctly identifies BOARDING reservations for overnight count
+  - Added `customerId`, `petId`, `serviceId`, `resourceId` to reservation detail response
+
+- **Gingr Timezone Handling** - Fixed times displaying incorrectly (e.g., 6:30 AM showing as 11:30 PM)
+  - Root cause: Gingr stores local time but API returns with `Z` suffix (interpreted as UTC)
+  - Added `parseGingrDate()` utility to treat API dates as local time
+  - Updated `ReservationForm` to use new date parser
+  - Added comprehensive tests for timezone edge cases
+  - Files: `frontend/src/utils/dateUtils.ts`, `frontend/src/utils/__tests__/dateUtils.test.ts`
+
+## [1.6.12] - 2025-12-01
+
+### Added
+
+- **Staging Environment** - Complete staging infrastructure for pre-production testing
+  - Staging URL: https://staging.tailtown.canicloud.com
+  - Separate database (`tailtown_staging`) with anonymized production data
+  - PM2 config: `ecosystem.staging.config.js` (ports 5000, 5003, 5004)
+  - Nginx config: `config/nginx/tailtown-staging.conf`
+  - GitHub Actions: `.github/workflows/deploy-staging.yml`
+  - Documentation: `docs/STAGING-ENVIRONMENT.md`
+  - SSL certificate (valid until March 2026)
+  - Data anonymization (emails → `@staging.test`, phones → `555-XXXX`)
+
+### Fixed
+
+- **Production Data Cleanup** - Removed duplicate records from Gingr import
+  - Deleted 11,860 placeholder customers (`@tailtown.placeholder`)
+  - Deduplicated 11,779 customers with same email
+  - Deduplicated 18,431 pets with same name+customer
+  - Final counts: 11,902 customers, 18,458 pets (was 35,541 / 36,889)
+
 ## [1.6.11] - 2025-11-30
 
 ### Added
