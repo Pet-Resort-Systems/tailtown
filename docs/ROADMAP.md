@@ -16,6 +16,12 @@ Multiple pets sharing same room:
 - Billing for shared rooms
 - Kennel card per pet
 
+### SendGrid/Twilio Setup
+
+- Configure API keys
+- Email templates (reservations, invoices)
+- SMS templates (reminders, alerts)
+
 ---
 
 ## 🟠 This Month
@@ -24,12 +30,6 @@ Multiple pets sharing same room:
 
 - Payment processing tests
 - Currently at 50% with 822 tests
-
-### SendGrid/Twilio Setup
-
-- Configure API keys
-- Email templates (reservations, invoices)
-- SMS templates (reminders, alerts)
 
 ### Grooming Calendar Testing
 

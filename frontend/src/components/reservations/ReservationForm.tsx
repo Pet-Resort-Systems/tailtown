@@ -43,6 +43,7 @@ import {
   getServiceNameForResourceType,
   shouldAutoSelectService,
 } from "../../config/resource-service-mapping";
+import { parseGingrDate } from "../../utils/dateUtils";
 
 /**
  * Props for the ReservationForm component
@@ -233,11 +234,14 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
 
         if (initialData) {
           // Set dates if they exist in initialData
+          // Use parseGingrDate to handle Gingr's local-time-with-Z-suffix format
           if (initialData.startDate) {
-            setStartDate(new Date(initialData.startDate));
+            const parsedStart = parseGingrDate(initialData.startDate);
+            if (parsedStart) setStartDate(parsedStart);
           }
           if (initialData.endDate) {
-            setEndDate(new Date(initialData.endDate));
+            const parsedEnd = parseGingrDate(initialData.endDate);
+            if (parsedEnd) setEndDate(parsedEnd);
           }
           // Set initial status if provided
           if (initialData.status) {

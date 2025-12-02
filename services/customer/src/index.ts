@@ -63,6 +63,7 @@ import daycarePassRoutes from "./routes/daycare-pass.routes";
 import auditLogRoutes from "./routes/audit-log.routes";
 import featureFlagsRoutes from "./routes/feature-flags.routes";
 import { systemRoutes } from "./routes/system.routes";
+import onboardingRoutes from "./routes/onboarding.routes";
 import { errorHandler } from "./middleware/error.middleware";
 import {
   extractTenantContext,
@@ -414,6 +415,9 @@ app.use("/api/tenants", tenantRoutes);
 
 // System Routes (health monitoring, metrics - no tenant context required)
 app.use("/api/system", systemRoutes);
+
+// Onboarding Routes (public - for new tenant signup wizard)
+app.use("/api/onboarding", onboardingRoutes);
 
 // Apply tenant context middleware to all other routes
 // This extracts the subdomain and attaches tenant info to the request

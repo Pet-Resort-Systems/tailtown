@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## [1.6.13] - 2025-12-01
+
+### Fixed
+
+- **Dashboard Overnight Count** - Fixed overnight count showing 0
+
+  - Added `serviceCategory` to API response for service data
+  - Dashboard now correctly identifies BOARDING reservations for overnight count
+  - Added `customerId`, `petId`, `serviceId`, `resourceId` to reservation detail response
+
+- **Gingr Timezone Handling** - Fixed times displaying incorrectly (e.g., 6:30 AM showing as 11:30 PM)
+  - Root cause: Gingr stores local time but API returns with `Z` suffix (interpreted as UTC)
+  - Added `parseGingrDate()` utility to treat API dates as local time
+  - Updated `ReservationForm` to use new date parser
+  - Added comprehensive tests for timezone edge cases
+  - Files: `frontend/src/utils/dateUtils.ts`, `frontend/src/utils/__tests__/dateUtils.test.ts`
+
 ## [1.6.12] - 2025-12-01
 
 ### Added
