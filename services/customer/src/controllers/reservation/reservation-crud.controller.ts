@@ -7,8 +7,9 @@
  * - deleteReservation
  */
 
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import { PrismaClient, ReservationStatus } from "@prisma/client";
+import { TenantRequest } from "../../middleware/tenant.middleware";
 import { AppError } from "../../middleware/error.middleware";
 import { logger } from "../../utils/logger";
 import {
@@ -75,7 +76,7 @@ async function isSuiteAvailable(
  * Create a new reservation
  */
 export const createReservation = async (
-  req: Request,
+  req: TenantRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -228,9 +229,11 @@ export const createReservation = async (
 
     // Generate order number and create reservation
     const orderNumber = await generateOrderNumber();
+    const tenantId = req.tenantId!;
 
     const newReservation = await prisma.reservation.create({
       data: {
+        tenantId,
         orderNumber,
         customerId,
         petId,
@@ -271,7 +274,7 @@ export const createReservation = async (
  * Update a reservation
  */
 export const updateReservation = async (
-  req: Request,
+  req: TenantRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -456,7 +459,7 @@ export const updateReservation = async (
  * Delete a reservation
  */
 export const deleteReservation = async (
-  req: Request,
+  req: TenantRequest,
   res: Response,
   next: NextFunction
 ) => {
