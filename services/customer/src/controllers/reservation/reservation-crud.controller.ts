@@ -92,6 +92,11 @@ export const createReservation = async (
       notes = "",
     } = req.body;
 
+    // Validate required fields
+    if (!serviceId) {
+      return next(new AppError("Service ID is required", 400));
+    }
+
     // Check if the service requires a suite type
     const service = await prisma.service.findUnique({
       where: { id: serviceId },
