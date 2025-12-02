@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## [1.6.15] - 2025-12-02
+
+### Fixed
+
+- **Grooming Calendar Reservation Display** - Fixed grooming reservations not appearing on calendar
+
+  - **Root Cause 1**: Reservations created without `tenantId` caused invoice creation to fail with FK constraint error
+  - **Root Cause 2**: Backend only had PUT route for updates, but frontend used PATCH
+  - **Root Cause 3**: Calendar filtered by single date (today), missing future reservations
+  - **Solution**:
+    - Added `tenantId` from `req.tenantId` to reservation creation in `reservation-crud.controller.ts`
+    - Added PATCH route alongside PUT in `reservation.routes.ts`
+    - Removed single-date filter from `SpecializedCalendar.tsx` to show all upcoming reservations
+  - Files: `services/customer/src/controllers/reservation/reservation-crud.controller.ts`, `services/customer/src/routes/reservation.routes.ts`, `frontend/src/components/calendar/SpecializedCalendar.tsx`
+
+- **Grooming Reservation Duration** - Grooming appointments now default to 2-hour duration on same day
+  - End date/time automatically calculated as start time + 2 hours
+  - Prevents overnight grooming reservations
+
 ## [1.6.14] - 2025-12-01
 
 ### Added
