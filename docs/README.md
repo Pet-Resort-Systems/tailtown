@@ -1,68 +1,83 @@
 # Tailtown Documentation
 
-This directory contains all project-wide documentation for the Tailtown Pet Resort Management System. We follow a standardized documentation structure to ensure consistency and ease of navigation.
+Project-wide documentation for the Tailtown Pet Resort Management System.
 
-## Documentation Structure
+## Quick Links
 
-### Project-wide Documentation
+| Document                                                | Description              |
+| ------------------------------------------------------- | ------------------------ |
+| [Quick Start](./QUICK-START.md)                         | Get running in 5 minutes |
+| [System Architecture](./CURRENT-SYSTEM-ARCHITECTURE.md) | Current system design    |
+| [Features Overview](./SYSTEM-FEATURES-OVERVIEW.md)      | Complete feature list    |
+| [Roadmap](./ROADMAP.md)                                 | Future development plans |
 
-- **Main Documentation** (root `/docs/` directory)
+## Directory Structure
 
-  - [Current State](./CURRENT_STATE.md) - Overview of the current system state and features
-  - [Roadmap](./ROADMAP.md) - Future development plans
-  - [Home](./Home.md) - Project introduction and overview
-  - [Quick Start](./QUICK-START.md) - 5-minute setup guide
+```
+docs/
+├── README.md                      # This file
+├── QUICK-START.md                 # 5-minute setup guide
+├── ROADMAP.md                     # Future plans
+├── CURRENT-SYSTEM-ARCHITECTURE.md # System design
+├── SYSTEM-FEATURES-OVERVIEW.md    # Feature documentation
+├── CRITICAL-DOCS-REGISTRY.md      # Doc update tracking
+├── DOCUMENTATION-STRATEGY.md      # AI vs Human docs strategy
+│
+├── architecture/                  # System design docs
+│   ├── API-GATEWAY-DESIGN.md
+│   ├── DATABASE-*.md
+│   ├── SERVICE-ARCHITECTURE.md
+│   └── tenant-isolation/          # Multi-tenancy docs
+│
+├── development/                   # Dev guidelines
+│   ├── DEVELOPMENT-BEST-PRACTICES.md
+│   ├── SchemaAlignmentStrategy.md
+│   └── FormGuidelines.md
+│
+├── features/                      # Feature specs
+│   ├── REPORT-CARD-DESIGN.md
+│   ├── WAITLIST-DESIGN.md
+│   ├── COUPON-SYSTEM.md
+│   └── ... (47 feature docs)
+│
+├── testing/                       # Test documentation
+│   ├── TESTING-STRATEGY.md
+│   └── TEST-SETUP.md
+│
+├── deployment/                    # Deploy guides
+│   ├── DEPLOYMENT-GUIDE.md
+│   └── STAGING-ENVIRONMENT.md
+│
+├── security/                      # Security docs
+│   ├── SECURITY-CHECKLIST.md
+│   └── AUDIT-LOGGING-GUIDE.md
+│
+├── operations/                    # Ops guides
+│   ├── MONITORING-GUIDE.md
+│   └── SCALING-PLAN.md
+│
+├── changelog/                     # Release history
+│   └── CHANGELOG.md
+│
+├── human/                         # Human-readable guides
+│   ├── QUICK-START.md
+│   └── COMMON-TASKS.md
+│
+├── ai-context/                    # AI assistant context
+│   └── security/
+│
+└── archive/                       # Historical docs
+    ├── sessions/                  # Session summaries
+    ├── deployments/               # One-time deploy docs
+    └── summaries/                 # Implementation summaries
+```
 
-- **Architecture Documentation** (`/docs/architecture/`)
+## Service Documentation
 
-  - [Architecture Overview](./architecture/Architecture.md) - System architecture overview
-  - [API Gateway](./architecture/API-GATEWAY.md) - API Gateway implementation (rate limiting, versioning, analytics) ✅ NEW
-  - [API Service Layer](./architecture/API-SERVICE-LAYER.md) - API service layer design
-  - [SaaS Implementation Progress](./architecture/SaaS-Implementation-Progress.md) - Progress on SaaS implementation
-  - [Service Architecture](./architecture/SERVICE-ARCHITECTURE.md) - Microservice architecture documentation
+Each service has its own `/docs/` directory:
 
-- **Development Guidelines** (`/docs/development/`)
-
-  - [Schema Alignment Strategy](./development/SchemaAlignmentStrategy.md) - Database schema management
-  - [Express Route Ordering](./development/ExpressRouteOrderingBestPractices.md) - Best practices for Express.js routes
-  - [Form Guidelines](./development/FormGuidelines.md) - UI form standards and patterns
-  - [Staff Scheduling Implementation](./development/StaffSchedulingImplementation.md) - Staff scheduling features
-
-- **Feature Documentation** (`/docs/features/`)
-
-  - [Kennel Calendar](./features/KennelCalendar.md) - Kennel calendar implementation
-  - [Reservations](./features/Reservations.md) - Reservation system details
-  - [Add-On System](./features/AddOnSystem.md) - Service add-on implementation
-  - [Checkout Process](./features/CheckoutProcess.md) - End-to-end checkout workflow
-  - [Pet Report Cards](./REPORT-CARD-DESIGN.md) - Photo-rich report card system (NEW - v1.2.0)
-  - [Report Card Deployment](./REPORT-CARD-DEPLOYMENT.md) - Deployment guide for report cards
-
-- **Operations** (`/docs/operations/`)
-
-  - [Environment Variables](./operations/Environment-Variables.md) - Documentation of environment variables
-  - [DevOps](./operations/DevOps.md) - Deployment and operations guide
-  - [Setup Guide](./operations/SETUP.md) - Comprehensive setup instructions for development
-
-- **Developer Tools** (`/mcp-server/`)
-
-  - [MCP RAG Server](../mcp-server/README.md) - AI-enhanced code search with semantic indexing
-
-- **Changelog** (`/docs/changelog/`)
-  - [Changelog](./changelog/CHANGELOG.md) - Comprehensive release notes and change history
-  - [Kennel Selection Fix](./changelog/2025-05-11-kennel-selection-fix.md) - Specific fix documentation
-
-### Service-specific Documentation
-
-Service-specific documentation is located in each service's own docs directory:
-
-- **Reservation Service** (`/services/reservation-service/docs/`)
-
-  - [Testing Guide](../services/reservation-service/docs/TESTING-GUIDE.md) - Testing patterns and best practices
-  - [TypeScript Fixes](../services/reservation-service/docs/TYPESCRIPT-FIXES.md) - TypeScript improvements
-  - [Date Conflict Validation](../services/reservation-service/docs/DATE-CONFLICT-VALIDATION.md) - Reservation conflict detection
-
-- **Customer Service** (`/services/customer/docs/`)
-  - Service-specific documentation for the customer service
+- **Customer Service**: `/services/customer/docs/`
+- **Reservation Service**: `/services/reservation-service/docs/`
 
 ## Documentation Guidelines
 

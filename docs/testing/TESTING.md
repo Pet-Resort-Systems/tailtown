@@ -1,209 +1,347 @@
 # Testing Guide
 
-## Automated Tests
+This document describes the automated testing setup for Tailtown.
 
-### Build Tests
+## Overview
 
-Test that all services build successfully:
+Tailtown uses a comprehensive testing strategy covering:
+- **Unit Tests**: Individual function and component testing
+- **Integration Tests**: API endpoint and database testing
+- **End-to-End Tests**: Full user flow testing (planned)
+- **Automated CI/CD**: Tests run on every push and PR
 
-```bash
-# Test backend services only (fast)
-npm run test:builds
+## Test Structure
 
-# Test all services including frontend (slower)
-npm run test:builds:full
+```
+tailtown/
+├── frontend/
+│   ├── src/
+│   │   └── __tests__/          # Frontend component tests
+│   └── package.json             # Test scripts
+├── services/
+│   ├── customer/
+│   │   ├── __tests__/           # Backend API tests
+│   │   │   ├── messaging.api.test.ts
+│   │   │   ├── api.integration.test.ts
+│   │   │   └── ...
+│   │   └── package.json
+│   └── reservation-service/
+│       ├── __tests__/
+│       └── package.json
+└── scripts/
+    └── run-tests.sh             # Automated test runner
 ```
 
-### Available Test Scripts
+## Running Tests
 
-### Localhost URL Checking
+### Quick Start
 
-**Purpose**: Detect hardcoded localhost URLs that would break in production
-
-**Script**: `scripts/check-localhost-urls.sh`
-
-**Usage**:
+Run all tests:
 ```bash
-# Check for hardcoded localhost URLs
-npm run test:localhost
-
-# Or run directly
-./scripts/check-localhost-urls.sh
+./scripts/run-tests.sh
 ```
 
-**What it checks**:
-- Hardcoded `localhost:XXXX` URLs in frontend source code
-- Direct API calls without environment variables
-- Excludes config files, test files, and environment variable fallbacks
+### Individual Test Suites
 
-**Example issues caught**:
-```typescript
-// ❌ BAD - Hardcoded localhost
-fetch('http://localhost:4004/api/endpoint')
-
-// ✅ GOOD - Uses environment variable
-const apiUrl = process.env.REACT_APP_API_URL || '';
-fetch(`${apiUrl}/api/endpoint`)
+**Frontend Tests**:
+```bash
+cd frontend
+npm test
 ```
 
-**Integration**:
-- Runs automatically on `git push` (warning only, doesn't block)
-- Part of pre-deployment checks
-
-### TypeScript Error Checking
-
-Check for TypeScript compilation errors without building:
-
+**Customer Service Tests**:
 ```bash
-# Check backend services only (fast)
-npm run test:typescript
-
-# Check all services including frontend
-npm run test:typescript:full
+cd services/customer
+npm test
 ```
 
-### All Tests
+**Messaging API Tests** (specific):
+```bash
+cd services/customer
+npm test -- messaging.api.test.ts
+```
 
-Run all available tests:
+**Reservation Service Tests**:
+```bash
+cd services/reservation-service
+npm test
+```
+
+### Watch Mode (Development)
+
+Run tests in watch mode for active development:
+```bash
+cd frontend
+npm test -- --watch
+```
+
+## Test Coverage
+
+Generate coverage reports:
+```bash
+cd services/customer
+npm run test:coverage
+```
+
+View coverage:
+```bash
+open coverage/lcov-report/index.html
+```
+
+## Messaging API Tests
+
+The messaging system has comprehensive test coverage:
+
+### Test Categories
+
+1. **Channel Management**
+   - List channels for authenticated staff
+   - Filter archived channels
+   - Calculate unread counts
+   - Channel membership validation
+
+2. **Message Operations**
+   - Send messages
+   - Fetch messages with pagination
+   - Message editing and deletion
+   - Soft delete functionality
+
+3. **Read Receipts**
+   - Mark channels as read
+   - Track last read message
+   - Update read timestamps
+
+4. **Unread Counts**
+   - Total unread across channels
+   - Exclude own messages
+   - Per-channel unread counts
+
+5. **Authorization**
+   - Require authentication
+   - Prevent non-member access
+   - Validate channel membership
+
+6. **Message Features**
+   - Mentions (@user)
+   - Reactions (emoji)
+   - Attachments (planned)
+   - Threading (planned)
+
+### Running Messaging Tests
 
 ```bash
-# Quick tests (unit + integration)
-npm run test:quick
+cd services/customer
+npm test -- messaging.api.test.ts
+```
 
-# All tests including E2E
-npm run test:all
-
-# Full test suite including builds
-npm run test:full
+Expected output:
+```
+ PASS  __tests__/messaging.api.test.ts
+  Messaging API Tests
+    GET /api/messaging/channels
+      ✓ should return channels for authenticated staff
+      ✓ should not return archived channels
+      ✓ should calculate unread count correctly
+    GET /api/messaging/channels/:channelId/messages
+      ✓ should return messages for channel member
+      ✓ should not return messages for non-member
+      ✓ should support pagination with before cursor
+    POST /api/messaging/channels/:channelId/messages
+      ✓ should create a new message
+      ✓ should reject empty message content
+      ✓ should support mentions
+    ... (60+ tests total)
 ```
 
 ## Continuous Integration
 
-### GitHub Actions
+Tests run automatically on:
+- Every push to `main` or `development`
+- Every pull request
+- Manual workflow dispatch
 
-The project includes automated CI/CD workflows:
+### GitHub Actions Workflow
 
-- **Build Tests** (`.github/workflows/build-test.yml`)
-  - Runs on push to main, develop, and feature branches
-  - Tests builds on Node 16.x and 18.x
-  - Verifies Docker builds
-  - Checks for TypeScript errors
+Location: `.github/workflows/test.yml`
 
-### Pre-Push Hook
+The CI pipeline:
+1. Sets up Node.js (16.x and 18.x)
+2. Installs dependencies
+3. Sets up PostgreSQL test database
+4. Runs Prisma migrations
+5. Runs all test suites
+6. Generates coverage reports
+7. Uploads to Codecov
 
-A git pre-push hook automatically runs:
-1. TypeScript error check
-2. Build verification
+### Viewing CI Results
 
-To bypass the hook (not recommended):
-```bash
-git push --no-verify
+1. Go to GitHub Actions tab
+2. Click on latest workflow run
+3. View test results and logs
+
+## Writing Tests
+
+### Backend API Tests (Jest + Supertest)
+
+```typescript
+describe('API Endpoint', () => {
+  beforeAll(async () => {
+    // Setup test data
+  });
+
+  afterAll(async () => {
+    // Cleanup
+  });
+
+  it('should do something', async () => {
+    const result = await prisma.model.findMany();
+    expect(result).toBeDefined();
+  });
+});
 ```
 
-## Manual Testing
+### Frontend Component Tests (React Testing Library)
 
-### Test Individual Services
+```typescript
+import { render, screen } from '@testing-library/react';
+import { MyComponent } from './MyComponent';
 
+describe('MyComponent', () => {
+  it('renders correctly', () => {
+    render(<MyComponent />);
+    expect(screen.getByText('Hello')).toBeInTheDocument();
+  });
+});
+```
+
+## Test Database
+
+Tests use a separate test database to avoid affecting development data.
+
+**Setup**:
 ```bash
-# Customer Service
+# Create test database
+createdb customer_test
+
+# Run migrations
 cd services/customer
-npm run build
-npm test
-
-# Reservation Service
-cd services/reservation-service
-npm run build
-npm test
-
-# Frontend
-cd frontend
-npm run build
-npm test
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/customer_test" \
+  npx prisma migrate deploy
 ```
 
-### Test Docker Builds
-
+**Environment Variables**:
 ```bash
-# Test customer service Docker build
-docker build -f services/customer/Dockerfile.prod -t test-customer services/customer
-
-# Test reservation service Docker build
-docker build -f services/reservation-service/Dockerfile.prod -t test-reservation services/reservation-service
-
-# Test frontend Docker build
-docker build -f frontend/Dockerfile.prod -t test-frontend frontend
+export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/customer_test"
+export NODE_ENV="test"
 ```
-
-## Test Scripts Location
-
-All test scripts are located in `/scripts/`:
-- `test-builds.sh` - Build verification script
-- `test-typescript.sh` - TypeScript error checking script
-- `test-runner.sh` - Main test runner for unit/integration tests
-
-## Troubleshooting
-
-### Build Fails Locally But CI Passes
-
-Check your Node version:
-```bash
-node --version  # Should be 16.x or 18.x
-```
-
-### TypeScript Errors in Test Files
-
-Test files are excluded from production builds. If you see errors in `*.test.ts` files, they won't affect production.
-
-### Docker Build Fails
-
-1. Check if you have enough disk space
-2. Try cleaning Docker cache:
-   ```bash
-   docker system prune -a
-   ```
-3. Rebuild without cache:
-   ```bash
-   docker-compose -f docker-compose.prod.yml build --no-cache
-   ```
-
-## Adding New Tests
-
-### Add a New Test Script
-
-1. Create script in `/scripts/test-*.sh`
-2. Make it executable: `chmod +x scripts/test-*.sh`
-3. Add npm script to `package.json`:
-   ```json
-   "test:mytest": "./scripts/test-mytest.sh"
-   ```
-
-### Add to CI/CD
-
-Edit `.github/workflows/build-test.yml` to include your new test.
-
-## Test Coverage
-
-Current test coverage:
-- Unit Tests: ~80%
-- Integration Tests: ~60%
-- E2E Tests: Core user flows
-- Build Tests: All services
-- TypeScript: Zero errors in production code
 
 ## Best Practices
 
-1. **Run tests before committing**: `npm run test:quick`
-2. **Run build tests before pushing**: `npm run test:builds`
-3. **Check TypeScript errors**: `npm run test:typescript`
-4. **Run full suite before major releases**: `npm run test:full`
-5. **Keep tests fast**: Use mocks for external dependencies
-6. **Write tests for bug fixes**: Prevent regressions
+### DO:
+- ✅ Write tests for all new features
+- ✅ Test both success and error cases
+- ✅ Use descriptive test names
+- ✅ Clean up test data in `afterAll`
+- ✅ Mock external services
+- ✅ Test edge cases
+- ✅ Keep tests fast and isolated
 
-## Continuous Testing
+### DON'T:
+- ❌ Depend on test execution order
+- ❌ Use production database for tests
+- ❌ Leave test data in database
+- ❌ Skip cleanup in afterAll
+- ❌ Test implementation details
+- ❌ Write flaky tests
 
-For development, run tests in watch mode:
+## Debugging Tests
+
+### Run Single Test
+
 ```bash
-npm run test:watch
+npm test -- -t "test name"
 ```
 
-This will automatically re-run tests when files change.
+### Run with Verbose Output
+
+```bash
+npm test -- --verbose
+```
+
+### Debug in VS Code
+
+Add to `.vscode/launch.json`:
+```json
+{
+  "type": "node",
+  "request": "launch",
+  "name": "Jest Debug",
+  "program": "${workspaceFolder}/node_modules/.bin/jest",
+  "args": ["--runInBand", "--no-cache"],
+  "console": "integratedTerminal",
+  "internalConsoleOptions": "neverOpen"
+}
+```
+
+## Common Issues
+
+### Prisma Client Not Generated
+
+```bash
+cd services/customer
+npx prisma generate
+```
+
+### Database Connection Errors
+
+Check:
+1. PostgreSQL is running
+2. DATABASE_URL is correct
+3. Test database exists
+4. Migrations are applied
+
+### Test Timeouts
+
+Increase timeout in jest.config.js:
+```javascript
+module.exports = {
+  testTimeout: 30000 // 30 seconds
+};
+```
+
+## Coverage Goals
+
+Target coverage levels:
+- **Statements**: >80%
+- **Branches**: >75%
+- **Functions**: >80%
+- **Lines**: >80%
+
+Current coverage:
+- Customer Service: ~75%
+- Frontend: ~60%
+- Reservation Service: ~70%
+
+## Future Enhancements
+
+- [ ] E2E tests with Playwright
+- [ ] Visual regression testing
+- [ ] Performance testing
+- [ ] Load testing
+- [ ] Security testing
+- [ ] Accessibility testing
+
+## Resources
+
+- [Jest Documentation](https://jestjs.io/)
+- [React Testing Library](https://testing-library.com/react)
+- [Supertest](https://github.com/visionmedia/supertest)
+- [Prisma Testing](https://www.prisma.io/docs/guides/testing)
+
+## Support
+
+For testing questions or issues:
+1. Check this documentation
+2. Review existing tests for examples
+3. Ask in #engineering Slack channel
+4. Create an issue in GitHub
