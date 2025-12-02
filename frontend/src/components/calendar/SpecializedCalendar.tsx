@@ -80,15 +80,16 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
       const allEvents: EventInput[] = [];
 
       // Get all relevant reservations (PENDING, CONFIRMED or CHECKED_IN)
-      // Use today's date to filter reservations that overlap with today
-      const today = new Date().toISOString().split("T")[0];
+      // Don't filter by date - let the calendar show all upcoming reservations
       const response = await reservationService.getAllReservations(
         1, // page
         500, // limit - increased to show more reservations (was 100)
         "startDate", // sortBy
         "asc", // sortOrder - ascending to get earliest first
         "PENDING,CONFIRMED,CHECKED_IN", // status - include pending reservations too
-        today // date - filter to reservations that overlap with today
+        undefined, // date - don't filter by single date
+        undefined, // checkInDate
+        undefined // timezone
       );
 
       // Handle both response formats:
