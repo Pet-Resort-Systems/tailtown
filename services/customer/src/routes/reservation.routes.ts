@@ -68,8 +68,9 @@ router.get("/:id", getReservationById);
 // POST create a new reservation
 router.post("/", createReservation);
 
-// PUT update a reservation
+// PUT/PATCH update a reservation
 router.put("/:id", updateReservation);
+router.patch("/:id", updateReservation);
 
 // POST add add-ons to a reservation
 router.post("/:id/add-ons", addAddOnsToReservation);
