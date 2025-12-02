@@ -862,6 +862,17 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
       );
 
       if (!selectedCustomerObj || !selectedPetObj || !selectedServiceObj) {
+        console.error("Invalid selection debug:", {
+          selectedCustomer,
+          selectedPet,
+          selectedService,
+          customersCount: customers.length,
+          petsCount: pets.length,
+          servicesCount: services.length,
+          foundCustomer: !!selectedCustomerObj,
+          foundPet: !!selectedPetObj,
+          foundService: !!selectedServiceObj,
+        });
         setError("Invalid selection. Please try again.");
         setLoading(false);
         return;
