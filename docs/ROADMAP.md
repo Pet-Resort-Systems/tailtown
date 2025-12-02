@@ -5,16 +5,6 @@
 
 ---
 
-## ✅ Recently Completed
-
-### Setup Wizard (v1.6.14) - Dec 1, 2025
-
-- 11-step onboarding wizard for new tenants
-- Creates tenant, rooms/kennels, services, staff in one flow
-- Route: `/setup`
-
----
-
 ## 🔴 This Week
 
 ### Fix Multi-Pet Room Reservations
@@ -41,12 +31,6 @@ Multiple pets sharing same room:
 
 - Payment processing tests
 - Currently at 50% with 822 tests
-
-### Grooming Calendar Testing
-
-- Appointment scheduling
-- Stylist assignment
-- Conflict detection
 
 ### Loyalty/Coupons Testing
 
