@@ -188,6 +188,12 @@ const Waitlist = lazy(() => import("./pages/waitlist/Waitlist"));
 
 // Public Booking Portal
 const BookingPortal = lazy(() => import("./pages/booking/BookingPortal"));
+
+// Setup Wizard
+const SetupWizard = lazy(() => import("./pages/setup-wizard/SetupWizard"));
+const SetupWizardProvider = lazy(
+  () => import("./pages/setup-wizard/SetupWizardContext")
+);
 const CustomerDashboard = lazy(
   () => import("./pages/booking/CustomerDashboard")
 );
@@ -263,6 +269,16 @@ const AppRoutes = () => {
         {/* Public Booking Portal - No authentication required */}
         <Route path="/book" element={<BookingPortal />} />
         <Route path="/my-account" element={<CustomerDashboard />} />
+
+        {/* Setup Wizard - For new tenant onboarding */}
+        <Route
+          path="/setup"
+          element={
+            <SetupWizardProvider>
+              <SetupWizard />
+            </SetupWizardProvider>
+          }
+        />
 
         {/* Auth Routes */}
         <Route element={<AuthLayout />}>

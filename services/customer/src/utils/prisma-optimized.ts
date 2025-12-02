@@ -49,7 +49,6 @@ export const petSelectMinimal = {
   name: true,
   type: true,
   breed: true,
-  photoUrl: true,
 } as const;
 
 /** Pet fields for reservation context */
@@ -59,10 +58,9 @@ export const petSelectForReservation = {
   type: true,
   breed: true,
   weight: true,
-  photoUrl: true,
   specialNeeds: true,
-  feedingInstructions: true,
-  medicationInstructions: true,
+  foodNotes: true,
+  medicationNotes: true,
 } as const;
 
 /** Full pet fields */
@@ -72,15 +70,13 @@ export const petSelectFull = {
   type: true,
   breed: true,
   weight: true,
-  birthDate: true,
+  birthdate: true,
   gender: true,
   color: true,
-  photoUrl: true,
   specialNeeds: true,
-  feedingInstructions: true,
-  medicationInstructions: true,
+  foodNotes: true,
+  medicationNotes: true,
   isActive: true,
-  lastCheckIn: true,
   createdAt: true,
   updatedAt: true,
 } as const;
@@ -114,6 +110,7 @@ export const serviceSelectMinimal = {
   id: true,
   name: true,
   price: true,
+  serviceCategory: true,
 } as const;
 
 /** Service fields for reservation context */
@@ -121,6 +118,7 @@ export const serviceSelectForReservation = {
   id: true,
   name: true,
   price: true,
+  serviceCategory: true,
   duration: true,
   description: true,
 } as const;
@@ -145,7 +143,6 @@ export const staffSelectForSchedule = {
   email: true,
   phone: true,
   role: true,
-  profilePhotoUrl: true,
 } as const;
 
 // ============================================================================
@@ -159,7 +156,6 @@ export const reservationSelectMinimal = {
   startDate: true,
   endDate: true,
   status: true,
-  totalPrice: true,
 } as const;
 
 /** Reservation with minimal related data for list views */
@@ -169,7 +165,6 @@ export const reservationSelectForList = {
   startDate: true,
   endDate: true,
   status: true,
-  totalPrice: true,
   notes: true,
   customer: { select: customerSelectMinimal },
   pet: { select: petSelectMinimal },
@@ -183,14 +178,15 @@ export const reservationSelectFull = {
   orderNumber: true,
   startDate: true,
   endDate: true,
-  checkInTime: true,
-  checkOutTime: true,
+  checkInDate: true,
+  checkOutDate: true,
   status: true,
-  totalPrice: true,
-  depositAmount: true,
-  depositPaid: true,
   notes: true,
-  specialRequests: true,
+  staffNotes: true,
+  customerId: true,
+  petId: true,
+  serviceId: true,
+  resourceId: true,
   createdAt: true,
   updatedAt: true,
   customer: { select: customerSelectFull },
