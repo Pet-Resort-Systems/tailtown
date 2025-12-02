@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import {
   // Query operations
   getAllReservations,
@@ -19,6 +19,24 @@ import {
 } from "../controllers/reservation";
 
 const router = Router();
+
+// Middleware to prevent browser caching of API responses
+const noCacheMiddleware = (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  res.set(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate"
+  );
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
+  next();
+};
+
+// Apply no-cache to all reservation routes
+router.use(noCacheMiddleware);
 
 // GET all reservations
 router.get("/", getAllReservations);
