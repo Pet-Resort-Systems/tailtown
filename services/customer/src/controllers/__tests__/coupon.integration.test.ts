@@ -24,6 +24,7 @@ describe("Coupon Controller Integration Tests", () => {
   const prisma = getTestPrismaClient();
   let testTenantId: string;
   let testCouponIds: string[] = [];
+  let testCustomerId: string;
 
   const createMockResponse = () => {
     const res: Partial<Response> = {};
@@ -36,6 +37,18 @@ describe("Coupon Controller Integration Tests", () => {
 
   beforeAll(async () => {
     testTenantId = await createTestTenant(`coupon-test-${Date.now()}`);
+
+    // Create test customer for validation tests
+    const customer = await prisma.customer.create({
+      data: {
+        tenantId: testTenantId,
+        firstName: "Coupon",
+        lastName: "Test",
+        email: `coupon-test-${Date.now()}@example.com`,
+        phone: "555-0500",
+      },
+    });
+    testCustomerId = customer.id;
   });
 
   afterAll(async () => {
@@ -368,7 +381,11 @@ describe("Coupon Controller Integration Tests", () => {
 
     it("should validate active coupon within date range", async () => {
       const req = {
-        body: { code: validCouponCode, orderTotal: 100 },
+        body: {
+          code: validCouponCode,
+          customerId: testCustomerId,
+          subtotal: 100,
+        },
       } as unknown as Request;
       const res = createMockResponse();
 
@@ -387,7 +404,11 @@ describe("Coupon Controller Integration Tests", () => {
 
     it("should reject expired coupon", async () => {
       const req = {
-        body: { code: expiredCouponCode, orderTotal: 100 },
+        body: {
+          code: expiredCouponCode,
+          customerId: testCustomerId,
+          subtotal: 100,
+        },
       } as unknown as Request;
       const res = createMockResponse();
 
@@ -405,7 +426,11 @@ describe("Coupon Controller Integration Tests", () => {
 
     it("should return invalid for non-existent coupon", async () => {
       const req = {
-        body: { code: "NONEXISTENT", orderTotal: 100 },
+        body: {
+          code: "NONEXISTENT",
+          customerId: testCustomerId,
+          subtotal: 100,
+        },
       } as unknown as Request;
       const res = createMockResponse();
 
