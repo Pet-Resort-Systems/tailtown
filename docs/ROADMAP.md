@@ -29,14 +29,10 @@ Multiple pets sharing same room:
 
 ### Test Coverage (Target: 70%+)
 
-- Payment processing tests
-- Currently at 50% with 822 tests
-
-### Loyalty/Coupons Testing
-
-- Coupon validation
-- Discount calculations
-- Usage limits
+- Currently at ~30% with 1,100+ tests
+- Need integration tests that exercise actual controller code
+- Payment processing integration tests
+- Reservation flow integration tests
 
 ---
 
