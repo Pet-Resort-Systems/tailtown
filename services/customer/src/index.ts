@@ -42,6 +42,7 @@ import analyticsRoutes from "./routes/analytics-fixed.routes";
 import tenantRoutes from "./routes/tenant.routes";
 import emailRoutes from "./routes/email.routes";
 import smsRoutes from "./routes/sms.routes";
+import notificationRoutes from "./routes/notification.routes";
 import vaccineUploadRoutes from "./routes/vaccine-upload.routes";
 import groomerAppointmentRoutes from "./routes/groomerAppointment.routes";
 import trainingClassRoutes from "./routes/trainingClass.routes";
@@ -507,6 +508,9 @@ app.use(
   emailRoutes
 );
 app.use("/api/sms", requireTenant, authenticate, requireTenantAdmin, smsRoutes);
+
+// Notification Routes (service-to-service, requires tenant context only)
+app.use("/api/notifications", requireTenant, notificationRoutes);
 app.use(
   "/api/reports",
   requireTenant,

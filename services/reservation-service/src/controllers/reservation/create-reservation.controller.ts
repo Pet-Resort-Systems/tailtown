@@ -18,6 +18,7 @@ import {
 } from "../../types/prisma-extensions";
 import { safeExecutePrismaQuery, prisma } from "./utils/prisma-helpers";
 import { customerServiceClient } from "../../clients/customer-service.client";
+import { notificationClient } from "../../clients/notification.client";
 
 /**
  * Helper function to determine suite type based on service type
@@ -558,6 +559,21 @@ export const createReservation = catchAsync(
       requestId,
       reservationId: newReservation?.id || "unknown",
     });
+
+    // Send confirmation notifications (async, don't block response)
+    if (newReservation?.id && tenantId) {
+      notificationClient
+        .sendReservationConfirmation({
+          reservationId: newReservation.id,
+          tenantId: tenantId as string,
+        })
+        .catch((err) => {
+          logger.warn(
+            `Failed to send confirmation notifications: ${err.message}`,
+            { requestId }
+          );
+        });
+    }
 
     // Prepare response with warnings if any
     const responseData: any = {
