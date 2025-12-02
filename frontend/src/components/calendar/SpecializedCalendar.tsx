@@ -89,22 +89,27 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
         "PENDING,CONFIRMED,CHECKED_IN" // status - include pending reservations too
       );
 
+      // Handle both response formats:
+      // Format 1: { status: "success", data: { reservations: [...] } }
+      // Format 2: { status: "success", data: [...] } (direct array)
+      const responseData = (response as any)?.data;
+      const reservationsArray = Array.isArray(responseData)
+        ? responseData
+        : responseData?.reservations;
+
       console.log("SpecializedCalendar loadReservations response:", {
         status: response?.status,
-        hasData: !!(response as any)?.data,
-        hasReservations: !!(response as any)?.data?.reservations,
-        isArray: Array.isArray((response as any)?.data?.reservations),
-        reservationsCount: (response as any)?.data?.reservations?.length,
-        rawResponse: response,
+        dataIsArray: Array.isArray(responseData),
+        reservationsCount: reservationsArray?.length,
       });
 
       if (
         response?.status === "success" &&
-        (response as any)?.data?.reservations &&
-        Array.isArray((response as any).data.reservations)
+        reservationsArray &&
+        Array.isArray(reservationsArray)
       ) {
         // Filter reservations by service category and/or staff ID if specified
-        let filteredReservations = (response as any).data.reservations;
+        let filteredReservations = reservationsArray;
 
         // Filter by service category
         if (serviceCategories && serviceCategories.length > 0) {
