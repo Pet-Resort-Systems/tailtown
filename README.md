@@ -5,8 +5,8 @@
 
 **Status:** 🟢 **LIVE IN PRODUCTION**  
 **Production URL:** https://canicloud.com (multi-tenant subdomains)  
-**Version:** 1.6.14  
-**Last Updated:** December 1, 2025  
+**Version:** 1.6.15  
+**Last Updated:** December 2, 2025  
 **Codebase:** ~205,000 lines of TypeScript
 
 A modern, full-featured SaaS management system for pet resorts, providing comprehensive tools for reservations, customer management, and pet care services.
@@ -39,7 +39,7 @@ A modern, full-featured SaaS management system for pet resorts, providing compre
 
 ### For Technical Leadership
 
-- **[Senior Dev Review](docs/SENIOR-DEV-REVIEW.md)** - ⭐ Architecture review & scaling roadmap (4/5 stars)
+- **[Senior Dev Review](docs/archive/SENIOR-DEV-REVIEW.md)** - ⭐ Architecture review & scaling roadmap (4/5 stars)
 - **[System Architecture](docs/CURRENT-SYSTEM-ARCHITECTURE.md)** - Complete architecture overview
 - **[Disaster Recovery](docs/operations/DISASTER-RECOVERY-PLAN.md)** - Backup & recovery procedures
 
@@ -51,8 +51,8 @@ A modern, full-featured SaaS management system for pet resorts, providing compre
 
 ### Reference
 
-- **[Security Checklist](docs/SECURITY-CHECKLIST.md)** - Security verification
-- **[Development Best Practices](docs/DEVELOPMENT-BEST-PRACTICES.md)** - Code standards
+- **[Security Checklist](docs/security/SECURITY-CHECKLIST.md)** - Security verification
+- **[Development Best Practices](docs/development/DEVELOPMENT-BEST-PRACTICES.md)** - Code standards
 
 ---
 
@@ -112,10 +112,9 @@ cd frontend && npm start
 
 ### Essential Reading
 
-- **[Documentation Index](DOCUMENTATION-INDEX.md)** - Master index of all documentation
-- **[Development Best Practices](docs/DEVELOPMENT-BEST-PRACTICES.md)** - ⭐ Common patterns & pitfalls
-- **[Developer Toolkit](DEVELOPER-TOOLKIT.md)** - Essential commands and tools
-- **[Deployment Guide](deployment/DEPLOYMENT-GUIDE.md)** - How to deploy to production
+- **[Documentation Index](docs/README.md)** - Master index of all documentation
+- **[Development Best Practices](docs/development/DEVELOPMENT-BEST-PRACTICES.md)** - ⭐ Common patterns & pitfalls
+- **[Deployment Guide](docs/deployment/DEPLOYMENT-GUIDE.md)** - How to deploy to production
 - **[Product Roadmap](docs/ROADMAP.md)** - Feature roadmap and priorities
 
 ### By Audience
@@ -247,7 +246,7 @@ ssh -i ~/ttkey root@129.212.178.244 "cd /opt/tailtown/frontend && tar -xzf build
 ssh -i ~/ttkey root@129.212.178.244 "cd /opt/tailtown && git pull && cd services/customer && npm run build && pm2 restart customer-service"
 ```
 
-For detailed deployment instructions, see [deployment/DEPLOYMENT-GUIDE.md](deployment/DEPLOYMENT-GUIDE.md).
+For detailed deployment instructions, see [docs/deployment/DEPLOYMENT-GUIDE.md](docs/deployment/DEPLOYMENT-GUIDE.md).
 
 ---
 
@@ -272,7 +271,7 @@ npm run kill:zombies
 cd services/customer && npx prisma migrate dev
 ```
 
-See [DEVELOPER-TOOLKIT.md](DEVELOPER-TOOLKIT.md) for complete command reference.
+See [docs/development/](docs/development/) for development guides.
 
 ### Code Quality
 
@@ -320,7 +319,7 @@ npm run type-check
 - ✅ PM2 cluster mode (2 instances per service)
 - ✅ Nginx reverse proxy with SSL
 
-For tenant strategy details, see [docs/TENANT-STRATEGY.md](docs/TENANT-STRATEGY.md)
+For tenant strategy details, see [docs/features/TENANT-STRATEGY.md](docs/features/TENANT-STRATEGY.md)
 
 ---
 
@@ -352,7 +351,7 @@ Proprietary - All rights reserved
 
 ## 📞 Support
 
-- **Documentation:** [DOCUMENTATION-INDEX.md](DOCUMENTATION-INDEX.md)
+- **Documentation:** [docs/README.md](docs/README.md)
 - **Issues:** GitHub Issues
 - **Email:** rob@tailtownpetresort.com
 
@@ -390,7 +389,7 @@ Proprietary - All rights reserved
 - ✅ Fixed 11 critical bugs
 - ✅ Populated with test data
 
-See [CHANGELOG.md](CHANGELOG.md) for complete history.
+See [docs/changelog/CHANGELOG.md](docs/changelog/CHANGELOG.md) for complete history.
 
 ---
 
