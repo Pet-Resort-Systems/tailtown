@@ -5,13 +5,13 @@
 
 **Status:** 🟢 **LIVE IN PRODUCTION**  
 **Production URL:** https://canicloud.com (multi-tenant subdomains)  
-**Version:** 1.6.10  
-**Last Updated:** November 29, 2025  
-**Codebase:** ~199,000 lines of TypeScript
+**Version:** 1.6.14  
+**Last Updated:** December 1, 2025  
+**Codebase:** ~205,000 lines of TypeScript
 
 A modern, full-featured SaaS management system for pet resorts, providing comprehensive tools for reservations, customer management, and pet care services.
 
-**🆕 NEW**: Mobile Web App now available! Staff can access checklists, team chat, and schedules from mobile devices at `/mobile` routes.
+**🆕 NEW**: Setup Wizard for new tenants! Complete onboarding at `/setup` - creates facility, rooms, services, and staff in one flow.
 
 ## 🌐 Access the Application
 

@@ -1,11 +1,16 @@
 # Tailtown Current System Architecture
 
-**Last Updated**: November 29, 2025  
+**Last Updated**: December 1, 2025  
 **Status**: ✅ Production - All Systems Operational  
 **Architecture**: Microservices with HTTP Communication, Redis Caching, Sentry Monitoring
 
 ## 🆕 Recent Additions (v1.6.x)
 
+- **Setup Wizard** (v1.6.14): `/setup` - Complete tenant onboarding wizard
+  - 11 steps: Business, Rooms, Services, Pricing, Hours, Staff, Payment, Notifications, Branding, Policies, Review
+  - API: `POST /api/onboarding/complete` - Creates tenant with all resources
+- **API Gateway** (v1.6.11): Per-tenant rate limiting, request correlation, API analytics
+- **Staging Environment** (v1.6.12): https://staging.tailtown.canicloud.com
 - **Audit Logging** (v1.6.2): TenantAuditLog model, admin viewer at `/admin/audit-logs`
 - **Customer Account Portal** (v1.6.3): `/my-account` - reservations, pets, passes, balance
 - **Online Booking Portal** (v1.6.1): `/book` - public booking with kennel selection

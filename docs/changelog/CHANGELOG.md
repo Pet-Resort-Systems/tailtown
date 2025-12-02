@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## [1.6.14] - 2025-12-01
+
+### Added
+
+- **Setup Wizard for New Tenants** - Complete onboarding wizard for new facilities
+
+  - 11-step wizard: Business Info, Rooms/Kennels, Services, Pricing, Operating Hours, Staff, Payment, Notifications, Branding, Policies, Review
+  - Backend API: `POST /api/onboarding/complete` creates tenant with all resources
+  - Creates tenant, rooms/kennels, services, and staff in one transaction
+  - Progress saved to localStorage (survives browser refresh)
+  - Mobile responsive with Material-UI Stepper
+  - CardConnect payment integration (Stripe excluded per requirements)
+  - SendGrid/Twilio notification configuration
+  - Files: `frontend/src/pages/setup-wizard/`, `services/customer/src/controllers/onboarding.controller.ts`
+
+- **Login Tenant Parameter** - Login page accepts `?tenant=subdomain` for wizard redirect
+  - Sets tenant ID in localStorage automatically
+  - Shows welcome message for new tenants
+
 ## [1.6.13] - 2025-12-01
 
 ### Fixed

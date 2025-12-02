@@ -5,6 +5,16 @@
 
 ---
 
+## ✅ Recently Completed
+
+### Setup Wizard (v1.6.14) - Dec 1, 2025
+
+- 11-step onboarding wizard for new tenants
+- Creates tenant, rooms/kennels, services, staff in one flow
+- Route: `/setup`
+
+---
+
 ## 🔴 This Week
 
 ### Fix Multi-Pet Room Reservations
@@ -16,11 +26,12 @@ Multiple pets sharing same room:
 - Billing for shared rooms
 - Kennel card per pet
 
-### SendGrid/Twilio Setup
+### SendGrid/Twilio Integration
 
-- Configure API keys
+- Configure API keys in setup wizard
 - Email templates (reservations, invoices)
 - SMS templates (reminders, alerts)
+- Welcome emails for new staff with password reset
 
 ---
 
