@@ -19,6 +19,7 @@ import {
 import { safeExecutePrismaQuery, prisma } from "./utils/prisma-helpers";
 import { customerServiceClient } from "../../clients/customer-service.client";
 import { notificationClient } from "../../clients/notification.client";
+import { logReservationCreated } from "../../services/reservation-activity.service";
 
 /**
  * Helper function to determine suite type based on service type
@@ -559,6 +560,34 @@ export const createReservation = catchAsync(
       requestId,
       reservationId: newReservation?.id || "unknown",
     });
+
+    // Log the activity
+    if (newReservation?.id) {
+      // Determine actor type - if staffAssignedId is provided, it's likely an employee booking
+      // Otherwise assume it's a customer online booking or system
+      const actorType = staffAssignedId ? "EMPLOYEE" : "CUSTOMER";
+
+      logReservationCreated(
+        tenantId as string,
+        newReservation.id,
+        actorType,
+        staffAssignedId || customerId,
+        undefined, // actorName will be fetched or defaulted
+        {
+          customerId,
+          petId,
+          serviceId,
+          startDate: parsedStartDate,
+          endDate: parsedEndDate,
+          resourceId: assignedResourceId,
+          status: status || "PENDING",
+        },
+        req.ip,
+        req.get("user-agent")
+      ).catch((err) =>
+        logger.warn("Failed to log reservation creation activity", { err })
+      );
+    }
 
     // Send confirmation notifications (async, don't block response)
     if (newReservation?.id && tenantId) {

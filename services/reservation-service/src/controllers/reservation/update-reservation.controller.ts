@@ -19,6 +19,10 @@ import {
 import { safeExecutePrismaQuery, prisma } from "./utils/prisma-helpers";
 import { customerServiceClient } from "../../clients/customer-service.client";
 import { notificationClient } from "../../clients/notification.client";
+import {
+  logStatusChange,
+  logReservationUpdated,
+} from "../../services/reservation-activity.service";
 
 /**
  * Helper function to determine suite type based on service type
@@ -625,6 +629,72 @@ export const updateReservation = catchAsync(
     }
 
     logger.success(`Successfully updated reservation: ${id}`, { requestId });
+
+    // Log the activity
+    if (tenantId) {
+      // Determine actor type - assume employee for dashboard updates
+      const actorType = "EMPLOYEE";
+      const actorId = req.body.updatedBy || undefined;
+
+      // Log status change if status was updated
+      if (status && existingReservation.status !== status) {
+        logStatusChange(
+          tenantId as string,
+          id,
+          existingReservation.status || "PENDING",
+          status,
+          actorType,
+          actorId,
+          undefined,
+          req.ip,
+          req.get("user-agent")
+        ).catch((err) =>
+          logger.warn("Failed to log status change activity", { err })
+        );
+      } else {
+        // Log general update
+        const changes: { field: string; from: any; to: any }[] = [];
+        if (startDate)
+          changes.push({
+            field: "startDate",
+            from: existingReservation.startDate,
+            to: startDate,
+          });
+        if (endDate)
+          changes.push({
+            field: "endDate",
+            from: existingReservation.endDate,
+            to: endDate,
+          });
+        if (notes !== undefined)
+          changes.push({
+            field: "notes",
+            from: existingReservation.notes,
+            to: notes,
+          });
+        if (resourceId)
+          changes.push({
+            field: "resourceId",
+            from: existingReservation.resourceId,
+            to: resourceId,
+          });
+
+        if (changes.length > 0) {
+          logReservationUpdated(
+            tenantId as string,
+            id,
+            changes,
+            actorType,
+            actorId,
+            undefined,
+            req.ip,
+            req.get("user-agent")
+          ).catch((err) =>
+            logger.warn("Failed to log reservation update activity", { err })
+          );
+        }
+      }
+    }
 
     // Send notifications for status changes (async, don't block response)
     if (status && existingReservation.status !== status && tenantId) {

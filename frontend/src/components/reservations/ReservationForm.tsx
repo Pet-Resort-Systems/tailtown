@@ -38,6 +38,7 @@ import { getRoomSizeDisplayName } from "../../types/resource";
 import { useResponsive, getResponsiveButtonSize } from "../../utils/responsive";
 import AddOnSelectionDialogEnhanced from "./AddOnSelectionDialogEnhanced";
 import GroomerSelector from "./GroomerSelector";
+import ReservationActivityLog, { ActivityLog } from "./ReservationActivityLog";
 import { useShoppingCart } from "../../contexts/ShoppingCartContext";
 import { useNavigate } from "react-router-dom";
 import {
@@ -2137,6 +2138,15 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                   <MenuItem value="NO_SHOW">No Show</MenuItem>
                 </Select>
               </FormControl>
+
+              {/* Activity Log - show when editing existing reservation */}
+              {initialData?.activityLogs &&
+                initialData.activityLogs.length > 0 && (
+                  <ReservationActivityLog
+                    activities={initialData.activityLogs as ActivityLog[]}
+                    defaultExpanded={false}
+                  />
+                )}
             </>
           )}
 

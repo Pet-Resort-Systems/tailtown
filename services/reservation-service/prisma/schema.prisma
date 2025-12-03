@@ -46,6 +46,7 @@ model Reservation {
   checkIns           CheckIn[]
   invoice            Invoice?
   addOnServices      ReservationAddOn[]
+  activityLogs       ReservationActivityLog[]
   // customer relation removed - use customerServiceClient.getCustomer(customerId, tenantId)
   // pet relation removed - use customerServiceClient.getPet(petId, tenantId)
   resource           Resource?          @relation(fields: [resourceId], references: [id])
@@ -789,6 +790,51 @@ enum ScheduleStatus {
   COMPLETED
   CANCELLED
   NO_SHOW
+}
+
+enum ReservationActivityType {
+  CREATED
+  UPDATED
+  STATUS_CHANGED
+  CHECKED_IN
+  CHECKED_OUT
+  CANCELLED
+  CONFIRMED
+  PAYMENT_RECEIVED
+  NOTE_ADDED
+  RESOURCE_ASSIGNED
+  STAFF_ASSIGNED
+  ADDON_ADDED
+  ADDON_REMOVED
+}
+
+enum ActivityActorType {
+  CUSTOMER
+  EMPLOYEE
+  SYSTEM
+}
+
+model ReservationActivityLog {
+  id             String                    @id @default(uuid())
+  tenantId       String                    @default("dev")
+  reservationId  String
+  activityType   ReservationActivityType
+  actorType      ActivityActorType
+  actorId        String?                   // customerId or staffId depending on actorType
+  actorName      String?                   // Denormalized for display (e.g., "John Smith" or "Online Booking")
+  description    String                    // Human-readable description of the activity
+  previousValue  String?                   // JSON string of previous state (for changes)
+  newValue       String?                   // JSON string of new state (for changes)
+  ipAddress      String?                   // For audit purposes
+  userAgent      String?                   // For audit purposes
+  createdAt      DateTime                  @default(now())
+  reservation    Reservation               @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  @@index([reservationId], map: "reservation_activity_log_reservation_idx")
+  @@index([tenantId, reservationId], map: "reservation_activity_log_tenant_reservation_idx")
+  @@index([tenantId, createdAt], map: "reservation_activity_log_tenant_created_idx")
+  @@index([actorType, actorId], map: "reservation_activity_log_actor_idx")
+  @@map("reservation_activity_logs")
 }
 
 enum ServiceCategory {
