@@ -23,6 +23,51 @@ Multiple pets sharing same room:
 - SMS templates (reminders, alerts)
 - Welcome emails for new staff with password reset
 
+### CardConnect Sign Up
+
+- Payment processor integration
+- Merchant account setup flow
+- PCI compliance handling
+
+### Financial Import from Gingr
+
+- Import historical financial data
+- Transaction history migration
+- Balance reconciliation
+
+### Editable Service Agreement with Signature
+
+- Customizable service agreement templates
+- Digital signature capture
+- Agreement versioning and storage
+- Customer acknowledgment tracking
+
+### Tips System
+
+- Groomer-specific tips vs general tips
+- Tip allocation and tracking
+- Tip reporting for payroll
+
+### Commission Splitting for Groomers
+
+- Configurable commission rates per groomer
+- Commission calculation on services
+- Commission reporting and payouts
+
+### Picky Eater Reporting
+
+- Flag pets as picky eaters
+- Feeding notes and preferences
+- Meal tracking and alerts
+- Reports for staff awareness
+
+### Automated Repeating Schedules for Staff
+
+- Recurring schedule templates
+- Auto-generate weekly schedules
+- Schedule rotation patterns
+- Holiday/exception handling
+
 ---
 
 ## 🟠 This Month
