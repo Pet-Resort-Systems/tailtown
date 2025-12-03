@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect } from "react";
+import { getApiBaseUrl } from "../../services/api";
 import { Box, Button, Typography, Alert } from "@mui/material";
 import {
   ExitToApp as ExitIcon,
@@ -68,17 +69,10 @@ const ImpersonationBanner: React.FC<ImpersonationBannerProps> = ({
     try {
       const token = localStorage.getItem("superAdminAccessToken");
 
-      const getApiUrl = () => {
-        if (process.env.NODE_ENV === "production") {
-          return window.location.origin;
-        }
-        return process.env.REACT_APP_API_URL || "http://localhost:4004";
-      };
-
       if (session && token) {
         // End the impersonation session on backend
         await axios.post(
-          `${getApiUrl()}/api/super-admin/impersonate/end/${session.id}`,
+          `${getApiBaseUrl()}/api/super-admin/impersonate/end/${session.id}`,
           {},
           {
             headers: {

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { getApiBaseUrl } from "../../services/api";
 import {
   Container,
   Typography,
@@ -21,21 +22,27 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  Chip
-} from '@mui/material';
+  Chip,
+} from "@mui/material";
 import {
   CloudUpload as UploadIcon,
   Delete as DeleteIcon,
   Edit as EditIcon,
-  Add as AddIcon
-} from '@mui/icons-material';
+  Add as AddIcon,
+} from "@mui/icons-material";
 
 interface CustomIcon {
   id: string;
   name: string;
   label: string;
   description: string;
-  category: 'status' | 'payment' | 'communication' | 'service' | 'flag' | 'custom';
+  category:
+    | "status"
+    | "payment"
+    | "communication"
+    | "service"
+    | "flag"
+    | "custom";
   imageUrl: string;
   createdAt: string;
 }
@@ -45,57 +52,51 @@ const CustomIcons: React.FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingIcon, setEditingIcon] = useState<CustomIcon | null>(null);
   const [formData, setFormData] = useState({
-    name: '',
-    label: '',
-    description: '',
-    category: 'custom' as CustomIcon['category'],
+    name: "",
+    label: "",
+    description: "",
+    category: "custom" as CustomIcon["category"],
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [snackbar, setSnackbar] = useState({
     open: false,
-    message: '',
-    severity: 'success' as 'success' | 'error'
+    message: "",
+    severity: "success" as "success" | "error",
   });
-
-  // Helper to get API URL
-  const getApiUrl = () => {
-    if (process.env.NODE_ENV === 'production') {
-      return window.location.origin;
-    }
-    return process.env.REACT_APP_API_URL || 'http://localhost:4004';
-  };
 
   // Load icons from API
   const loadIcons = async () => {
     try {
-      const response = await fetch(`${getApiUrl()}/api/custom-icons`);
+      const response = await fetch(`${getApiBaseUrl()}/api/custom-icons`);
       const data = await response.json();
-      if (data.status === 'success') {
+      if (data.status === "success") {
         setCustomIcons(data.data);
       }
     } catch (error) {
-      console.error('Error loading icons:', error);
+      console.error("Error loading icons:", error);
     }
   };
 
   // Load icons on mount
-  React.useEffect(() => {
+  React.useEffect(
+    () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      loadIcons();
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    loadIcons();
-  },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  []);
+    []
+  );
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       // Validate file type
-      if (!file.type.startsWith('image/')) {
+      if (!file.type.startsWith("image/")) {
         setSnackbar({
           open: true,
-          message: 'Please select an image file',
-          severity: 'error'
+          message: "Please select an image file",
+          severity: "error",
         });
         return;
       }
@@ -104,14 +105,14 @@ const CustomIcons: React.FC = () => {
       if (file.size > 1024 * 1024) {
         setSnackbar({
           open: true,
-          message: 'Image must be smaller than 1MB',
-          severity: 'error'
+          message: "Image must be smaller than 1MB",
+          severity: "error",
         });
         return;
       }
 
       setSelectedFile(file);
-      
+
       // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -134,10 +135,10 @@ const CustomIcons: React.FC = () => {
     } else {
       setEditingIcon(null);
       setFormData({
-        name: '',
-        label: '',
-        description: '',
-        category: 'custom',
+        name: "",
+        label: "",
+        description: "",
+        category: "custom",
       });
       setPreviewUrl(null);
       setSelectedFile(null);
@@ -149,10 +150,10 @@ const CustomIcons: React.FC = () => {
     setDialogOpen(false);
     setEditingIcon(null);
     setFormData({
-      name: '',
-      label: '',
-      description: '',
-      category: 'custom',
+      name: "",
+      label: "",
+      description: "",
+      category: "custom",
     });
     setSelectedFile(null);
     setPreviewUrl(null);
@@ -163,8 +164,8 @@ const CustomIcons: React.FC = () => {
     if (!formData.name || !formData.label || !formData.description) {
       setSnackbar({
         open: true,
-        message: 'Please fill in all required fields',
-        severity: 'error'
+        message: "Please fill in all required fields",
+        severity: "error",
       });
       return;
     }
@@ -172,80 +173,85 @@ const CustomIcons: React.FC = () => {
     if (!editingIcon && !selectedFile) {
       setSnackbar({
         open: true,
-        message: 'Please select an image file',
-        severity: 'error'
+        message: "Please select an image file",
+        severity: "error",
       });
       return;
     }
 
     try {
       const formDataToSend = new FormData();
-      formDataToSend.append('name', formData.name);
-      formDataToSend.append('label', formData.label);
-      formDataToSend.append('description', formData.description);
-      formDataToSend.append('category', formData.category);
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("label", formData.label);
+      formDataToSend.append("description", formData.description);
+      formDataToSend.append("category", formData.category);
       if (selectedFile) {
-        formDataToSend.append('image', selectedFile);
+        formDataToSend.append("image", selectedFile);
       }
-      
-      const url = editingIcon 
-        ? `${getApiUrl()}/api/custom-icons/${editingIcon.id}`
-        : `${getApiUrl()}/api/custom-icons`;
-      
+
+      const url = editingIcon
+        ? `${getApiBaseUrl()}/api/custom-icons/${editingIcon.id}`
+        : `${getApiBaseUrl()}/api/custom-icons`;
+
       const response = await fetch(url, {
-        method: editingIcon ? 'PUT' : 'POST',
-        body: formDataToSend
+        method: editingIcon ? "PUT" : "POST",
+        body: formDataToSend,
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save icon');
+        throw new Error("Failed to save icon");
       }
 
       setSnackbar({
         open: true,
-        message: editingIcon ? 'Icon updated successfully' : 'Icon uploaded successfully',
-        severity: 'success'
+        message: editingIcon
+          ? "Icon updated successfully"
+          : "Icon uploaded successfully",
+        severity: "success",
       });
-      
+
       handleCloseDialog();
       loadIcons(); // Reload icons list
     } catch (error) {
-      console.error('Error saving icon:', error);
+      console.error("Error saving icon:", error);
       setSnackbar({
         open: true,
-        message: 'Failed to save icon',
-        severity: 'error'
+        message: "Failed to save icon",
+        severity: "error",
       });
     }
   };
 
   const handleDelete = async (iconId: string) => {
-    if (!window.confirm('Are you sure you want to delete this custom icon?')) {
+    if (!window.confirm("Are you sure you want to delete this custom icon?")) {
       return;
     }
 
     try {
-      const response = await fetch(`${getApiUrl()}/api/custom-icons/${iconId}`, { 
-        method: 'DELETE' 
-      });
-      
+      const response = await fetch(
+        `${getApiBaseUrl()}/api/custom-icons/${iconId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
       if (!response.ok) {
-        throw new Error('Failed to delete icon');
+        throw new Error("Failed to delete icon");
       }
-      
+
       setSnackbar({
         open: true,
-        message: 'Icon deleted successfully',
-        severity: 'success'
+        message: "Icon deleted successfully",
+        severity: "success",
       });
-      
+
       loadIcons(); // Reload icons list
     } catch (error) {
-      console.error('Error deleting icon:', error);
+      console.error("Error deleting icon:", error);
       setSnackbar({
         open: true,
-        message: 'Failed to delete icon',
-        severity: 'error'
+        message: "Failed to delete icon",
+        severity: "error",
       });
     }
   };
@@ -253,7 +259,14 @@ const CustomIcons: React.FC = () => {
   return (
     <Container maxWidth="lg">
       <Box sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
           <Box>
             <Typography variant="h4" gutterBottom>
               Custom Icons
@@ -273,18 +286,21 @@ const CustomIcons: React.FC = () => {
 
         <Alert severity="info" sx={{ mb: 3 }}>
           <Typography variant="body2">
-            <strong>Image Requirements:</strong> PNG, JPG, or SVG format • Maximum size: 1MB • Recommended size: 64x64px • Transparent background recommended
+            <strong>Image Requirements:</strong> PNG, JPG, or SVG format •
+            Maximum size: 1MB • Recommended size: 64x64px • Transparent
+            background recommended
           </Typography>
         </Alert>
 
         {customIcons.length === 0 ? (
-          <Paper sx={{ p: 6, textAlign: 'center' }}>
-            <UploadIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+          <Paper sx={{ p: 6, textAlign: "center" }}>
+            <UploadIcon sx={{ fontSize: 64, color: "text.secondary", mb: 2 }} />
             <Typography variant="h6" gutterBottom>
               No Custom Icons Yet
             </Typography>
             <Typography variant="body2" color="text.secondary" paragraph>
-              Upload your first custom icon to get started. Custom icons will appear alongside the built-in icons in the icon selector.
+              Upload your first custom icon to get started. Custom icons will
+              appear alongside the built-in icons in the icon selector.
             </Typography>
             <Button
               variant="contained"
@@ -300,28 +316,42 @@ const CustomIcons: React.FC = () => {
               <Grid item xs={12} sm={6} md={4} lg={3} key={icon.id}>
                 <Card>
                   <CardContent>
-                    <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+                    <Box
+                      sx={{ display: "flex", justifyContent: "center", mb: 2 }}
+                    >
                       <img
                         src={icon.imageUrl}
                         alt={icon.label}
-                        style={{ width: 64, height: 64, objectFit: 'contain' }}
+                        style={{ width: 64, height: 64, objectFit: "contain" }}
                       />
                     </Box>
                     <Typography variant="h6" align="center" gutterBottom>
                       {icon.label}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" align="center" paragraph>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      align="center"
+                      paragraph
+                    >
                       {icon.description}
                     </Typography>
-                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
                       <Chip label={icon.category} size="small" />
                     </Box>
                   </CardContent>
-                  <CardActions sx={{ justifyContent: 'center' }}>
-                    <IconButton size="small" onClick={() => handleOpenDialog(icon)}>
+                  <CardActions sx={{ justifyContent: "center" }}>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleOpenDialog(icon)}
+                    >
                       <EditIcon />
                     </IconButton>
-                    <IconButton size="small" color="error" onClick={() => handleDelete(icon.id)}>
+                    <IconButton
+                      size="small"
+                      color="error"
+                      onClick={() => handleDelete(icon.id)}
+                    >
                       <DeleteIcon />
                     </IconButton>
                   </CardActions>
@@ -332,17 +362,22 @@ const CustomIcons: React.FC = () => {
         )}
 
         {/* Upload/Edit Dialog */}
-        <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+        <Dialog
+          open={dialogOpen}
+          onClose={handleCloseDialog}
+          maxWidth="sm"
+          fullWidth
+        >
           <DialogTitle>
-            {editingIcon ? 'Edit Custom Icon' : 'Upload Custom Icon'}
+            {editingIcon ? "Edit Custom Icon" : "Upload Custom Icon"}
           </DialogTitle>
           <DialogContent>
             <Box sx={{ mt: 2 }}>
               {/* File Upload */}
-              <Box sx={{ mb: 3, textAlign: 'center' }}>
+              <Box sx={{ mb: 3, textAlign: "center" }}>
                 <input
                   accept="image/*"
-                  style={{ display: 'none' }}
+                  style={{ display: "none" }}
                   id="icon-file-upload"
                   type="file"
                   onChange={handleFileSelect}
@@ -354,19 +389,32 @@ const CustomIcons: React.FC = () => {
                     startIcon={<UploadIcon />}
                     fullWidth
                   >
-                    {selectedFile ? selectedFile.name : 'Select Image File'}
+                    {selectedFile ? selectedFile.name : "Select Image File"}
                   </Button>
                 </label>
-                
+
                 {previewUrl && (
-                  <Box sx={{ mt: 2, p: 2, border: '1px dashed', borderColor: 'divider', borderRadius: 1 }}>
-                    <Typography variant="caption" color="text.secondary" gutterBottom display="block">
+                  <Box
+                    sx={{
+                      mt: 2,
+                      p: 2,
+                      border: "1px dashed",
+                      borderColor: "divider",
+                      borderRadius: 1,
+                    }}
+                  >
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      gutterBottom
+                      display="block"
+                    >
                       Preview:
                     </Typography>
                     <img
                       src={previewUrl}
                       alt="Preview"
-                      style={{ width: 64, height: 64, objectFit: 'contain' }}
+                      style={{ width: 64, height: 64, objectFit: "contain" }}
                     />
                   </Box>
                 )}
@@ -377,7 +425,12 @@ const CustomIcons: React.FC = () => {
                 fullWidth
                 label="Icon Name (ID)"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value.toLowerCase().replace(/\s+/g, '_') })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    name: e.target.value.toLowerCase().replace(/\s+/g, "_"),
+                  })
+                }
                 placeholder="e.g., custom_vip"
                 helperText="Unique identifier for this icon (lowercase, underscores only)"
                 sx={{ mb: 2 }}
@@ -388,7 +441,9 @@ const CustomIcons: React.FC = () => {
                 fullWidth
                 label="Display Label"
                 value={formData.label}
-                onChange={(e) => setFormData({ ...formData, label: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, label: e.target.value })
+                }
                 placeholder="e.g., VIP Customer"
                 helperText="Text shown in the icon selector"
                 sx={{ mb: 2 }}
@@ -399,7 +454,9 @@ const CustomIcons: React.FC = () => {
                 fullWidth
                 label="Description"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="e.g., High-value customer requiring special attention"
                 helperText="Tooltip text shown when hovering over the icon"
                 multiline
@@ -412,7 +469,12 @@ const CustomIcons: React.FC = () => {
                 <InputLabel>Category</InputLabel>
                 <Select
                   value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value as CustomIcon['category'] })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      category: e.target.value as CustomIcon["category"],
+                    })
+                  }
                   label="Category"
                 >
                   <MenuItem value="status">Status</MenuItem>
@@ -428,7 +490,7 @@ const CustomIcons: React.FC = () => {
           <DialogActions>
             <Button onClick={handleCloseDialog}>Cancel</Button>
             <Button onClick={handleSave} variant="contained">
-              {editingIcon ? 'Update' : 'Upload'}
+              {editingIcon ? "Update" : "Upload"}
             </Button>
           </DialogActions>
         </Dialog>
@@ -439,7 +501,10 @@ const CustomIcons: React.FC = () => {
           autoHideDuration={6000}
           onClose={() => setSnackbar({ ...snackbar, open: false })}
         >
-          <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+          <Alert
+            severity={snackbar.severity}
+            onClose={() => setSnackbar({ ...snackbar, open: false })}
+          >
             {snackbar.message}
           </Alert>
         </Snackbar>

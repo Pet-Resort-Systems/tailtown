@@ -3,6 +3,7 @@
  */
 
 import React, { useState } from "react";
+import { getApiBaseUrl } from "../../../services/api";
 import {
   Box,
   Typography,
@@ -52,7 +53,7 @@ export default function ReviewStep() {
     setError(null);
 
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:4004";
+      const apiUrl = getApiBaseUrl();
 
       // Submit to onboarding API
       const response = await fetch(`${apiUrl}/api/onboarding/complete`, {

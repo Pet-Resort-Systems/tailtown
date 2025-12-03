@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import { getApiBaseUrl } from "../../services/api";
 import {
   Container,
   Typography,
@@ -29,16 +30,16 @@ import {
   Alert,
   Snackbar,
   Tabs,
-  Tab
-} from '@mui/material';
+  Tab,
+} from "@mui/material";
 import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
   Search as SearchIcon,
   Inventory as InventoryIcon,
-  Warning as WarningIcon
-} from '@mui/icons-material';
+  Warning as WarningIcon,
+} from "@mui/icons-material";
 
 interface Product {
   id: string;
@@ -72,100 +73,102 @@ const Products: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [currentTab, setCurrentTab] = useState(0);
   const [snackbar, setSnackbar] = useState({
     open: false,
-    message: '',
-    severity: 'success' as 'success' | 'error'
+    message: "",
+    severity: "success" as "success" | "error",
   });
 
   // Inventory adjustment state
   const [inventoryDialogOpen, setInventoryDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [inventoryAdjustment, setInventoryAdjustment] = useState({
-    quantity: '',
-    changeType: 'ADJUSTMENT',
-    reason: ''
+    quantity: "",
+    changeType: "ADJUSTMENT",
+    reason: "",
   });
 
   const [formData, setFormData] = useState({
-    sku: '',
-    name: '',
-    description: '',
-    categoryId: '',
-    price: '',
-    cost: '',
+    sku: "",
+    name: "",
+    description: "",
+    categoryId: "",
+    price: "",
+    cost: "",
     taxable: true,
     trackInventory: true,
-    currentStock: '0',
-    lowStockAlert: '',
-    reorderPoint: '',
-    reorderQuantity: '',
+    currentStock: "0",
+    lowStockAlert: "",
+    reorderPoint: "",
+    reorderQuantity: "",
     isService: false,
     isPackage: false,
-    isFeatured: false
+    isFeatured: false,
   });
 
-  useEffect(() => {
+  useEffect(
+    () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      loadProducts();
+      loadCategories();
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    loadProducts();
-    loadCategories();
-  },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  []);
+    []
+  );
 
-  useEffect(() => {
+  useEffect(
+    () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      filterProducts();
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    filterProducts();
-  },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  [products, searchQuery, selectedCategory, currentTab]);
-
-  // Helper to get dynamic API URL
-  const getApiUrl = () => {
-    if (process.env.NODE_ENV === 'production') {
-      return window.location.origin;
-    }
-    return process.env.REACT_APP_API_URL || 'http://localhost:4004';
-  };
+    [products, searchQuery, selectedCategory, currentTab]
+  );
 
   const loadProducts = async () => {
     try {
-      const apiUrl = getApiUrl();
-      const tenantId = localStorage.getItem('tailtown_tenant_id') || localStorage.getItem('tenantId') || 'dev';
+      const apiUrl = getApiBaseUrl();
+      const tenantId =
+        localStorage.getItem("tailtown_tenant_id") ||
+        localStorage.getItem("tenantId") ||
+        "dev";
       const response = await fetch(`${apiUrl}/api/products`, {
         headers: {
-          'x-tenant-id': tenantId
-        }
+          "x-tenant-id": tenantId,
+        },
       });
       const data = await response.json();
-      if (data.status === 'success') {
+      if (data.status === "success") {
         setProducts(data.data);
       }
     } catch (error) {
-      console.error('Error loading products:', error);
+      console.error("Error loading products:", error);
     }
   };
 
   const loadCategories = async () => {
     try {
-      const apiUrl = getApiUrl();
-      const tenantId = localStorage.getItem('tailtown_tenant_id') || localStorage.getItem('tenantId') || 'dev';
+      const apiUrl = getApiBaseUrl();
+      const tenantId =
+        localStorage.getItem("tailtown_tenant_id") ||
+        localStorage.getItem("tenantId") ||
+        "dev";
       const response = await fetch(`${apiUrl}/api/products/categories`, {
         headers: {
-          'x-tenant-id': tenantId
-        }
+          "x-tenant-id": tenantId,
+        },
       });
       const data = await response.json();
-      if (data.status === 'success') {
+      if (data.status === "success") {
         setCategories(data.data);
       }
     } catch (error) {
-      console.error('Error loading categories:', error);
+      console.error("Error loading categories:", error);
     }
   };
 
@@ -173,22 +176,24 @@ const Products: React.FC = () => {
     let filtered = products;
 
     // Filter by tab (All, Physical, Services, Packages)
-    if (currentTab === 1) filtered = filtered.filter(p => !p.isService && !p.isPackage);
-    if (currentTab === 2) filtered = filtered.filter(p => p.isService);
-    if (currentTab === 3) filtered = filtered.filter(p => p.isPackage);
+    if (currentTab === 1)
+      filtered = filtered.filter((p) => !p.isService && !p.isPackage);
+    if (currentTab === 2) filtered = filtered.filter((p) => p.isService);
+    if (currentTab === 3) filtered = filtered.filter((p) => p.isPackage);
 
     // Filter by category
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(p => p.categoryId === selectedCategory);
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter((p) => p.categoryId === selectedCategory);
     }
 
     // Filter by search
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(p =>
-        p.name.toLowerCase().includes(query) ||
-        (p.sku && p.sku.toLowerCase().includes(query)) ||
-        (p.description && p.description.toLowerCase().includes(query))
+      filtered = filtered.filter(
+        (p) =>
+          p.name.toLowerCase().includes(query) ||
+          (p.sku && p.sku.toLowerCase().includes(query)) ||
+          (p.description && p.description.toLowerCase().includes(query))
       );
     }
 
@@ -199,40 +204,40 @@ const Products: React.FC = () => {
     if (product) {
       setEditingProduct(product);
       setFormData({
-        sku: product.sku || '',
+        sku: product.sku || "",
         name: product.name,
-        description: product.description || '',
-        categoryId: product.categoryId || '',
+        description: product.description || "",
+        categoryId: product.categoryId || "",
         price: product.price.toString(),
-        cost: product.cost?.toString() || '',
+        cost: product.cost?.toString() || "",
         taxable: product.taxable,
         trackInventory: product.trackInventory,
         currentStock: product.currentStock.toString(),
-        lowStockAlert: product.lowStockAlert?.toString() || '',
-        reorderPoint: '',
-        reorderQuantity: '',
+        lowStockAlert: product.lowStockAlert?.toString() || "",
+        reorderPoint: "",
+        reorderQuantity: "",
         isService: product.isService,
         isPackage: product.isPackage,
-        isFeatured: product.isFeatured
+        isFeatured: product.isFeatured,
       });
     } else {
       setEditingProduct(null);
       setFormData({
-        sku: '',
-        name: '',
-        description: '',
-        categoryId: '',
-        price: '',
-        cost: '',
+        sku: "",
+        name: "",
+        description: "",
+        categoryId: "",
+        price: "",
+        cost: "",
         taxable: true,
         trackInventory: true,
-        currentStock: '0',
-        lowStockAlert: '',
-        reorderPoint: '',
-        reorderQuantity: '',
+        currentStock: "0",
+        lowStockAlert: "",
+        reorderPoint: "",
+        reorderQuantity: "",
         isService: false,
         isPackage: false,
-        isFeatured: false
+        isFeatured: false,
       });
     }
     setDialogOpen(true);
@@ -247,80 +252,95 @@ const Products: React.FC = () => {
     if (!formData.name || !formData.price) {
       setSnackbar({
         open: true,
-        message: 'Name and price are required',
-        severity: 'error'
+        message: "Name and price are required",
+        severity: "error",
       });
       return;
     }
 
     try {
-      const apiUrl = getApiUrl();
+      const apiUrl = getApiBaseUrl();
       const url = editingProduct
         ? `${apiUrl}/api/products/${editingProduct.id}`
         : `${apiUrl}/api/products`;
 
       const response = await fetch(url, {
-        method: editingProduct ? 'PUT' : 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'x-tenant-id': (localStorage.getItem('tailtown_tenant_id') || localStorage.getItem('tenantId') || 'dev')
+        method: editingProduct ? "PUT" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-tenant-id":
+            localStorage.getItem("tailtown_tenant_id") ||
+            localStorage.getItem("tenantId") ||
+            "dev",
         },
         body: JSON.stringify({
           ...formData,
           price: parseFloat(formData.price),
           cost: formData.cost ? parseFloat(formData.cost) : undefined,
           currentStock: parseInt(formData.currentStock),
-          lowStockAlert: formData.lowStockAlert ? parseInt(formData.lowStockAlert) : undefined,
-          reorderPoint: formData.reorderPoint ? parseInt(formData.reorderPoint) : undefined,
-          reorderQuantity: formData.reorderQuantity ? parseInt(formData.reorderQuantity) : undefined
-        })
+          lowStockAlert: formData.lowStockAlert
+            ? parseInt(formData.lowStockAlert)
+            : undefined,
+          reorderPoint: formData.reorderPoint
+            ? parseInt(formData.reorderPoint)
+            : undefined,
+          reorderQuantity: formData.reorderQuantity
+            ? parseInt(formData.reorderQuantity)
+            : undefined,
+        }),
       });
 
-      if (!response.ok) throw new Error('Failed to save product');
+      if (!response.ok) throw new Error("Failed to save product");
 
       setSnackbar({
         open: true,
-        message: editingProduct ? 'Product updated!' : 'Product created!',
-        severity: 'success'
+        message: editingProduct ? "Product updated!" : "Product created!",
+        severity: "success",
       });
 
       handleCloseDialog();
       loadProducts();
     } catch (error) {
-      console.error('Error saving product:', error);
+      console.error("Error saving product:", error);
       setSnackbar({
         open: true,
-        message: 'Failed to save product',
-        severity: 'error'
+        message: "Failed to save product",
+        severity: "error",
       });
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this product?')) return;
+    if (!window.confirm("Are you sure you want to delete this product?"))
+      return;
 
     try {
-      const apiUrl = getApiUrl();
+      const apiUrl = getApiBaseUrl();
       const response = await fetch(`${apiUrl}/api/products/${id}`, {
-        method: 'DELETE',
-        headers: { 'x-tenant-id': (localStorage.getItem('tailtown_tenant_id') || localStorage.getItem('tenantId') || 'dev') }
+        method: "DELETE",
+        headers: {
+          "x-tenant-id":
+            localStorage.getItem("tailtown_tenant_id") ||
+            localStorage.getItem("tenantId") ||
+            "dev",
+        },
       });
 
-      if (!response.ok) throw new Error('Failed to delete product');
+      if (!response.ok) throw new Error("Failed to delete product");
 
       setSnackbar({
         open: true,
-        message: 'Product deleted!',
-        severity: 'success'
+        message: "Product deleted!",
+        severity: "success",
       });
 
       loadProducts();
     } catch (error) {
-      console.error('Error deleting product:', error);
+      console.error("Error deleting product:", error);
       setSnackbar({
         open: true,
-        message: 'Failed to delete product',
-        severity: 'error'
+        message: "Failed to delete product",
+        severity: "error",
       });
     }
   };
@@ -336,9 +356,9 @@ const Products: React.FC = () => {
   const handleOpenInventoryDialog = (product: Product) => {
     setSelectedProduct(product);
     setInventoryAdjustment({
-      quantity: '',
-      changeType: 'ADJUSTMENT',
-      reason: ''
+      quantity: "",
+      changeType: "ADJUSTMENT",
+      reason: "",
     });
     setInventoryDialogOpen(true);
   };
@@ -352,46 +372,52 @@ const Products: React.FC = () => {
     if (!selectedProduct || !inventoryAdjustment.quantity) {
       setSnackbar({
         open: true,
-        message: 'Quantity is required',
-        severity: 'error'
+        message: "Quantity is required",
+        severity: "error",
       });
       return;
     }
 
     try {
-      const apiUrl = getApiUrl();
-      const response = await fetch(`${apiUrl}/api/products/${selectedProduct.id}/inventory/adjust`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-tenant-id': (localStorage.getItem('tailtown_tenant_id') || localStorage.getItem('tenantId') || 'dev')
-        },
-        body: JSON.stringify({
-          quantity: parseInt(inventoryAdjustment.quantity),
-          changeType: inventoryAdjustment.changeType,
-          reason: inventoryAdjustment.reason || undefined
-        })
-      });
+      const apiUrl = getApiBaseUrl();
+      const response = await fetch(
+        `${apiUrl}/api/products/${selectedProduct.id}/inventory/adjust`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-tenant-id":
+              localStorage.getItem("tailtown_tenant_id") ||
+              localStorage.getItem("tenantId") ||
+              "dev",
+          },
+          body: JSON.stringify({
+            quantity: parseInt(inventoryAdjustment.quantity),
+            changeType: inventoryAdjustment.changeType,
+            reason: inventoryAdjustment.reason || undefined,
+          }),
+        }
+      );
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to adjust inventory');
+        throw new Error(error.message || "Failed to adjust inventory");
       }
 
       setSnackbar({
         open: true,
-        message: 'Inventory adjusted successfully!',
-        severity: 'success'
+        message: "Inventory adjusted successfully!",
+        severity: "success",
       });
 
       handleCloseInventoryDialog();
       loadProducts();
     } catch (error: any) {
-      console.error('Error adjusting inventory:', error);
+      console.error("Error adjusting inventory:", error);
       setSnackbar({
         open: true,
-        message: error.message || 'Failed to adjust inventory',
-        severity: 'error'
+        message: error.message || "Failed to adjust inventory",
+        severity: "error",
       });
     }
   };
@@ -399,9 +425,20 @@ const Products: React.FC = () => {
   return (
     <Container maxWidth="xl">
       <Box sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
           <Typography variant="h4">Products & Inventory</Typography>
-          <Button variant="contained" startIcon={<AddIcon />} onClick={() => handleOpenDialog()}>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => handleOpenDialog()}
+          >
             Add Product
           </Button>
         </Box>
@@ -420,7 +457,7 @@ const Products: React.FC = () => {
                     <InputAdornment position="start">
                       <SearchIcon />
                     </InputAdornment>
-                  )
+                  ),
                 }}
               />
             </Grid>
@@ -433,8 +470,10 @@ const Products: React.FC = () => {
                   label="Category"
                 >
                   <MenuItem value="all">All Categories</MenuItem>
-                  {categories.map(cat => (
-                    <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
+                  {categories.map((cat) => (
+                    <MenuItem key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </MenuItem>
                   ))}
                 </Select>
               </FormControl>
@@ -443,11 +482,23 @@ const Products: React.FC = () => {
         </Paper>
 
         {/* Tabs */}
-        <Tabs value={currentTab} onChange={(e, v) => setCurrentTab(v)} sx={{ mb: 2 }}>
+        <Tabs
+          value={currentTab}
+          onChange={(e, v) => setCurrentTab(v)}
+          sx={{ mb: 2 }}
+        >
           <Tab label={`All (${products.length})`} />
-          <Tab label={`Physical Products (${products.filter(p => !p.isService && !p.isPackage).length})`} />
-          <Tab label={`Services (${products.filter(p => p.isService).length})`} />
-          <Tab label={`Packages (${products.filter(p => p.isPackage).length})`} />
+          <Tab
+            label={`Physical Products (${
+              products.filter((p) => !p.isService && !p.isPackage).length
+            })`}
+          />
+          <Tab
+            label={`Services (${products.filter((p) => p.isService).length})`}
+          />
+          <Tab
+            label={`Packages (${products.filter((p) => p.isPackage).length})`}
+          />
         </Tabs>
 
         {/* Products Table */}
@@ -467,8 +518,11 @@ const Products: React.FC = () => {
             </TableHead>
             <TableBody>
               {filteredProducts.map((product) => (
-                <TableRow key={product.id} sx={{ '&:hover': { bgcolor: 'action.hover' } }}>
-                  <TableCell>{product.sku || '-'}</TableCell>
+                <TableRow
+                  key={product.id}
+                  sx={{ "&:hover": { bgcolor: "action.hover" } }}
+                >
+                  <TableCell>{product.sku || "-"}</TableCell>
                   <TableCell>
                     <Box>
                       <Typography variant="body2" fontWeight="medium">
@@ -481,48 +535,84 @@ const Products: React.FC = () => {
                       )}
                     </Box>
                   </TableCell>
-                  <TableCell>{product.category?.name || '-'}</TableCell>
-                  <TableCell align="right">${Number(product.price).toFixed(2)}</TableCell>
+                  <TableCell>{product.category?.name || "-"}</TableCell>
+                  <TableCell align="right">
+                    ${Number(product.price).toFixed(2)}
+                  </TableCell>
                   <TableCell align="center">
                     {product.trackInventory && !product.isService ? (
-                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
-                        {isLowStock(product) && <WarningIcon color="warning" fontSize="small" />}
-                        <Typography variant="body2" color={isLowStock(product) ? 'warning.main' : 'inherit'}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: 0.5,
+                        }}
+                      >
+                        {isLowStock(product) && (
+                          <WarningIcon color="warning" fontSize="small" />
+                        )}
+                        <Typography
+                          variant="body2"
+                          color={
+                            isLowStock(product) ? "warning.main" : "inherit"
+                          }
+                        >
                           {product.currentStock}
                         </Typography>
                       </Box>
                     ) : (
-                      '-'
+                      "-"
                     )}
                   </TableCell>
                   <TableCell>
-                    {product.isService && <Chip label="Service" size="small" color="info" />}
-                    {product.isPackage && <Chip label="Package" size="small" color="secondary" />}
-                    {!product.isService && !product.isPackage && <Chip label="Product" size="small" />}
+                    {product.isService && (
+                      <Chip label="Service" size="small" color="info" />
+                    )}
+                    {product.isPackage && (
+                      <Chip label="Package" size="small" color="secondary" />
+                    )}
+                    {!product.isService && !product.isPackage && (
+                      <Chip label="Product" size="small" />
+                    )}
                   </TableCell>
                   <TableCell>
-                    {product.isFeatured && <Chip label="Featured" size="small" color="primary" sx={{ mr: 0.5 }} />}
+                    {product.isFeatured && (
+                      <Chip
+                        label="Featured"
+                        size="small"
+                        color="primary"
+                        sx={{ mr: 0.5 }}
+                      />
+                    )}
                     <Chip
-                      label={product.isActive ? 'Active' : 'Inactive'}
+                      label={product.isActive ? "Active" : "Inactive"}
                       size="small"
-                      color={product.isActive ? 'success' : 'default'}
+                      color={product.isActive ? "success" : "default"}
                     />
                   </TableCell>
                   <TableCell align="right">
                     {product.trackInventory && !product.isService && (
-                      <IconButton 
-                        size="small" 
-                        color="primary" 
+                      <IconButton
+                        size="small"
+                        color="primary"
                         onClick={() => handleOpenInventoryDialog(product)}
                         title="Adjust Inventory"
                       >
                         <InventoryIcon fontSize="small" />
                       </IconButton>
                     )}
-                    <IconButton size="small" onClick={() => handleOpenDialog(product)}>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleOpenDialog(product)}
+                    >
                       <EditIcon fontSize="small" />
                     </IconButton>
-                    <IconButton size="small" color="error" onClick={() => handleDelete(product.id)}>
+                    <IconButton
+                      size="small"
+                      color="error"
+                      onClick={() => handleDelete(product.id)}
+                    >
                       <DeleteIcon fontSize="small" />
                     </IconButton>
                   </TableCell>
@@ -531,7 +621,9 @@ const Products: React.FC = () => {
               {filteredProducts.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={8} align="center" sx={{ py: 4 }}>
-                    <Typography color="text.secondary">No products found</Typography>
+                    <Typography color="text.secondary">
+                      No products found
+                    </Typography>
                   </TableCell>
                 </TableRow>
               )}
@@ -540,8 +632,15 @@ const Products: React.FC = () => {
         </TableContainer>
 
         {/* Add/Edit Dialog */}
-        <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="md" fullWidth>
-          <DialogTitle>{editingProduct ? 'Edit Product' : 'Add Product'}</DialogTitle>
+        <Dialog
+          open={dialogOpen}
+          onClose={handleCloseDialog}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>
+            {editingProduct ? "Edit Product" : "Add Product"}
+          </DialogTitle>
           <DialogContent>
             <Grid container spacing={2} sx={{ mt: 1 }}>
               <Grid item xs={12} sm={6}>
@@ -549,7 +648,9 @@ const Products: React.FC = () => {
                   fullWidth
                   label="Product Name"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   required
                 />
               </Grid>
@@ -558,7 +659,9 @@ const Products: React.FC = () => {
                   fullWidth
                   label="SKU"
                   value={formData.sku}
-                  onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, sku: e.target.value })
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -566,7 +669,9 @@ const Products: React.FC = () => {
                   fullWidth
                   label="Description"
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   multiline
                   rows={2}
                 />
@@ -576,12 +681,16 @@ const Products: React.FC = () => {
                   <InputLabel>Category</InputLabel>
                   <Select
                     value={formData.categoryId}
-                    onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, categoryId: e.target.value })
+                    }
                     label="Category"
                   >
                     <MenuItem value="">None</MenuItem>
-                    {categories.map(cat => (
-                      <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
+                    {categories.map((cat) => (
+                      <MenuItem key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
@@ -592,9 +701,15 @@ const Products: React.FC = () => {
                   label="Price"
                   type="number"
                   value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, price: e.target.value })
+                  }
                   required
-                  InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">$</InputAdornment>
+                    ),
+                  }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -603,8 +718,14 @@ const Products: React.FC = () => {
                   label="Cost"
                   type="number"
                   value={formData.cost}
-                  onChange={(e) => setFormData({ ...formData, cost: e.target.value })}
-                  InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }}
+                  onChange={(e) =>
+                    setFormData({ ...formData, cost: e.target.value })
+                  }
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">$</InputAdornment>
+                    ),
+                  }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -613,7 +734,9 @@ const Products: React.FC = () => {
                   label="Current Stock"
                   type="number"
                   value={formData.currentStock}
-                  onChange={(e) => setFormData({ ...formData, currentStock: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, currentStock: e.target.value })
+                  }
                   disabled={formData.isService || !formData.trackInventory}
                 />
               </Grid>
@@ -623,7 +746,9 @@ const Products: React.FC = () => {
                   label="Low Stock Alert"
                   type="number"
                   value={formData.lowStockAlert}
-                  onChange={(e) => setFormData({ ...formData, lowStockAlert: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, lowStockAlert: e.target.value })
+                  }
                   disabled={formData.isService || !formData.trackInventory}
                 />
               </Grid>
@@ -632,7 +757,9 @@ const Products: React.FC = () => {
                   control={
                     <Checkbox
                       checked={formData.taxable}
-                      onChange={(e) => setFormData({ ...formData, taxable: e.target.checked })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, taxable: e.target.checked })
+                      }
                     />
                   }
                   label="Taxable"
@@ -641,7 +768,12 @@ const Products: React.FC = () => {
                   control={
                     <Checkbox
                       checked={formData.trackInventory}
-                      onChange={(e) => setFormData({ ...formData, trackInventory: e.target.checked })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          trackInventory: e.target.checked,
+                        })
+                      }
                       disabled={formData.isService}
                     />
                   }
@@ -651,7 +783,13 @@ const Products: React.FC = () => {
                   control={
                     <Checkbox
                       checked={formData.isService}
-                      onChange={(e) => setFormData({ ...formData, isService: e.target.checked, trackInventory: !e.target.checked })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          isService: e.target.checked,
+                          trackInventory: !e.target.checked,
+                        })
+                      }
                     />
                   }
                   label="Service (no inventory)"
@@ -660,7 +798,12 @@ const Products: React.FC = () => {
                   control={
                     <Checkbox
                       checked={formData.isFeatured}
-                      onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          isFeatured: e.target.checked,
+                        })
+                      }
                     />
                   }
                   label="Featured"
@@ -671,29 +814,38 @@ const Products: React.FC = () => {
           <DialogActions>
             <Button onClick={handleCloseDialog}>Cancel</Button>
             <Button onClick={handleSave} variant="contained">
-              {editingProduct ? 'Update' : 'Create'}
+              {editingProduct ? "Update" : "Create"}
             </Button>
           </DialogActions>
         </Dialog>
 
         {/* Inventory Adjustment Dialog */}
-        <Dialog open={inventoryDialogOpen} onClose={handleCloseInventoryDialog} maxWidth="sm" fullWidth>
-          <DialogTitle>
-            Adjust Inventory - {selectedProduct?.name}
-          </DialogTitle>
+        <Dialog
+          open={inventoryDialogOpen}
+          onClose={handleCloseInventoryDialog}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle>Adjust Inventory - {selectedProduct?.name}</DialogTitle>
           <DialogContent>
             <Box sx={{ mt: 2 }}>
               <Alert severity="info" sx={{ mb: 2 }}>
-                Current Stock: <strong>{selectedProduct?.currentStock || 0}</strong>
+                Current Stock:{" "}
+                <strong>{selectedProduct?.currentStock || 0}</strong>
               </Alert>
-              
+
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <FormControl fullWidth>
                     <InputLabel>Change Type</InputLabel>
                     <Select
                       value={inventoryAdjustment.changeType}
-                      onChange={(e) => setInventoryAdjustment({ ...inventoryAdjustment, changeType: e.target.value })}
+                      onChange={(e) =>
+                        setInventoryAdjustment({
+                          ...inventoryAdjustment,
+                          changeType: e.target.value,
+                        })
+                      }
                       label="Change Type"
                     >
                       <MenuItem value="PURCHASE">Purchase (Add Stock)</MenuItem>
@@ -705,36 +857,54 @@ const Products: React.FC = () => {
                     </Select>
                   </FormControl>
                 </Grid>
-                
+
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
                     label="Quantity"
                     type="number"
                     value={inventoryAdjustment.quantity}
-                    onChange={(e) => setInventoryAdjustment({ ...inventoryAdjustment, quantity: e.target.value })}
+                    onChange={(e) =>
+                      setInventoryAdjustment({
+                        ...inventoryAdjustment,
+                        quantity: e.target.value,
+                      })
+                    }
                     helperText="Use negative numbers to decrease stock (e.g., -5 for removing 5 items)"
                     required
                   />
                 </Grid>
-                
+
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
                     label="Reason (Optional)"
                     value={inventoryAdjustment.reason}
-                    onChange={(e) => setInventoryAdjustment({ ...inventoryAdjustment, reason: e.target.value })}
+                    onChange={(e) =>
+                      setInventoryAdjustment({
+                        ...inventoryAdjustment,
+                        reason: e.target.value,
+                      })
+                    }
                     multiline
                     rows={2}
                     placeholder="Enter reason for adjustment..."
                   />
                 </Grid>
-                
+
                 {inventoryAdjustment.quantity && (
                   <Grid item xs={12}>
-                    <Alert severity={parseInt(inventoryAdjustment.quantity) >= 0 ? 'success' : 'warning'}>
-                      New Stock: <strong>
-                        {(selectedProduct?.currentStock || 0) + parseInt(inventoryAdjustment.quantity || '0')}
+                    <Alert
+                      severity={
+                        parseInt(inventoryAdjustment.quantity) >= 0
+                          ? "success"
+                          : "warning"
+                      }
+                    >
+                      New Stock:{" "}
+                      <strong>
+                        {(selectedProduct?.currentStock || 0) +
+                          parseInt(inventoryAdjustment.quantity || "0")}
                       </strong>
                     </Alert>
                   </Grid>
@@ -744,7 +914,11 @@ const Products: React.FC = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseInventoryDialog}>Cancel</Button>
-            <Button onClick={handleInventoryAdjustment} variant="contained" color="primary">
+            <Button
+              onClick={handleInventoryAdjustment}
+              variant="contained"
+              color="primary"
+            >
               Adjust Inventory
             </Button>
           </DialogActions>
@@ -756,7 +930,10 @@ const Products: React.FC = () => {
           autoHideDuration={4000}
           onClose={() => setSnackbar({ ...snackbar, open: false })}
         >
-          <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+          <Alert
+            severity={snackbar.severity}
+            onClose={() => setSnackbar({ ...snackbar, open: false })}
+          >
             {snackbar.message}
           </Alert>
         </Snackbar>
