@@ -206,9 +206,24 @@ export const daysBetween = (
  * @returns Date object in local timezone
  */
 export const parseGingrDate = (
-  isoString: string | null | undefined
+  isoString: string | Date | null | undefined
 ): Date | null => {
   if (!isoString) return null;
+
+  // If already a Date object, return it directly
+  if (isoString instanceof Date) {
+    return isoString;
+  }
+
+  // Ensure we have a string before calling replace
+  if (typeof isoString !== "string") {
+    console.warn(
+      "parseGingrDate received non-string value:",
+      typeof isoString,
+      isoString
+    );
+    return null;
+  }
 
   // Remove the 'Z' suffix and parse as local time
   // "2025-11-20T06:30:00.000Z" -> "2025-11-20T06:30:00.000"
