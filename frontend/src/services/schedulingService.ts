@@ -3,6 +3,7 @@
  * API service for groomer appointments and training classes
  */
 
+import { getApiBaseUrl } from "./api";
 import {
   GroomerAppointment,
   GroomerBreak,
@@ -19,22 +20,17 @@ import {
   GroomerAppointmentFilters,
   TrainingClassFilters,
   AvailableGroomersQuery,
-} from '../types/scheduling';
+} from "../types/scheduling";
 // Helper to get tenant ID from localStorage
 const getTenantId = () => {
-  return localStorage.getItem('tailtown_tenant_id') || localStorage.getItem('tenantId') || 'dev';
+  return (
+    localStorage.getItem("tailtown_tenant_id") ||
+    localStorage.getItem("tenantId") ||
+    "dev"
+  );
 };
 
 // Use dynamic API URL based on environment
-const getApiBaseUrl = () => {
-  // In production, use the current origin (supports subdomains)
-  if (process.env.NODE_ENV === 'production') {
-    return window.location.origin;
-  }
-  // In development, use environment variable or localhost
-  return process.env.REACT_APP_API_URL || 'http://localhost:4004';
-};
-
 const API_BASE_URL = getApiBaseUrl();
 
 // ============================================
@@ -45,24 +41,26 @@ export const groomerAppointmentService = {
   /**
    * Get all groomer appointments with optional filters
    */
-  async getAll(filters?: GroomerAppointmentFilters): Promise<GroomerAppointment[]> {
+  async getAll(
+    filters?: GroomerAppointmentFilters
+  ): Promise<GroomerAppointment[]> {
     const params = new URLSearchParams();
-    if (filters?.groomerId) params.append('groomerId', filters.groomerId);
-    if (filters?.status) params.append('status', filters.status);
-    if (filters?.startDate) params.append('startDate', filters.startDate);
-    if (filters?.endDate) params.append('endDate', filters.endDate);
+    if (filters?.groomerId) params.append("groomerId", filters.groomerId);
+    if (filters?.status) params.append("status", filters.status);
+    if (filters?.startDate) params.append("startDate", filters.startDate);
+    if (filters?.endDate) params.append("endDate", filters.endDate);
 
     const response = await fetch(
       `${API_BASE_URL}/api/groomer-appointments?${params.toString()}`,
       {
         headers: {
-          'Content-Type': 'application/json',
-          'x-tenant-id': getTenantId() || 'dev',
+          "Content-Type": "application/json",
+          "x-tenant-id": getTenantId() || "dev",
         },
       }
     );
 
-    if (!response.ok) throw new Error('Failed to fetch groomer appointments');
+    if (!response.ok) throw new Error("Failed to fetch groomer appointments");
     const data = await response.json();
     return data.data;
   },
@@ -71,14 +69,17 @@ export const groomerAppointmentService = {
    * Get a single groomer appointment by ID
    */
   async getById(id: string): Promise<GroomerAppointment> {
-    const response = await fetch(`${API_BASE_URL}/api/groomer-appointments/${id}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
-      },
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/groomer-appointments/${id}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "x-tenant-id": getTenantId(),
+        },
+      }
+    );
 
-    if (!response.ok) throw new Error('Failed to fetch groomer appointment');
+    if (!response.ok) throw new Error("Failed to fetch groomer appointment");
     const data = await response.json();
     return data.data;
   },
@@ -86,17 +87,19 @@ export const groomerAppointmentService = {
   /**
    * Create a new groomer appointment
    */
-  async create(appointment: CreateGroomerAppointmentRequest): Promise<GroomerAppointment> {
+  async create(
+    appointment: CreateGroomerAppointmentRequest
+  ): Promise<GroomerAppointment> {
     const response = await fetch(`${API_BASE_URL}/api/groomer-appointments`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
+        "Content-Type": "application/json",
+        "x-tenant-id": getTenantId(),
       },
       body: JSON.stringify(appointment),
     });
 
-    if (!response.ok) throw new Error('Failed to create groomer appointment');
+    if (!response.ok) throw new Error("Failed to create groomer appointment");
     const data = await response.json();
     return data.data;
   },
@@ -108,16 +111,19 @@ export const groomerAppointmentService = {
     id: string,
     updates: UpdateGroomerAppointmentRequest
   ): Promise<GroomerAppointment> {
-    const response = await fetch(`${API_BASE_URL}/api/groomer-appointments/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
-      },
-      body: JSON.stringify(updates),
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/groomer-appointments/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "x-tenant-id": getTenantId(),
+        },
+        body: JSON.stringify(updates),
+      }
+    );
 
-    if (!response.ok) throw new Error('Failed to update groomer appointment');
+    if (!response.ok) throw new Error("Failed to update groomer appointment");
     const data = await response.json();
     return data.data;
   },
@@ -125,17 +131,23 @@ export const groomerAppointmentService = {
   /**
    * Reassign appointment to a different groomer
    */
-  async reassign(id: string, request: ReassignGroomerRequest): Promise<GroomerAppointment> {
-    const response = await fetch(`${API_BASE_URL}/api/groomer-appointments/${id}/reassign`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
-      },
-      body: JSON.stringify(request),
-    });
+  async reassign(
+    id: string,
+    request: ReassignGroomerRequest
+  ): Promise<GroomerAppointment> {
+    const response = await fetch(
+      `${API_BASE_URL}/api/groomer-appointments/${id}/reassign`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "x-tenant-id": getTenantId(),
+        },
+        body: JSON.stringify(request),
+      }
+    );
 
-    if (!response.ok) throw new Error('Failed to reassign groomer appointment');
+    if (!response.ok) throw new Error("Failed to reassign groomer appointment");
     const data = await response.json();
     return data.data;
   },
@@ -144,15 +156,18 @@ export const groomerAppointmentService = {
    * Start an appointment (mark as in progress)
    */
   async start(id: string): Promise<GroomerAppointment> {
-    const response = await fetch(`${API_BASE_URL}/api/groomer-appointments/${id}/start`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
-      },
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/groomer-appointments/${id}/start`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-tenant-id": getTenantId(),
+        },
+      }
+    );
 
-    if (!response.ok) throw new Error('Failed to start groomer appointment');
+    if (!response.ok) throw new Error("Failed to start groomer appointment");
     const data = await response.json();
     return data.data;
   },
@@ -161,16 +176,19 @@ export const groomerAppointmentService = {
    * Complete an appointment
    */
   async complete(id: string, notes?: string): Promise<GroomerAppointment> {
-    const response = await fetch(`${API_BASE_URL}/api/groomer-appointments/${id}/complete`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
-      },
-      body: JSON.stringify({ notes }),
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/groomer-appointments/${id}/complete`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-tenant-id": getTenantId(),
+        },
+        body: JSON.stringify({ notes }),
+      }
+    );
 
-    if (!response.ok) throw new Error('Failed to complete groomer appointment');
+    if (!response.ok) throw new Error("Failed to complete groomer appointment");
     const data = await response.json();
     return data.data;
   },
@@ -179,16 +197,19 @@ export const groomerAppointmentService = {
    * Cancel an appointment
    */
   async cancel(id: string, reason?: string): Promise<GroomerAppointment> {
-    const response = await fetch(`${API_BASE_URL}/api/groomer-appointments/${id}/cancel`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
-      },
-      body: JSON.stringify({ reason }),
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/groomer-appointments/${id}/cancel`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-tenant-id": getTenantId(),
+        },
+        body: JSON.stringify({ reason }),
+      }
+    );
 
-    if (!response.ok) throw new Error('Failed to cancel groomer appointment');
+    if (!response.ok) throw new Error("Failed to cancel groomer appointment");
     const data = await response.json();
     return data.data;
   },
@@ -197,15 +218,18 @@ export const groomerAppointmentService = {
    * Delete an appointment
    */
   async delete(id: string): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/api/groomer-appointments/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
-      },
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/groomer-appointments/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "x-tenant-id": getTenantId(),
+        },
+      }
+    );
 
-    if (!response.ok) throw new Error('Failed to delete groomer appointment');
+    if (!response.ok) throw new Error("Failed to delete groomer appointment");
   },
 
   /**
@@ -220,13 +244,13 @@ export const groomerAppointmentService = {
       `${API_BASE_URL}/api/groomers/${groomerId}/schedule?startDate=${startDate}&endDate=${endDate}`,
       {
         headers: {
-          'Content-Type': 'application/json',
-          'x-tenant-id': getTenantId() || 'dev',
+          "Content-Type": "application/json",
+          "x-tenant-id": getTenantId() || "dev",
         },
       }
     );
 
-    if (!response.ok) throw new Error('Failed to fetch groomer schedule');
+    if (!response.ok) throw new Error("Failed to fetch groomer schedule");
     const data = await response.json();
     return data.data;
   },
@@ -234,24 +258,26 @@ export const groomerAppointmentService = {
   /**
    * Get available groomers for a specific date/time
    */
-  async getAvailableGroomers(query: AvailableGroomersQuery): Promise<AvailableGroomer[]> {
+  async getAvailableGroomers(
+    query: AvailableGroomersQuery
+  ): Promise<AvailableGroomer[]> {
     const params = new URLSearchParams();
-    params.append('date', query.date);
-    params.append('time', query.time);
-    if (query.duration) params.append('duration', query.duration.toString());
-    if (query.serviceId) params.append('serviceId', query.serviceId);
+    params.append("date", query.date);
+    params.append("time", query.time);
+    if (query.duration) params.append("duration", query.duration.toString());
+    if (query.serviceId) params.append("serviceId", query.serviceId);
 
     const response = await fetch(
       `${API_BASE_URL}/api/groomers/available?${params.toString()}`,
       {
         headers: {
-          'Content-Type': 'application/json',
-          'x-tenant-id': getTenantId() || 'dev',
+          "Content-Type": "application/json",
+          "x-tenant-id": getTenantId() || "dev",
         },
       }
     );
 
-    if (!response.ok) throw new Error('Failed to fetch available groomers');
+    if (!response.ok) throw new Error("Failed to fetch available groomers");
     const data = await response.json();
     return data.data;
   },
@@ -267,23 +293,25 @@ export const trainingClassService = {
    */
   async getAll(filters?: TrainingClassFilters): Promise<TrainingClass[]> {
     const params = new URLSearchParams();
-    if (filters?.status) params.append('status', filters.status);
-    if (filters?.category) params.append('category', filters.category);
-    if (filters?.level) params.append('level', filters.level);
-    if (filters?.instructorId) params.append('instructorId', filters.instructorId);
-    if (filters?.isActive !== undefined) params.append('isActive', filters.isActive.toString());
+    if (filters?.status) params.append("status", filters.status);
+    if (filters?.category) params.append("category", filters.category);
+    if (filters?.level) params.append("level", filters.level);
+    if (filters?.instructorId)
+      params.append("instructorId", filters.instructorId);
+    if (filters?.isActive !== undefined)
+      params.append("isActive", filters.isActive.toString());
 
     const response = await fetch(
       `${API_BASE_URL}/api/training-classes?${params.toString()}`,
       {
         headers: {
-          'Content-Type': 'application/json',
-          'x-tenant-id': getTenantId() || 'dev',
+          "Content-Type": "application/json",
+          "x-tenant-id": getTenantId() || "dev",
         },
       }
     );
 
-    if (!response.ok) throw new Error('Failed to fetch training classes');
+    if (!response.ok) throw new Error("Failed to fetch training classes");
     const data = await response.json();
     return data.data;
   },
@@ -294,12 +322,12 @@ export const trainingClassService = {
   async getById(id: string): Promise<TrainingClass> {
     const response = await fetch(`${API_BASE_URL}/api/training-classes/${id}`, {
       headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
+        "Content-Type": "application/json",
+        "x-tenant-id": getTenantId(),
       },
     });
 
-    if (!response.ok) throw new Error('Failed to fetch training class');
+    if (!response.ok) throw new Error("Failed to fetch training class");
     const data = await response.json();
     return data.data;
   },
@@ -309,15 +337,15 @@ export const trainingClassService = {
    */
   async create(classData: CreateTrainingClassRequest): Promise<TrainingClass> {
     const response = await fetch(`${API_BASE_URL}/api/training-classes`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
+        "Content-Type": "application/json",
+        "x-tenant-id": getTenantId(),
       },
       body: JSON.stringify(classData),
     });
 
-    if (!response.ok) throw new Error('Failed to create training class');
+    if (!response.ok) throw new Error("Failed to create training class");
     const data = await response.json();
     return data.data;
   },
@@ -325,17 +353,20 @@ export const trainingClassService = {
   /**
    * Update a training class
    */
-  async update(id: string, updates: Partial<TrainingClass>): Promise<TrainingClass> {
+  async update(
+    id: string,
+    updates: Partial<TrainingClass>
+  ): Promise<TrainingClass> {
     const response = await fetch(`${API_BASE_URL}/api/training-classes/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
+        "Content-Type": "application/json",
+        "x-tenant-id": getTenantId(),
       },
       body: JSON.stringify(updates),
     });
 
-    if (!response.ok) throw new Error('Failed to update training class');
+    if (!response.ok) throw new Error("Failed to update training class");
     const data = await response.json();
     return data.data;
   },
@@ -345,30 +376,33 @@ export const trainingClassService = {
    */
   async delete(id: string): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/api/training-classes/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
+        "Content-Type": "application/json",
+        "x-tenant-id": getTenantId(),
       },
     });
 
-    if (!response.ok) throw new Error('Failed to delete training class');
+    if (!response.ok) throw new Error("Failed to delete training class");
   },
 
   /**
    * Duplicate a training class for the next session
    */
   async duplicate(id: string, startDate: string): Promise<TrainingClass> {
-    const response = await fetch(`${API_BASE_URL}/api/training-classes/${id}/duplicate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
-      },
-      body: JSON.stringify({ startDate }),
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/training-classes/${id}/duplicate`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-tenant-id": getTenantId(),
+        },
+        body: JSON.stringify({ startDate }),
+      }
+    );
 
-    if (!response.ok) throw new Error('Failed to duplicate training class');
+    if (!response.ok) throw new Error("Failed to duplicate training class");
     const data = await response.json();
     return data.data;
   },
@@ -377,14 +411,17 @@ export const trainingClassService = {
    * Get sessions for a training class
    */
   async getSessions(classId: string): Promise<ClassSession[]> {
-    const response = await fetch(`${API_BASE_URL}/api/training-classes/${classId}/sessions`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
-      },
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/training-classes/${classId}/sessions`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "x-tenant-id": getTenantId(),
+        },
+      }
+    );
 
-    if (!response.ok) throw new Error('Failed to fetch class sessions');
+    if (!response.ok) throw new Error("Failed to fetch class sessions");
     const data = await response.json();
     return data.data;
   },
@@ -392,17 +429,20 @@ export const trainingClassService = {
   /**
    * Update a class session
    */
-  async updateSession(id: string, updates: Partial<ClassSession>): Promise<ClassSession> {
+  async updateSession(
+    id: string,
+    updates: Partial<ClassSession>
+  ): Promise<ClassSession> {
     const response = await fetch(`${API_BASE_URL}/api/sessions/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
+        "Content-Type": "application/json",
+        "x-tenant-id": getTenantId(),
       },
       body: JSON.stringify(updates),
     });
 
-    if (!response.ok) throw new Error('Failed to update session');
+    if (!response.ok) throw new Error("Failed to update session");
     const data = await response.json();
     return data.data;
   },
@@ -412,14 +452,14 @@ export const trainingClassService = {
    */
   async startSession(id: string): Promise<ClassSession> {
     const response = await fetch(`${API_BASE_URL}/api/sessions/${id}/start`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
+        "Content-Type": "application/json",
+        "x-tenant-id": getTenantId(),
       },
     });
 
-    if (!response.ok) throw new Error('Failed to start session');
+    if (!response.ok) throw new Error("Failed to start session");
     const data = await response.json();
     return data.data;
   },
@@ -428,16 +468,19 @@ export const trainingClassService = {
    * Complete a class session
    */
   async completeSession(id: string, notes?: string): Promise<ClassSession> {
-    const response = await fetch(`${API_BASE_URL}/api/sessions/${id}/complete`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
-      },
-      body: JSON.stringify({ notes }),
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/sessions/${id}/complete`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-tenant-id": getTenantId(),
+        },
+        body: JSON.stringify({ notes }),
+      }
+    );
 
-    if (!response.ok) throw new Error('Failed to complete session');
+    if (!response.ok) throw new Error("Failed to complete session");
     const data = await response.json();
     return data.data;
   },
@@ -451,17 +494,23 @@ export const enrollmentService = {
   /**
    * Enroll a pet in a training class
    */
-  async enroll(classId: string, enrollment: EnrollInClassRequest): Promise<ClassEnrollment> {
-    const response = await fetch(`${API_BASE_URL}/api/training-classes/${classId}/enroll`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
-      },
-      body: JSON.stringify(enrollment),
-    });
+  async enroll(
+    classId: string,
+    enrollment: EnrollInClassRequest
+  ): Promise<ClassEnrollment> {
+    const response = await fetch(
+      `${API_BASE_URL}/api/training-classes/${classId}/enroll`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-tenant-id": getTenantId(),
+        },
+        body: JSON.stringify(enrollment),
+      }
+    );
 
-    if (!response.ok) throw new Error('Failed to enroll in class');
+    if (!response.ok) throw new Error("Failed to enroll in class");
     const data = await response.json();
     return data.data;
   },
@@ -472,12 +521,12 @@ export const enrollmentService = {
   async getById(id: string): Promise<ClassEnrollment> {
     const response = await fetch(`${API_BASE_URL}/api/enrollments/${id}`, {
       headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
+        "Content-Type": "application/json",
+        "x-tenant-id": getTenantId(),
       },
     });
 
-    if (!response.ok) throw new Error('Failed to fetch enrollment');
+    if (!response.ok) throw new Error("Failed to fetch enrollment");
     const data = await response.json();
     return data.data;
   },
@@ -485,17 +534,20 @@ export const enrollmentService = {
   /**
    * Update an enrollment
    */
-  async update(id: string, updates: Partial<ClassEnrollment>): Promise<ClassEnrollment> {
+  async update(
+    id: string,
+    updates: Partial<ClassEnrollment>
+  ): Promise<ClassEnrollment> {
     const response = await fetch(`${API_BASE_URL}/api/enrollments/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
+        "Content-Type": "application/json",
+        "x-tenant-id": getTenantId(),
       },
       body: JSON.stringify(updates),
     });
 
-    if (!response.ok) throw new Error('Failed to update enrollment');
+    if (!response.ok) throw new Error("Failed to update enrollment");
     const data = await response.json();
     return data.data;
   },
@@ -505,33 +557,36 @@ export const enrollmentService = {
    */
   async drop(id: string, reason?: string): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/api/enrollments/${id}/drop`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
+        "Content-Type": "application/json",
+        "x-tenant-id": getTenantId(),
       },
       body: JSON.stringify({ reason }),
     });
 
-    if (!response.ok) throw new Error('Failed to drop from class');
+    if (!response.ok) throw new Error("Failed to drop from class");
   },
 
   /**
    * Get customer's enrollments
    */
-  async getByCustomer(customerId: string, status?: string): Promise<ClassEnrollment[]> {
-    const params = status ? `?status=${status}` : '';
+  async getByCustomer(
+    customerId: string,
+    status?: string
+  ): Promise<ClassEnrollment[]> {
+    const params = status ? `?status=${status}` : "";
     const response = await fetch(
       `${API_BASE_URL}/api/customers/${customerId}/enrollments${params}`,
       {
         headers: {
-          'Content-Type': 'application/json',
-          'x-tenant-id': getTenantId() || 'dev',
+          "Content-Type": "application/json",
+          "x-tenant-id": getTenantId() || "dev",
         },
       }
     );
 
-    if (!response.ok) throw new Error('Failed to fetch customer enrollments');
+    if (!response.ok) throw new Error("Failed to fetch customer enrollments");
     const data = await response.json();
     return data.data;
   },
@@ -540,14 +595,17 @@ export const enrollmentService = {
    * Get pet's enrollment history
    */
   async getByPet(petId: string): Promise<ClassEnrollment[]> {
-    const response = await fetch(`${API_BASE_URL}/api/pets/${petId}/enrollments`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
-      },
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/pets/${petId}/enrollments`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "x-tenant-id": getTenantId(),
+        },
+      }
+    );
 
-    if (!response.ok) throw new Error('Failed to fetch pet enrollments');
+    if (!response.ok) throw new Error("Failed to fetch pet enrollments");
     const data = await response.json();
     return data.data;
   },
@@ -556,15 +614,18 @@ export const enrollmentService = {
    * Issue a certificate
    */
   async issueCertificate(id: string): Promise<ClassEnrollment> {
-    const response = await fetch(`${API_BASE_URL}/api/enrollments/${id}/certificate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
-      },
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/enrollments/${id}/certificate`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-tenant-id": getTenantId(),
+        },
+      }
+    );
 
-    if (!response.ok) throw new Error('Failed to issue certificate');
+    if (!response.ok) throw new Error("Failed to issue certificate");
     const data = await response.json();
     return data.data;
   },
@@ -577,16 +638,19 @@ export const enrollmentService = {
     petId: string,
     customerId: string
   ): Promise<ClassWaitlist> {
-    const response = await fetch(`${API_BASE_URL}/api/training-classes/${classId}/waitlist`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
-      },
-      body: JSON.stringify({ petId, customerId }),
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/training-classes/${classId}/waitlist`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-tenant-id": getTenantId(),
+        },
+        body: JSON.stringify({ petId, customerId }),
+      }
+    );
 
-    if (!response.ok) throw new Error('Failed to add to waitlist');
+    if (!response.ok) throw new Error("Failed to add to waitlist");
     const data = await response.json();
     return data.data;
   },
@@ -596,28 +660,31 @@ export const enrollmentService = {
    */
   async removeFromWaitlist(id: string): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/api/waitlist/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
+        "Content-Type": "application/json",
+        "x-tenant-id": getTenantId(),
       },
     });
 
-    if (!response.ok) throw new Error('Failed to remove from waitlist');
+    if (!response.ok) throw new Error("Failed to remove from waitlist");
   },
 
   /**
    * Get class waitlist
    */
   async getWaitlist(classId: string): Promise<ClassWaitlist[]> {
-    const response = await fetch(`${API_BASE_URL}/api/training-classes/${classId}/waitlist`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'x-tenant-id': getTenantId(),
-      },
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/training-classes/${classId}/waitlist`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "x-tenant-id": getTenantId(),
+        },
+      }
+    );
 
-    if (!response.ok) throw new Error('Failed to fetch waitlist');
+    if (!response.ok) throw new Error("Failed to fetch waitlist");
     const data = await response.json();
     return data.data;
   },

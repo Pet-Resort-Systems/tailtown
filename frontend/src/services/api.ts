@@ -95,12 +95,17 @@ const addResponseInterceptor = (instance: AxiosInstance) => {
  * Get API base URL - uses current origin in production for multi-tenant support
  */
 const getApiBaseUrl = (): string => {
-  // In production, use the current origin (supports subdomains like brangro.canicloud.com)
-  if (process.env.NODE_ENV === "production" && typeof window !== "undefined") {
+  // If REACT_APP_API_URL is explicitly set (dev), use it
+  // Otherwise use window.location.origin (production)
+  const envUrl = process.env.REACT_APP_API_URL;
+  if (envUrl && envUrl.length > 0) {
+    return envUrl;
+  }
+  // In production (no env var set), use current origin for multi-tenant support
+  if (typeof window !== "undefined") {
     return window.location.origin;
   }
-  // In development, use environment variable or localhost
-  return process.env.REACT_APP_API_URL || "http://localhost:4004";
+  return "http://localhost:4004";
 };
 
 /**
