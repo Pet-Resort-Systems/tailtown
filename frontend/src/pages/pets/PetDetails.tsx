@@ -147,6 +147,8 @@ const PetDetails = () => {
     veterinarianId: null,
     customerId: "",
     isActive: true,
+    deactivatedAt: null,
+    deactivationReason: null,
     petIcons: [],
     iconNotes: {},
     vaccinationStatus: undefined,
