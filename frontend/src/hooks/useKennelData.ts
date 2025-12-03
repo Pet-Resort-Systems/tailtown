@@ -312,10 +312,29 @@ export const useKennelData = ({
         reservationsData.length,
         "reservations"
       );
+
+      // Filter out reservations that haven't been paid/confirmed
+      // Only show CONFIRMED, CHECKED_IN, CHECKED_OUT, COMPLETED reservations on calendar
+      const confirmedReservations = reservationsData.filter(
+        (res: Reservation) => {
+          const status = res.status?.toUpperCase();
+          // Exclude PENDING, DRAFT, CANCELLED, NO_SHOW statuses
+          return (
+            status &&
+            !["PENDING", "DRAFT", "CANCELLED", "NO_SHOW"].includes(status)
+          );
+        }
+      );
+
+      console.log(
+        "[useKennelData] Confirmed reservations (excluding pending/draft):",
+        confirmedReservations.length,
+        "reservations"
+      );
       if (reservationsData.length > 0) {
         console.log("[useKennelData] First reservation:", reservationsData[0]);
       }
-      setReservations(reservationsData);
+      setReservations(confirmedReservations);
     } catch (error) {
       console.error("Error loading reservations:", error);
       setReservations([]);

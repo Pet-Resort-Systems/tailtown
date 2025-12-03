@@ -191,22 +191,24 @@ export const useDashboardData = () => {
         if (!resResponse?.pagination?.hasNextPage) break;
       }
 
-      let reservations = allReservations;
-      const reservationsResponse = { data: { reservations: allReservations } };
-      console.log(
-        "[Dashboard] Total reservations fetched:",
-        allReservations.length
-      );
+      // Filter out PENDING/DRAFT reservations - only show confirmed/paid reservations
+      const confirmedReservations = allReservations.filter((res: any) => {
+        const status = res.status?.toUpperCase();
+        // Exclude PENDING, DRAFT statuses (unpaid reservations)
+        return status && !["PENDING", "DRAFT"].includes(status);
+      });
 
       console.log(
-        "[Dashboard] Extracted reservations:",
-        reservations.length,
-        "reservations"
+        "[Dashboard] Total reservations fetched:",
+        allReservations.length,
+        "| Confirmed (excluding pending/draft):",
+        confirmedReservations.length
       );
 
       // Enhance reservations with vaccination icons
-      const enhancedReservations =
-        enhanceReservationsWithVaccinationIcons(reservations);
+      const enhancedReservations = enhanceReservationsWithVaccinationIcons(
+        confirmedReservations
+      );
       console.log("[Dashboard] Enhanced reservations with vaccination icons");
 
       // Calculate metrics using local timezone dates
