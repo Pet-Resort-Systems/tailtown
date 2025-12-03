@@ -1,5 +1,5 @@
-import api from './api';
-import { AxiosResponse } from 'axios';
+import api from "./api";
+import { AxiosResponse } from "axios";
 
 export interface PaginatedResponse<T> {
   status: string;
@@ -12,13 +12,13 @@ export interface PaginatedResponse<T> {
 export interface Pet {
   id: string;
   name: string;
-  type: 'DOG' | 'CAT' | 'OTHER';
+  type: "DOG" | "CAT" | "OTHER";
   breed: string | null;
   color: string | null;
   // Format: YYYY-MM-DD for input, ISO string for API
   birthdate: string | null;
   weight: number | null;
-  gender: 'MALE' | 'FEMALE' | null;
+  gender: "MALE" | "FEMALE" | null;
   isNeutered: boolean;
   microchipNumber: string | null;
   rabiesTagNumber: string | null;
@@ -38,6 +38,8 @@ export interface Pet {
     lastName: string;
   };
   isActive: boolean;
+  deactivatedAt?: string | null;
+  deactivationReason?: string | null;
   createdAt?: string;
   updatedAt?: string;
   medicalRecords?: any[];
@@ -47,7 +49,7 @@ export interface Pet {
   iconNotes?: { [iconId: string]: string };
   vaccinationStatus?: {
     [key: string]: {
-      status: 'CURRENT' | 'EXPIRED' | 'PENDING';
+      status: "CURRENT" | "EXPIRED" | "PENDING";
       lastGiven?: string;
       notes?: string;
     };
@@ -58,44 +60,52 @@ export interface Pet {
 }
 
 export const petService = {
-  getPetsByCustomer: async (customerId: string): Promise<PaginatedResponse<Pet>> => {
+  getPetsByCustomer: async (
+    customerId: string
+  ): Promise<PaginatedResponse<Pet>> => {
     try {
-      const response: AxiosResponse<PaginatedResponse<Pet>> = await api.get(`/api/pets/customer/${customerId}`);
+      const response: AxiosResponse<PaginatedResponse<Pet>> = await api.get(
+        `/api/pets/customer/${customerId}`
+      );
       return response.data;
     } catch (error: any) {
-      console.error('Error in getPetsByCustomer:', error);
+      console.error("Error in getPetsByCustomer:", error);
       throw error;
     }
   },
 
-  getAllPets: async (page = 1, limit = 10, search = ''): Promise<PaginatedResponse<Pet>> => {
+  getAllPets: async (
+    page = 1,
+    limit = 10,
+    search = ""
+  ): Promise<PaginatedResponse<Pet>> => {
     try {
-      const response: AxiosResponse = await api.get('/api/pets', {
+      const response: AxiosResponse = await api.get("/api/pets", {
         params: {
           page,
           limit,
-          search
-        }
+          search,
+        },
       });
-      
+
       // Return a properly formatted PaginatedResponse
       return {
-        status: response.data.status || 'success',
+        status: response.data.status || "success",
         results: response.data.results || 0,
         totalPages: response.data.totalPages || 1,
         currentPage: response.data.currentPage || page,
-        data: response.data.data || []
+        data: response.data.data || [],
       };
     } catch (error: any) {
-      console.error('Error in getAllPets:', error);
+      console.error("Error in getAllPets:", error);
       if (error.response) {
-        console.error('Response status:', error.response.status);
-        console.error('Response data:', error.response.data);
-        console.error('Response headers:', error.response.headers);
+        console.error("Response status:", error.response.status);
+        console.error("Response data:", error.response.data);
+        console.error("Response headers:", error.response.headers);
       } else if (error.request) {
-        console.error('No response received:', error.request);
+        console.error("No response received:", error.request);
       } else {
-        console.error('Error setting up request:', error.message);
+        console.error("Error setting up request:", error.message);
       }
       throw error;
     }
@@ -106,19 +116,19 @@ export const petService = {
       const response: AxiosResponse = await api.get(`/api/pets/${id}`);
       return response.data?.data;
     } catch (error: any) {
-      console.error('Error in getPetById:', error);
-      console.error('Response:', error.response);
+      console.error("Error in getPetById:", error);
+      console.error("Response:", error.response);
       throw error;
     }
   },
 
-  createPet: async (pet: Omit<Pet, 'id'>): Promise<Pet> => {
+  createPet: async (pet: Omit<Pet, "id">): Promise<Pet> => {
     try {
-      const response: AxiosResponse = await api.post('/api/pets', pet);
+      const response: AxiosResponse = await api.post("/api/pets", pet);
       return response.data?.data;
     } catch (error: any) {
-      console.error('Error in createPet:', error);
-      console.error('Response:', error.response);
+      console.error("Error in createPet:", error);
+      console.error("Response:", error.response);
       throw error;
     }
   },
@@ -128,8 +138,8 @@ export const petService = {
       const response: AxiosResponse = await api.put(`/api/pets/${id}`, pet);
       return response.data?.data;
     } catch (error: any) {
-      console.error('Error in updatePet:', error);
-      console.error('Response:', error.response);
+      console.error("Error in updatePet:", error);
+      console.error("Response:", error.response);
       throw error;
     }
   },
@@ -138,8 +148,8 @@ export const petService = {
     try {
       await api.delete(`/api/pets/${id}?permanent=true`);
     } catch (error: any) {
-      console.error('Error in deletePet:', error);
-      console.error('Response:', error.response);
+      console.error("Error in deletePet:", error);
+      console.error("Response:", error.response);
       throw error;
     }
   },
@@ -147,28 +157,34 @@ export const petService = {
   uploadPetPhoto: async (id: string, file: File): Promise<Pet> => {
     try {
       const formData = new FormData();
-      formData.append('photo', file);
+      formData.append("photo", file);
 
-      const response: AxiosResponse = await api.post(`/api/pets/${id}/photo`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response: AxiosResponse = await api.post(
+        `/api/pets/${id}/photo`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       return response.data?.data;
     } catch (error: any) {
-      console.error('Error in uploadPetPhoto:', error);
-      console.error('Response:', error.response);
+      console.error("Error in uploadPetPhoto:", error);
+      console.error("Response:", error.response);
       throw error;
     }
   },
 
   getPetMedicalRecords: async (id: string): Promise<any[]> => {
     try {
-      const response: AxiosResponse = await api.get(`/api/pets/${id}/medical-records`);
+      const response: AxiosResponse = await api.get(
+        `/api/pets/${id}/medical-records`
+      );
       return response.data?.data || [];
     } catch (error: any) {
-      console.error('Error in getPetMedicalRecords:', error);
-      console.error('Response:', error.response);
+      console.error("Error in getPetMedicalRecords:", error);
+      console.error("Response:", error.response);
       throw error;
     }
   },
@@ -178,8 +194,48 @@ export const petService = {
       // Use getAllPets with search parameter
       return await petService.getAllPets(1, 50, searchText);
     } catch (error: any) {
-      console.error('Error in searchPets:', error);
+      console.error("Error in searchPets:", error);
       throw error;
     }
-  }
+  },
+
+  /**
+   * Deactivate a pet (soft delete).
+   * Used when a pet passes away or is no longer a client.
+   * History is preserved but communications will stop.
+   */
+  deactivatePet: async (
+    id: string,
+    reason?: string,
+    deactivatedAt?: string
+  ): Promise<Pet> => {
+    try {
+      const response: AxiosResponse = await api.post(
+        `/api/pets/${id}/deactivate`,
+        {
+          reason,
+          deactivatedAt,
+        }
+      );
+      return response.data?.data;
+    } catch (error: any) {
+      console.error("Error in deactivatePet:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Reactivate a previously deactivated pet.
+   */
+  reactivatePet: async (id: string): Promise<Pet> => {
+    try {
+      const response: AxiosResponse = await api.post(
+        `/api/pets/${id}/reactivate`
+      );
+      return response.data?.data;
+    } catch (error: any) {
+      console.error("Error in reactivatePet:", error);
+      throw error;
+    }
+  },
 };
