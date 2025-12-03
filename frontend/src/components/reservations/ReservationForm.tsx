@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { getApiBaseUrl } from "../../services/api";
 import {
   Box,
   Button,
@@ -957,18 +958,11 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
       return;
     }
 
-    const getApiUrl = () => {
-      if (process.env.NODE_ENV === "production") {
-        return window.location.origin;
-      }
-      return process.env.REACT_APP_API_URL || "http://localhost:4003";
-    };
-
     console.log("Deleting reservation:", initialData.id);
     setDeleting(true);
     try {
       const response = await fetch(
-        `${getApiUrl()}/api/reservations/${initialData.id}`,
+        `${getApiBaseUrl()}/api/reservations/${initialData.id}`,
         {
           method: "DELETE",
           headers: {
