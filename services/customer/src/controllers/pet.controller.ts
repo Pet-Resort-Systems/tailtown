@@ -1,40 +1,52 @@
-import { Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
-import { AppError } from '../middleware/error.middleware';
-import { TenantRequest } from '../middleware/tenant.middleware';
-import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
+import { Response, NextFunction } from "express";
+import { PrismaClient } from "@prisma/client";
+import { AppError } from "../middleware/error.middleware";
+import { TenantRequest } from "../middleware/tenant.middleware";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
 
 const prisma = new PrismaClient();
 
 // Configure multer for file upload
 const storage = multer.diskStorage({
-  destination: (req: Express.Request, file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
-    const uploadDir = 'uploads/pets';
+  destination: (
+    req: Express.Request,
+    file: Express.Multer.File,
+    cb: (error: Error | null, destination: string) => void
+  ) => {
+    const uploadDir = "uploads/pets";
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
     cb(null, uploadDir);
   },
-  filename: (req: Express.Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'pet-' + uniqueSuffix + path.extname(file.originalname));
-  }
+  filename: (
+    req: Express.Request,
+    file: Express.Multer.File,
+    cb: (error: Error | null, filename: string) => void
+  ) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, "pet-" + uniqueSuffix + path.extname(file.originalname));
+  },
 });
 
 const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-  fileFilter: (req: Express.Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+  fileFilter: (
+    req: Express.Request,
+    file: Express.Multer.File,
+    cb: multer.FileFilterCallback
+  ) => {
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Invalid file type. Only JPEG, PNG and GIF are allowed.'));
+      cb(new Error("Invalid file type. Only JPEG, PNG and GIF are allowed."));
     }
-  }
-}).single('photo');
+  },
+}).single("photo");
 
 // Get all pets
 /**
@@ -53,46 +65,46 @@ export const getAllPets = async (
     // Process get all pets request
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
-    const search = String(req.query.search || '');
+    const search = String(req.query.search || "");
     const skip = (page - 1) * limit;
-    
+
     // Use tenant ID from middleware
     const tenantId = req.tenantId!;
-    
+
     // Build where clause with tenant filter
     const where: any = {
       tenantId,
     };
-    
+
     // Add search filter if provided
     if (search) {
       where.OR = [
-        { name: { contains: search, mode: 'insensitive' as const } },
-        { breed: { contains: search, mode: 'insensitive' as const } }
+        { name: { contains: search, mode: "insensitive" as const } },
+        { breed: { contains: search, mode: "insensitive" as const } },
       ];
     }
-    
+
     const [pets, total] = await prisma.$transaction([
       prisma.pet.findMany({
         where,
         skip,
         take: limit,
-        orderBy: { name: 'asc' },
+        orderBy: { name: "asc" },
         include: {
           owner: {
             select: {
               id: true,
               firstName: true,
-              lastName: true
-            }
-          }
-        }
+              lastName: true,
+            },
+          },
+        },
       }),
       prisma.pet.count({ where }),
     ]);
-    
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       results: total,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
@@ -118,16 +130,16 @@ export const getPetById = async (
       include: {
         medicalRecords: {
           orderBy: {
-            recordDate: 'desc'
-          }
-        }
-      }
+            recordDate: "desc",
+          },
+        },
+      },
     });
 
     // Photo handling removed as profilePhoto is not in the current schema
 
     if (!pet) {
-      return next(new AppError('Pet not found', 404));
+      return next(new AppError("Pet not found", 404));
     }
 
     // Populate vaccination data from medical records if not already set
@@ -140,20 +152,22 @@ export const getPetById = async (
         const desc = record.description.toLowerCase();
         let vaccineName = null;
 
-        if (desc.includes('rabies')) vaccineName = 'rabies';
-        else if (desc.includes('dhpp')) vaccineName = 'dhpp';
-        else if (desc.includes('bordetella')) vaccineName = 'bordetella';
-        else if (desc.includes('fvrcp')) vaccineName = 'fvrcp';
-        else if (desc.includes('lepto')) vaccineName = 'lepto';
-        else if (desc.includes('influenza')) vaccineName = 'influenza';
+        if (desc.includes("rabies")) vaccineName = "rabies";
+        else if (desc.includes("dhpp")) vaccineName = "dhpp";
+        else if (desc.includes("bordetella")) vaccineName = "bordetella";
+        else if (desc.includes("fvrcp")) vaccineName = "fvrcp";
+        else if (desc.includes("lepto")) vaccineName = "lepto";
+        else if (desc.includes("influenza")) vaccineName = "influenza";
 
         if (vaccineName && record.expirationDate) {
           const expDate = new Date(record.expirationDate);
           const today = new Date();
-          const status = expDate >= today ? 'CURRENT' : 'EXPIRED';
+          const status = expDate >= today ? "CURRENT" : "EXPIRED";
 
           vaccinationStatus[vaccineName] = { status };
-          vaccineExpirations[vaccineName] = record.expirationDate.toISOString().split('T')[0];
+          vaccineExpirations[vaccineName] = record.expirationDate
+            .toISOString()
+            .split("T")[0];
         }
       });
 
@@ -163,7 +177,7 @@ export const getPetById = async (
     }
 
     res.status(200).json({
-      status: 'success',
+      status: "success",
       data: pet,
     });
   } catch (error) {
@@ -179,22 +193,22 @@ export const getPetReservations = async (
 ) => {
   try {
     const { id } = req.params;
-    
+
     const pet = await prisma.pet.findUnique({
       where: { id },
       include: { reservations: true },
     });
-    
+
     if (!pet) {
-      return next(new AppError('Pet not found', 404));
+      return next(new AppError("Pet not found", 404));
     }
-    
+
     if (!pet || !pet.reservations || pet.reservations.length === 0) {
-      return next(new AppError('No reservations found for this pet', 404));
+      return next(new AppError("No reservations found for this pet", 404));
     }
-    
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       results: pet.reservations.length,
       data: pet.reservations,
     });
@@ -219,9 +233,9 @@ export const createPet = async (
   try {
     const tenantId = req.tenantId!;
     let petData = { ...req.body };
-    
+
     // Handle empty date strings
-    if (petData.birthdate === '') {
+    if (petData.birthdate === "") {
       petData.birthdate = null;
     } else if (petData.birthdate) {
       petData.birthdate = new Date(petData.birthdate);
@@ -230,48 +244,48 @@ export const createPet = async (
     // Handle vaccine data - keep as JSON strings, don't convert to Date objects
     if (petData.vaccineExpirations) {
       try {
-        if (typeof petData.vaccineExpirations === 'string') {
+        if (typeof petData.vaccineExpirations === "string") {
           petData.vaccineExpirations = JSON.parse(petData.vaccineExpirations);
         }
         // JSON fields need strings, not Date objects - leave dates as strings
       } catch (e) {
-        return next(new AppError('Invalid vaccine expiration data', 400));
+        return next(new AppError("Invalid vaccine expiration data", 400));
       }
     }
 
     // Handle vaccination status
     if (petData.vaccinationStatus) {
       try {
-        if (typeof petData.vaccinationStatus === 'string') {
+        if (typeof petData.vaccinationStatus === "string") {
           petData.vaccinationStatus = JSON.parse(petData.vaccinationStatus);
         }
       } catch (e) {
-        return next(new AppError('Invalid vaccination status data', 400));
+        return next(new AppError("Invalid vaccination status data", 400));
       }
     }
-    
+
     // Check if the customer exists
     const customer = await prisma.customer.findFirst({
-      where: { 
+      where: {
         id: petData.customerId,
-        tenantId
+        tenantId,
       },
     });
-    
+
     if (!customer) {
-      return next(new AppError('Customer not found', 404));
+      return next(new AppError("Customer not found", 404));
     }
-    
+
     // Add tenantId to pet data
     petData.tenantId = tenantId;
-    
+
     // Create the pet
     const newPet = await prisma.pet.create({
       data: petData,
     });
-    
+
     res.status(201).json({
-      status: 'success',
+      status: "success",
       data: newPet,
     });
   } catch (error) {
@@ -295,9 +309,9 @@ export const updatePet = async (
   try {
     const { id } = req.params;
     let petData = { ...req.body };
-    
+
     // Handle empty date strings
-    if (petData.birthdate === '') {
+    if (petData.birthdate === "") {
       petData.birthdate = null;
     } else if (petData.birthdate) {
       petData.birthdate = new Date(petData.birthdate);
@@ -306,59 +320,59 @@ export const updatePet = async (
     // Handle vaccine data - keep as JSON strings, don't convert to Date objects
     if (petData.vaccineExpirations) {
       try {
-        if (typeof petData.vaccineExpirations === 'string') {
+        if (typeof petData.vaccineExpirations === "string") {
           petData.vaccineExpirations = JSON.parse(petData.vaccineExpirations);
         }
         // JSON fields need strings, not Date objects - leave dates as strings
       } catch (e) {
-        return next(new AppError('Invalid vaccine expiration data', 400));
+        return next(new AppError("Invalid vaccine expiration data", 400));
       }
     }
 
     // Handle vaccination status
     if (petData.vaccinationStatus) {
       try {
-        if (typeof petData.vaccinationStatus === 'string') {
+        if (typeof petData.vaccinationStatus === "string") {
           petData.vaccinationStatus = JSON.parse(petData.vaccinationStatus);
         }
       } catch (e) {
-        return next(new AppError('Invalid vaccination status data', 400));
+        return next(new AppError("Invalid vaccination status data", 400));
       }
     }
-    
+
     // Check if pet exists and belongs to this tenant
     const existingPet = await prisma.pet.findFirst({
       where: {
         id,
-        tenantId: req.tenantId
-      }
+        tenantId: req.tenantId,
+      },
     });
-    
+
     if (!existingPet) {
-      return next(new AppError('Pet not found', 404));
+      return next(new AppError("Pet not found", 404));
     }
-    
+
     // If customerId is being updated, check if the customer exists and belongs to this tenant
     if (petData.customerId) {
       const customer = await prisma.customer.findFirst({
-        where: { 
+        where: {
           id: petData.customerId,
-          tenantId: req.tenantId
+          tenantId: req.tenantId,
         },
       });
-      
+
       if (!customer) {
-        return next(new AppError('Customer not found', 404));
+        return next(new AppError("Customer not found", 404));
       }
     }
-    
+
     const updatedPet = await prisma.pet.update({
       where: { id },
       data: petData,
     });
-    
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       data: updatedPet,
     });
   } catch (error) {
@@ -382,7 +396,7 @@ export const uploadPetPhoto = async (
     });
 
     if (!pet) {
-      return next(new AppError('Pet not found', 404));
+      return next(new AppError("Pet not found", 404));
     }
 
     // Handle file upload
@@ -394,7 +408,7 @@ export const uploadPetPhoto = async (
       }
 
       if (!req.file) {
-        return next(new AppError('No file uploaded', 400));
+        return next(new AppError("No file uploaded", 400));
       }
 
       // Delete old photo if it exists
@@ -407,7 +421,7 @@ export const uploadPetPhoto = async (
 
       // Update pet with new photo URL - use a simpler path without the /api prefix
       const photoUrl = `/uploads/pets/${path.basename(req.file.path)}`;
-      
+
       // Update pet with new photo URL
       const updatedPet = await prisma.pet.update({
         where: { id },
@@ -415,9 +429,9 @@ export const uploadPetPhoto = async (
       });
 
       res.status(200).json({
-        status: 'success',
+        status: "success",
         data: updatedPet,
-        message: 'Photo uploaded successfully'
+        message: "Photo uploaded successfully",
       });
     });
   } catch (error) {
@@ -433,23 +447,23 @@ export const getPetsByCustomer = async (
 ) => {
   try {
     const { customerId } = req.params;
-    
+
     // Check if customer exists
     const customer = await prisma.customer.findUnique({
       where: { id: customerId },
     });
-    
+
     if (!customer) {
-      return next(new AppError('Customer not found', 404));
+      return next(new AppError("Customer not found", 404));
     }
-    
+
     const pets = await prisma.pet.findMany({
       where: { customerId },
-      orderBy: { name: 'asc' },
+      orderBy: { name: "asc" },
     });
-    
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       results: pets.length,
       totalPages: 1,
       currentPage: 1,
@@ -467,14 +481,101 @@ export const deletePet = async (
 ) => {
   try {
     const { id } = req.params;
-    
+
     await prisma.pet.delete({
       where: { id },
     });
-    
+
     res.status(204).json({
-      status: 'success',
+      status: "success",
       data: null,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Deactivate a pet (soft delete).
+ * Sets isActive to false and records the deactivation date.
+ * Used when a pet passes away or is no longer a client.
+ * History is preserved but communications will stop.
+ */
+export const deactivatePet = async (
+  req: TenantRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const tenantId = req.tenantId!;
+    const { reason, deactivatedAt } = req.body;
+
+    // Check if pet exists and belongs to this tenant
+    const existingPet = await prisma.pet.findFirst({
+      where: { id, tenantId },
+    });
+
+    if (!existingPet) {
+      return next(new AppError("Pet not found", 404));
+    }
+
+    // Deactivate the pet
+    const updatedPet = await prisma.pet.update({
+      where: { id },
+      data: {
+        isActive: false,
+        deactivatedAt: deactivatedAt ? new Date(deactivatedAt) : new Date(),
+        deactivationReason: reason || null,
+      },
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "Pet has been deactivated",
+      data: updatedPet,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Reactivate a previously deactivated pet.
+ * Sets isActive to true and clears deactivation fields.
+ */
+export const reactivatePet = async (
+  req: TenantRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const tenantId = req.tenantId!;
+
+    // Check if pet exists and belongs to this tenant
+    const existingPet = await prisma.pet.findFirst({
+      where: { id, tenantId },
+    });
+
+    if (!existingPet) {
+      return next(new AppError("Pet not found", 404));
+    }
+
+    // Reactivate the pet
+    const updatedPet = await prisma.pet.update({
+      where: { id },
+      data: {
+        isActive: true,
+        deactivatedAt: null,
+        deactivationReason: null,
+      },
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "Pet has been reactivated",
+      data: updatedPet,
     });
   } catch (error) {
     next(error);

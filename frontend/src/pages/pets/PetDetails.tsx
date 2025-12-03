@@ -20,6 +20,11 @@ import {
   Autocomplete,
   FormGroup,
   FormLabel,
+  Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import VaccinationStatus from "../../components/VaccinationStatus";
@@ -112,6 +117,11 @@ const PetDetails = () => {
   });
 
   const [photoTimestamp, setPhotoTimestamp] = useState<number>(Date.now());
+  const [deactivateDialogOpen, setDeactivateDialogOpen] = useState(false);
+  const [deactivationReason, setDeactivationReason] = useState("");
+  const [deactivationDate, setDeactivationDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
 
   const [pet, setPet] = useState<
     Omit<Pet, "id" | "createdAt" | "updatedAt" | "medicalRecords">
@@ -427,6 +437,54 @@ const PetDetails = () => {
     }
   };
 
+  const handleDeactivate = async () => {
+    try {
+      setSaving(true);
+      await petService.deactivatePet(id!, deactivationReason, deactivationDate);
+      setDeactivateDialogOpen(false);
+      setSnackbar({
+        open: true,
+        message:
+          "Pet has been deactivated. History preserved, communications stopped.",
+        severity: "success",
+      });
+      // Reload pet data to show updated status
+      loadData();
+    } catch (err) {
+      console.error("Error deactivating pet:", err);
+      setSnackbar({
+        open: true,
+        message: "Error deactivating pet",
+        severity: "error",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleReactivate = async () => {
+    try {
+      setSaving(true);
+      await petService.reactivatePet(id!);
+      setSnackbar({
+        open: true,
+        message: "Pet has been reactivated",
+        severity: "success",
+      });
+      // Reload pet data to show updated status
+      loadData();
+    } catch (err) {
+      console.error("Error reactivating pet:", err);
+      setSnackbar({
+        open: true,
+        message: "Error reactivating pet",
+        severity: "error",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (loading) {
     return (
       <Container maxWidth="lg">
@@ -461,10 +519,44 @@ const PetDetails = () => {
           <Typography variant="h4">
             {isNewPet ? "New Pet" : pet.name}
           </Typography>
-          {!isNewPet && id && (
+          {!isNewPet && !pet.isActive && (
+            <Chip
+              label={`Deactivated${
+                pet.deactivatedAt
+                  ? ` on ${new Date(pet.deactivatedAt).toLocaleDateString()}`
+                  : ""
+              }`}
+              color="error"
+              size="small"
+            />
+          )}
+          {!isNewPet && id && pet.isActive && (
             <VaccineComplianceBadge petId={id} showDetails={true} />
           )}
         </Box>
+
+        {/* Deactivation Warning Banner */}
+        {!isNewPet && !pet.isActive && (
+          <Alert
+            severity="warning"
+            sx={{ mb: 2 }}
+            action={
+              <Button
+                color="inherit"
+                size="small"
+                onClick={handleReactivate}
+                disabled={saving}
+              >
+                Reactivate
+              </Button>
+            }
+          >
+            This pet has been deactivated
+            {pet.deactivationReason ? `: ${pet.deactivationReason}` : ""}.
+            Communications have been stopped and the pet will not appear in
+            active lists.
+          </Alert>
+        )}
 
         <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
@@ -1053,30 +1145,92 @@ const PetDetails = () => {
           </Box>
         </Paper>
 
-        <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSave}
-            disabled={saving}
-          >
-            {saving ? (
-              <CircularProgress size={24} />
-            ) : isNewPet ? (
-              "Create Pet"
-            ) : (
-              "Save Changes"
-            )}
-          </Button>
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={() => navigate("/pets")}
-            disabled={saving}
-          >
-            Cancel
-          </Button>
+        <Box
+          sx={{
+            mt: 3,
+            display: "flex",
+            gap: 2,
+            justifyContent: "space-between",
+          }}
+        >
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSave}
+              disabled={saving}
+            >
+              {saving ? (
+                <CircularProgress size={24} />
+              ) : isNewPet ? (
+                "Create Pet"
+              ) : (
+                "Save Changes"
+              )}
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => navigate("/pets")}
+              disabled={saving}
+            >
+              Cancel
+            </Button>
+          </Box>
+
+          {/* Deactivate Button - only show for existing active pets */}
+          {!isNewPet && pet.isActive && (
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={() => setDeactivateDialogOpen(true)}
+              disabled={saving}
+            >
+              Deactivate Pet
+            </Button>
+          )}
         </Box>
+
+        {/* Deactivation Dialog */}
+        <Dialog
+          open={deactivateDialogOpen}
+          onClose={() => setDeactivateDialogOpen(false)}
+        >
+          <DialogTitle>Deactivate Pet</DialogTitle>
+          <DialogContent>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              Deactivating a pet will preserve all history but stop all
+              communications regarding this pet. This is typically used when a
+              pet has passed away or is no longer a client.
+            </Typography>
+            <TextField
+              label="Date"
+              type="date"
+              value={deactivationDate}
+              onChange={(e) => setDeactivationDate(e.target.value)}
+              fullWidth
+              sx={{ mb: 2 }}
+              InputLabelProps={{ shrink: true }}
+            />
+            <TextField
+              label="Reason (optional)"
+              value={deactivationReason}
+              onChange={(e) => setDeactivationReason(e.target.value)}
+              fullWidth
+              multiline
+              rows={2}
+              placeholder="e.g., Passed away, Moved away, No longer a client"
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setDeactivateDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleDeactivate} color="error" disabled={saving}>
+              {saving ? <CircularProgress size={20} /> : "Deactivate"}
+            </Button>
+          </DialogActions>
+        </Dialog>
 
         <Snackbar
           open={snackbar.open}
