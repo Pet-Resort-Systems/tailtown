@@ -144,7 +144,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
   const [selectedService, setSelectedService] = useState<string>("");
   const [selectedGroomerId, setSelectedGroomerId] = useState<string>("");
   const [selectedSuiteType, setSelectedSuiteType] = useState<string>("");
-  const [selectedStatus, setSelectedStatus] = useState<string>("CONFIRMED");
+  const [selectedStatus, setSelectedStatus] = useState<string>("PENDING");
   const [startDate, setStartDate] = useState<Date | null>(
     defaultDates?.start || null
   );
@@ -2124,7 +2124,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                 <Select
                   labelId="status-select-label"
                   id="status-select"
-                  value={selectedStatus || "CONFIRMED"}
+                  value={selectedStatus || "PENDING"}
                   label="Reservation Status"
                   onChange={(e) => setSelectedStatus(e.target.value)}
                   displayEmpty
