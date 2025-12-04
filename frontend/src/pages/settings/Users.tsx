@@ -36,11 +36,13 @@ import {
   ArrowBack as ArrowBackIcon,
   Person as PersonIcon,
   Schedule as ScheduleIcon,
+  Percent as PercentIcon,
 } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import staffService, { Staff } from "../../services/staffService";
 import { CircularProgress, Alert, Snackbar } from "@mui/material";
 import StaffSchedulingTabs from "../../components/staff/StaffSchedulingTabs";
+import CommissionSettings from "../../components/staff/CommissionSettings";
 import {
   validatePassword,
   getPasswordStrength,
@@ -442,6 +444,13 @@ const Users: React.FC = () => {
                   aria-controls="staff-tabpanel-1"
                   iconPosition="start"
                 />
+                <Tab
+                  icon={<PercentIcon fontSize="small" />}
+                  label="Commissions"
+                  id="staff-tab-2"
+                  aria-controls="staff-tabpanel-2"
+                  iconPosition="start"
+                />
               </Tabs>
             </Box>
           )}
@@ -762,6 +771,23 @@ const Users: React.FC = () => {
                 <StaffSchedulingTabs
                   staffId={editingUser.id}
                   onSave={loadStaffMembers}
+                />
+              )}
+            </Box>
+          )}
+
+          {/* Commissions Tab */}
+          {editingUser && (
+            <Box
+              role="tabpanel"
+              hidden={dialogTabValue !== 2}
+              id="staff-tabpanel-2"
+              aria-labelledby="staff-tab-2"
+            >
+              {dialogTabValue === 2 && editingUser.id && (
+                <CommissionSettings
+                  staffId={editingUser.id}
+                  staffName={`${editingUser.firstName} ${editingUser.lastName}`}
                 />
               )}
             </Box>

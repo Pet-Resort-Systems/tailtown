@@ -63,6 +63,7 @@ import reportCardRoutes from "./routes/reportCard.routes";
 import daycarePassRoutes from "./routes/daycare-pass.routes";
 import auditLogRoutes from "./routes/audit-log.routes";
 import tipRoutes from "./routes/tip.routes";
+import commissionRoutes from "./routes/commission.routes";
 import featureFlagsRoutes from "./routes/feature-flags.routes";
 import { systemRoutes } from "./routes/system.routes";
 import onboardingRoutes from "./routes/onboarding.routes";
@@ -549,6 +550,7 @@ app.use("/api/schedules", requireTenant, authenticate, scheduleRoutes);
 app.use("/api/invoices", requireTenant, authenticate, invoiceRoutes);
 app.use("/api/payments", requireTenant, authenticate, paymentRoutes);
 app.use("/api/tips", requireTenant, authenticate, tipRoutes);
+app.use("/api/commissions", requireTenant, authenticate, commissionRoutes);
 app.use("/api/addons", requireTenant, authenticate, addonRoutes);
 app.use("/api/pets", requireTenant, authenticate, vaccineUploadRoutes);
 
