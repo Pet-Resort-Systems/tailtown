@@ -37,12 +37,14 @@ import {
   Person as PersonIcon,
   Schedule as ScheduleIcon,
   Percent as PercentIcon,
+  Repeat as RepeatIcon,
 } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import staffService, { Staff } from "../../services/staffService";
 import { CircularProgress, Alert, Snackbar } from "@mui/material";
 import StaffSchedulingTabs from "../../components/staff/StaffSchedulingTabs";
 import CommissionSettings from "../../components/staff/CommissionSettings";
+import ScheduleTemplates from "../../components/staff/ScheduleTemplates";
 import {
   validatePassword,
   getPasswordStrength,
@@ -451,6 +453,13 @@ const Users: React.FC = () => {
                   aria-controls="staff-tabpanel-2"
                   iconPosition="start"
                 />
+                <Tab
+                  icon={<RepeatIcon fontSize="small" />}
+                  label="Schedule Templates"
+                  id="staff-tab-3"
+                  aria-controls="staff-tabpanel-3"
+                  iconPosition="start"
+                />
               </Tabs>
             </Box>
           )}
@@ -786,6 +795,23 @@ const Users: React.FC = () => {
             >
               {dialogTabValue === 2 && editingUser.id && (
                 <CommissionSettings
+                  staffId={editingUser.id}
+                  staffName={`${editingUser.firstName} ${editingUser.lastName}`}
+                />
+              )}
+            </Box>
+          )}
+
+          {/* Schedule Templates Tab */}
+          {editingUser && (
+            <Box
+              role="tabpanel"
+              hidden={dialogTabValue !== 3}
+              id="staff-tabpanel-3"
+              aria-labelledby="staff-tab-3"
+            >
+              {dialogTabValue === 3 && editingUser.id && (
+                <ScheduleTemplates
                   staffId={editingUser.id}
                   staffName={`${editingUser.firstName} ${editingUser.lastName}`}
                 />

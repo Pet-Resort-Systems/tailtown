@@ -66,6 +66,7 @@ import tipRoutes from "./routes/tip.routes";
 import commissionRoutes from "./routes/commission.routes";
 import standingReservationRoutes from "./routes/standing-reservation.routes";
 import careTrackingRoutes from "./routes/care-tracking.routes";
+import scheduleTemplateRoutes from "./routes/schedule-template.routes";
 import featureFlagsRoutes from "./routes/feature-flags.routes";
 import { systemRoutes } from "./routes/system.routes";
 import onboardingRoutes from "./routes/onboarding.routes";
@@ -560,6 +561,12 @@ app.use(
   standingReservationRoutes
 );
 app.use("/api/care-tracking", requireTenant, authenticate, careTrackingRoutes);
+app.use(
+  "/api/schedule-templates",
+  requireTenant,
+  authenticate,
+  scheduleTemplateRoutes
+);
 app.use("/api/addons", requireTenant, authenticate, addonRoutes);
 app.use("/api/pets", requireTenant, authenticate, vaccineUploadRoutes);
 
