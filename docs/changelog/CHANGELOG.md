@@ -37,12 +37,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Files: `frontend/src/components/customers/PermanentDiscountSelector.tsx`, `services/customer/src/controllers/customer/customer-extras.controller.ts`
 
 - **Staff Commission System** - Configure commission rates for groomers, trainers, etc.
+
   - Percentage or flat-amount commission types
   - Link commissions to specific services
   - Commission calculation at checkout
   - Commission reporting by staff with date range filtering
   - New "Commissions" tab in staff settings
   - Files: `frontend/src/components/staff/CommissionSettings.tsx`, `services/customer/src/controllers/commission.controller.ts`
+
+- **Standing Reservations** - Create recurring reservation templates
+  - Support for DAILY, WEEKLY, BIWEEKLY, MONTHLY frequencies
+  - Select specific days of week or day of month
+  - Generate reservations ahead of time (configurable days)
+  - Skip individual instances with reason tracking
+  - Auto-confirm option for generated reservations
+  - New "Standing Reservations" tab in customer profile
+  - Files: `frontend/src/components/reservations/StandingReservations.tsx`, `services/customer/src/controllers/standing-reservation.controller.ts`
 
 ## [1.6.17] - 2025-12-03
 
