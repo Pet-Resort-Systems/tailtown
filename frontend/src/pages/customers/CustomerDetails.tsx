@@ -35,6 +35,7 @@ import AccountHistory from "../../components/customers/AccountHistory";
 import CustomerIconSelectorNew from "../../components/customers/CustomerIconSelectorNew";
 import CustomerIconBadges from "../../components/customers/CustomerIconBadges";
 import CustomerDaycarePasses from "../../components/customers/CustomerDaycarePasses";
+import PermanentDiscountSelector from "../../components/customers/PermanentDiscountSelector";
 import {
   CustomerAgreementHistory,
   ServiceAgreementSign,
@@ -565,6 +566,9 @@ const CustomerDetails: React.FC = () => {
           <>
             <TabPanel value={tabValue} index={0}>
               <CustomerForm />
+              {!isNewCustomer && id && (
+                <PermanentDiscountSelector customerId={id} />
+              )}
             </TabPanel>
             <TabPanel value={tabValue} index={1}>
               <PetsList />

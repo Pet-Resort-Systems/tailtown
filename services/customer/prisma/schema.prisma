@@ -34,6 +34,8 @@ model Customer {
   iconNotes        Json?                   // Custom notes for generic flag icons
   externalId       String?                 // ID from external system (Gingr, etc.) for migration tracking
   veterinarianId   String?                 // Link to preferred veterinarian
+  permanentCouponId String?                // Link to permanent discount coupon (military, senior, etc.)
+  permanentCoupon   Coupon?                @relation("CustomerPermanentCoupon", fields: [permanentCouponId], references: [id], onDelete: SetNull)
   isActive         Boolean                 @default(true)
   createdAt        DateTime                @default(now())
   updatedAt        DateTime                @updatedAt
@@ -902,6 +904,7 @@ model Coupon {
   createdAt              DateTime      @default(now())
   updatedAt              DateTime      @updatedAt
   usages                 CouponUsage[]
+  permanentCustomers     Customer[]    @relation("CustomerPermanentCoupon") // Customers with this as permanent discount
 
   @@unique([tenantId, code], map: "coupons_tenant_code_unique")
   @@index([tenantId, status], map: "coupons_tenant_status_idx")

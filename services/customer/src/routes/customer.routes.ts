@@ -7,6 +7,9 @@ import {
   deleteCustomer,
   getCustomerPets,
   getCustomerInvoices,
+  getCustomerPermanentCoupon,
+  setCustomerPermanentCoupon,
+  removeCustomerPermanentCoupon,
 } from "../controllers/customer";
 
 const router = Router();
@@ -31,5 +34,10 @@ router.put("/:id", updateCustomer);
 
 // DELETE a customer
 router.delete("/:id", deleteCustomer);
+
+// Permanent discount coupon routes
+router.get("/:id/permanent-coupon", getCustomerPermanentCoupon);
+router.put("/:id/permanent-coupon", setCustomerPermanentCoupon);
+router.delete("/:id/permanent-coupon", removeCustomerPermanentCoupon);
 
 export { router as customerRoutes };

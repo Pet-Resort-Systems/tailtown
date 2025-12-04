@@ -71,13 +71,13 @@ Multiple pets sharing same room:
 - Alerts for missed medications
 - Medication history per stay
 
-### Permanent Account Discounts
+### ~~Permanent Account Discounts~~ ✅ COMPLETED
 
-- Military discount
-- Senior discount
-- Multi-pet discount
-- Custom discount types per account
-- Auto-apply on invoices
+- ~~Military discount~~
+- ~~Senior discount~~
+- ~~Multi-pet discount~~
+- ~~Custom discount types per account~~
+- ~~Auto-apply on invoices~~
 
 ### Standing Reservations
 
