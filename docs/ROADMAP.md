@@ -64,12 +64,19 @@ Multiple pets sharing same room:
 - ~~Filter by date range, customer, amount~~
 - ~~Export to CSV/PDF~~
 
-### Medication Tracking During Stay
+### ~~Picky Eater Reporting~~ ✅ COMPLETED
 
-- Log medication administration times
-- Staff sign-off on each dose
-- Alerts for missed medications
-- Medication history per stay
+- ~~Flag pets as picky eaters~~
+- ~~Feeding notes and preferences~~
+- ~~Meal tracking and alerts~~
+- ~~Reports for staff awareness~~
+
+### ~~Medication Tracking During Stay~~ ✅ COMPLETED
+
+- ~~Log medication administration times~~
+- ~~Staff sign-off on each dose~~
+- ~~Alerts for missed medications~~
+- ~~Medication history per stay~~
 
 ### ~~Permanent Account Discounts~~ ✅ COMPLETED
 

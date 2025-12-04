@@ -95,6 +95,7 @@ model Pet {
   iconNotes          Json?           // Custom notes for generic flag icons
   externalId         String?         // ID from external system (Gingr, etc.) for migration tracking
   isActive           Boolean         @default(true)
+  isPickyEater       Boolean         @default(false) // Flag for picky eater tracking
   deactivatedAt      DateTime?       // Date when pet was deactivated (e.g., passed away)
   deactivationReason String?         // Optional reason for deactivation
   lastCheckIn        DateTime?
@@ -113,6 +114,9 @@ model Pet {
   waitlistEntries     WaitlistEntry[]
   reportCards         ReportCard[]
   standingReservations StandingReservation[]
+  feedingLogs         FeedingLog[]
+  medicationLogs      MedicationLog[]
+  medications         PetMedication[]
 
   @@index([customerId], map: "pets_customer_id_idx")
   @@index([isActive, type], map: "pets_active_type_idx")
@@ -244,6 +248,92 @@ model StandingReservationInstance {
   @@unique([standingReservationId, scheduledDate], map: "standing_instance_unique")
   @@index([tenantId, scheduledDate], map: "standing_instances_tenant_date_idx")
   @@map("standing_reservation_instances")
+}
+
+// ============================================
+// FEEDING & MEDICATION TRACKING
+// ============================================
+
+enum MealTime {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+}
+
+// Feeding log for tracking meal consumption (0-4 rating)
+model FeedingLog {
+  id            String    @id @default(uuid())
+  tenantId      String    @default("dev")
+  petId         String
+  pet           Pet       @relation(fields: [petId], references: [id], onDelete: Cascade)
+  reservationId String?   // Optional link to reservation
+  date          DateTime  // Date of the meal
+  mealTime      MealTime  // BREAKFAST, LUNCH, DINNER, SNACK
+  rating        Int       // 0=didn't eat, 1=ate little, 2=ate half, 3=ate most, 4=ate all
+  notes         String?   // Optional notes about the meal
+  foodType      String?   // What food was given
+  staffId       String    // Who logged this
+  staff         Staff     @relation(fields: [staffId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([petId, date, mealTime], map: "feeding_log_unique")
+  @@index([tenantId, date], map: "feeding_logs_tenant_date_idx")
+  @@index([tenantId, petId, date], map: "feeding_logs_tenant_pet_date_idx")
+  @@index([staffId], map: "feeding_logs_staff_idx")
+  @@map("feeding_logs")
+}
+
+// Pet medication schedule (what medications a pet needs)
+model PetMedication {
+  id                   String              @id @default(uuid())
+  tenantId             String              @default("dev")
+  petId                String
+  pet                  Pet                 @relation(fields: [petId], references: [id], onDelete: Cascade)
+  medicationName       String
+  dosage               String
+  frequency            String              // e.g., "twice daily", "every 8 hours"
+  administrationMethod String              // e.g., "oral", "topical", "injection"
+  timeOfDay            String[]            // e.g., ["08:00", "20:00"]
+  withFood             Boolean             @default(false)
+  specialInstructions  String?
+  startDate            DateTime?
+  endDate              DateTime?
+  prescribingVet       String?
+  isActive             Boolean             @default(true)
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  logs                 MedicationLog[]
+
+  @@index([tenantId, petId, isActive], map: "pet_medications_tenant_pet_active_idx")
+  @@map("pet_medications")
+}
+
+// Medication administration log
+model MedicationLog {
+  id              String        @id @default(uuid())
+  tenantId        String        @default("dev")
+  petId           String
+  pet             Pet           @relation(fields: [petId], references: [id], onDelete: Cascade)
+  medicationId    String
+  medication      PetMedication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+  reservationId   String?       // Optional link to reservation
+  scheduledTime   DateTime      // When medication was supposed to be given
+  administeredAt  DateTime?     // When medication was actually given (null if missed)
+  wasAdministered Boolean       @default(false)
+  staffId         String        // Who administered or logged this
+  staff           Staff         @relation(fields: [staffId], references: [id])
+  notes           String?       // Any notes about administration
+  skippedReason   String?       // Reason if medication was skipped
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([tenantId, scheduledTime], map: "medication_logs_tenant_time_idx")
+  @@index([tenantId, petId, scheduledTime], map: "medication_logs_tenant_pet_time_idx")
+  @@index([staffId], map: "medication_logs_staff_idx")
+  @@index([medicationId], map: "medication_logs_medication_idx")
+  @@map("medication_logs")
 }
 
 model Service {
@@ -415,6 +505,8 @@ model Staff {
   groomerTips          Tip[]                @relation("GroomerTips")
   commissions          StaffCommission[]    @relation("StaffCommissions")
   standingReservations StandingReservation[]
+  feedingLogs          FeedingLog[]
+  medicationLogs       MedicationLog[]
 
   @@unique([tenantId, email], map: "staff_tenant_email_unique")
   @@index([tenantId, isActive], map: "staff_tenant_active_idx")
