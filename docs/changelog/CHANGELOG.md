@@ -46,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Files: `frontend/src/components/staff/CommissionSettings.tsx`, `services/customer/src/controllers/commission.controller.ts`
 
 - **Standing Reservations** - Create recurring reservation templates
+
   - Support for DAILY, WEEKLY, BIWEEKLY, MONTHLY frequencies
   - Select specific days of week or day of month
   - Generate reservations ahead of time (configurable days)
@@ -53,6 +54,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Auto-confirm option for generated reservations
   - New "Standing Reservations" tab in customer profile
   - Files: `frontend/src/components/reservations/StandingReservations.tsx`, `services/customer/src/controllers/standing-reservation.controller.ts`
+
+- **Picky Eater Reporting** - Track feeding patterns for pets during stays
+
+  - Flag pets as picky eaters (auto-flags after 3+ low ratings)
+  - Meal tracking with 0-4 rating scale (0=didn't eat, 4=ate all)
+  - MealTime enum: BREAKFAST, LUNCH, DINNER, SNACK
+  - Mobile-friendly FeedingTracker component with emoji ratings
+  - Feeding reports with stats (average rating, low rating count)
+  - Auto-detects meal time based on current hour
+  - Files: `frontend/src/components/care-tracking/FeedingTracker.tsx`, `services/customer/src/controllers/care-tracking.controller.ts`
+
+- **Medication Tracking During Stay** - Log medication administration with staff sign-off
+
+  - PetMedication model for medication schedules (dosage, frequency, timing)
+  - MedicationLog model for administration tracking
+  - Staff sign-off on each dose with timestamp
+  - Skip medication with required reason
+  - Mobile-friendly MedicationTracker component
+  - Medication reports with administered/missed/pending stats
+  - Special instructions and "give with food" flags
+  - Files: `frontend/src/components/care-tracking/MedicationTracker.tsx`, `services/customer/src/controllers/care-tracking.controller.ts`
+
+- **Care Tracking Page** - Combined mobile interface at `/mobile/care-tracking`
+  - Tabbed interface for Feeding and Medications
+  - Lists all checked-in pets needing care
+  - Added to Pet Reports section in main app
+  - Files: `frontend/src/pages/care-tracking/CareTrackingPage.tsx`
 
 ## [1.6.17] - 2025-12-03
 
