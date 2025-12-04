@@ -138,18 +138,11 @@ const ServiceAgreements: React.FC = () => {
 
   useEffect(() => {
     loadTemplates();
-    // Load business name for merge fields
-    const loadBusinessName = async () => {
-      try {
-        const tenant = await tenantService.getCurrentTenant();
-        if (tenant?.businessName) {
-          setBusinessName(tenant.businessName);
-        }
-      } catch (err) {
-        console.warn("Could not load business name for merge fields");
-      }
-    };
-    loadBusinessName();
+    // Load business name for merge fields - use cached value to avoid API call
+    const cachedName = tenantService.getCachedBusinessName();
+    if (cachedName) {
+      setBusinessName(cachedName);
+    }
   }, [loadTemplates]);
 
   // Get content with merge fields replaced (preview mode - uses sample data)
