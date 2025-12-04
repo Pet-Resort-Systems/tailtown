@@ -9,6 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## [1.6.18] - 2025-12-04
+
+### Added
+
+- **Tipping System** - Complete tip collection and reporting for staff
+
+  - **Database Schema**: New `Tip` model with `TipType` (GROOMER/GENERAL) and `TipCollectionMethod` (ONLINE/TERMINAL/CASH) enums
+  - **API Endpoints**: Full CRUD at `/api/tips` plus reporting endpoints for groomer summaries and tip pool
+  - **Staff Checkout UI**: Tip selection step in checkout workflow with 15%, 20%, 25% presets and custom amounts
+  - **Online Checkout**: Tip selection integrated into customer booking flow
+  - **Tip Reporting Dashboard**: New "Tips" tab in Reports with groomer tips table, general pool breakdown, and CSV export
+  - Files: `services/customer/prisma/schema.prisma`, `services/customer/src/controllers/tip.controller.ts`, `frontend/src/components/checkout/TipSelection.tsx`, `frontend/src/pages/reports/TipReports.tsx`
+
+- **Calendar View Improvements** - Better date navigation
+  - Week view now starts with current date on far left (instead of Sunday)
+  - Shows 7 days forward from today
+  - Files: `frontend/src/components/calendar/KennelCalendar.tsx`, `frontend/src/components/calendar/SpecializedCalendar.tsx`, `frontend/src/components/calendar/base/BaseCalendar.tsx`
+
 ## [1.6.17] - 2025-12-03
 
 ### Fixed

@@ -26,7 +26,7 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({
   showHeader = true,
   allowEventCreation = true,
   allowEventEditing = true,
-  onEventChange,
+  onEventChange: _onEventChange,
   onDateSelect,
   onEventClick,
   children,

@@ -53,16 +53,16 @@ Multiple pets sharing same room:
 - ~~Online checkout tip integration~~
 - ~~Tip reporting dashboard for payroll~~
 
-### Calendar View Improvements
+### ~~Calendar View Improvements~~ ✅ COMPLETED
 
-- Start calendar with current date on far left
-- Better date navigation
+- ~~Start calendar with current date on far left~~
+- ~~Better date navigation~~
 
-### Outstanding Invoice Report
+### ~~Outstanding Invoice Report~~ ✅ COMPLETED
 
-- List all unpaid/overdue invoices
-- Filter by date range, customer, amount
-- Export to CSV/PDF
+- ~~List all unpaid/overdue invoices~~ (Available in Financial Reports)
+- ~~Filter by date range, customer, amount~~
+- ~~Export to CSV/PDF~~
 
 ### Medication Tracking During Stay
 
