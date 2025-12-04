@@ -35,12 +35,15 @@ Multiple pets sharing same room:
 - Transaction history migration
 - Balance reconciliation
 
-### Editable Service Agreement with Signature
+### ~~Editable Service Agreement with Signature~~ ✅ COMPLETED
 
-- Customizable service agreement templates
-- Digital signature capture
-- Agreement versioning and storage
-- Customer acknowledgment tracking
+- ~~Customizable service agreement templates~~
+- ~~Digital signature capture~~
+- ~~Agreement versioning and storage~~
+- ~~Customer acknowledgment tracking~~
+- ~~Custom questions with multiple types (Text, Currency, Yes/No, etc.)~~
+- ~~Merge fields for dynamic content ([Business Name], etc.)~~
+- ~~On-the-fly signing from customer profile~~
 
 ### Tips System
 

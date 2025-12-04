@@ -183,6 +183,35 @@ class TenantService {
   }
 
   /**
+   * Get current tenant info (for merge fields, etc.)
+   */
+  async getCurrentTenant(): Promise<Tenant | null> {
+    try {
+      const response = await axios.get(`${API_URL}/api/tenants/me`, {
+        headers: getAuthHeaders(),
+      });
+      const tenant = response.data.data || response.data;
+
+      // Cache business name for merge fields
+      if (tenant?.businessName) {
+        localStorage.setItem("tenant_businessName", tenant.businessName);
+      }
+
+      return tenant;
+    } catch (error) {
+      console.warn("Could not fetch current tenant:", error);
+      return null;
+    }
+  }
+
+  /**
+   * Get cached business name (for merge fields without API call)
+   */
+  getCachedBusinessName(): string {
+    return localStorage.getItem("tenant_businessName") || "";
+  }
+
+  /**
    * Create new tenant
    */
   async createTenant(data: CreateTenantDto): Promise<Tenant> {

@@ -164,11 +164,24 @@ addRequestInterceptor(customerApi);
 addResponseInterceptor(customerApi);
 
 /**
+ * Get the base URL for the Reservation API
+ * Uses REACT_APP_RESERVATION_API_URL in development, falls back to same origin in production
+ */
+const getReservationApiBaseUrl = (): string => {
+  const envUrl = process.env.REACT_APP_RESERVATION_API_URL;
+  if (envUrl && envUrl.length > 0) {
+    return envUrl;
+  }
+  // Fall back to main API URL (nginx routes to correct service in production)
+  return getApiBaseUrl();
+};
+
+/**
  * Reservation Service API client
  * Handles reservation and resource operations
  */
 const reservationApi = axios.create({
-  baseURL: getApiBaseUrl(), // Use same base URL as customer API (nginx routes to correct service)
+  baseURL: getReservationApiBaseUrl(),
   headers: {
     ...defaultHeaders,
   },

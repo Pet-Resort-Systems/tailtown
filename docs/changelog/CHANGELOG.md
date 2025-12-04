@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## [1.6.16] - 2025-12-03
+
+### Added
+
+- **Service Agreement System** - Complete digital service agreement workflow
+  - **Customizable Templates**: Create and edit service agreement templates with rich text editor
+  - **Custom Questions**: Add questions to templates with multiple types (Text, Long Text, Number, Currency, Yes/No)
+  - **Merge Fields**: Dynamic placeholders like `[Business Name]` auto-replaced with tenant data
+  - **Digital Signature Capture**: Canvas-based signature capture on any device
+  - **On-the-fly Signing**: "Sign Agreement" button on customer profile for immediate signing
+  - **Agreement History**: View all signed agreements per customer in their profile's Agreements tab
+  - **Question Responses**: Capture and display customer responses to custom questions
+  - **Template Versioning**: Track template versions and changes over time
+  - **Auto-default Template**: Single template automatically set as default
+  - Files: `frontend/src/components/agreements/`, `frontend/src/pages/settings/ServiceAgreements.tsx`, `services/reservation-service/src/controllers/service-agreement.controller.ts`
+
 ## [1.6.15] - 2025-12-02
 
 ### Fixed

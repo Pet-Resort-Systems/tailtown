@@ -1,12 +1,15 @@
-import { Request, Response } from 'express';
-import { tenantService, CreateTenantDto, UpdateTenantDto } from '../services/tenant.service';
-import { TenantStatus } from '@prisma/client';
-import { AuthRequest } from '../middleware/auth.middleware';
-import { logger } from '../utils/logger';
-import { deleteCache, getCacheKey } from '../utils/redis';
+import { Request, Response } from "express";
+import {
+  tenantService,
+  CreateTenantDto,
+  UpdateTenantDto,
+} from "../services/tenant.service";
+import { TenantStatus } from "@prisma/client";
+import { AuthRequest } from "../middleware/auth.middleware";
+import { logger } from "../utils/logger";
+import { deleteCache, getCacheKey } from "../utils/redis";
 
 export class TenantController {
-  
   /**
    * GET /api/tenants
    * Get all tenants with optional filtering
@@ -17,21 +20,21 @@ export class TenantController {
 
       const filters: any = {};
       if (status) filters.status = status as TenantStatus;
-      if (isActive !== undefined) filters.isActive = isActive === 'true';
-      if (isPaused !== undefined) filters.isPaused = isPaused === 'true';
+      if (isActive !== undefined) filters.isActive = isActive === "true";
+      if (isPaused !== undefined) filters.isPaused = isPaused === "true";
 
       const tenants = await tenantService.getAllTenants(filters);
-      
+
       res.json({
         success: true,
         data: tenants,
         count: tenants.length,
       });
     } catch (error: any) {
-      logger.error('Error fetching tenants', { error: error.message });
+      logger.error("Error fetching tenants", { error: error.message });
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch tenants',
+        error: "Failed to fetch tenants",
         message: error.message,
       });
     }
@@ -49,7 +52,7 @@ export class TenantController {
       if (!tenant) {
         return res.status(404).json({
           success: false,
-          error: 'Tenant not found',
+          error: "Tenant not found",
         });
       }
 
@@ -58,10 +61,13 @@ export class TenantController {
         data: tenant,
       });
     } catch (error: any) {
-      logger.error('Error fetching tenant', { tenantId: req.params.id, error: error.message });
+      logger.error("Error fetching tenant", {
+        tenantId: req.params.id,
+        error: error.message,
+      });
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch tenant',
+        error: "Failed to fetch tenant",
         message: error.message,
       });
     }
@@ -79,7 +85,7 @@ export class TenantController {
       if (!tenant) {
         return res.status(404).json({
           success: false,
-          error: 'Tenant not found',
+          error: "Tenant not found",
         });
       }
 
@@ -88,10 +94,13 @@ export class TenantController {
         data: tenant,
       });
     } catch (error: any) {
-      logger.error('Error fetching tenant by subdomain', { subdomain: req.params.subdomain, error: error.message });
+      logger.error("Error fetching tenant by subdomain", {
+        subdomain: req.params.subdomain,
+        error: error.message,
+      });
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch tenant',
+        error: "Failed to fetch tenant",
         message: error.message,
       });
     }
@@ -106,15 +115,28 @@ export class TenantController {
       const data: CreateTenantDto = req.body;
 
       // Validate required fields
-      if (!data.businessName || !data.subdomain || !data.contactName || 
-          !data.contactEmail || !data.adminEmail || !data.adminPassword ||
-          !data.adminFirstName || !data.adminLastName) {
+      if (
+        !data.businessName ||
+        !data.subdomain ||
+        !data.contactName ||
+        !data.contactEmail ||
+        !data.adminEmail ||
+        !data.adminPassword ||
+        !data.adminFirstName ||
+        !data.adminLastName
+      ) {
         return res.status(400).json({
           success: false,
-          error: 'Missing required fields',
+          error: "Missing required fields",
           required: [
-            'businessName', 'subdomain', 'contactName', 'contactEmail',
-            'adminEmail', 'adminPassword', 'adminFirstName', 'adminLastName'
+            "businessName",
+            "subdomain",
+            "contactName",
+            "contactEmail",
+            "adminEmail",
+            "adminPassword",
+            "adminFirstName",
+            "adminLastName",
           ],
         });
       }
@@ -124,7 +146,8 @@ export class TenantController {
       if (!subdomainRegex.test(data.subdomain)) {
         return res.status(400).json({
           success: false,
-          error: 'Invalid subdomain format. Use lowercase letters, numbers, and hyphens only.',
+          error:
+            "Invalid subdomain format. Use lowercase letters, numbers, and hyphens only.",
         });
       }
 
@@ -133,12 +156,15 @@ export class TenantController {
       res.status(201).json({
         success: true,
         data: tenant,
-        message: 'Tenant created successfully',
+        message: "Tenant created successfully",
       });
     } catch (error: any) {
-      console.error('Error creating tenant:', error);
-      
-      if (error.message.includes('already taken') || error.message.includes('already registered')) {
+      console.error("Error creating tenant:", error);
+
+      if (
+        error.message.includes("already taken") ||
+        error.message.includes("already registered")
+      ) {
         return res.status(409).json({
           success: false,
           error: error.message,
@@ -147,7 +173,7 @@ export class TenantController {
 
       res.status(500).json({
         success: false,
-        error: 'Failed to create tenant',
+        error: "Failed to create tenant",
         message: error.message,
       });
     }
@@ -166,21 +192,66 @@ export class TenantController {
 
       // Invalidate tenant cache when updated
       if (tenant.subdomain) {
-        const cacheKey = getCacheKey('global', 'tenant', tenant.subdomain);
+        const cacheKey = getCacheKey("global", "tenant", tenant.subdomain);
         await deleteCache(cacheKey);
-        logger.debug('Tenant cache invalidated', { subdomain: tenant.subdomain, tenantId: id });
+        logger.debug("Tenant cache invalidated", {
+          subdomain: tenant.subdomain,
+          tenantId: id,
+        });
       }
 
       res.json({
         success: true,
         data: tenant,
-        message: 'Tenant updated successfully',
+        message: "Tenant updated successfully",
       });
     } catch (error: any) {
-      logger.error('Error updating tenant', { tenantId: req.params.id, error: error.message });
+      logger.error("Error updating tenant", {
+        tenantId: req.params.id,
+        error: error.message,
+      });
       res.status(500).json({
         success: false,
-        error: 'Failed to update tenant',
+        error: "Failed to update tenant",
+        message: error.message,
+      });
+    }
+  }
+
+  /**
+   * GET /api/tenants/me
+   * Get current tenant info (for merge fields, etc.)
+   */
+  async getCurrentTenant(req: AuthRequest, res: Response) {
+    try {
+      const tenantId = req.user?.tenantId || (req as any).tenantId;
+
+      if (!tenantId) {
+        return res.status(401).json({
+          success: false,
+          error: "Unauthorized",
+          message: "No tenant ID found in request",
+        });
+      }
+
+      const tenant = await tenantService.getTenantById(tenantId);
+
+      if (!tenant) {
+        return res.status(404).json({
+          success: false,
+          error: "Tenant not found",
+        });
+      }
+
+      res.json({
+        success: true,
+        data: tenant,
+      });
+    } catch (error: any) {
+      logger.error("Error fetching current tenant", { error: error.message });
+      res.status(500).json({
+        success: false,
+        error: "Failed to fetch tenant",
         message: error.message,
       });
     }
@@ -193,12 +264,12 @@ export class TenantController {
   async updateCurrentTenantSettings(req: AuthRequest, res: Response) {
     try {
       const tenantId = req.user?.tenantId;
-      
+
       if (!tenantId) {
         return res.status(401).json({
           success: false,
-          error: 'Unauthorized',
-          message: 'No tenant ID found in request',
+          error: "Unauthorized",
+          message: "No tenant ID found in request",
         });
       }
 
@@ -209,13 +280,13 @@ export class TenantController {
       res.json({
         success: true,
         data: tenant,
-        message: 'Settings updated successfully',
+        message: "Settings updated successfully",
       });
     } catch (error: any) {
-      console.error('Error updating tenant settings:', error);
+      console.error("Error updating tenant settings:", error);
       res.status(500).json({
         success: false,
-        error: 'Failed to update settings',
+        error: "Failed to update settings",
         message: error.message,
       });
     }
@@ -233,13 +304,13 @@ export class TenantController {
       res.json({
         success: true,
         data: tenant,
-        message: 'Tenant paused successfully',
+        message: "Tenant paused successfully",
       });
     } catch (error: any) {
-      console.error('Error pausing tenant:', error);
+      console.error("Error pausing tenant:", error);
       res.status(500).json({
         success: false,
-        error: 'Failed to pause tenant',
+        error: "Failed to pause tenant",
         message: error.message,
       });
     }
@@ -257,13 +328,13 @@ export class TenantController {
       res.json({
         success: true,
         data: tenant,
-        message: 'Tenant reactivated successfully',
+        message: "Tenant reactivated successfully",
       });
     } catch (error: any) {
-      console.error('Error reactivating tenant:', error);
+      console.error("Error reactivating tenant:", error);
       res.status(500).json({
         success: false,
-        error: 'Failed to reactivate tenant',
+        error: "Failed to reactivate tenant",
         message: error.message,
       });
     }
@@ -281,13 +352,13 @@ export class TenantController {
       res.json({
         success: true,
         data: tenant,
-        message: 'Tenant deleted successfully',
+        message: "Tenant deleted successfully",
       });
     } catch (error: any) {
-      console.error('Error deleting tenant:', error);
+      console.error("Error deleting tenant:", error);
       res.status(500).json({
         success: false,
-        error: 'Failed to delete tenant',
+        error: "Failed to delete tenant",
         message: error.message,
       });
     }
@@ -307,10 +378,10 @@ export class TenantController {
         data: usage,
       });
     } catch (error: any) {
-      console.error('Error fetching tenant usage:', error);
+      console.error("Error fetching tenant usage:", error);
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch tenant usage',
+        error: "Failed to fetch tenant usage",
         message: error.message,
       });
     }

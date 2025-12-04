@@ -556,6 +556,7 @@ model CheckIn {
   activities          Activity[]
   pet                 Pet          @relation(fields: [petId], references: [id])
   reservation         Reservation? @relation(fields: [reservationId], references: [id])
+  serviceAgreement    ServiceAgreement?
 
   @@index([checkInTime], map: "check_ins_time_idx")
   @@index([petId, checkInTime], map: "check_ins_pet_time_idx")
@@ -2574,4 +2575,85 @@ enum FeatureFlagCategory {
   FEATURE         // General features (AI, reports, etc.)
   BETA            // Beta/experimental features
   INTEGRATION     // Third-party integrations
+}
+
+// ============================================
+// SERVICE AGREEMENTS
+// ============================================
+
+model ServiceAgreementTemplate {
+  id          String                    @id @default(uuid())
+  tenantId    String                    @default("dev")
+  name        String
+  content     String                    // Rich text content (HTML)
+  version     Int                       @default(1)
+  isActive    Boolean                   @default(true)
+  isDefault   Boolean                   @default(false)
+  requiresInitials Boolean              @default(true)  // Require initials on each section
+  requiresSignature Boolean             @default(true)  // Require signature at end
+  questions   Json?                     // Array of custom questions: [{id, question, type, required, options?}]
+  effectiveDate DateTime?               // When this version becomes effective
+  expiresAt   DateTime?                 // Optional expiration date
+  createdBy   String?                   // Staff ID who created
+  updatedBy   String?                   // Staff ID who last updated
+  createdAt   DateTime                  @default(now())
+  updatedAt   DateTime                  @updatedAt
+  versions    ServiceAgreementVersion[]
+  agreements  ServiceAgreement[]        @relation("TemplateAgreements")
+
+  @@unique([tenantId, name], map: "service_agreement_templates_tenant_name_unique")
+  @@index([tenantId, isActive], map: "service_agreement_templates_tenant_active_idx")
+  @@index([tenantId, isDefault], map: "service_agreement_templates_tenant_default_idx")
+  @@map("service_agreement_templates")
+}
+
+model ServiceAgreementVersion {
+  id          String                   @id @default(uuid())
+  tenantId    String                   @default("dev")
+  templateId  String
+  version     Int
+  content     String                   // Snapshot of content at this version
+  changeNotes String?                  // Description of changes
+  createdBy   String?                  // Staff ID who created this version
+  createdAt   DateTime                 @default(now())
+  template    ServiceAgreementTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@unique([templateId, version], map: "service_agreement_versions_template_version_unique")
+  @@index([tenantId, templateId], map: "service_agreement_versions_tenant_template_idx")
+  @@map("service_agreement_versions")
+}
+
+model ServiceAgreement {
+  id              String                    @id @default(uuid())
+  tenantId        String                    @default("dev")
+  checkInId       String?                   @unique // Optional - can be signed without check-in
+  customerId      String                    // Customer who signed
+  petId           String?                   // Optional - specific pet if applicable
+  templateId      String?                   // Reference to template used
+  templateVersion Int?                      // Version of template at time of signing
+  agreementText   String                    // Full text at time of signing (snapshot)
+  initials        Json                      // Array of {section, initials, timestamp}
+  signature       String                    // Base64 signature image
+  signatureMethod String?                   // How signature was captured: 'device', 'terminal', 'paper'
+  signedBy        String                    // Name of person who signed
+  signedAt        DateTime
+  ipAddress       String?
+  userAgent       String?                   // Browser/device info
+  questionResponses Json?                   // Responses to custom questions: {questionId: response}
+  acknowledgedAt  DateTime?                 // When customer acknowledged (if separate from signing)
+  expiresAt       DateTime?                 // When this agreement expires (for renewals)
+  isValid         Boolean                   @default(true) // Can be invalidated if needed
+  invalidatedAt   DateTime?
+  invalidatedBy   String?
+  invalidReason   String?
+  createdAt       DateTime                  @default(now())
+  updatedAt       DateTime                  @updatedAt
+  checkIn         CheckIn?                  @relation(fields: [checkInId], references: [id], onDelete: SetNull)
+  template        ServiceAgreementTemplate? @relation("TemplateAgreements", fields: [templateId], references: [id])
+
+  @@index([tenantId], map: "service_agreements_tenant_idx")
+  @@index([tenantId, customerId], map: "service_agreements_tenant_customer_idx")
+  @@index([tenantId, customerId, signedAt], map: "service_agreements_tenant_customer_signed_idx")
+  @@index([tenantId, isValid], map: "service_agreements_tenant_valid_idx")
+  @@map("service_agreements")
 }
