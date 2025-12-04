@@ -186,6 +186,19 @@ class TenantService {
    * Get current tenant info (for merge fields, etc.)
    */
   async getCurrentTenant(): Promise<Tenant | null> {
+    // Check for cached data first to avoid unnecessary API calls
+    const cachedName = localStorage.getItem("tenant_businessName");
+
+    // Only make API call if we have a token (authenticated)
+    const token = localStorage.getItem("token");
+    if (!token) {
+      // Not authenticated - return cached data if available
+      if (cachedName) {
+        return { businessName: cachedName } as Tenant;
+      }
+      return null;
+    }
+
     try {
       const response = await axios.get(`${API_URL}/api/tenants/me`, {
         headers: getAuthHeaders(),
@@ -199,9 +212,7 @@ class TenantService {
 
       return tenant;
     } catch {
-      // Silently fail - this is expected when not authenticated
-      // Try to return cached data if available
-      const cachedName = localStorage.getItem("tenant_businessName");
+      // Silently fail - return cached data if available
       if (cachedName) {
         return { businessName: cachedName } as Tenant;
       }
