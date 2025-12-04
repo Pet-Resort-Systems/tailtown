@@ -19,9 +19,13 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
+import NightsStayIcon from "@mui/icons-material/NightsStay";
+import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -174,6 +178,15 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
     useState<boolean>(false);
   const [preSelectedResource, setPreSelectedResource] =
     useState<Resource | null>(null);
+
+  // Stay type: "boarding" (overnight) or "daycamp" (same day)
+  // Default times - these could come from tenant settings in the future
+  const DEFAULT_BOARDING_CHECKIN_HOUR = 15; // 3:00 PM
+  const DEFAULT_BOARDING_CHECKOUT_HOUR = 11; // 11:00 AM
+  const DEFAULT_DAYCAMP_DROPOFF_HOUR = 7; // 7:00 AM
+  const DEFAULT_DAYCAMP_PICKUP_HOUR = 18; // 6:00 PM
+
+  const [stayType, setStayType] = useState<"boarding" | "daycamp">("boarding");
 
   // Use a ref to track if the form has been initialized
   // This prevents multiple initializations that can cause select value errors
@@ -1246,6 +1259,80 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
               {error}
             </Alert>
           )}
+
+          {/* Stay Type Toggle - Boarding vs Daycamp */}
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>
+              Stay Type
+            </Typography>
+            <ToggleButtonGroup
+              value={stayType}
+              exclusive
+              onChange={(_, newStayType) => {
+                if (newStayType !== null) {
+                  setStayType(newStayType);
+
+                  // Adjust dates based on stay type
+                  if (startDate) {
+                    const newStartDate = new Date(startDate);
+                    const newEndDate = new Date(startDate);
+
+                    if (newStayType === "boarding") {
+                      // Boarding: Check-in at 3pm, check-out next day at 11am
+                      newStartDate.setHours(
+                        DEFAULT_BOARDING_CHECKIN_HOUR,
+                        0,
+                        0,
+                        0
+                      );
+                      newEndDate.setDate(newEndDate.getDate() + 1);
+                      newEndDate.setHours(
+                        DEFAULT_BOARDING_CHECKOUT_HOUR,
+                        0,
+                        0,
+                        0
+                      );
+                    } else {
+                      // Daycamp: Drop-off at 7am, pick-up same day at 6pm
+                      newStartDate.setHours(
+                        DEFAULT_DAYCAMP_DROPOFF_HOUR,
+                        0,
+                        0,
+                        0
+                      );
+                      newEndDate.setHours(DEFAULT_DAYCAMP_PICKUP_HOUR, 0, 0, 0);
+                    }
+
+                    setStartDate(newStartDate);
+                    setEndDate(newEndDate);
+                  }
+                }
+              }}
+              aria-label="stay type"
+              fullWidth
+              sx={{
+                "& .MuiToggleButton-root": {
+                  py: 1.5,
+                  "&.Mui-selected": {
+                    backgroundColor: "primary.main",
+                    color: "white",
+                    "&:hover": {
+                      backgroundColor: "primary.dark",
+                    },
+                  },
+                },
+              }}
+            >
+              <ToggleButton value="boarding" aria-label="boarding">
+                <NightsStayIcon sx={{ mr: 1 }} />
+                Boarding (Overnight)
+              </ToggleButton>
+              <ToggleButton value="daycamp" aria-label="daycamp">
+                <WbSunnyIcon sx={{ mr: 1 }} />
+                Daycamp (Same Day)
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
 
           {/* Display order number when editing an existing reservation */}
           {initialData && initialData.orderNumber && (
