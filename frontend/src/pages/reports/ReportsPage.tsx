@@ -26,6 +26,8 @@ import {
   Campaign as MarketingIcon,
   Build as ServiceIcon,
   GetApp as ExportIcon,
+  Restaurant as FeedingIcon,
+  Medication as MedicationIcon,
 } from "@mui/icons-material";
 import SalesReports from "./SalesReports";
 import TaxReports from "./TaxReports";
@@ -309,6 +311,30 @@ const ReportsPage: React.FC = () => {
                 status="planned"
                 onGenerate={() => handleExport("Service Preferences")}
                 onExport={() => handleExport("Service Preferences")}
+              />
+            </Grid>
+            <Grid item xs={12} md={6} lg={4}>
+              <ReportCard
+                title="Feeding Reports"
+                description="Picky eater tracking, meal consumption ratings (0-4), and feeding patterns by pet."
+                icon={<FeedingIcon color="primary" />}
+                status="available"
+                onGenerate={() =>
+                  (window.location.href = "/mobile/care-tracking")
+                }
+                onExport={() => handleExport("Feeding Reports")}
+              />
+            </Grid>
+            <Grid item xs={12} md={6} lg={4}>
+              <ReportCard
+                title="Medication Reports"
+                description="Medication administration logs, missed doses, and staff sign-off tracking."
+                icon={<MedicationIcon color="primary" />}
+                status="available"
+                onGenerate={() =>
+                  (window.location.href = "/mobile/care-tracking")
+                }
+                onExport={() => handleExport("Medication Reports")}
               />
             </Grid>
           </Grid>

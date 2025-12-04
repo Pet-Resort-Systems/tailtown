@@ -210,6 +210,9 @@ const MobileProfile = lazy(() => import("./pages/mobile/Profile"));
 const MobileReportCards = lazy(
   () => import("./pages/mobile/MobileReportCards")
 );
+const CareTrackingPage = lazy(
+  () => import("./pages/care-tracking/CareTrackingPage")
+);
 
 // Custom event and utility components
 
@@ -757,6 +760,12 @@ const AppRoutes = () => {
           path="/mobile/report-cards"
           element={
             isAuthenticated ? <MobileReportCards /> : <Navigate to="/login" />
+          }
+        />
+        <Route
+          path="/mobile/care-tracking"
+          element={
+            isAuthenticated ? <CareTrackingPage /> : <Navigate to="/login" />
           }
         />
         <Route
