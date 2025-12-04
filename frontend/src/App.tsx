@@ -124,6 +124,9 @@ const SuperAdminOnlyRoute = lazy(
   () => import("./components/auth/SuperAdminOnlyRoute")
 );
 
+// Admin-only route wrapper (for Manager/Admin access)
+const AdminOnlyRoute = lazy(() => import("./components/auth/AdminOnlyRoute"));
+
 // Lazy loaded pages - Tenant Management
 const TenantManagement = lazy(() => import("./pages/admin/TenantManagement"));
 const CheckInComplete = lazy(() => import("./pages/check-in/CheckInComplete"));
@@ -450,54 +453,66 @@ const AppRoutes = () => {
           <Route path="/price-rules/:id" element={<PriceRuleRedirect />} />
           <Route
             path="/settings"
-            element={isAuthenticated ? <Settings /> : <Navigate to="/login" />}
+            element={
+              <AdminOnlyRoute>
+                <Settings />
+              </AdminOnlyRoute>
+            }
           />
           <Route
             path="/settings/users"
-            element={isAuthenticated ? <Users /> : <Navigate to="/login" />}
+            element={
+              <AdminOnlyRoute>
+                <Users />
+              </AdminOnlyRoute>
+            }
           />
           <Route
             path="/settings/payment-methods"
             element={
-              isAuthenticated ? <PaymentMethods /> : <Navigate to="/login" />
+              <AdminOnlyRoute>
+                <PaymentMethods />
+              </AdminOnlyRoute>
             }
           />
           <Route
             path="/settings/business"
             element={
-              isAuthenticated ? <BusinessSettings /> : <Navigate to="/login" />
+              <AdminOnlyRoute>
+                <BusinessSettings />
+              </AdminOnlyRoute>
             }
           />
           <Route
             path="/settings/price-rules"
             element={
-              isAuthenticated ? <PriceRulesPage /> : <Navigate to="/login" />
+              <AdminOnlyRoute>
+                <PriceRulesPage />
+              </AdminOnlyRoute>
             }
           />
           <Route
             path="/settings/price-rules/new"
             element={
-              isAuthenticated ? (
+              <AdminOnlyRoute>
                 <PriceRuleDetailsPage />
-              ) : (
-                <Navigate to="/login" />
-              )
+              </AdminOnlyRoute>
             }
           />
           <Route
             path="/settings/price-rules/:id"
             element={
-              isAuthenticated ? (
+              <AdminOnlyRoute>
                 <PriceRuleDetailsPage />
-              ) : (
-                <Navigate to="/login" />
-              )
+              </AdminOnlyRoute>
             }
           />
           <Route
             path="/settings/service-agreements"
             element={
-              isAuthenticated ? <ServiceAgreements /> : <Navigate to="/login" />
+              <AdminOnlyRoute>
+                <ServiceAgreements />
+              </AdminOnlyRoute>
             }
           />
           <Route
@@ -545,29 +560,37 @@ const AppRoutes = () => {
             }
           />
 
-          {/* Marketing Routes */}
+          {/* Marketing Routes - Admin Only */}
           <Route
             path="/admin/marketing"
             element={
-              isAuthenticated ? <MarketingHub /> : <Navigate to="/login" />
+              <AdminOnlyRoute>
+                <MarketingHub />
+              </AdminOnlyRoute>
             }
           />
           <Route
             path="/admin/marketing/sms"
             element={
-              isAuthenticated ? <SmsMarketing /> : <Navigate to="/login" />
+              <AdminOnlyRoute>
+                <SmsMarketing />
+              </AdminOnlyRoute>
             }
           />
           <Route
             path="/admin/marketing/email"
             element={
-              isAuthenticated ? <EmailMarketing /> : <Navigate to="/login" />
+              <AdminOnlyRoute>
+                <EmailMarketing />
+              </AdminOnlyRoute>
             }
           />
           <Route
             path="/admin/marketing/templates"
             element={
-              isAuthenticated ? <MessageTemplates /> : <Navigate to="/login" />
+              <AdminOnlyRoute>
+                <MessageTemplates />
+              </AdminOnlyRoute>
             }
           />
 
@@ -587,11 +610,9 @@ const AppRoutes = () => {
           <Route
             path="/admin/check-in-templates"
             element={
-              isAuthenticated ? (
+              <AdminOnlyRoute>
                 <CheckInTemplateManager />
-              ) : (
-                <Navigate to="/login" />
-              )
+              </AdminOnlyRoute>
             }
           />
 
@@ -607,11 +628,9 @@ const AppRoutes = () => {
           <Route
             path="/admin/checklist-templates"
             element={
-              isAuthenticated ? (
+              <AdminOnlyRoute>
                 <ChecklistTemplates />
-              ) : (
-                <Navigate to="/login" />
-              )
+              </AdminOnlyRoute>
             }
           />
           <Route
@@ -621,70 +640,74 @@ const AppRoutes = () => {
             }
           />
 
-          {/* Vaccine Management Routes */}
+          {/* Vaccine Management Routes - Admin Only */}
           <Route
             path="/admin/vaccine-requirements"
             element={
-              isAuthenticated ? (
+              <AdminOnlyRoute>
                 <VaccineRequirements />
-              ) : (
-                <Navigate to="/login" />
-              )
+              </AdminOnlyRoute>
             }
           />
 
-          {/* Custom Icons Route */}
+          {/* Custom Icons Route - Admin Only */}
           <Route
             path="/admin/custom-icons"
             element={
-              isAuthenticated ? <CustomIcons /> : <Navigate to="/login" />
+              <AdminOnlyRoute>
+                <CustomIcons />
+              </AdminOnlyRoute>
             }
           />
 
-          {/* Announcement Routes */}
+          {/* Announcement Routes - Admin Only */}
           <Route
             path="/admin/announcements"
             element={
-              isAuthenticated ? (
+              <AdminOnlyRoute>
                 <AnnouncementManager />
-              ) : (
-                <Navigate to="/login" />
-              )
+              </AdminOnlyRoute>
             }
           />
 
-          {/* Loyalty Program Route */}
+          {/* Loyalty Program Route - Admin Only */}
           <Route
             path="/admin/loyalty"
             element={
-              isAuthenticated ? <LoyaltyProgram /> : <Navigate to="/login" />
+              <AdminOnlyRoute>
+                <LoyaltyProgram />
+              </AdminOnlyRoute>
             }
           />
 
-          {/* Coupon Management Route */}
+          {/* Coupon Management Route - Admin Only */}
           <Route
             path="/admin/coupons"
             element={
-              isAuthenticated ? <CouponManagement /> : <Navigate to="/login" />
+              <AdminOnlyRoute>
+                <CouponManagement />
+              </AdminOnlyRoute>
             }
           />
 
-          {/* Daycare Pass Management Route */}
+          {/* Daycare Pass Management Route - Admin Only */}
           <Route
             path="/admin/daycare-passes"
             element={
-              isAuthenticated ? (
+              <AdminOnlyRoute>
                 <DaycarePassManagement />
-              ) : (
-                <Navigate to="/login" />
-              )
+              </AdminOnlyRoute>
             }
           />
 
-          {/* Audit Logs Route */}
+          {/* Audit Logs Route - Admin Only */}
           <Route
             path="/admin/audit-logs"
-            element={isAuthenticated ? <AuditLogs /> : <Navigate to="/login" />}
+            element={
+              <AdminOnlyRoute>
+                <AuditLogs />
+              </AdminOnlyRoute>
+            }
           />
 
           {/* Products/POS Routes */}
