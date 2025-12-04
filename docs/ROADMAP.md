@@ -79,12 +79,12 @@ Multiple pets sharing same room:
 - ~~Custom discount types per account~~
 - ~~Auto-apply on invoices~~
 
-### Standing Reservations
+### ~~Standing Reservations~~ ✅ COMPLETED
 
-- Recurring reservation templates
-- Weekly/bi-weekly/monthly patterns
-- Auto-generate future reservations
-- Easy modification of series
+- ~~Recurring reservation templates~~
+- ~~Weekly/bi-weekly/monthly patterns~~
+- ~~Auto-generate future reservations~~
+- ~~Easy modification of series~~
 
 ### ~~Commission Splitting for Groomers~~ ✅ COMPLETED
 
