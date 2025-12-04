@@ -52,6 +52,7 @@ model Customer {
   waitlistEntries     WaitlistEntry[]
   reportCards         ReportCard[]
   tips                Tip[]
+  standingReservations StandingReservation[]
 
   @@index([firstName, lastName], map: "customers_name_search_idx")
   @@index([email], map: "customers_email_search_idx")
@@ -111,6 +112,7 @@ model Pet {
   classWaitlist       ClassWaitlist[]      @relation("PetClassWaitlist")
   waitlistEntries     WaitlistEntry[]
   reportCards         ReportCard[]
+  standingReservations StandingReservation[]
 
   @@index([customerId], map: "pets_customer_id_idx")
   @@index([isActive, type], map: "pets_active_type_idx")
@@ -171,6 +173,79 @@ model Reservation {
   @@map("reservations")
 }
 
+// ============================================
+// STANDING RESERVATIONS (Recurring Templates)
+// ============================================
+
+enum RecurrenceFrequency {
+  DAILY
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
+}
+
+model StandingReservation {
+  id                String              @id @default(uuid())
+  tenantId          String              @default("dev")
+  customerId        String
+  customer          Customer            @relation(fields: [customerId], references: [id])
+  petId             String
+  pet               Pet                 @relation(fields: [petId], references: [id])
+  serviceId         String
+  service           Service             @relation(fields: [serviceId], references: [id])
+  resourceId        String?
+  resource          Resource?           @relation(fields: [resourceId], references: [id])
+  staffAssignedId   String?
+  staffAssigned     Staff?              @relation(fields: [staffAssignedId], references: [id])
+  
+  // Recurrence settings
+  name              String              // e.g., "Weekly Daycare - Buddy"
+  frequency         RecurrenceFrequency
+  daysOfWeek        Int[]               // 0=Sunday, 1=Monday, etc. For weekly/biweekly
+  dayOfMonth        Int?                // For monthly (1-31)
+  startTime         String              // e.g., "09:00"
+  endTime           String              // e.g., "17:00"
+  
+  // Date range
+  effectiveFrom     DateTime            // When this standing reservation starts
+  effectiveUntil    DateTime?           // Optional end date (null = indefinite)
+  
+  // Options
+  notes             String?
+  isActive          Boolean             @default(true)
+  autoConfirm       Boolean             @default(false) // Auto-confirm generated reservations
+  generateAheadDays Int                 @default(30)    // How many days ahead to generate
+  
+  // Tracking
+  lastGeneratedDate DateTime?           // Last date reservations were generated up to
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  // Generated reservations link
+  generatedReservations StandingReservationInstance[]
+
+  @@index([tenantId, customerId], map: "standing_reservations_tenant_customer_idx")
+  @@index([tenantId, isActive], map: "standing_reservations_tenant_active_idx")
+  @@index([tenantId, effectiveFrom, effectiveUntil], map: "standing_reservations_tenant_dates_idx")
+  @@map("standing_reservations")
+}
+
+model StandingReservationInstance {
+  id                    String              @id @default(uuid())
+  tenantId              String              @default("dev")
+  standingReservationId String
+  standingReservation   StandingReservation @relation(fields: [standingReservationId], references: [id], onDelete: Cascade)
+  reservationId         String?             // Link to actual reservation (null if skipped/cancelled)
+  scheduledDate         DateTime            // The date this instance was scheduled for
+  status                String              @default("PENDING") // PENDING, GENERATED, SKIPPED, CANCELLED
+  skipReason            String?             // Reason if skipped
+  createdAt             DateTime            @default(now())
+
+  @@unique([standingReservationId, scheduledDate], map: "standing_instance_unique")
+  @@index([tenantId, scheduledDate], map: "standing_instances_tenant_date_idx")
+  @@map("standing_reservation_instances")
+}
+
 model Service {
   id              String             @id @default(uuid())
   tenantId        String             @default("dev")
@@ -193,6 +268,7 @@ model Service {
   reservations    Reservation[]
   groomerAppointments GroomerAppointment[]
   waitlistEntries WaitlistEntry[]
+  standingReservations StandingReservation[]
 
   @@index([tenantId, isActive], map: "services_tenant_active_idx")
   @@index([tenantId, name], map: "services_tenant_name_idx")
@@ -257,6 +333,7 @@ model Resource {
   reservations        Reservation[]
   waitlistEntries     WaitlistEntry[]
   availabilitySlots   ResourceAvailability[]
+  standingReservations StandingReservation[]
 
   @@index([tenantId, type, isActive], map: "resources_tenant_type_active_idx")
   @@index([tenantId, name], map: "resources_tenant_name_idx")
@@ -337,6 +414,7 @@ model Staff {
   uploadedPhotos       ReportCardPhoto[]    @relation("StaffUploadedPhotos")
   groomerTips          Tip[]                @relation("GroomerTips")
   commissions          StaffCommission[]    @relation("StaffCommissions")
+  standingReservations StandingReservation[]
 
   @@unique([tenantId, email], map: "staff_tenant_email_unique")
   @@index([tenantId, isActive], map: "staff_tenant_active_idx")

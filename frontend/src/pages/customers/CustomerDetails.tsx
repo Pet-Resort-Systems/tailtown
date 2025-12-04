@@ -36,6 +36,7 @@ import CustomerIconSelectorNew from "../../components/customers/CustomerIconSele
 import CustomerIconBadges from "../../components/customers/CustomerIconBadges";
 import CustomerDaycarePasses from "../../components/customers/CustomerDaycarePasses";
 import PermanentDiscountSelector from "../../components/customers/PermanentDiscountSelector";
+import StandingReservations from "../../components/reservations/StandingReservations";
 import {
   CustomerAgreementHistory,
   ServiceAgreementSign,
@@ -43,6 +44,7 @@ import {
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import DescriptionIcon from "@mui/icons-material/Description";
 import DrawIcon from "@mui/icons-material/Draw";
+import RepeatIcon from "@mui/icons-material/Repeat";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -553,6 +555,11 @@ const CustomerDetails: React.FC = () => {
                 iconPosition="start"
                 label="Agreements"
               />
+              <Tab
+                icon={<RepeatIcon />}
+                iconPosition="start"
+                label="Standing Reservations"
+              />
             </Tabs>
           </Box>
         )}
@@ -596,6 +603,12 @@ const CustomerDetails: React.FC = () => {
                 </Typography>
                 <CustomerAgreementHistory customerId={id || ""} />
               </Box>
+            </TabPanel>
+            <TabPanel value={tabValue} index={5}>
+              <StandingReservations
+                customerId={id || ""}
+                customerName={`${customer.firstName} ${customer.lastName}`}
+              />
             </TabPanel>
           </>
         )}
