@@ -19,8 +19,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  ToggleButton,
-  ToggleButtonGroup,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -1260,25 +1258,23 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
             </Alert>
           )}
 
-          {/* Stay Type Toggle - Boarding vs Daycamp */}
+          {/* Stay Type Selection - Boarding vs Daycamp */}
           <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              Stay Type
+            <Typography
+              variant="subtitle2"
+              sx={{ mb: 1, fontWeight: 600, color: "text.primary" }}
+            >
+              What type of stay is this?
             </Typography>
-            <ToggleButtonGroup
-              value={stayType}
-              exclusive
-              onChange={(_, newStayType) => {
-                if (newStayType !== null) {
-                  setStayType(newStayType);
-
-                  // Adjust dates based on stay type
-                  if (startDate) {
-                    const newStartDate = new Date(startDate);
-                    const newEndDate = new Date(startDate);
-
-                    if (newStayType === "boarding") {
-                      // Boarding: Check-in at 3pm, check-out next day at 11am
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Paper
+                  elevation={stayType === "boarding" ? 3 : 1}
+                  onClick={() => {
+                    setStayType("boarding");
+                    if (startDate) {
+                      const newStartDate = new Date(startDate);
+                      const newEndDate = new Date(startDate);
                       newStartDate.setHours(
                         DEFAULT_BOARDING_CHECKIN_HOUR,
                         0,
@@ -1292,8 +1288,62 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                         0,
                         0
                       );
-                    } else {
-                      // Daycamp: Drop-off at 7am, pick-up same day at 6pm
+                      setStartDate(newStartDate);
+                      setEndDate(newEndDate);
+                    }
+                  }}
+                  sx={{
+                    p: 2,
+                    cursor: "pointer",
+                    textAlign: "center",
+                    border: stayType === "boarding" ? 2 : 1,
+                    borderColor:
+                      stayType === "boarding" ? "primary.main" : "grey.300",
+                    backgroundColor:
+                      stayType === "boarding"
+                        ? "primary.50"
+                        : "background.paper",
+                    transition: "all 0.2s ease",
+                    "&:hover": {
+                      borderColor: "primary.main",
+                      backgroundColor:
+                        stayType === "boarding" ? "primary.50" : "grey.50",
+                    },
+                  }}
+                >
+                  <NightsStayIcon
+                    sx={{
+                      fontSize: 32,
+                      color:
+                        stayType === "boarding" ? "primary.main" : "grey.500",
+                      mb: 0.5,
+                    }}
+                  />
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      fontWeight: stayType === "boarding" ? 600 : 500,
+                      color:
+                        stayType === "boarding"
+                          ? "primary.main"
+                          : "text.primary",
+                    }}
+                  >
+                    Boarding
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Overnight stay
+                  </Typography>
+                </Paper>
+              </Grid>
+              <Grid item xs={6}>
+                <Paper
+                  elevation={stayType === "daycamp" ? 3 : 1}
+                  onClick={() => {
+                    setStayType("daycamp");
+                    if (startDate) {
+                      const newStartDate = new Date(startDate);
+                      const newEndDate = new Date(startDate);
                       newStartDate.setHours(
                         DEFAULT_DAYCAMP_DROPOFF_HOUR,
                         0,
@@ -1301,37 +1351,55 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                         0
                       );
                       newEndDate.setHours(DEFAULT_DAYCAMP_PICKUP_HOUR, 0, 0, 0);
+                      setStartDate(newStartDate);
+                      setEndDate(newEndDate);
                     }
-
-                    setStartDate(newStartDate);
-                    setEndDate(newEndDate);
-                  }
-                }
-              }}
-              aria-label="stay type"
-              fullWidth
-              sx={{
-                "& .MuiToggleButton-root": {
-                  py: 1.5,
-                  "&.Mui-selected": {
-                    backgroundColor: "primary.main",
-                    color: "white",
+                  }}
+                  sx={{
+                    p: 2,
+                    cursor: "pointer",
+                    textAlign: "center",
+                    border: stayType === "daycamp" ? 2 : 1,
+                    borderColor:
+                      stayType === "daycamp" ? "primary.main" : "grey.300",
+                    backgroundColor:
+                      stayType === "daycamp"
+                        ? "primary.50"
+                        : "background.paper",
+                    transition: "all 0.2s ease",
                     "&:hover": {
-                      backgroundColor: "primary.dark",
+                      borderColor: "primary.main",
+                      backgroundColor:
+                        stayType === "daycamp" ? "primary.50" : "grey.50",
                     },
-                  },
-                },
-              }}
-            >
-              <ToggleButton value="boarding" aria-label="boarding">
-                <NightsStayIcon sx={{ mr: 1 }} />
-                Boarding (Overnight)
-              </ToggleButton>
-              <ToggleButton value="daycamp" aria-label="daycamp">
-                <WbSunnyIcon sx={{ mr: 1 }} />
-                Daycamp (Same Day)
-              </ToggleButton>
-            </ToggleButtonGroup>
+                  }}
+                >
+                  <WbSunnyIcon
+                    sx={{
+                      fontSize: 32,
+                      color:
+                        stayType === "daycamp" ? "primary.main" : "grey.500",
+                      mb: 0.5,
+                    }}
+                  />
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      fontWeight: stayType === "daycamp" ? 600 : 500,
+                      color:
+                        stayType === "daycamp"
+                          ? "primary.main"
+                          : "text.primary",
+                    }}
+                  >
+                    Daycamp
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Same day pickup
+                  </Typography>
+                </Paper>
+              </Grid>
+            </Grid>
           </Box>
 
           {/* Display order number when editing an existing reservation */}
@@ -1534,7 +1602,6 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                   shrink: true,
                 }}
                 helperText="You can select multiple pets for the same reservation"
-                error={selectedPets.length === 0 && selectedPet === ""}
               />
             )}
             size="small"
