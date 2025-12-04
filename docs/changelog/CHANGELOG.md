@@ -77,10 +77,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Files: `frontend/src/components/care-tracking/MedicationTracker.tsx`, `services/customer/src/controllers/care-tracking.controller.ts`
 
 - **Care Tracking Page** - Combined mobile interface at `/mobile/care-tracking`
+
   - Tabbed interface for Feeding and Medications
   - Lists all checked-in pets needing care
   - Added to Pet Reports section in main app
   - Files: `frontend/src/pages/care-tracking/CareTrackingPage.tsx`
+
+- **Automated Repeating Schedules for Staff** - Create recurring schedule templates
+  - ScheduleTemplate model with WEEKLY, BIWEEKLY, MONTHLY, CUSTOM rotation types
+  - ScheduleTemplateEntry model for defining days/times in rotation
+  - BusinessHoliday model for holiday exception handling
+  - Auto-generate schedules X days ahead (configurable)
+  - Skip holidays and approved time off automatically
+  - Bi-weekly and custom rotation patterns (Week A/Week B)
+  - New "Schedule Templates" tab in staff settings
+  - Generate schedules on-demand or for all active templates
+  - Files: `frontend/src/components/staff/ScheduleTemplates.tsx`, `services/customer/src/controllers/staff/schedule-template.controller.ts`
 
 ## [1.6.17] - 2025-12-03
 

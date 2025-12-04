@@ -505,6 +505,7 @@ model Staff {
   groomerTips          Tip[]                @relation("GroomerTips")
   commissions          StaffCommission[]    @relation("StaffCommissions")
   standingReservations StandingReservation[]
+  scheduleTemplates    ScheduleTemplate[]   @relation("StaffScheduleTemplates")
   feedingLogs          FeedingLog[]
   medicationLogs       MedicationLog[]
 
@@ -593,6 +594,75 @@ model StaffSchedule {
   @@index([date, status])
   @@index([tenantId, staffId, date], map: "staff_schedules_tenant_staff_date_idx")
   @@map("staff_schedules")
+}
+
+// ============================================
+// RECURRING SCHEDULE TEMPLATES
+// ============================================
+
+enum ScheduleRotationType {
+  WEEKLY       // Same schedule every week
+  BIWEEKLY     // Alternates every 2 weeks
+  MONTHLY      // Same schedule every month
+  CUSTOM       // Custom rotation pattern
+}
+
+model ScheduleTemplate {
+  id                String               @id @default(uuid())
+  tenantId          String               @default("dev")
+  staffId           String
+  staff             Staff                @relation("StaffScheduleTemplates", fields: [staffId], references: [id], onDelete: Cascade)
+  name              String               // e.g., "Regular Week", "Week A", "Week B"
+  rotationType      ScheduleRotationType @default(WEEKLY)
+  rotationWeeks     Int                  @default(1) // For BIWEEKLY/CUSTOM: number of weeks in rotation
+  currentRotation   Int                  @default(0) // Which week of rotation we're on (0-indexed)
+  isActive          Boolean              @default(true)
+  effectiveFrom     DateTime             // When this template starts being used
+  effectiveUntil    DateTime?            // Optional end date
+  generateAheadDays Int                  @default(14) // How many days ahead to generate schedules
+  lastGeneratedDate DateTime?            // Last date schedules were generated to
+  skipHolidays      Boolean              @default(true) // Skip generating on holidays
+  notes             String?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  entries           ScheduleTemplateEntry[]
+
+  @@index([tenantId, staffId, isActive], map: "schedule_templates_tenant_staff_active_idx")
+  @@map("schedule_templates")
+}
+
+model ScheduleTemplateEntry {
+  id           String           @id @default(uuid())
+  templateId   String
+  template     ScheduleTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  dayOfWeek    Int              // 0=Sunday, 1=Monday, ... 6=Saturday
+  rotationWeek Int              @default(0) // Which week of rotation (0 for weekly, 0-1 for biweekly, etc.)
+  startTime    String           // e.g., "09:00"
+  endTime      String           // e.g., "17:00"
+  location     String?
+  role         String?
+  notes        String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([templateId, dayOfWeek], map: "schedule_template_entries_template_day_idx")
+  @@map("schedule_template_entries")
+}
+
+model BusinessHoliday {
+  id          String   @id @default(uuid())
+  tenantId    String   @default("dev")
+  name        String   // e.g., "Christmas Day", "Thanksgiving"
+  date        DateTime // Specific date of the holiday
+  isRecurring Boolean  @default(false) // If true, repeats yearly on same month/day
+  isClosed    Boolean  @default(true) // If true, business is closed (skip schedules)
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([tenantId, date], map: "business_holidays_tenant_date_unique")
+  @@index([tenantId, date], map: "business_holidays_tenant_date_idx")
+  @@map("business_holidays")
 }
 
 // ============================================

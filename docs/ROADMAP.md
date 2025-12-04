@@ -35,13 +35,6 @@ Multiple pets sharing same room:
 - Transaction history migration
 - Balance reconciliation
 
-### Automated Repeating Schedules for Staff
-
-- Recurring schedule templates
-- Auto-generate weekly schedules
-- Schedule rotation patterns
-- Holiday/exception handling
-
 ---
 
 ## 🟠 This Month
