@@ -1,12 +1,32 @@
-import React, { useState, useMemo } from 'react';
-import { Card, CardHeader, CardContent, Box, Typography, Chip, Button, CircularProgress, List, ListItem, IconButton, Tooltip, TextField, InputAdornment } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import PrintIcon from '@mui/icons-material/Print';
-import SearchIcon from '@mui/icons-material/Search';
-import ClearIcon from '@mui/icons-material/Clear';
-import PetNameWithIcons from '../pets/PetNameWithIcons';
-import KennelCard from '../kennels/KennelCard';
+import React, { useState, useMemo } from "react";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  Box,
+  Typography,
+  Chip,
+  Button,
+  CircularProgress,
+  List,
+  ListItem,
+  IconButton,
+  Tooltip,
+  TextField,
+  InputAdornment,
+} from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import PrintIcon from "@mui/icons-material/Print";
+import SearchIcon from "@mui/icons-material/Search";
+import ClearIcon from "@mui/icons-material/Clear";
+import PetNameWithIcons from "../pets/PetNameWithIcons";
+import KennelCard from "../kennels/KennelCard";
+import {
+  formatGingrTime,
+  formatGingrDate,
+  parseGingrDate,
+} from "../../utils/dateUtils";
 
 interface Reservation {
   id: string;
@@ -39,16 +59,16 @@ interface ReservationListProps {
   reservations: Reservation[];
   loading: boolean;
   error: string | null;
-  filter: 'in' | 'out' | 'all';
-  onFilterChange: (filter: 'in' | 'out' | 'all') => void;
+  filter: "in" | "out" | "all";
+  onFilterChange: (filter: "in" | "out" | "all") => void;
 }
 
 /**
  * ReservationList Component
- * 
+ *
  * Displays upcoming reservations in a compact, scrollable list optimized for high-volume operations.
  * Designed to handle 200+ daily reservations efficiently.
- * 
+ *
  * Features:
  * - Compact list layout (~60px per item)
  * - Scrollable container (500px max height)
@@ -58,13 +78,13 @@ interface ReservationListProps {
  * - Reservation count badge
  * - Status chips with color coding
  * - Hover effects for better UX
- * 
+ *
  * @param reservations - Array of reservation objects to display
  * @param loading - Loading state indicator
  * @param error - Error message if data fetch failed
  * @param filter - Current filter ('in' | 'out' | 'all')
  * @param onFilterChange - Callback to change filter
- * 
+ *
  * @example
  * <ReservationList
  *   reservations={filteredReservations}
@@ -79,11 +99,13 @@ const ReservationList: React.FC<ReservationListProps> = ({
   loading,
   error,
   filter,
-  onFilterChange
+  onFilterChange,
 }) => {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [printingReservationId, setPrintingReservationId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [printingReservationId, setPrintingReservationId] = useState<
+    string | null
+  >(null);
 
   // Filter reservations based on search query
   const filteredReservations = useMemo(() => {
@@ -92,13 +114,16 @@ const ReservationList: React.FC<ReservationListProps> = ({
     }
 
     const query = searchQuery.toLowerCase();
-    return reservations.filter(reservation => {
-      const petName = reservation.pet?.name?.toLowerCase() || '';
-      const customerFirstName = reservation.customer?.firstName?.toLowerCase() || '';
-      const customerLastName = reservation.customer?.lastName?.toLowerCase() || '';
-      const customerFullName = `${customerFirstName} ${customerLastName}`.trim();
-      const kennelName = reservation.resource?.name?.toLowerCase() || '';
-      const serviceName = reservation.service?.name?.toLowerCase() || '';
+    return reservations.filter((reservation) => {
+      const petName = reservation.pet?.name?.toLowerCase() || "";
+      const customerFirstName =
+        reservation.customer?.firstName?.toLowerCase() || "";
+      const customerLastName =
+        reservation.customer?.lastName?.toLowerCase() || "";
+      const customerFullName =
+        `${customerFirstName} ${customerLastName}`.trim();
+      const kennelName = reservation.resource?.name?.toLowerCase() || "";
+      const serviceName = reservation.service?.name?.toLowerCase() || "";
 
       return (
         petName.includes(query) ||
@@ -112,7 +137,7 @@ const ReservationList: React.FC<ReservationListProps> = ({
   }, [reservations, searchQuery]);
 
   const handleClearSearch = () => {
-    setSearchQuery('');
+    setSearchQuery("");
   };
 
   /**
@@ -120,7 +145,7 @@ const ReservationList: React.FC<ReservationListProps> = ({
    */
   const handlePrintKennelCard = (reservation: Reservation) => {
     setPrintingReservationId(reservation.id);
-    
+
     // Small delay to ensure the component renders
     setTimeout(() => {
       window.print();
@@ -133,13 +158,20 @@ const ReservationList: React.FC<ReservationListProps> = ({
    * @param status - Reservation status string
    * @returns Chip color variant
    */
-  const getStatusColor = (status: string): "success" | "warning" | "info" | "error" | "default" => {
-    switch(status) {
-      case 'CONFIRMED': return 'success';
-      case 'PENDING': return 'warning';
-      case 'CHECKED_IN': return 'info';
-      case 'CANCELLED': return 'error';
-      default: return 'default';
+  const getStatusColor = (
+    status: string
+  ): "success" | "warning" | "info" | "error" | "default" => {
+    switch (status) {
+      case "CONFIRMED":
+        return "success";
+      case "PENDING":
+        return "warning";
+      case "CHECKED_IN":
+        return "info";
+      case "CANCELLED":
+        return "error";
+      default:
+        return "default";
     }
   };
 
@@ -148,46 +180,52 @@ const ReservationList: React.FC<ReservationListProps> = ({
    * DAYCARE = orange tint, BOARDING = default (blue tint)
    */
   const getServiceColor = (serviceCategory?: string) => {
-    if (serviceCategory === 'DAYCARE') {
-      return 'rgba(255, 152, 0, 0.08)'; // Orange tint
+    if (serviceCategory === "DAYCARE") {
+      return "rgba(255, 152, 0, 0.08)"; // Orange tint
     }
-    return 'rgba(25, 118, 210, 0.08)'; // Blue tint (default)
+    return "rgba(25, 118, 210, 0.08)"; // Blue tint (default)
   };
 
+  /**
+   * Format time from ISO string using timezone-safe Gingr date parsing
+   * This correctly handles dates stored as local time with 'Z' suffix
+   */
   const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', { 
-      hour: 'numeric',
-      minute: '2-digit'
-    });
+    return formatGingrTime(dateString);
   };
 
+  /**
+   * Format date from ISO string using timezone-safe Gingr date parsing
+   */
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric'
-    });
+    return formatGingrDate(dateString, { month: "short", day: "numeric" });
   };
 
   const getFilterTitle = () => {
-    switch(filter) {
-      case 'in': return 'Check-Ins Today';
-      case 'out': return 'Check-Outs Today';
-      default: return 'Upcoming Appointments';
+    switch (filter) {
+      case "in":
+        return "Check-Ins Today";
+      case "out":
+        return "Check-Outs Today";
+      default:
+        return "Upcoming Appointments";
     }
   };
 
   return (
     <Card>
-      <CardHeader 
+      <CardHeader
         title={
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             {getFilterTitle()}
             {reservations.length > 0 && (
-              <Chip 
-                label={searchQuery ? `${filteredReservations.length} of ${reservations.length}` : reservations.length} 
-                size="small" 
+              <Chip
+                label={
+                  searchQuery
+                    ? `${filteredReservations.length} of ${reservations.length}`
+                    : reservations.length
+                }
+                size="small"
                 color="primary"
                 variant="outlined"
               />
@@ -195,25 +233,25 @@ const ReservationList: React.FC<ReservationListProps> = ({
           </Box>
         }
         action={
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button 
-              size="small" 
-              variant={filter === 'all' ? 'contained' : 'outlined'}
-              onClick={() => onFilterChange('all')}
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <Button
+              size="small"
+              variant={filter === "all" ? "contained" : "outlined"}
+              onClick={() => onFilterChange("all")}
             >
               All
             </Button>
-            <Button 
-              size="small" 
-              variant={filter === 'in' ? 'contained' : 'outlined'}
-              onClick={() => onFilterChange('in')}
+            <Button
+              size="small"
+              variant={filter === "in" ? "contained" : "outlined"}
+              onClick={() => onFilterChange("in")}
             >
               Check-Ins
             </Button>
-            <Button 
-              size="small" 
-              variant={filter === 'out' ? 'contained' : 'outlined'}
-              onClick={() => onFilterChange('out')}
+            <Button
+              size="small"
+              variant={filter === "out" ? "contained" : "outlined"}
+              onClick={() => onFilterChange("out")}
             >
               Check-Outs
             </Button>
@@ -246,32 +284,38 @@ const ReservationList: React.FC<ReservationListProps> = ({
         />
 
         {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+          <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
             <CircularProgress />
           </Box>
         ) : error ? (
           <Typography color="error">{error}</Typography>
         ) : reservations.length === 0 ? (
           <Typography color="text.secondary">
-            No {filter === 'in' ? 'check-ins' : filter === 'out' ? 'check-outs' : 'appointments'} scheduled
+            No{" "}
+            {filter === "in"
+              ? "check-ins"
+              : filter === "out"
+              ? "check-outs"
+              : "appointments"}{" "}
+            scheduled
           </Typography>
         ) : filteredReservations.length === 0 ? (
           <Typography color="text.secondary">
             No reservations match your search "{searchQuery}"
           </Typography>
         ) : (
-          <List 
-            sx={{ 
-              maxHeight: 500, 
-              overflow: 'auto',
+          <List
+            sx={{
+              maxHeight: 500,
+              overflow: "auto",
               p: 0,
-              '& .MuiListItem-root': {
+              "& .MuiListItem-root": {
                 borderBottom: 1,
-                borderColor: 'divider',
-                '&:last-child': {
-                  borderBottom: 0
-                }
-              }
+                borderColor: "divider",
+                "&:last-child": {
+                  borderBottom: 0,
+                },
+              },
             }}
           >
             {filteredReservations.map((reservation) => (
@@ -280,15 +324,18 @@ const ReservationList: React.FC<ReservationListProps> = ({
                 sx={{
                   py: 1,
                   px: 2,
-                  bgcolor: getServiceColor(reservation.service?.serviceCategory),
-                  '&:hover': {
-                    bgcolor: reservation.service?.serviceCategory === 'DAYCARE' 
-                      ? 'rgba(255, 152, 0, 0.15)'
-                      : 'rgba(25, 118, 210, 0.15)',
-                  }
+                  bgcolor: getServiceColor(
+                    reservation.service?.serviceCategory
+                  ),
+                  "&:hover": {
+                    bgcolor:
+                      reservation.service?.serviceCategory === "DAYCARE"
+                        ? "rgba(255, 152, 0, 0.15)"
+                        : "rgba(25, 118, 210, 0.15)",
+                  },
                 }}
                 secondaryAction={
-                  <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+                  <Box sx={{ display: "flex", gap: 0.5, alignItems: "center" }}>
                     <Tooltip title="Print Kennel Card">
                       <IconButton
                         size="small"
@@ -301,7 +348,7 @@ const ReservationList: React.FC<ReservationListProps> = ({
                         <PrintIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
-                    {filter === 'in' && reservation.status === 'CONFIRMED' ? (
+                    {filter === "in" && reservation.status === "CONFIRMED" ? (
                       <Tooltip title="Start Check-In">
                         <IconButton
                           edge="end"
@@ -315,8 +362,8 @@ const ReservationList: React.FC<ReservationListProps> = ({
                         </IconButton>
                       </Tooltip>
                     ) : (
-                      <Chip 
-                        label={reservation.status} 
+                      <Chip
+                        label={reservation.status}
                         color={getStatusColor(reservation.status)}
                         size="small"
                       />
@@ -324,40 +371,62 @@ const ReservationList: React.FC<ReservationListProps> = ({
                   </Box>
                 }
               >
-                <Box 
-                  sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0.25, cursor: 'pointer' }}
+                <Box
+                  sx={{
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 0.25,
+                    cursor: "pointer",
+                  }}
                   onClick={() => navigate(`/reservations/${reservation.id}`)}
                 >
                   {/* Row 1: Pet Name & Customer Name */}
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <PetNameWithIcons
-                      petName={reservation.pet?.name || 'Unknown Pet'}
+                      petName={reservation.pet?.name || "Unknown Pet"}
                       petIcons={reservation.pet?.petIcons}
                     />
-                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
-                      • {reservation.customer?.firstName || ''} {reservation.customer?.lastName || 'Unknown'}
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ fontSize: "0.8rem" }}
+                    >
+                      • {reservation.customer?.firstName || ""}{" "}
+                      {reservation.customer?.lastName || "Unknown"}
                     </Typography>
                   </Box>
                   {/* Row 2: Kennel, Service, Time */}
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      flexWrap: "wrap",
+                    }}
+                  >
                     {reservation.resource?.name && (
                       <>
-                        <Chip 
+                        <Chip
                           label={
                             reservation.resource.name.length > 1
-                              ? reservation.resource.name.slice(0, -1) + ' ' + reservation.resource.name.slice(-1)
+                              ? reservation.resource.name.slice(0, -1) +
+                                " " +
+                                reservation.resource.name.slice(-1)
                               : reservation.resource.name
-                          } 
-                          size="small" 
+                          }
+                          size="small"
                           variant="outlined"
-                          sx={{ 
-                            height: 18, 
-                            fontSize: '0.75rem', 
+                          sx={{
+                            height: 18,
+                            fontSize: "0.75rem",
                             fontWeight: 600,
-                            backgroundColor: 'white'
+                            backgroundColor: "white",
                           }}
                         />
-                        <Typography variant="caption" color="text.secondary">•</Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          •
+                        </Typography>
                       </>
                     )}
                     {reservation.service?.name && (
@@ -365,7 +434,9 @@ const ReservationList: React.FC<ReservationListProps> = ({
                         <Typography variant="caption" color="text.secondary">
                           {reservation.service.name}
                         </Typography>
-                        <Typography variant="caption" color="text.secondary">•</Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          •
+                        </Typography>
                       </>
                     )}
                     <Typography variant="caption" color="text.secondary">
@@ -378,7 +449,7 @@ const ReservationList: React.FC<ReservationListProps> = ({
           </List>
         )}
         {reservations.length > 0 && (
-          <Box sx={{ mt: 2, textAlign: 'center' }}>
+          <Box sx={{ mt: 2, textAlign: "center" }}>
             <Button
               component={Link}
               to="/calendar"
@@ -393,22 +464,27 @@ const ReservationList: React.FC<ReservationListProps> = ({
 
       {/* Hidden kennel card for printing */}
       {printingReservationId && (
-        <Box sx={{ display: 'none', '@media print': { display: 'block' } }}>
+        <Box sx={{ display: "none", "@media print": { display: "block" } }}>
           {(() => {
-            const reservation = reservations.find(r => r.id === printingReservationId);
-            if (!reservation || !reservation.pet || !reservation.customer) return null;
-            
+            const reservation = reservations.find(
+              (r) => r.id === printingReservationId
+            );
+            if (!reservation || !reservation.pet || !reservation.customer)
+              return null;
+
             return (
               <KennelCard
-                kennelNumber={reservation.resource?.name || 'N/A'}
-                suiteType={reservation.resource?.type || 'STANDARD'}
+                kennelNumber={reservation.resource?.name || "N/A"}
+                suiteType={reservation.resource?.type || "STANDARD"}
                 petName={reservation.pet.name}
                 petBreed={reservation.pet.breed}
                 petIconIds={reservation.pet.petIcons || []}
-                petType={reservation.pet.type as 'DOG' | 'CAT' | 'OTHER'}
-                ownerName={`${reservation.customer.firstName || ''} ${reservation.customer.lastName || ''}`.trim()}
-                startDate={new Date(reservation.startDate)}
-                endDate={new Date(reservation.endDate)}
+                petType={reservation.pet.type as "DOG" | "CAT" | "OTHER"}
+                ownerName={`${reservation.customer.firstName || ""} ${
+                  reservation.customer.lastName || ""
+                }`.trim()}
+                startDate={parseGingrDate(reservation.startDate) || new Date()}
+                endDate={parseGingrDate(reservation.endDate) || new Date()}
               />
             );
           })()}
