@@ -635,6 +635,8 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
             week: "Week",
             day: "Day",
           }}
+          initialDate={new Date()}
+          firstDay={new Date().getDay()} // Start week from current day
           views={{
             timeGrid: {
               nowIndicator: true,
