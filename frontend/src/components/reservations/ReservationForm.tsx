@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { getApiBaseUrl } from "../../services/api";
 import {
   Box,
   Button,
@@ -21,6 +22,8 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
+import NightsStayIcon from "@mui/icons-material/NightsStay";
+import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -37,6 +40,7 @@ import { getRoomSizeDisplayName } from "../../types/resource";
 import { useResponsive, getResponsiveButtonSize } from "../../utils/responsive";
 import AddOnSelectionDialogEnhanced from "./AddOnSelectionDialogEnhanced";
 import GroomerSelector from "./GroomerSelector";
+import ReservationActivityLog, { ActivityLog } from "./ReservationActivityLog";
 import { useShoppingCart } from "../../contexts/ShoppingCartContext";
 import { useNavigate } from "react-router-dom";
 import {
@@ -144,7 +148,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
   const [selectedService, setSelectedService] = useState<string>("");
   const [selectedGroomerId, setSelectedGroomerId] = useState<string>("");
   const [selectedSuiteType, setSelectedSuiteType] = useState<string>("");
-  const [selectedStatus, setSelectedStatus] = useState<string>("CONFIRMED");
+  const [selectedStatus, setSelectedStatus] = useState<string>("PENDING");
   const [startDate, setStartDate] = useState<Date | null>(
     defaultDates?.start || null
   );
@@ -172,6 +176,15 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
     useState<boolean>(false);
   const [preSelectedResource, setPreSelectedResource] =
     useState<Resource | null>(null);
+
+  // Stay type: "boarding" (overnight) or "daycamp" (same day)
+  // Default times - these could come from tenant settings in the future
+  const DEFAULT_BOARDING_CHECKIN_HOUR = 15; // 3:00 PM
+  const DEFAULT_BOARDING_CHECKOUT_HOUR = 11; // 11:00 AM
+  const DEFAULT_DAYCAMP_DROPOFF_HOUR = 7; // 7:00 AM
+  const DEFAULT_DAYCAMP_PICKUP_HOUR = 18; // 6:00 PM
+
+  const [stayType, setStayType] = useState<"boarding" | "daycamp">("boarding");
 
   // Use a ref to track if the form has been initialized
   // This prevents multiple initializations that can cause select value errors
@@ -957,18 +970,11 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
       return;
     }
 
-    const getApiUrl = () => {
-      if (process.env.NODE_ENV === "production") {
-        return window.location.origin;
-      }
-      return process.env.REACT_APP_API_URL || "http://localhost:4003";
-    };
-
     console.log("Deleting reservation:", initialData.id);
     setDeleting(true);
     try {
       const response = await fetch(
-        `${getApiUrl()}/api/reservations/${initialData.id}`,
+        `${getApiBaseUrl()}/api/reservations/${initialData.id}`,
         {
           method: "DELETE",
           headers: {
@@ -1252,6 +1258,150 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
             </Alert>
           )}
 
+          {/* Stay Type Selection - Boarding vs Daycamp */}
+          <Box sx={{ mb: 2 }}>
+            <Typography
+              variant="subtitle2"
+              sx={{ mb: 1, fontWeight: 600, color: "text.primary" }}
+            >
+              What type of stay is this?
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Paper
+                  elevation={stayType === "boarding" ? 3 : 1}
+                  onClick={() => {
+                    setStayType("boarding");
+                    if (startDate) {
+                      const newStartDate = new Date(startDate);
+                      const newEndDate = new Date(startDate);
+                      newStartDate.setHours(
+                        DEFAULT_BOARDING_CHECKIN_HOUR,
+                        0,
+                        0,
+                        0
+                      );
+                      newEndDate.setDate(newEndDate.getDate() + 1);
+                      newEndDate.setHours(
+                        DEFAULT_BOARDING_CHECKOUT_HOUR,
+                        0,
+                        0,
+                        0
+                      );
+                      setStartDate(newStartDate);
+                      setEndDate(newEndDate);
+                    }
+                  }}
+                  sx={{
+                    p: 2,
+                    cursor: "pointer",
+                    textAlign: "center",
+                    border: stayType === "boarding" ? 2 : 1,
+                    borderColor:
+                      stayType === "boarding" ? "primary.main" : "grey.300",
+                    backgroundColor:
+                      stayType === "boarding"
+                        ? "primary.50"
+                        : "background.paper",
+                    transition: "all 0.2s ease",
+                    "&:hover": {
+                      borderColor: "primary.main",
+                      backgroundColor:
+                        stayType === "boarding" ? "primary.50" : "grey.50",
+                    },
+                  }}
+                >
+                  <NightsStayIcon
+                    sx={{
+                      fontSize: 32,
+                      color:
+                        stayType === "boarding" ? "primary.main" : "grey.500",
+                      mb: 0.5,
+                    }}
+                  />
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      fontWeight: stayType === "boarding" ? 600 : 500,
+                      color:
+                        stayType === "boarding"
+                          ? "primary.main"
+                          : "text.primary",
+                    }}
+                  >
+                    Boarding
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Overnight stay
+                  </Typography>
+                </Paper>
+              </Grid>
+              <Grid item xs={6}>
+                <Paper
+                  elevation={stayType === "daycamp" ? 3 : 1}
+                  onClick={() => {
+                    setStayType("daycamp");
+                    if (startDate) {
+                      const newStartDate = new Date(startDate);
+                      const newEndDate = new Date(startDate);
+                      newStartDate.setHours(
+                        DEFAULT_DAYCAMP_DROPOFF_HOUR,
+                        0,
+                        0,
+                        0
+                      );
+                      newEndDate.setHours(DEFAULT_DAYCAMP_PICKUP_HOUR, 0, 0, 0);
+                      setStartDate(newStartDate);
+                      setEndDate(newEndDate);
+                    }
+                  }}
+                  sx={{
+                    p: 2,
+                    cursor: "pointer",
+                    textAlign: "center",
+                    border: stayType === "daycamp" ? 2 : 1,
+                    borderColor:
+                      stayType === "daycamp" ? "primary.main" : "grey.300",
+                    backgroundColor:
+                      stayType === "daycamp"
+                        ? "primary.50"
+                        : "background.paper",
+                    transition: "all 0.2s ease",
+                    "&:hover": {
+                      borderColor: "primary.main",
+                      backgroundColor:
+                        stayType === "daycamp" ? "primary.50" : "grey.50",
+                    },
+                  }}
+                >
+                  <WbSunnyIcon
+                    sx={{
+                      fontSize: 32,
+                      color:
+                        stayType === "daycamp" ? "primary.main" : "grey.500",
+                      mb: 0.5,
+                    }}
+                  />
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      fontWeight: stayType === "daycamp" ? 600 : 500,
+                      color:
+                        stayType === "daycamp"
+                          ? "primary.main"
+                          : "text.primary",
+                    }}
+                  >
+                    Daycamp
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Same day pickup
+                  </Typography>
+                </Paper>
+              </Grid>
+            </Grid>
+          </Box>
+
           {/* Display order number when editing an existing reservation */}
           {initialData && initialData.orderNumber && (
             <Box sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1 }}>
@@ -1452,7 +1602,6 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                   shrink: true,
                 }}
                 helperText="You can select multiple pets for the same reservation"
-                error={selectedPets.length === 0 && selectedPet === ""}
               />
             )}
             size="small"
@@ -2124,7 +2273,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                 <Select
                   labelId="status-select-label"
                   id="status-select"
-                  value={selectedStatus || "CONFIRMED"}
+                  value={selectedStatus || "PENDING"}
                   label="Reservation Status"
                   onChange={(e) => setSelectedStatus(e.target.value)}
                   displayEmpty
@@ -2143,6 +2292,15 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                   <MenuItem value="NO_SHOW">No Show</MenuItem>
                 </Select>
               </FormControl>
+
+              {/* Activity Log - show when editing existing reservation */}
+              {initialData?.activityLogs &&
+                initialData.activityLogs.length > 0 && (
+                  <ReservationActivityLog
+                    activities={initialData.activityLogs as ActivityLog[]}
+                    defaultExpanded={false}
+                  />
+                )}
             </>
           )}
 

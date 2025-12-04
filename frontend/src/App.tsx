@@ -87,6 +87,9 @@ const PriceRuleDetailsPage = lazy(
 const PaymentMethods = lazy(() => import("./pages/settings/PaymentMethods"));
 const Settings = lazy(() => import("./pages/settings/Settings"));
 const Users = lazy(() => import("./pages/settings/Users"));
+const ServiceAgreements = lazy(
+  () => import("./pages/settings/ServiceAgreements")
+);
 const BusinessSettings = lazy(() => import("./pages/admin/BusinessSettings"));
 const PriceRuleRedirect = lazy(
   () => import("./components/redirects/PriceRuleRedirect")
@@ -486,6 +489,12 @@ const AppRoutes = () => {
               ) : (
                 <Navigate to="/login" />
               )
+            }
+          />
+          <Route
+            path="/settings/service-agreements"
+            element={
+              isAuthenticated ? <ServiceAgreements /> : <Navigate to="/login" />
             }
           />
           <Route

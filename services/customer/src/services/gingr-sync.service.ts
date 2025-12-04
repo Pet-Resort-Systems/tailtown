@@ -146,6 +146,16 @@ export class GingrSyncService {
         result.errors.push(`Invoices: ${error.message}`);
       }
 
+      // Link orphaned invoices to reservations
+      console.log("   5️⃣  Linking invoices to reservations...");
+      try {
+        const linkedCount = await this.linkInvoicesToReservations(tenantId);
+        console.log(`      ✓ Linked ${linkedCount} invoices to reservations`);
+      } catch (error: any) {
+        console.error(`      ❌ Invoice linking failed: ${error.message}`);
+        result.errors.push(`Invoice linking: ${error.message}`);
+      }
+
       result.success = true;
     } catch (error: any) {
       result.errors.push(error.message);
@@ -520,19 +530,36 @@ export class GingrSyncService {
           externalId: reservation.reservation_id,
         };
 
+        let savedReservation;
         if (existing) {
-          await prisma.reservation.update({
+          savedReservation = await prisma.reservation.update({
             where: { id: existing.id },
             data: reservationData,
           });
         } else {
-          await prisma.reservation.create({
+          savedReservation = await prisma.reservation.create({
             data: {
               ...reservationData,
               tenantId,
             },
           });
         }
+
+        // Create/update invoice if reservation has price data
+        const reservationPrice = (reservation as any).transaction?.price;
+        if (reservationPrice && reservationPrice > 0 && savedReservation) {
+          await this.createOrUpdateReservationInvoice(
+            tenantId,
+            savedReservation.id,
+            customer.id,
+            reservationPrice,
+            parseGingrDate(reservation.start_date),
+            reservation.reservation_id,
+            reservationData.status === "COMPLETED" ||
+              reservationData.status === "CHECKED_OUT"
+          );
+        }
+
         syncCount++;
       } catch (error: any) {
         if (!error.message.includes("Unique constraint")) {
@@ -640,6 +667,446 @@ export class GingrSyncService {
     }
 
     return syncCount;
+  }
+
+  /**
+   * Create or update an invoice linked to a reservation
+   * This is called when syncing reservations that have price data from Gingr
+   */
+  private async createOrUpdateReservationInvoice(
+    tenantId: string,
+    reservationId: string,
+    customerId: string,
+    price: number,
+    invoiceDate: Date,
+    gingrReservationId: string,
+    isPaid: boolean
+  ): Promise<void> {
+    try {
+      // Check if invoice already exists for this reservation
+      const existingInvoice = await prisma.invoice.findFirst({
+        where: {
+          tenantId,
+          reservationId,
+        },
+      });
+
+      // Calculate tax (use default 7.44% rate)
+      const taxRate = 0.0744;
+      const subtotal = price;
+      const taxAmount = subtotal * taxRate;
+      const total = subtotal + taxAmount;
+
+      const invoiceData: any = {
+        customerId,
+        reservationId,
+        invoiceNumber: `GINGR-RES-${gingrReservationId}`,
+        issueDate: invoiceDate,
+        dueDate: new Date(invoiceDate.getTime() + 30 * 24 * 60 * 60 * 1000), // 30 days
+        subtotal,
+        taxRate,
+        taxAmount,
+        total,
+        status: isPaid ? "PAID" : "PENDING",
+        notes: "Invoice synced from Gingr reservation",
+      };
+
+      if (existingInvoice) {
+        await prisma.invoice.update({
+          where: { id: existingInvoice.id },
+          data: invoiceData,
+        });
+      } else {
+        // Create new invoice with line item
+        const invoice = await prisma.invoice.create({
+          data: {
+            ...invoiceData,
+            tenantId,
+            lineItems: {
+              create: {
+                tenantId,
+                type: "SERVICE",
+                description: "Reservation services (from Gingr)",
+                quantity: 1,
+                unitPrice: subtotal,
+                amount: subtotal,
+                taxable: true,
+              },
+            },
+          },
+        });
+
+        // If paid, create a payment record
+        if (isPaid) {
+          await prisma.payment.create({
+            data: {
+              tenantId,
+              invoiceId: invoice.id,
+              customerId,
+              amount: total,
+              method: "CASH", // Default since we don't know payment method from Gingr
+              paymentDate: invoiceDate,
+              status: "PAID",
+              notes: "Payment synced from Gingr",
+            },
+          });
+        }
+      }
+    } catch (error: any) {
+      // Don't fail the reservation sync if invoice creation fails
+      if (!error.message.includes("Unique constraint")) {
+        console.error(
+          `      Warning: Failed to create invoice for reservation ${reservationId}:`,
+          error.message
+        );
+      }
+    }
+  }
+
+  /**
+   * Link existing invoices to reservations by matching customer and date
+   * This is called after syncing invoices to try to link orphaned invoices
+   */
+  async linkInvoicesToReservations(tenantId: string): Promise<number> {
+    let linkedCount = 0;
+
+    // Find invoices without a reservation link
+    const orphanedInvoices = await prisma.invoice.findMany({
+      where: {
+        tenantId,
+        reservationId: null,
+        externalId: { not: null }, // Only Gingr-imported invoices
+      },
+      include: {
+        customer: true,
+      },
+    });
+
+    console.log(`      Found ${orphanedInvoices.length} invoices to link`);
+
+    for (const invoice of orphanedInvoices) {
+      try {
+        // Find a reservation for this customer within a reasonable date range
+        // Invoice date should be close to reservation end date (checkout)
+        const invoiceDate = invoice.issueDate;
+        const startRange = new Date(invoiceDate);
+        startRange.setDate(startRange.getDate() - 7); // 7 days before
+        const endRange = new Date(invoiceDate);
+        endRange.setDate(endRange.getDate() + 1); // 1 day after
+
+        const matchingReservation = await prisma.reservation.findFirst({
+          where: {
+            tenantId,
+            customerId: invoice.customerId,
+            endDate: {
+              gte: startRange,
+              lte: endRange,
+            },
+            invoice: null, // Not already linked to an invoice
+            status: { in: ["COMPLETED", "CHECKED_OUT"] },
+          },
+          orderBy: {
+            endDate: "desc",
+          },
+        });
+
+        if (matchingReservation) {
+          await prisma.invoice.update({
+            where: { id: invoice.id },
+            data: { reservationId: matchingReservation.id },
+          });
+          linkedCount++;
+          console.log(
+            `      Linked invoice ${invoice.invoiceNumber} to reservation ${matchingReservation.id}`
+          );
+        }
+      } catch (error: any) {
+        if (!error.message.includes("Unique constraint")) {
+          console.error(
+            `      Warning: Failed to link invoice ${invoice.id}:`,
+            error.message
+          );
+        }
+      }
+    }
+
+    return linkedCount;
+  }
+
+  /**
+   * Historical sync - sync reservations and invoices for a custom date range
+   * Use this for backfilling historical data
+   */
+  async syncHistorical(
+    tenantId: string,
+    fromDate: Date,
+    toDate: Date
+  ): Promise<{ reservations: number; invoices: number; linked: number }> {
+    console.log(`📅 Starting historical sync for ${tenantId}`);
+    console.log(
+      `   Date range: ${fromDate.toISOString().split("T")[0]} to ${
+        toDate.toISOString().split("T")[0]
+      }`
+    );
+
+    const gingrClient = new GingrApiClient({
+      subdomain: "tailtownpetresort",
+      apiKey: process.env.GINGR_API_KEY || "c84c09ecfacdf23a495505d2ae1df533",
+    });
+
+    let reservationCount = 0;
+    let invoiceCount = 0;
+
+    // Sync reservations in 30-day chunks (API limitation)
+    console.log("   1️⃣  Syncing historical reservations...");
+    let currentStart = new Date(fromDate);
+    while (currentStart < toDate) {
+      const chunkEnd = new Date(currentStart);
+      chunkEnd.setDate(chunkEnd.getDate() + 29);
+      const actualEnd = chunkEnd > toDate ? toDate : chunkEnd;
+
+      console.log(
+        `      Chunk: ${currentStart.toISOString().split("T")[0]} to ${
+          actualEnd.toISOString().split("T")[0]
+        }`
+      );
+
+      try {
+        const reservations = await gingrClient.fetchAllReservations(
+          currentStart,
+          actualEnd
+        );
+        console.log(`      Found ${reservations.length} reservations`);
+
+        for (const reservation of reservations) {
+          try {
+            await this.syncSingleReservation(
+              tenantId,
+              reservation,
+              gingrClient
+            );
+            reservationCount++;
+          } catch (error: any) {
+            if (!error.message.includes("Unique constraint")) {
+              console.error(
+                `      Error syncing reservation: ${error.message}`
+              );
+            }
+          }
+        }
+      } catch (error: any) {
+        console.error(`      Error fetching chunk: ${error.message}`);
+      }
+
+      currentStart = new Date(actualEnd);
+      currentStart.setDate(currentStart.getDate() + 1);
+    }
+    console.log(`      ✓ Synced ${reservationCount} reservations`);
+
+    // Sync invoices for the date range
+    console.log("   2️⃣  Syncing historical invoices...");
+    try {
+      const invoices = await gingrClient.fetchAllInvoices(fromDate, toDate);
+      console.log(`      Found ${invoices.length} invoices`);
+
+      for (const invoice of invoices) {
+        try {
+          const customer = await prisma.customer.findFirst({
+            where: { tenantId, externalId: invoice.owner_id },
+          });
+
+          if (!customer) continue;
+
+          const existing = await prisma.invoice.findFirst({
+            where: { tenantId, externalId: invoice.id },
+          });
+
+          const invoiceData: any = {
+            customerId: customer.id,
+            invoiceNumber: `GINGR-${invoice.id}`,
+            issueDate: new Date(parseInt(invoice.create_stamp) * 1000),
+            dueDate: new Date(
+              parseInt(invoice.create_stamp) * 1000 + 30 * 24 * 60 * 60 * 1000
+            ),
+            subtotal: parseFloat(invoice.subtotal),
+            taxRate:
+              parseFloat(invoice.subtotal) > 0
+                ? parseFloat(invoice.tax_amount) / parseFloat(invoice.subtotal)
+                : 0,
+            taxAmount: parseFloat(invoice.tax_amount),
+            total: parseFloat(invoice.total),
+            status: "PAID",
+            externalId: invoice.id,
+          };
+
+          if (existing) {
+            await prisma.invoice.update({
+              where: { id: existing.id },
+              data: invoiceData,
+            });
+          } else {
+            await prisma.invoice.create({
+              data: {
+                ...invoiceData,
+                tenantId,
+                lineItems: {
+                  create: {
+                    tenantId,
+                    type: "SERVICE",
+                    description: "Services (imported from Gingr)",
+                    quantity: 1,
+                    unitPrice: parseFloat(invoice.subtotal),
+                    amount: parseFloat(invoice.subtotal),
+                    taxable: true,
+                  },
+                },
+              },
+            });
+          }
+          invoiceCount++;
+        } catch (error: any) {
+          if (!error.message.includes("Unique constraint")) {
+            console.error(`      Error syncing invoice: ${error.message}`);
+          }
+        }
+      }
+    } catch (error: any) {
+      console.error(`      Error fetching invoices: ${error.message}`);
+    }
+    console.log(`      ✓ Synced ${invoiceCount} invoices`);
+
+    // Link invoices to reservations
+    console.log("   3️⃣  Linking invoices to reservations...");
+    const linkedCount = await this.linkInvoicesToReservations(tenantId);
+    console.log(`      ✓ Linked ${linkedCount} invoices`);
+
+    console.log(
+      `\n✅ Historical sync complete: ${reservationCount} reservations, ${invoiceCount} invoices, ${linkedCount} linked`
+    );
+
+    return {
+      reservations: reservationCount,
+      invoices: invoiceCount,
+      linked: linkedCount,
+    };
+  }
+
+  /**
+   * Sync a single reservation (helper for historical sync)
+   */
+  private async syncSingleReservation(
+    tenantId: string,
+    reservation: any,
+    gingrClient: GingrApiClient
+  ): Promise<void> {
+    const customer = await prisma.customer.findFirst({
+      where: { tenantId, externalId: reservation.owner?.id },
+    });
+
+    const pet = await prisma.pet.findFirst({
+      where: { tenantId, externalId: reservation.animal?.id },
+    });
+
+    if (!customer || !pet) return;
+
+    const existing = await prisma.reservation.findFirst({
+      where: { tenantId, externalId: reservation.reservation_id },
+    });
+
+    const parseGingrDate = (dateStr: string): Date => {
+      if (!dateStr) return new Date();
+      const localPart = dateStr.replace(/[+-]\d{2}:\d{2}$/, "");
+      return new Date(localPart);
+    };
+
+    // Determine service
+    const gingrLodging = extractGingrLodging(reservation);
+    let serviceName = "Boarding | Indoor Suite";
+    let serviceCategory: "BOARDING" | "DAYCARE" = "BOARDING";
+
+    if (gingrLodging) {
+      const lodgingUpper = gingrLodging.toUpperCase();
+      let resourceType = "JUNIOR_KENNEL";
+      if (lodgingUpper.includes("VIP") || lodgingUpper.startsWith("V"))
+        resourceType = "VIP_ROOM";
+      else if (lodgingUpper.includes("CAT") || lodgingUpper.includes("CONDO"))
+        resourceType = "CAT_CONDO";
+      else if (lodgingUpper.endsWith("K") || lodgingUpper.includes("KING"))
+        resourceType = "KING_KENNEL";
+      else if (lodgingUpper.endsWith("Q") || lodgingUpper.includes("QUEEN"))
+        resourceType = "QUEEN_KENNEL";
+      serviceName = getServiceNameForResourceType(resourceType);
+    } else {
+      const gingrType = reservation.reservation_type?.type || "Boarding";
+      if (gingrType.includes("Day Camp") && !gingrType.includes("Lodging")) {
+        serviceName = gingrType.includes("Half")
+          ? "Day Camp | Half Day"
+          : "Day Camp | Full Day";
+        serviceCategory = "DAYCARE";
+      }
+    }
+
+    let service = await prisma.service.findFirst({
+      where: { tenantId, name: serviceName },
+    });
+    if (!service) {
+      service = await prisma.service.create({
+        data: {
+          tenantId,
+          name: serviceName,
+          serviceCategory,
+          duration: 1440,
+          price: 0,
+          isActive: true,
+        },
+      });
+    }
+
+    const reservationData: any = {
+      customerId: customer.id,
+      petId: pet.id,
+      serviceId: service.id,
+      startDate: parseGingrDate(reservation.start_date),
+      endDate: parseGingrDate(reservation.end_date),
+      status: reservation.cancelled_date
+        ? "CANCELLED"
+        : reservation.check_out_date
+        ? "COMPLETED"
+        : reservation.check_in_date
+        ? "CHECKED_IN"
+        : reservation.confirmed_date
+        ? "CONFIRMED"
+        : "PENDING",
+      notes: reservation.notes?.reservation_notes,
+      externalId: reservation.reservation_id,
+    };
+
+    let savedReservation;
+    if (existing) {
+      savedReservation = await prisma.reservation.update({
+        where: { id: existing.id },
+        data: reservationData,
+      });
+    } else {
+      savedReservation = await prisma.reservation.create({
+        data: { ...reservationData, tenantId },
+      });
+    }
+
+    // Create invoice if price data exists
+    const reservationPrice = reservation.transaction?.price;
+    if (reservationPrice && reservationPrice > 0 && savedReservation) {
+      await this.createOrUpdateReservationInvoice(
+        tenantId,
+        savedReservation.id,
+        customer.id,
+        reservationPrice,
+        parseGingrDate(reservation.start_date),
+        reservation.reservation_id,
+        reservationData.status === "COMPLETED" ||
+          reservationData.status === "CHECKED_OUT"
+      );
+    }
   }
 }
 

@@ -11,6 +11,7 @@ import { catchAsync } from "../../middleware/catchAsync";
 import { logger } from "../../utils/logger";
 import { ExtendedReservationWhereInput } from "../../types/prisma-extensions";
 import { safeExecutePrismaQuery, prisma } from "./utils/prisma-helpers";
+import { getReservationActivityLogs } from "../../services/reservation-activity.service";
 
 /**
  * Get all reservations with pagination and filtering
@@ -564,12 +565,23 @@ export const getReservationById = catchAsync(
       throw AppError.notFoundError("Reservation not found");
     }
 
+    // Fetch activity logs for this reservation
+    let activityLogs: any[] = [];
+    try {
+      activityLogs = await getReservationActivityLogs(tenantId, id, 20);
+    } catch (err) {
+      logger.warn(`Failed to fetch activity logs for reservation ${id}`, {
+        err,
+      });
+    }
+
     logger.info(`Found reservation: ${id}`, { requestId });
 
     res.status(200).json({
       status: "success",
       data: {
         reservation,
+        activityLogs,
       },
     });
   }

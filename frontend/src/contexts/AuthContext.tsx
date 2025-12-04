@@ -101,10 +101,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       // Real API call to login endpoint - uses dynamic URL for multi-tenant support
+      const envUrl = process.env.REACT_APP_API_URL;
       const apiUrl =
-        process.env.NODE_ENV === "production"
-          ? window.location.origin
-          : process.env.REACT_APP_API_URL || "http://localhost:4004";
+        envUrl && envUrl.length > 0 ? envUrl : window.location.origin;
 
       // Extract tenant subdomain from hostname
       const hostname = window.location.hostname;

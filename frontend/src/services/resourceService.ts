@@ -675,12 +675,24 @@ export const resourceService = {
       }>;
     };
   }> => {
+    // Guard: Don't call API with empty resourceIds array
+    if (!resourceIds || resourceIds.length === 0) {
+      return {
+        status: "success",
+        data: {
+          checkDate: null,
+          checkStartDate: startDate,
+          checkEndDate: endDate,
+          resources: [],
+        },
+      };
+    }
+
     try {
-      // Using the correct endpoint path that exists in the backend
       const response: AxiosResponse = await api.post(
         "/api/resources/availability/batch",
         {
-          resources: resourceIds, // Also fixing the parameter name to match what the backend expects
+          resourceIds, // Backend expects 'resourceIds' not 'resources'
           startDate,
           endDate,
         }

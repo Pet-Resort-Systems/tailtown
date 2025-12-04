@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import { getApiBaseUrl } from "../services/api";
 import {
   Box,
   Button,
@@ -17,15 +18,15 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-} from '@mui/material';
+} from "@mui/material";
 import {
   CloudUpload as UploadIcon,
   Delete as DeleteIcon,
   Download as DownloadIcon,
   Description as FileIcon,
   Image as ImageIcon,
-} from '@mui/icons-material';
-import axios from 'axios';
+} from "@mui/icons-material";
+import axios from "axios";
 
 interface VaccineFile {
   filename: string;
@@ -42,7 +43,10 @@ interface VaccineRecordUploadProps {
   petName: string;
 }
 
-const VaccineRecordUpload: React.FC<VaccineRecordUploadProps> = ({ petId, petName }) => {
+const VaccineRecordUpload: React.FC<VaccineRecordUploadProps> = ({
+  petId,
+  petName,
+}) => {
   const [files, setFiles] = useState<VaccineFile[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -52,20 +56,22 @@ const VaccineRecordUpload: React.FC<VaccineRecordUploadProps> = ({ petId, petNam
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  const API_BASE_URL = process.env.REACT_APP_CUSTOMER_SERVICE_URL || 'http://localhost:4004';
+  const API_BASE_URL = getApiBaseUrl();
 
   // Fetch existing vaccine records
   const fetchVaccineRecords = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/pets/${petId}/vaccine-records`);
+      const response = await axios.get(
+        `${API_BASE_URL}/api/pets/${petId}/vaccine-records`
+      );
       if (response.data.success) {
         setFiles(response.data.data.files || []);
       }
     } catch (err: any) {
-      console.error('Error fetching vaccine records:', err);
-      setError(err.response?.data?.message || 'Failed to load vaccine records');
+      console.error("Error fetching vaccine records:", err);
+      setError(err.response?.data?.message || "Failed to load vaccine records");
     } finally {
       setLoading(false);
     }
@@ -81,23 +87,25 @@ const VaccineRecordUpload: React.FC<VaccineRecordUploadProps> = ({ petId, petNam
     if (file) {
       // Validate file type
       const allowedTypes = [
-        'image/jpeg', 
-        'image/jpg', 
-        'image/png', 
-        'image/gif', 
-        'image/webp', 
-        'image/heic', 
-        'image/heif',
-        'application/pdf'
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+        "image/heic",
+        "image/heif",
+        "application/pdf",
       ];
       if (!allowedTypes.includes(file.type)) {
-        setError('Invalid file type. Please upload an image (JPEG, PNG, GIF, WebP, HEIC) or PDF file.');
+        setError(
+          "Invalid file type. Please upload an image (JPEG, PNG, GIF, WebP, HEIC) or PDF file."
+        );
         return;
       }
 
       // Validate file size (10MB max)
       if (file.size > 10 * 1024 * 1024) {
-        setError('File size exceeds 10MB limit.');
+        setError("File size exceeds 10MB limit.");
         return;
       }
 
@@ -115,7 +123,7 @@ const VaccineRecordUpload: React.FC<VaccineRecordUploadProps> = ({ petId, petNam
     setSuccess(null);
 
     const formData = new FormData();
-    formData.append('file', selectedFile);
+    formData.append("file", selectedFile);
 
     try {
       const response = await axios.post(
@@ -123,23 +131,25 @@ const VaccineRecordUpload: React.FC<VaccineRecordUploadProps> = ({ petId, petNam
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         }
       );
 
       if (response.data.success) {
-        setSuccess('Vaccine record uploaded successfully!');
+        setSuccess("Vaccine record uploaded successfully!");
         setSelectedFile(null);
         // Reset file input
-        const fileInput = document.getElementById('vaccine-file-input') as HTMLInputElement;
-        if (fileInput) fileInput.value = '';
+        const fileInput = document.getElementById(
+          "vaccine-file-input"
+        ) as HTMLInputElement;
+        if (fileInput) fileInput.value = "";
         // Refresh the list
         await fetchVaccineRecords();
       }
     } catch (err: any) {
-      console.error('Error uploading file:', err);
-      setError(err.response?.data?.message || 'Failed to upload file');
+      console.error("Error uploading file:", err);
+      setError(err.response?.data?.message || "Failed to upload file");
     } finally {
       setUploading(false);
     }
@@ -147,26 +157,30 @@ const VaccineRecordUpload: React.FC<VaccineRecordUploadProps> = ({ petId, petNam
 
   // Delete file
   const handleDelete = async (filename: string) => {
-    if (!window.confirm('Are you sure you want to delete this vaccine record?')) {
+    if (
+      !window.confirm("Are you sure you want to delete this vaccine record?")
+    ) {
       return;
     }
 
     try {
-      const response = await axios.delete(`${API_BASE_URL}/api/pets/${petId}/vaccine-records/${filename}`);
+      const response = await axios.delete(
+        `${API_BASE_URL}/api/pets/${petId}/vaccine-records/${filename}`
+      );
       if (response.data.success) {
-        setSuccess('Vaccine record deleted successfully!');
+        setSuccess("Vaccine record deleted successfully!");
         await fetchVaccineRecords();
       }
     } catch (err: any) {
-      console.error('Error deleting file:', err);
-      setError(err.response?.data?.message || 'Failed to delete file');
+      console.error("Error deleting file:", err);
+      setError(err.response?.data?.message || "Failed to delete file");
     }
   };
 
   // Download file
   const handleDownload = (filename: string, originalName: string) => {
     const downloadUrl = `${API_BASE_URL}/api/pets/${petId}/vaccine-records/${filename}/download`;
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = downloadUrl;
     link.download = originalName;
     document.body.appendChild(link);
@@ -177,8 +191,8 @@ const VaccineRecordUpload: React.FC<VaccineRecordUploadProps> = ({ petId, petNam
   // Preview/View file
   const handlePreview = (file: VaccineFile) => {
     // For PDFs, open in new tab
-    if (file.mimeType === 'application/pdf') {
-      window.open(file.url, '_blank');
+    if (file.mimeType === "application/pdf") {
+      window.open(file.url, "_blank");
     } else {
       // For images, show in preview dialog
       setPreviewUrl(file.url);
@@ -188,20 +202,20 @@ const VaccineRecordUpload: React.FC<VaccineRecordUploadProps> = ({ petId, petNam
 
   // Format file size
   const formatFileSize = (bytes: number): string => {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
   };
 
   // Format date
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+    return date.toLocaleDateString() + " " + date.toLocaleTimeString();
   };
 
   // Get file icon
   const getFileIcon = (mimeType: string) => {
-    if (mimeType.startsWith('image/')) {
+    if (mimeType.startsWith("image/")) {
       return <ImageIcon color="primary" />;
     }
     return <FileIcon color="secondary" />;
@@ -221,7 +235,11 @@ const VaccineRecordUpload: React.FC<VaccineRecordUploadProps> = ({ petId, petNam
         )}
 
         {success && (
-          <Alert severity="success" onClose={() => setSuccess(null)} sx={{ mb: 2 }}>
+          <Alert
+            severity="success"
+            onClose={() => setSuccess(null)}
+            sx={{ mb: 2 }}
+          >
             {success}
           </Alert>
         )}
@@ -230,7 +248,7 @@ const VaccineRecordUpload: React.FC<VaccineRecordUploadProps> = ({ petId, petNam
         <Box sx={{ mb: 3 }}>
           <input
             accept=".jpg,.jpeg,.png,.gif,.webp,.heic,.heif,.pdf"
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
             id="vaccine-file-input"
             type="file"
             onChange={handleFileSelect}
@@ -247,9 +265,10 @@ const VaccineRecordUpload: React.FC<VaccineRecordUploadProps> = ({ petId, petNam
           </label>
 
           {selectedFile && (
-            <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ mt: 2, display: "flex", alignItems: "center", gap: 2 }}>
               <Typography variant="body2">
-                Selected: {selectedFile.name} ({formatFileSize(selectedFile.size)})
+                Selected: {selectedFile.name} (
+                {formatFileSize(selectedFile.size)})
               </Typography>
               <Button
                 variant="contained"
@@ -258,7 +277,7 @@ const VaccineRecordUpload: React.FC<VaccineRecordUploadProps> = ({ petId, petNam
                 disabled={uploading}
                 startIcon={<UploadIcon />}
               >
-                {uploading ? 'Uploading...' : 'Upload'}
+                {uploading ? "Uploading..." : "Upload"}
               </Button>
             </Box>
           )}
@@ -286,12 +305,17 @@ const VaccineRecordUpload: React.FC<VaccineRecordUploadProps> = ({ petId, petNam
                   primary={file.originalName}
                   secondary={
                     <>
-                      {formatFileSize(file.size)} • Uploaded {formatDate(file.uploadedAt)}
+                      {formatFileSize(file.size)} • Uploaded{" "}
+                      {formatDate(file.uploadedAt)}
                       <Chip
-                        label={file.mimeType === 'application/pdf' ? 'View PDF' : 'Preview'}
+                        label={
+                          file.mimeType === "application/pdf"
+                            ? "View PDF"
+                            : "Preview"
+                        }
                         size="small"
                         onClick={() => handlePreview(file)}
-                        sx={{ ml: 1, cursor: 'pointer' }}
+                        sx={{ ml: 1, cursor: "pointer" }}
                         color="primary"
                         variant="outlined"
                       />
@@ -302,7 +326,9 @@ const VaccineRecordUpload: React.FC<VaccineRecordUploadProps> = ({ petId, petNam
                   <IconButton
                     edge="end"
                     aria-label="download"
-                    onClick={() => handleDownload(file.filename, file.originalName)}
+                    onClick={() =>
+                      handleDownload(file.filename, file.originalName)
+                    }
                     sx={{ mr: 1 }}
                   >
                     <DownloadIcon />
@@ -331,14 +357,14 @@ const VaccineRecordUpload: React.FC<VaccineRecordUploadProps> = ({ petId, petNam
           <DialogTitle>Vaccine Record Preview</DialogTitle>
           <DialogContent>
             {previewUrl && (
-              <Box sx={{ textAlign: 'center', p: 2 }}>
+              <Box sx={{ textAlign: "center", p: 2 }}>
                 <img
                   src={previewUrl}
                   alt="Vaccine record"
-                  style={{ 
-                    maxWidth: '100%', 
-                    maxHeight: '80vh',
-                    objectFit: 'contain'
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "80vh",
+                    objectFit: "contain",
                   }}
                 />
               </Box>

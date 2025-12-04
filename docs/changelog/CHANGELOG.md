@@ -9,6 +9,65 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## [1.6.18] - 2025-12-04
+
+### Added
+
+- **Tipping System** - Complete tip collection and reporting for staff
+
+  - **Database Schema**: New `Tip` model with `TipType` (GROOMER/GENERAL) and `TipCollectionMethod` (ONLINE/TERMINAL/CASH) enums
+  - **API Endpoints**: Full CRUD at `/api/tips` plus reporting endpoints for groomer summaries and tip pool
+  - **Staff Checkout UI**: Tip selection step in checkout workflow with 15%, 20%, 25% presets and custom amounts
+  - **Online Checkout**: Tip selection integrated into customer booking flow
+  - **Tip Reporting Dashboard**: New "Tips" tab in Reports with groomer tips table, general pool breakdown, and CSV export
+  - Files: `services/customer/prisma/schema.prisma`, `services/customer/src/controllers/tip.controller.ts`, `frontend/src/components/checkout/TipSelection.tsx`, `frontend/src/pages/reports/TipReports.tsx`
+
+- **Calendar View Improvements** - Better date navigation
+  - Week view now starts with current date on far left (instead of Sunday)
+  - Shows 7 days forward from today
+  - Files: `frontend/src/components/calendar/KennelCalendar.tsx`, `frontend/src/components/calendar/SpecializedCalendar.tsx`, `frontend/src/components/calendar/base/BaseCalendar.tsx`
+
+## [1.6.17] - 2025-12-03
+
+### Fixed
+
+- **Production Customer Service 500 Errors** - Resolved critical issue preventing customers from loading
+
+  - **Root Cause**: Prisma version mismatch - `npm install` upgraded Prisma to v7.x which has breaking changes
+  - **Secondary Issue**: `staging-customer-service` was running on same port (4004) as production, intercepting requests
+  - **Solution**:
+    - Pinned `prisma` and `@prisma/client` to version `4.16.2` in both customer-service and reservation-service
+    - Stopped staging-customer-service to free port 4004
+    - Clean reinstall with `npm ci --legacy-peer-deps`
+  - Files: `services/customer/package.json`, `services/reservation-service/package.json`
+
+- **Console Warning Spam** - Eliminated unnecessary console errors
+  - Removed `/api/tenants/me` API call from ServiceAgreements page (used cached data instead)
+  - Added auth token check before making authenticated API calls
+  - Added `minHeight` to Recharts `ResponsiveContainer` components to prevent dimension errors
+  - Files: `frontend/src/services/tenantService.ts`, `frontend/src/pages/settings/ServiceAgreements.tsx`, `frontend/src/pages/analytics/AnalyticsDashboard.tsx`, `frontend/src/pages/analytics/CustomerValueReport.tsx`
+
+### Technical Notes
+
+- **Prisma Version Lock**: Both services now use Prisma 4.16.2. Do NOT upgrade to v5+ without migration planning.
+- **Port Allocation**: Production customer-service uses port 4004. Staging should use a different port.
+
+## [1.6.16] - 2025-12-03
+
+### Added
+
+- **Service Agreement System** - Complete digital service agreement workflow
+  - **Customizable Templates**: Create and edit service agreement templates with rich text editor
+  - **Custom Questions**: Add questions to templates with multiple types (Text, Long Text, Number, Currency, Yes/No)
+  - **Merge Fields**: Dynamic placeholders like `[Business Name]` auto-replaced with tenant data
+  - **Digital Signature Capture**: Canvas-based signature capture on any device
+  - **On-the-fly Signing**: "Sign Agreement" button on customer profile for immediate signing
+  - **Agreement History**: View all signed agreements per customer in their profile's Agreements tab
+  - **Question Responses**: Capture and display customer responses to custom questions
+  - **Template Versioning**: Track template versions and changes over time
+  - **Auto-default Template**: Single template automatically set as default
+  - Files: `frontend/src/components/agreements/`, `frontend/src/pages/settings/ServiceAgreements.tsx`, `services/reservation-service/src/controllers/service-agreement.controller.ts`
+
 ## [1.6.15] - 2025-12-02
 
 ### Fixed

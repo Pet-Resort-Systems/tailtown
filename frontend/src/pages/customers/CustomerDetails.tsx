@@ -35,7 +35,13 @@ import AccountHistory from "../../components/customers/AccountHistory";
 import CustomerIconSelectorNew from "../../components/customers/CustomerIconSelectorNew";
 import CustomerIconBadges from "../../components/customers/CustomerIconBadges";
 import CustomerDaycarePasses from "../../components/customers/CustomerDaycarePasses";
+import {
+  CustomerAgreementHistory,
+  ServiceAgreementSign,
+} from "../../components/agreements";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
+import DescriptionIcon from "@mui/icons-material/Description";
+import DrawIcon from "@mui/icons-material/Draw";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -96,6 +102,7 @@ const CustomerDetails: React.FC = () => {
   const [iconNotes, setIconNotes] = useState<Record<string, string>>(
     customer.iconNotes || {}
   );
+  const [signAgreementOpen, setSignAgreementOpen] = useState(false);
 
   // Fetch customer data
   const fetchCustomer = useCallback(async () => {
@@ -496,6 +503,14 @@ const CustomerDetails: React.FC = () => {
                 Edit Customer
               </Button>
               <Button
+                variant="contained"
+                color="success"
+                startIcon={<DrawIcon />}
+                onClick={() => setSignAgreementOpen(true)}
+              >
+                Sign Agreement
+              </Button>
+              <Button
                 variant="outlined"
                 color="secondary"
                 onClick={() => navigate("/customers")}
@@ -532,6 +547,11 @@ const CustomerDetails: React.FC = () => {
                 iconPosition="start"
                 label="Account History"
               />
+              <Tab
+                icon={<DescriptionIcon />}
+                iconPosition="start"
+                label="Agreements"
+              />
             </Tabs>
           </Box>
         )}
@@ -565,6 +585,14 @@ const CustomerDetails: React.FC = () => {
                 <AccountHistory customerId={id || ""} />
               </Box>
             </TabPanel>
+            <TabPanel value={tabValue} index={4}>
+              <Box>
+                <Typography variant="h6" gutterBottom>
+                  Service Agreements
+                </Typography>
+                <CustomerAgreementHistory customerId={id || ""} />
+              </Box>
+            </TabPanel>
           </>
         )}
 
@@ -589,6 +617,37 @@ const CustomerDetails: React.FC = () => {
           <DialogActions>
             <Button onClick={() => setIconSelectorOpen(false)}>Close</Button>
           </DialogActions>
+        </Dialog>
+
+        {/* Sign Agreement Dialog */}
+        <Dialog
+          open={signAgreementOpen}
+          onClose={() => setSignAgreementOpen(false)}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>
+            Sign Service Agreement - {customer.firstName} {customer.lastName}
+          </DialogTitle>
+          <DialogContent>
+            {id && (
+              <ServiceAgreementSign
+                customerId={id}
+                customerName={`${customer.firstName} ${customer.lastName}`}
+                onComplete={() => {
+                  setSignAgreementOpen(false);
+                  setSnackbar({
+                    open: true,
+                    message: "Agreement signed successfully!",
+                    severity: "success",
+                  });
+                  // Switch to Agreements tab to show the new agreement
+                  setTabValue(4);
+                }}
+                onCancel={() => setSignAgreementOpen(false)}
+              />
+            )}
+          </DialogContent>
         </Dialog>
 
         {/* Snackbar for notifications */}

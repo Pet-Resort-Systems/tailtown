@@ -78,10 +78,9 @@ const getProfilePhotoUrl = (
   if (!profilePhoto) return undefined;
 
   try {
+    const envUrl = process.env.REACT_APP_API_URL;
     const baseUrl =
-      process.env.NODE_ENV === "production"
-        ? window.location.origin
-        : process.env.REACT_APP_API_URL || "http://localhost:4004";
+      envUrl && envUrl.length > 0 ? envUrl : window.location.origin;
 
     // Ensure profilePhoto starts with /
     const path = profilePhoto.startsWith("/")
@@ -134,13 +133,9 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
   const loadBusinessSettings = async () => {
     try {
       // Use dynamic API URL based on environment
-      const getApiUrl = () => {
-        if (process.env.NODE_ENV === "production") {
-          return window.location.origin;
-        }
-        return process.env.REACT_APP_API_URL || "http://localhost:4004";
-      };
-      const API_URL = getApiUrl();
+      const envUrl = process.env.REACT_APP_API_URL;
+      const API_URL =
+        envUrl && envUrl.length > 0 ? envUrl : window.location.origin;
       const tenantId =
         localStorage.getItem("tailtown_tenant_id") ||
         localStorage.getItem("tenantId");

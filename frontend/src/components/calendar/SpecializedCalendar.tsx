@@ -339,7 +339,7 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
    * It closes the form dialog and refreshes the calendar
    */
   useEffect(() => {
-    const handleReservationComplete = (event: Event) => {
+    const handleReservationComplete = (_event: Event) => {
       // Close the form dialog and reset all selection state
       setIsFormOpen(false);
       setSelectedEvent(null);
@@ -635,6 +635,8 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
             week: "Week",
             day: "Day",
           }}
+          initialDate={new Date()}
+          firstDay={new Date().getDay()} // Start week from current day
           views={{
             timeGrid: {
               nowIndicator: true,

@@ -46,6 +46,7 @@ model Reservation {
   checkIns           CheckIn[]
   invoice            Invoice?
   addOnServices      ReservationAddOn[]
+  activityLogs       ReservationActivityLog[]
   // customer relation removed - use customerServiceClient.getCustomer(customerId, tenantId)
   // pet relation removed - use customerServiceClient.getPet(petId, tenantId)
   resource           Resource?          @relation(fields: [resourceId], references: [id])
@@ -520,33 +521,79 @@ model CheckInMedication {
 }
 
 model ServiceAgreementTemplate {
-  id        String   @id @default(uuid())
-  tenantId  String   @default("dev")
-  name      String
-  content   String
-  isActive  Boolean  @default(true)
-  isDefault Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String                    @id @default(uuid())
+  tenantId    String                    @default("dev")
+  name        String
+  content     String                    // Rich text content (HTML)
+  version     Int                       @default(1)
+  isActive    Boolean                   @default(true)
+  isDefault   Boolean                   @default(false)
+  requiresInitials Boolean              @default(true)  // Require initials on each section
+  requiresSignature Boolean             @default(true)  // Require signature at end
+  questions   Json?                     // Array of custom questions: [{id, question, type, required, options?}]
+  effectiveDate DateTime?               // When this version becomes effective
+  expiresAt   DateTime?                 // Optional expiration date
+  createdBy   String?                   // Staff ID who created
+  updatedBy   String?                   // Staff ID who last updated
+  createdAt   DateTime                  @default(now())
+  updatedAt   DateTime                  @updatedAt
+  versions    ServiceAgreementVersion[]
+  agreements  ServiceAgreement[]        @relation("TemplateAgreements")
 
   @@unique([tenantId, name], map: "service_agreement_templates_tenant_name_unique")
   @@index([tenantId, isActive], map: "service_agreement_templates_tenant_active_idx")
+  @@index([tenantId, isDefault], map: "service_agreement_templates_tenant_default_idx")
   @@map("service_agreement_templates")
 }
 
+model ServiceAgreementVersion {
+  id          String                   @id @default(uuid())
+  tenantId    String                   @default("dev")
+  templateId  String
+  version     Int
+  content     String                   // Snapshot of content at this version
+  changeNotes String?                  // Description of changes
+  createdBy   String?                  // Staff ID who created this version
+  createdAt   DateTime                 @default(now())
+  template    ServiceAgreementTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@unique([templateId, version], map: "service_agreement_versions_template_version_unique")
+  @@index([tenantId, templateId], map: "service_agreement_versions_tenant_template_idx")
+  @@map("service_agreement_versions")
+}
+
 model ServiceAgreement {
-  id            String   @id @default(uuid())
-  tenantId      String   @default("dev")
-  checkInId     String   @unique
-  agreementText String
-  initials      Json
-  signature     String
-  signedBy      String
-  signedAt      DateTime
-  ipAddress     String?
-  checkIn       CheckIn  @relation(fields: [checkInId], references: [id], onDelete: Cascade)
+  id              String                    @id @default(uuid())
+  tenantId        String                    @default("dev")
+  checkInId       String?                   @unique // Optional - can be signed without check-in
+  customerId      String                    // Customer who signed
+  petId           String?                   // Optional - specific pet if applicable
+  templateId      String?                   // Reference to template used
+  templateVersion Int?                      // Version of template at time of signing
+  agreementText   String                    // Full text at time of signing (snapshot)
+  initials        Json                      // Array of {section, initials, timestamp}
+  signature       String                    // Base64 signature image
+  signatureMethod String?                   // How signature was captured: 'device', 'terminal', 'paper'
+  signedBy        String                    // Name of person who signed
+  signedAt        DateTime
+  ipAddress       String?
+  userAgent       String?                   // Browser/device info
+  questionResponses Json?                   // Responses to custom questions: {questionId: response}
+  acknowledgedAt  DateTime?                 // When customer acknowledged (if separate from signing)
+  expiresAt       DateTime?                 // When this agreement expires (for renewals)
+  isValid         Boolean                   @default(true) // Can be invalidated if needed
+  invalidatedAt   DateTime?
+  invalidatedBy   String?
+  invalidReason   String?
+  createdAt       DateTime                  @default(now())
+  updatedAt       DateTime                  @updatedAt
+  checkIn         CheckIn?                  @relation(fields: [checkInId], references: [id], onDelete: SetNull)
+  template        ServiceAgreementTemplate? @relation("TemplateAgreements", fields: [templateId], references: [id])
 
   @@index([tenantId], map: "service_agreements_tenant_idx")
+  @@index([tenantId, customerId], map: "service_agreements_tenant_customer_idx")
+  @@index([tenantId, customerId, signedAt], map: "service_agreements_tenant_customer_signed_idx")
+  @@index([tenantId, isValid], map: "service_agreements_tenant_valid_idx")
   @@map("service_agreements")
 }
 
@@ -791,6 +838,51 @@ enum ScheduleStatus {
   NO_SHOW
 }
 
+enum ReservationActivityType {
+  CREATED
+  UPDATED
+  STATUS_CHANGED
+  CHECKED_IN
+  CHECKED_OUT
+  CANCELLED
+  CONFIRMED
+  PAYMENT_RECEIVED
+  NOTE_ADDED
+  RESOURCE_ASSIGNED
+  STAFF_ASSIGNED
+  ADDON_ADDED
+  ADDON_REMOVED
+}
+
+enum ActivityActorType {
+  CUSTOMER
+  EMPLOYEE
+  SYSTEM
+}
+
+model ReservationActivityLog {
+  id             String                    @id @default(uuid())
+  tenantId       String                    @default("dev")
+  reservationId  String
+  activityType   ReservationActivityType
+  actorType      ActivityActorType
+  actorId        String?                   // customerId or staffId depending on actorType
+  actorName      String?                   // Denormalized for display (e.g., "John Smith" or "Online Booking")
+  description    String                    // Human-readable description of the activity
+  previousValue  String?                   // JSON string of previous state (for changes)
+  newValue       String?                   // JSON string of new state (for changes)
+  ipAddress      String?                   // For audit purposes
+  userAgent      String?                   // For audit purposes
+  createdAt      DateTime                  @default(now())
+  reservation    Reservation               @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  @@index([reservationId], map: "reservation_activity_log_reservation_idx")
+  @@index([tenantId, reservationId], map: "reservation_activity_log_tenant_reservation_idx")
+  @@index([tenantId, createdAt], map: "reservation_activity_log_tenant_created_idx")
+  @@index([actorType, actorId], map: "reservation_activity_log_actor_idx")
+  @@map("reservation_activity_logs")
+}
+
 enum ServiceCategory {
   DAYCARE
   BOARDING
@@ -837,17 +929,77 @@ enum DiscountType {
 
 model Tenant {
   id                    String       @id @default(uuid())
+  
+  // Business Information
   businessName          String
-  subdomain             String       @unique
+  subdomain             String       @unique  // e.g., "pawsinn" for pawsinn.tailtown.com
   contactName           String
   contactEmail          String       @unique
   contactPhone          String?
-  status                String       @default("TRIAL")
+  address               String?
+  city                  String?
+  state                 String?
+  zipCode               String?
+  country               String       @default("US")
+  
+  // Account Status
+  status                TenantStatus @default(TRIAL)
   isActive              Boolean      @default(true)
   isPaused              Boolean      @default(false)
+  
+  // Subscription & Billing
+  planType              String       @default("STARTER")  // STARTER, PROFESSIONAL, ENTERPRISE
+  billingEmail          String?
+  maxEmployees          Int          @default(50)
+  maxLocations          Int          @default(1)
+  
+  // Dates
+  trialEndsAt           DateTime?
+  subscriptionStartDate DateTime?
+  subscriptionEndDate   DateTime?
+  pausedAt              DateTime?
+  deletedAt             DateTime?    // Soft delete
   createdAt             DateTime     @default(now())
   updatedAt             DateTime     @updatedAt
+  
+  // Super Admin Management
+  suspendedAt           DateTime?    @map("suspended_at")
+  suspendedReason       String?      @map("suspended_reason")
+  suspendedBy           String?      @map("suspended_by")
+  deletedBy             String?      @map("deleted_by")
+  
+  // Tenant Management Flags
+  isProduction          Boolean      @default(false)  @map("is_production")
+  isTemplate            Boolean      @default(false)  @map("is_template")
+  gingrSyncEnabled      Boolean      @default(false)  @map("gingr_sync_enabled")
+  lastGingrSyncAt       DateTime?    @map("last_gingr_sync_at")
+  clonedFromId          String?      @map("cloned_from_id")
+  
+  // Settings
+  timezone              String       @default("America/New_York")
+  currency              String       @default("USD")
+  dateFormat            String       @default("MM/DD/YYYY")
+  timeFormat            String       @default("12h")
+  logoUrl               String?      @map("logo_url")
+  
+  // Usage Tracking
+  employeeCount         Int          @default(0)
+  customerCount         Int          @default(0)
+  reservationCount      Int          @default(0)
+  storageUsedMB         Int          @default(0)
 
+  @@index([subdomain])
+  @@index([status, isActive])
+  @@index([contactEmail])
   @@map("tenants")
+}
+
+enum TenantStatus {
+  TRIAL
+  ACTIVE
+  PAUSED
+  CANCELLED
+  DELETED
+  PENDING
 }
 

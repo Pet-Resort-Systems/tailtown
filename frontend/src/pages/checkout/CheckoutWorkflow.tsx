@@ -14,9 +14,11 @@ import {
 } from "@mui/material";
 import { reservationService } from "../../services/reservationService";
 import checkInService from "../../services/checkInService";
+import tipService, { TipCollectionMethod } from "../../services/tipService";
 import FinalInvoiceReview from "../../components/checkout/FinalInvoiceReview";
 import ReturnBelongings from "../../components/checkout/ReturnBelongings";
 import ReturnMedications from "../../components/checkout/ReturnMedications";
+import TipSelection, { TipData } from "../../components/checkout/TipSelection";
 import FinalPayment from "../../components/checkout/FinalPayment";
 import CheckoutComplete from "../../components/checkout/CheckoutComplete";
 
@@ -24,6 +26,7 @@ const steps = [
   "Review Invoice",
   "Return Belongings",
   "Return Medications",
+  "Add Tip",
   "Final Payment",
   "Complete",
 ];
@@ -36,6 +39,9 @@ interface CheckoutData {
   medications: any[];
   belongingsReturned: boolean;
   medicationsReturned: boolean;
+  tipData: TipData | null;
+  groomer: { id: string; firstName: string; lastName: string } | null;
+  hasGroomingService: boolean;
   finalPayment: any;
 }
 
@@ -55,6 +61,9 @@ const CheckoutWorkflow: React.FC = () => {
     medications: [],
     belongingsReturned: false,
     medicationsReturned: false,
+    tipData: null,
+    groomer: null,
+    hasGroomingService: false,
     finalPayment: null,
   });
 
@@ -84,12 +93,32 @@ const CheckoutWorkflow: React.FC = () => {
           console.log("No check-in data found, continuing without it");
         }
 
+        // Check if this is a grooming service and get groomer info
+        const serviceData = reservation.service as any;
+        const hasGroomingService =
+          serviceData?.category === "GROOMING" ||
+          serviceData?.name?.toLowerCase().includes("groom") ||
+          false;
+
+        // Get groomer from reservation if assigned
+        const reservationData = reservation as any;
+        const groomerData =
+          reservationData.assignedStaff || reservationData.groomer || null;
+
         setCheckoutData({
           ...checkoutData,
           invoice: reservation.invoice,
           checkInId: checkInData?.id || null,
           belongings: checkInData?.belongings || [],
           medications: checkInData?.medications || [],
+          hasGroomingService,
+          groomer: groomerData
+            ? {
+                id: groomerData.id,
+                firstName: groomerData.firstName,
+                lastName: groomerData.lastName,
+              }
+            : null,
         });
 
         setLoading(false);
@@ -135,6 +164,51 @@ const CheckoutWorkflow: React.FC = () => {
       medications: medicationsData,
       medicationsReturned: true,
     });
+    handleNext();
+  };
+
+  const handleTipsSelected = async (tipData: TipData) => {
+    setCheckoutData({
+      ...checkoutData,
+      tipData,
+    });
+
+    // Save tips to the database
+    try {
+      const tipsToCreate = [];
+      const customerId = checkoutData.invoice?.customerId;
+
+      if (tipData.groomerTip && tipData.groomerId && customerId) {
+        tipsToCreate.push({
+          type: "GROOMER" as const,
+          amount: tipData.groomerTip,
+          percentage: tipData.groomerTipPercentage,
+          collectionMethod: "TERMINAL" as TipCollectionMethod,
+          customerId,
+          reservationId: checkoutData.reservationId,
+          groomerId: tipData.groomerId,
+        });
+      }
+
+      if (tipData.generalTip && customerId) {
+        tipsToCreate.push({
+          type: "GENERAL" as const,
+          amount: tipData.generalTip,
+          percentage: tipData.generalTipPercentage,
+          collectionMethod: "TERMINAL" as TipCollectionMethod,
+          customerId,
+          reservationId: checkoutData.reservationId,
+        });
+      }
+
+      if (tipsToCreate.length > 0) {
+        await tipService.createTips(tipsToCreate);
+      }
+    } catch (err) {
+      console.error("Error saving tips:", err);
+      // Continue anyway - tips are optional
+    }
+
     handleNext();
   };
 
@@ -189,13 +263,33 @@ const CheckoutWorkflow: React.FC = () => {
         );
       case 3:
         return (
+          <TipSelection
+            subtotal={checkoutData.invoice?.total || 0}
+            groomer={checkoutData.groomer}
+            hasGroomingService={checkoutData.hasGroomingService}
+            onTipsSelected={handleTipsSelected}
+            onBack={handleBack}
+            onSkip={() =>
+              handleTipsSelected({
+                groomerTip: null,
+                groomerTipPercentage: null,
+                groomerId: null,
+                generalTip: null,
+                generalTipPercentage: null,
+                totalTips: 0,
+              })
+            }
+          />
+        );
+      case 4:
+        return (
           <FinalPayment
             invoice={checkoutData.invoice}
             onContinue={handleFinalPayment}
             onBack={handleBack}
           />
         );
-      case 4:
+      case 5:
         return (
           <CheckoutComplete
             checkoutData={checkoutData}

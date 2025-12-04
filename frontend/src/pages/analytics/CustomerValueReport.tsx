@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Container,
@@ -24,23 +24,25 @@ import {
   IconButton,
   Collapse,
   useTheme,
-  Button
-} from '@mui/material';
-import { SelectChangeEvent } from '@mui/material/Select';
-import SearchIcon from '@mui/icons-material/Search';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+  Button,
+} from "@mui/material";
+import { SelectChangeEvent } from "@mui/material/Select";
+import SearchIcon from "@mui/icons-material/Search";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import {
   Tooltip,
   Legend,
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell
-} from 'recharts';
-import analyticsService, { CustomerValueData } from '../../services/analyticsService';
-import { formatCurrency } from '../../utils/formatters';
-import { useNavigate } from 'react-router-dom';
+  Cell,
+} from "recharts";
+import analyticsService, {
+  CustomerValueData,
+} from "../../services/analyticsService";
+import { formatCurrency } from "../../utils/formatters";
+import { useNavigate } from "react-router-dom";
 
 interface ExpandableRowProps {
   customer: CustomerValueData;
@@ -58,10 +60,10 @@ const ExpandableRow = ({ customer, theme }: ExpandableRowProps) => {
     theme.palette.warning.main,
     theme.palette.error.main,
     theme.palette.info.main,
-    '#8884d8',
-    '#82ca9d',
-    '#ffc658',
-    '#ff8042'
+    "#8884d8",
+    "#82ca9d",
+    "#ffc658",
+    "#ff8042",
   ];
 
   const viewCustomerDetails = () => {
@@ -70,7 +72,7 @@ const ExpandableRow = ({ customer, theme }: ExpandableRowProps) => {
 
   return (
     <>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -85,7 +87,9 @@ const ExpandableRow = ({ customer, theme }: ExpandableRowProps) => {
         </TableCell>
         <TableCell>{customer.email}</TableCell>
         <TableCell align="right">{customer.invoiceCount}</TableCell>
-        <TableCell align="right">{formatCurrency(customer.totalSpend)}</TableCell>
+        <TableCell align="right">
+          {formatCurrency(customer.totalSpend)}
+        </TableCell>
         <TableCell align="right">
           <Typography variant="body2" fontWeight="bold" color="primary">
             {formatCurrency(customer.totalSpend)}
@@ -95,11 +99,7 @@ const ExpandableRow = ({ customer, theme }: ExpandableRowProps) => {
           </Typography>
         </TableCell>
         <TableCell align="right">
-          <Button 
-            variant="outlined" 
-            size="small" 
-            onClick={viewCustomerDetails}
-          >
+          <Button variant="outlined" size="small" onClick={viewCustomerDetails}>
             View Details
           </Button>
         </TableCell>
@@ -129,22 +129,32 @@ const ExpandableRow = ({ customer, theme }: ExpandableRowProps) => {
                               {service.name}
                             </TableCell>
                             <TableCell align="right">{service.count}</TableCell>
-                            <TableCell align="right">{formatCurrency(service.revenue)}</TableCell>
+                            <TableCell align="right">
+                              {formatCurrency(service.revenue)}
+                            </TableCell>
                           </TableRow>
                         ))}
-                        <TableRow sx={{ backgroundColor: 'rgba(0, 0, 0, 0.04)' }}>
+                        <TableRow
+                          sx={{ backgroundColor: "rgba(0, 0, 0, 0.04)" }}
+                        >
                           <TableCell component="th" scope="row">
                             <strong>Total</strong>
                           </TableCell>
                           <TableCell align="right">
                             <strong>
-                              {customer.serviceBreakdown.reduce((sum, service) => sum + service.count, 0)}
+                              {customer.serviceBreakdown.reduce(
+                                (sum, service) => sum + service.count,
+                                0
+                              )}
                             </strong>
                           </TableCell>
                           <TableCell align="right">
                             <strong>
                               {formatCurrency(
-                                customer.serviceBreakdown.reduce((sum, service) => sum + service.revenue, 0)
+                                customer.serviceBreakdown.reduce(
+                                  (sum, service) => sum + service.revenue,
+                                  0
+                                )
                               )}
                             </strong>
                           </TableCell>
@@ -173,16 +183,23 @@ const ExpandableRow = ({ customer, theme }: ExpandableRowProps) => {
                               {addon.name}
                             </TableCell>
                             <TableCell align="right">{addon.count}</TableCell>
-                            <TableCell align="right">{formatCurrency(addon.revenue)}</TableCell>
+                            <TableCell align="right">
+                              {formatCurrency(addon.revenue)}
+                            </TableCell>
                           </TableRow>
                         ))}
-                        <TableRow sx={{ backgroundColor: 'rgba(0, 0, 0, 0.04)' }}>
+                        <TableRow
+                          sx={{ backgroundColor: "rgba(0, 0, 0, 0.04)" }}
+                        >
                           <TableCell component="th" scope="row">
                             <strong>Total</strong>
                           </TableCell>
                           <TableCell align="right">
                             <strong>
-                              {customer.addOnBreakdown.reduce((sum, addon) => sum + addon.count, 0)}
+                              {customer.addOnBreakdown.reduce(
+                                (sum, addon) => sum + addon.count,
+                                0
+                              )}
                             </strong>
                           </TableCell>
                           <TableCell align="right">
@@ -197,26 +214,38 @@ const ExpandableRow = ({ customer, theme }: ExpandableRowProps) => {
                 </Grid>
                 <Grid item xs={12}>
                   <Box sx={{ height: 250 }}>
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer
+                      width="100%"
+                      height="100%"
+                      minHeight={200}
+                    >
                       <PieChart>
                         <Pie
                           data={[
-                            ...customer.serviceBreakdown.map(service => ({
+                            ...customer.serviceBreakdown.map((service) => ({
                               name: service.name,
                               value: service.revenue,
-                              type: 'service'
+                              type: "service",
                             })),
-                            ...customer.addOnBreakdown.map(addon => ({
+                            ...customer.addOnBreakdown.map((addon) => ({
                               name: addon.name,
                               value: addon.revenue,
-                              type: 'addon'
-                            }))
+                              type: "addon",
+                            })),
                           ]}
                           cx="50%"
                           cy="50%"
                           labelLine={false}
-                          label={({ name, percent }: { name?: string; percent?: number }) => 
-                            percent && percent > 0.05 ? `${name}: ${(percent * 100).toFixed(0)}%` : ''
+                          label={({
+                            name,
+                            percent,
+                          }: {
+                            name?: string;
+                            percent?: number;
+                          }) =>
+                            percent && percent > 0.05
+                              ? `${name}: ${(percent * 100).toFixed(0)}%`
+                              : ""
                           }
                           outerRadius={80}
                           fill="#8884d8"
@@ -224,20 +253,25 @@ const ExpandableRow = ({ customer, theme }: ExpandableRowProps) => {
                         >
                           {[
                             ...customer.serviceBreakdown.map((entry, index) => (
-                              <Cell 
-                                key={`cell-service-${index}`} 
-                                fill={COLORS[index % COLORS.length]} 
+                              <Cell
+                                key={`cell-service-${index}`}
+                                fill={COLORS[index % COLORS.length]}
                               />
                             )),
                             ...customer.addOnBreakdown.map((entry, index) => (
-                              <Cell 
-                                key={`cell-addon-${index}`} 
-                                fill={COLORS[(index + customer.serviceBreakdown.length) % COLORS.length]} 
+                              <Cell
+                                key={`cell-addon-${index}`}
+                                fill={
+                                  COLORS[
+                                    (index + customer.serviceBreakdown.length) %
+                                      COLORS.length
+                                  ]
+                                }
                               />
-                            ))
+                            )),
                           ]}
                         </Pie>
-                        <Tooltip 
+                        <Tooltip
                           formatter={(value) => formatCurrency(Number(value))}
                         />
                         <Legend />
@@ -257,10 +291,12 @@ const ExpandableRow = ({ customer, theme }: ExpandableRowProps) => {
 const CustomerValueReport = () => {
   const theme = useTheme();
   const [loading, setLoading] = useState(true);
-  const [period, setPeriod] = useState('month');
+  const [period, setPeriod] = useState("month");
   const [customers, setCustomers] = useState<CustomerValueData[]>([]);
-  const [filteredCustomers, setFilteredCustomers] = useState<CustomerValueData[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredCustomers, setFilteredCustomers] = useState<
+    CustomerValueData[]
+  >([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [error, setError] = useState<string | null>(null);
@@ -273,8 +309,8 @@ const CustomerValueReport = () => {
       setCustomers(customerData);
       setFilteredCustomers(customerData);
     } catch (err) {
-      console.error('Error loading customer value data:', err);
-      setError('Failed to load customer data. Please try again.');
+      console.error("Error loading customer value data:", err);
+      setError("Failed to load customer data. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -288,11 +324,11 @@ const CustomerValueReport = () => {
 
     const term = searchTerm.toLowerCase();
     const filtered = customers.filter(
-      customer => 
-        customer.name.toLowerCase().includes(term) || 
+      (customer) =>
+        customer.name.toLowerCase().includes(term) ||
         customer.email.toLowerCase().includes(term)
     );
-    
+
     setFilteredCustomers(filtered);
     setPage(0); // Reset to first page when filtering
   }, [searchTerm, customers]);
@@ -317,31 +353,40 @@ const CustomerValueReport = () => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
   const getPeriodLabel = () => {
     switch (period) {
-      case 'day':
-        return 'Today';
-      case 'week':
-        return 'This Week';
-      case 'month':
-        return 'This Month';
-      case 'year':
-        return 'This Year';
-      case 'all':
-        return 'All Time';
+      case "day":
+        return "Today";
+      case "week":
+        return "This Week";
+      case "month":
+        return "This Month";
+      case "year":
+        return "This Year";
+      case "all":
+        return "All Time";
       default:
-        return 'Custom Period';
+        return "Custom Period";
     }
   };
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "80vh",
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -349,7 +394,7 @@ const CustomerValueReport = () => {
 
   if (error) {
     return (
-      <Box sx={{ p: 3, color: 'error.main' }}>
+      <Box sx={{ p: 3, color: "error.main" }}>
         <Typography variant="h6">{error}</Typography>
       </Box>
     );
@@ -361,7 +406,14 @@ const CustomerValueReport = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           Customer Value Report
         </Typography>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
           <Typography variant="subtitle1" color="text.secondary">
             Track customer spending and identify your most valuable customers
           </Typography>
@@ -393,12 +445,22 @@ const CustomerValueReport = () => {
                   <Typography variant="subtitle2" color="text.secondary">
                     Total Customer Value
                   </Typography>
-                  <Typography variant="h4" sx={{ mt: 1, color: 'primary.main' }}>
+                  <Typography
+                    variant="h4"
+                    sx={{ mt: 1, color: "primary.main" }}
+                  >
                     {formatCurrency(
-                      customers.reduce((sum, customer) => sum + customer.totalSpend, 0)
+                      customers.reduce(
+                        (sum, customer) => sum + customer.totalSpend,
+                        0
+                      )
                     )}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mt: 1 }}
+                  >
                     {getPeriodLabel()}
                   </Typography>
                 </CardContent>
@@ -410,10 +472,17 @@ const CustomerValueReport = () => {
                   <Typography variant="subtitle2" color="text.secondary">
                     Active Customers
                   </Typography>
-                  <Typography variant="h4" sx={{ mt: 1, color: 'secondary.main' }}>
+                  <Typography
+                    variant="h4"
+                    sx={{ mt: 1, color: "secondary.main" }}
+                  >
                     {customers.length}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mt: 1 }}
+                  >
                     {getPeriodLabel()}
                   </Typography>
                 </CardContent>
@@ -425,14 +494,24 @@ const CustomerValueReport = () => {
                   <Typography variant="subtitle2" color="text.secondary">
                     Avg. Customer Value
                   </Typography>
-                  <Typography variant="h4" sx={{ mt: 1, color: 'success.main' }}>
+                  <Typography
+                    variant="h4"
+                    sx={{ mt: 1, color: "success.main" }}
+                  >
                     {formatCurrency(
                       customers.length > 0
-                        ? customers.reduce((sum, customer) => sum + customer.totalSpend, 0) / customers.length
+                        ? customers.reduce(
+                            (sum, customer) => sum + customer.totalSpend,
+                            0
+                          ) / customers.length
                         : 0
                     )}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mt: 1 }}
+                  >
                     {getPeriodLabel()}
                   </Typography>
                 </CardContent>
@@ -444,14 +523,24 @@ const CustomerValueReport = () => {
                   <Typography variant="subtitle2" color="text.secondary">
                     Avg. LTV
                   </Typography>
-                  <Typography variant="h4" sx={{ mt: 1, color: 'warning.main' }}>
+                  <Typography
+                    variant="h4"
+                    sx={{ mt: 1, color: "warning.main" }}
+                  >
                     {formatCurrency(
                       customers.length > 0
-                        ? customers.reduce((sum, customer) => sum + customer.totalSpend, 0) / customers.length
+                        ? customers.reduce(
+                            (sum, customer) => sum + customer.totalSpend,
+                            0
+                          ) / customers.length
                         : 0
                     )}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mt: 1 }}
+                  >
                     All Time Average
                   </Typography>
                 </CardContent>
@@ -463,10 +552,15 @@ const CustomerValueReport = () => {
 
       <Paper elevation={3} sx={{ borderRadius: 2 }}>
         <Box sx={{ p: 3 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h6">
-              Customer Spending
-            </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 2,
+            }}
+          >
+            <Typography variant="h6">Customer Spending</Typography>
             <TextField
               label="Search Customers"
               variant="outlined"
@@ -500,7 +594,11 @@ const CustomerValueReport = () => {
                 {filteredCustomers
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((customer) => (
-                    <ExpandableRow key={customer.id} customer={customer} theme={theme} />
+                    <ExpandableRow
+                      key={customer.id}
+                      customer={customer}
+                      theme={theme}
+                    />
                   ))}
                 {filteredCustomers.length === 0 && (
                   <TableRow>

@@ -79,14 +79,10 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
         break;
 
       case "week":
-        // Get the start of the week (Sunday)
-        const startOfWeek = new Date(today);
-        startOfWeek.setDate(today.getDate() - today.getDay());
-
-        // Add 7 days
+        // Start from current date (today on far left) and show 7 days forward
         for (let i = 0; i < 7; i++) {
-          const day = new Date(startOfWeek);
-          day.setDate(startOfWeek.getDate() + i);
+          const day = new Date(today);
+          day.setDate(today.getDate() + i);
           days.push(day);
         }
         break;

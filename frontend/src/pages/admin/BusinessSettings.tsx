@@ -5,6 +5,7 @@
  */
 
 import React, { useState, useEffect } from "react";
+import { getApiBaseUrl } from "../../services/api";
 import {
   Container,
   Typography,
@@ -56,13 +57,7 @@ const BusinessSettings: React.FC = () => {
   ];
 
   // Use dynamic API URL based on environment
-  const getApiUrl = () => {
-    if (process.env.NODE_ENV === "production") {
-      return window.location.origin;
-    }
-    return process.env.REACT_APP_API_URL || "http://localhost:4004";
-  };
-  const API_URL = getApiUrl();
+  const API_URL = getApiBaseUrl();
 
   useEffect(() => {
     loadSettings();

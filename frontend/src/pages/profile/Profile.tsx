@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { getApiBaseUrl } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import {
   Formik,
@@ -109,10 +110,7 @@ const Profile = () => {
     if (!profilePhoto) return undefined;
 
     try {
-      const baseUrl =
-        process.env.NODE_ENV === "production"
-          ? window.location.origin
-          : process.env.REACT_APP_API_URL || "http://localhost:4004";
+      const baseUrl = getApiBaseUrl();
 
       // Ensure profilePhoto starts with /
       const path = profilePhoto.startsWith("/")

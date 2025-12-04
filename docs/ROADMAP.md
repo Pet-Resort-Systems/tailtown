@@ -23,6 +23,89 @@ Multiple pets sharing same room:
 - SMS templates (reminders, alerts)
 - Welcome emails for new staff with password reset
 
+### CardConnect Sign Up
+
+- Payment processor integration
+- Merchant account setup flow
+- PCI compliance handling
+
+### Financial Import from Gingr
+
+- Import historical financial data
+- Transaction history migration
+- Balance reconciliation
+
+### ~~Editable Service Agreement with Signature~~ ✅ COMPLETED
+
+- ~~Customizable service agreement templates~~
+- ~~Digital signature capture~~
+- ~~Agreement versioning and storage~~
+- ~~Customer acknowledgment tracking~~
+- ~~Custom questions with multiple types (Text, Currency, Yes/No, etc.)~~
+- ~~Merge fields for dynamic content ([Business Name], etc.)~~
+- ~~On-the-fly signing from customer profile~~
+
+### ~~Tips System~~ ✅ COMPLETED
+
+- ~~Database schema with Tip model (GROOMER/GENERAL types)~~
+- ~~API endpoints for CRUD and reporting~~
+- ~~Staff checkout UI with tip selection (groomer + general)~~
+- ~~Online checkout tip integration~~
+- ~~Tip reporting dashboard for payroll~~
+
+### ~~Calendar View Improvements~~ ✅ COMPLETED
+
+- ~~Start calendar with current date on far left~~
+- ~~Better date navigation~~
+
+### ~~Outstanding Invoice Report~~ ✅ COMPLETED
+
+- ~~List all unpaid/overdue invoices~~ (Available in Financial Reports)
+- ~~Filter by date range, customer, amount~~
+- ~~Export to CSV/PDF~~
+
+### Medication Tracking During Stay
+
+- Log medication administration times
+- Staff sign-off on each dose
+- Alerts for missed medications
+- Medication history per stay
+
+### Permanent Account Discounts
+
+- Military discount
+- Senior discount
+- Multi-pet discount
+- Custom discount types per account
+- Auto-apply on invoices
+
+### Standing Reservations
+
+- Recurring reservation templates
+- Weekly/bi-weekly/monthly patterns
+- Auto-generate future reservations
+- Easy modification of series
+
+### Commission Splitting for Groomers
+
+- Configurable commission rates per groomer
+- Commission calculation on services
+- Commission reporting and payouts
+
+### Picky Eater Reporting
+
+- Flag pets as picky eaters
+- Feeding notes and preferences
+- Meal tracking and alerts
+- Reports for staff awareness
+
+### Automated Repeating Schedules for Staff
+
+- Recurring schedule templates
+- Auto-generate weekly schedules
+- Schedule rotation patterns
+- Holiday/exception handling
+
 ---
 
 ## 🟠 This Month

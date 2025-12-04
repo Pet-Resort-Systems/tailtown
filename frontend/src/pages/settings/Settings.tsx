@@ -36,6 +36,7 @@ import {
   Group as CustomersIcon,
   Storefront as SalesIcon,
   Palette as BrandingIcon,
+  Description as AgreementIcon,
 } from "@mui/icons-material";
 
 const Settings: React.FC = () => {
@@ -116,6 +117,14 @@ const Settings: React.FC = () => {
           icon: <CheckInIcon sx={{ fontSize: 40, color: "success.main" }} />,
           path: "/admin/check-in-templates",
           stats: "Templates: 1",
+        },
+        {
+          title: "Service Agreements",
+          description:
+            "Create and manage service agreement templates with digital signature capture",
+          icon: <AgreementIcon sx={{ fontSize: 40, color: "primary.main" }} />,
+          path: "/settings/service-agreements",
+          stats: "Agreement Templates",
         },
         {
           title: "Checklist Templates",

@@ -106,15 +106,23 @@ export const useDashboardData = () => {
 
       if (filter === "in") {
         // Show only check-ins (reservations starting on selected date in local timezone)
+        // Exclude pets that have already been checked in (status = CHECKED_IN, CHECKED_OUT, or COMPLETED)
         filtered = reservationsToFilter.filter((res: any) => {
           const startDateStr = getLocalDateString(res.startDate);
-          return startDateStr === formattedDate;
+          if (startDateStr !== formattedDate) return false;
+          // Hide already checked-in pets from the incoming list
+          const status = res.status?.toUpperCase();
+          return !["CHECKED_IN", "CHECKED_OUT", "COMPLETED"].includes(status);
         });
       } else if (filter === "out") {
         // Show only check-outs (reservations ending on selected date in local timezone)
+        // Exclude pets that have already been checked out (status = CHECKED_OUT or COMPLETED)
         filtered = reservationsToFilter.filter((res: any) => {
           const endDateStr = getLocalDateString(res.endDate);
-          return endDateStr === formattedDate;
+          if (endDateStr !== formattedDate) return false;
+          // Hide already checked-out pets from the outgoing list
+          const status = res.status?.toUpperCase();
+          return !["CHECKED_OUT", "COMPLETED"].includes(status);
         });
       } else if (filter === "all") {
         // Show both check-ins AND check-outs for selected date in local timezone
@@ -191,11 +199,14 @@ export const useDashboardData = () => {
         if (!resResponse?.pagination?.hasNextPage) break;
       }
 
-      // Filter out PENDING/DRAFT reservations - only show confirmed/paid reservations
+      // Filter out PENDING/DRAFT/CANCELLED/NO_SHOW reservations - only show active reservations
       const confirmedReservations = allReservations.filter((res: any) => {
         const status = res.status?.toUpperCase();
-        // Exclude PENDING, DRAFT statuses (unpaid reservations)
-        return status && !["PENDING", "DRAFT"].includes(status);
+        // Exclude PENDING, DRAFT, CANCELLED, NO_SHOW statuses
+        return (
+          status &&
+          !["PENDING", "DRAFT", "CANCELLED", "NO_SHOW"].includes(status)
+        );
       });
 
       console.log(
@@ -280,9 +291,12 @@ export const useDashboardData = () => {
       setAllReservations(enhancedReservations);
 
       // Apply initial filter (check-ins by default to show today's appointments in local timezone)
+      // Exclude already checked-in pets so team sees only remaining incoming pets
       const checkInsToday = enhancedReservations.filter((res: any) => {
         const startDateStr = getLocalDateString(res.startDate);
-        return startDateStr === formattedDate;
+        if (startDateStr !== formattedDate) return false;
+        const status = res.status?.toUpperCase();
+        return !["CHECKED_IN", "CHECKED_OUT", "COMPLETED"].includes(status);
       });
       setFilteredReservations(checkInsToday);
     } catch (err: any) {
