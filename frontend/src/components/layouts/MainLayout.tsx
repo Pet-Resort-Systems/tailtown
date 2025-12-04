@@ -50,6 +50,7 @@ import {
   NotificationsActive as WaitlistIcon,
 } from "@mui/icons-material";
 import { useAuth } from "../../contexts/AuthContext";
+import { canAccessSettings } from "../../utils/permissions";
 import ImpersonationBanner from "../super-admin/ImpersonationBanner";
 import AnnouncementBell from "../announcements/AnnouncementBell";
 import AnnouncementModal from "../announcements/AnnouncementModal";
@@ -394,17 +395,22 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
           )
         )}
       </List>
-      <Divider />
-      <List>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/settings">
-            <ListItemIcon>
-              <SettingsIcon />
-            </ListItemIcon>
-            <ListItemText primary="Admin" />
-          </ListItemButton>
-        </ListItem>
-      </List>
+      {/* Admin link - only visible to Managers and Administrators */}
+      {canAccessSettings(user?.role) && (
+        <>
+          <Divider />
+          <List>
+            <ListItem disablePadding>
+              <ListItemButton component={Link} to="/settings">
+                <ListItemIcon>
+                  <SettingsIcon />
+                </ListItemIcon>
+                <ListItemText primary="Admin" />
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </>
+      )}
     </div>
   );
 
