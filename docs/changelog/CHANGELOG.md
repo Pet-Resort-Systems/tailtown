@@ -9,6 +9,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## [1.6.17] - 2025-12-03
+
+### Fixed
+
+- **Production Customer Service 500 Errors** - Resolved critical issue preventing customers from loading
+
+  - **Root Cause**: Prisma version mismatch - `npm install` upgraded Prisma to v7.x which has breaking changes
+  - **Secondary Issue**: `staging-customer-service` was running on same port (4004) as production, intercepting requests
+  - **Solution**:
+    - Pinned `prisma` and `@prisma/client` to version `4.16.2` in both customer-service and reservation-service
+    - Stopped staging-customer-service to free port 4004
+    - Clean reinstall with `npm ci --legacy-peer-deps`
+  - Files: `services/customer/package.json`, `services/reservation-service/package.json`
+
+- **Console Warning Spam** - Eliminated unnecessary console errors
+  - Removed `/api/tenants/me` API call from ServiceAgreements page (used cached data instead)
+  - Added auth token check before making authenticated API calls
+  - Added `minHeight` to Recharts `ResponsiveContainer` components to prevent dimension errors
+  - Files: `frontend/src/services/tenantService.ts`, `frontend/src/pages/settings/ServiceAgreements.tsx`, `frontend/src/pages/analytics/AnalyticsDashboard.tsx`, `frontend/src/pages/analytics/CustomerValueReport.tsx`
+
+### Technical Notes
+
+- **Prisma Version Lock**: Both services now use Prisma 4.16.2. Do NOT upgrade to v5+ without migration planning.
+- **Port Allocation**: Production customer-service uses port 4004. Staging should use a different port.
+
 ## [1.6.16] - 2025-12-03
 
 ### Added
