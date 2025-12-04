@@ -23,9 +23,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Files: `services/customer/prisma/schema.prisma`, `services/customer/src/controllers/tip.controller.ts`, `frontend/src/components/checkout/TipSelection.tsx`, `frontend/src/pages/reports/TipReports.tsx`
 
 - **Calendar View Improvements** - Better date navigation
+
   - Week view now starts with current date on far left (instead of Sunday)
   - Shows 7 days forward from today
   - Files: `frontend/src/components/calendar/KennelCalendar.tsx`, `frontend/src/components/calendar/SpecializedCalendar.tsx`, `frontend/src/components/calendar/base/BaseCalendar.tsx`
+
+- **Permanent Account Discounts** - Assign permanent coupons to customer accounts
+  - Link coupons (military, senior, first responder, etc.) to customer accounts
+  - Discounts auto-apply at checkout
+  - New `PermanentDiscountSelector` component in customer profile
+  - API endpoints for managing permanent coupons
+  - Files: `frontend/src/components/customers/PermanentDiscountSelector.tsx`, `services/customer/src/controllers/customer/customer-extras.controller.ts`
 
 ## [1.6.17] - 2025-12-03
 
