@@ -114,4 +114,30 @@ export const customerService = {
       throw error;
     }
   },
+
+  // Permanent discount coupon management
+  getPermanentCoupon: async (customerId: string): Promise<any> => {
+    const response = await api.get(
+      `/api/customers/${customerId}/permanent-coupon`
+    );
+    return response.data?.data;
+  },
+
+  setPermanentCoupon: async (
+    customerId: string,
+    couponId: string | null
+  ): Promise<Customer> => {
+    const response = await api.put(
+      `/api/customers/${customerId}/permanent-coupon`,
+      { couponId }
+    );
+    return response.data?.data;
+  },
+
+  removePermanentCoupon: async (customerId: string): Promise<Customer> => {
+    const response = await api.delete(
+      `/api/customers/${customerId}/permanent-coupon`
+    );
+    return response.data?.data;
+  },
 };

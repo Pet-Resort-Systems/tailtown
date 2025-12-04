@@ -15,6 +15,7 @@ import {
 import { reservationService } from "../../services/reservationService";
 import checkInService from "../../services/checkInService";
 import tipService, { TipCollectionMethod } from "../../services/tipService";
+import { couponService } from "../../services/couponService";
 import FinalInvoiceReview from "../../components/checkout/FinalInvoiceReview";
 import ReturnBelongings from "../../components/checkout/ReturnBelongings";
 import ReturnMedications from "../../components/checkout/ReturnMedications";
@@ -43,6 +44,7 @@ interface CheckoutData {
   groomer: { id: string; firstName: string; lastName: string } | null;
   hasGroomingService: boolean;
   finalPayment: any;
+  permanentCoupon: any | null;
 }
 
 const CheckoutWorkflow: React.FC = () => {
@@ -65,6 +67,7 @@ const CheckoutWorkflow: React.FC = () => {
     groomer: null,
     hasGroomingService: false,
     finalPayment: null,
+    permanentCoupon: null,
   });
 
   // Load reservation and check-in data
@@ -105,6 +108,20 @@ const CheckoutWorkflow: React.FC = () => {
         const groomerData =
           reservationData.assignedStaff || reservationData.groomer || null;
 
+        // Check for customer's permanent discount coupon
+        let permanentCoupon = null;
+        const customerId =
+          reservationData.customerId || reservationData.customer?.id;
+        if (customerId) {
+          try {
+            permanentCoupon = await couponService.getCustomerPermanentCoupon(
+              customerId
+            );
+          } catch (err) {
+            console.log("No permanent coupon found for customer");
+          }
+        }
+
         setCheckoutData({
           ...checkoutData,
           invoice: reservation.invoice,
@@ -119,6 +136,7 @@ const CheckoutWorkflow: React.FC = () => {
                 lastName: groomerData.lastName,
               }
             : null,
+          permanentCoupon,
         });
 
         setLoading(false);

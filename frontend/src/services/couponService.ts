@@ -1,6 +1,6 @@
 /**
  * Coupon Service
- * 
+ *
  * Handles all coupon-related API calls and business logic:
  * - CRUD operations
  * - Coupon validation
@@ -9,7 +9,7 @@
  * - Bulk generation
  */
 
-import { customerApi } from './api';
+import { customerApi } from "./api";
 import {
   Coupon,
   CouponUsage,
@@ -17,8 +17,8 @@ import {
   ApplyCouponRequest,
   CreateCouponRequest,
   BulkCouponRequest,
-  CouponStats
-} from '../types/coupon';
+  CouponStats,
+} from "../types/coupon";
 
 export const couponService = {
   /**
@@ -30,13 +30,13 @@ export const couponService = {
     page?: number;
     limit?: number;
   }): Promise<{ data: Coupon[]; totalPages: number; currentPage: number }> => {
-    const response = await customerApi.get('/api/coupons', { params });
+    const response = await customerApi.get("/api/coupons", { params });
     // API returns { status, results, totalPages, currentPage, data }
     // We need to return { data, totalPages, currentPage }
     return {
       data: response.data.data || [],
       totalPages: response.data.totalPages || 1,
-      currentPage: response.data.currentPage || 1
+      currentPage: response.data.currentPage || 1,
     };
   },
 
@@ -61,14 +61,17 @@ export const couponService = {
    * Create a new coupon
    */
   createCoupon: async (couponData: CreateCouponRequest): Promise<Coupon> => {
-    const response = await customerApi.post('/api/coupons', couponData);
+    const response = await customerApi.post("/api/coupons", couponData);
     return response.data;
   },
 
   /**
    * Update an existing coupon
    */
-  updateCoupon: async (id: string, updates: Partial<Coupon>): Promise<Coupon> => {
+  updateCoupon: async (
+    id: string,
+    updates: Partial<Coupon>
+  ): Promise<Coupon> => {
     const response = await customerApi.put(`/api/coupons/${id}`, updates);
     return response.data;
   },
@@ -82,7 +85,7 @@ export const couponService = {
 
   /**
    * Validate a coupon and calculate discount
-   * 
+   *
    * Business Logic:
    * 1. Check if coupon exists and is active
    * 2. Check date validity
@@ -92,14 +95,16 @@ export const couponService = {
    * 6. Check first-time customer restriction
    * 7. Calculate discount amount
    */
-  validateCoupon: async (request: ApplyCouponRequest): Promise<CouponValidationResult> => {
+  validateCoupon: async (
+    request: ApplyCouponRequest
+  ): Promise<CouponValidationResult> => {
     try {
-      const response = await customerApi.post('/api/coupons/validate', request);
+      const response = await customerApi.post("/api/coupons/validate", request);
       return response.data;
     } catch (error: any) {
       return {
         isValid: false,
-        error: error.response?.data?.message || 'Invalid coupon code'
+        error: error.response?.data?.message || "Invalid coupon code",
       };
     }
   },
@@ -114,11 +119,11 @@ export const couponService = {
     reservationId: string,
     subtotal: number
   ): Promise<CouponUsage> => {
-    const response = await customerApi.post('/api/coupons/apply', {
+    const response = await customerApi.post("/api/coupons/apply", {
       code: couponCode,
       customerId,
       reservationId,
-      subtotal
+      subtotal,
     });
     return response.data;
   },
@@ -134,8 +139,12 @@ export const couponService = {
   /**
    * Get customer's coupon usage history
    */
-  getCustomerCouponUsage: async (customerId: string): Promise<CouponUsage[]> => {
-    const response = await customerApi.get(`/api/customers/${customerId}/coupons`);
+  getCustomerCouponUsage: async (
+    customerId: string
+  ): Promise<CouponUsage[]> => {
+    const response = await customerApi.get(
+      `/api/customers/${customerId}/coupons`
+    );
     return response.data;
   },
 
@@ -143,8 +152,10 @@ export const couponService = {
    * Generate bulk coupons
    * Creates multiple unique coupon codes with the same settings
    */
-  generateBulkCoupons: async (request: BulkCouponRequest): Promise<Coupon[]> => {
-    const response = await customerApi.post('/api/coupons/bulk', request);
+  generateBulkCoupons: async (
+    request: BulkCouponRequest
+  ): Promise<Coupon[]> => {
+    const response = await customerApi.post("/api/coupons/bulk", request);
     return response.data;
   },
 
@@ -152,7 +163,7 @@ export const couponService = {
    * Get coupon statistics
    */
   getCouponStats: async (): Promise<CouponStats> => {
-    const response = await customerApi.get('/api/coupons/stats');
+    const response = await customerApi.get("/api/coupons/stats");
     return response.data;
   },
 
@@ -160,7 +171,9 @@ export const couponService = {
    * Check if customer is eligible for first-time customer coupons
    */
   checkFirstTimeCustomer: async (customerId: string): Promise<boolean> => {
-    const response = await customerApi.get(`/api/customers/${customerId}/first-time`);
+    const response = await customerApi.get(
+      `/api/customers/${customerId}/first-time`
+    );
     return response.data.isFirstTime;
   },
 
@@ -171,9 +184,9 @@ export const couponService = {
     customerId: string,
     discountValue: number
   ): Promise<Coupon> => {
-    const response = await customerApi.post('/api/coupons/referral', {
+    const response = await customerApi.post("/api/coupons/referral", {
       customerId,
-      discountValue
+      discountValue,
     });
     return response.data;
   },
@@ -188,9 +201,9 @@ export const couponService = {
   ): { discountAmount: number; finalPrice: number } => {
     let discountAmount = 0;
 
-    if (coupon.type === 'PERCENTAGE') {
+    if (coupon.type === "PERCENTAGE") {
       discountAmount = (subtotal * coupon.discountValue) / 100;
-    } else if (coupon.type === 'FIXED_AMOUNT') {
+    } else if (coupon.type === "FIXED_AMOUNT") {
       discountAmount = Math.min(coupon.discountValue, subtotal);
     }
 
@@ -200,7 +213,7 @@ export const couponService = {
 
     return {
       discountAmount,
-      finalPrice: Math.round(finalPrice * 100) / 100
+      finalPrice: Math.round(finalPrice * 100) / 100,
     };
   },
 
@@ -209,20 +222,29 @@ export const couponService = {
    */
   validateCouponCode: (code: string): { isValid: boolean; error?: string } => {
     if (!code || code.trim().length === 0) {
-      return { isValid: false, error: 'Coupon code is required' };
+      return { isValid: false, error: "Coupon code is required" };
     }
 
     if (code.length < 3) {
-      return { isValid: false, error: 'Coupon code must be at least 3 characters' };
+      return {
+        isValid: false,
+        error: "Coupon code must be at least 3 characters",
+      };
     }
 
     if (code.length > 50) {
-      return { isValid: false, error: 'Coupon code must be less than 50 characters' };
+      return {
+        isValid: false,
+        error: "Coupon code must be less than 50 characters",
+      };
     }
 
     // Only allow alphanumeric and hyphens
     if (!/^[A-Z0-9-]+$/i.test(code)) {
-      return { isValid: false, error: 'Coupon code can only contain letters, numbers, and hyphens' };
+      return {
+        isValid: false,
+        error: "Coupon code can only contain letters, numbers, and hyphens",
+      };
     }
 
     return { isValid: true };
@@ -258,10 +280,22 @@ export const couponService = {
    * CLIENT-SIDE: Format coupon discount for display
    */
   formatCouponDiscount: (coupon: Coupon): string => {
-    if (coupon.type === 'PERCENTAGE') {
+    if (coupon.type === "PERCENTAGE") {
       return `${coupon.discountValue}% off`;
     } else {
       return `$${coupon.discountValue.toFixed(2)} off`;
     }
-  }
+  },
+
+  /**
+   * Get customer's permanent coupon for checkout auto-apply
+   */
+  getCustomerPermanentCoupon: async (
+    customerId: string
+  ): Promise<Coupon | null> => {
+    const response = await customerApi.get(
+      `/api/coupons/customer/${customerId}/permanent`
+    );
+    return response.data?.data || null;
+  },
 };

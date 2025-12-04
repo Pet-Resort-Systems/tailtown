@@ -247,3 +247,133 @@ export const getCustomerPayments = async (
     next(error);
   }
 };
+
+/**
+ * Get customer's permanent discount coupon
+ */
+export const getCustomerPermanentCoupon = async (
+  req: TenantRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+
+    const customer = await prisma.customer.findUnique({
+      where: { id },
+      include: {
+        permanentCoupon: true,
+      },
+    });
+
+    if (!customer) {
+      return next(new AppError("Customer not found", 404));
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: customer.permanentCoupon,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Set customer's permanent discount coupon
+ */
+export const setCustomerPermanentCoupon = async (
+  req: TenantRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const { couponId } = req.body;
+
+    // Verify customer exists
+    const customer = await prisma.customer.findUnique({
+      where: { id },
+      select: { id: true, tenantId: true },
+    });
+
+    if (!customer) {
+      return next(new AppError("Customer not found", 404));
+    }
+
+    // If couponId provided, verify coupon exists and is active
+    if (couponId) {
+      const coupon = await prisma.coupon.findUnique({
+        where: { id: couponId },
+      });
+
+      if (!coupon) {
+        return next(new AppError("Coupon not found", 404));
+      }
+
+      if (coupon.status !== "ACTIVE") {
+        return next(new AppError("Coupon is not active", 400));
+      }
+    }
+
+    // Update customer with permanent coupon
+    const updatedCustomer = await prisma.customer.update({
+      where: { id },
+      data: {
+        permanentCouponId: couponId || null,
+      },
+      include: {
+        permanentCoupon: true,
+      },
+    });
+
+    logger.info(
+      `Set permanent coupon for customer ${id}: ${couponId || "removed"}`
+    );
+
+    res.status(200).json({
+      status: "success",
+      data: updatedCustomer,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Remove customer's permanent discount coupon
+ */
+export const removeCustomerPermanentCoupon = async (
+  req: TenantRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+
+    const customer = await prisma.customer.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+
+    if (!customer) {
+      return next(new AppError("Customer not found", 404));
+    }
+
+    const updatedCustomer = await prisma.customer.update({
+      where: { id },
+      data: {
+        permanentCouponId: null,
+      },
+    });
+
+    logger.info(`Removed permanent coupon from customer ${id}`);
+
+    res.status(200).json({
+      status: "success",
+      data: updatedCustomer,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

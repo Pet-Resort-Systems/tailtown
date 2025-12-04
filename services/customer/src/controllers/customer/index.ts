@@ -18,7 +18,7 @@ export {
   lookupCustomerByEmail,
 } from "./customer-crud.controller";
 
-// Extras (Documents, Notifications, Billing)
+// Extras (Documents, Notifications, Billing, Permanent Coupons)
 export {
   getCustomerDocuments,
   uploadCustomerDocument,
@@ -26,4 +26,7 @@ export {
   updateCustomerNotificationPreferences,
   getCustomerInvoices,
   getCustomerPayments,
+  getCustomerPermanentCoupon,
+  setCustomerPermanentCoupon,
+  removeCustomerPermanentCoupon,
 } from "./customer-extras.controller";
