@@ -86,11 +86,11 @@ Multiple pets sharing same room:
 - Auto-generate future reservations
 - Easy modification of series
 
-### Commission Splitting for Groomers
+### ~~Commission Splitting for Groomers~~ ✅ COMPLETED
 
-- Configurable commission rates per groomer
-- Commission calculation on services
-- Commission reporting and payouts
+- ~~Configurable commission rates per groomer~~
+- ~~Commission calculation on services~~
+- ~~Commission reporting and payouts~~
 
 ### Picky Eater Reporting
 

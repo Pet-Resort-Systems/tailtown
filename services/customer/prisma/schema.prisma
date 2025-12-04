@@ -336,6 +336,7 @@ model Staff {
   createdReportCards   ReportCard[]         @relation("StaffCreatedReportCards")
   uploadedPhotos       ReportCardPhoto[]    @relation("StaffUploadedPhotos")
   groomerTips          Tip[]                @relation("GroomerTips")
+  commissions          StaffCommission[]    @relation("StaffCommissions")
 
   @@unique([tenantId, email], map: "staff_tenant_email_unique")
   @@index([tenantId, isActive], map: "staff_tenant_active_idx")
@@ -422,6 +423,49 @@ model StaffSchedule {
   @@index([date, status])
   @@index([tenantId, staffId, date], map: "staff_schedules_tenant_staff_date_idx")
   @@map("staff_schedules")
+}
+
+// ============================================
+// STAFF COMMISSION SYSTEM
+// ============================================
+
+enum CommissionType {
+  PERCENTAGE
+  FLAT_AMOUNT
+}
+
+model StaffCommission {
+  id              String         @id @default(uuid())
+  tenantId        String         @default("dev")
+  staffId         String
+  staff           Staff          @relation("StaffCommissions", fields: [staffId], references: [id], onDelete: Cascade)
+  name            String         // e.g., "Grooming Commission", "Training Commission"
+  commissionType  CommissionType
+  commissionValue Float          // Percentage (0-100) or flat dollar amount
+  isActive        Boolean        @default(true)
+  notes           String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  
+  // Services this commission applies to
+  serviceCommissions StaffCommissionService[]
+
+  @@index([tenantId, staffId], map: "staff_commissions_tenant_staff_idx")
+  @@index([tenantId, isActive], map: "staff_commissions_tenant_active_idx")
+  @@map("staff_commissions")
+}
+
+model StaffCommissionService {
+  id           String          @id @default(uuid())
+  tenantId     String          @default("dev")
+  commissionId String
+  commission   StaffCommission @relation(fields: [commissionId], references: [id], onDelete: Cascade)
+  serviceId    String
+  createdAt    DateTime        @default(now())
+
+  @@unique([commissionId, serviceId], map: "staff_commission_service_unique")
+  @@index([tenantId, serviceId], map: "staff_commission_service_tenant_service_idx")
+  @@map("staff_commission_services")
 }
 
 model Invoice {
