@@ -18,6 +18,8 @@ import {
   FormControlLabel,
   Checkbox,
   TextField,
+  Avatar,
+  InputAdornment,
 } from "@mui/material";
 import {
   ArrowBack as ArrowBackIcon,
@@ -26,6 +28,7 @@ import {
   Pets as PetsIcon,
   Event as EventIcon,
   AttachMoney as MoneyIcon,
+  Groups as GroupsIcon,
 } from "@mui/icons-material";
 import { useCustomerAuth } from "../../../contexts/CustomerAuthContext";
 import { reservationService } from "../../../services/reservationService";
@@ -33,6 +36,7 @@ import {
   paymentService,
   CardPaymentRequest,
 } from "../../../services/paymentService";
+import tipService from "../../../services/tipService";
 
 interface ReviewBookingProps {
   bookingData: any;
@@ -61,12 +65,59 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
     `${customer?.firstName || ""} ${customer?.lastName || ""}`.trim()
   );
 
+  // Tip state
+  const [tipPercentage, setTipPercentage] = useState<number | null>(null);
+  const [customTip, setCustomTip] = useState<string>("");
+  const [tipMode, setTipMode] = useState<"percentage" | "custom" | "none">(
+    "none"
+  );
+
   // Calculate totals
   const servicePrice = bookingData.servicePrice || 0;
   const addOnTotal = bookingData.addOnTotal || 0;
   const subtotal = servicePrice + addOnTotal;
   const tax = subtotal * 0.08; // 8% tax
-  const total = subtotal + tax;
+
+  // Calculate tip
+  const calculateTip = (): number => {
+    if (tipMode === "percentage" && tipPercentage) {
+      return Math.round(subtotal * (tipPercentage / 100) * 100) / 100;
+    }
+    if (tipMode === "custom" && customTip) {
+      return parseFloat(customTip) || 0;
+    }
+    return 0;
+  };
+  const tipAmount = calculateTip();
+  const total = subtotal + tax + tipAmount;
+
+  // Check if this is a grooming service
+  const isGroomingService =
+    bookingData.serviceCategory === "GROOMING" ||
+    bookingData.serviceName?.toLowerCase().includes("groom");
+
+  const TIP_PERCENTAGES = [15, 20, 25];
+
+  const handleTipPercentageClick = (pct: number) => {
+    if (tipMode === "percentage" && tipPercentage === pct) {
+      setTipMode("none");
+      setTipPercentage(null);
+    } else {
+      setTipMode("percentage");
+      setTipPercentage(pct);
+      setCustomTip("");
+    }
+  };
+
+  const handleCustomTipChange = (value: string) => {
+    setCustomTip(value);
+    if (value) {
+      setTipMode("custom");
+      setTipPercentage(null);
+    } else {
+      setTipMode("none");
+    }
+  };
 
   const handleCompleteBooking = async () => {
     if (!agreeToTerms) {
@@ -152,12 +203,31 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
         reservationData
       );
 
+      // Save tip if any was added
+      if (tipAmount > 0 && bookingData.customerId) {
+        try {
+          await tipService.createTip({
+            type: isGroomingService ? "GROOMER" : "GENERAL",
+            amount: tipAmount,
+            percentage: tipMode === "percentage" ? tipPercentage : null,
+            collectionMethod: "ONLINE",
+            customerId: bookingData.customerId,
+            reservationId: reservation.id,
+            groomerId: isGroomingService ? bookingData.groomerId : null,
+          });
+        } catch (tipErr) {
+          console.error("Error saving tip:", tipErr);
+          // Continue anyway - tip is optional
+        }
+      }
+
       // Store reservation and payment info for confirmation
       onUpdate({
         reservationId: reservation.id,
         paymentTransactionId: paymentResult.data?.transactionId,
         paymentAuthCode: paymentResult.data?.authCode,
         maskedCard: paymentResult.data?.maskedCard,
+        tipAmount,
       });
 
       // Move to confirmation
@@ -344,6 +414,24 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
                   </Typography>
                 </Box>
 
+                {tipAmount > 0 && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      mb: 2,
+                    }}
+                  >
+                    <Typography variant="body2" color="success.main">
+                      Tip{" "}
+                      {tipMode === "percentage" ? `(${tipPercentage}%)` : ""}
+                    </Typography>
+                    <Typography variant="body2" color="success.main">
+                      ${tipAmount.toFixed(2)}
+                    </Typography>
+                  </Box>
+                )}
+
                 <Divider sx={{ my: 2 }} />
 
                 <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -355,6 +443,96 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
                   </Typography>
                 </Box>
               </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Add a Tip */}
+        <Grid item xs={12}>
+          <Card
+            sx={{
+              bgcolor: "success.50",
+              border: "1px solid",
+              borderColor: "success.200",
+            }}
+          >
+            <CardContent>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <Avatar
+                  sx={{ bgcolor: "success.main", mr: 2, width: 36, height: 36 }}
+                >
+                  <GroupsIcon fontSize="small" />
+                </Avatar>
+                <Box>
+                  <Typography variant="h6">
+                    {isGroomingService ? "Tip for Your Groomer" : "Add a Tip"}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {isGroomingService
+                      ? "Show appreciation for your groomer's great work"
+                      : "Tips are optional and appreciated by our team"}
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Grid container spacing={1} sx={{ mb: 2 }}>
+                {TIP_PERCENTAGES.map((pct) => (
+                  <Grid item xs={4} key={pct}>
+                    <Button
+                      fullWidth
+                      variant={
+                        tipMode === "percentage" && tipPercentage === pct
+                          ? "contained"
+                          : "outlined"
+                      }
+                      color="success"
+                      onClick={() => handleTipPercentageClick(pct)}
+                      sx={{
+                        py: 1.5,
+                        flexDirection: "column",
+                      }}
+                    >
+                      <Typography variant="h6" component="span">
+                        {pct}%
+                      </Typography>
+                      <Typography variant="caption" component="span">
+                        ${(subtotal * (pct / 100)).toFixed(2)}
+                      </Typography>
+                    </Button>
+                  </Grid>
+                ))}
+              </Grid>
+
+              <TextField
+                fullWidth
+                size="small"
+                label="Custom Tip Amount"
+                placeholder="Enter custom amount"
+                value={customTip}
+                onChange={(e) => handleCustomTipChange(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">$</InputAdornment>
+                  ),
+                }}
+                type="number"
+                inputProps={{ min: 0, step: 0.01 }}
+              />
+
+              {tipAmount > 0 && (
+                <Box sx={{ mt: 2, textAlign: "center" }}>
+                  <Chip
+                    label={`Tip: $${tipAmount.toFixed(2)}`}
+                    color="success"
+                    variant="filled"
+                    onDelete={() => {
+                      setTipMode("none");
+                      setTipPercentage(null);
+                      setCustomTip("");
+                    }}
+                  />
+                </Box>
+              )}
             </CardContent>
           </Card>
         </Grid>
