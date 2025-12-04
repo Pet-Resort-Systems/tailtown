@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { logger } from "../utils/logger";
 
-interface AuthenticatedRequest extends Request {
+// Use type intersection instead of interface extension to avoid TS2430
+type AuthenticatedRequest = Request & {
   tenantId?: string;
   user?: { id: string; name: string };
-}
+};
 
 /**
  * Service Agreement Controller
