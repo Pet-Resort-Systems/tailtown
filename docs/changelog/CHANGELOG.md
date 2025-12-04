@@ -29,11 +29,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Files: `frontend/src/components/calendar/KennelCalendar.tsx`, `frontend/src/components/calendar/SpecializedCalendar.tsx`, `frontend/src/components/calendar/base/BaseCalendar.tsx`
 
 - **Permanent Account Discounts** - Assign permanent coupons to customer accounts
+
   - Link coupons (military, senior, first responder, etc.) to customer accounts
   - Discounts auto-apply at checkout
   - New `PermanentDiscountSelector` component in customer profile
   - API endpoints for managing permanent coupons
   - Files: `frontend/src/components/customers/PermanentDiscountSelector.tsx`, `services/customer/src/controllers/customer/customer-extras.controller.ts`
+
+- **Staff Commission System** - Configure commission rates for groomers, trainers, etc.
+  - Percentage or flat-amount commission types
+  - Link commissions to specific services
+  - Commission calculation at checkout
+  - Commission reporting by staff with date range filtering
+  - New "Commissions" tab in staff settings
+  - Files: `frontend/src/components/staff/CommissionSettings.tsx`, `services/customer/src/controllers/commission.controller.ts`
 
 ## [1.6.17] - 2025-12-03
 
