@@ -45,11 +45,46 @@ Multiple pets sharing same room:
 - ~~Merge fields for dynamic content ([Business Name], etc.)~~
 - ~~On-the-fly signing from customer profile~~
 
-### Tips System
+### ~~Tips System~~ ✅ IN PROGRESS
 
-- Groomer-specific tips vs general tips
-- Tip allocation and tracking
-- Tip reporting for payroll
+- ~~Database schema with Tip model (GROOMER/GENERAL types)~~
+- ~~API endpoints for CRUD and reporting~~
+- ~~Staff checkout UI with tip selection (groomer + general)~~
+- Online checkout tip integration
+- Tip reporting dashboard for payroll
+
+### Calendar View Improvements
+
+- Start calendar with current date on far left
+- Better date navigation
+
+### Outstanding Invoice Report
+
+- List all unpaid/overdue invoices
+- Filter by date range, customer, amount
+- Export to CSV/PDF
+
+### Medication Tracking During Stay
+
+- Log medication administration times
+- Staff sign-off on each dose
+- Alerts for missed medications
+- Medication history per stay
+
+### Permanent Account Discounts
+
+- Military discount
+- Senior discount
+- Multi-pet discount
+- Custom discount types per account
+- Auto-apply on invoices
+
+### Standing Reservations
+
+- Recurring reservation templates
+- Weekly/bi-weekly/monthly patterns
+- Auto-generate future reservations
+- Easy modification of series
 
 ### Commission Splitting for Groomers
 
