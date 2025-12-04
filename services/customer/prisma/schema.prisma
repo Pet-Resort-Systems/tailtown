@@ -49,6 +49,7 @@ model Customer {
   classWaitlist       ClassWaitlist[]      @relation("CustomerClassWaitlist")
   waitlistEntries     WaitlistEntry[]
   reportCards         ReportCard[]
+  tips                Tip[]
 
   @@index([firstName, lastName], map: "customers_name_search_idx")
   @@index([email], map: "customers_email_search_idx")
@@ -332,6 +333,7 @@ model Staff {
   groomerWaitlist      WaitlistEntry[]      @relation("GroomerWaitlist")
   createdReportCards   ReportCard[]         @relation("StaffCreatedReportCards")
   uploadedPhotos       ReportCardPhoto[]    @relation("StaffUploadedPhotos")
+  groomerTips          Tip[]                @relation("GroomerTips")
 
   @@unique([tenantId, email], map: "staff_tenant_email_unique")
   @@index([tenantId, isActive], map: "staff_tenant_active_idx")
@@ -709,6 +711,17 @@ enum PaymentMethod {
   BANK_TRANSFER
   STORE_CREDIT
   GIFT_CARD
+}
+
+enum TipType {
+  GROOMER   // Goes directly to the assigned groomer
+  GENERAL   // Goes to the team tip pool
+}
+
+enum TipCollectionMethod {
+  ONLINE    // Collected during online checkout
+  TERMINAL  // Collected via card terminal in-person
+  CASH      // Cash tip recorded by staff
 }
 
 enum PaymentStatus {
@@ -2656,4 +2669,43 @@ model ServiceAgreement {
   @@index([tenantId, customerId, signedAt], map: "service_agreements_tenant_customer_signed_idx")
   @@index([tenantId, isValid], map: "service_agreements_tenant_valid_idx")
   @@map("service_agreements")
+}
+
+// ============================================
+// TIPPING SYSTEM
+// ============================================
+
+model Tip {
+  id                String              @id @default(uuid())
+  tenantId          String              @default("dev")
+  type              TipType             // GROOMER or GENERAL
+  amount            Decimal             @db.Decimal(10, 2)
+  percentage        Int?                // Preset percentage used (15, 20, 25, etc.) - null if custom
+  collectionMethod  TipCollectionMethod // ONLINE, TERMINAL, or CASH
+  
+  // Relationships
+  customerId        String              // Customer who gave the tip
+  reservationId     String?             // Optional - linked reservation
+  invoiceId         String?             // Optional - linked invoice/payment
+  groomerId         String?             // Only for GROOMER type tips
+  
+  // Metadata
+  notes             String?             // Optional notes (e.g., "Great job with Fluffy!")
+  recordedBy        String?             // Staff ID who recorded the tip (for CASH tips)
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  // Relations
+  customer          Customer            @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  groomer           Staff?              @relation("GroomerTips", fields: [groomerId], references: [id], onDelete: SetNull)
+  
+  @@index([tenantId], map: "tips_tenant_idx")
+  @@index([tenantId, customerId], map: "tips_tenant_customer_idx")
+  @@index([tenantId, groomerId], map: "tips_tenant_groomer_idx")
+  @@index([tenantId, type], map: "tips_tenant_type_idx")
+  @@index([tenantId, createdAt], map: "tips_tenant_created_idx")
+  @@index([tenantId, reservationId], map: "tips_tenant_reservation_idx")
+  @@index([tenantId, invoiceId], map: "tips_tenant_invoice_idx")
+  @@map("tips")
 }
