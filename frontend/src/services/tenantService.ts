@@ -198,8 +198,13 @@ class TenantService {
       }
 
       return tenant;
-    } catch (error) {
-      console.warn("Could not fetch current tenant:", error);
+    } catch {
+      // Silently fail - this is expected when not authenticated
+      // Try to return cached data if available
+      const cachedName = localStorage.getItem("tenant_businessName");
+      if (cachedName) {
+        return { businessName: cachedName } as Tenant;
+      }
       return null;
     }
   }
