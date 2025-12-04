@@ -45,13 +45,13 @@ Multiple pets sharing same room:
 - ~~Merge fields for dynamic content ([Business Name], etc.)~~
 - ~~On-the-fly signing from customer profile~~
 
-### ~~Tips System~~ ✅ IN PROGRESS
+### ~~Tips System~~ ✅ COMPLETED
 
 - ~~Database schema with Tip model (GROOMER/GENERAL types)~~
 - ~~API endpoints for CRUD and reporting~~
 - ~~Staff checkout UI with tip selection (groomer + general)~~
-- Online checkout tip integration
-- Tip reporting dashboard for payroll
+- ~~Online checkout tip integration~~
+- ~~Tip reporting dashboard for payroll~~
 
 ### Calendar View Improvements
 
