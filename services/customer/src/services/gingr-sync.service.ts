@@ -625,16 +625,24 @@ export class GingrSyncService {
           },
         });
 
+        const subtotal = parseFloat(invoice.subtotal) || 0;
+        const taxAmount = parseFloat(invoice.tax_amount) || 0;
+        const total = parseFloat(invoice.total) || 0;
+        // Calculate tax rate from subtotal and tax amount
+        const taxRate = subtotal > 0 ? (taxAmount / subtotal) * 100 : 0;
+
         const invoiceData: any = {
           customerId: customer.id,
           invoiceNumber: `GINGR-${invoice.id}`,
-          invoiceDate: new Date(parseInt(invoice.create_stamp) * 1000),
+          issueDate: new Date(parseInt(invoice.create_stamp) * 1000),
           dueDate: new Date(
             parseInt(invoice.create_stamp) * 1000 + 30 * 24 * 60 * 60 * 1000
           ),
-          subtotal: parseFloat(invoice.subtotal),
-          tax: parseFloat(invoice.tax_amount),
-          total: parseFloat(invoice.total),
+          subtotal,
+          taxRate,
+          taxAmount,
+          discount: 0,
+          total,
           status: "PAID", // All imported invoices are completed transactions
           externalId: invoice.id,
         };
