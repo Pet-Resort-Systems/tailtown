@@ -237,6 +237,7 @@ export interface CustomerRetentionData {
 export interface CustomerLifetimeValue {
   customerId: string;
   customerName: string;
+  petNames: string;
   firstVisit: string;
   lastVisit: string;
   totalVisits: number;
@@ -324,7 +325,7 @@ export interface CapacityAnalysis {
 // Export Types
 // ============================================================================
 
-export type ExportFormat = 'pdf' | 'csv' | 'excel';
+export type ExportFormat = "pdf" | "csv" | "excel";
 
 export interface ExportRequest {
   reportType: string;
@@ -350,38 +351,38 @@ export interface ExportResponse {
 
 export enum ReportType {
   // Sales
-  SALES_DAILY = 'sales_daily',
-  SALES_WEEKLY = 'sales_weekly',
-  SALES_MONTHLY = 'sales_monthly',
-  SALES_YTD = 'sales_ytd',
-  SALES_BY_SERVICE = 'sales_by_service',
-  SALES_BY_PAYMENT = 'sales_by_payment',
-  SALES_TOP_CUSTOMERS = 'sales_top_customers',
-  
+  SALES_DAILY = "sales_daily",
+  SALES_WEEKLY = "sales_weekly",
+  SALES_MONTHLY = "sales_monthly",
+  SALES_YTD = "sales_ytd",
+  SALES_BY_SERVICE = "sales_by_service",
+  SALES_BY_PAYMENT = "sales_by_payment",
+  SALES_TOP_CUSTOMERS = "sales_top_customers",
+
   // Tax
-  TAX_MONTHLY = 'tax_monthly',
-  TAX_QUARTERLY = 'tax_quarterly',
-  TAX_ANNUAL = 'tax_annual',
-  TAX_BREAKDOWN = 'tax_breakdown',
-  
+  TAX_MONTHLY = "tax_monthly",
+  TAX_QUARTERLY = "tax_quarterly",
+  TAX_ANNUAL = "tax_annual",
+  TAX_BREAKDOWN = "tax_breakdown",
+
   // Financial
-  FINANCIAL_REVENUE = 'financial_revenue',
-  FINANCIAL_PROFIT_LOSS = 'financial_profit_loss',
-  FINANCIAL_OUTSTANDING = 'financial_outstanding',
-  FINANCIAL_REFUNDS = 'financial_refunds',
-  
+  FINANCIAL_REVENUE = "financial_revenue",
+  FINANCIAL_PROFIT_LOSS = "financial_profit_loss",
+  FINANCIAL_OUTSTANDING = "financial_outstanding",
+  FINANCIAL_REFUNDS = "financial_refunds",
+
   // Customer
-  CUSTOMER_ACQUISITION = 'customer_acquisition',
-  CUSTOMER_RETENTION = 'customer_retention',
-  CUSTOMER_LIFETIME_VALUE = 'customer_lifetime_value',
-  CUSTOMER_DEMOGRAPHICS = 'customer_demographics',
-  CUSTOMER_INACTIVE = 'customer_inactive',
-  
+  CUSTOMER_ACQUISITION = "customer_acquisition",
+  CUSTOMER_RETENTION = "customer_retention",
+  CUSTOMER_LIFETIME_VALUE = "customer_lifetime_value",
+  CUSTOMER_DEMOGRAPHICS = "customer_demographics",
+  CUSTOMER_INACTIVE = "customer_inactive",
+
   // Operational
-  OPERATIONS_STAFF = 'operations_staff',
-  OPERATIONS_RESOURCES = 'operations_resources',
-  OPERATIONS_BOOKINGS = 'operations_bookings',
-  OPERATIONS_CAPACITY = 'operations_capacity',
+  OPERATIONS_STAFF = "operations_staff",
+  OPERATIONS_RESOURCES = "operations_resources",
+  OPERATIONS_BOOKINGS = "operations_bookings",
+  OPERATIONS_CAPACITY = "operations_capacity",
 }
 
 // ============================================================================
@@ -394,7 +395,7 @@ export interface DateRange {
 }
 
 export interface PeriodFilter {
-  type: 'day' | 'week' | 'month' | 'quarter' | 'year' | 'custom';
+  type: "day" | "week" | "month" | "quarter" | "year" | "custom";
   value?: string | number;
   startDate?: string;
   endDate?: string;
@@ -410,8 +411,8 @@ export interface ChartData {
 export interface TableColumn {
   key: string;
   label: string;
-  type: 'string' | 'number' | 'currency' | 'date' | 'percentage';
+  type: "string" | "number" | "currency" | "date" | "percentage";
   sortable?: boolean;
-  align?: 'left' | 'center' | 'right';
+  align?: "left" | "center" | "right";
   format?: (value: any) => string;
 }

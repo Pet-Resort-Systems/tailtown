@@ -3,14 +3,14 @@
  * Generates customer analytics and insights
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 import {
   CustomerAcquisitionData,
   CustomerRetentionData,
   CustomerLifetimeValue,
   CustomerDemographics,
-  InactiveCustomer
-} from '../types/reports.types';
+  InactiveCustomer,
+} from "../types/reports.types";
 
 const prisma = new PrismaClient();
 
@@ -25,32 +25,35 @@ export const getCustomerAcquisitionReport = async (
   const start = new Date(startDate);
   const end = new Date(endDate);
   end.setHours(23, 59, 59, 999);
-  
+
   // Get all customers
   const allCustomers = await prisma.customer.count({
-    where: { tenantId }
+    where: { tenantId },
   });
-  
+
   // Get new customers in date range
   const newCustomers = await prisma.customer.count({
     where: {
       tenantId,
       createdAt: {
         gte: start,
-        lte: end
-      }
-    }
+        lte: end,
+      },
+    },
   });
-  
-  const acquisitionRate = allCustomers > 0 ? (newCustomers / allCustomers) * 100 : 0;
-  
-  return [{
-    period: `${startDate} to ${endDate}`,
-    newCustomers,
-    totalCustomers: allCustomers,
-    acquisitionRate,
-    source: 'All Sources'
-  }];
+
+  const acquisitionRate =
+    allCustomers > 0 ? (newCustomers / allCustomers) * 100 : 0;
+
+  return [
+    {
+      period: `${startDate} to ${endDate}`,
+      newCustomers,
+      totalCustomers: allCustomers,
+      acquisitionRate,
+      source: "All Sources",
+    },
+  ];
 };
 
 /**
@@ -64,42 +67,45 @@ export const getCustomerRetentionReport = async (
   const start = new Date(startDate);
   const end = new Date(endDate);
   end.setHours(23, 59, 59, 999);
-  
+
   // Get customers who had reservations in the period
   const customersWithReservations = await prisma.reservation.findMany({
     where: {
       tenantId,
       startDate: {
         gte: start,
-        lte: end
-      }
+        lte: end,
+      },
     },
     select: {
-      customerId: true
+      customerId: true,
     },
-    distinct: ['customerId']
+    distinct: ["customerId"],
   });
-  
+
   const returningCustomers = customersWithReservations.length;
-  
+
   // Get total active customers (had any reservation ever)
   const totalActiveCustomers = await prisma.reservation.findMany({
     where: { tenantId },
     select: { customerId: true },
-    distinct: ['customerId']
+    distinct: ["customerId"],
   });
-  
+
   const totalCustomers = totalActiveCustomers.length;
-  const retentionRate = totalCustomers > 0 ? (returningCustomers / totalCustomers) * 100 : 0;
+  const retentionRate =
+    totalCustomers > 0 ? (returningCustomers / totalCustomers) * 100 : 0;
   const churnRate = 100 - retentionRate;
-  
-  return [{
-    period: `${startDate} to ${endDate}`,
-    returningCustomers,
-    totalCustomers,
-    retentionRate,
-    churnRate
-  }];
+
+  return [
+    {
+      period: `${startDate} to ${endDate}`,
+      returningCustomers,
+      totalCustomers,
+      retentionRate,
+      churnRate,
+    },
+  ];
 };
 
 /**
@@ -109,52 +115,69 @@ export const getCustomerLifetimeValueReport = async (
   tenantId: string,
   limit: number = 100
 ): Promise<CustomerLifetimeValue[]> => {
-  // Get all customers with their invoices
+  // Get all customers with their invoices and pets
   const customers = await prisma.customer.findMany({
     where: { tenantId },
     include: {
       invoices: {
         where: {
-          status: 'PAID'
+          status: "PAID",
         },
         orderBy: {
-          issueDate: 'asc'
-        }
-      }
-    }
+          issueDate: "asc",
+        },
+      },
+      pets: {
+        select: {
+          name: true,
+        },
+      },
+    },
   });
-  
+
   const customerValues: CustomerLifetimeValue[] = [];
-  
+
   for (const customer of customers) {
     if (customer.invoices.length === 0) continue;
-    
-    const totalSpent = customer.invoices.reduce((sum, inv) => sum + inv.total, 0);
+
+    const totalSpent = customer.invoices.reduce(
+      (sum, inv) => sum + inv.total,
+      0
+    );
     const totalVisits = customer.invoices.length;
     const averageTransaction = totalVisits > 0 ? totalSpent / totalVisits : 0;
-    
-    const firstVisit = customer.invoices[0].issueDate.toISOString().split('T')[0];
-    const lastVisit = customer.invoices[customer.invoices.length - 1].issueDate.toISOString().split('T')[0];
-    
+
+    const firstVisit = customer.invoices[0].issueDate
+      .toISOString()
+      .split("T")[0];
+    const lastVisit = customer.invoices[customer.invoices.length - 1].issueDate
+      .toISOString()
+      .split("T")[0];
+
     // Calculate tier based on total spent
-    let tier = 'Bronze';
-    if (totalSpent > 5000) tier = 'Platinum';
-    else if (totalSpent > 2000) tier = 'Gold';
-    else if (totalSpent > 1000) tier = 'Silver';
-    
+    let tier = "Bronze";
+    if (totalSpent > 5000) tier = "Platinum";
+    else if (totalSpent > 2000) tier = "Gold";
+    else if (totalSpent > 1000) tier = "Silver";
+
+    // Get unique pet names (avoid duplicates from sync issues)
+    const uniquePetNames = [...new Set(customer.pets.map((p) => p.name))];
+    const petNames = uniquePetNames.join(", ") || "No pets";
+
     customerValues.push({
       customerId: customer.id,
       customerName: `${customer.firstName} ${customer.lastName}`,
+      petNames,
       firstVisit,
       lastVisit,
       totalVisits,
       totalSpent,
       averageTransaction,
       lifetimeValue: totalSpent,
-      tier
+      tier,
     });
   }
-  
+
   // Sort by lifetime value and limit
   return customerValues
     .sort((a, b) => b.lifetimeValue - a.lifetimeValue)
@@ -171,52 +194,54 @@ export const getCustomerDemographicsReport = async (
   const customers = await prisma.customer.findMany({
     where: { tenantId },
     include: {
-      pets: true
-    }
+      pets: true,
+    },
   });
-  
+
   const totalCustomers = customers.length;
-  
+
   // Aggregate by location (city)
   const locationMap = new Map<string, number>();
   for (const customer of customers) {
-    const city = customer.city || 'Unknown';
+    const city = customer.city || "Unknown";
     locationMap.set(city, (locationMap.get(city) || 0) + 1);
   }
-  
+
   const byLocation = Array.from(locationMap.entries()).map(([city, count]) => ({
     city,
     count,
-    percentage: totalCustomers > 0 ? (count / totalCustomers) * 100 : 0
+    percentage: totalCustomers > 0 ? (count / totalCustomers) * 100 : 0,
   }));
-  
+
   // Aggregate by pet type
   const petTypeMap = new Map<string, number>();
   for (const customer of customers) {
     for (const pet of customer.pets) {
-      const type = pet.type || 'Unknown';
+      const type = pet.type || "Unknown";
       petTypeMap.set(type, (petTypeMap.get(type) || 0) + 1);
     }
   }
-  
-  const byPetType = Array.from(petTypeMap.entries()).map(([petType, count]) => ({
-    petType,
-    count,
-    percentage: totalCustomers > 0 ? (count / totalCustomers) * 100 : 0
-  }));
-  
+
+  const byPetType = Array.from(petTypeMap.entries()).map(
+    ([petType, count]) => ({
+      petType,
+      count,
+      percentage: totalCustomers > 0 ? (count / totalCustomers) * 100 : 0,
+    })
+  );
+
   // Service preference (would need reservation data - placeholder)
   const byServicePreference = [
-    { service: 'Boarding', count: 0, percentage: 0 },
-    { service: 'Daycare', count: 0, percentage: 0 },
-    { service: 'Grooming', count: 0, percentage: 0 }
+    { service: "Boarding", count: 0, percentage: 0 },
+    { service: "Daycare", count: 0, percentage: 0 },
+    { service: "Grooming", count: 0, percentage: 0 },
   ];
-  
+
   return {
     totalCustomers,
     byLocation,
     byPetType,
-    byServicePreference
+    byServicePreference,
   };
 };
 
@@ -229,50 +254,57 @@ export const getInactiveCustomersReport = async (
 ): Promise<InactiveCustomer[]> => {
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() - daysSinceLastVisit);
-  
+
   // Get customers with their last reservation
   const customers = await prisma.customer.findMany({
     where: { tenantId },
     include: {
       reservations: {
         orderBy: {
-          startDate: 'desc'
+          startDate: "desc",
         },
-        take: 1
+        take: 1,
       },
       invoices: {
         where: {
-          status: 'PAID'
-        }
-      }
-    }
+          status: "PAID",
+        },
+      },
+    },
   });
-  
+
   const inactiveCustomers: InactiveCustomer[] = [];
-  
+
   for (const customer of customers) {
     if (customer.reservations.length === 0) continue;
-    
+
     const lastVisit = customer.reservations[0].startDate;
-    
+
     if (lastVisit < cutoffDate) {
-      const daysSince = Math.floor((new Date().getTime() - lastVisit.getTime()) / (1000 * 60 * 60 * 24));
-      const totalSpent = customer.invoices.reduce((sum, inv) => sum + inv.total, 0);
+      const daysSince = Math.floor(
+        (new Date().getTime() - lastVisit.getTime()) / (1000 * 60 * 60 * 24)
+      );
+      const totalSpent = customer.invoices.reduce(
+        (sum, inv) => sum + inv.total,
+        0
+      );
       const totalVisits = customer.invoices.length;
-      
+
       inactiveCustomers.push({
         customerId: customer.id,
         customerName: `${customer.firstName} ${customer.lastName}`,
-        lastVisit: lastVisit.toISOString().split('T')[0],
+        lastVisit: lastVisit.toISOString().split("T")[0],
         daysSinceLastVisit: daysSince,
         totalSpent,
         totalVisits,
         email: customer.email,
-        phone: customer.phone || ''
+        phone: customer.phone || "",
       });
     }
   }
-  
+
   // Sort by days since last visit (most inactive first)
-  return inactiveCustomers.sort((a, b) => b.daysSinceLastVisit - a.daysSinceLastVisit);
+  return inactiveCustomers.sort(
+    (a, b) => b.daysSinceLastVisit - a.daysSinceLastVisit
+  );
 };
