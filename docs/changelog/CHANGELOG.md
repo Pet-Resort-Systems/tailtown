@@ -9,6 +9,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Fixed
+
+- **Customer Search by Pet Name** - Report Cards and other customer search fields now support searching by pet name
+
+  - Backend: Added pet name to customer search query in `customer-crud.controller.ts`
+  - Frontend: Added `filterOptions={(x) => x}` to Autocomplete to disable client-side filtering for server-side search
+  - Customer dropdown now shows pet names to help identify customers when searching by pet
+  - Files: `services/customer/src/controllers/customer/customer-crud.controller.ts`, `frontend/src/components/reportCards/QuickReportCard.tsx`
+
+- **Customers Page Performance** - Reduced initial load from 1000 to 100 customers
+
+  - Removed duplicate data loading that caused UI flashing
+  - Users can search to find specific customers beyond initial 100
+  - Files: `frontend/src/pages/customers/Customers.tsx`
+
+- **Production Build Localhost URLs** - Fixed frontend builds including localhost URLs
+  - Removed hardcoded localhost fallbacks from source files
+  - Updated deploy script to temporarily rename `.env.development` during builds
+  - Files: `frontend/src/config/development.ts`, `frontend/src/services/api.ts`, `scripts/deploy-frontend.sh`
+
 ## [1.6.18] - 2025-12-04
 
 ### Added

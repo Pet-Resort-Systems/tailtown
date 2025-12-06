@@ -51,16 +51,16 @@ const Customers = () => {
         console.log("Debounced search triggered:", { query, iconFilters });
 
         try {
-          setLoading(true);
+          // Don't show loading spinner for searches - keeps UI stable
           let result;
 
           // Use server-side search if there's a text query
           if (query) {
             console.log("Using server-side search for:", query);
-            result = await customerService.searchCustomers(query, 1, 1000); // Get up to 1000 results
+            result = await customerService.searchCustomers(query, 1, 100); // Search results
           } else {
-            console.log("Loading all customers (first 1000)");
-            result = await customerService.getAllCustomers(1, 1000); // Load more customers
+            console.log("Loading initial customers (use search to find more)");
+            result = await customerService.getAllCustomers(1, 100); // Fast initial load, use search for more
           }
 
           let filtered = result.data || [];
@@ -79,10 +79,10 @@ const Customers = () => {
 
           setCustomers(filtered);
           setFilteredCustomers(filtered);
+          setLoading(false); // Clear initial loading state
         } catch (err) {
           console.error("Error searching customers:", err);
           setError("Failed to search customers");
-        } finally {
           setLoading(false);
         }
       }, 300),
@@ -111,26 +111,7 @@ const Customers = () => {
     {}
   );
 
-  const loadCustomers = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      // Load first 1000 customers instead of just 10
-      const data = await customerService.getAllCustomers(1, 1000);
-      console.log("Loaded customers:", data);
-      setCustomers(data.data || []);
-      setFilteredCustomers(data.data || []);
-    } catch (err) {
-      console.error("Error loading customers:", err);
-      setError("Failed to load customers. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadCustomers();
-  }, [loadCustomers]);
+  // Initial load is handled by debouncedSearch effect - no separate loadCustomers needed
 
   const handleAddNew = useCallback(() => {
     navigate("/customers/new");
