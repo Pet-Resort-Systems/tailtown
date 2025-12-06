@@ -249,6 +249,9 @@ export class GingrSyncService {
   ): Promise<number> {
     const animals = await gingrClient.fetchAllAnimals();
     let syncCount = 0;
+    let skippedNoOwner = 0;
+    let skippedCustomerNotFound = 0;
+    let skippedErrors = 0;
     const BATCH_SIZE = 100; // Process 100 pets at a time
 
     console.log(`      Found ${animals.length} pets to sync`);
@@ -259,10 +262,16 @@ export class GingrSyncService {
       // Log progress every 100 pets
       if (i > 0 && i % BATCH_SIZE === 0) {
         console.log(
-          `      Progress: ${i}/${animals.length} pets (${syncCount} synced)`
+          `      Progress: ${i}/${animals.length} pets (${syncCount} synced, ${skippedNoOwner} no owner, ${skippedCustomerNotFound} customer not found)`
         );
       }
       try {
+        // Check if pet has an owner_id
+        if (!animal.owner_id) {
+          skippedNoOwner++;
+          continue;
+        }
+
         // Find customer by externalId
         const customer = await prisma.customer.findFirst({
           where: {
@@ -272,9 +281,7 @@ export class GingrSyncService {
         });
 
         if (!customer) {
-          console.error(
-            `      Warning: Customer not found for pet ${animal.id}`
-          );
+          skippedCustomerNotFound++;
           continue;
         }
 

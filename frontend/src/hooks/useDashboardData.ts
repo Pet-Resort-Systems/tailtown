@@ -110,19 +110,25 @@ export const useDashboardData = () => {
         filtered = reservationsToFilter.filter((res: any) => {
           const startDateStr = getLocalDateString(res.startDate);
           if (startDateStr !== formattedDate) return false;
-          // Hide already checked-in pets from the incoming list
+          // Hide already checked-in pets and cancelled from the incoming list
           const status = res.status?.toUpperCase();
-          return !["CHECKED_IN", "CHECKED_OUT", "COMPLETED"].includes(status);
+          return ![
+            "CHECKED_IN",
+            "CHECKED_OUT",
+            "COMPLETED",
+            "CANCELLED",
+          ].includes(status);
         });
       } else if (filter === "out") {
         // Show only check-outs (reservations ending on selected date in local timezone)
         // Exclude pets that have already been checked out (status = CHECKED_OUT or COMPLETED)
+        // Also exclude CANCELLED reservations
         filtered = reservationsToFilter.filter((res: any) => {
           const endDateStr = getLocalDateString(res.endDate);
           if (endDateStr !== formattedDate) return false;
-          // Hide already checked-out pets from the outgoing list
+          // Hide already checked-out pets and cancelled from the outgoing list
           const status = res.status?.toUpperCase();
-          return !["CHECKED_OUT", "COMPLETED"].includes(status);
+          return !["CHECKED_OUT", "COMPLETED", "CANCELLED"].includes(status);
         });
       } else if (filter === "all") {
         // Show both check-ins AND check-outs for selected date in local timezone
@@ -224,6 +230,7 @@ export const useDashboardData = () => {
 
       // Calculate metrics using local timezone dates
 
+      // Count total expected check-ins for the day (for metric card)
       const checkIns = enhancedReservations.filter((res: any) => {
         if (res.status === "CANCELLED") return false;
         const startDateStr = getLocalDateString(res.startDate);
@@ -264,8 +271,9 @@ export const useDashboardData = () => {
       });
 
       const overnight = enhancedReservations.filter((res: any) => {
-        // Only count CHECKED_IN reservations as overnight (matches Gingr)
-        if (res.status !== "CHECKED_IN") return false;
+        // Count CHECKED_IN and CONFIRMED reservations as overnight (matches Gingr)
+        const status = res.status?.toUpperCase();
+        if (!["CHECKED_IN", "CONFIRMED"].includes(status)) return false;
         // Only count boarding reservations as overnight, not day camp
         const serviceCategory = res.service?.serviceCategory;
         if (serviceCategory !== "BOARDING") return false;

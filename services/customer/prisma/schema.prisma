@@ -123,6 +123,7 @@ model Pet {
   @@index([lastCheckIn], map: "pets_last_checkin_idx")
   @@index([tenantId, customerId], map: "pets_tenant_customer_idx")
   @@index([veterinarianId], map: "pets_veterinarian_id_idx")
+  @@unique([tenantId, externalId], map: "pets_tenant_external_id_unique")
   @@map("pets")
 }
 
