@@ -440,7 +440,18 @@ const ReservationList: React.FC<ReservationListProps> = ({
                       </>
                     )}
                     <Typography variant="caption" color="text.secondary">
-                      {formatTime(reservation.startDate)}
+                      {reservation.service?.serviceCategory === "BOARDING" ? (
+                        // Show date range for boarding reservations
+                        <>
+                          {formatDate(reservation.startDate)}{" "}
+                          {formatTime(reservation.startDate)} →{" "}
+                          {formatDate(reservation.endDate)}{" "}
+                          {formatTime(reservation.endDate)}
+                        </>
+                      ) : (
+                        // Show just time for daycare
+                        formatTime(reservation.startDate)
+                      )}
                     </Typography>
                   </Box>
                 </Box>
