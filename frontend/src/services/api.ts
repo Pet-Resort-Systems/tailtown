@@ -105,7 +105,7 @@ const getApiBaseUrl = (): string => {
   if (typeof window !== "undefined") {
     return window.location.origin;
   }
-  return "http://localhost:4004";
+  return "";
 };
 
 /**

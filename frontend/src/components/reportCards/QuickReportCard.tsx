@@ -1,10 +1,10 @@
 /**
  * Quick Report Card Creator
- * 
+ *
  * Mobile-first component for quickly creating report cards with photos
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 import {
   Box,
   Card,
@@ -23,18 +23,15 @@ import {
   CircularProgress,
   Stack,
   Divider,
-  Autocomplete
-} from '@mui/material';
+  Autocomplete,
+} from "@mui/material";
+import { PhotoCamera, Delete, Send, Save, Close } from "@mui/icons-material";
 import {
-  PhotoCamera,
-  Delete,
-  Send,
-  Save,
-  Close
-} from '@mui/icons-material';
-import { reportCardService, CreateReportCardRequest } from '../../services/reportCardService';
-import { customerService } from '../../services/customerService';
-import { petService, Pet } from '../../services/petService';
+  reportCardService,
+  CreateReportCardRequest,
+} from "../../services/reportCardService";
+import { customerService } from "../../services/customerService";
+import { petService, Pet } from "../../services/petService";
 
 interface QuickReportCardProps {
   petId?: string;
@@ -49,7 +46,7 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
   customerId: initialCustomerId,
   reservationId,
   onSuccess,
-  onCancel
+  onCancel,
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -58,27 +55,29 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Form state
-  const [petId, setPetId] = useState(initialPetId || '');
-  const [customerId, setCustomerId] = useState(initialCustomerId || '');
-  const [serviceType, setServiceType] = useState<'BOARDING' | 'DAYCARE' | 'GROOMING' | 'TRAINING' | 'GENERAL'>('DAYCARE');
-  const [title, setTitle] = useState('');
-  const [summary, setSummary] = useState('');
+  const [petId, setPetId] = useState(initialPetId || "");
+  const [customerId, setCustomerId] = useState(initialCustomerId || "");
+  const [serviceType, setServiceType] = useState<
+    "BOARDING" | "DAYCARE" | "GROOMING" | "TRAINING" | "GENERAL"
+  >("DAYCARE");
+  const [title, setTitle] = useState("");
+  const [summary, setSummary] = useState("");
   const [moodRating, setMoodRating] = useState<number>(4);
   const [energyRating, setEnergyRating] = useState<number>(4);
   const [appetiteRating, setAppetiteRating] = useState<number>(4);
   const [socialRating, setSocialRating] = useState<number>(4);
   const [activities, setActivities] = useState<string[]>([]);
-  const [activityInput, setActivityInput] = useState('');
-  const [behaviorNotes, setBehaviorNotes] = useState('');
+  const [activityInput, setActivityInput] = useState("");
+  const [behaviorNotes, setBehaviorNotes] = useState("");
   const [highlights, setHighlights] = useState<string[]>([]);
-  const [highlightInput, setHighlightInput] = useState('');
+  const [highlightInput, setHighlightInput] = useState("");
 
   // Customer and Pet selection state
   const [customers, setCustomers] = useState<any[]>([]);
   const [pets, setPets] = useState<Pet[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<any | null>(null);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
-  const [customerSearchInput, setCustomerSearchInput] = useState('');
+  const [customerSearchInput, setCustomerSearchInput] = useState("");
   const [loadingCustomers, setLoadingCustomers] = useState(false);
   const [loadingPets, setLoadingPets] = useState(false);
 
@@ -92,10 +91,20 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
 
       setLoadingCustomers(true);
       try {
-        const response = await customerService.searchCustomers(customerSearchInput, 1, 20);
+        console.log(
+          "QuickReportCard: Searching for customers with:",
+          customerSearchInput
+        );
+        const response = await customerService.searchCustomers(
+          customerSearchInput,
+          1,
+          20
+        );
+        console.log("QuickReportCard: Search response:", response);
+        console.log("QuickReportCard: Setting customers to:", response.data);
         setCustomers(response.data || []);
       } catch (err) {
-        console.error('Failed to load customers:', err);
+        console.error("Failed to load customers:", err);
       } finally {
         setLoadingCustomers(false);
       }
@@ -116,16 +125,18 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
 
       setLoadingPets(true);
       try {
-        const response = await petService.getPetsByCustomer(selectedCustomer.id);
+        const response = await petService.getPetsByCustomer(
+          selectedCustomer.id
+        );
         setPets(response.data || []);
-        
+
         // Auto-select if only one pet
         if (response.data?.length === 1) {
           setSelectedPet(response.data[0]);
           setPetId(response.data[0].id);
         }
       } catch (err) {
-        console.error('Failed to load pets:', err);
+        console.error("Failed to load pets:", err);
       } finally {
         setLoadingPets(false);
       }
@@ -147,7 +158,9 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
     }
   }, [selectedPet]);
 
-  const handlePhotoCapture = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoCapture = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const files = event.target.files;
     if (!files) return;
 
@@ -156,14 +169,14 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      
+
       // Compress image
       try {
         const compressed = await reportCardService.compressImage(file);
         newPhotos.push(compressed);
         newPreviews.push(URL.createObjectURL(compressed));
       } catch (err) {
-        console.error('Failed to compress image:', err);
+        console.error("Failed to compress image:", err);
         newPhotos.push(file);
         newPreviews.push(URL.createObjectURL(file));
       }
@@ -183,7 +196,7 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
   const handleAddActivity = () => {
     if (activityInput.trim()) {
       setActivities([...activities, activityInput.trim()]);
-      setActivityInput('');
+      setActivityInput("");
     }
   };
 
@@ -194,7 +207,7 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
   const handleAddHighlight = () => {
     if (highlightInput.trim()) {
       setHighlights([...highlights, highlightInput.trim()]);
-      setHighlightInput('');
+      setHighlightInput("");
     }
   };
 
@@ -208,7 +221,7 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
       setError(null);
 
       if (!petId || !customerId) {
-        setError('Pet and Customer are required');
+        setError("Pet and Customer are required");
         return;
       }
 
@@ -226,7 +239,7 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
         socialRating,
         activities,
         behaviorNotes: behaviorNotes || undefined,
-        highlights
+        highlights,
       };
 
       const reportCard = await reportCardService.createReportCard(reportData);
@@ -235,13 +248,13 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
       for (let i = 0; i < photos.length; i++) {
         const file = photos[i];
         const uploadResult = await reportCardService.uploadFile(file);
-        
+
         await reportCardService.uploadPhoto(reportCard.id, {
           url: uploadResult.url,
           thumbnailUrl: uploadResult.thumbnailUrl,
           order: i,
           mimeType: file.type,
-          fileSize: file.size
+          fileSize: file.size,
         });
       }
 
@@ -249,13 +262,13 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
       if (sendNow) {
         await reportCardService.sendReportCard(reportCard.id, {
           sendEmail: true,
-          sendSMS: true
+          sendSMS: true,
         });
       }
 
       onSuccess?.();
     } catch (err: any) {
-      setError(err.message || 'Failed to create report card');
+      setError(err.message || "Failed to create report card");
     } finally {
       setLoading(false);
     }
@@ -264,7 +277,14 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
   return (
     <Card>
       <CardContent>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
           <Typography variant="h6">Create Report Card</Typography>
           {onCancel && (
             <IconButton onClick={onCancel} size="small">
@@ -286,15 +306,20 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
             value={selectedCustomer}
             onChange={(_, newValue) => setSelectedCustomer(newValue)}
             inputValue={customerSearchInput}
-            onInputChange={(_, newInputValue) => setCustomerSearchInput(newInputValue)}
-            getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
+            onInputChange={(_, newInputValue) =>
+              setCustomerSearchInput(newInputValue)
+            }
+            getOptionLabel={(option) =>
+              `${option.firstName} ${option.lastName}`
+            }
+            filterOptions={(x) => x}
             loading={loadingCustomers}
             renderInput={(params) => (
               <TextField
                 {...params}
                 label="Customer *"
-                placeholder="Search by name..."
-                helperText="Type at least 2 characters to search"
+                placeholder="Search by customer or pet name..."
+                helperText="Type to search customers"
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (
@@ -313,7 +338,11 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
                     {option.firstName} {option.lastName}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {option.email} • {option.phone || 'No phone'}
+                    {option.pets && option.pets.length > 0
+                      ? `Pets: ${option.pets
+                          .map((p: any) => p.name)
+                          .join(", ")}`
+                      : "No pets"}
                   </Typography>
                 </Box>
               </li>
@@ -337,7 +366,9 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
               <TextField
                 {...params}
                 label="Pet *"
-                placeholder={selectedCustomer ? "Select a pet" : "Select customer first"}
+                placeholder={
+                  selectedCustomer ? "Select a pet" : "Select customer first"
+                }
                 helperText={
                   selectedCustomer
                     ? pets.length === 0
@@ -359,19 +390,16 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
             renderOption={(props, option) => (
               <li {...props} key={option.id}>
                 <Box>
-                  <Typography variant="body1">
-                    {option.name}
-                  </Typography>
+                  <Typography variant="body1">{option.name}</Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {option.breed || option.type} • {option.color || 'No color specified'}
+                    {option.breed || option.type} •{" "}
+                    {option.color || "No color specified"}
                   </Typography>
                 </Box>
               </li>
             )}
             noOptionsText={
-              !selectedCustomer
-                ? "Select a customer first"
-                : "No pets found"
+              !selectedCustomer ? "Select a customer first" : "No pets found"
             }
           />
 
@@ -410,7 +438,7 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
               accept="image/*"
               capture="environment"
               multiple
-              style={{ display: 'none' }}
+              style={{ display: "none" }}
               onChange={handlePhotoCapture}
             />
 
@@ -422,12 +450,12 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
                       src={preview}
                       alt={`Photo ${index + 1}`}
                       loading="lazy"
-                      style={{ height: 120, objectFit: 'cover' }}
+                      style={{ height: 120, objectFit: "cover" }}
                     />
                     <ImageListItemBar
                       actionIcon={
                         <IconButton
-                          sx={{ color: 'white' }}
+                          sx={{ color: "white" }}
                           onClick={() => handleRemovePhoto(index)}
                         >
                           <Delete />
@@ -447,7 +475,7 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
             <Typography variant="subtitle2" gutterBottom>
               How was their day?
             </Typography>
-            
+
             <Box sx={{ mb: 2 }}>
               <Typography variant="body2" color="text.secondary">
                 Mood {reportCardService.getRatingEmoji(moodRating)}
@@ -511,12 +539,12 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
             <Typography variant="subtitle2" gutterBottom>
               Activities
             </Typography>
-            <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
+            <Box sx={{ display: "flex", gap: 1, mb: 1 }}>
               <TextField
                 size="small"
                 value={activityInput}
                 onChange={(e) => setActivityInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleAddActivity()}
+                onKeyPress={(e) => e.key === "Enter" && handleAddActivity()}
                 placeholder="e.g., Played fetch"
                 fullWidth
               />
@@ -524,7 +552,7 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
                 Add
               </Button>
             </Box>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
               {activities.map((activity, index) => (
                 <Chip
                   key={index}
@@ -541,12 +569,12 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
             <Typography variant="subtitle2" gutterBottom>
               Highlights ⭐
             </Typography>
-            <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
+            <Box sx={{ display: "flex", gap: 1, mb: 1 }}>
               <TextField
                 size="small"
                 value={highlightInput}
                 onChange={(e) => setHighlightInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleAddHighlight()}
+                onKeyPress={(e) => e.key === "Enter" && handleAddHighlight()}
                 placeholder="e.g., Made a new friend!"
                 fullWidth
               />
@@ -554,7 +582,7 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
                 Add
               </Button>
             </Box>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
               {highlights.map((highlight, index) => (
                 <Chip
                   key={index}
@@ -579,7 +607,7 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
           />
 
           {/* Action Buttons */}
-          <Box sx={{ display: 'flex', gap: 2, pt: 2 }}>
+          <Box sx={{ display: "flex", gap: 2, pt: 2 }}>
             <Button
               variant="outlined"
               startIcon={loading ? <CircularProgress size={20} /> : <Save />}

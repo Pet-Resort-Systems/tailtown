@@ -74,6 +74,8 @@ export const getAllCustomers = async (
         { lastName: { contains: search, mode: "insensitive" } },
         { email: { contains: search, mode: "insensitive" } },
         { phone: { contains: search } },
+        // Search by pet name - find customers who have pets matching the search
+        { pets: { some: { name: { contains: search, mode: "insensitive" } } } },
       ];
 
       // Phone number format matching

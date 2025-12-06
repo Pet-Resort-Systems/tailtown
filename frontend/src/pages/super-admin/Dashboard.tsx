@@ -140,10 +140,7 @@ const SuperAdminDashboard: React.FC = () => {
                   color="info"
                   sx={{ flex: 1 }}
                   onClick={() => {
-                    const monitoringUrl =
-                      process.env.NODE_ENV === "production"
-                        ? "http://129.212.178.244:4004/monitoring/dashboard"
-                        : "http://localhost:4004/monitoring/dashboard";
+                    const monitoringUrl = `${window.location.origin}/monitoring/dashboard`;
                     window.open(monitoringUrl, "_blank");
                   }}
                 >

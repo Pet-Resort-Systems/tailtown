@@ -20,10 +20,22 @@ cd "$FRONTEND_DIR"
 # Step 1: Build with production environment
 echo ""
 echo "📦 Building frontend for production..."
-echo "   (Clearing REACT_APP_API_URL and REACT_APP_RESERVATION_API_URL)"
+echo "   (Temporarily removing .env.development to prevent localhost URLs)"
 
-# CRITICAL: Clear env vars so frontend uses window.location.origin
-REACT_APP_API_URL= REACT_APP_RESERVATION_API_URL= npm run build
+# CRITICAL: Temporarily rename .env.development so it doesn't get loaded
+# CRA loads .env.development even during production builds if it exists
+if [ -f .env.development ]; then
+    mv .env.development .env.development.bak
+    RESTORE_ENV=true
+fi
+
+# Build for production
+npm run build
+
+# Restore .env.development
+if [ "$RESTORE_ENV" = true ]; then
+    mv .env.development.bak .env.development
+fi
 
 # Verify build was created
 if ls build/static/js/*.js 1> /dev/null 2>&1; then
