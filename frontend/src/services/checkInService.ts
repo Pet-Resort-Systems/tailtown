@@ -1,4 +1,4 @@
-import { reservationApi } from './api';
+import { reservationApi } from "./api";
 
 /**
  * Check-In Service
@@ -30,7 +30,14 @@ export interface CheckInQuestion {
   id: string;
   sectionId: string;
   questionText: string;
-  questionType: 'TEXT' | 'NUMBER' | 'YES_NO' | 'MULTIPLE_CHOICE' | 'TIME' | 'LONG_TEXT' | 'DATE';
+  questionType:
+    | "TEXT"
+    | "NUMBER"
+    | "YES_NO"
+    | "MULTIPLE_CHOICE"
+    | "TIME"
+    | "LONG_TEXT"
+    | "DATE";
   options?: { choices: string[] };
   isRequired: boolean;
   order: number;
@@ -48,7 +55,16 @@ export interface CheckInMedication {
   medicationName: string;
   dosage: string;
   frequency: string;
-  administrationMethod: 'ORAL_PILL' | 'ORAL_LIQUID' | 'TOPICAL' | 'INJECTION' | 'EYE_DROPS' | 'EAR_DROPS' | 'INHALER' | 'TRANSDERMAL_PATCH' | 'OTHER';
+  administrationMethod:
+    | "ORAL_PILL"
+    | "ORAL_LIQUID"
+    | "TOPICAL"
+    | "INJECTION"
+    | "EYE_DROPS"
+    | "EAR_DROPS"
+    | "INHALER"
+    | "TRANSDERMAL_PATCH"
+    | "OTHER";
   timeOfDay?: string;
   withFood: boolean;
   specialInstructions?: string;
@@ -98,7 +114,9 @@ const checkInService = {
    * Get the default check-in template
    */
   getDefaultTemplate: async () => {
-    const response = await reservationApi.get('/api/check-in-templates/default');
+    const response = await reservationApi.get(
+      "/api/check-in-templates/default"
+    );
     return response.data;
   },
 
@@ -106,8 +124,8 @@ const checkInService = {
    * Get all check-in templates
    */
   getAllTemplates: async (activeOnly = true) => {
-    const response = await reservationApi.get('/api/check-in-templates', {
-      params: { active: activeOnly }
+    const response = await reservationApi.get("/api/check-in-templates", {
+      params: { active: activeOnly },
     });
     return response.data;
   },
@@ -124,15 +142,24 @@ const checkInService = {
    * Create a new check-in template
    */
   createTemplate: async (templateData: Partial<CheckInTemplate>) => {
-    const response = await reservationApi.post('/api/check-in-templates', templateData);
+    const response = await reservationApi.post(
+      "/api/check-in-templates",
+      templateData
+    );
     return response.data;
   },
 
   /**
    * Update an existing check-in template
    */
-  updateTemplate: async (id: string, templateData: Partial<CheckInTemplate>) => {
-    const response = await reservationApi.put(`/api/check-in-templates/${id}`, templateData);
+  updateTemplate: async (
+    id: string,
+    templateData: Partial<CheckInTemplate>
+  ) => {
+    const response = await reservationApi.put(
+      `/api/check-in-templates/${id}`,
+      templateData
+    );
     return response.data;
   },
 
@@ -140,7 +167,9 @@ const checkInService = {
    * Delete a check-in template
    */
   deleteTemplate: async (id: string) => {
-    const response = await reservationApi.delete(`/api/check-in-templates/${id}`);
+    const response = await reservationApi.delete(
+      `/api/check-in-templates/${id}`
+    );
     return response.data;
   },
 
@@ -148,7 +177,7 @@ const checkInService = {
    * Create a new check-in
    */
   createCheckIn: async (checkInData: CheckIn) => {
-    const response = await reservationApi.post('/api/check-ins', checkInData);
+    const response = await reservationApi.post("/api/check-ins", checkInData);
     return response.data;
   },
 
@@ -164,8 +193,8 @@ const checkInService = {
    * Get check-ins by reservation ID
    */
   getCheckInsByReservation: async (reservationId: string) => {
-    const response = await reservationApi.get('/api/check-ins', {
-      params: { reservationId }
+    const response = await reservationApi.get("/api/check-ins", {
+      params: { reservationId },
     });
     return response.data;
   },
@@ -182,15 +211,25 @@ const checkInService = {
    * Add a medication to a check-in
    */
   addMedication: async (checkInId: string, medication: CheckInMedication) => {
-    const response = await reservationApi.post(`/api/check-ins/${checkInId}/medications`, medication);
+    const response = await reservationApi.post(
+      `/api/check-ins/${checkInId}/medications`,
+      medication
+    );
     return response.data;
   },
 
   /**
    * Update a medication
    */
-  updateMedication: async (checkInId: string, medicationId: string, medication: CheckInMedication) => {
-    const response = await reservationApi.put(`/api/check-ins/${checkInId}/medications/${medicationId}`, medication);
+  updateMedication: async (
+    checkInId: string,
+    medicationId: string,
+    medication: CheckInMedication
+  ) => {
+    const response = await reservationApi.put(
+      `/api/check-ins/${checkInId}/medications/${medicationId}`,
+      medication
+    );
     return response.data;
   },
 
@@ -198,17 +237,26 @@ const checkInService = {
    * Delete a medication
    */
   deleteMedication: async (checkInId: string, medicationId: string) => {
-    const response = await reservationApi.delete(`/api/check-ins/${checkInId}/medications/${medicationId}`);
+    const response = await reservationApi.delete(
+      `/api/check-ins/${checkInId}/medications/${medicationId}`
+    );
     return response.data;
   },
 
   /**
    * Mark a belonging as returned
    */
-  returnBelonging: async (checkInId: string, belongingId: string, returnedBy: string) => {
-    const response = await reservationApi.put(`/api/check-ins/${checkInId}/belongings/${belongingId}/return`, {
-      returnedBy
-    });
+  returnBelonging: async (
+    checkInId: string,
+    belongingId: string,
+    returnedBy: string
+  ) => {
+    const response = await reservationApi.put(
+      `/api/check-ins/${checkInId}/belongings/${belongingId}/return`,
+      {
+        returnedBy,
+      }
+    );
     return response.data;
   },
 
@@ -216,7 +264,9 @@ const checkInService = {
    * Get default service agreement template
    */
   getDefaultAgreementTemplate: async () => {
-    const response = await reservationApi.get('/api/service-agreement-templates/default');
+    const response = await reservationApi.get(
+      "/api/service-agreement-templates/default"
+    );
     return response.data;
   },
 
@@ -224,7 +274,10 @@ const checkInService = {
    * Create a signed service agreement
    */
   createServiceAgreement: async (agreement: ServiceAgreement) => {
-    const response = await reservationApi.post('/api/service-agreements', agreement);
+    const response = await reservationApi.post(
+      "/api/service-agreements",
+      agreement
+    );
     return response.data;
   },
 
@@ -232,9 +285,32 @@ const checkInService = {
    * Get service agreement by check-in ID
    */
   getAgreementByCheckIn: async (checkInId: string) => {
-    const response = await reservationApi.get(`/api/service-agreements/check-in/${checkInId}`);
+    const response = await reservationApi.get(
+      `/api/service-agreements/check-in/${checkInId}`
+    );
     return response.data;
-  }
+  },
+
+  /**
+   * Get all pets sharing the same room for a reservation
+   */
+  getRoomPets: async (reservationId: string) => {
+    const response = await reservationApi.get(
+      `/api/check-ins/room-pets/${reservationId}`
+    );
+    return response.data;
+  },
+
+  /**
+   * Batch check-in multiple pets sharing the same room
+   */
+  batchCheckIn: async (checkIns: CheckIn[], sharedData?: Partial<CheckIn>) => {
+    const response = await reservationApi.post("/api/check-ins/batch", {
+      checkIns,
+      sharedData,
+    });
+    return response.data;
+  },
 };
 
 export default checkInService;

@@ -522,3 +522,253 @@ export const returnBelonging = async (req: Request, res: Response) => {
     });
   }
 };
+
+/**
+ * Get all pets sharing the same room/resource for a reservation
+ * GET /api/check-ins/room-pets/:reservationId
+ */
+export const getRoomPets = async (req: Request, res: Response) => {
+  try {
+    const { reservationId } = req.params;
+    const tenantId = req.headers["x-tenant-id"] as string;
+
+    // Get the reservation to find the resource and date range
+    const reservation = await prisma.reservation.findFirst({
+      where: { id: reservationId, tenantId },
+      select: {
+        id: true,
+        resourceId: true,
+        startDate: true,
+        endDate: true,
+        petId: true,
+        customerId: true,
+        status: true,
+      },
+    });
+
+    if (!reservation) {
+      return res.status(404).json({
+        status: "error",
+        message: "Reservation not found",
+      });
+    }
+
+    if (!reservation.resourceId) {
+      // No room assigned, return just this reservation
+      return res.json({
+        status: "success",
+        data: {
+          reservations: [reservation],
+          totalPets: 1,
+          resourceId: null,
+        },
+      });
+    }
+
+    // Find all reservations sharing the same resource with overlapping dates
+    const roomReservations = await prisma.reservation.findMany({
+      where: {
+        tenantId,
+        resourceId: reservation.resourceId,
+        status: { in: ["CONFIRMED", "PENDING", "CHECKED_IN"] },
+        // Overlapping date range
+        AND: [
+          { startDate: { lte: reservation.endDate } },
+          { endDate: { gte: reservation.startDate } },
+        ],
+      },
+      select: {
+        id: true,
+        petId: true,
+        customerId: true,
+        startDate: true,
+        endDate: true,
+        status: true,
+      },
+      orderBy: { startDate: "asc" },
+    });
+
+    // Get check-in status for each reservation
+    const checkInStatuses = await prisma.checkIn.findMany({
+      where: {
+        tenantId,
+        reservationId: { in: roomReservations.map((r) => r.id) },
+      },
+      select: {
+        reservationId: true,
+        id: true,
+        checkInTime: true,
+      },
+    });
+
+    const checkInMap = new Map(
+      checkInStatuses.map((c) => [c.reservationId, c])
+    );
+
+    // Enrich reservations with check-in status
+    const enrichedReservations = roomReservations.map((r) => ({
+      ...r,
+      checkIn: checkInMap.get(r.id) || null,
+      isCheckedIn: !!checkInMap.get(r.id),
+    }));
+
+    res.json({
+      status: "success",
+      data: {
+        reservations: enrichedReservations,
+        totalPets: roomReservations.length,
+        resourceId: reservation.resourceId,
+        dateRange: {
+          startDate: reservation.startDate,
+          endDate: reservation.endDate,
+        },
+      },
+    });
+  } catch (error: any) {
+    logger.error("Error fetching room pets", {
+      reservationId: req.params.reservationId,
+      tenantId: req.headers["x-tenant-id"],
+      error: error.message,
+    });
+    res.status(500).json({
+      status: "error",
+      message: "Failed to fetch room pets",
+    });
+  }
+};
+
+/**
+ * Batch check-in multiple pets sharing the same room
+ * POST /api/check-ins/batch
+ */
+export const batchCheckIn = async (req: Request, res: Response) => {
+  try {
+    const tenantId = req.headers["x-tenant-id"] as string;
+    const { checkIns, sharedData } = req.body;
+
+    if (!checkIns || !Array.isArray(checkIns) || checkIns.length === 0) {
+      return res.status(400).json({
+        status: "error",
+        message: "At least one check-in is required",
+      });
+    }
+
+    const results = [];
+    const errors = [];
+
+    for (const checkInData of checkIns) {
+      try {
+        const {
+          petId,
+          customerId,
+          reservationId,
+          templateId,
+          checkInBy,
+          checkInNotes,
+          responses,
+          medications,
+          belongings,
+        } = checkInData;
+
+        // Merge shared data with individual data
+        const mergedMedications = medications || sharedData?.medications || [];
+        const mergedBelongings = belongings || sharedData?.belongings || [];
+
+        const checkIn = await prisma.checkIn.create({
+          data: {
+            tenantId,
+            petId,
+            customerId,
+            reservationId,
+            templateId: templateId || sharedData?.templateId,
+            checkInBy: checkInBy || sharedData?.checkInBy,
+            checkInNotes,
+            checkInTime: new Date(),
+            responses: responses
+              ? {
+                  create: responses.map((response: any) => ({
+                    questionId: response.questionId,
+                    response: response.response,
+                  })),
+                }
+              : undefined,
+            medications:
+              mergedMedications.length > 0
+                ? {
+                    create: mergedMedications.map((med: any) => ({
+                      medicationName: med.medicationName,
+                      dosage: med.dosage,
+                      frequency: med.frequency,
+                      administrationMethod: med.administrationMethod,
+                      timeOfDay: med.timeOfDay,
+                      withFood: med.withFood || false,
+                      specialInstructions: med.specialInstructions,
+                      startDate: med.startDate
+                        ? new Date(med.startDate)
+                        : undefined,
+                      endDate: med.endDate ? new Date(med.endDate) : undefined,
+                      prescribingVet: med.prescribingVet,
+                      notes: med.notes,
+                    })),
+                  }
+                : undefined,
+            belongings:
+              mergedBelongings.length > 0
+                ? {
+                    create: mergedBelongings.map((item: any) => ({
+                      itemType: item.itemType,
+                      description: item.description,
+                      quantity: item.quantity || 1,
+                      color: item.color,
+                      brand: item.brand,
+                      notes: item.notes,
+                    })),
+                  }
+                : undefined,
+          },
+          include: {
+            responses: true,
+            medications: true,
+            belongings: true,
+          },
+        });
+
+        // Update reservation status to CHECKED_IN
+        if (reservationId) {
+          await prisma.reservation.update({
+            where: { id: reservationId },
+            data: { status: "CHECKED_IN" },
+          });
+        }
+
+        results.push({ petId, checkIn, success: true });
+      } catch (petError: any) {
+        errors.push({
+          petId: checkInData.petId,
+          error: petError.message,
+          success: false,
+        });
+      }
+    }
+
+    res.status(201).json({
+      status: errors.length === 0 ? "success" : "partial",
+      data: {
+        successful: results,
+        failed: errors,
+        totalProcessed: checkIns.length,
+        successCount: results.length,
+        errorCount: errors.length,
+      },
+    });
+  } catch (error: any) {
+    logger.error("Error in batch check-in", {
+      tenantId: req.headers["x-tenant-id"],
+      error: error.message,
+    });
+    res.status(500).json({
+      status: "error",
+      message: "Failed to process batch check-in",
+    });
+  }
+};

@@ -32,14 +32,21 @@ import { reservationService } from "../../services/reservationService";
 import MedicationForm from "../../components/check-in/MedicationForm";
 import BelongingsForm from "../../components/check-in/BelongingsForm";
 import SignatureCapture from "../../components/check-in/SignatureCapture";
+import PetSummaryCard from "../../components/check-in/PetSummaryCard";
+import MultiPetCheckIn from "../../components/check-in/MultiPetCheckIn";
+import { customerService } from "../../services/customerService";
 
 const STEPS = [
+  "Pet Summary",
   "Questionnaire",
   "Medications",
   "Belongings",
   "Service Agreement",
   "Review & Complete",
 ];
+
+// Local storage key for draft check-ins
+const DRAFT_STORAGE_KEY = "tailtown_checkin_draft_";
 
 const CheckInWorkflow: React.FC = () => {
   const { reservationId } = useParams<{ reservationId: string }>();
@@ -60,11 +67,31 @@ const CheckInWorkflow: React.FC = () => {
   const [signature, setSignature] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [initials, setInitials] = useState<{ [key: string]: string }>({});
+  const [pet, setPet] = useState<any>(null);
+  const [hasDraft, setHasDraft] = useState(false);
+  const [stepCompletion, setStepCompletion] = useState<{
+    [key: number]: boolean;
+  }>({});
+  const [isMultiPet, setIsMultiPet] = useState(false);
+  const [selectedPetIds, setSelectedPetIds] = useState<string[]>([]);
+  const [selectedReservationIds, setSelectedReservationIds] = useState<
+    string[]
+  >([]);
+  const [allPets, setAllPets] = useState<any[]>([]);
 
   useEffect(() => {
     loadData();
+    checkForDraft();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reservationId]);
+
+  // Auto-save draft on data changes
+  useEffect(() => {
+    if (reservation && !loading) {
+      saveDraft();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [responses, medications, belongings, activeStep]);
 
   const loadData = async () => {
     try {
@@ -87,6 +114,16 @@ const CheckInWorkflow: React.FC = () => {
       // Load service agreement template
       const agreementData = await checkInService.getDefaultAgreementTemplate();
       setAgreementTemplate(agreementData.data);
+
+      // Load pet details
+      if (resData.petId) {
+        try {
+          const petData = await customerService.getPetById(resData.petId);
+          setPet(petData);
+        } catch (petErr) {
+          console.error("Error loading pet:", petErr);
+        }
+      }
     } catch (err: any) {
       console.error("Error loading check-in data:", err);
       setError(err.response?.data?.message || "Failed to load check-in data");
@@ -97,15 +134,17 @@ const CheckInWorkflow: React.FC = () => {
 
   const handleNext = () => {
     // Validate current step
-    if (activeStep === 0 && !validateQuestionnaire()) {
+    if (activeStep === 1 && !validateQuestionnaire()) {
       setError("Please answer all required questions");
       return;
     }
-    if (activeStep === 3 && !validateAgreement()) {
+    if (activeStep === 4 && !validateAgreement()) {
       setError("Please complete the service agreement");
       return;
     }
 
+    // Mark current step as complete
+    setStepCompletion((prev) => ({ ...prev, [activeStep]: true }));
     setError(null);
     setActiveStep((prev) => prev + 1);
   };
@@ -113,6 +152,62 @@ const CheckInWorkflow: React.FC = () => {
   const handleBack = () => {
     setError(null);
     setActiveStep((prev) => prev - 1);
+  };
+
+  // Draft management functions
+  const getDraftKey = () => `${DRAFT_STORAGE_KEY}${reservationId}`;
+
+  const saveDraft = () => {
+    const draft = {
+      activeStep,
+      responses,
+      medications,
+      belongings,
+      initials,
+      stepCompletion,
+      savedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(getDraftKey(), JSON.stringify(draft));
+  };
+
+  const checkForDraft = () => {
+    const draftStr = localStorage.getItem(getDraftKey());
+    if (draftStr) {
+      setHasDraft(true);
+    }
+  };
+
+  const loadDraft = () => {
+    const draftStr = localStorage.getItem(getDraftKey());
+    if (draftStr) {
+      try {
+        const draft = JSON.parse(draftStr);
+        setActiveStep(draft.activeStep || 0);
+        setResponses(draft.responses || {});
+        setMedications(draft.medications || []);
+        setBelongings(draft.belongings || []);
+        setInitials(draft.initials || {});
+        setStepCompletion(draft.stepCompletion || {});
+        setHasDraft(false);
+      } catch (e) {
+        console.error("Error loading draft:", e);
+      }
+    }
+  };
+
+  const clearDraft = () => {
+    localStorage.removeItem(getDraftKey());
+    setHasDraft(false);
+  };
+
+  const handleUpdatePet = async (updates: Partial<any>) => {
+    if (!pet) return;
+    try {
+      await customerService.updatePet(pet.id, updates);
+      setPet({ ...pet, ...updates });
+    } catch (err) {
+      console.error("Error updating pet:", err);
+    }
   };
 
   const validateQuestionnaire = () => {
@@ -145,42 +240,90 @@ const CheckInWorkflow: React.FC = () => {
         })
       );
 
-      // Create check-in
-      const checkInData = {
-        petId: reservation.petId,
-        customerId: reservation.customerId,
-        reservationId: reservation.id,
-        templateId: template?.id,
-        checkInBy: "staff", // TODO: Get from auth context
-        responses: responseArray,
-        medications,
-        belongings,
-      };
+      // Check if this is a multi-pet check-in
+      if (isMultiPet && selectedPetIds.length > 1) {
+        // Batch check-in for multiple pets
+        const checkIns = selectedReservationIds.map((resId, index) => ({
+          petId: selectedPetIds[index],
+          customerId: reservation.customerId,
+          reservationId: resId,
+          responses: responseArray,
+        }));
 
-      const checkInResult = await checkInService.createCheckIn(checkInData);
+        const sharedData = {
+          templateId: template?.id,
+          checkInBy: "staff",
+          medications,
+          belongings,
+        };
 
-      // Create service agreement
-      const agreementData = {
-        checkInId: checkInResult.data.id,
-        agreementText: agreementTemplate.content,
-        initials: Object.entries(initials).map(([section, value]) => ({
-          section,
-          initials: value,
-          timestamp: new Date().toISOString(),
-        })),
-        signature,
-        signedBy: customerName,
-      };
+        const batchResult = await checkInService.batchCheckIn(
+          checkIns,
+          sharedData
+        );
 
-      await checkInService.createServiceAgreement(agreementData);
+        // Create service agreement for primary pet
+        if (batchResult.data.successful.length > 0) {
+          const primaryCheckIn = batchResult.data.successful[0];
+          const agreementData = {
+            checkInId: primaryCheckIn.checkIn.id,
+            agreementText: agreementTemplate.content,
+            initials: Object.entries(initials).map(([section, value]) => ({
+              section,
+              initials: value,
+              timestamp: new Date().toISOString(),
+            })),
+            signature,
+            signedBy: customerName,
+          };
+          await checkInService.createServiceAgreement(agreementData);
+        }
 
-      // Update reservation status to CHECKED_IN
-      await reservationService.updateReservation(reservationId!, {
-        status: "CHECKED_IN",
-      });
+        // Navigate to confirmation
+        navigate(
+          `/check-in/batch-complete?count=${batchResult.data.successCount}`
+        );
+      } else {
+        // Single pet check-in
+        const checkInData = {
+          petId: reservation.petId,
+          customerId: reservation.customerId,
+          reservationId: reservation.id,
+          templateId: template?.id,
+          checkInBy: "staff",
+          responses: responseArray,
+          medications,
+          belongings,
+        };
 
-      // Success! Navigate to confirmation
-      navigate(`/check-in/${checkInResult.data.id}/complete`);
+        const checkInResult = await checkInService.createCheckIn(checkInData);
+
+        // Create service agreement
+        const agreementData = {
+          checkInId: checkInResult.data.id,
+          agreementText: agreementTemplate.content,
+          initials: Object.entries(initials).map(([section, value]) => ({
+            section,
+            initials: value,
+            timestamp: new Date().toISOString(),
+          })),
+          signature,
+          signedBy: customerName,
+        };
+
+        await checkInService.createServiceAgreement(agreementData);
+
+        // Update reservation status to CHECKED_IN
+        await reservationService.updateReservation(reservationId!, {
+          status: "CHECKED_IN",
+        });
+
+        // Success! Navigate to confirmation
+        navigate(`/check-in/${checkInResult.data.id}/complete`);
+      }
+
+      // Clear draft on successful submission
+      clearDraft();
     } catch (err: any) {
       console.error("Error creating check-in:", err);
       setError(err.response?.data?.message || "Failed to create check-in");
@@ -504,13 +647,40 @@ const CheckInWorkflow: React.FC = () => {
           Pet Check-In
         </Typography>
         <Typography variant="subtitle1" color="text.secondary" paragraph>
-          {reservation?.pet?.name} - {customerName}
+          {pet?.name || reservation?.pet?.name} - {customerName}
         </Typography>
 
+        {/* Draft Resume Banner */}
+        {hasDraft && (
+          <Alert
+            severity="info"
+            sx={{ mb: 3 }}
+            action={
+              <Box>
+                <Button
+                  color="inherit"
+                  size="small"
+                  onClick={loadDraft}
+                  sx={{ mr: 1 }}
+                >
+                  Resume
+                </Button>
+                <Button color="inherit" size="small" onClick={clearDraft}>
+                  Start Fresh
+                </Button>
+              </Box>
+            }
+          >
+            You have an unfinished check-in. Would you like to resume where you
+            left off?
+          </Alert>
+        )}
+
+        {/* Step Progress Indicator */}
         <Paper sx={{ p: 3, mb: 3 }}>
           <Stepper activeStep={activeStep}>
-            {STEPS.map((label) => (
-              <Step key={label}>
+            {STEPS.map((label, index) => (
+              <Step key={label} completed={stepCompletion[index]}>
                 <StepLabel>{label}</StepLabel>
               </Step>
             ))}
@@ -523,15 +693,63 @@ const CheckInWorkflow: React.FC = () => {
           </Alert>
         )}
 
-        {activeStep === 0 && renderQuestionnaireStep()}
-        {activeStep === 1 && (
+        {/* Step 0: Pet Summary with Multi-Pet Detection */}
+        {activeStep === 0 && (
+          <>
+            {/* Multi-pet check-in selector */}
+            <MultiPetCheckIn
+              reservationId={reservationId!}
+              onSelectPets={(petIds, reservationIds) => {
+                setSelectedPetIds(petIds);
+                setSelectedReservationIds(reservationIds);
+                setIsMultiPet(petIds.length > 1);
+                // Load all selected pets
+                Promise.all(
+                  petIds.map((id) => customerService.getPetById(id))
+                ).then((pets) => setAllPets(pets));
+              }}
+              onSinglePetCheckIn={() => {
+                setIsMultiPet(false);
+                setSelectedPetIds([reservation?.petId]);
+                setSelectedReservationIds([reservationId!]);
+              }}
+            />
+            {/* Current pet summary */}
+            {pet && (
+              <PetSummaryCard
+                pet={pet}
+                onUpdatePet={handleUpdatePet}
+                showEditButtons={true}
+              />
+            )}
+            {/* Show other selected pets if multi-pet */}
+            {isMultiPet && allPets.length > 1 && (
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="subtitle1" gutterBottom>
+                  Additional Pets Being Checked In:
+                </Typography>
+                {allPets
+                  .filter((p) => p.id !== pet?.id)
+                  .map((otherPet) => (
+                    <PetSummaryCard
+                      key={otherPet.id}
+                      pet={otherPet}
+                      showEditButtons={false}
+                    />
+                  ))}
+              </Box>
+            )}
+          </>
+        )}
+        {activeStep === 1 && renderQuestionnaireStep()}
+        {activeStep === 2 && (
           <MedicationForm medications={medications} onChange={setMedications} />
         )}
-        {activeStep === 2 && (
+        {activeStep === 3 && (
           <BelongingsForm belongings={belongings} onChange={setBelongings} />
         )}
-        {activeStep === 3 && renderAgreementStep()}
-        {activeStep === 4 && renderReviewStep()}
+        {activeStep === 4 && renderAgreementStep()}
+        {activeStep === 5 && renderReviewStep()}
 
         <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
           <Button

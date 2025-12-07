@@ -75,6 +75,13 @@ router.put(
   checkInController.returnBelonging
 );
 
+// Multi-pet check-in routes
+router.get(
+  "/check-ins/room-pets/:reservationId",
+  checkInController.getRoomPets
+);
+router.post("/check-ins/batch", checkInController.batchCheckIn);
+
 /**
  * Service Agreement Template Routes
  */
