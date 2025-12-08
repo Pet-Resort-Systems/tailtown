@@ -46,7 +46,7 @@
     "redis": "^5.10.0",
     "twilio": "^5.10.6",
     "uuid": "^13.0.0",
-    "winston": "^3.8.2",
+    "winston": "^3.19.0",
     "zod": "^4.1.13"
   },
   "devDependencies": {
