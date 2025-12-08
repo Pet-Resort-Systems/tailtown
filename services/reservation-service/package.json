@@ -16,7 +16,7 @@
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {
-    "@prisma/client": "4.16.2",
+    "@prisma/client": "7.1.0",
     "@types/compression": "^1.8.1",
     "axios": "^1.13.2",
     "compression": "^1.8.1",
