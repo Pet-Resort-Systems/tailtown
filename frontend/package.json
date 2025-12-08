@@ -11,7 +11,7 @@
     "@fullcalendar/react": "^6.1.17",
     "@fullcalendar/timegrid": "^6.1.17",
     "@mui/icons-material": "^5.14.19",
-    "@mui/material": "^5.14.20",
+    "@mui/material": "^7.3.6",
     "@mui/system": "^7.3.5",
     "@mui/x-date-pickers": "^8.19.0",
     "@sentry/react": "^10.27.0",
