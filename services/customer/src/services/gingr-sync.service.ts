@@ -252,9 +252,36 @@ export class GingrSyncService {
     let skippedNoOwner = 0;
     let skippedCustomerNotFound = 0;
     let skippedErrors = 0;
+    let vaccinesImported = 0;
+    let vetsImported = 0;
     const BATCH_SIZE = 100; // Process 100 pets at a time
 
     console.log(`      Found ${animals.length} pets to sync`);
+
+    // Fetch vets list once for vet_id lookup
+    // Gingr returns vets as { label: "Vet Name", value: "vet_id" }
+    let vetsMap: Map<string, { name: string; phone: string }> = new Map();
+    try {
+      const vets = await gingrClient.fetchVets();
+      for (const vet of vets) {
+        // Gingr uses 'value' for ID and 'label' for name
+        const vetId = vet.value || vet.id;
+        const vetName =
+          vet.label ||
+          vet.name ||
+          vet.vet_name ||
+          `${vet.first_name || ""} ${vet.last_name || ""}`.trim();
+        if (vetId && vetName) {
+          vetsMap.set(vetId, {
+            name: vetName,
+            phone: vet.phone || vet.phone_number || "",
+          });
+        }
+      }
+      console.log(`      Loaded ${vetsMap.size} vets for lookup`);
+    } catch (error: any) {
+      console.log(`      Could not load vets: ${error.message}`);
+    }
 
     for (let i = 0; i < animals.length; i++) {
       const animal = animals[i];
@@ -293,7 +320,8 @@ export class GingrSyncService {
           },
         });
 
-        const petData: any = {
+        // Core Gingr fields - these are the source of truth from Gingr
+        const gingrCoreData: any = {
           name: animal.first_name,
           type: animal.species_id === "1" ? "DOG" : "CAT", // Assuming 1=Dog, 2=Cat
           breed: animal.breed_id,
@@ -309,25 +337,156 @@ export class GingrSyncService {
             : undefined,
           weight: animal.weight ? parseFloat(animal.weight) : undefined,
           microchipNumber: animal.microchip,
-          notes: animal.notes,
-          medicationNotes: animal.medicines,
-          allergies: animal.allergies,
-          foodNotes: animal.feeding_notes,
-          behaviorNotes: animal.grooming_notes,
-          specialNeeds: animal.temperment,
           isNeutered: animal.fixed === "1",
           externalId: animal.id,
         };
 
         if (existing) {
+          // For existing pets, ONLY update core Gingr fields
+          // Preserve Tailtown-managed fields: vetName, vetPhone, profilePhoto, petIcons,
+          // notes, medicationNotes, allergies, foodNotes, behaviorNotes, specialNeeds,
+          // vaccinations, and any other fields edited in Tailtown
+          const updateData: any = { ...gingrCoreData };
+
+          // Import vet info if missing in Tailtown
+          if (
+            !existing.vetName &&
+            animal.vet_id &&
+            vetsMap.has(animal.vet_id)
+          ) {
+            const vet = vetsMap.get(animal.vet_id)!;
+            if (vet.name) {
+              updateData.vetName = vet.name;
+              if (vet.phone) updateData.vetPhone = vet.phone;
+              vetsImported++;
+            }
+          }
+
+          // Import profile photo if missing in Tailtown but exists in Gingr
+          if (!existing.profilePhoto && (animal as any).image) {
+            updateData.profilePhoto = (animal as any).image;
+          }
+
+          // Import notes fields if they're empty in Tailtown but exist in Gingr
+          if (!existing.notes && animal.notes) {
+            updateData.notes = animal.notes;
+          }
+          if (!existing.medicationNotes && animal.medicines) {
+            updateData.medicationNotes = animal.medicines;
+          }
+          if (!existing.allergies && animal.allergies) {
+            updateData.allergies = animal.allergies;
+          }
+          if (!existing.foodNotes && animal.feeding_notes) {
+            updateData.foodNotes = animal.feeding_notes;
+          }
+          if (!existing.behaviorNotes && animal.grooming_notes) {
+            updateData.behaviorNotes = animal.grooming_notes;
+          }
+          if (!existing.specialNeeds && animal.temperment) {
+            updateData.specialNeeds = animal.temperment;
+          }
+
+          // Import vaccinations if pet has none (stored as JSON fields)
+          const hasVaccines =
+            existing.vaccinationStatus &&
+            typeof existing.vaccinationStatus === "object" &&
+            Object.keys(existing.vaccinationStatus as object).length > 0;
+
+          if (!hasVaccines) {
+            try {
+              const immunizations = await gingrClient.fetchAnimalImmunizations(
+                animal.id
+              );
+              if (immunizations && immunizations.length > 0) {
+                const vaccinationStatus: Record<string, string> = {};
+                const vaccineExpirations: Record<string, string> = {};
+
+                for (const imm of immunizations) {
+                  const name = imm.name || imm.immunization_name || "Unknown";
+                  // Set status to 'current' if has expiration in future, otherwise 'expired'
+                  const expDate = imm.expiration_date
+                    ? new Date(imm.expiration_date * 1000)
+                    : null;
+                  vaccinationStatus[name] =
+                    expDate && expDate > new Date() ? "current" : "expired";
+                  if (expDate) {
+                    vaccineExpirations[name] = expDate
+                      .toISOString()
+                      .split("T")[0];
+                  }
+                  vaccinesImported++;
+                }
+
+                updateData.vaccinationStatus = vaccinationStatus;
+                updateData.vaccineExpirations = vaccineExpirations;
+              }
+            } catch (immErr: any) {
+              // Skip if can't fetch immunizations
+            }
+          }
+
           await prisma.pet.update({
             where: { id: existing.id },
-            data: petData,
+            data: updateData,
           });
         } else {
+          // For new pets, include Gingr notes fields as initial values
+          const newPetData: any = {
+            ...gingrCoreData,
+            notes: animal.notes,
+            medicationNotes: animal.medicines,
+            allergies: animal.allergies,
+            foodNotes: animal.feeding_notes,
+            behaviorNotes: animal.grooming_notes,
+            specialNeeds: animal.temperment,
+            profilePhoto: (animal as any).image || null,
+          };
+
+          // Add vet info for new pets
+          if (animal.vet_id && vetsMap.has(animal.vet_id)) {
+            const vet = vetsMap.get(animal.vet_id)!;
+            if (vet.name) {
+              newPetData.vetName = vet.name;
+              if (vet.phone) newPetData.vetPhone = vet.phone;
+              vetsImported++;
+            }
+          }
+
+          // Fetch and add vaccinations for new pets
+          try {
+            const immunizations = await gingrClient.fetchAnimalImmunizations(
+              animal.id
+            );
+            if (immunizations && immunizations.length > 0) {
+              const vaccinationStatus: Record<string, string> = {};
+              const vaccineExpirations: Record<string, string> = {};
+
+              for (const imm of immunizations) {
+                const name = imm.name || imm.immunization_name || "Unknown";
+                const expDate = imm.expiration_date
+                  ? new Date(imm.expiration_date * 1000)
+                  : null;
+                vaccinationStatus[name] =
+                  expDate && expDate > new Date() ? "current" : "expired";
+                if (expDate) {
+                  vaccineExpirations[name] = expDate
+                    .toISOString()
+                    .split("T")[0];
+                }
+                vaccinesImported++;
+              }
+
+              newPetData.vaccinationStatus = vaccinationStatus;
+              newPetData.vaccineExpirations = vaccineExpirations;
+            }
+          } catch (immErr: any) {
+            // Skip if can't fetch immunizations
+          }
+
           await prisma.pet.create({
             data: {
-              ...petData,
+              ...newPetData,
               tenantId,
               customerId: customer.id,
             },
@@ -344,6 +503,9 @@ export class GingrSyncService {
       }
     }
 
+    console.log(
+      `      Imported ${vetsImported} vet records, ${vaccinesImported} vaccine records`
+    );
     return syncCount;
   }
 
