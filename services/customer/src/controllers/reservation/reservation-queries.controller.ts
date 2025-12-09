@@ -91,8 +91,28 @@ export const getAllReservations = async (
       ];
     } else if (date) {
       const [year, month, day] = date.split("-").map(Number);
-      const startOfDay = new Date(year, month - 1, day, 0, 0, 0, 0);
-      const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
+
+      // Get timezone from query parameter, default to America/Denver (MST/UTC-7)
+      const timezone = (req.query.timezone as string) || "America/Denver";
+      const timezoneOffsets: { [key: string]: number } = {
+        "America/New_York": -5,
+        "America/Chicago": -6,
+        "America/Denver": -7,
+        "America/Los_Angeles": -8,
+        "America/Phoenix": -7,
+        UTC: 0,
+      };
+      const offsetHours = timezoneOffsets[timezone] || -7;
+
+      // Create start and end of day in UTC, representing the user's local day
+      // For MST (UTC-7), Dec 9 00:00 MST = Dec 9 07:00 UTC
+      // For MST (UTC-7), Dec 9 23:59 MST = Dec 10 06:59 UTC
+      const startOfDay = new Date(
+        Date.UTC(year, month - 1, day, -offsetHours, 0, 0, 0)
+      );
+      const endOfDay = new Date(
+        Date.UTC(year, month - 1, day, 23 - offsetHours, 59, 59, 999)
+      );
 
       where.AND = [
         { startDate: { lte: endOfDay } },

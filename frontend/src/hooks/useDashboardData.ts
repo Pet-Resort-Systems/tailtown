@@ -73,15 +73,16 @@ export const useDashboardData = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date()); // Always default to today
 
   /**
-   * Extract date string from ISO date
-   * Dates from Gingr are stored as local time (no timezone conversion needed)
-   * Just extract the YYYY-MM-DD portion directly
+   * Extract date string from ISO date, converting to local timezone
+   * The database stores dates in UTC, so we need to convert to local time
    */
   const getLocalDateString = useCallback((dateString: string): string => {
-    // Dates are stored as local time in ISO format (e.g., "2025-11-28T19:00:00.000Z")
-    // The "Z" is misleading - it's actually local time, not UTC
-    // Just extract the date portion directly
-    return dateString.split("T")[0];
+    // Parse the UTC date and convert to local timezone
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   }, []);
 
   /**
@@ -131,11 +132,13 @@ export const useDashboardData = () => {
           return !["CHECKED_OUT", "COMPLETED", "CANCELLED"].includes(status);
         });
       } else if (filter === "all") {
-        // Show both check-ins AND check-outs for selected date in local timezone
+        // Show ALL reservations active on selected date (including checked-in/out)
+        // This includes: reservations starting, ending, or spanning the selected date
         filtered = reservationsToFilter.filter((res: any) => {
           const startDateStr = getLocalDateString(res.startDate);
           const endDateStr = getLocalDateString(res.endDate);
-          return startDateStr === formattedDate || endDateStr === formattedDate;
+          // Include if: starts on date, ends on date, OR spans the date
+          return startDateStr <= formattedDate && endDateStr >= formattedDate;
         });
       }
 
@@ -170,13 +173,17 @@ export const useDashboardData = () => {
       console.log("[Dashboard] Fetching reservations...");
       let allReservations: any[] = [];
       for (let page = 1; page <= 2; page++) {
+        // Get the user's timezone for accurate date filtering
+        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         const pageResponse = await reservationService.getAllReservations(
           page,
           500,
           "startDate",
           "asc",
           allStatuses, // Fetch all statuses for display
-          formattedDate // Pass the selected date to filter reservations
+          formattedDate, // Pass the selected date to filter reservations
+          undefined, // checkInDate
+          userTimezone // Pass user's timezone for accurate filtering
         );
         console.log(`[Dashboard] Page ${page} response:`, pageResponse);
 
