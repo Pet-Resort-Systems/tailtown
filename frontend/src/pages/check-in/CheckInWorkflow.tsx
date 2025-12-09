@@ -68,7 +68,10 @@ const CheckInWorkflow: React.FC = () => {
   const [customerName, setCustomerName] = useState("");
   const [initials, setInitials] = useState<{ [key: string]: string }>({});
   const [pet, setPet] = useState<any>(null);
+  const [existingAgreement, setExistingAgreement] = useState<any>(null);
   const [hasDraft, setHasDraft] = useState(false);
+  const [draftCheckInId, setDraftCheckInId] = useState<string | null>(null);
+  const [savingDraft, setSavingDraft] = useState(false);
   const [stepCompletion, setStepCompletion] = useState<{
     [key: number]: boolean;
   }>({});
@@ -81,17 +84,25 @@ const CheckInWorkflow: React.FC = () => {
 
   useEffect(() => {
     loadData();
-    checkForDraft();
+    loadServerDraft();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reservationId]);
 
-  // Auto-save draft on data changes
+  // Auto-save draft to server on step changes
   useEffect(() => {
-    if (reservation && !loading) {
-      saveDraft();
+    if (reservation && !loading && activeStep > 0) {
+      saveDraftToServer();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [responses, medications, belongings, activeStep]);
+  }, [activeStep]);
+
+  // Auto-save when signature is captured
+  useEffect(() => {
+    if (reservation && !loading && signature) {
+      saveDraftToServer();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signature]);
 
   const loadData = async () => {
     try {
@@ -124,6 +135,34 @@ const CheckInWorkflow: React.FC = () => {
           console.error("Error loading pet:", petErr);
         }
       }
+
+      // Check if there's an existing completed check-in with a service agreement
+      try {
+        const checkInsResponse = await checkInService.getCheckInsByReservation(
+          reservationId!
+        );
+        const completedCheckIn = checkInsResponse.data?.find(
+          (c: any) => c.status === "COMPLETED"
+        );
+        if (completedCheckIn) {
+          // Try to load the service agreement for this check-in
+          try {
+            const agreementResponse =
+              await checkInService.getAgreementByCheckIn(completedCheckIn.id);
+            if (agreementResponse?.data?.signature) {
+              setExistingAgreement(agreementResponse.data);
+              setSignature(agreementResponse.data.signature);
+              setCustomerName(agreementResponse.data.signedBy || "");
+            }
+          } catch (agreementErr) {
+            // No agreement found, that's ok
+            console.log("No existing agreement found for check-in");
+          }
+        }
+      } catch (checkInErr) {
+        // No check-ins found, that's ok
+        console.log("No existing check-ins found for reservation");
+      }
     } catch (err: any) {
       console.error("Error loading check-in data:", err);
       setError(err.response?.data?.message || "Failed to load check-in data");
@@ -154,23 +193,144 @@ const CheckInWorkflow: React.FC = () => {
     setActiveStep((prev) => prev - 1);
   };
 
-  // Draft management functions
+  // Draft management functions - now uses server-side storage
   const getDraftKey = () => `${DRAFT_STORAGE_KEY}${reservationId}`;
 
-  const saveDraft = () => {
-    const draft = {
-      activeStep,
-      responses,
-      medications,
-      belongings,
-      initials,
-      stepCompletion,
-      savedAt: new Date().toISOString(),
-    };
-    localStorage.setItem(getDraftKey(), JSON.stringify(draft));
+  const saveDraftToServer = async () => {
+    if (!reservation || savingDraft) return;
+
+    try {
+      setSavingDraft(true);
+      const responseArray = Object.entries(responses).map(
+        ([questionId, response]) => ({ questionId, response })
+      );
+
+      const result = await checkInService.saveDraft({
+        checkInId: draftCheckInId || undefined,
+        petId: reservation.petId,
+        customerId: reservation.customerId,
+        reservationId: reservationId!,
+        templateId: template?.id,
+        currentStep: activeStep,
+        responses: responseArray.length > 0 ? responseArray : undefined,
+        medications: medications.length > 0 ? medications : undefined,
+        belongings: belongings.length > 0 ? belongings : undefined,
+      });
+
+      if (result.data?.id) {
+        setDraftCheckInId(result.data.id);
+      }
+
+      // Also save to localStorage as backup
+      const draft = {
+        activeStep,
+        responses,
+        medications,
+        belongings,
+        initials,
+        stepCompletion,
+        signature,
+        customerName,
+        savedAt: new Date().toISOString(),
+      };
+      console.log(
+        "[CheckIn] Saving draft to localStorage, key:",
+        getDraftKey(),
+        "signature length:",
+        signature?.length || 0
+      );
+      localStorage.setItem(getDraftKey(), JSON.stringify(draft));
+    } catch (err) {
+      console.error("Error saving draft to server:", err);
+      // Fall back to localStorage only
+      const draft = {
+        activeStep,
+        responses,
+        medications,
+        belongings,
+        initials,
+        stepCompletion,
+        signature,
+        customerName,
+        savedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(getDraftKey(), JSON.stringify(draft));
+    } finally {
+      setSavingDraft(false);
+    }
   };
 
-  const checkForDraft = () => {
+  const loadServerDraft = async () => {
+    try {
+      const result = await checkInService.getDraft(reservationId!);
+      if (result.data) {
+        const draft = result.data;
+        setDraftCheckInId(draft.id);
+        setActiveStep(draft.currentStep || 0);
+        setHasDraft(true);
+
+        // Load responses
+        if (draft.responses && draft.responses.length > 0) {
+          const respObj: { [key: string]: any } = {};
+          draft.responses.forEach((r: any) => {
+            respObj[r.questionId] = r.response;
+          });
+          setResponses(respObj);
+        }
+
+        // Load medications
+        if (draft.medications && draft.medications.length > 0) {
+          setMedications(draft.medications);
+        }
+
+        // Load belongings
+        if (draft.belongings && draft.belongings.length > 0) {
+          setBelongings(draft.belongings);
+        }
+
+        // Mark completed steps
+        const completion: { [key: number]: boolean } = {};
+        for (let i = 0; i < draft.currentStep; i++) {
+          completion[i] = true;
+        }
+        setStepCompletion(completion);
+
+        // Load signature from localStorage (not stored on server)
+        const localDraftStr = localStorage.getItem(getDraftKey());
+        console.log(
+          "[CheckIn] Loading signature from localStorage, key:",
+          getDraftKey(),
+          "found:",
+          !!localDraftStr
+        );
+        if (localDraftStr) {
+          try {
+            const localDraft = JSON.parse(localDraftStr);
+            console.log(
+              "[CheckIn] LocalDraft has signature:",
+              !!localDraft.signature,
+              "length:",
+              localDraft.signature?.length || 0
+            );
+            if (localDraft.signature) setSignature(localDraft.signature);
+            if (localDraft.customerName)
+              setCustomerName(localDraft.customerName);
+            if (localDraft.initials) setInitials(localDraft.initials);
+          } catch (e) {
+            console.error("Error loading signature from localStorage:", e);
+          }
+        }
+      } else {
+        // Check localStorage as fallback
+        checkForLocalDraft();
+      }
+    } catch (err) {
+      console.error("Error loading server draft:", err);
+      checkForLocalDraft();
+    }
+  };
+
+  const checkForLocalDraft = () => {
     const draftStr = localStorage.getItem(getDraftKey());
     if (draftStr) {
       setHasDraft(true);
@@ -178,6 +338,13 @@ const CheckInWorkflow: React.FC = () => {
   };
 
   const loadDraft = () => {
+    // If we have a server draft, it's already loaded
+    if (draftCheckInId) {
+      setHasDraft(false);
+      return;
+    }
+
+    // Fall back to localStorage
     const draftStr = localStorage.getItem(getDraftKey());
     if (draftStr) {
       try {
@@ -188,6 +355,8 @@ const CheckInWorkflow: React.FC = () => {
         setBelongings(draft.belongings || []);
         setInitials(draft.initials || {});
         setStepCompletion(draft.stepCompletion || {});
+        if (draft.signature) setSignature(draft.signature);
+        if (draft.customerName) setCustomerName(draft.customerName);
         setHasDraft(false);
       } catch (e) {
         console.error("Error loading draft:", e);
@@ -197,6 +366,7 @@ const CheckInWorkflow: React.FC = () => {
 
   const clearDraft = () => {
     localStorage.removeItem(getDraftKey());
+    setDraftCheckInId(null);
     setHasDraft(false);
   };
 
@@ -267,6 +437,7 @@ const CheckInWorkflow: React.FC = () => {
           const primaryCheckIn = batchResult.data.successful[0];
           const agreementData = {
             checkInId: primaryCheckIn.checkIn.id,
+            customerId: reservation.customerId,
             agreementText: agreementTemplate.content,
             initials: Object.entries(initials).map(([section, value]) => ({
               section,
@@ -301,6 +472,7 @@ const CheckInWorkflow: React.FC = () => {
         // Create service agreement
         const agreementData = {
           checkInId: checkInResult.data.id,
+          customerId: reservation.customerId,
           agreementText: agreementTemplate.content,
           initials: Object.entries(initials).map(([section, value]) => ({
             section,
@@ -322,8 +494,8 @@ const CheckInWorkflow: React.FC = () => {
         navigate(`/check-in/${checkInResult.data.id}/complete`);
       }
 
-      // Clear draft on successful submission
-      clearDraft();
+      // Don't clear draft immediately - keep signature visible if user navigates back
+      // Draft will be overwritten on next check-in for this reservation
     } catch (err: any) {
       console.error("Error creating check-in:", err);
       setError(err.response?.data?.message || "Failed to create check-in");
@@ -536,10 +708,55 @@ const CheckInWorkflow: React.FC = () => {
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
             required
+            disabled={!!existingAgreement}
             sx={{ mb: 3 }}
           />
 
-          <SignatureCapture onSignature={setSignature} label="Sign Below *" />
+          {existingAgreement ? (
+            <Box>
+              <Typography
+                variant="subtitle2"
+                color="text.secondary"
+                gutterBottom
+              >
+                Signature (Already Signed)
+              </Typography>
+              <Paper
+                variant="outlined"
+                sx={{
+                  p: 2,
+                  backgroundColor: "grey.50",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <img
+                  src={existingAgreement.signature}
+                  alt="Signature"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "150px",
+                    objectFit: "contain",
+                  }}
+                />
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ mt: 1 }}
+                >
+                  Signed by {existingAgreement.signedBy} on{" "}
+                  {new Date(existingAgreement.signedAt).toLocaleString()}
+                </Typography>
+              </Paper>
+            </Box>
+          ) : (
+            <SignatureCapture
+              onSignature={setSignature}
+              label="Sign Below *"
+              initialSignature={signature}
+            />
+          )}
         </Paper>
       </Box>
     );
