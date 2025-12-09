@@ -140,4 +140,15 @@ export const customerService = {
     );
     return response.data?.data;
   },
+
+  // Pet management
+  getPetById: async (petId: string): Promise<any> => {
+    const response = await api.get(`/api/pets/${petId}`);
+    return response.data?.data || response.data;
+  },
+
+  updatePet: async (petId: string, updates: any): Promise<any> => {
+    const response = await api.put(`/api/pets/${petId}`, updates);
+    return response.data?.data || response.data;
+  },
 };
