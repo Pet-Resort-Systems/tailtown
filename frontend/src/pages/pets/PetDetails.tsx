@@ -565,7 +565,11 @@ const PetDetails = () => {
             <Avatar
               src={
                 pet.profilePhoto
-                  ? `${getApiBaseUrl()}${pet.profilePhoto}?t=${photoTimestamp}`
+                  ? pet.profilePhoto.startsWith("http")
+                    ? `${pet.profilePhoto}?t=${photoTimestamp}`
+                    : `${getApiBaseUrl()}${
+                        pet.profilePhoto
+                      }?t=${photoTimestamp}`
                   : undefined
               }
               alt={pet.name || "Pet"}
@@ -623,9 +627,11 @@ const PetDetails = () => {
 
                       // Create a local cached URL to display immediately
                       if (updatedPet.profilePhoto) {
-                        const imageUrl = `${getApiBaseUrl()}${
-                          updatedPet.profilePhoto
-                        }`;
+                        const imageUrl = updatedPet.profilePhoto.startsWith(
+                          "http"
+                        )
+                          ? updatedPet.profilePhoto
+                          : `${getApiBaseUrl()}${updatedPet.profilePhoto}`;
 
                         // Preload the image to ensure it's in browser cache
                         const preloadImg = new Image();

@@ -34,6 +34,7 @@ import {
   Cancel as CancelIcon,
   CheckCircle as CheckInIcon,
   ExitToApp as CheckOutIcon,
+  Visibility as ViewIcon,
 } from "@mui/icons-material";
 import { parseGingrDate } from "../../utils/dateUtils";
 
@@ -702,15 +703,26 @@ const ReservationDetailsRedesigned = () => {
             </Button>
           )}
           {reservation.status === "CHECKED_IN" && (
-            <Button
-              variant="contained"
-              color="secondary"
-              startIcon={<CheckOutIcon />}
-              onClick={handleCheckOut}
-              size="large"
-            >
-              Check Out
-            </Button>
+            <>
+              <Button
+                variant="outlined"
+                color="info"
+                startIcon={<ViewIcon />}
+                onClick={handleCheckIn}
+                size="large"
+              >
+                View Check-In
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                startIcon={<CheckOutIcon />}
+                onClick={handleCheckOut}
+                size="large"
+              >
+                Check Out
+              </Button>
+            </>
           )}
           <Button
             variant="outlined"

@@ -386,6 +386,8 @@ const ReservationList: React.FC<ReservationListProps> = ({
                     <PetNameWithIcons
                       petName={reservation.pet?.name || "Unknown Pet"}
                       petIcons={reservation.pet?.petIcons}
+                      profilePhoto={reservation.pet?.profilePhoto}
+                      showPhoto={false}
                     />
                     <Typography
                       variant="body2"
