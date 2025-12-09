@@ -311,6 +311,38 @@ const checkInService = {
     });
     return response.data;
   },
+
+  /**
+   * Get draft check-in for a reservation
+   */
+  getDraft: async (reservationId: string) => {
+    const response = await reservationApi.get(
+      `/api/check-ins/draft/${reservationId}`
+    );
+    return response.data;
+  },
+
+  /**
+   * Save or update a check-in draft
+   */
+  saveDraft: async (draftData: {
+    checkInId?: string;
+    petId: string;
+    customerId?: string;
+    reservationId: string;
+    templateId?: string;
+    currentStep: number;
+    responses?: CheckInResponse[];
+    medications?: CheckInMedication[];
+    belongings?: CheckInBelonging[];
+    checkInNotes?: string;
+  }) => {
+    const response = await reservationApi.post(
+      "/api/check-ins/draft",
+      draftData
+    );
+    return response.data;
+  },
 };
 
 export default checkInService;

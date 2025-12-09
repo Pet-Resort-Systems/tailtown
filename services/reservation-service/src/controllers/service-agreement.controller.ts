@@ -382,6 +382,14 @@ export const createAgreement = async (req: Request, res: Response) => {
 
     // Validate required fields
     if (!customerId || !agreementText || !signature || !signedBy) {
+      logger.warn("Service agreement validation failed", {
+        hasCustomerId: !!customerId,
+        hasAgreementText: !!agreementText,
+        hasSignature: !!signature,
+        signatureLength: signature?.length || 0,
+        hasSignedBy: !!signedBy,
+        signedBy,
+      });
       return res.status(400).json({
         status: "error",
         message:
