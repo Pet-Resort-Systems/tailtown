@@ -82,6 +82,10 @@ router.get(
 );
 router.post("/check-ins/batch", checkInController.batchCheckIn);
 
+// Draft management routes
+router.get("/check-ins/draft/:reservationId", checkInController.getDraft);
+router.post("/check-ins/draft", checkInController.saveDraft);
+
 /**
  * Service Agreement Template Routes
  */

@@ -13,7 +13,8 @@ import { logger } from "../utils/logger";
  */
 export const getAllCheckIns = async (req: Request, res: Response) => {
   try {
-    const tenantId = req.headers["x-tenant-id"] as string;
+    const tenantId =
+      (req as any).tenantId || (req.headers["x-tenant-id"] as string);
     const { petId, reservationId, startDate, endDate } = req.query;
 
     const where: any = { tenantId };
@@ -95,7 +96,8 @@ export const getAllCheckIns = async (req: Request, res: Response) => {
 export const getCheckInById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.headers["x-tenant-id"] as string;
+    const tenantId =
+      (req as any).tenantId || (req.headers["x-tenant-id"] as string);
 
     const checkIn = await prisma.checkIn.findFirst({
       where: { id, tenantId },
@@ -160,9 +162,23 @@ export const getCheckInById = async (req: Request, res: Response) => {
  * Create a new check-in
  * POST /api/check-ins
  */
+// Map frontend medication method values to valid enum values
+const mapMedicationMethod = (method: string): string => {
+  const methodMap: Record<string, string> = {
+    ORAL: "ORAL_PILL",
+    oral: "ORAL_PILL",
+    Oral: "ORAL_PILL",
+    PILL: "ORAL_PILL",
+    LIQUID: "ORAL_LIQUID",
+    DROPS: "EYE_DROPS",
+  };
+  return methodMap[method] || method;
+};
+
 export const createCheckIn = async (req: Request, res: Response) => {
   try {
-    const tenantId = req.headers["x-tenant-id"] as string;
+    const tenantId =
+      (req as any).tenantId || (req.headers["x-tenant-id"] as string);
     const {
       petId,
       customerId,
@@ -194,6 +210,8 @@ export const createCheckIn = async (req: Request, res: Response) => {
         checkInBy,
         checkInNotes,
         checkInTime: new Date(),
+        status: "COMPLETED",
+        currentStep: 5,
         // Create responses
         responses: responses
           ? {
@@ -210,7 +228,9 @@ export const createCheckIn = async (req: Request, res: Response) => {
                 medicationName: med.medicationName,
                 dosage: med.dosage,
                 frequency: med.frequency,
-                administrationMethod: med.administrationMethod,
+                administrationMethod: mapMedicationMethod(
+                  med.administrationMethod
+                ),
                 timeOfDay: med.timeOfDay,
                 withFood: med.withFood || false,
                 specialInstructions: med.specialInstructions,
@@ -271,7 +291,8 @@ export const createCheckIn = async (req: Request, res: Response) => {
 export const updateCheckIn = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.headers["x-tenant-id"] as string;
+    const tenantId =
+      (req as any).tenantId || (req.headers["x-tenant-id"] as string);
     const {
       checkInNotes,
       checkOutNotes,
@@ -348,7 +369,8 @@ export const updateCheckIn = async (req: Request, res: Response) => {
 export const addMedication = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.headers["x-tenant-id"] as string;
+    const tenantId =
+      (req as any).tenantId || (req.headers["x-tenant-id"] as string);
     const medicationData = req.body;
 
     // Verify check-in exists and belongs to tenant
@@ -408,7 +430,8 @@ export const addMedication = async (req: Request, res: Response) => {
 export const updateMedication = async (req: Request, res: Response) => {
   try {
     const { checkInId, medicationId } = req.params;
-    const tenantId = req.headers["x-tenant-id"] as string;
+    const tenantId =
+      (req as any).tenantId || (req.headers["x-tenant-id"] as string);
     const medicationData = req.body;
 
     // Verify check-in exists and belongs to tenant
@@ -530,7 +553,8 @@ export const returnBelonging = async (req: Request, res: Response) => {
 export const getRoomPets = async (req: Request, res: Response) => {
   try {
     const { reservationId } = req.params;
-    const tenantId = req.headers["x-tenant-id"] as string;
+    const tenantId =
+      (req as any).tenantId || (req.headers["x-tenant-id"] as string);
 
     // Get the reservation to find the resource and date range
     const reservation = await prisma.reservation.findFirst({
@@ -643,7 +667,8 @@ export const getRoomPets = async (req: Request, res: Response) => {
  */
 export const batchCheckIn = async (req: Request, res: Response) => {
   try {
-    const tenantId = req.headers["x-tenant-id"] as string;
+    const tenantId =
+      (req as any).tenantId || (req.headers["x-tenant-id"] as string);
     const { checkIns, sharedData } = req.body;
 
     if (!checkIns || !Array.isArray(checkIns) || checkIns.length === 0) {
@@ -769,6 +794,243 @@ export const batchCheckIn = async (req: Request, res: Response) => {
     res.status(500).json({
       status: "error",
       message: "Failed to process batch check-in",
+    });
+  }
+};
+
+/**
+ * Save or update a check-in draft
+ * POST /api/check-ins/draft
+ */
+export const saveDraft = async (req: Request, res: Response) => {
+  try {
+    const tenantId =
+      (req as any).tenantId || (req.headers["x-tenant-id"] as string);
+    const {
+      checkInId,
+      petId,
+      customerId,
+      reservationId,
+      templateId,
+      currentStep,
+      responses,
+      medications,
+      belongings,
+      checkInNotes,
+    } = req.body;
+
+    if (!petId || !reservationId) {
+      return res.status(400).json({
+        status: "error",
+        message: "Pet ID and Reservation ID are required",
+      });
+    }
+
+    let checkIn;
+
+    if (checkInId) {
+      // Update existing draft
+      checkIn = await prisma.checkIn.update({
+        where: { id: checkInId },
+        data: {
+          currentStep: currentStep || 0,
+          checkInNotes,
+          status: "IN_PROGRESS",
+          updatedAt: new Date(),
+        },
+        include: {
+          responses: true,
+          medications: true,
+          belongings: true,
+        },
+      });
+
+      // Update responses - delete old and create new
+      if (responses && responses.length > 0) {
+        await prisma.checkInResponse.deleteMany({
+          where: { checkInId: checkIn.id },
+        });
+        await prisma.checkInResponse.createMany({
+          data: responses.map((r: any) => ({
+            checkInId: checkIn.id,
+            questionId: r.questionId,
+            response: r.response,
+          })),
+        });
+      }
+
+      // Update medications - delete old and create new
+      if (medications && medications.length > 0) {
+        await prisma.checkInMedication.deleteMany({
+          where: { checkInId: checkIn.id },
+        });
+        await prisma.checkInMedication.createMany({
+          data: medications.map((med: any) => ({
+            checkInId: checkIn.id,
+            medicationName: med.medicationName,
+            dosage: med.dosage,
+            frequency: med.frequency,
+            administrationMethod: mapMedicationMethod(med.administrationMethod),
+            timeOfDay: med.timeOfDay,
+            withFood: med.withFood || false,
+            specialInstructions: med.specialInstructions,
+            prescribingVet: med.prescribingVet,
+            notes: med.notes,
+          })),
+        });
+      }
+
+      // Update belongings - delete old and create new
+      if (belongings && belongings.length > 0) {
+        await prisma.checkInBelonging.deleteMany({
+          where: { checkInId: checkIn.id },
+        });
+        await prisma.checkInBelonging.createMany({
+          data: belongings.map((item: any) => ({
+            checkInId: checkIn.id,
+            itemType: item.itemType,
+            description: item.description,
+            quantity: item.quantity || 1,
+            color: item.color,
+            brand: item.brand,
+            notes: item.notes,
+          })),
+        });
+      }
+    } else {
+      // Create new draft
+      checkIn = await prisma.checkIn.create({
+        data: {
+          tenantId,
+          petId,
+          customerId,
+          reservationId,
+          templateId,
+          currentStep: currentStep || 0,
+          checkInNotes,
+          status: "DRAFT",
+          checkInTime: new Date(),
+          responses: responses
+            ? {
+                create: responses.map((r: any) => ({
+                  questionId: r.questionId,
+                  response: r.response,
+                })),
+              }
+            : undefined,
+          medications: medications
+            ? {
+                create: medications.map((med: any) => ({
+                  medicationName: med.medicationName,
+                  dosage: med.dosage,
+                  frequency: med.frequency,
+                  administrationMethod: mapMedicationMethod(
+                    med.administrationMethod
+                  ),
+                  timeOfDay: med.timeOfDay,
+                  withFood: med.withFood || false,
+                  specialInstructions: med.specialInstructions,
+                  prescribingVet: med.prescribingVet,
+                  notes: med.notes,
+                })),
+              }
+            : undefined,
+          belongings: belongings
+            ? {
+                create: belongings.map((item: any) => ({
+                  itemType: item.itemType,
+                  description: item.description,
+                  quantity: item.quantity || 1,
+                  color: item.color,
+                  brand: item.brand,
+                  notes: item.notes,
+                })),
+              }
+            : undefined,
+        },
+        include: {
+          responses: true,
+          medications: true,
+          belongings: true,
+        },
+      });
+    }
+
+    // Fetch updated check-in with all relations
+    const updatedCheckIn = await prisma.checkIn.findUnique({
+      where: { id: checkIn.id },
+      include: {
+        responses: {
+          include: { question: true },
+        },
+        medications: true,
+        belongings: true,
+      },
+    });
+
+    res.json({
+      status: "success",
+      data: updatedCheckIn,
+    });
+  } catch (error: any) {
+    logger.error("Error saving draft", {
+      tenantId: req.headers["x-tenant-id"],
+      error: error.message,
+    });
+    res.status(500).json({
+      status: "error",
+      message: "Failed to save draft",
+    });
+  }
+};
+
+/**
+ * Get draft check-in for a reservation
+ * GET /api/check-ins/draft/:reservationId
+ */
+export const getDraft = async (req: Request, res: Response) => {
+  try {
+    const { reservationId } = req.params;
+    const tenantId =
+      (req as any).tenantId || (req.headers["x-tenant-id"] as string);
+
+    // Find existing draft or in-progress check-in for this reservation
+    const checkIn = await prisma.checkIn.findFirst({
+      where: {
+        tenantId,
+        reservationId,
+        status: { in: ["DRAFT", "IN_PROGRESS"] },
+      },
+      include: {
+        responses: {
+          include: { question: true },
+        },
+        medications: true,
+        belongings: true,
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+
+    if (!checkIn) {
+      return res.json({
+        status: "success",
+        data: null,
+      });
+    }
+
+    res.json({
+      status: "success",
+      data: checkIn,
+    });
+  } catch (error: any) {
+    logger.error("Error fetching draft", {
+      reservationId: req.params.reservationId,
+      tenantId: req.headers["x-tenant-id"],
+      error: error.message,
+    });
+    res.status(500).json({
+      status: "error",
+      message: "Failed to fetch draft",
     });
   }
 };
