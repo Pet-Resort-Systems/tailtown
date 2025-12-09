@@ -18,10 +18,18 @@ import {
   MenuItem,
   Grid,
   Divider,
+  Chip,
+  Link,
+  Tooltip,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import WarningIcon from "@mui/icons-material/Warning";
+import InfoIcon from "@mui/icons-material/Info";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import RestaurantIcon from "@mui/icons-material/Restaurant";
+import GroupsIcon from "@mui/icons-material/Groups";
 import checkInService, {
   CheckInTemplate,
   CheckInResponse,
@@ -395,6 +403,52 @@ const CheckInWorkflow: React.FC = () => {
 
   const validateAgreement = () => {
     return signature && customerName;
+  };
+
+  // Get validation status for each step
+  const getStepStatus = (
+    stepIndex: number
+  ): "complete" | "error" | "warning" | "pending" => {
+    if (stepCompletion[stepIndex]) return "complete";
+
+    switch (stepIndex) {
+      case 0: // Pet Summary - check for expired vaccines
+        if (pet?.vaccineExpirations) {
+          const today = new Date();
+          const hasExpired = Object.values(pet.vaccineExpirations).some(
+            (expDate: any) => new Date(expDate) < today
+          );
+          if (hasExpired) return "error";
+        }
+        return "pending";
+      case 1: // Questionnaire
+        if (Object.keys(responses).length > 0 && !validateQuestionnaire()) {
+          return "warning"; // Partially filled
+        }
+        return Object.keys(responses).length > 0 ? "complete" : "pending";
+      case 2: // Medications
+        return medications.length > 0 ? "complete" : "pending";
+      case 3: // Belongings
+        return belongings.length > 0 ? "complete" : "pending";
+      case 4: // Service Agreement
+        if (existingAgreement) return "complete";
+        if (signature && customerName) return "complete";
+        if (signature || customerName) return "warning";
+        return "pending";
+      case 5: // Review
+        return "pending";
+      default:
+        return "pending";
+    }
+  };
+
+  // Check if all required steps are complete for final submission
+  const canSubmit = () => {
+    // Questionnaire must be valid
+    if (!validateQuestionnaire()) return false;
+    // Agreement must be signed (unless already exists)
+    if (!existingAgreement && !validateAgreement()) return false;
+    return true;
   };
 
   const handleSubmit = async () => {
@@ -893,14 +947,42 @@ const CheckInWorkflow: React.FC = () => {
           </Alert>
         )}
 
-        {/* Step Progress Indicator */}
+        {/* Step Progress Indicator with Status Icons */}
         <Paper sx={{ p: 3, mb: 3 }}>
           <Stepper activeStep={activeStep}>
-            {STEPS.map((label, index) => (
-              <Step key={label} completed={stepCompletion[index]}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
+            {STEPS.map((label, index) => {
+              const status = getStepStatus(index);
+              return (
+                <Step key={label} completed={status === "complete"}>
+                  <StepLabel
+                    error={status === "error"}
+                    optional={
+                      status === "warning" ? (
+                        <Typography variant="caption" color="warning.main">
+                          Incomplete
+                        </Typography>
+                      ) : status === "error" ? (
+                        <Typography variant="caption" color="error">
+                          Action Required
+                        </Typography>
+                      ) : null
+                    }
+                    StepIconProps={{
+                      sx: {
+                        color:
+                          status === "error"
+                            ? "error.main"
+                            : status === "warning"
+                            ? "warning.main"
+                            : undefined,
+                      },
+                    }}
+                  >
+                    {label}
+                  </StepLabel>
+                </Step>
+              );
+            })}
           </Stepper>
         </Paper>
 
@@ -913,6 +995,111 @@ const CheckInWorkflow: React.FC = () => {
         {/* Step 0: Pet Summary with Multi-Pet Detection */}
         {activeStep === 0 && (
           <>
+            {/* Integration Points - Quick Links */}
+            <Paper sx={{ p: 2, mb: 3, bgcolor: "grey.50" }}>
+              <Grid container spacing={2} alignItems="center">
+                <Grid item xs={12} sm={6} md={3}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Reservation
+                  </Typography>
+                  <Link
+                    href={`/reservations/${reservationId}`}
+                    target="_blank"
+                    sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
+                  >
+                    #{reservationId?.slice(0, 8)}...
+                    <OpenInNewIcon fontSize="small" />
+                  </Link>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Customer
+                  </Typography>
+                  <Link
+                    href={`/customers/${reservation?.customerId}`}
+                    target="_blank"
+                    sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
+                  >
+                    {customerName}
+                    <OpenInNewIcon fontSize="small" />
+                  </Link>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Stay Dates
+                  </Typography>
+                  <Typography variant="body2">
+                    {new Date(reservation?.startDate).toLocaleDateString()} -{" "}
+                    {new Date(reservation?.endDate).toLocaleDateString()}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Assigned Room
+                  </Typography>
+                  <Typography variant="body2">
+                    {reservation?.resource?.name || "Not assigned"}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Paper>
+
+            {/* Auto-populated Pet Profile Info */}
+            {pet && (
+              <Paper sx={{ p: 2, mb: 3 }}>
+                <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                  <InfoIcon
+                    sx={{ mr: 1, verticalAlign: "middle", fontSize: 20 }}
+                  />
+                  Pet Profile (Auto-populated)
+                </Typography>
+                <Grid container spacing={2}>
+                  {pet.idealPlayGroup && (
+                    <Grid item xs={12} sm={4}>
+                      <Chip
+                        icon={<GroupsIcon />}
+                        label={`Play Group: ${pet.idealPlayGroup}`}
+                        color="primary"
+                        variant="outlined"
+                      />
+                    </Grid>
+                  )}
+                  {pet.foodNotes && (
+                    <Grid item xs={12} sm={4}>
+                      <Tooltip title={pet.foodNotes}>
+                        <Chip
+                          icon={<RestaurantIcon />}
+                          label="Feeding Schedule"
+                          color="info"
+                          variant="outlined"
+                        />
+                      </Tooltip>
+                    </Grid>
+                  )}
+                  {(pet.specialNeeds || pet.behaviorNotes) && (
+                    <Grid item xs={12} sm={4}>
+                      <Tooltip title={pet.specialNeeds || pet.behaviorNotes}>
+                        <Chip
+                          icon={<WarningIcon />}
+                          label="Special Handling"
+                          color="warning"
+                          variant="outlined"
+                        />
+                      </Tooltip>
+                    </Grid>
+                  )}
+                </Grid>
+                {!pet.idealPlayGroup &&
+                  !pet.foodNotes &&
+                  !pet.specialNeeds &&
+                  !pet.behaviorNotes && (
+                    <Typography variant="body2" color="text.secondary">
+                      No special preferences on file for this pet.
+                    </Typography>
+                  )}
+              </Paper>
+            )}
+
             {/* Multi-pet check-in selector */}
             <MultiPetCheckIn
               reservationId={reservationId!}
@@ -986,21 +1173,31 @@ const CheckInWorkflow: React.FC = () => {
               Next
             </Button>
           ) : (
-            <Button
-              variant="contained"
-              color="success"
-              onClick={handleSubmit}
-              disabled={submitting}
-              startIcon={
-                submitting ? (
-                  <CircularProgress size={20} />
-                ) : (
-                  <CheckCircleIcon />
-                )
+            <Tooltip
+              title={
+                !canSubmit()
+                  ? "Please complete all required fields (questionnaire and service agreement)"
+                  : ""
               }
             >
-              {submitting ? "Completing..." : "Complete Check-In"}
-            </Button>
+              <span>
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={handleSubmit}
+                  disabled={submitting || !canSubmit()}
+                  startIcon={
+                    submitting ? (
+                      <CircularProgress size={20} />
+                    ) : (
+                      <CheckCircleIcon />
+                    )
+                  }
+                >
+                  {submitting ? "Completing..." : "Complete Check-In"}
+                </Button>
+              </span>
+            </Tooltip>
           )}
         </Box>
       </Box>
