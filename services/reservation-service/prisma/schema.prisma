@@ -393,6 +393,8 @@ model CheckIn {
   customerId          String?
   reservationId       String?
   templateId          String?
+  status              CheckInStatus       @default(DRAFT)
+  currentStep         Int                 @default(0) @map("current_step")
   checkInTime         DateTime            @default(now())
   checkOutTime        DateTime?
   checkInNotes        String?
@@ -754,6 +756,15 @@ enum InvoiceStatus {
   OVERDUE
   CANCELLED
   REFUNDED
+}
+
+enum CheckInStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+
+  @@map("checkinstatus")
 }
 
 enum DepositType {
