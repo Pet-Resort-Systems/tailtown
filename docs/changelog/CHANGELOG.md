@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Check-in Workflow Improvements** - Enhanced check-in process for pet boarding
+
+  - **Signature Capture**: Digital signature with canvas-based capture, persists across navigation
+  - **Read-only Agreement View**: Shows signed agreement when revisiting completed check-ins
+  - **Draft/Resume Capability**: Save partial check-ins to localStorage and server, resume later
+  - **Belongings Checklist**: Track items brought (food, meds, toys, bedding) with photo upload support
+  - **Medication Schedule**: Capture dosage, frequency, and special instructions at check-in
+  - **Tenant ID Resolution**: Fixed subdomain-to-UUID resolution for check-in API calls
+  - **Timezone Support**: Date filtering now respects user's local timezone
+  - Files: `frontend/src/pages/check-in/CheckInWorkflow.tsx`, `frontend/src/components/check-in/SignatureCapture.tsx`, `frontend/src/components/check-in/BelongingsForm.tsx`, `services/reservation-service/src/controllers/check-in.controller.ts`
+
+- **Multi-Pet Room Reservations** - Multiple pets sharing same room
+  - Room capacity validation (`multiPet.controller.ts`)
+  - Batch check-in API for multiple pets (`MultiPetCheckIn` component)
+  - Billing for shared rooms (`multiPetService.ts` pricing)
+  - Kennel card per pet (`PrintKennelCards` generates one card per reservation)
+
 ### Fixed
 
 - **Customer Search by Pet Name** - Report Cards and other customer search fields now support searching by pet name

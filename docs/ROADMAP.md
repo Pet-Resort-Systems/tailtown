@@ -7,15 +7,6 @@
 
 ## 🔴 This Week
 
-### ~~Fix Multi-Pet Room Reservations~~ ✅
-
-Multiple pets sharing same room:
-
-- ✅ Room capacity validation (multiPet.controller.ts)
-- ✅ Check-in for multiple pets (batch check-in API + MultiPetCheckIn component)
-- ✅ Billing for shared rooms (multiPetService.ts pricing)
-- ✅ Kennel card per pet (PrintKennelCards generates one card per reservation)
-
 ### SendGrid/Twilio Integration
 
 - Configure API keys in setup wizard
@@ -41,17 +32,17 @@ Multiple pets sharing same room:
 
 - Pre-populated forms - Auto-fill from customer/pet records
 - Quick-add for missing info - Inline editing for vet, emergency contact, vaccines
-- Signature capture - Digital waivers and consent forms
+- ~~Signature capture - Digital waivers and consent forms~~ ✅
 
 #### Inventory & Belongings (per-visit)
 
-- Belongings checklist - Track items brought (food, meds, toys, bedding)
+- ~~Belongings checklist - Track items brought (food, meds, toys, bedding)~~ ✅
 - Photo documentation - Snap photos of belongings at check-in
-- Medication schedule - Capture dosage, frequency, and special instructions
+- ~~Medication schedule - Capture dosage, frequency, and special instructions~~ ✅
 
 #### Workflow Continuity
 
-- Draft/resume capability - Save partial check-ins and return to finish
+- ~~Draft/resume capability - Save partial check-ins and return to finish~~ ✅
 - Check-in status indicator - Show what's complete vs pending
 - Required fields validation - Block completion until critical info is captured
 
@@ -164,4 +155,4 @@ Zero-downtime deploys:
 
 ---
 
-**Last Updated**: December 4, 2025
+**Last Updated**: December 9, 2025
