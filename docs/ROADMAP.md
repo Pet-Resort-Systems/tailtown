@@ -23,8 +23,6 @@
 ### E2E Testing
 
 - E2E tests for online booking process
-- Production smoke tests (completed)
-- Reservation and check-in workflow tests
 
 ---
 
