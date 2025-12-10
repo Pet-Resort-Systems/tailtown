@@ -12,6 +12,7 @@ import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
+import { emailService } from "../services/email.service";
 
 const prisma = new PrismaClient();
 
@@ -172,16 +173,22 @@ export const requestPasswordReset = async (req: Request, res: Response) => {
       },
     });
 
-    // TODO: Send email with reset link
-    // For now, log the token (remove in production)
-    console.log(`[CustomerAuth] Password reset requested for ${email}`);
-    console.log(`[CustomerAuth] Reset token: ${resetToken}`);
-    console.log(
-      `[CustomerAuth] Reset link: /book/reset-password?token=${resetToken}`
-    );
-
-    // In production, send email here:
-    // await sendPasswordResetEmail(customer.email, customer.firstName, resetToken, tenantId);
+    // Send password reset email via SendGrid
+    try {
+      await emailService.sendPasswordResetEmail(
+        customer.email,
+        customer.firstName,
+        resetToken,
+        "Tailtown Pet Resort" // TODO: Get business name from tenant settings
+      );
+      console.log(`[CustomerAuth] Password reset email sent to ${email}`);
+    } catch (emailError) {
+      // Log but don't fail - user shouldn't know if email failed
+      console.error(
+        "[CustomerAuth] Failed to send password reset email:",
+        emailError
+      );
+    }
 
     return res.status(200).json({
       status: "success",
