@@ -67,6 +67,24 @@ Zero-downtime deploys:
 
 ## 📋 Future Features
 
+### AI Belongings Scanner (OpenCV Microservice)
+
+- Docker-based OpenCV microservice for image classification
+- Webcam capture integration at check-in
+- Auto-classify pet belongings: leashes, collars, meds, toys, bedding, harnesses
+- Generate item descriptions automatically
+- Pre-populate belongings list from photo analysis
+
+### Staff Onboarding Wizard
+
+- First-time walkthrough for new staff users
+- Interactive tutorial covering:
+  - How to create a reservation
+  - How to check in a pet
+  - How to check out and process payment
+- Skip option for experienced users
+- Progress tracking per user
+
 ### Tenant Onboarding
 
 - Self-service signup
