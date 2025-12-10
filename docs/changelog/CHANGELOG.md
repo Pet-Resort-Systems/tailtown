@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.20] - 2025-12-09
+
+### Added
+
+- **Customer Portal Password Authentication** - Secure login for booking portal
+  - **Password storage**: Bcrypt-hashed passwords with 10 rounds
+  - **Password reset flow**: Email-based reset with 24-hour expiring tokens
+  - **Login verification**: Proper password checking instead of email-only lookup
+  - **Rate limiting**: 10 requests per 15 minutes on auth endpoints (production)
+  - **UI pages**: ForgotPassword and ResetPassword pages for customers
+  - **Error handling**: PASSWORD_NOT_SET detection prompts customers to set up password
+  - Files: `services/customer/src/controllers/customer-auth.controller.ts`, `frontend/src/pages/booking/ForgotPassword.tsx`, `frontend/src/pages/booking/ResetPassword.tsx`
+
 ## [1.6.19] - 2025-12-09
 
 ### Added
