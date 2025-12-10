@@ -16,6 +16,7 @@ import { HelmetProvider } from "react-helmet-async";
 import theme from "./theme";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { SuperAdminProvider } from "./contexts/SuperAdminContext";
+import { CustomerAuthProvider } from "./contexts/CustomerAuthContext";
 import { ShoppingCartProvider } from "./contexts/ShoppingCartContext";
 import { HelpProvider } from "./contexts/HelpContext";
 import AccessibilityFix from "./components/AccessibilityFix";
@@ -285,11 +286,19 @@ const AppRoutes = () => {
         <Route path="/book" element={<BookingPortal />} />
         <Route
           path="/book/forgot-password"
-          element={<CustomerForgotPassword />}
+          element={
+            <CustomerAuthProvider>
+              <CustomerForgotPassword />
+            </CustomerAuthProvider>
+          }
         />
         <Route
           path="/book/reset-password"
-          element={<CustomerResetPassword />}
+          element={
+            <CustomerAuthProvider>
+              <CustomerResetPassword />
+            </CustomerAuthProvider>
+          }
         />
         <Route path="/my-account" element={<CustomerDashboard />} />
 
