@@ -69,6 +69,16 @@ Zero-downtime deploys:
 
 ### AI Belongings Scanner (OpenCV Microservice)
 
+**Phase 1 - COMPLETED (Dec 2025):**
+
+- ✅ Quick-add buttons for common items (Collar, Leash, Toy, Bedding, Food, Bowl, Medication, Treats)
+- ✅ Color quick-select chips (10 common colors)
+- ✅ "Use Previous" button to load belongings from pet's last visit
+- ✅ Bulk photo upload for all belongings
+- ✅ Photo documentation per item
+
+**Phase 2 - Future:**
+
 - Docker-based OpenCV microservice for image classification
 - Webcam capture integration at check-in
 - Auto-classify pet belongings: leashes, collars, meds, toys, bedding, harnesses
@@ -118,7 +128,7 @@ Zero-downtime deploys:
 ### Third-Party Integrations
 
 - QuickBooks
-- Mailchimp
+
 - Zapier webhooks
 
 ### Enhanced Security
