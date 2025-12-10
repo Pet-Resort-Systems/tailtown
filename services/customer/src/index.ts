@@ -70,6 +70,7 @@ import scheduleTemplateRoutes from "./routes/schedule-template.routes";
 import featureFlagsRoutes from "./routes/feature-flags.routes";
 import { systemRoutes } from "./routes/system.routes";
 import onboardingRoutes from "./routes/onboarding.routes";
+import customerAuthRoutes from "./routes/customer-auth.routes";
 import { errorHandler } from "./middleware/error.middleware";
 import {
   extractTenantContext,
@@ -467,6 +468,24 @@ app.post(
   customerLookupLimiter,
   requireJsonContentType,
   lookupCustomerByEmail
+);
+
+// Customer Portal Authentication Routes (public, rate-limited)
+const customerAuthLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: process.env.NODE_ENV === "production" ? 10 : 100,
+  message: {
+    success: false,
+    error: "Too many authentication attempts, please try again later",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(
+  "/api/customers/auth",
+  requireTenant,
+  customerAuthLimiter,
+  customerAuthRoutes
 );
 
 // Announcement Routes (GET is public, write requires admin - auth handled in routes)

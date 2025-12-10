@@ -5,6 +5,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { customerService } from "../services/customerService";
+import api from "../services/api";
 
 interface Customer {
   id: string;
@@ -28,6 +29,11 @@ interface CustomerAuthContextType {
   signup: (customerData: any) => Promise<void>;
   logout: () => void;
   updateCustomer: (data: Partial<Customer>) => void;
+  requestPasswordReset: (email: string) => Promise<void>;
+  resetPassword: (token: string, password: string) => Promise<void>;
+  checkPasswordStatus: (
+    email: string
+  ) => Promise<{ hasPassword: boolean; portalEnabled: boolean }>;
 }
 
 const CustomerAuthContext = createContext<CustomerAuthContextType | undefined>(
@@ -58,21 +64,33 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({
     checkSession();
   }, []);
 
-  const login = async (email: string, _password: string) => {
+  const login = async (email: string, password: string) => {
     try {
-      // Use public lookup endpoint (no auth required)
-      // Note: Password is currently not verified - future enhancement
-      // TODO(auth): Add password verification when customer passwords are implemented
-      const customerData = await customerService.lookupByEmail(email);
+      // Use the new authentication endpoint that verifies password
+      const response = await api.post("/api/customers/auth/login", {
+        email,
+        password,
+      });
 
-      setCustomer(customerData);
-      localStorage.setItem("customer", JSON.stringify(customerData));
+      if (response.data.status === "success") {
+        const customerData = response.data.data;
+        setCustomer(customerData);
+        localStorage.setItem("customer", JSON.stringify(customerData));
+      } else {
+        throw new Error(response.data.message || "Login failed");
+      }
     } catch (error: any) {
-      // Re-throw with user-friendly message
+      // Handle specific error cases
       if (error.response?.status === 404) {
         throw new Error("Customer not found");
       } else if (error.response?.status === 403) {
         throw new Error("Portal access disabled for this account");
+      } else if (error.response?.status === 401) {
+        // Check if password not set
+        if (error.response?.data?.message === "PASSWORD_NOT_SET") {
+          throw new Error("PASSWORD_NOT_SET");
+        }
+        throw new Error("Invalid password");
       } else if (error.response?.status === 429) {
         throw new Error("Too many login attempts. Please try again later.");
       }
@@ -118,6 +136,51 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const requestPasswordReset = async (email: string) => {
+    try {
+      await api.post("/api/customers/auth/forgot-password", { email });
+    } catch (error: any) {
+      if (error.response?.status === 429) {
+        throw new Error("Too many requests. Please try again later.");
+      }
+      // Don't reveal if email exists or not
+      console.error("Password reset request error:", error);
+    }
+  };
+
+  const resetPassword = async (token: string, password: string) => {
+    try {
+      const response = await api.post("/api/customers/auth/reset-password", {
+        token,
+        password,
+      });
+      if (response.data.status !== "success") {
+        throw new Error(response.data.message || "Failed to reset password");
+      }
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        throw new Error(error.response.data.message);
+      }
+      throw error;
+    }
+  };
+
+  const checkPasswordStatus = async (
+    email: string
+  ): Promise<{ hasPassword: boolean; portalEnabled: boolean }> => {
+    try {
+      const response = await api.get(
+        `/api/customers/auth/check-password?email=${encodeURIComponent(email)}`
+      );
+      return response.data.data;
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        throw new Error("Customer not found");
+      }
+      throw error;
+    }
+  };
+
   return (
     <CustomerAuthContext.Provider
       value={{
@@ -128,6 +191,9 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({
         signup,
         logout,
         updateCustomer,
+        requestPasswordReset,
+        resetPassword,
+        checkPasswordStatus,
       }}
     >
       {children}

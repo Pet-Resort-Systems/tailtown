@@ -22,6 +22,11 @@ model Customer {
   zipCode          String?
   notes            String?
   portalEnabled    Boolean                 @default(true)
+  // Customer portal authentication
+  passwordHash     String?                 // Hashed password for booking portal login
+  resetToken       String?                 // Password reset token
+  resetTokenExpiry DateTime?               // Token expiration time
+  lastPortalLogin  DateTime?               // Last successful portal login
   preferredContact ContactMethod            @default(EMAIL)
   emergencyContact String?
   emergencyPhone   String?
