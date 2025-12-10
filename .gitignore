@@ -114,3 +114,5 @@ mcp-server/.faiss_index
 tailtown_data_export.sql
 services/*/dist.tar.gz
 *.tar.gz
+playwright-report/
+test-results/
