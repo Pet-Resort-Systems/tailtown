@@ -23,10 +23,10 @@ model Customer {
   notes            String?
   portalEnabled    Boolean                 @default(true)
   // Customer portal authentication
-  passwordHash     String?                 // Hashed password for booking portal login
-  resetToken       String?                 // Password reset token
-  resetTokenExpiry DateTime?               // Token expiration time
-  lastPortalLogin  DateTime?               // Last successful portal login
+  passwordHash     String?                 @map("password_hash") // Hashed password for booking portal login
+  resetToken       String?                 @map("reset_token") // Password reset token
+  resetTokenExpiry DateTime?               @map("reset_token_expiry") // Token expiration time
+  lastPortalLogin  DateTime?               @map("last_portal_login") // Last successful portal login
   preferredContact ContactMethod            @default(EMAIL)
   emergencyContact String?
   emergencyPhone   String?
