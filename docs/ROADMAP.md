@@ -20,49 +20,11 @@
 - Merchant account setup flow
 - PCI compliance handling
 
-### ~~Check-in Process~~ ✅
+### E2E Testing
 
-#### Pet Information at a Glance
-
-- ~~Pet summary card - Show photo, icons, vet info, vaccine status, and alerts in one view~~ ✅
-- ~~Vaccination expiration warnings - Highlight expired or soon-to-expire vaccines~~ ✅
-- ~~Special handling notes - Prominently display aggression, medical, and behavior flags~~ ✅
-
-#### Streamlined Data Entry
-
-- ~~Pre-populated forms - Auto-fill from customer/pet records~~ ✅
-- ~~Quick-add for missing info - Inline editing for vet, emergency contact, vaccines~~ ✅
-- ~~Signature capture - Digital waivers and consent forms~~ ✅
-
-#### Inventory & Belongings (per-visit)
-
-- ~~Belongings checklist - Track items brought (food, meds, toys, bedding)~~ ✅
-- ~~Photo documentation - Snap photos of belongings at check-in~~ ✅
-- ~~Medication schedule - Capture dosage, frequency, and special instructions~~ ✅
-
-#### Workflow Continuity
-
-- ~~Draft/resume capability - Save partial check-ins and return to finish~~ ✅
-- ~~Check-in status indicator - Show what's complete vs pending~~ ✅
-- ~~Required fields validation - Block completion until critical info is captured~~ ✅
-
-#### Auto-populated from Pet Profile (saved across visits)
-
-- ~~Play group assignment - Based on pet's ideal play group~~ ✅
-- ~~Feeding schedule - Confirm or update feeding preferences~~ ✅
-- ~~Special handling instructions - Medical, behavior, and care notes~~ ✅
-
-#### Integration Points
-
-- ~~Kennel suite already assigned from reservation~~ ✅
-- ~~Link to reservation details and customer account~~ ✅
-- ~~Quick access to pet history and previous visit notes~~ ✅
-
-### test on line booking process
-
-- E2E tests for on line booking process
-
-###
+- E2E tests for online booking process
+- Production smoke tests (completed)
+- Reservation and check-in workflow tests
 
 ---
 
