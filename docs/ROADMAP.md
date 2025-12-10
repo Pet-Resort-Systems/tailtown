@@ -85,15 +85,17 @@ Zero-downtime deploys:
 - Generate item descriptions automatically
 - Pre-populate belongings list from photo analysis
 
-### Staff Onboarding Wizard
+### Staff Onboarding Wizard ✅ COMPLETED (Dec 2025)
 
-- First-time walkthrough for new staff users
-- Interactive tutorial covering:
+- ✅ First-time walkthrough for new staff users
+- ✅ Interactive tutorial covering:
+  - How to navigate the Dashboard
   - How to create a reservation
   - How to check in a pet
   - How to check out and process payment
-- Skip option for experienced users
-- Progress tracking per user
+- ✅ Skip option for experienced users
+- ✅ Progress tracking per user (localStorage)
+- ✅ Auto-triggers on first login
 
 ### Tenant Onboarding
 
