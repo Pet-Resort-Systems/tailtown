@@ -728,6 +728,9 @@ model Invoice {
   taxAmount     Float             @default(0)
   discount      Float             @default(0)
   total         Float
+  depositAmount Float             @default(0)
+  depositPaid   Float             @default(0)
+  balanceDue    Float             @default(0)
   notes         String?
   externalId    String?           // ID from external system (Gingr, etc.) for migration tracking
   createdAt     DateTime          @default(now())
