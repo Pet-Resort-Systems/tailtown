@@ -89,6 +89,7 @@ const CheckInWorkflow: React.FC = () => {
     string[]
   >([]);
   const [allPets, setAllPets] = useState<any[]>([]);
+  const [customer, setCustomer] = useState<any>(null);
 
   useEffect(() => {
     loadData();
@@ -141,6 +142,18 @@ const CheckInWorkflow: React.FC = () => {
           setPet(petData);
         } catch (petErr) {
           console.error("Error loading pet:", petErr);
+        }
+      }
+
+      // Load customer details for emergency contact
+      if (resData.customerId) {
+        try {
+          const customerData = await customerService.getCustomerById(
+            resData.customerId
+          );
+          setCustomer(customerData);
+        } catch (custErr) {
+          console.error("Error loading customer:", custErr);
         }
       }
 
@@ -385,6 +398,19 @@ const CheckInWorkflow: React.FC = () => {
       setPet({ ...pet, ...updates });
     } catch (err) {
       console.error("Error updating pet:", err);
+    }
+  };
+
+  const handleUpdateCustomer = async (updates: {
+    emergencyContact?: string;
+    emergencyPhone?: string;
+  }) => {
+    if (!customer) return;
+    try {
+      await customerService.updateCustomer(customer.id, updates);
+      setCustomer({ ...customer, ...updates });
+    } catch (err) {
+      console.error("Error updating customer:", err);
     }
   };
 
@@ -1124,6 +1150,9 @@ const CheckInWorkflow: React.FC = () => {
                 pet={pet}
                 onUpdatePet={handleUpdatePet}
                 showEditButtons={true}
+                emergencyContact={customer?.emergencyContact}
+                emergencyPhone={customer?.emergencyPhone}
+                onUpdateCustomer={handleUpdateCustomer}
               />
             )}
             {/* Show other selected pets if multi-pet */}

@@ -5,8 +5,8 @@
 
 **Status:** 🟢 **LIVE IN PRODUCTION**  
 **Production URL:** https://canicloud.com (multi-tenant subdomains)  
-**Version:** 1.6.17  
-**Last Updated:** December 3, 2025  
+**Version:** 1.6.18  
+**Last Updated:** December 9, 2025  
 **Codebase:** ~205,000 lines of TypeScript
 
 A modern, full-featured SaaS management system for pet resorts, providing comprehensive tools for reservations, customer management, and pet care services.
@@ -84,11 +84,11 @@ cd tailtown
 npm install
 cd frontend && npm install && cd ..
 cd services/customer && npm install && cd ../..
-cd services/reservation && npm install && cd ../..
+cd services/reservation-service && npm install && cd ../..
 
 # Set up environment variables
 cp services/customer/.env.example services/customer/.env
-cp services/reservation/.env.example services/reservation/.env
+cp services/reservation-service/.env.example services/reservation-service/.env
 # Edit .env files with your database credentials
 
 # Start all services
@@ -358,6 +358,14 @@ Proprietary - All rights reserved
 ---
 
 ## Recent Updates
+
+### December 9, 2025 - Check-in Workflow Enhancements
+
+- **Quick-add for missing info**: Inline editing for vet, emergency contact, and vaccines during check-in
+- **Pet history access**: View previous visits and check-in notes directly from pet summary
+- **Belongings quick-edit**: Edit inventory after check-in completion
+- **Multi-pet check-in**: Enhanced support for checking in multiple pets sharing a room
+- **Step validation**: Visual indicators showing completion status of each check-in step
 
 ### November 24, 2025 - Multi-Day Passes & Service Architecture
 

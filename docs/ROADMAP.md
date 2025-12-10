@@ -31,7 +31,7 @@
 #### Streamlined Data Entry
 
 - ~~Pre-populated forms - Auto-fill from customer/pet records~~ ✅
-- Quick-add for missing info - Inline editing for vet, emergency contact, vaccines
+- ~~Quick-add for missing info - Inline editing for vet, emergency contact, vaccines~~ ✅
 - ~~Signature capture - Digital waivers and consent forms~~ ✅
 
 #### Inventory & Belongings (per-visit)
@@ -56,7 +56,7 @@
 
 - ~~Kennel suite already assigned from reservation~~ ✅
 - ~~Link to reservation details and customer account~~ ✅
-- Quick access to pet history and previous visit notes
+- ~~Quick access to pet history and previous visit notes~~ ✅
 
 ### test on line booking process
 

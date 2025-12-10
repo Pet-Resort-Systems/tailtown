@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.19] - 2025-12-09
+
+### Added
+
+- **Check-in Workflow Enhancements** - Final polish for check-in process
+  - **Quick-add for missing info**: Inline editing for vet, emergency contact, and vaccines in PetSummaryCard
+  - **Pet history access**: Collapsible "Previous Visits" section showing last 5 check-ins with notes
+  - **Belongings quick-edit**: Edit inventory after check-in completion via dialog on CheckInComplete page
+  - **Step validation indicators**: Visual status (complete/error/warning/pending) on stepper steps
+  - **Integration links**: Quick links to reservation details and customer account from check-in
+  - Files: `frontend/src/components/check-in/PetSummaryCard.tsx`, `frontend/src/pages/check-in/CheckInComplete.tsx`, `frontend/src/pages/check-in/CheckInWorkflow.tsx`
+
+### Changed
+
+- **Documentation Updates** - Updated architecture and quick-start docs
+  - Fixed port numbers in SERVICE-ARCHITECTURE.md (Customer Service is 4004, not 3003)
+  - Added dev workflow commands to QUICK-START.md (`npm run dev:restart`, etc.)
+  - Updated README.md with December 2025 changes and correct folder paths
+
+## [1.6.18] - 2025-12-04
+
 ### Added
 
 - **Check-in Workflow Improvements** - Enhanced check-in process for pet boarding

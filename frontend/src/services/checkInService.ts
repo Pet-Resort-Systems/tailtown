@@ -200,6 +200,21 @@ const checkInService = {
   },
 
   /**
+   * Get all check-ins with optional filters
+   */
+  getAllCheckIns: async (filters?: {
+    petId?: string;
+    reservationId?: string;
+    startDate?: string;
+    endDate?: string;
+  }) => {
+    const response = await reservationApi.get("/api/check-ins", {
+      params: filters,
+    });
+    return response.data;
+  },
+
+  /**
    * Update a check-in
    */
   updateCheckIn: async (id: string, updates: Partial<CheckIn>) => {

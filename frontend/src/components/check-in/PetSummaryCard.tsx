@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Paper,
@@ -32,7 +32,11 @@ import {
   Restaurant as FoodIcon,
   Psychology as BehaviorIcon,
   MedicalServices as MedicalIcon,
+  ContactPhone as EmergencyIcon,
+  History as HistoryIcon,
+  Add as AddIcon,
 } from "@mui/icons-material";
+import checkInService from "../../services/checkInService";
 import PetIconDisplay from "../pets/PetIconDisplay";
 
 interface VaccinationStatus {
@@ -70,12 +74,33 @@ interface PetSummaryCardProps {
   pet: Pet;
   onUpdatePet?: (updates: Partial<Pet>) => Promise<void>;
   showEditButtons?: boolean;
+  customerId?: string;
+  emergencyContact?: string;
+  emergencyPhone?: string;
+  onUpdateCustomer?: (updates: {
+    emergencyContact?: string;
+    emergencyPhone?: string;
+  }) => Promise<void>;
+}
+
+interface PreviousCheckIn {
+  id: string;
+  createdAt: string;
+  status: string;
+  checkInNotes?: string;
+  reservation?: {
+    startDate: string;
+    endDate: string;
+  };
 }
 
 const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
   pet,
   onUpdatePet,
   showEditButtons = true,
+  emergencyContact,
+  emergencyPhone,
+  onUpdateCustomer,
 }) => {
   const [expandedSections, setExpandedSections] = useState<{
     [key: string]: boolean;
@@ -83,10 +108,55 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
     vaccines: true,
     notes: false,
     handling: false,
+    history: false,
   });
   const [editingVet, setEditingVet] = useState(false);
   const [vetName, setVetName] = useState(pet.vetName || "");
   const [vetPhone, setVetPhone] = useState(pet.vetPhone || "");
+
+  // Emergency contact editing
+  const [editingEmergency, setEditingEmergency] = useState(false);
+  const [emergencyName, setEmergencyName] = useState(emergencyContact || "");
+  const [emergencyPhoneValue, setEmergencyPhoneValue] = useState(
+    emergencyPhone || ""
+  );
+
+  // Vaccine quick-add
+  const [addingVaccine, setAddingVaccine] = useState(false);
+  const [newVaccineName, setNewVaccineName] = useState("");
+  const [newVaccineDate, setNewVaccineDate] = useState("");
+
+  // Pet history
+  const [previousCheckIns, setPreviousCheckIns] = useState<PreviousCheckIn[]>(
+    []
+  );
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
+  // Load pet history when history section is expanded
+  useEffect(() => {
+    if (
+      expandedSections.history &&
+      previousCheckIns.length === 0 &&
+      !loadingHistory
+    ) {
+      loadPetHistory();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expandedSections.history]);
+
+  const loadPetHistory = async () => {
+    try {
+      setLoadingHistory(true);
+      const response = await checkInService.getAllCheckIns({ petId: pet.id });
+      if (response?.data) {
+        setPreviousCheckIns(response.data.slice(0, 5)); // Last 5 check-ins
+      }
+    } catch (err) {
+      console.error("Error loading pet history:", err);
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
 
   const toggleSection = (section: string) => {
     setExpandedSections((prev) => ({
@@ -100,6 +170,29 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
       await onUpdatePet({ vetName, vetPhone });
     }
     setEditingVet(false);
+  };
+
+  const handleSaveEmergency = async () => {
+    if (onUpdateCustomer) {
+      await onUpdateCustomer({
+        emergencyContact: emergencyName,
+        emergencyPhone: emergencyPhoneValue,
+      });
+    }
+    setEditingEmergency(false);
+  };
+
+  const handleAddVaccine = async () => {
+    if (onUpdatePet && newVaccineName && newVaccineDate) {
+      const updatedVaccines = {
+        ...(pet.vaccineExpirations || {}),
+        [newVaccineName]: newVaccineDate,
+      };
+      await onUpdatePet({ vaccineExpirations: updatedVaccines } as any);
+      setAddingVaccine(false);
+      setNewVaccineName("");
+      setNewVaccineDate("");
+    }
   };
 
   // Calculate vaccine alerts
@@ -485,6 +578,170 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
         </Box>
       )}
 
+      {/* Emergency Contact Section */}
+      <Box sx={{ mt: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            cursor: "pointer",
+            p: 1,
+            bgcolor: "grey.50",
+            borderRadius: 1,
+          }}
+          onClick={() => toggleSection("emergency")}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <EmergencyIcon color="warning" />
+            <Typography variant="subtitle1" fontWeight="bold">
+              Emergency Contact
+            </Typography>
+          </Box>
+          {expandedSections.emergency ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+        </Box>
+        <Collapse in={expandedSections.emergency}>
+          <Box sx={{ p: 2, bgcolor: "grey.50", borderRadius: 1, mt: 1 }}>
+            {emergencyContact || emergencyPhone ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Box>
+                  <Typography variant="body2">
+                    <strong>Name:</strong> {emergencyContact || "Not set"}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Phone:</strong> {emergencyPhone || "Not set"}
+                  </Typography>
+                </Box>
+                {showEditButtons && onUpdateCustomer && (
+                  <IconButton
+                    size="small"
+                    onClick={() => setEditingEmergency(true)}
+                  >
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                )}
+              </Box>
+            ) : (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="body2" color="text.secondary">
+                  No emergency contact on file
+                </Typography>
+                {showEditButtons && onUpdateCustomer && (
+                  <Button
+                    size="small"
+                    startIcon={<AddIcon />}
+                    onClick={() => setEditingEmergency(true)}
+                  >
+                    Add Contact
+                  </Button>
+                )}
+              </Box>
+            )}
+          </Box>
+        </Collapse>
+      </Box>
+
+      {/* Vaccine Quick-Add Section */}
+      {showEditButtons && onUpdatePet && (
+        <Box sx={{ mt: 2 }}>
+          <Button
+            size="small"
+            variant="outlined"
+            startIcon={<AddIcon />}
+            onClick={() => setAddingVaccine(true)}
+          >
+            Add Vaccine Record
+          </Button>
+        </Box>
+      )}
+
+      {/* Pet History Section */}
+      <Box sx={{ mt: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            cursor: "pointer",
+            p: 1,
+            bgcolor: "grey.50",
+            borderRadius: 1,
+          }}
+          onClick={() => toggleSection("history")}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <HistoryIcon color="info" />
+            <Typography variant="subtitle1" fontWeight="bold">
+              Previous Visits
+            </Typography>
+          </Box>
+          {expandedSections.history ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+        </Box>
+        <Collapse in={expandedSections.history}>
+          <Box sx={{ p: 2, bgcolor: "grey.50", borderRadius: 1, mt: 1 }}>
+            {loadingHistory ? (
+              <Typography variant="body2" color="text.secondary">
+                Loading visit history...
+              </Typography>
+            ) : previousCheckIns.length > 0 ? (
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                {previousCheckIns.map((checkIn) => (
+                  <Paper key={checkIn.id} variant="outlined" sx={{ p: 1.5 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography variant="body2" fontWeight="bold">
+                        {checkIn.reservation?.startDate
+                          ? new Date(
+                              checkIn.reservation.startDate
+                            ).toLocaleDateString()
+                          : new Date(checkIn.createdAt).toLocaleDateString()}
+                      </Typography>
+                      <Chip
+                        label={checkIn.status}
+                        size="small"
+                        color={
+                          checkIn.status === "COMPLETED" ? "success" : "default"
+                        }
+                      />
+                    </Box>
+                    {checkIn.checkInNotes && (
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ mt: 0.5 }}
+                      >
+                        {checkIn.checkInNotes}
+                      </Typography>
+                    )}
+                  </Paper>
+                ))}
+              </Box>
+            ) : (
+              <Typography variant="body2" color="text.secondary">
+                No previous visits on record
+              </Typography>
+            )}
+          </Box>
+        </Collapse>
+      </Box>
+
       {/* Edit Vet Dialog */}
       <Dialog open={editingVet} onClose={() => setEditingVet(false)}>
         <DialogTitle>Edit Veterinarian Information</DialogTitle>
@@ -507,6 +764,68 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
           <Button onClick={() => setEditingVet(false)}>Cancel</Button>
           <Button variant="contained" onClick={handleSaveVet}>
             Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Edit Emergency Contact Dialog */}
+      <Dialog
+        open={editingEmergency}
+        onClose={() => setEditingEmergency(false)}
+      >
+        <DialogTitle>Edit Emergency Contact</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            label="Contact Name"
+            value={emergencyName}
+            onChange={(e) => setEmergencyName(e.target.value)}
+            sx={{ mt: 2, mb: 2 }}
+          />
+          <TextField
+            fullWidth
+            label="Phone Number"
+            value={emergencyPhoneValue}
+            onChange={(e) => setEmergencyPhoneValue(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setEditingEmergency(false)}>Cancel</Button>
+          <Button variant="contained" onClick={handleSaveEmergency}>
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Add Vaccine Dialog */}
+      <Dialog open={addingVaccine} onClose={() => setAddingVaccine(false)}>
+        <DialogTitle>Add Vaccine Record</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            label="Vaccine Name"
+            value={newVaccineName}
+            onChange={(e) => setNewVaccineName(e.target.value)}
+            placeholder="e.g., Rabies, DHPP, Bordetella"
+            sx={{ mt: 2, mb: 2 }}
+          />
+          <TextField
+            fullWidth
+            label="Expiration Date"
+            type="date"
+            value={newVaccineDate}
+            onChange={(e) => setNewVaccineDate(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAddingVaccine(false)}>Cancel</Button>
+          <Button
+            variant="contained"
+            onClick={handleAddVaccine}
+            disabled={!newVaccineName || !newVaccineDate}
+          >
+            Add Vaccine
           </Button>
         </DialogActions>
       </Dialog>

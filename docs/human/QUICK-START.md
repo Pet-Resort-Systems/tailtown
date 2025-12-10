@@ -7,6 +7,7 @@
 ## 🌐 For End Users (No Setup Required!)
 
 **Just visit the production site:**
+
 - **Tailtown (Production):** https://tailtown.canicloud.com
 - **BranGro (Demo):** https://brangro.canicloud.com
 
@@ -19,6 +20,7 @@ No installation needed! 🎉
 ### 🚀 Get Running
 
 ### 1. Clone and Install
+
 ```bash
 git clone https://github.com/moosecreates/tailtown.git
 cd tailtown
@@ -26,30 +28,60 @@ npm install
 ```
 
 ### 2. Setup Environment
-```bash
-# Copy environment template
-cp .env.example .env
 
-# Edit .env and set:
+```bash
+# Use the environment manager to set up development
+npm run env:dev
+
+# Or manually copy templates:
+cp services/customer/.env.example services/customer/.env
+cp services/reservation-service/.env.example services/reservation-service/.env
+
+# Edit .env files and set:
 # - DATABASE_URL (PostgreSQL connection)
 # - JWT_SECRET (any random string)
 # - JWT_REFRESH_SECRET (different random string)
 ```
 
 ### 3. Setup Database
+
 ```bash
+# Customer service database
 cd services/customer
 npx prisma migrate dev
+npx prisma generate
+
+# Reservation service database (uses same DB)
+cd ../reservation-service
 npx prisma generate
 ```
 
 ### 4. Start Development Server
+
+**Option A: Use the dev workflow (recommended)**
+
+```bash
+# Start all services at once
+npm run dev:restart
+
+# Check status
+npm run dev:status
+
+# View logs
+npm run dev:logs
+
+# Stop all services
+npm run dev:stop
+```
+
+**Option B: Start services manually**
+
 ```bash
 # Terminal 1: Customer Service
 cd services/customer
 npm run dev
 
-# Terminal 2: Reservation Service  
+# Terminal 2: Reservation Service
 cd services/reservation-service
 npm run dev
 
@@ -59,6 +91,7 @@ npm start
 ```
 
 ### 5. Verify Local Development Works
+
 - **Frontend:** http://localhost:3000
 - **Customer API:** http://localhost:4004/health
 - **Reservation API:** http://localhost:4003/health
@@ -87,26 +120,30 @@ cd services/customer && npm test -- --testPathPattern=security
 ### Add a New API Endpoint
 
 1. **Create route** in `services/customer/src/routes/`:
+
 ```typescript
-router.get('/my-endpoint', myHandler);
+router.get("/my-endpoint", myHandler);
 ```
 
 2. **Create controller** in `services/customer/src/controllers/`:
+
 ```typescript
 export const myHandler = async (req, res) => {
-  res.json({ message: 'Hello!' });
+  res.json({ message: "Hello!" });
 };
 ```
 
 3. **Add test** in `services/customer/src/__tests__/`:
+
 ```typescript
-test('my endpoint works', async () => {
-  const response = await request(app).get('/api/my-endpoint');
+test("my endpoint works", async () => {
+  const response = await request(app).get("/api/my-endpoint");
   expect(response.status).toBe(200);
 });
 ```
 
 4. **Run test**:
+
 ```bash
 npm test
 ```
@@ -125,6 +162,7 @@ npm test
 ## 🆘 Troubleshooting
 
 **Database connection fails:**
+
 ```bash
 # Check PostgreSQL is running
 psql -h localhost -p 5432 -U postgres
@@ -133,6 +171,7 @@ psql -h localhost -p 5432 -U postgres
 ```
 
 **Port already in use:**
+
 ```bash
 # Find process using port
 lsof -i :4004
@@ -142,6 +181,7 @@ kill -9 <PID>
 ```
 
 **Tests failing:**
+
 ```bash
 # Clear and rebuild
 rm -rf node_modules

@@ -6,15 +6,16 @@ This document provides a comprehensive overview of the Tailtown microservice arc
 
 Tailtown is built on a microservice architecture with the following core services:
 
-| Service | Description | Port | Repository Path |
-|---------|-------------|------|----------------|
-| Frontend | React-based UI application | 3000 | `/frontend` |
-| Customer Service | Manages customer and pet data | 4004 | `/services/customer` |
-| Reservation Service | Handles reservations and resource management | 4003 | `/services/reservation-service` |
+| Service             | Description                                 | Port | Repository Path                 |
+| ------------------- | ------------------------------------------- | ---- | ------------------------------- |
+| Frontend            | React-based UI application                  | 3000 | `/frontend`                     |
+| Customer Service    | Manages customer, pet, staff, products data | 4004 | `/services/customer`            |
+| Reservation Service | Handles reservations, resources, check-ins  | 4003 | `/services/reservation-service` |
 
 ## Service Boundaries
 
 ### Frontend
+
 - **Responsibility**: User interface and client-side logic
 - **Technologies**: React, Material-UI, TypeScript
 - **Key Features**:
@@ -24,6 +25,7 @@ Tailtown is built on a microservice architecture with the following core service
   - Service configuration
 
 ### Customer Service
+
 - **Responsibility**: Customer and pet data management
 - **Technologies**: Express.js, Prisma, PostgreSQL
 - **Key Features**:
@@ -33,6 +35,7 @@ Tailtown is built on a microservice architecture with the following core service
   - Customer account balance tracking
 
 ### Reservation Service
+
 - **Responsibility**: Reservation and resource management
 - **Technologies**: Express.js, Prisma, PostgreSQL
 - **Key Features**:
@@ -45,6 +48,7 @@ Tailtown is built on a microservice architecture with the following core service
 ## Database Architecture
 
 ### Shared Database Approach
+
 - Customer and Reservation services share the same PostgreSQL database (port 5433)
 - Prisma schemas must be synchronized between services to avoid runtime errors
 - Field names and types must be consistent across services
@@ -53,11 +57,13 @@ Tailtown is built on a microservice architecture with the following core service
 ## Service Communication
 
 ### API Gateway Pattern
+
 - The frontend communicates with backend services directly
 - Each service exposes a RESTful API with consistent patterns
 - Authentication is handled at the service level
 
 ### Cross-Service Communication
+
 - Services communicate via HTTP when needed
 - No direct database access between services
 - Each service owns its data domain
@@ -67,10 +73,18 @@ Tailtown is built on a microservice architecture with the following core service
 To avoid confusion and port conflicts, we've standardized the port assignments:
 
 ### Development Environment
+
 - Frontend: Port 3000
-- Customer Service: Port 3003
+- Customer Service: Port 4004
 - Reservation Service: Port 4003
-- PostgreSQL Database: Port 5433
+- PostgreSQL Database: Port 5433 (Docker) or 5432 (local)
+
+### Production Environment
+
+- Frontend: Port 3000 (served by Nginx)
+- Customer Service: Port 4004 (PM2 cluster, 2 instances)
+- Reservation Service: Port 4003 (PM2 cluster, 2 instances)
+- PostgreSQL Database: Port 5432
 
 ### Database
 
@@ -81,6 +95,7 @@ To avoid confusion and port conflicts, we've standardized the port assignments:
 - Automatic schema validation on service startup with detailed reporting
 
 ### Configuration Files
+
 - Frontend: `.env` in `/frontend`
 - Customer Service: `.env` in `/services/customer`
 - Reservation Service: `.env` in `/services/reservation-service`
@@ -88,18 +103,21 @@ To avoid confusion and port conflicts, we've standardized the port assignments:
 ## Environment Variables
 
 ### Frontend
+
 ```
 REACT_APP_API_URL=http://localhost:3003  # Points to Customer Service
 REACT_APP_RESERVATION_API_URL=http://localhost:4003  # Points to Reservation Service
 ```
 
 ### Customer Service
+
 ```
 PORT=3003
 DATABASE_URL=postgresql://postgres:postgres@localhost:5433/customer
 ```
 
 ### Reservation Service
+
 ```
 PORT=4003
 DATABASE_URL=postgresql://postgres:postgres@localhost:5433/customer
@@ -135,6 +153,7 @@ As we continue to implement the SaaS architecture, we plan to add the following 
 ## Deployment Considerations
 
 In production environments:
+
 - Each service should be deployed independently
 - Consider using containerization (Docker) for consistency
 - Implement proper load balancing for horizontal scaling
