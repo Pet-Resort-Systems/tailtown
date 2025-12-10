@@ -177,12 +177,10 @@ const CheckInWorkflow: React.FC = () => {
             }
           } catch (agreementErr) {
             // No agreement found, that's ok
-            console.log("No existing agreement found for check-in");
           }
         }
       } catch (checkInErr) {
         // No check-ins found, that's ok
-        console.log("No existing check-ins found for reservation");
       }
     } catch (err: any) {
       console.error("Error loading check-in data:", err);
@@ -254,12 +252,6 @@ const CheckInWorkflow: React.FC = () => {
         customerName,
         savedAt: new Date().toISOString(),
       };
-      console.log(
-        "[CheckIn] Saving draft to localStorage, key:",
-        getDraftKey(),
-        "signature length:",
-        signature?.length || 0
-      );
       localStorage.setItem(getDraftKey(), JSON.stringify(draft));
     } catch (err) {
       console.error("Error saving draft to server:", err);
@@ -318,21 +310,9 @@ const CheckInWorkflow: React.FC = () => {
 
         // Load signature from localStorage (not stored on server)
         const localDraftStr = localStorage.getItem(getDraftKey());
-        console.log(
-          "[CheckIn] Loading signature from localStorage, key:",
-          getDraftKey(),
-          "found:",
-          !!localDraftStr
-        );
         if (localDraftStr) {
           try {
             const localDraft = JSON.parse(localDraftStr);
-            console.log(
-              "[CheckIn] LocalDraft has signature:",
-              !!localDraft.signature,
-              "length:",
-              localDraft.signature?.length || 0
-            );
             if (localDraft.signature) setSignature(localDraft.signature);
             if (localDraft.customerName)
               setCustomerName(localDraft.customerName);
