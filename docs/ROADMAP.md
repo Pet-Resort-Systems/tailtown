@@ -20,10 +20,6 @@
 - Merchant account setup flow
 - PCI compliance handling
 
-### E2E Testing
-
-- E2E tests for online booking process
-
 ---
 
 ## 🟠 This Month

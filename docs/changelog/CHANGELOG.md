@@ -26,7 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Check-out flow tests**: Belongings return, balance handling, status updates
   - **Dashboard flow tests**: Metrics display, navigation, date filtering
   - **Production workflow tests**: Test customer reservation and check-in against live site
-  - Files: `e2e/production-smoke.spec.ts`, `e2e/check-in-flow.spec.ts`, `e2e/checkout-flow.spec.ts`, `e2e/dashboard-flow.spec.ts`, `e2e/production-workflow.spec.ts`
+  - **Online booking portal tests**: Customer-facing booking flow with auth, service selection, accessibility
+  - Files: `e2e/production-smoke.spec.ts`, `e2e/check-in-flow.spec.ts`, `e2e/checkout-flow.spec.ts`, `e2e/dashboard-flow.spec.ts`, `e2e/production-workflow.spec.ts`, `e2e/online-booking.spec.ts`
 
 ### Changed
 
