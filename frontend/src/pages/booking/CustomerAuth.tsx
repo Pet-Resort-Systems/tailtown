@@ -120,7 +120,15 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
       await signup(signupData);
       onSuccess();
     } catch (err: any) {
-      setError(err.message || "Signup failed. Please try again.");
+      if (err.message === "CUSTOMER_EXISTS") {
+        setError(
+          "An account with this email already exists. Please use the Login tab and click 'Forgot password?' to set up your password."
+        );
+        setActiveTab(0); // Switch to login tab
+        setLoginEmail(signupData.email); // Pre-fill email
+      } else {
+        setError(err.message || "Signup failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

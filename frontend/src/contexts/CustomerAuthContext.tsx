@@ -117,7 +117,15 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setCustomer(newCustomer);
       localStorage.setItem("customer", JSON.stringify(newCustomer));
-    } catch (error) {
+    } catch (error: any) {
+      // Check if customer already exists
+      if (
+        error.response?.status === 400 &&
+        (error.response?.data?.message?.includes("already exists") ||
+          error.response?.data?.error?.includes("already exists"))
+      ) {
+        throw new Error("CUSTOMER_EXISTS");
+      }
       console.error("Signup error:", error);
       throw error;
     }
