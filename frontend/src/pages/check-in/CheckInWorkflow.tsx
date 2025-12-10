@@ -1159,7 +1159,11 @@ const CheckInWorkflow: React.FC = () => {
           <MedicationForm medications={medications} onChange={setMedications} />
         )}
         {activeStep === 3 && (
-          <BelongingsForm belongings={belongings} onChange={setBelongings} />
+          <BelongingsForm
+            belongings={belongings}
+            onChange={setBelongings}
+            petId={pet?.id || reservation?.petId}
+          />
         )}
         {activeStep === 4 && renderAgreementStep()}
         {activeStep === 5 && renderReviewStep()}

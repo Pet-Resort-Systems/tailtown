@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   Box,
   TextField,
@@ -11,11 +11,20 @@ import {
   ImageList,
   ImageListItem,
   ImageListItemBar,
+  Alert,
+  CircularProgress,
+  Tooltip,
+  Collapse,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import CloseIcon from "@mui/icons-material/Close";
-import { CheckInBelonging } from "../../services/checkInService";
+import HistoryIcon from "@mui/icons-material/History";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import checkInService from "../../services/checkInService";
+import type { CheckInBelonging } from "../../services/checkInService";
 
 // Extended belonging type with photos
 interface BelongingWithPhotos extends CheckInBelonging {
@@ -25,7 +34,22 @@ interface BelongingWithPhotos extends CheckInBelonging {
 interface BelongingsFormProps {
   belongings: BelongingWithPhotos[];
   onChange: (belongings: BelongingWithPhotos[]) => void;
+  petId?: string; // Optional - enables "Use Previous" feature
+  onBulkPhotoCapture?: (photo: string) => void; // Callback for bulk photo
 }
+
+const COMMON_COLORS = [
+  { name: "Red", color: "#ef5350" },
+  { name: "Blue", color: "#42a5f5" },
+  { name: "Green", color: "#66bb6a" },
+  { name: "Black", color: "#424242" },
+  { name: "Brown", color: "#8d6e63" },
+  { name: "Pink", color: "#f48fb1" },
+  { name: "Purple", color: "#ab47bc" },
+  { name: "Orange", color: "#ff9800" },
+  { name: "Yellow", color: "#ffee58" },
+  { name: "Gray", color: "#9e9e9e" },
+];
 
 const COMMON_ITEMS = [
   { type: "Collar", icon: "🔗" },
@@ -41,8 +65,16 @@ const COMMON_ITEMS = [
 const BelongingsForm: React.FC<BelongingsFormProps> = ({
   belongings,
   onChange,
+  petId,
+  onBulkPhotoCapture,
 }) => {
   const fileInputRefs = useRef<{ [key: number]: HTMLInputElement | null }>({});
+  const bulkPhotoInputRef = useRef<HTMLInputElement | null>(null);
+  const [loadingPrevious, setLoadingPrevious] = useState(false);
+  const [previousError, setPreviousError] = useState<string | null>(null);
+  // showColorPicker removed - using inline color selection instead
+  const [bulkPhoto, setBulkPhoto] = useState<string | null>(null);
+  const [showBulkPhoto, setShowBulkPhoto] = useState(false);
 
   const handleQuickAdd = (itemType: string) => {
     const newBelonging: BelongingWithPhotos = {
@@ -113,11 +145,184 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
     handleUpdateBelonging(belongingIndex, "photos", updatedPhotos);
   };
 
+  // Load belongings from pet's last check-in
+  const handleLoadPrevious = async () => {
+    if (!petId) return;
+
+    setLoadingPrevious(true);
+    setPreviousError(null);
+
+    try {
+      const previousBelongings = await checkInService.getPreviousBelongings(
+        petId
+      );
+      if (previousBelongings.length > 0) {
+        // Add photos array to each belonging
+        const withPhotos = previousBelongings.map((b) => ({
+          ...b,
+          photos: [],
+        }));
+        onChange(withPhotos);
+      } else {
+        setPreviousError("No previous belongings found for this pet.");
+      }
+    } catch (err) {
+      console.error("Error loading previous belongings:", err);
+      setPreviousError("Failed to load previous belongings.");
+    } finally {
+      setLoadingPrevious(false);
+    }
+  };
+
+  // Handle bulk photo capture for all belongings
+  const handleBulkPhotoCapture = () => {
+    bulkPhotoInputRef.current?.click();
+  };
+
+  const handleBulkFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    const file = files[0];
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      const base64 = reader.result as string;
+      setBulkPhoto(base64);
+      setShowBulkPhoto(true);
+      // Call callback if provided
+      if (onBulkPhotoCapture) {
+        onBulkPhotoCapture(base64);
+      }
+    };
+
+    reader.readAsDataURL(file);
+    event.target.value = "";
+  };
+
+  // Select color for a belonging
+  const handleColorSelect = (index: number, colorName: string) => {
+    handleUpdateBelonging(index, "color", colorName);
+  };
+
   return (
     <Box>
-      <Typography variant="h6" gutterBottom>
-        Belongings Inventory
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 2,
+        }}
+      >
+        <Typography variant="h6">Belongings Inventory</Typography>
+        <Box sx={{ display: "flex", gap: 1 }}>
+          {/* Bulk Photo Button */}
+          <input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            style={{ display: "none" }}
+            ref={bulkPhotoInputRef}
+            onChange={handleBulkFileChange}
+          />
+          <Tooltip title="Take a photo of all belongings together">
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<AddPhotoAlternateIcon />}
+              onClick={handleBulkPhotoCapture}
+            >
+              Bulk Photo
+            </Button>
+          </Tooltip>
+          {/* Use Previous Button */}
+          {petId && (
+            <Tooltip title="Load belongings from this pet's last visit">
+              <Button
+                variant="outlined"
+                size="small"
+                startIcon={
+                  loadingPrevious ? (
+                    <CircularProgress size={16} />
+                  ) : (
+                    <HistoryIcon />
+                  )
+                }
+                onClick={handleLoadPrevious}
+                disabled={loadingPrevious}
+              >
+                Use Previous
+              </Button>
+            </Tooltip>
+          )}
+        </Box>
+      </Box>
+
+      {/* Error message for loading previous */}
+      {previousError && (
+        <Alert
+          severity="info"
+          sx={{ mb: 2 }}
+          onClose={() => setPreviousError(null)}
+        >
+          {previousError}
+        </Alert>
+      )}
+
+      {/* Bulk Photo Preview */}
+      <Collapse in={showBulkPhoto && !!bulkPhoto}>
+        <Paper sx={{ p: 2, mb: 3, bgcolor: "grey.100" }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 1,
+            }}
+          >
+            <Typography variant="subtitle2">
+              📷 Bulk Belongings Photo
+            </Typography>
+            <IconButton
+              size="small"
+              onClick={() => setShowBulkPhoto(!showBulkPhoto)}
+            >
+              {showBulkPhoto ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            </IconButton>
+          </Box>
+          {bulkPhoto && (
+            <Box sx={{ position: "relative" }}>
+              <img
+                src={bulkPhoto}
+                alt="All belongings"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: 200,
+                  objectFit: "contain",
+                  borderRadius: 8,
+                }}
+              />
+              <IconButton
+                size="small"
+                sx={{
+                  position: "absolute",
+                  top: 4,
+                  right: 4,
+                  bgcolor: "rgba(0,0,0,0.5)",
+                  color: "white",
+                }}
+                onClick={() => {
+                  setBulkPhoto(null);
+                  setShowBulkPhoto(false);
+                }}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </Box>
+          )}
+        </Paper>
+      </Collapse>
 
       <Paper sx={{ p: 2, mb: 3, bgcolor: "grey.50" }}>
         <Typography variant="subtitle2" gutterBottom>
@@ -203,7 +408,7 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} md={3}>
+            <Grid item xs={6} md={2}>
               <TextField
                 fullWidth
                 type="number"
@@ -220,7 +425,47 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} md={9}>
+            {/* Color Quick Select */}
+            <Grid item xs={6} md={4}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ mb: 0.5, display: "block" }}
+              >
+                Color
+              </Typography>
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                {COMMON_COLORS.map((c) => (
+                  <Tooltip key={c.name} title={c.name}>
+                    <Box
+                      onClick={() => handleColorSelect(index, c.name)}
+                      sx={{
+                        width: 24,
+                        height: 24,
+                        borderRadius: "50%",
+                        bgcolor: c.color,
+                        cursor: "pointer",
+                        border:
+                          belonging.color === c.name
+                            ? "3px solid #1976d2"
+                            : "2px solid #ddd",
+                        "&:hover": { transform: "scale(1.1)" },
+                      }}
+                    />
+                  </Tooltip>
+                ))}
+              </Box>
+              {belonging.color && (
+                <Chip
+                  label={belonging.color}
+                  size="small"
+                  onDelete={() => handleUpdateBelonging(index, "color", "")}
+                  sx={{ mt: 0.5 }}
+                />
+              )}
+            </Grid>
+
+            <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
                 label="Notes"
