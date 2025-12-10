@@ -33,7 +33,6 @@ import {
   useOnboarding,
   OnboardingStep,
 } from "../../contexts/OnboardingContext";
-import { useNavigate } from "react-router-dom";
 
 const STEPS: { key: OnboardingStep; label: string }[] = [
   { key: "welcome", label: "Welcome" },
@@ -47,18 +46,11 @@ const STEPS: { key: OnboardingStep; label: string }[] = [
 const OnboardingWizard: React.FC = () => {
   const { state, nextStep, previousStep, skipOnboarding, completeOnboarding } =
     useOnboarding();
-  const navigate = useNavigate();
-
   if (!state.isActive) {
     return null;
   }
 
   const currentStepIndex = STEPS.findIndex((s) => s.key === state.currentStep);
-
-  const handleNavigateAndNext = (path: string) => {
-    navigate(path);
-    nextStep();
-  };
 
   const renderStepContent = () => {
     switch (state.currentStep) {
@@ -152,13 +144,6 @@ const OnboardingWizard: React.FC = () => {
                 </ListItem>
               </List>
             </Paper>
-            <Button
-              variant="outlined"
-              onClick={() => handleNavigateAndNext("/dashboard")}
-              endIcon={<ArrowForwardIcon />}
-            >
-              View Dashboard & Continue
-            </Button>
           </Box>
         );
 
@@ -209,13 +194,6 @@ const OnboardingWizard: React.FC = () => {
                 </ListItem>
               </List>
             </Paper>
-            <Button
-              variant="outlined"
-              onClick={() => handleNavigateAndNext("/calendar")}
-              endIcon={<ArrowForwardIcon />}
-            >
-              View Calendar & Continue
-            </Button>
           </Box>
         );
 
