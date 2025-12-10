@@ -196,6 +196,8 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
                 onChange={(e) => setLoginEmail(e.target.value)}
                 sx={{ mb: 3 }}
                 autoComplete="email"
+                InputLabelProps={{ shrink: true }}
+                placeholder="Enter your email"
               />
 
               <TextField
@@ -207,6 +209,8 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
                 onChange={(e) => setLoginPassword(e.target.value)}
                 sx={{ mb: 2 }}
                 autoComplete="current-password"
+                InputLabelProps={{ shrink: true }}
+                placeholder="Enter your password"
               />
 
               <Box sx={{ textAlign: "right", mb: 3 }}>
