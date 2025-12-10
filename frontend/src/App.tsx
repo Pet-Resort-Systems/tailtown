@@ -19,6 +19,7 @@ import { SuperAdminProvider } from "./contexts/SuperAdminContext";
 import { CustomerAuthProvider } from "./contexts/CustomerAuthContext";
 import { ShoppingCartProvider } from "./contexts/ShoppingCartContext";
 import { HelpProvider } from "./contexts/HelpContext";
+import { OnboardingProvider } from "./contexts/OnboardingContext";
 import AccessibilityFix from "./components/AccessibilityFix";
 import ScrollFix from "./components/ScrollFix";
 import ApiTester from "./components/debug/ApiTester";
@@ -209,6 +210,11 @@ const SetupWizardProvider = lazy(
 );
 const CustomerDashboard = lazy(
   () => import("./pages/booking/CustomerDashboard")
+);
+
+// Onboarding
+const OnboardingWizard = lazy(
+  () => import("./components/onboarding/OnboardingWizard")
 );
 
 // Mobile Pages
@@ -849,26 +855,29 @@ const App = () => {
           <RouteChangeListener />
           <SuperAdminProvider>
             <AuthProvider>
-              <ShoppingCartProvider>
-                <HelpProvider>
-                  <React.Suspense
-                    fallback={
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          height: "100vh",
-                        }}
-                      >
-                        <CircularProgress />
-                      </Box>
-                    }
-                  >
-                    <AppRoutes />
-                  </React.Suspense>
-                </HelpProvider>
-              </ShoppingCartProvider>
+              <OnboardingProvider>
+                <ShoppingCartProvider>
+                  <HelpProvider>
+                    <React.Suspense
+                      fallback={
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            height: "100vh",
+                          }}
+                        >
+                          <CircularProgress />
+                        </Box>
+                      }
+                    >
+                      <OnboardingWizard />
+                      <AppRoutes />
+                    </React.Suspense>
+                  </HelpProvider>
+                </ShoppingCartProvider>
+              </OnboardingProvider>
             </AuthProvider>
           </SuperAdminProvider>
         </ThemeProvider>
