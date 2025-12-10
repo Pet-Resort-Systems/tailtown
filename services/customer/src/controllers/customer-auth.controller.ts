@@ -8,11 +8,12 @@
  * - Password change for logged-in customers
  */
 
-import { Request, Response } from "express";
+import { Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import { emailService } from "../services/email.service";
+import { TenantRequest } from "../middleware/tenant.middleware";
 
 const prisma = new PrismaClient();
 
@@ -23,7 +24,7 @@ const RESET_TOKEN_EXPIRY_HOURS = 24;
  * Customer login with email and password
  * POST /api/customers/auth/login
  */
-export const customerLogin = async (req: Request, res: Response) => {
+export const customerLogin = async (req: TenantRequest, res: Response) => {
   try {
     const { email, password } = req.body;
     const tenantId = req.tenantId;
@@ -120,7 +121,10 @@ export const customerLogin = async (req: Request, res: Response) => {
  * Request password reset - sends email with reset link
  * POST /api/customers/auth/forgot-password
  */
-export const requestPasswordReset = async (req: Request, res: Response) => {
+export const requestPasswordReset = async (
+  req: TenantRequest,
+  res: Response
+) => {
   try {
     const { email } = req.body;
     const tenantId = req.tenantId;
@@ -210,7 +214,7 @@ export const requestPasswordReset = async (req: Request, res: Response) => {
  * Reset password using token
  * POST /api/customers/auth/reset-password
  */
-export const resetPassword = async (req: Request, res: Response) => {
+export const resetPassword = async (req: TenantRequest, res: Response) => {
   try {
     const { token, password } = req.body;
     const tenantId = req.tenantId;
@@ -282,7 +286,7 @@ export const resetPassword = async (req: Request, res: Response) => {
  * Verify reset token is valid (for UI validation)
  * GET /api/customers/auth/verify-token?token=xxx
  */
-export const verifyResetToken = async (req: Request, res: Response) => {
+export const verifyResetToken = async (req: TenantRequest, res: Response) => {
   try {
     const { token } = req.query;
     const tenantId = req.tenantId;
@@ -337,7 +341,10 @@ export const verifyResetToken = async (req: Request, res: Response) => {
  * Check if customer has password set (for login flow)
  * GET /api/customers/auth/check-password?email=xxx
  */
-export const checkPasswordStatus = async (req: Request, res: Response) => {
+export const checkPasswordStatus = async (
+  req: TenantRequest,
+  res: Response
+) => {
   try {
     const { email } = req.query;
     const tenantId = req.tenantId;
