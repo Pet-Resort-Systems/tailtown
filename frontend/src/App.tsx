@@ -92,6 +92,9 @@ const Users = lazy(() => import("./pages/settings/Users"));
 const ServiceAgreements = lazy(
   () => import("./pages/settings/ServiceAgreements")
 );
+const LabelPrinterTest = lazy(
+  () => import("./pages/settings/LabelPrinterTest")
+);
 const BusinessSettings = lazy(() => import("./pages/admin/BusinessSettings"));
 const PriceRuleRedirect = lazy(
   () => import("./components/redirects/PriceRuleRedirect")
@@ -541,6 +544,14 @@ const AppRoutes = () => {
             element={
               <AdminOnlyRoute>
                 <ServiceAgreements />
+              </AdminOnlyRoute>
+            }
+          />
+          <Route
+            path="/settings/label-printer"
+            element={
+              <AdminOnlyRoute>
+                <LabelPrinterTest />
               </AdminOnlyRoute>
             }
           />

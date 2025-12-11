@@ -18,12 +18,14 @@ import {
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PrintIcon from "@mui/icons-material/Print";
+import LabelIcon from "@mui/icons-material/Label";
 import HomeIcon from "@mui/icons-material/Home";
 import EditIcon from "@mui/icons-material/Edit";
 import checkInService, {
   CheckInBelonging,
 } from "../../services/checkInService";
 import BelongingsForm from "../../components/check-in/BelongingsForm";
+import KennelLabelPrint from "../../components/labels/KennelLabelPrint";
 
 const CheckInComplete: React.FC = () => {
   const { checkInId } = useParams<{ checkInId: string }>();
@@ -36,6 +38,9 @@ const CheckInComplete: React.FC = () => {
   const [editingBelongings, setEditingBelongings] = useState(false);
   const [belongings, setBelongings] = useState<CheckInBelonging[]>([]);
   const [savingBelongings, setSavingBelongings] = useState(false);
+
+  // Label printing state
+  const [showLabelPrint, setShowLabelPrint] = useState(false);
 
   useEffect(
     () => {
@@ -264,6 +269,13 @@ const CheckInComplete: React.FC = () => {
         >
           <Button
             variant="outlined"
+            startIcon={<LabelIcon />}
+            onClick={() => setShowLabelPrint(true)}
+          >
+            Print Kennel Label
+          </Button>
+          <Button
+            variant="outlined"
             startIcon={<PrintIcon />}
             onClick={handlePrint}
           >
@@ -305,6 +317,18 @@ const CheckInComplete: React.FC = () => {
             </Button>
           </DialogActions>
         </Dialog>
+
+        {/* Kennel Label Print Dialog */}
+        <KennelLabelPrint
+          open={showLabelPrint}
+          onClose={() => setShowLabelPrint(false)}
+          initialData={{
+            dogName: checkIn?.pet?.name || "",
+            kennelNumber: checkIn?.reservation?.resource?.name || "",
+            boardingType:
+              checkIn?.reservation?.service?.name || "Standard Suite",
+          }}
+        />
       </Box>
     </Container>
   );
