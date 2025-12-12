@@ -38,18 +38,22 @@ router.get("/health/simple", getSimpleHealth);
  * Print a kennel label to the Zebra printer
  * No authentication required (local printer access)
  */
-router.post("/print/kennel-label", printKennelLabel);
+router.post("/print/kennel-label", authenticate, printKennelLabel);
 
 /**
  * GET /api/system/print/printers
  * Get list of available printers
  */
-router.get("/print/printers", getAvailablePrinters);
+router.get("/print/printers", authenticate, getAvailablePrinters);
 
 /**
  * GET /api/system/print/printers/:printerName/status
  * Get printer status
  */
-router.get("/print/printers/:printerName/status", getPrinterStatus);
+router.get(
+  "/print/printers/:printerName/status",
+  authenticate,
+  getPrinterStatus
+);
 
 export { router as systemRoutes };
