@@ -27,6 +27,15 @@ import checkInService, {
 import BelongingsForm from "../../components/check-in/BelongingsForm";
 import KennelLabelPrint from "../../components/labels/KennelLabelPrint";
 
+// Map PlayGroupType enum to display-friendly group size
+const mapPlayGroupToSize = (playGroup?: string): string => {
+  if (!playGroup) return "Medium";
+  const group = playGroup.toUpperCase();
+  if (group.includes("SMALL")) return "Small";
+  if (group.includes("LARGE")) return "Large";
+  return "Medium";
+};
+
 const CheckInComplete: React.FC = () => {
   const { checkInId } = useParams<{ checkInId: string }>();
   const navigate = useNavigate();
@@ -324,9 +333,12 @@ const CheckInComplete: React.FC = () => {
           onClose={() => setShowLabelPrint(false)}
           initialData={{
             dogName: checkIn?.pet?.name || "",
+            customerLastName:
+              checkIn?.reservation?.customer?.lastName ||
+              checkIn?.pet?.Customer?.lastName ||
+              "",
             kennelNumber: checkIn?.reservation?.resource?.name || "",
-            boardingType:
-              checkIn?.reservation?.service?.name || "Standard Suite",
+            groupSize: mapPlayGroupToSize(checkIn?.pet?.idealPlayGroup),
           }}
         />
       </Box>

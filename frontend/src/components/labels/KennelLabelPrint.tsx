@@ -20,7 +20,6 @@ import {
   CircularProgress,
 } from "@mui/material";
 import PrintIcon from "@mui/icons-material/Print";
-import UsbIcon from "@mui/icons-material/Usb";
 import DownloadIcon from "@mui/icons-material/Download";
 import PreviewIcon from "@mui/icons-material/Preview";
 import CloseIcon from "@mui/icons-material/Close";
@@ -36,13 +35,10 @@ interface KennelLabelPrintProps {
   initialData?: Partial<KennelLabelData>;
 }
 
-const BOARDING_TYPES = [
-  "Standard Suite",
-  "Standard Plus Suite",
-  "VIP Suite",
-  "Daycare",
-  "Grooming",
-  "Training",
+const GROUP_SIZES = [
+  { value: "Small", label: "Small" },
+  { value: "Medium", label: "Medium" },
+  { value: "Large", label: "Large" },
 ];
 
 const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
@@ -51,11 +47,14 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
   initialData,
 }) => {
   const [dogName, setDogName] = useState(initialData?.dogName || "");
+  const [customerLastName, setCustomerLastName] = useState(
+    initialData?.customerLastName || ""
+  );
   const [kennelNumber, setKennelNumber] = useState(
     initialData?.kennelNumber || ""
   );
-  const [boardingType, setBoardingType] = useState(
-    initialData?.boardingType || "Standard Suite"
+  const [groupSize, setGroupSize] = useState(
+    initialData?.groupSize || "Medium"
   );
   const [showPreview, setShowPreview] = useState(false);
   const [printing, setPrinting] = useState(false);
@@ -64,11 +63,12 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
 
   const labelData: KennelLabelData = {
     dogName,
+    customerLastName,
     kennelNumber,
-    boardingType,
+    groupSize,
   };
 
-  const handlePrint = async (method: "usb" | "download" | "raw") => {
+  const handlePrint = async (method: "server" | "usb" | "download") => {
     if (!dogName || !kennelNumber) {
       setError("Please fill in dog name and kennel number");
       return;
@@ -141,6 +141,15 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
           />
 
           <TextField
+            label="Customer Last Name"
+            value={customerLastName}
+            onChange={(e) => setCustomerLastName(e.target.value)}
+            fullWidth
+            required
+            placeholder="e.g., Smith"
+          />
+
+          <TextField
             label="Kennel Number"
             value={kennelNumber}
             onChange={(e) => setKennelNumber(e.target.value)}
@@ -150,15 +159,15 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
           />
 
           <FormControl fullWidth>
-            <InputLabel>Boarding Type</InputLabel>
+            <InputLabel>Group Size</InputLabel>
             <Select
-              value={boardingType}
-              label="Boarding Type"
-              onChange={(e) => setBoardingType(e.target.value)}
+              value={groupSize}
+              label="Group Size"
+              onChange={(e) => setGroupSize(e.target.value)}
             >
-              {BOARDING_TYPES.map((type) => (
-                <MenuItem key={type} value={type}>
-                  {type}
+              {GROUP_SIZES.map((group) => (
+                <MenuItem key={group.value} value={group.value}>
+                  {group.label}
                 </MenuItem>
               ))}
             </Select>
@@ -175,7 +184,7 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
             }}
           >
             <Typography variant="caption" color="text.secondary" gutterBottom>
-              Label Preview (1" x 6")
+              Label Preview (~14" with duplicate)
             </Typography>
             <Box
               sx={{
@@ -189,19 +198,21 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
                 mt: 1,
               }}
             >
-              <Typography variant="h5" fontWeight="bold">
-                {dogName || "Dog Name"}
+              <Typography variant="h6" fontWeight="bold">
+                {dogName || "Dog Name"} ({customerLastName || "Last Name"})
+                {"   "}
+                <Box component="span" color="primary.main">
+                  #{kennelNumber || "---"}
+                </Box>
+                {"   "}
+                {groupSize}
               </Typography>
               <Typography
-                variant="h3"
-                fontWeight="bold"
-                color="primary"
-                sx={{ my: 1 }}
+                variant="caption"
+                color="text.secondary"
+                sx={{ mt: 1 }}
               >
-                #{kennelNumber || "---"}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {boardingType}
+                (Prints twice with 2" gap for collar readability)
               </Typography>
             </Box>
           </Paper>
@@ -259,16 +270,16 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
             </Button>
           </Tooltip>
 
-          <Tooltip title="Print via USB (Chrome/Edge only)">
+          <Tooltip title="Print to Zebra printer">
             <Button
               variant="contained"
               startIcon={
-                printing ? <CircularProgress size={20} /> : <UsbIcon />
+                printing ? <CircularProgress size={20} /> : <PrintIcon />
               }
-              onClick={() => handlePrint("usb")}
+              onClick={() => handlePrint("server")}
               disabled={printing || !dogName || !kennelNumber}
             >
-              {printing ? "Printing..." : "Print USB"}
+              {printing ? "Printing..." : "Print"}
             </Button>
           </Tooltip>
         </Box>

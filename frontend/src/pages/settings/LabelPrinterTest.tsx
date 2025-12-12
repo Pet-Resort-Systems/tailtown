@@ -15,7 +15,6 @@ import {
   Grid,
 } from "@mui/material";
 import PrintIcon from "@mui/icons-material/Print";
-import UsbIcon from "@mui/icons-material/Usb";
 import DownloadIcon from "@mui/icons-material/Download";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {
@@ -24,19 +23,17 @@ import {
   getZPLPreview,
 } from "../../services/labelPrintService";
 
-const BOARDING_TYPES = [
-  "Standard Suite",
-  "Standard Plus Suite",
-  "VIP Suite",
-  "Daycare",
-  "Grooming",
-  "Training",
+const GROUP_SIZES = [
+  { value: "Small", label: "Small" },
+  { value: "Medium", label: "Medium" },
+  { value: "Large", label: "Large" },
 ];
 
 const LabelPrinterTest: React.FC = () => {
   const [dogName, setDogName] = useState("Max");
+  const [customerLastName, setCustomerLastName] = useState("Smith");
   const [kennelNumber, setKennelNumber] = useState("A-12");
-  const [boardingType, setBoardingType] = useState("Standard Suite");
+  const [groupSize, setGroupSize] = useState("Medium");
   const [printing, setPrinting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -44,11 +41,12 @@ const LabelPrinterTest: React.FC = () => {
 
   const labelData: KennelLabelData = {
     dogName,
+    customerLastName,
     kennelNumber,
-    boardingType,
+    groupSize,
   };
 
-  const handlePrint = async (method: "usb" | "download") => {
+  const handlePrint = async (method: "server" | "download") => {
     setPrinting(true);
     setError(null);
     setSuccess(null);
@@ -124,6 +122,14 @@ const LabelPrinterTest: React.FC = () => {
                 />
 
                 <TextField
+                  label="Customer Last Name"
+                  value={customerLastName}
+                  onChange={(e) => setCustomerLastName(e.target.value)}
+                  fullWidth
+                  placeholder="e.g., Smith, Johnson"
+                />
+
+                <TextField
                   label="Kennel Number"
                   value={kennelNumber}
                   onChange={(e) => setKennelNumber(e.target.value)}
@@ -132,15 +138,15 @@ const LabelPrinterTest: React.FC = () => {
                 />
 
                 <FormControl fullWidth>
-                  <InputLabel>Boarding Type</InputLabel>
+                  <InputLabel>Group Size</InputLabel>
                   <Select
-                    value={boardingType}
-                    label="Boarding Type"
-                    onChange={(e) => setBoardingType(e.target.value)}
+                    value={groupSize}
+                    label="Group Size"
+                    onChange={(e) => setGroupSize(e.target.value)}
                   >
-                    {BOARDING_TYPES.map((type) => (
-                      <MenuItem key={type} value={type}>
-                        {type}
+                    {GROUP_SIZES.map((group) => (
+                      <MenuItem key={group.value} value={group.value}>
+                        {group.label}
                       </MenuItem>
                     ))}
                   </Select>
@@ -167,19 +173,21 @@ const LabelPrinterTest: React.FC = () => {
                   justifyContent: "center",
                 }}
               >
-                <Typography variant="h5" fontWeight="bold" sx={{ mb: 1 }}>
-                  {dogName || "Dog Name"}
+                <Typography variant="h6" fontWeight="bold">
+                  {dogName || "Dog Name"} ({customerLastName || "Last Name"})
+                  {"   "}
+                  <Box component="span" color="primary.main">
+                    #{kennelNumber || "---"}
+                  </Box>
+                  {"   "}
+                  {groupSize}
                 </Typography>
                 <Typography
-                  variant="h3"
-                  fontWeight="bold"
-                  color="primary"
-                  sx={{ my: 2 }}
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ mt: 1 }}
                 >
-                  #{kennelNumber || "---"}
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                  {boardingType}
+                  (Prints twice with 2" gap for collar readability)
                 </Typography>
               </Paper>
 
@@ -188,7 +196,7 @@ const LabelPrinterTest: React.FC = () => {
                 color="text.secondary"
                 sx={{ mt: 1, display: "block" }}
               >
-                Actual label prints vertically on 1" × 6" label
+                Label prints ~14" with content duplicated
               </Typography>
             </Grid>
           </Grid>
@@ -206,11 +214,11 @@ const LabelPrinterTest: React.FC = () => {
             <Button
               variant="contained"
               size="large"
-              startIcon={<UsbIcon />}
-              onClick={() => handlePrint("usb")}
+              startIcon={<PrintIcon />}
+              onClick={() => handlePrint("server")}
               disabled={printing || !dogName || !kennelNumber}
             >
-              {printing ? "Printing..." : "Print via USB"}
+              {printing ? "Printing..." : "Print"}
             </Button>
 
             <Button

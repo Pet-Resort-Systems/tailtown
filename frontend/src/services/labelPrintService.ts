@@ -10,10 +10,25 @@
  * Uses ZPL (Zebra Programming Language) for label formatting
  */
 
+import { customerApi } from "./api";
+
 export interface KennelLabelData {
   dogName: string;
+  customerLastName: string;
   kennelNumber: string;
-  boardingType: string; // e.g., "Standard Suite", "VIP Suite", "Daycare"
+  groupSize: string; // e.g., "Small", "Medium", "Large"
+}
+
+export interface BatchPrintProgress {
+  index: number;
+  total: number;
+  label: KennelLabelData;
+}
+
+export interface BatchPrintResult {
+  successCount: number;
+  failureCount: number;
+  failures: Array<{ index: number; label: KennelLabelData; error: string }>;
 }
 
 // Label dimensions in dots (203 DPI)
@@ -28,15 +43,18 @@ export interface KennelLabelData {
  * - 3" = 609 dots
  */
 export const generateKennelLabelZPL = (data: KennelLabelData): string => {
-  const { dogName, kennelNumber, boardingType } = data;
+  const { dogName, customerLastName, kennelNumber, groupSize } = data;
 
-  // Truncate long names to fit on label
+  // Truncate names to fit on label
   const truncatedDogName =
-    dogName.length > 15 ? dogName.substring(0, 13) + ".." : dogName;
-  const truncatedBoardingType =
-    boardingType.length > 20
-      ? boardingType.substring(0, 18) + ".."
-      : boardingType;
+    dogName.length > 10 ? dogName.substring(0, 8) + ".." : dogName;
+  const truncatedLastName =
+    customerLastName.length > 8
+      ? customerLastName.substring(0, 6) + ".."
+      : customerLastName;
+
+  // Build the main line: Name (LastName)   #Kennel   Group
+  const mainLine = `${truncatedDogName} (${truncatedLastName})   #${kennelNumber}   ${groupSize}`;
 
   // ZPL Commands:
   // ^XA = Start format
@@ -45,27 +63,81 @@ export const generateKennelLabelZPL = (data: KennelLabelData): string => {
   // ^FS = Field Separator
   // ^XZ = End format
 
-  // For 1" wide label, we use horizontal text layout
-  // X position controls horizontal placement on the label
-  // Y position controls vertical placement
-
-  // ^FWR rotates all fields 90° so text runs along the 6" length
+  // For 1" wide label with duplicated content for neck collar readability
+  // ^FWR rotates all fields 90° so text runs along the label length
   // X controls vertical stacking (0=bottom, 203=top of 1" width)
   // Y controls horizontal position along the length
+  // Label length: ~14" (2842 dots) to fit both copies with 2" gap
   const zpl = `^XA
 ^FWR
 ^PW203
-^LL609
-^CF0,45
-^FO145,30^FD${truncatedDogName}^FS
-^CF0,70
-^FO65,30^FD#${kennelNumber}^FS
-^CF0,30
-^FO20,30^FD${truncatedBoardingType}^FS
+^LL2842
+^CF0,90
+^FO60,10^FD${mainLine}^FS
+^FO60,1626^FD${mainLine}^FS
 ^PQ1
 ^XZ`;
 
   return zpl;
+};
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Print multiple labels sequentially.
+ *
+ * Printing is intentionally sequential to avoid overwhelming the printer/spooler.
+ */
+export const printKennelLabelsBatch = async (
+  labels: KennelLabelData[],
+  method: "server" | "usb" | "download" = "server",
+  options?: {
+    delayMs?: number;
+    onProgress?: (progress: BatchPrintProgress) => void;
+    printFn?: (
+      data: KennelLabelData,
+      method: "server" | "usb" | "download"
+    ) => Promise<boolean>;
+  }
+): Promise<BatchPrintResult> => {
+  const delayMs = options?.delayMs ?? 250;
+  const printFn = options?.printFn ?? printKennelLabel;
+  const failures: BatchPrintResult["failures"] = [];
+  let successCount = 0;
+
+  for (let i = 0; i < labels.length; i++) {
+    const label = labels[i];
+    options?.onProgress?.({ index: i, total: labels.length, label });
+
+    try {
+      const ok = await printFn(label, method);
+      if (ok) {
+        successCount += 1;
+      } else {
+        failures.push({
+          index: i,
+          label,
+          error: "Print returned false",
+        });
+      }
+    } catch (e: any) {
+      failures.push({
+        index: i,
+        label,
+        error: e?.message || "Failed to print label",
+      });
+    }
+
+    if (delayMs > 0 && i < labels.length - 1) {
+      await sleep(delayMs);
+    }
+  }
+
+  return {
+    successCount,
+    failureCount: failures.length,
+    failures,
+  };
 };
 
 /**
@@ -144,54 +216,41 @@ export const printLabelViaUSB = async (
 };
 
 /**
- * Print label using raw printing (requires print server or driver)
- * This method uses a hidden iframe to trigger the print dialog
+ * Print label via backend API (sends to server which prints via lp command)
+ * Uses the system endpoint which doesn't require authentication
  */
-export const printLabelRaw = async (
+export const printLabelViaServer = async (
   data: KennelLabelData
-): Promise<boolean> => {
-  const zpl = generateKennelLabelZPL(data);
-
-  // Create a hidden iframe
-  const iframe = document.createElement("iframe");
-  iframe.style.display = "none";
-  document.body.appendChild(iframe);
-
-  // Write the ZPL content
-  const doc = iframe.contentDocument || iframe.contentWindow?.document;
-  if (doc) {
-    doc.open();
-    doc.write(
-      `<pre style="font-family: monospace; white-space: pre;">${zpl}</pre>`
+): Promise<{ success: boolean; jobId?: string; error?: string }> => {
+  try {
+    const response = await customerApi.post(
+      "/api/system/print/kennel-label",
+      data
     );
-    doc.close();
-
-    // Trigger print
-    iframe.contentWindow?.print();
+    return response.data;
+  } catch (error: any) {
+    console.error("Error printing via server:", error);
+    throw new Error(
+      error.response?.data?.error || "Failed to print label via server"
+    );
   }
-
-  // Clean up after a delay
-  setTimeout(() => {
-    document.body.removeChild(iframe);
-  }, 1000);
-
-  return true;
 };
 
 /**
- * Main print function - tries USB first, falls back to download
+ * Main print function - server is default, with fallbacks
  */
 export const printKennelLabel = async (
   data: KennelLabelData,
-  method: "usb" | "download" | "raw" = "usb"
+  method: "server" | "usb" | "download" = "server"
 ): Promise<boolean> => {
   switch (method) {
+    case "server":
+      const result = await printLabelViaServer(data);
+      return result.success;
     case "usb":
       return printLabelViaUSB(data);
     case "download":
       return printLabelViaBrowser(data);
-    case "raw":
-      return printLabelRaw(data);
     default:
       return printLabelViaBrowser(data);
   }
@@ -206,11 +265,12 @@ export const getZPLPreview = (data: KennelLabelData): string => {
 
 const labelPrintService = {
   printKennelLabel,
+  printKennelLabelsBatch,
   generateKennelLabelZPL,
   getZPLPreview,
   printLabelViaUSB,
   printLabelViaBrowser,
-  printLabelRaw,
+  printLabelViaServer,
 };
 
 export default labelPrintService;

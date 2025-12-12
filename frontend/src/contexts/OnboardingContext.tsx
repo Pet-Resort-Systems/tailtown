@@ -54,6 +54,21 @@ const defaultState: OnboardingState = {
 
 const OnboardingContext = createContext<OnboardingContextType | null>(null);
 
+const getTenantKey = () => {
+  const hostname = window.location.hostname;
+  const parts = hostname.split(".");
+  return (
+    (parts.length >= 3 ? parts[0] : undefined) ||
+    localStorage.getItem("tailtown_tenant_id") ||
+    "dev"
+  );
+};
+
+const getOnboardingStorageKey = (email: string) => {
+  const tenantKey = getTenantKey();
+  return `${ONBOARDING_STORAGE_KEY}_${tenantKey}_${email.toLowerCase()}`;
+};
+
 export const useOnboarding = () => {
   const context = useContext(OnboardingContext);
   if (!context) {
@@ -67,11 +82,13 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const { user } = useAuth();
   const [state, setState] = useState<OnboardingState>(defaultState);
+  const userId = user?.id;
+  const userEmail = user?.email;
 
   // Load onboarding state from localStorage
   useEffect(() => {
-    if (user?.id) {
-      const storageKey = `${ONBOARDING_STORAGE_KEY}_${user.id}`;
+    if (userId && userEmail) {
+      const storageKey = getOnboardingStorageKey(userEmail);
       const stored = localStorage.getItem(storageKey);
 
       if (stored) {
@@ -82,25 +99,38 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
           console.error("Failed to parse onboarding state:", e);
         }
       } else {
-        // First time user - show onboarding prompt
-        setState({
-          ...defaultState,
-          isActive: true, // Auto-start for new users
-        });
+        const legacyKey = `${ONBOARDING_STORAGE_KEY}_${userId}`;
+        const legacyStored = localStorage.getItem(legacyKey);
+
+        if (legacyStored) {
+          try {
+            const parsed = JSON.parse(legacyStored);
+            localStorage.setItem(storageKey, JSON.stringify(parsed));
+            setState(parsed);
+          } catch (e) {
+            console.error("Failed to parse onboarding state:", e);
+          }
+        } else {
+          // First time user - show onboarding prompt
+          setState({
+            ...defaultState,
+            isActive: true, // Auto-start for new users
+          });
+        }
       }
     }
-  }, [user?.id]);
+  }, [userEmail, userId]);
 
   // Save state to localStorage
   const saveState = useCallback(
     (newState: OnboardingState) => {
-      if (user?.id) {
-        const storageKey = `${ONBOARDING_STORAGE_KEY}_${user.id}`;
+      if (userId && userEmail) {
+        const storageKey = getOnboardingStorageKey(userEmail);
         localStorage.setItem(storageKey, JSON.stringify(newState));
       }
       setState(newState);
     },
-    [user?.id]
+    [userEmail, userId]
   );
 
   const startOnboarding = useCallback(() => {
@@ -162,12 +192,14 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [state, saveState]);
 
   const resetOnboarding = useCallback(() => {
-    if (user?.id) {
-      const storageKey = `${ONBOARDING_STORAGE_KEY}_${user.id}`;
+    if (userId && userEmail) {
+      const storageKey = getOnboardingStorageKey(userEmail);
+      const legacyKey = `${ONBOARDING_STORAGE_KEY}_${userId}`;
       localStorage.removeItem(storageKey);
+      localStorage.removeItem(legacyKey);
     }
     setState(defaultState);
-  }, [user?.id]);
+  }, [userEmail, userId]);
 
   return (
     <OnboardingContext.Provider

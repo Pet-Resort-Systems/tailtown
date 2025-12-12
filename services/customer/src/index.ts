@@ -71,6 +71,7 @@ import featureFlagsRoutes from "./routes/feature-flags.routes";
 import { systemRoutes } from "./routes/system.routes";
 import onboardingRoutes from "./routes/onboarding.routes";
 import customerAuthRoutes from "./routes/customer-auth.routes";
+import printRoutes from "./routes/print.routes";
 import { errorHandler } from "./middleware/error.middleware";
 import {
   extractTenantContext,
@@ -588,6 +589,7 @@ app.use(
 );
 app.use("/api/addons", requireTenant, authenticate, addonRoutes);
 app.use("/api/pets", requireTenant, authenticate, vaccineUploadRoutes);
+app.use("/api/print", requireTenant, authenticate, printRoutes);
 
 // Reference Data Routes (breeds, vets, temperaments) - read-only, optional auth
 app.use("/api", requireTenant, optionalAuth, referenceDataRoutes);
