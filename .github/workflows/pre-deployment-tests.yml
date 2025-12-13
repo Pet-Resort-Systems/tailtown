@@ -234,6 +234,8 @@ jobs:
           echo "✅ All required files present"
 
       - name: Validate Prisma Schema Syntax
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/test
         run: |
           cd services/customer
           npx prisma validate
