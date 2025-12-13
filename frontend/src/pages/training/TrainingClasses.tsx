@@ -36,7 +36,7 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { DatePicker } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import schedulingService from "../../services/schedulingService";
 import { customerService } from "../../services/customerService";
@@ -94,12 +94,14 @@ const TrainingClasses: React.FC = () => {
     amountPaid: 0,
   });
 
-  useEffect(() => {
+  useEffect(
+    () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      loadClasses();
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    loadClasses();
-  },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  [filters]);
+    [filters]
+  );
 
   const loadClasses = async () => {
     try {

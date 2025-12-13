@@ -35,7 +35,7 @@ import {
   Cancel as CancelIcon,
 } from "@mui/icons-material";
 import { DatePicker } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { format } from "date-fns";
 import schedulingService from "../../services/schedulingService";
@@ -72,12 +72,14 @@ const GroomerAppointments: React.FC = () => {
     endDate: "",
   });
 
-  useEffect(() => {
+  useEffect(
+    () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      loadAppointments();
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    loadAppointments();
-  },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  [filters]);
+    [filters]
+  );
 
   const loadAppointments = async () => {
     try {

@@ -79,7 +79,7 @@ preflight_checks() {
             
             # Validate frontend .env points to localhost
             if [[ "$env_file" == "frontend/.env" ]]; then
-                if grep -q "129.212.178.244" "$PROJECT_ROOT/$env_file"; then
+                if grep -Eq "129\.212\.178\.244|canicloud\.com" "$PROJECT_ROOT/$env_file"; then
                     echo -e "${RED}  ✗ Frontend .env points to production IP!${NC}"
                     echo -e "${YELLOW}  Should be: REACT_APP_API_URL=http://localhost:4004${NC}"
                     errors=$((errors + 1))

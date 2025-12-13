@@ -368,7 +368,7 @@ clean_logs() {
 #############################################
 
 fix_node_modules() {
-    print_header "Fixing node_modules"
+    print_header "Fixing Node Modules"
     
     echo "This will:"
     echo "  1. Remove all node_modules directories"
@@ -393,6 +393,8 @@ fix_node_modules() {
     cd "$PROJECT_ROOT/frontend" && npm install
     cd "$PROJECT_ROOT/services/customer" && npm install
     cd "$PROJECT_ROOT/services/reservation-service" && npm install
+    cd "$PROJECT_ROOT/services/reservation-service/scripts" && npm install
+    cd "$PROJECT_ROOT/services/payment-service" && npm install
     
     echo -e "${GREEN}✅ node_modules fixed${NC}"
 }

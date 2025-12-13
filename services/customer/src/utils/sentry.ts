@@ -1,8 +1,8 @@
 /**
  * Sentry Error Tracking Configuration
- * 
+ *
  * Provides error tracking and performance monitoring for production.
- * 
+ *
  * Features:
  * - Automatic error capture
  * - Performance monitoring
@@ -10,26 +10,28 @@
  * - Custom tags for filtering
  */
 
-import * as Sentry from '@sentry/node';
-import { nodeProfilingIntegration } from '@sentry/profiling-node';
+import * as Sentry from "@sentry/node";
+import { nodeProfilingIntegration } from "@sentry/profiling-node";
 
 // Sentry configuration
 const SENTRY_DSN = process.env.SENTRY_DSN;
-const SENTRY_ENABLED = process.env.SENTRY_ENABLED !== 'false' && process.env.NODE_ENV === 'production';
-const SENTRY_ENVIRONMENT = process.env.NODE_ENV || 'development';
-const SENTRY_RELEASE = process.env.SENTRY_RELEASE || 'customer-service@1.0.0';
+const SENTRY_ENABLED =
+  process.env.SENTRY_ENABLED !== "false" &&
+  process.env.NODE_ENV === "production";
+const SENTRY_ENVIRONMENT = process.env.NODE_ENV || "development";
+const SENTRY_RELEASE = process.env.SENTRY_RELEASE || "customer-service@1.0.0";
 
 /**
  * Initialize Sentry error tracking
  */
 export function initSentry(): void {
   if (!SENTRY_ENABLED) {
-    console.log('📊 Sentry error tracking is disabled');
+    console.log("📊 Sentry error tracking is disabled");
     return;
   }
 
   if (!SENTRY_DSN) {
-    console.warn('⚠️  Sentry DSN not configured, error tracking disabled');
+    console.warn("⚠️  Sentry DSN not configured, error tracking disabled");
     return;
   }
 
@@ -38,51 +40,51 @@ export function initSentry(): void {
       dsn: SENTRY_DSN,
       environment: SENTRY_ENVIRONMENT,
       release: SENTRY_RELEASE,
-      
+
       // Performance Monitoring
       tracesSampleRate: 0.1, // Capture 10% of transactions for performance monitoring
-      
+
       // Profiling
       profilesSampleRate: 0.1, // Capture 10% of transactions for profiling
-      integrations: [
-        nodeProfilingIntegration(),
-      ],
-      
+      integrations: [nodeProfilingIntegration() as any],
+
       // Error filtering
       beforeSend(event, hint) {
         // Don't send errors in development
-        if (SENTRY_ENVIRONMENT === 'development') {
+        if (SENTRY_ENVIRONMENT === "development") {
           return null;
         }
-        
+
         // Filter out specific errors
         const error = hint.originalException;
-        if (error && typeof error === 'object' && 'message' in error) {
+        if (error && typeof error === "object" && "message" in error) {
           const message = String(error.message);
-          
+
           // Ignore common non-critical errors
-          if (message.includes('ECONNREFUSED') || 
-              message.includes('ETIMEDOUT') ||
-              message.includes('socket hang up')) {
+          if (
+            message.includes("ECONNREFUSED") ||
+            message.includes("ETIMEDOUT") ||
+            message.includes("socket hang up")
+          ) {
             return null;
           }
         }
-        
+
         return event;
       },
-      
+
       // Add custom tags
       initialScope: {
         tags: {
-          service: 'customer-service',
+          service: "customer-service",
           version: SENTRY_RELEASE,
         },
       },
     });
 
-    console.log('✅ Sentry error tracking initialized');
+    console.log("✅ Sentry error tracking initialized");
   } catch (error) {
-    console.error('❌ Failed to initialize Sentry:', error);
+    console.error("❌ Failed to initialize Sentry:", error);
   }
 }
 
@@ -91,7 +93,10 @@ export function initSentry(): void {
  * @param error - Error to capture
  * @param context - Additional context
  */
-export function captureException(error: Error, context?: Record<string, any>): void {
+export function captureException(
+  error: Error,
+  context?: Record<string, any>
+): void {
   if (!SENTRY_ENABLED) {
     return;
   }
@@ -109,7 +114,7 @@ export function captureException(error: Error, context?: Record<string, any>): v
  */
 export function captureMessage(
   message: string,
-  level: 'info' | 'warning' | 'error' = 'info',
+  level: "info" | "warning" | "error" = "info",
   context?: Record<string, any>
 ): void {
   if (!SENTRY_ENABLED) {
@@ -126,7 +131,11 @@ export function captureMessage(
  * Set user context for error tracking
  * @param user - User information
  */
-export function setUser(user: { id: string; email?: string; tenantId?: string }): void {
+export function setUser(user: {
+  id: string;
+  email?: string;
+  tenantId?: string;
+}): void {
   if (!SENTRY_ENABLED) {
     return;
   }
@@ -146,7 +155,7 @@ export function setUser(user: { id: string; email?: string; tenantId?: string })
  */
 export function addBreadcrumb(
   message: string,
-  category: string = 'custom',
+  category: string = "custom",
   data?: Record<string, any>
 ): void {
   if (!SENTRY_ENABLED) {
@@ -157,7 +166,7 @@ export function addBreadcrumb(
     message,
     category,
     data,
-    level: 'info',
+    level: "info",
   });
 }
 
@@ -166,17 +175,20 @@ export function addBreadcrumb(
  * @param name - Span name
  * @param op - Operation type
  */
-export function startSpan(name: string, op: string = 'http.server'): any {
+export function startSpan(name: string, op: string = "http.server"): any {
   if (!SENTRY_ENABLED) {
     return null;
   }
 
-  return Sentry.startSpan({
-    name,
-    op,
-  }, () => {
-    // Span callback
-  });
+  return Sentry.startSpan(
+    {
+      name,
+      op,
+    },
+    () => {
+      // Span callback
+    }
+  );
 }
 
 // Export Sentry for advanced usage
