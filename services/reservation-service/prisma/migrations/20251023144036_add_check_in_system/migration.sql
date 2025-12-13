@@ -4,9 +4,36 @@ CREATE TYPE "QuestionType" AS ENUM ('TEXT', 'NUMBER', 'YES_NO', 'MULTIPLE_CHOICE
 -- CreateEnum
 CREATE TYPE "MedicationMethod" AS ENUM ('ORAL_PILL', 'ORAL_LIQUID', 'TOPICAL', 'INJECTION', 'EYE_DROPS', 'EAR_DROPS', 'INHALER', 'TRANSDERMAL_PATCH', 'OTHER');
 
--- AlterTable
-ALTER TABLE "check_ins" ADD COLUMN     "customerId" TEXT,
-ADD COLUMN     "templateId" TEXT;
+-- Ensure base table exists on fresh databases, then add new columns.
+-- Prisma migrations normally run once, but CI may start from an empty DB.
+CREATE TABLE IF NOT EXISTS "check_ins" (
+    "id" TEXT NOT NULL,
+    "tenantId" TEXT NOT NULL DEFAULT 'dev',
+    "petId" TEXT NOT NULL,
+    "reservationId" TEXT,
+    "templateId" TEXT,
+    "customerId" TEXT,
+    "checkInTime" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "checkOutTime" TIMESTAMP(3),
+    "checkInNotes" TEXT,
+    "checkOutNotes" TEXT,
+    "checkInBy" TEXT,
+    "checkOutBy" TEXT,
+    "belongingsChecklist" JSONB,
+    "foodProvided" BOOLEAN NOT NULL DEFAULT false,
+    "medicationGiven" BOOLEAN NOT NULL DEFAULT false,
+    "medicationNotes" TEXT,
+    "behaviorDuringStay" TEXT,
+    "photosTaken" BOOLEAN NOT NULL DEFAULT false,
+    "photosShared" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "check_ins_pkey" PRIMARY KEY ("id")
+);
+
+ALTER TABLE "check_ins" ADD COLUMN IF NOT EXISTS "customerId" TEXT;
+ALTER TABLE "check_ins" ADD COLUMN IF NOT EXISTS "templateId" TEXT;
 
 -- CreateTable
 CREATE TABLE "check_in_templates" (

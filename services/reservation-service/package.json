@@ -4,6 +4,7 @@
   "description": "Reservation management service for Tailtown",
   "main": "dist/index.js",
   "scripts": {
+    "prebuild": "prisma generate",
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
@@ -16,7 +17,7 @@
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {
-    "@prisma/client": "7.1.0",
+    "@prisma/client": "6.19.0",
     "@types/compression": "^1.8.1",
     "axios": "^1.13.2",
     "compression": "^1.8.1",
@@ -25,6 +26,7 @@
     "express": "^5.2.1",
     "express-rate-limit": "^8.2.1",
     "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
     "uuid": "^11.1.0",
     "zod": "^4.1.13"
@@ -44,10 +46,10 @@
     "@typescript-eslint/parser": "^8.47.0",
     "eslint": "^9.39.1",
     "jest": "^30.2.0",
-    "prisma": "7.1.0",
+    "prisma": "6.19.0",
     "supertest": "^6.3.4",
     "ts-jest": "^29.1.0",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.0.4"
+    "typescript": "^5.1.6"
   }
 }

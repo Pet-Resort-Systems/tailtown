@@ -3,6 +3,9 @@ import { prisma } from "../config/prisma";
 import { logger } from "../utils/logger";
 import { getCache, setCache, getCacheKey } from "../utils/redis";
 
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 // Extended Request type to include tenant info
 export interface TenantRequest extends Request {
   tenantId?: string;
@@ -34,6 +37,7 @@ export const extractTenantContext = async (
 ) => {
   try {
     let subdomain: string | null = null;
+    let tenantIdHeader: string | null = null;
 
     // Method 1: Extract from subdomain (production)
     // Check X-Forwarded-Host first (from reverse proxy), then fall back to hostname
@@ -70,8 +74,16 @@ export const extractTenantContext = async (
 
     // Method 2b: Check X-Tenant-ID header (for impersonation)
     if (!subdomain && req.headers["x-tenant-id"]) {
-      subdomain = req.headers["x-tenant-id"] as string;
-      logger.debug("Using X-Tenant-ID header", { subdomain });
+      tenantIdHeader = req.headers["x-tenant-id"] as string;
+      logger.debug("Using X-Tenant-ID header", { tenantIdHeader });
+
+      // If the header is a UUID, treat it as the tenant UUID directly.
+      // Otherwise fall back to legacy behavior where it is treated as a subdomain.
+      if (UUID_REGEX.test(tenantIdHeader)) {
+        // leave subdomain null; we'll resolve by id below
+      } else {
+        subdomain = tenantIdHeader;
+      }
     }
 
     // Method 3: Development - Check query parameter
@@ -80,8 +92,22 @@ export const extractTenantContext = async (
       logger.debug("Using query parameter", { subdomain });
     }
 
-    // Method 4: Fail if no tenant context found
-    if (!subdomain) {
+    // Method 4: Default to dev tenant in non-production
+    if (
+      !subdomain &&
+      !tenantIdHeader &&
+      process.env.NODE_ENV !== "production" &&
+      process.env.NODE_ENV !== "test"
+    ) {
+      subdomain = "dev";
+      logger.debug("No tenant provided; defaulting to dev tenant", {
+        hostname,
+        path: req.path,
+      });
+    }
+
+    // Method 5: Fail if no tenant context found
+    if (!subdomain && !tenantIdHeader) {
       logger.error("No tenant context found", { hostname, path: req.path });
       return res.status(400).json({
         success: false,
@@ -89,6 +115,70 @@ export const extractTenantContext = async (
         message:
           "No tenant context found. Please access via subdomain or provide tenant ID.",
       });
+    }
+
+    // If we have a UUID tenant id header, resolve tenant by id
+    if (tenantIdHeader && UUID_REGEX.test(tenantIdHeader)) {
+      const cacheKey = getCacheKey("global", "tenant", tenantIdHeader);
+      let tenant = await getCache<{
+        id: string;
+        subdomain: string;
+        businessName: string;
+        status: string;
+        isActive: boolean;
+        isPaused: boolean;
+      }>(cacheKey);
+
+      if (!tenant) {
+        tenant = await prisma.tenant.findUnique({
+          where: { id: tenantIdHeader },
+          select: {
+            id: true,
+            subdomain: true,
+            businessName: true,
+            status: true,
+            isActive: true,
+            isPaused: true,
+          },
+        });
+
+        if (tenant) {
+          await setCache(cacheKey, tenant, 300);
+        }
+      }
+
+      if (!tenant) {
+        return res.status(404).json({
+          success: false,
+          error: "Tenant not found",
+          message: `No tenant found for id: ${tenantIdHeader}`,
+        });
+      }
+
+      if (!tenant.isActive || tenant.isPaused) {
+        return res.status(403).json({
+          success: false,
+          error: "Tenant inactive",
+          message: "This tenant account is currently inactive or paused",
+        });
+      }
+
+      req.tenantId = tenant.id;
+      req.tenant = {
+        id: tenant.id,
+        subdomain: tenant.subdomain,
+        businessName: tenant.businessName,
+        status: tenant.status,
+        isActive: tenant.isActive,
+      };
+
+      logger.debug("Tenant context set", {
+        businessName: tenant.businessName,
+        subdomain: tenant.subdomain,
+        tenantId: tenant.id,
+      });
+
+      return next();
     }
 
     // Try to get tenant from cache first

@@ -306,8 +306,13 @@ BEGIN
         SELECT 1 FROM information_schema.table_constraints 
         WHERE constraint_name = 'waitlist_entries_classId_fkey'
     ) THEN
-        ALTER TABLE "waitlist_entries" ADD CONSTRAINT "waitlist_entries_classId_fkey" 
-        FOREIGN KEY ("classId") REFERENCES "training_classes"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+        IF EXISTS (
+            SELECT 1 FROM information_schema.tables
+            WHERE table_name = 'training_classes'
+        ) THEN
+            ALTER TABLE "waitlist_entries" ADD CONSTRAINT "waitlist_entries_classId_fkey" 
+            FOREIGN KEY ("classId") REFERENCES "training_classes"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+        END IF;
     END IF;
 END $$;
 

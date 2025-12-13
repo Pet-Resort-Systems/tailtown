@@ -54,4 +54,17 @@ CREATE INDEX "reservation_activity_log_tenant_created_idx" ON "reservation_activ
 CREATE INDEX "reservation_activity_log_actor_idx" ON "reservation_activity_logs"("actorType", "actorId");
 
 -- AddForeignKey
-ALTER TABLE "reservation_activity_logs" ADD CONSTRAINT "reservation_activity_logs_reservationId_fkey" FOREIGN KEY ("reservationId") REFERENCES "reservations"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_name = 'reservations'
+  ) THEN
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.table_constraints
+      WHERE constraint_name = 'reservation_activity_logs_reservationId_fkey'
+    ) THEN
+      ALTER TABLE "reservation_activity_logs" ADD CONSTRAINT "reservation_activity_logs_reservationId_fkey" FOREIGN KEY ("reservationId") REFERENCES "reservations"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+  END IF;
+END $$;

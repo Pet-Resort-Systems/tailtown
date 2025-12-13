@@ -16,6 +16,7 @@
 /** Minimal customer fields for list views and references */
 export const customerSelectMinimal = {
   id: true,
+  tenantId: true,
   firstName: true,
   lastName: true,
   email: true,
@@ -25,6 +26,7 @@ export const customerSelectMinimal = {
 /** Customer fields for detail views */
 export const customerSelectFull = {
   id: true,
+  tenantId: true,
   firstName: true,
   lastName: true,
   email: true,
@@ -46,6 +48,7 @@ export const customerSelectFull = {
 /** Minimal pet fields for list views */
 export const petSelectMinimal = {
   id: true,
+  tenantId: true,
   name: true,
   type: true,
   breed: true,
@@ -56,6 +59,7 @@ export const petSelectMinimal = {
 /** Pet fields for reservation context */
 export const petSelectForReservation = {
   id: true,
+  tenantId: true,
   name: true,
   type: true,
   breed: true,
@@ -68,6 +72,7 @@ export const petSelectForReservation = {
 /** Full pet fields */
 export const petSelectFull = {
   id: true,
+  tenantId: true,
   name: true,
   type: true,
   breed: true,

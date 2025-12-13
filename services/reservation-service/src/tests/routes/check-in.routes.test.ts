@@ -76,7 +76,28 @@ jest.mock("../../controllers/service-agreement.controller", () => ({
   createAgreement: jest.fn((req, res) =>
     res.status(201).json({ status: "success", data: {} })
   ),
+  getAllAgreements: jest.fn((req, res) =>
+    res.json({ status: "success", data: [] })
+  ),
   getAgreementByCheckIn: jest.fn((req, res) =>
+    res.json({ status: "success", data: {} })
+  ),
+  getAgreementsByCustomer: jest.fn((req, res) =>
+    res.json({ status: "success", data: [] })
+  ),
+  checkCustomerAgreement: jest.fn((req, res) =>
+    res.json({ status: "success", data: { hasValidAgreement: false } })
+  ),
+  getAgreementById: jest.fn((req, res) =>
+    res.json({ status: "success", data: {} })
+  ),
+  invalidateAgreement: jest.fn((req, res) =>
+    res.json({ status: "success", data: {} })
+  ),
+  getTemplateVersions: jest.fn((req, res) =>
+    res.json({ status: "success", data: [] })
+  ),
+  getTemplateVersion: jest.fn((req, res) =>
     res.json({ status: "success", data: {} })
   ),
 }));
@@ -235,12 +256,10 @@ describe("Check-In Routes", () => {
 
   describe("Service Agreement Routes", () => {
     it("POST /api/service-agreements should call createAgreement", async () => {
-      await request(app)
-        .post("/api/service-agreements")
-        .send({
-          checkInId: "checkin-123",
-          signature: "data:image/png;base64,...",
-        });
+      await request(app).post("/api/service-agreements").send({
+        checkInId: "checkin-123",
+        signature: "data:image/png;base64,...",
+      });
       expect(serviceAgreementController.createAgreement).toHaveBeenCalled();
     });
 

@@ -10,10 +10,10 @@
     "@fullcalendar/interaction": "^6.1.17",
     "@fullcalendar/react": "^6.1.17",
     "@fullcalendar/timegrid": "^6.1.17",
-    "@mui/icons-material": "^7.3.6",
-    "@mui/material": "^7.3.6",
-    "@mui/system": "^7.3.5",
-    "@mui/x-date-pickers": "^8.21.0",
+    "@mui/icons-material": "5.16.14",
+    "@mui/material": "5.16.14",
+    "@mui/system": "5.16.14",
+    "@mui/x-date-pickers": "^7.0.0",
     "@sentry/react": "^10.29.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^14.2.1",
@@ -38,7 +38,8 @@
     "react-router-dom": "7.10.1",
     "react-scripts": "5.0.1",
     "recharts": "^3.5.1",
-    "typescript": "^5.4.2",
+    "uuid": "^9.0.1",
+    "typescript": "5.1.6",
     "web-vitals": "^5.1.0",
     "yup": "^1.6.1"
   },
@@ -77,10 +78,11 @@
   },
   "jest": {
     "transformIgnorePatterns": [
-      "node_modules/(?!(axios)/)"
+      "node_modules/(?!(axios|react-router|react-router-dom)/)"
     ],
     "moduleNameMapper": {
-      "\\.(css|less|scss|sass)$": "<rootDir>/src/__mocks__/styleMock.js"
+      "\\.(css|less|scss|sass)$": "<rootDir>/src/__mocks__/styleMock.js",
+      "^react-router-dom$": "<rootDir>/src/__mocks__/react-router-dom.js"
     }
   },
   "browserslist": {
@@ -106,6 +108,7 @@
     "@testing-library/dom": "^10.4.1",
     "@types/lodash": "^4.17.21",
     "@types/recharts": "^2.0.1",
+    "@types/uuid": "^9.0.7",
     "compression-webpack-plugin": "^11.1.0",
     "eslint-plugin-unused-imports": "^4.3.0",
     "webpack-bundle-analyzer": "^5.0.1"
