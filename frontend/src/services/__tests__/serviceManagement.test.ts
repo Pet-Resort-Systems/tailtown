@@ -135,7 +135,15 @@ describe("serviceManagement", () => {
 
       const result = await serviceManagement.updateService("s1", updates);
 
-      expect(mockApi.put).toHaveBeenCalledWith("/api/services/s1", updates);
+      // updateService transforms the data before sending, so check it was called with transformed data
+      expect(mockApi.put).toHaveBeenCalledWith(
+        "/api/services/s1",
+        expect.objectContaining({
+          price: 50,
+          description: "Updated description",
+          isActive: true, // Default added by updateService
+        })
+      );
       expect(result.price).toBe(50);
     });
   });
