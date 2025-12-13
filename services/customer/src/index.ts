@@ -449,6 +449,10 @@ app.use("/api/metrics", apiMetricsRoutes);
 // ============================================
 // Customer lookup for booking portal login (public, rate-limited)
 import { lookupCustomerByEmail } from "./controllers/customer";
+import { loginStaff } from "./controllers/staff";
+import { validateBody } from "./middleware/validation.middleware";
+import { staffLoginSchema } from "./validators/staff.validators";
+import { loginRateLimiter } from "./middleware/rateLimiter.middleware";
 
 const customerLookupLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -467,6 +471,14 @@ app.post(
   customerLookupLimiter,
   requireJsonContentType,
   lookupCustomerByEmail
+);
+
+app.post(
+  "/api/auth/login",
+  requireTenant,
+  loginRateLimiter,
+  validateBody(staffLoginSchema),
+  loginStaff
 );
 
 // Announcement Routes (GET is public, write requires admin - auth handled in routes)

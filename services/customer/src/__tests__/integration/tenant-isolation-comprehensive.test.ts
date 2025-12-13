@@ -9,6 +9,8 @@
  * 5. Database query isolation
  */
 
+// @ts-nocheck
+
 import request from "supertest";
 import { PrismaClient } from "@prisma/client";
 import { generateToken } from "../../utils/jwt";
@@ -193,7 +195,7 @@ describe("Comprehensive Tenant Isolation", () => {
       const response = await request(app)
         .get("/api/customers")
         .set("Authorization", `Bearer ${tokenA}`)
-        .set("x-tenant-subdomain", "tenant-a-isolation-test");
+        .set("x-tenant-id", tenantAId);
 
       expect(response.status).toBe(200);
       const customers = response.body.data;
