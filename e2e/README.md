@@ -11,6 +11,7 @@ End-to-end tests that simulate real user interactions with the Tailtown applicat
 Tests complete reservation workflows:
 
 - ✅ **Create boarding reservation with kennel assignment**
+
   - Navigate to kennel calendar
   - Select customer and pet
   - Choose boarding service
@@ -18,17 +19,20 @@ Tests complete reservation workflows:
   - Submit and verify on calendar/dashboard
 
 - ✅ **Prevent double-booking same kennel**
+
   - Attempt to book occupied kennel
   - Verify occupied kennels show red indicator
   - Verify occupied kennels are disabled
 
 - ✅ **Edit existing reservation and change kennel**
+
   - Open reservation from list
   - Edit kennel assignment
   - Verify current kennel shows as available
   - Save changes
 
 - ✅ **Create grooming reservation without kennel**
+
   - Select grooming service
   - Verify kennel selector does NOT appear
   - Submit successfully
@@ -39,44 +43,132 @@ Tests complete reservation workflows:
   - Assign different kennels to each pet
   - Submit successfully
 
-### 2. `kennel-management.spec.ts` (10 tests)
+### 2. `check-in-flow.spec.ts` (3 tests)
+
+Tests complete check-in workflows:
+
+- ✅ **Complete full check-in workflow**
+
+  - Navigate from dashboard to check-in
+  - Review pet summary with vaccination status
+  - Complete questionnaire
+  - Add medications (optional)
+  - Add belongings with quick-add
+  - Sign service agreement with signature capture
+  - Review and submit
+  - Verify completion
+
+- ✅ **Edit belongings after check-in completion**
+
+  - Navigate to completed check-in
+  - Open belongings edit dialog
+  - Add/remove items
+  - Save changes
+
+- ✅ **Show pet history in check-in workflow**
+  - View Previous Visits section
+  - Verify history loads on expand
+
+### 3. `checkout-flow.spec.ts` (3 tests)
+
+Tests complete check-out workflows:
+
+- ✅ **Complete full check-out workflow**
+
+  - Find checked-in reservation
+  - Verify belongings returned
+  - Add checkout notes
+  - Complete checkout
+  - Verify status change
+
+- ✅ **Handle checkout with unpaid balance**
+
+  - Check for balance due
+  - Verify payment warning or proceed
+
+- ✅ **Update reservation status after checkout**
+  - Track completed reservation count
+  - Perform checkout
+  - Verify count increased
+
+### 4. `dashboard-flow.spec.ts` (6 tests)
+
+Tests dashboard functionality:
+
+- ✅ **Display dashboard with key metrics**
+
+  - Verify arrivals/departures sections
+  - Verify numeric counts displayed
+
+- ✅ **Navigate to check-in from dashboard**
+
+  - Click check-in action
+  - Verify navigation works
+
+- ✅ **Filter dashboard by date**
+
+  - Change date picker
+  - Verify data refreshes
+
+- ✅ **Display announcements on dashboard**
+
+  - Check announcements section
+
+- ✅ **Show occupancy information**
+
+  - Verify occupancy/capacity display
+
+- ✅ **Navigate to reservation details from dashboard**
+  - Click reservation item
+  - Verify details page
+
+### 5. `kennel-management.spec.ts` (10 tests)
 
 Tests kennel board and print functionality:
 
 - ✅ **Display kennel board with all kennels**
+
   - Verify summary cards (Total, Available, Occupied)
   - Verify kennel cards show alphanumeric IDs (A01, not just 0)
   - Verify status indicators
 
 - ✅ **Filter kennels by type**
+
   - Apply suite type filter
   - Verify filtered results
 
 - ✅ **Filter kennels by status**
+
   - Apply status filter (Available/Occupied)
   - Verify filtered results
 
 - ✅ **Search for specific kennel**
+
   - Use search functionality
   - Verify search results
 
 - ✅ **Refresh kennel board data**
+
   - Click refresh button
   - Verify data reloads
 
 - ✅ **Navigate to print kennel cards**
+
   - Navigate to print page
   - Verify page loads
 
 - ✅ **Display full kennel identifiers for printing**
+
   - Verify "Kennel #A01" format (not "Kennel #3")
   - Verify pet information displays
 
 - ✅ **Filter print cards by date**
+
   - Change date filter
   - Verify cards update
 
 - ✅ **Trigger print dialog**
+
   - Click print button
   - Verify print dialog appears
 
@@ -84,7 +176,7 @@ Tests kennel board and print functionality:
   - Verify green for available
   - Verify different styling for occupied
 
-**Total: 15 E2E tests**
+**Total: 27 E2E tests**
 
 ## Setup
 
@@ -167,6 +259,7 @@ npx playwright show-report
 ### `playwright.config.ts`
 
 Key settings:
+
 - **Base URL**: `http://localhost:3000`
 - **Timeout**: 60 seconds per test
 - **Retries**: 2 on CI, 0 locally
@@ -190,17 +283,17 @@ Key settings:
 ### Test Organization
 
 ```typescript
-test.describe('Feature Name', () => {
+test.describe("Feature Name", () => {
   test.beforeEach(async ({ page }) => {
     // Setup before each test
   });
 
-  test('should do something', async ({ page }) => {
-    await test.step('Step 1', async () => {
+  test("should do something", async ({ page }) => {
+    await test.step("Step 1", async () => {
       // Test step 1
     });
-    
-    await test.step('Step 2', async () => {
+
+    await test.step("Step 2", async () => {
       // Test step 2
     });
   });
@@ -210,6 +303,7 @@ test.describe('Feature Name', () => {
 ### Best Practices
 
 #### ✅ DO
+
 - Use `test.step()` for clear test organization
 - Wait for elements before interacting
 - Use descriptive test names
@@ -219,6 +313,7 @@ test.describe('Feature Name', () => {
 - Clean up test data if needed
 
 #### ❌ DON'T
+
 - Use fixed waits (`waitForTimeout`) unless necessary
 - Assume element positions
 - Test implementation details
@@ -255,6 +350,7 @@ npx playwright show-trace trace.zip
 ### Screenshots and Videos
 
 After test failures:
+
 - Screenshots: `test-results/*/test-failed-*.png`
 - Videos: `test-results/*/video.webm`
 - Traces: `test-results/*/trace.zip`
@@ -273,21 +369,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-      
+          node-version: "18"
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-      
+
       - name: Run E2E tests
         run: npx playwright test
-      
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v3
@@ -322,10 +418,10 @@ timeout: 120000 // 2 minutes
 
 ```typescript
 // Use proper waits
-await page.waitForSelector('text=Element', { timeout: 10000 });
+await page.waitForSelector("text=Element", { timeout: 10000 });
 
 // Or use auto-waiting actions
-await page.click('button'); // Automatically waits
+await page.click("button"); // Automatically waits
 ```
 
 ### Flaky Tests
@@ -350,6 +446,7 @@ npx playwright install --force
 ### Using Existing Data
 
 Tests use existing data in the database:
+
 - Customers
 - Pets
 - Services
@@ -411,10 +508,10 @@ npx playwright test --reporter=junit
 ```typescript
 // In playwright.config.ts
 reporter: [
-  ['html'],
-  ['json', { outputFile: 'test-results.json' }],
-  ['junit', { outputFile: 'junit.xml' }]
-]
+  ["html"],
+  ["json", { outputFile: "test-results.json" }],
+  ["junit", { outputFile: "junit.xml" }],
+];
 ```
 
 ## Next Steps

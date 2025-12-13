@@ -2,182 +2,182 @@ name: Deploy to Production
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
   deploy:
     name: Deploy Application
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18.x'
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: |
-        npm ci
-        cd frontend && npm ci
-        cd ../services/customer && npm ci
-        cd ../reservation-service && npm ci
-    
-    - name: Build frontend
-      env:
-        REACT_APP_TENANT_ID: dev
-        REACT_APP_API_URL: https://dev.canicloud.com
-        REACT_APP_RESERVATION_API_URL: https://dev.canicloud.com
-        DISABLE_ESLINT_PLUGIN: true
-      run: |
-        cd frontend
-        npm run build
-    
-    - name: Build backend services
-      run: |
-        cd services/customer
-        npm run build
-        cd ../reservation-service
-        npm run build
-    
-    - name: Create deployment package
-      run: |
-        mkdir -p deploy/frontend
-        mkdir -p deploy/customer
-        mkdir -p deploy/reservation
-        cp -r frontend/build/* deploy/frontend/
-        cp -r services/customer/dist deploy/customer/
-        cp -r services/customer/src deploy/customer/
-        cp -r services/customer/prisma deploy/customer/
-        cp services/customer/package.json deploy/customer/
-        cp services/customer/tsconfig.json deploy/customer/
-        cp -r services/reservation-service/dist deploy/reservation/
-        cp -r services/reservation-service/src deploy/reservation/
-        cp -r services/reservation-service/prisma deploy/reservation/
-        cp services/reservation-service/package.json deploy/reservation/
-        cp services/reservation-service/tsconfig.json deploy/reservation/
-        tar -czf deploy.tar.gz deploy/
-    
-    - name: Deploy to Digital Ocean
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
-        SERVER_HOST: 129.212.178.244
-        SERVER_USER: root
-      run: |
-        # Setup SSH
-        mkdir -p ~/.ssh
-        echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-        chmod 600 ~/.ssh/deploy_key
-        ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts
-        
-        # Upload deployment package
-        scp -i ~/.ssh/deploy_key deploy.tar.gz $SERVER_USER@$SERVER_HOST:/tmp/
-        
-        # Deploy on server using zero-downtime script
-        ssh -i ~/.ssh/deploy_key $SERVER_USER@$SERVER_HOST << 'EOF'
-          cd /opt/tailtown
-          
-          # Backup current deployment
-          tar -czf backup-$(date +%Y%m%d_%H%M%S).tar.gz frontend/build services/customer/dist services/reservation-service/dist 2>/dev/null || true
-          
-          # Extract new deployment
-          tar -xzf /tmp/deploy.tar.gz -C /tmp/
-          
-          # Update files
-          cp -r /tmp/deploy/frontend/* frontend/build/
-          cp -r /tmp/deploy/customer/* services/customer/
-          cp -r /tmp/deploy/reservation/* services/reservation-service/
-          
-          # DIAGNOSTICS - Check what's actually wrong
-          echo "================================"
-          echo "🔍 DIAGNOSTICS"
-          echo "================================"
-          
-          echo "📊 PM2 Status:"
-          pm2 list
-          
-          echo ""
-          echo "📝 Customer Service Logs (last 50 lines):"
-          pm2 logs customer-service --lines 50 --nostream || echo "No logs available"
-          
-          echo ""
-          echo "📝 Reservation Service Logs (last 50 lines):"
-          pm2 logs reservation-service --lines 50 --nostream || echo "No logs available"
-          
-          echo ""
-          echo "🔌 Testing Database Connection:"
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20.19.0"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd frontend && npm ci
+          cd ../services/customer && npm ci
+          cd ../reservation-service && npm ci
+
+      - name: Build frontend
+        env:
+          REACT_APP_TENANT_ID: dev
+          REACT_APP_API_URL: https://dev.canicloud.com
+          REACT_APP_RESERVATION_API_URL: https://dev.canicloud.com
+          DISABLE_ESLINT_PLUGIN: true
+        run: |
+          cd frontend
+          npm run build
+
+      - name: Build backend services
+        run: |
           cd services/customer
-          node -e "const { PrismaClient } = require('@prisma/client'); const prisma = new PrismaClient(); prisma.\$connect().then(() => { console.log('✅ Customer DB: Connected'); return prisma.\$disconnect(); }).catch(e => { console.error('❌ Customer DB Error:', e.message); });" || echo "Failed to test DB"
-          cd ../..
-          
-          echo ""
-          echo "📦 Prisma Client Version:"
-          cd services/customer
-          node -e "try { const pkg = require('@prisma/client/package.json'); console.log('Version:', pkg.version); } catch(e) { console.log('❌ Not found'); }" || echo "Failed to check version"
-          cd ../..
-          
-          echo ""
-          echo "================================"
-          echo "🔧 ATTEMPTING FIX"
-          echo "================================"
-          
-          # Now try to fix
-          echo "Stopping all services..."
-          pm2 delete all || true
-          
-          echo "Running database migrations..."
-          cd services/customer
-          npx prisma migrate deploy || echo "Customer migrations failed (may already be applied)"
-          npx prisma generate || echo "Customer Prisma generation failed"
-          echo "Rebuilding customer service..."
-          npm run build || echo "Customer build failed"
+          npm run build
           cd ../reservation-service
-          npx prisma migrate deploy || echo "Reservation migrations failed (may already be applied)"
-          # NUCLEAR OPTION: Delete and reinstall node_modules
-          echo "Cleaning reservation service node_modules..."
-          rm -rf node_modules
-          echo "Installing dependencies with npm install (more forgiving than npm ci)..."
-          npm install --legacy-peer-deps || echo "npm install failed"
-          npx prisma generate || echo "Reservation Prisma generation failed"
-          echo "Rebuilding reservation service..."
-          npm run build || echo "Reservation build failed"
-          cd ../..
-          
-          echo "Starting services fresh..."
-          pm2 start ecosystem.config.js --only customer-service
-          pm2 start ecosystem.config.js --only reservation-service
-          pm2 start ecosystem.config.js --only frontend
-          pm2 save
-          echo "Waiting for services to stabilize..."
-          sleep 5
-          
-          # Cleanup
-          rm -rf /tmp/deploy /tmp/deploy.tar.gz
-          
-          echo "✅ Zero-downtime deployment complete"
-        EOF
-    
-    - name: Verify deployment
-      env:
-        SERVER_HOST: 129.212.178.244
-      run: |
-        sleep 10
-        echo "Checking customer service (port 4004)..."
-        curl -f http://$SERVER_HOST:4004/health || exit 1
-        echo "Checking reservation service (port 4003)..."
-        curl -f http://$SERVER_HOST:4003/health || echo "Warning: Reservation service not responding"
-        echo "Checking frontend (port 3000)..."
-        curl -f http://$SERVER_HOST:3000 || exit 1
-        echo "✅ Critical services are healthy"
-    
-    - name: Notify on success
-      if: success()
-      run: echo "✅ Deployment successful!"
-    
-    - name: Notify on failure
-      if: failure()
-      run: echo "❌ Deployment failed!"
+          npm run build
+
+      - name: Create deployment package
+        run: |
+          mkdir -p deploy/frontend
+          mkdir -p deploy/customer
+          mkdir -p deploy/reservation
+          cp -r frontend/build/* deploy/frontend/
+          cp -r services/customer/dist deploy/customer/
+          cp -r services/customer/src deploy/customer/
+          cp -r services/customer/prisma deploy/customer/
+          cp services/customer/package.json deploy/customer/
+          cp services/customer/tsconfig.json deploy/customer/
+          cp -r services/reservation-service/dist deploy/reservation/
+          cp -r services/reservation-service/src deploy/reservation/
+          cp -r services/reservation-service/prisma deploy/reservation/
+          cp services/reservation-service/package.json deploy/reservation/
+          cp services/reservation-service/tsconfig.json deploy/reservation/
+          tar -czf deploy.tar.gz deploy/
+
+      - name: Deploy to Digital Ocean
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          SERVER_HOST: 129.212.178.244
+          SERVER_USER: root
+        run: |
+          # Setup SSH
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts
+
+          # Upload deployment package
+          scp -i ~/.ssh/deploy_key deploy.tar.gz $SERVER_USER@$SERVER_HOST:/tmp/
+
+          # Deploy on server using zero-downtime script
+          ssh -i ~/.ssh/deploy_key $SERVER_USER@$SERVER_HOST << 'EOF'
+            cd /opt/tailtown
+            
+            # Backup current deployment
+            tar -czf backup-$(date +%Y%m%d_%H%M%S).tar.gz frontend/build services/customer/dist services/reservation-service/dist 2>/dev/null || true
+            
+            # Extract new deployment
+            tar -xzf /tmp/deploy.tar.gz -C /tmp/
+            
+            # Update files
+            cp -r /tmp/deploy/frontend/* frontend/build/
+            cp -r /tmp/deploy/customer/* services/customer/
+            cp -r /tmp/deploy/reservation/* services/reservation-service/
+            
+            # DIAGNOSTICS - Check what's actually wrong
+            echo "================================"
+            echo "🔍 DIAGNOSTICS"
+            echo "================================"
+            
+            echo "📊 PM2 Status:"
+            pm2 list
+            
+            echo ""
+            echo "📝 Customer Service Logs (last 50 lines):"
+            pm2 logs customer-service --lines 50 --nostream || echo "No logs available"
+            
+            echo ""
+            echo "📝 Reservation Service Logs (last 50 lines):"
+            pm2 logs reservation-service --lines 50 --nostream || echo "No logs available"
+            
+            echo ""
+            echo "🔌 Testing Database Connection:"
+            cd services/customer
+            node -e "const { PrismaClient } = require('@prisma/client'); const prisma = new PrismaClient(); prisma.\$connect().then(() => { console.log('✅ Customer DB: Connected'); return prisma.\$disconnect(); }).catch(e => { console.error('❌ Customer DB Error:', e.message); });" || echo "Failed to test DB"
+            cd ../..
+            
+            echo ""
+            echo "📦 Prisma Client Version:"
+            cd services/customer
+            node -e "try { const pkg = require('@prisma/client/package.json'); console.log('Version:', pkg.version); } catch(e) { console.log('❌ Not found'); }" || echo "Failed to check version"
+            cd ../..
+            
+            echo ""
+            echo "================================"
+            echo "🔧 ATTEMPTING FIX"
+            echo "================================"
+            
+            # Now try to fix
+            echo "Stopping all services..."
+            pm2 delete all || true
+            
+            echo "Running database migrations..."
+            cd services/customer
+            npx prisma migrate deploy || echo "Customer migrations failed (may already be applied)"
+            npx prisma generate || echo "Customer Prisma generation failed"
+            echo "Rebuilding customer service..."
+            npm run build || echo "Customer build failed"
+            cd ../reservation-service
+            npx prisma migrate deploy || echo "Reservation migrations failed (may already be applied)"
+            # NUCLEAR OPTION: Delete and reinstall node_modules
+            echo "Cleaning reservation service node_modules..."
+            rm -rf node_modules
+            echo "Installing dependencies with npm install (more forgiving than npm ci)..."
+            npm install --legacy-peer-deps || echo "npm install failed"
+            npx prisma generate || echo "Reservation Prisma generation failed"
+            echo "Rebuilding reservation service..."
+            npm run build || echo "Reservation build failed"
+            cd ../..
+            
+            echo "Starting services fresh..."
+            pm2 start ecosystem.config.js --only customer-service
+            pm2 start ecosystem.config.js --only reservation-service
+            pm2 start ecosystem.config.js --only frontend
+            pm2 save
+            echo "Waiting for services to stabilize..."
+            sleep 5
+            
+            # Cleanup
+            rm -rf /tmp/deploy /tmp/deploy.tar.gz
+            
+            echo "✅ Zero-downtime deployment complete"
+          EOF
+
+      - name: Verify deployment
+        env:
+          SERVER_HOST: 129.212.178.244
+        run: |
+          sleep 10
+          echo "Checking customer service (port 4004)..."
+          curl -f http://$SERVER_HOST:4004/health || exit 1
+          echo "Checking reservation service (port 4003)..."
+          curl -f http://$SERVER_HOST:4003/health || echo "Warning: Reservation service not responding"
+          echo "Checking frontend (port 3000)..."
+          curl -f http://$SERVER_HOST:3000 || exit 1
+          echo "✅ Critical services are healthy"
+
+      - name: Notify on success
+        if: success()
+        run: echo "✅ Deployment successful!"
+
+      - name: Notify on failure
+        if: failure()
+        run: echo "❌ Deployment failed!"

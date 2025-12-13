@@ -1,7 +1,7 @@
-import React, { memo, useMemo } from "react";
+import React, { memo, useMemo, useState } from "react";
 import { getApiBaseUrl } from "../../services/api";
-import { Box, Typography } from "@mui/material";
-import EmojiIconDisplay from "../customers/EmojiIconDisplay";
+import { Box, Typography, Tooltip, Dialog, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import ClickableAvatar from "./ClickableAvatar";
 import { mapPetIconsToEmojis } from "../../utils/petIconMapping";
 
@@ -29,17 +29,19 @@ const PetNameWithIcons: React.FC<PetNameWithIconsProps> = memo(
   ({
     petName,
     petIcons = [],
-    iconNotes = {},
-    petType,
+    iconNotes: _iconNotes = {},
+    petType: _petType,
     profilePhoto,
     size = "small",
-    showLabels = false,
+    showLabels: _showLabels = false,
     showPhoto = true,
     nameVariant = "body2",
     nameColor,
     direction = "row",
     gap = 1,
   }) => {
+    const [photoModalOpen, setPhotoModalOpen] = useState(false);
+
     // Convert icon IDs to emojis
     const emojiIcons = useMemo(() => mapPetIconsToEmojis(petIcons), [petIcons]);
     const hasIcons = useMemo(
@@ -63,49 +65,176 @@ const PetNameWithIcons: React.FC<PetNameWithIconsProps> = memo(
       return `${baseUrl}${profilePhoto}`;
     }, [profilePhoto]);
 
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: direction,
-          alignItems: direction === "row" ? "center" : "flex-start",
-          gap: gap,
-        }}
-      >
-        {showPhoto && (
-          <ClickableAvatar
-            src={photoUrl}
-            alt={petName}
-            size={avatarSize}
-            fontSize={
-              size === "small"
-                ? "0.75rem"
-                : size === "medium"
-                ? "0.875rem"
-                : "1rem"
-            }
-          />
-        )}
+    // Add photo icon to display icons if pet has a photo
+    const displayIcons = useMemo(() => {
+      if (photoUrl) {
+        return ["📷", ...emojiIcons];
+      }
+      return emojiIcons;
+    }, [photoUrl, emojiIcons]);
 
-        <Typography
-          variant={nameVariant}
-          color={nameColor}
+    const hasDisplayIcons = displayIcons.length > 0;
+
+    const handleIconClick = (icon: string, e: React.MouseEvent) => {
+      if (icon === "📷" && photoUrl) {
+        e.stopPropagation();
+        setPhotoModalOpen(true);
+      }
+    };
+
+    return (
+      <>
+        <Box
           sx={{
-            fontWeight: hasIcons ? 500 : "normal",
-            minWidth: "fit-content",
+            display: "flex",
+            flexDirection: direction,
+            alignItems: direction === "row" ? "center" : "flex-start",
+            gap: gap,
           }}
         >
-          {petName}
-        </Typography>
+          {showPhoto && (
+            <ClickableAvatar
+              src={photoUrl}
+              alt={petName}
+              size={avatarSize}
+              fontSize={
+                size === "small"
+                  ? "0.75rem"
+                  : size === "medium"
+                  ? "0.875rem"
+                  : "1rem"
+              }
+            />
+          )}
 
-        {hasIcons && (
-          <EmojiIconDisplay
-            icons={emojiIcons}
-            size={size === "large" ? "medium" : size}
-            maxDisplay={5}
-          />
-        )}
-      </Box>
+          <Typography
+            variant={nameVariant}
+            color={nameColor}
+            sx={{
+              fontWeight: hasDisplayIcons ? 500 : "normal",
+              minWidth: "fit-content",
+            }}
+          >
+            {petName}
+          </Typography>
+
+          {hasDisplayIcons && (
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 0.5,
+                alignItems: "center",
+              }}
+            >
+              {displayIcons.slice(0, 5).map((icon, index) => (
+                <Tooltip
+                  key={`${icon}-${index}`}
+                  title={icon === "📷" ? "View Photo" : ""}
+                  arrow
+                >
+                  <Box
+                    onClick={(e) => handleIconClick(icon, e)}
+                    sx={{
+                      cursor: icon === "📷" ? "pointer" : "default",
+                      fontSize: size === "small" ? "0.9rem" : "1.1rem",
+                      padding: "2px 4px",
+                      borderRadius: "4px",
+                      backgroundColor: "rgba(0,0,0,0.08)",
+                      "&:hover":
+                        icon === "📷"
+                          ? {
+                              backgroundColor: "rgba(25, 118, 210, 0.2)",
+                              transform: "scale(1.1)",
+                            }
+                          : {},
+                      transition: "all 0.2s",
+                    }}
+                  >
+                    {icon}
+                  </Box>
+                </Tooltip>
+              ))}
+              {displayIcons.length > 5 && (
+                <Box
+                  sx={{
+                    fontSize: size === "small" ? "0.75rem" : "0.9rem",
+                    padding: "2px 6px",
+                    borderRadius: "4px",
+                    backgroundColor: "rgba(0,0,0,0.08)",
+                    color: "text.secondary",
+                  }}
+                >
+                  +{displayIcons.length - 5}
+                </Box>
+              )}
+            </Box>
+          )}
+        </Box>
+
+        {/* Photo Modal */}
+        <Dialog
+          open={photoModalOpen}
+          onClose={(e: React.SyntheticEvent) => {
+            e.stopPropagation();
+            setPhotoModalOpen(false);
+          }}
+          onClick={(e: React.MouseEvent) => e.stopPropagation()}
+          maxWidth="md"
+          PaperProps={{
+            sx: {
+              backgroundColor: "transparent",
+              boxShadow: "none",
+              overflow: "visible",
+            },
+          }}
+        >
+          <Box
+            sx={{ position: "relative" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <IconButton
+              onClick={(e) => {
+                e.stopPropagation();
+                setPhotoModalOpen(false);
+              }}
+              sx={{
+                position: "absolute",
+                top: -40,
+                right: 0,
+                color: "white",
+                backgroundColor: "rgba(0,0,0,0.5)",
+                "&:hover": { backgroundColor: "rgba(0,0,0,0.7)" },
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+            {photoUrl && (
+              <img
+                src={photoUrl}
+                alt={petName}
+                style={{
+                  maxWidth: "90vw",
+                  maxHeight: "80vh",
+                  objectFit: "contain",
+                  borderRadius: "8px",
+                }}
+              />
+            )}
+            <Typography
+              variant="h6"
+              sx={{
+                textAlign: "center",
+                color: "white",
+                mt: 1,
+                textShadow: "0 2px 4px rgba(0,0,0,0.5)",
+              }}
+            >
+              {petName}
+            </Typography>
+          </Box>
+        </Dialog>
+      </>
     );
   }
 );

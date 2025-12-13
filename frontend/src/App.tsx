@@ -16,8 +16,10 @@ import { HelmetProvider } from "react-helmet-async";
 import theme from "./theme";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { SuperAdminProvider } from "./contexts/SuperAdminContext";
+import { CustomerAuthProvider } from "./contexts/CustomerAuthContext";
 import { ShoppingCartProvider } from "./contexts/ShoppingCartContext";
 import { HelpProvider } from "./contexts/HelpContext";
+import { OnboardingProvider } from "./contexts/OnboardingContext";
 import AccessibilityFix from "./components/AccessibilityFix";
 import ScrollFix from "./components/ScrollFix";
 import ApiTester from "./components/debug/ApiTester";
@@ -89,6 +91,9 @@ const Settings = lazy(() => import("./pages/settings/Settings"));
 const Users = lazy(() => import("./pages/settings/Users"));
 const ServiceAgreements = lazy(
   () => import("./pages/settings/ServiceAgreements")
+);
+const LabelPrinterTest = lazy(
+  () => import("./pages/settings/LabelPrinterTest")
 );
 const BusinessSettings = lazy(() => import("./pages/admin/BusinessSettings"));
 const PriceRuleRedirect = lazy(
@@ -194,6 +199,12 @@ const Waitlist = lazy(() => import("./pages/waitlist/Waitlist"));
 
 // Public Booking Portal
 const BookingPortal = lazy(() => import("./pages/booking/BookingPortal"));
+const CustomerForgotPassword = lazy(
+  () => import("./pages/booking/ForgotPassword")
+);
+const CustomerResetPassword = lazy(
+  () => import("./pages/booking/ResetPassword")
+);
 
 // Setup Wizard
 const SetupWizard = lazy(() => import("./pages/setup-wizard/SetupWizard"));
@@ -202,6 +213,11 @@ const SetupWizardProvider = lazy(
 );
 const CustomerDashboard = lazy(
   () => import("./pages/booking/CustomerDashboard")
+);
+
+// Onboarding
+const OnboardingWizard = lazy(
+  () => import("./components/onboarding/OnboardingWizard")
 );
 
 // Mobile Pages
@@ -277,6 +293,22 @@ const AppRoutes = () => {
 
         {/* Public Booking Portal - No authentication required */}
         <Route path="/book" element={<BookingPortal />} />
+        <Route
+          path="/book/forgot-password"
+          element={
+            <CustomerAuthProvider>
+              <CustomerForgotPassword />
+            </CustomerAuthProvider>
+          }
+        />
+        <Route
+          path="/book/reset-password"
+          element={
+            <CustomerAuthProvider>
+              <CustomerResetPassword />
+            </CustomerAuthProvider>
+          }
+        />
         <Route path="/my-account" element={<CustomerDashboard />} />
 
         {/* Setup Wizard - For new tenant onboarding */}
@@ -512,6 +544,14 @@ const AppRoutes = () => {
             element={
               <AdminOnlyRoute>
                 <ServiceAgreements />
+              </AdminOnlyRoute>
+            }
+          />
+          <Route
+            path="/settings/label-printer"
+            element={
+              <AdminOnlyRoute>
+                <LabelPrinterTest />
               </AdminOnlyRoute>
             }
           />
@@ -826,26 +866,29 @@ const App = () => {
           <RouteChangeListener />
           <SuperAdminProvider>
             <AuthProvider>
-              <ShoppingCartProvider>
-                <HelpProvider>
-                  <React.Suspense
-                    fallback={
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          height: "100vh",
-                        }}
-                      >
-                        <CircularProgress />
-                      </Box>
-                    }
-                  >
-                    <AppRoutes />
-                  </React.Suspense>
-                </HelpProvider>
-              </ShoppingCartProvider>
+              <OnboardingProvider>
+                <ShoppingCartProvider>
+                  <HelpProvider>
+                    <React.Suspense
+                      fallback={
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            height: "100vh",
+                          }}
+                        >
+                          <CircularProgress />
+                        </Box>
+                      }
+                    >
+                      <OnboardingWizard />
+                      <AppRoutes />
+                    </React.Suspense>
+                  </HelpProvider>
+                </ShoppingCartProvider>
+              </OnboardingProvider>
             </AuthProvider>
           </SuperAdminProvider>
         </ThemeProvider>

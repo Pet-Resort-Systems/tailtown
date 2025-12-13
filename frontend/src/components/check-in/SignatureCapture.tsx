@@ -1,27 +1,29 @@
-import React, { useRef, useState, useEffect } from 'react';
-import {
-  Box,
-  Button,
-  Paper,
-  Typography
-} from '@mui/material';
-import ClearIcon from '@mui/icons-material/Clear';
+import React, { useRef, useState, useEffect } from "react";
+import { Box, Button, Paper, Typography } from "@mui/material";
+import ClearIcon from "@mui/icons-material/Clear";
 
 interface SignatureCaptureProps {
   onSignature: (signature: string) => void;
   label?: string;
+  initialSignature?: string;
 }
 
-const SignatureCapture: React.FC<SignatureCaptureProps> = ({ onSignature, label = 'Signature' }) => {
+const SignatureCapture: React.FC<SignatureCaptureProps> = ({
+  onSignature,
+  label = "Signature",
+  initialSignature,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [hasSignature, setHasSignature] = useState(false);
+  const [hasSignature, setHasSignature] = useState(!!initialSignature);
+  const [isInitialized, setIsInitialized] = useState(false);
 
+  // Initialize canvas and restore signature if available
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     // Set canvas size
@@ -31,24 +33,48 @@ const SignatureCapture: React.FC<SignatureCaptureProps> = ({ onSignature, label 
     ctx.scale(2, 2);
 
     // Set drawing style
-    ctx.strokeStyle = '#000000';
+    ctx.strokeStyle = "#000000";
     ctx.lineWidth = 2;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    setIsInitialized(true);
   }, []);
 
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+  // Restore initial signature after canvas is initialized
+  useEffect(() => {
+    if (!isInitialized || !initialSignature) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const img = new Image();
+    img.onload = () => {
+      // Draw the image scaled to fit the canvas
+      const rect = canvas.getBoundingClientRect();
+      ctx.drawImage(img, 0, 0, rect.width, rect.height);
+      setHasSignature(true);
+    };
+    img.src = initialSignature;
+  }, [isInitialized, initialSignature]);
+
+  const startDrawing = (
+    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
+  ) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     setIsDrawing(true);
     const rect = canvas.getBoundingClientRect();
-    
+
     let x, y;
-    if ('touches' in e) {
+    if ("touches" in e) {
       x = e.touches[0].clientX - rect.left;
       y = e.touches[0].clientY - rect.top;
     } else {
@@ -60,19 +86,21 @@ const SignatureCapture: React.FC<SignatureCaptureProps> = ({ onSignature, label 
     ctx.moveTo(x, y);
   };
 
-  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+  const draw = (
+    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
+  ) => {
     if (!isDrawing) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     const rect = canvas.getBoundingClientRect();
-    
+
     let x, y;
-    if ('touches' in e) {
+    if ("touches" in e) {
       e.preventDefault();
       x = e.touches[0].clientX - rect.left;
       y = e.touches[0].clientY - rect.top;
@@ -88,13 +116,13 @@ const SignatureCapture: React.FC<SignatureCaptureProps> = ({ onSignature, label 
 
   const stopDrawing = () => {
     if (!isDrawing) return;
-    
+
     setIsDrawing(false);
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     // Convert to base64 and send to parent
-    const signature = canvas.toDataURL('image/png');
+    const signature = canvas.toDataURL("image/png");
     onSignature(signature);
   };
 
@@ -102,17 +130,24 @@ const SignatureCapture: React.FC<SignatureCaptureProps> = ({ onSignature, label 
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     setHasSignature(false);
-    onSignature('');
+    onSignature("");
   };
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 1,
+        }}
+      >
         <Typography variant="subtitle1" fontWeight="bold">
           {label}
         </Typography>
@@ -130,12 +165,12 @@ const SignatureCapture: React.FC<SignatureCaptureProps> = ({ onSignature, label 
 
       <Paper
         sx={{
-          border: '2px solid',
-          borderColor: 'grey.300',
+          border: "2px solid",
+          borderColor: "grey.300",
           borderRadius: 1,
-          overflow: 'hidden',
-          cursor: 'crosshair',
-          bgcolor: 'white'
+          overflow: "hidden",
+          cursor: "crosshair",
+          bgcolor: "white",
         }}
       >
         <canvas
@@ -148,15 +183,19 @@ const SignatureCapture: React.FC<SignatureCaptureProps> = ({ onSignature, label 
           onTouchMove={draw}
           onTouchEnd={stopDrawing}
           style={{
-            width: '100%',
-            height: '200px',
-            display: 'block',
-            touchAction: 'none'
+            width: "100%",
+            height: "200px",
+            display: "block",
+            touchAction: "none",
           }}
         />
       </Paper>
 
-      <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+      <Typography
+        variant="caption"
+        color="text.secondary"
+        sx={{ mt: 1, display: "block" }}
+      >
         Sign above using your mouse or touch screen
       </Typography>
     </Box>

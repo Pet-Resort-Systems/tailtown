@@ -301,18 +301,11 @@ export const useKennelData = ({
       });
 
       // Handle the nested response format: data.reservations
-      console.log("[useKennelData] Reservations response:", response?.data);
       const reservationsData =
         response?.data?.data?.reservations ||
         response?.data?.reservations ||
         response?.data?.data ||
         [];
-      console.log(
-        "[useKennelData] Extracted reservations:",
-        reservationsData.length,
-        "reservations"
-      );
-
       // Filter out reservations that haven't been paid/confirmed
       // Only show CONFIRMED, CHECKED_IN, CHECKED_OUT, COMPLETED reservations on calendar
       const confirmedReservations = reservationsData.filter(
@@ -326,14 +319,6 @@ export const useKennelData = ({
         }
       );
 
-      console.log(
-        "[useKennelData] Confirmed reservations (excluding pending/draft):",
-        confirmedReservations.length,
-        "reservations"
-      );
-      if (reservationsData.length > 0) {
-        console.log("[useKennelData] First reservation:", reservationsData[0]);
-      }
       setReservations(confirmedReservations);
     } catch (error) {
       console.error("Error loading reservations:", error);

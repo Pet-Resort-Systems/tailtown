@@ -18,10 +18,18 @@ import {
   MenuItem,
   Grid,
   Divider,
+  Chip,
+  Link,
+  Tooltip,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import WarningIcon from "@mui/icons-material/Warning";
+import InfoIcon from "@mui/icons-material/Info";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import RestaurantIcon from "@mui/icons-material/Restaurant";
+import GroupsIcon from "@mui/icons-material/Groups";
 import checkInService, {
   CheckInTemplate,
   CheckInResponse,
@@ -32,14 +40,21 @@ import { reservationService } from "../../services/reservationService";
 import MedicationForm from "../../components/check-in/MedicationForm";
 import BelongingsForm from "../../components/check-in/BelongingsForm";
 import SignatureCapture from "../../components/check-in/SignatureCapture";
+import PetSummaryCard from "../../components/check-in/PetSummaryCard";
+import MultiPetCheckIn from "../../components/check-in/MultiPetCheckIn";
+import { customerService } from "../../services/customerService";
 
 const STEPS = [
+  "Pet Summary",
   "Questionnaire",
   "Medications",
   "Belongings",
   "Service Agreement",
   "Review & Complete",
 ];
+
+// Local storage key for draft check-ins
+const DRAFT_STORAGE_KEY = "tailtown_checkin_draft_";
 
 const CheckInWorkflow: React.FC = () => {
   const { reservationId } = useParams<{ reservationId: string }>();
@@ -60,11 +75,43 @@ const CheckInWorkflow: React.FC = () => {
   const [signature, setSignature] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [initials, setInitials] = useState<{ [key: string]: string }>({});
+  const [pet, setPet] = useState<any>(null);
+  const [existingAgreement, setExistingAgreement] = useState<any>(null);
+  const [hasDraft, setHasDraft] = useState(false);
+  const [draftCheckInId, setDraftCheckInId] = useState<string | null>(null);
+  const [savingDraft, setSavingDraft] = useState(false);
+  const [stepCompletion, setStepCompletion] = useState<{
+    [key: number]: boolean;
+  }>({});
+  const [isMultiPet, setIsMultiPet] = useState(false);
+  const [selectedPetIds, setSelectedPetIds] = useState<string[]>([]);
+  const [selectedReservationIds, setSelectedReservationIds] = useState<
+    string[]
+  >([]);
+  const [allPets, setAllPets] = useState<any[]>([]);
+  const [customer, setCustomer] = useState<any>(null);
 
   useEffect(() => {
     loadData();
+    loadServerDraft();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reservationId]);
+
+  // Auto-save draft to server on step changes
+  useEffect(() => {
+    if (reservation && !loading && activeStep > 0) {
+      saveDraftToServer();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeStep]);
+
+  // Auto-save when signature is captured
+  useEffect(() => {
+    if (reservation && !loading && signature) {
+      saveDraftToServer();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signature]);
 
   const loadData = async () => {
     try {
@@ -87,6 +134,54 @@ const CheckInWorkflow: React.FC = () => {
       // Load service agreement template
       const agreementData = await checkInService.getDefaultAgreementTemplate();
       setAgreementTemplate(agreementData.data);
+
+      // Load pet details
+      if (resData.petId) {
+        try {
+          const petData = await customerService.getPetById(resData.petId);
+          setPet(petData);
+        } catch (petErr) {
+          console.error("Error loading pet:", petErr);
+        }
+      }
+
+      // Load customer details for emergency contact
+      if (resData.customerId) {
+        try {
+          const customerData = await customerService.getCustomerById(
+            resData.customerId
+          );
+          setCustomer(customerData);
+        } catch (custErr) {
+          console.error("Error loading customer:", custErr);
+        }
+      }
+
+      // Check if there's an existing completed check-in with a service agreement
+      try {
+        const checkInsResponse = await checkInService.getCheckInsByReservation(
+          reservationId!
+        );
+        const completedCheckIn = checkInsResponse.data?.find(
+          (c: any) => c.status === "COMPLETED"
+        );
+        if (completedCheckIn) {
+          // Try to load the service agreement for this check-in
+          try {
+            const agreementResponse =
+              await checkInService.getAgreementByCheckIn(completedCheckIn.id);
+            if (agreementResponse?.data?.signature) {
+              setExistingAgreement(agreementResponse.data);
+              setSignature(agreementResponse.data.signature);
+              setCustomerName(agreementResponse.data.signedBy || "");
+            }
+          } catch (agreementErr) {
+            // No agreement found, that's ok
+          }
+        }
+      } catch (checkInErr) {
+        // No check-ins found, that's ok
+      }
     } catch (err: any) {
       console.error("Error loading check-in data:", err);
       setError(err.response?.data?.message || "Failed to load check-in data");
@@ -97,15 +192,17 @@ const CheckInWorkflow: React.FC = () => {
 
   const handleNext = () => {
     // Validate current step
-    if (activeStep === 0 && !validateQuestionnaire()) {
+    if (activeStep === 1 && !validateQuestionnaire()) {
       setError("Please answer all required questions");
       return;
     }
-    if (activeStep === 3 && !validateAgreement()) {
+    if (activeStep === 4 && !validateAgreement()) {
       setError("Please complete the service agreement");
       return;
     }
 
+    // Mark current step as complete
+    setStepCompletion((prev) => ({ ...prev, [activeStep]: true }));
     setError(null);
     setActiveStep((prev) => prev + 1);
   };
@@ -113,6 +210,188 @@ const CheckInWorkflow: React.FC = () => {
   const handleBack = () => {
     setError(null);
     setActiveStep((prev) => prev - 1);
+  };
+
+  // Draft management functions - now uses server-side storage
+  const getDraftKey = () => `${DRAFT_STORAGE_KEY}${reservationId}`;
+
+  const saveDraftToServer = async () => {
+    if (!reservation || savingDraft) return;
+
+    try {
+      setSavingDraft(true);
+      const responseArray = Object.entries(responses).map(
+        ([questionId, response]) => ({ questionId, response })
+      );
+
+      const result = await checkInService.saveDraft({
+        checkInId: draftCheckInId || undefined,
+        petId: reservation.petId,
+        customerId: reservation.customerId,
+        reservationId: reservationId!,
+        templateId: template?.id,
+        currentStep: activeStep,
+        responses: responseArray.length > 0 ? responseArray : undefined,
+        medications: medications.length > 0 ? medications : undefined,
+        belongings: belongings.length > 0 ? belongings : undefined,
+      });
+
+      if (result.data?.id) {
+        setDraftCheckInId(result.data.id);
+      }
+
+      // Also save to localStorage as backup
+      const draft = {
+        activeStep,
+        responses,
+        medications,
+        belongings,
+        initials,
+        stepCompletion,
+        signature,
+        customerName,
+        savedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(getDraftKey(), JSON.stringify(draft));
+    } catch (err) {
+      console.error("Error saving draft to server:", err);
+      // Fall back to localStorage only
+      const draft = {
+        activeStep,
+        responses,
+        medications,
+        belongings,
+        initials,
+        stepCompletion,
+        signature,
+        customerName,
+        savedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(getDraftKey(), JSON.stringify(draft));
+    } finally {
+      setSavingDraft(false);
+    }
+  };
+
+  const loadServerDraft = async () => {
+    try {
+      const result = await checkInService.getDraft(reservationId!);
+      if (result.data) {
+        const draft = result.data;
+        setDraftCheckInId(draft.id);
+        setActiveStep(draft.currentStep || 0);
+        setHasDraft(true);
+
+        // Load responses
+        if (draft.responses && draft.responses.length > 0) {
+          const respObj: { [key: string]: any } = {};
+          draft.responses.forEach((r: any) => {
+            respObj[r.questionId] = r.response;
+          });
+          setResponses(respObj);
+        }
+
+        // Load medications
+        if (draft.medications && draft.medications.length > 0) {
+          setMedications(draft.medications);
+        }
+
+        // Load belongings
+        if (draft.belongings && draft.belongings.length > 0) {
+          setBelongings(draft.belongings);
+        }
+
+        // Mark completed steps
+        const completion: { [key: number]: boolean } = {};
+        for (let i = 0; i < draft.currentStep; i++) {
+          completion[i] = true;
+        }
+        setStepCompletion(completion);
+
+        // Load signature from localStorage (not stored on server)
+        const localDraftStr = localStorage.getItem(getDraftKey());
+        if (localDraftStr) {
+          try {
+            const localDraft = JSON.parse(localDraftStr);
+            if (localDraft.signature) setSignature(localDraft.signature);
+            if (localDraft.customerName)
+              setCustomerName(localDraft.customerName);
+            if (localDraft.initials) setInitials(localDraft.initials);
+          } catch (e) {
+            console.error("Error loading signature from localStorage:", e);
+          }
+        }
+      } else {
+        // Check localStorage as fallback
+        checkForLocalDraft();
+      }
+    } catch (err) {
+      console.error("Error loading server draft:", err);
+      checkForLocalDraft();
+    }
+  };
+
+  const checkForLocalDraft = () => {
+    const draftStr = localStorage.getItem(getDraftKey());
+    if (draftStr) {
+      setHasDraft(true);
+    }
+  };
+
+  const loadDraft = () => {
+    // If we have a server draft, it's already loaded
+    if (draftCheckInId) {
+      setHasDraft(false);
+      return;
+    }
+
+    // Fall back to localStorage
+    const draftStr = localStorage.getItem(getDraftKey());
+    if (draftStr) {
+      try {
+        const draft = JSON.parse(draftStr);
+        setActiveStep(draft.activeStep || 0);
+        setResponses(draft.responses || {});
+        setMedications(draft.medications || []);
+        setBelongings(draft.belongings || []);
+        setInitials(draft.initials || {});
+        setStepCompletion(draft.stepCompletion || {});
+        if (draft.signature) setSignature(draft.signature);
+        if (draft.customerName) setCustomerName(draft.customerName);
+        setHasDraft(false);
+      } catch (e) {
+        console.error("Error loading draft:", e);
+      }
+    }
+  };
+
+  const clearDraft = () => {
+    localStorage.removeItem(getDraftKey());
+    setDraftCheckInId(null);
+    setHasDraft(false);
+  };
+
+  const handleUpdatePet = async (updates: Partial<any>) => {
+    if (!pet) return;
+    try {
+      await customerService.updatePet(pet.id, updates);
+      setPet({ ...pet, ...updates });
+    } catch (err) {
+      console.error("Error updating pet:", err);
+    }
+  };
+
+  const handleUpdateCustomer = async (updates: {
+    emergencyContact?: string;
+    emergencyPhone?: string;
+  }) => {
+    if (!customer) return;
+    try {
+      await customerService.updateCustomer(customer.id, updates);
+      setCustomer({ ...customer, ...updates });
+    } catch (err) {
+      console.error("Error updating customer:", err);
+    }
   };
 
   const validateQuestionnaire = () => {
@@ -132,6 +411,52 @@ const CheckInWorkflow: React.FC = () => {
     return signature && customerName;
   };
 
+  // Get validation status for each step
+  const getStepStatus = (
+    stepIndex: number
+  ): "complete" | "error" | "warning" | "pending" => {
+    if (stepCompletion[stepIndex]) return "complete";
+
+    switch (stepIndex) {
+      case 0: // Pet Summary - check for expired vaccines
+        if (pet?.vaccineExpirations) {
+          const today = new Date();
+          const hasExpired = Object.values(pet.vaccineExpirations).some(
+            (expDate: any) => new Date(expDate) < today
+          );
+          if (hasExpired) return "error";
+        }
+        return "pending";
+      case 1: // Questionnaire
+        if (Object.keys(responses).length > 0 && !validateQuestionnaire()) {
+          return "warning"; // Partially filled
+        }
+        return Object.keys(responses).length > 0 ? "complete" : "pending";
+      case 2: // Medications
+        return medications.length > 0 ? "complete" : "pending";
+      case 3: // Belongings
+        return belongings.length > 0 ? "complete" : "pending";
+      case 4: // Service Agreement
+        if (existingAgreement) return "complete";
+        if (signature && customerName) return "complete";
+        if (signature || customerName) return "warning";
+        return "pending";
+      case 5: // Review
+        return "pending";
+      default:
+        return "pending";
+    }
+  };
+
+  // Check if all required steps are complete for final submission
+  const canSubmit = () => {
+    // Questionnaire must be valid
+    if (!validateQuestionnaire()) return false;
+    // Agreement must be signed (unless already exists)
+    if (!existingAgreement && !validateAgreement()) return false;
+    return true;
+  };
+
   const handleSubmit = async () => {
     try {
       setSubmitting(true);
@@ -145,42 +470,92 @@ const CheckInWorkflow: React.FC = () => {
         })
       );
 
-      // Create check-in
-      const checkInData = {
-        petId: reservation.petId,
-        customerId: reservation.customerId,
-        reservationId: reservation.id,
-        templateId: template?.id,
-        checkInBy: "staff", // TODO: Get from auth context
-        responses: responseArray,
-        medications,
-        belongings,
-      };
+      // Check if this is a multi-pet check-in
+      if (isMultiPet && selectedPetIds.length > 1) {
+        // Batch check-in for multiple pets
+        const checkIns = selectedReservationIds.map((resId, index) => ({
+          petId: selectedPetIds[index],
+          customerId: reservation.customerId,
+          reservationId: resId,
+          responses: responseArray,
+        }));
 
-      const checkInResult = await checkInService.createCheckIn(checkInData);
+        const sharedData = {
+          templateId: template?.id,
+          checkInBy: "staff",
+          medications,
+          belongings,
+        };
 
-      // Create service agreement
-      const agreementData = {
-        checkInId: checkInResult.data.id,
-        agreementText: agreementTemplate.content,
-        initials: Object.entries(initials).map(([section, value]) => ({
-          section,
-          initials: value,
-          timestamp: new Date().toISOString(),
-        })),
-        signature,
-        signedBy: customerName,
-      };
+        const batchResult = await checkInService.batchCheckIn(
+          checkIns,
+          sharedData
+        );
 
-      await checkInService.createServiceAgreement(agreementData);
+        // Create service agreement for primary pet
+        if (batchResult.data.successful.length > 0) {
+          const primaryCheckIn = batchResult.data.successful[0];
+          const agreementData = {
+            checkInId: primaryCheckIn.checkIn.id,
+            customerId: reservation.customerId,
+            agreementText: agreementTemplate.content,
+            initials: Object.entries(initials).map(([section, value]) => ({
+              section,
+              initials: value,
+              timestamp: new Date().toISOString(),
+            })),
+            signature,
+            signedBy: customerName,
+          };
+          await checkInService.createServiceAgreement(agreementData);
+        }
 
-      // Update reservation status to CHECKED_IN
-      await reservationService.updateReservation(reservationId!, {
-        status: "CHECKED_IN",
-      });
+        // Navigate to confirmation
+        navigate(
+          `/check-in/batch-complete?count=${batchResult.data.successCount}`
+        );
+      } else {
+        // Single pet check-in
+        const checkInData = {
+          petId: reservation.petId,
+          customerId: reservation.customerId,
+          reservationId: reservation.id,
+          templateId: template?.id,
+          checkInBy: "staff",
+          responses: responseArray,
+          medications,
+          belongings,
+        };
 
-      // Success! Navigate to confirmation
-      navigate(`/check-in/${checkInResult.data.id}/complete`);
+        const checkInResult = await checkInService.createCheckIn(checkInData);
+
+        // Create service agreement
+        const agreementData = {
+          checkInId: checkInResult.data.id,
+          customerId: reservation.customerId,
+          agreementText: agreementTemplate.content,
+          initials: Object.entries(initials).map(([section, value]) => ({
+            section,
+            initials: value,
+            timestamp: new Date().toISOString(),
+          })),
+          signature,
+          signedBy: customerName,
+        };
+
+        await checkInService.createServiceAgreement(agreementData);
+
+        // Update reservation status to CHECKED_IN
+        await reservationService.updateReservation(reservationId!, {
+          status: "CHECKED_IN",
+        });
+
+        // Success! Navigate to confirmation
+        navigate(`/check-in/${checkInResult.data.id}/complete`);
+      }
+
+      // Don't clear draft immediately - keep signature visible if user navigates back
+      // Draft will be overwritten on next check-in for this reservation
     } catch (err: any) {
       console.error("Error creating check-in:", err);
       setError(err.response?.data?.message || "Failed to create check-in");
@@ -393,10 +768,55 @@ const CheckInWorkflow: React.FC = () => {
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
             required
+            disabled={!!existingAgreement}
             sx={{ mb: 3 }}
           />
 
-          <SignatureCapture onSignature={setSignature} label="Sign Below *" />
+          {existingAgreement ? (
+            <Box>
+              <Typography
+                variant="subtitle2"
+                color="text.secondary"
+                gutterBottom
+              >
+                Signature (Already Signed)
+              </Typography>
+              <Paper
+                variant="outlined"
+                sx={{
+                  p: 2,
+                  backgroundColor: "grey.50",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <img
+                  src={existingAgreement.signature}
+                  alt="Signature"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "150px",
+                    objectFit: "contain",
+                  }}
+                />
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ mt: 1 }}
+                >
+                  Signed by {existingAgreement.signedBy} on{" "}
+                  {new Date(existingAgreement.signedAt).toLocaleString()}
+                </Typography>
+              </Paper>
+            </Box>
+          ) : (
+            <SignatureCapture
+              onSignature={setSignature}
+              label="Sign Below *"
+              initialSignature={signature}
+            />
+          )}
         </Paper>
       </Box>
     );
@@ -504,16 +924,71 @@ const CheckInWorkflow: React.FC = () => {
           Pet Check-In
         </Typography>
         <Typography variant="subtitle1" color="text.secondary" paragraph>
-          {reservation?.pet?.name} - {customerName}
+          {pet?.name || reservation?.pet?.name} - {customerName}
         </Typography>
 
+        {/* Draft Resume Banner */}
+        {hasDraft && (
+          <Alert
+            severity="info"
+            sx={{ mb: 3 }}
+            action={
+              <Box>
+                <Button
+                  color="inherit"
+                  size="small"
+                  onClick={loadDraft}
+                  sx={{ mr: 1 }}
+                >
+                  Resume
+                </Button>
+                <Button color="inherit" size="small" onClick={clearDraft}>
+                  Start Fresh
+                </Button>
+              </Box>
+            }
+          >
+            You have an unfinished check-in. Would you like to resume where you
+            left off?
+          </Alert>
+        )}
+
+        {/* Step Progress Indicator with Status Icons */}
         <Paper sx={{ p: 3, mb: 3 }}>
           <Stepper activeStep={activeStep}>
-            {STEPS.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
+            {STEPS.map((label, index) => {
+              const status = getStepStatus(index);
+              return (
+                <Step key={label} completed={status === "complete"}>
+                  <StepLabel
+                    error={status === "error"}
+                    optional={
+                      status === "warning" ? (
+                        <Typography variant="caption" color="warning.main">
+                          Incomplete
+                        </Typography>
+                      ) : status === "error" ? (
+                        <Typography variant="caption" color="error">
+                          Action Required
+                        </Typography>
+                      ) : null
+                    }
+                    StepIconProps={{
+                      sx: {
+                        color:
+                          status === "error"
+                            ? "error.main"
+                            : status === "warning"
+                            ? "warning.main"
+                            : undefined,
+                      },
+                    }}
+                  >
+                    {label}
+                  </StepLabel>
+                </Step>
+              );
+            })}
           </Stepper>
         </Paper>
 
@@ -523,15 +998,175 @@ const CheckInWorkflow: React.FC = () => {
           </Alert>
         )}
 
-        {activeStep === 0 && renderQuestionnaireStep()}
-        {activeStep === 1 && (
+        {/* Step 0: Pet Summary with Multi-Pet Detection */}
+        {activeStep === 0 && (
+          <>
+            {/* Integration Points - Quick Links */}
+            <Paper sx={{ p: 2, mb: 3, bgcolor: "grey.50" }}>
+              <Grid container spacing={2} alignItems="center">
+                <Grid item xs={12} sm={6} md={3}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Reservation
+                  </Typography>
+                  <Link
+                    href={`/reservations/${reservationId}`}
+                    target="_blank"
+                    sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
+                  >
+                    #{reservationId?.slice(0, 8)}...
+                    <OpenInNewIcon fontSize="small" />
+                  </Link>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Customer
+                  </Typography>
+                  <Link
+                    href={`/customers/${reservation?.customerId}`}
+                    target="_blank"
+                    sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
+                  >
+                    {customerName}
+                    <OpenInNewIcon fontSize="small" />
+                  </Link>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Stay Dates
+                  </Typography>
+                  <Typography variant="body2">
+                    {new Date(reservation?.startDate).toLocaleDateString()} -{" "}
+                    {new Date(reservation?.endDate).toLocaleDateString()}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Assigned Room
+                  </Typography>
+                  <Typography variant="body2">
+                    {reservation?.resource?.name || "Not assigned"}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Paper>
+
+            {/* Auto-populated Pet Profile Info */}
+            {pet && (
+              <Paper sx={{ p: 2, mb: 3 }}>
+                <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                  <InfoIcon
+                    sx={{ mr: 1, verticalAlign: "middle", fontSize: 20 }}
+                  />
+                  Pet Profile (Auto-populated)
+                </Typography>
+                <Grid container spacing={2}>
+                  {pet.idealPlayGroup && (
+                    <Grid item xs={12} sm={4}>
+                      <Chip
+                        icon={<GroupsIcon />}
+                        label={`Play Group: ${pet.idealPlayGroup}`}
+                        color="primary"
+                        variant="outlined"
+                      />
+                    </Grid>
+                  )}
+                  {pet.foodNotes && (
+                    <Grid item xs={12} sm={4}>
+                      <Tooltip title={pet.foodNotes}>
+                        <Chip
+                          icon={<RestaurantIcon />}
+                          label="Feeding Schedule"
+                          color="info"
+                          variant="outlined"
+                        />
+                      </Tooltip>
+                    </Grid>
+                  )}
+                  {(pet.specialNeeds || pet.behaviorNotes) && (
+                    <Grid item xs={12} sm={4}>
+                      <Tooltip title={pet.specialNeeds || pet.behaviorNotes}>
+                        <Chip
+                          icon={<WarningIcon />}
+                          label="Special Handling"
+                          color="warning"
+                          variant="outlined"
+                        />
+                      </Tooltip>
+                    </Grid>
+                  )}
+                </Grid>
+                {!pet.idealPlayGroup &&
+                  !pet.foodNotes &&
+                  !pet.specialNeeds &&
+                  !pet.behaviorNotes && (
+                    <Typography variant="body2" color="text.secondary">
+                      No special preferences on file for this pet.
+                    </Typography>
+                  )}
+              </Paper>
+            )}
+
+            {/* Multi-pet check-in selector */}
+            <MultiPetCheckIn
+              reservationId={reservationId!}
+              onSelectPets={(petIds, reservationIds) => {
+                setSelectedPetIds(petIds);
+                setSelectedReservationIds(reservationIds);
+                setIsMultiPet(petIds.length > 1);
+                // Load all selected pets
+                Promise.all(
+                  petIds.map((id) => customerService.getPetById(id))
+                ).then((pets) => setAllPets(pets));
+              }}
+              onSinglePetCheckIn={() => {
+                setIsMultiPet(false);
+                setSelectedPetIds([reservation?.petId]);
+                setSelectedReservationIds([reservationId!]);
+              }}
+            />
+            {/* Current pet summary */}
+            {pet && (
+              <PetSummaryCard
+                pet={pet}
+                onUpdatePet={handleUpdatePet}
+                showEditButtons={true}
+                emergencyContact={customer?.emergencyContact}
+                emergencyPhone={customer?.emergencyPhone}
+                onUpdateCustomer={handleUpdateCustomer}
+              />
+            )}
+            {/* Show other selected pets if multi-pet */}
+            {isMultiPet && allPets.length > 1 && (
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="subtitle1" gutterBottom>
+                  Additional Pets Being Checked In:
+                </Typography>
+                {allPets
+                  .filter((p) => p.id !== pet?.id)
+                  .map((otherPet) => (
+                    <PetSummaryCard
+                      key={otherPet.id}
+                      pet={otherPet}
+                      showEditButtons={false}
+                    />
+                  ))}
+              </Box>
+            )}
+          </>
+        )}
+        {activeStep === 1 && renderQuestionnaireStep()}
+        {activeStep === 2 && (
           <MedicationForm medications={medications} onChange={setMedications} />
         )}
-        {activeStep === 2 && (
-          <BelongingsForm belongings={belongings} onChange={setBelongings} />
+        {activeStep === 3 && (
+          <BelongingsForm
+            belongings={belongings}
+            onChange={setBelongings}
+            petId={pet?.id || reservation?.petId}
+          />
         )}
-        {activeStep === 3 && renderAgreementStep()}
-        {activeStep === 4 && renderReviewStep()}
+        {activeStep === 4 && renderAgreementStep()}
+        {activeStep === 5 && renderReviewStep()}
 
         <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
           <Button
@@ -551,21 +1186,31 @@ const CheckInWorkflow: React.FC = () => {
               Next
             </Button>
           ) : (
-            <Button
-              variant="contained"
-              color="success"
-              onClick={handleSubmit}
-              disabled={submitting}
-              startIcon={
-                submitting ? (
-                  <CircularProgress size={20} />
-                ) : (
-                  <CheckCircleIcon />
-                )
+            <Tooltip
+              title={
+                !canSubmit()
+                  ? "Please complete all required fields (questionnaire and service agreement)"
+                  : ""
               }
             >
-              {submitting ? "Completing..." : "Complete Check-In"}
-            </Button>
+              <span>
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={handleSubmit}
+                  disabled={submitting || !canSubmit()}
+                  startIcon={
+                    submitting ? (
+                      <CircularProgress size={20} />
+                    ) : (
+                      <CheckCircleIcon />
+                    )
+                  }
+                >
+                  {submitting ? "Completing..." : "Complete Check-In"}
+                </Button>
+              </span>
+            </Tooltip>
           )}
         </Box>
       </Box>

@@ -262,15 +262,36 @@ export const getAllReservations = catchAsync(
           const [year, month, day] = dateStr
             .split("-")
             .map((num) => parseInt(num, 10));
-          const startOfDay = new Date(year, month - 1, day, 0, 0, 0, 0);
-          const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
+
+          // Get timezone from query parameter, default to America/Denver (MST/UTC-7)
+          const timezone = (req.query.timezone as string) || "America/Denver";
+          const timezoneOffsets: { [key: string]: number } = {
+            "America/New_York": -5,
+            "America/Chicago": -6,
+            "America/Denver": -7,
+            "America/Los_Angeles": -8,
+            "America/Phoenix": -7,
+            UTC: 0,
+          };
+          const offsetHours = timezoneOffsets[timezone] || -7;
+
+          // Create start and end of day in UTC, representing the user's local day
+          // For MST (UTC-7), Dec 9 00:00 MST = Dec 9 07:00 UTC
+          // For MST (UTC-7), Dec 9 23:59 MST = Dec 10 06:59 UTC
+          const startOfDay = new Date(
+            Date.UTC(year, month - 1, day, -offsetHours, 0, 0, 0)
+          );
+          const endOfDay = new Date(
+            Date.UTC(year, month - 1, day, 23 - offsetHours, 59, 59, 999)
+          );
+
           if (!isNaN(startOfDay.getTime()) && !isNaN(endOfDay.getTime())) {
             // Filter for reservations that are ACTIVE on this date
             // This means: startDate <= endOfDay AND endDate >= startOfDay
             filter.startDate = { lte: endOfDay };
             filter.endDate = { gte: startOfDay };
             logger.info(
-              `Filtering reservations active on date: ${dateStr}, using start: ${startOfDay.toISOString()} and end: ${endOfDay.toISOString()}`,
+              `Filtering reservations active on date: ${dateStr} in timezone ${timezone}, UTC range: ${startOfDay.toISOString()} to ${endOfDay.toISOString()}`,
               { requestId }
             );
           } else {

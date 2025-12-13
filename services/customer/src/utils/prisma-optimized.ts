@@ -52,6 +52,8 @@ export const petSelectMinimal = {
   name: true,
   type: true,
   breed: true,
+  profilePhoto: true,
+  petIcons: true,
 } as const;
 
 /** Pet fields for reservation context */

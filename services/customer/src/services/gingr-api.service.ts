@@ -48,6 +48,8 @@ interface GingrAnimal {
   fixed?: string; // "1" or "0"
   vip?: string; // "1" or "0"
   banned?: string; // "1" or "0"
+  image?: string; // Pet photo URL
+  next_immunization_expiration?: string; // Unix timestamp
 }
 
 interface GingrReservation {
@@ -124,11 +126,13 @@ export class GingrApiClient {
   private async rateLimit(): Promise<void> {
     const now = Date.now();
     const timeSinceLastRequest = now - this.lastRequestTime;
-    
+
     if (timeSinceLastRequest < 150) {
-      await new Promise(resolve => setTimeout(resolve, 150 - timeSinceLastRequest));
+      await new Promise((resolve) =>
+        setTimeout(resolve, 150 - timeSinceLastRequest)
+      );
     }
-    
+
     this.lastRequestTime = Date.now();
     this.requestCount++;
   }
@@ -136,13 +140,16 @@ export class GingrApiClient {
   /**
    * Generic GET request
    */
-  private async get(endpoint: string, params: Record<string, any> = {}): Promise<any> {
+  private async get(
+    endpoint: string,
+    params: Record<string, any> = {}
+  ): Promise<any> {
     await this.rateLimit();
-    
+
     const url = new URL(`${this.baseUrl}${endpoint}`);
-    url.searchParams.append('key', this.apiKey);
-    
-    Object.keys(params).forEach(key => {
+    url.searchParams.append("key", this.apiKey);
+
+    Object.keys(params).forEach((key) => {
       const value = params[key];
       if (value !== undefined && value !== null) {
         url.searchParams.append(key, String(value));
@@ -150,20 +157,20 @@ export class GingrApiClient {
     });
 
     console.log(`[Gingr API] GET ${endpoint}`, params);
-    
+
     try {
       const response = await fetch(url.toString());
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      
-      const data = await response.json() as any;
-      
+
+      const data = (await response.json()) as any;
+
       if (data.error) {
         throw new Error(data.error);
       }
-      
+
       return data;
     } catch (error) {
       console.error(`[Gingr API] Error on GET ${endpoint}:`, error);
@@ -174,13 +181,16 @@ export class GingrApiClient {
   /**
    * Generic POST request
    */
-  private async post(endpoint: string, data: Record<string, any> = {}): Promise<any> {
+  private async post(
+    endpoint: string,
+    data: Record<string, any> = {}
+  ): Promise<any> {
     await this.rateLimit();
-    
+
     const formData = new URLSearchParams();
-    formData.append('key', this.apiKey);
-    
-    Object.keys(data).forEach(key => {
+    formData.append("key", this.apiKey);
+
+    Object.keys(data).forEach((key) => {
       const value = data[key];
       if (value !== undefined && value !== null) {
         formData.append(key, String(value));
@@ -188,26 +198,26 @@ export class GingrApiClient {
     });
 
     console.log(`[Gingr API] POST ${endpoint}`, data);
-    
+
     try {
       const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
         },
-        body: formData
+        body: formData,
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      
-      const result = await response.json() as any;
-      
+
+      const result = (await response.json()) as any;
+
       if (result.error) {
         throw new Error(result.error);
       }
-      
+
       return result;
     } catch (error) {
       console.error(`[Gingr API] Error on POST ${endpoint}:`, error);
@@ -219,14 +229,14 @@ export class GingrApiClient {
    * Format date to YYYY-MM-DD
    */
   private formatDate(date: Date): string {
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
   }
 
   /**
    * Fetch all owners
    */
   async fetchAllOwners(): Promise<GingrOwner[]> {
-    const response = await this.get('/owners');
+    const response = await this.get("/owners");
     return response.data || [];
   }
 
@@ -234,54 +244,65 @@ export class GingrApiClient {
    * Fetch all animals
    */
   async fetchAllAnimals(): Promise<GingrAnimal[]> {
-    const response = await this.get('/animals');
+    const response = await this.get("/animals");
     return response.data || [];
   }
 
   /**
    * Fetch reservations in 30-day chunks (API limitation)
    */
-  async fetchAllReservations(startDate: Date, endDate: Date): Promise<GingrReservation[]> {
+  async fetchAllReservations(
+    startDate: Date,
+    endDate: Date
+  ): Promise<GingrReservation[]> {
     const allReservations: GingrReservation[] = [];
     let currentStart = new Date(startDate);
-    
+
     while (currentStart < endDate) {
       // Calculate end of current chunk (30 days max)
       const currentEnd = new Date(currentStart);
       currentEnd.setDate(currentEnd.getDate() + 29);
-      
+
       // Don't go past the requested end date
       const chunkEnd = currentEnd > endDate ? endDate : currentEnd;
-      
-      console.log(`[Gingr API] Fetching reservations from ${this.formatDate(currentStart)} to ${this.formatDate(chunkEnd)}`);
-      
+
+      console.log(
+        `[Gingr API] Fetching reservations from ${this.formatDate(
+          currentStart
+        )} to ${this.formatDate(chunkEnd)}`
+      );
+
       try {
-        const response = await this.post('/reservations', {
+        const response = await this.post("/reservations", {
           start_date: this.formatDate(currentStart),
-          end_date: this.formatDate(chunkEnd)
+          end_date: this.formatDate(chunkEnd),
         });
-        
+
         // Gingr returns reservations in response.data as an object with reservation IDs as keys
         // Convert to array
         const reservationsData = response.data || {};
-        const chunk = Array.isArray(reservationsData) 
-          ? reservationsData 
-          : Object.values(reservationsData) as GingrReservation[];
-        
+        const chunk = Array.isArray(reservationsData)
+          ? reservationsData
+          : (Object.values(reservationsData) as GingrReservation[]);
+
         allReservations.push(...chunk);
-        
-        console.log(`[Gingr API] Fetched ${chunk.length} reservations for this chunk`);
+
+        console.log(
+          `[Gingr API] Fetched ${chunk.length} reservations for this chunk`
+        );
       } catch (error) {
         console.error(`[Gingr API] Error fetching reservations chunk:`, error);
         // Continue with next chunk even if one fails
       }
-      
+
       // Move to next chunk
       currentStart = new Date(chunkEnd);
       currentStart.setDate(currentStart.getDate() + 1);
     }
-    
-    console.log(`[Gingr API] Total reservations fetched: ${allReservations.length}`);
+
+    console.log(
+      `[Gingr API] Total reservations fetched: ${allReservations.length}`
+    );
     return allReservations;
   }
 
@@ -289,20 +310,23 @@ export class GingrApiClient {
    * Fetch reservation types (services)
    */
   async fetchReservationTypes(): Promise<GingrReservationType[]> {
-    const response = await this.get('/reservation_types');
+    const response = await this.get("/reservation_types");
     return response.data || [];
   }
 
   /**
    * Fetch invoices
    */
-  async fetchAllInvoices(fromDate: Date, toDate: Date): Promise<GingrInvoice[]> {
-    const response = await this.get('/list_invoices', {
+  async fetchAllInvoices(
+    fromDate: Date,
+    toDate: Date
+  ): Promise<GingrInvoice[]> {
+    const response = await this.get("/list_invoices", {
       from_date: this.formatDate(fromDate),
       to_date: this.formatDate(toDate),
-      complete: true
+      complete: true,
     });
-    
+
     return response.data || [];
   }
 
@@ -310,10 +334,10 @@ export class GingrApiClient {
    * Fetch animal immunizations
    */
   async fetchAnimalImmunizations(animalId: string): Promise<any[]> {
-    const response = await this.get('/get_animal_immunizations', {
-      animal_id: animalId
+    const response = await this.get("/get_animal_immunizations", {
+      animal_id: animalId,
     });
-    
+
     return response.data || [];
   }
 
@@ -321,10 +345,10 @@ export class GingrApiClient {
    * Fetch animal feeding info
    */
   async fetchFeedingInfo(animalId: string): Promise<any> {
-    const response = await this.get('/get_feeding_info', {
-      animal_id: animalId
+    const response = await this.get("/get_feeding_info", {
+      animal_id: animalId,
     });
-    
+
     return response.data || null;
   }
 
@@ -332,10 +356,10 @@ export class GingrApiClient {
    * Fetch animal medication info
    */
   async fetchMedicationInfo(animalId: string): Promise<any> {
-    const response = await this.get('/get_medication_info', {
-      animal_id: animalId
+    const response = await this.get("/get_medication_info", {
+      animal_id: animalId,
     });
-    
+
     return response.data || null;
   }
 
@@ -343,7 +367,7 @@ export class GingrApiClient {
    * Fetch species list
    */
   async fetchSpecies(): Promise<any[]> {
-    const response = await this.get('/get_species');
+    const response = await this.get("/get_species");
     return response.data || [];
   }
 
@@ -351,7 +375,7 @@ export class GingrApiClient {
    * Fetch breeds list
    */
   async fetchBreeds(): Promise<any[]> {
-    const response = await this.get('/get_breeds');
+    const response = await this.get("/get_breeds");
     return response.data || [];
   }
 
@@ -359,7 +383,15 @@ export class GingrApiClient {
    * Fetch locations
    */
   async fetchLocations(): Promise<any[]> {
-    const response = await this.get('/get_locations');
+    const response = await this.get("/get_locations");
+    return response.data || [];
+  }
+
+  /**
+   * Fetch vets list
+   */
+  async fetchVets(): Promise<any[]> {
+    const response = await this.get("/get_vets");
     return response.data || [];
   }
 
@@ -369,7 +401,7 @@ export class GingrApiClient {
   getStats() {
     return {
       totalRequests: this.requestCount,
-      baseUrl: this.baseUrl
+      baseUrl: this.baseUrl,
     };
   }
 }

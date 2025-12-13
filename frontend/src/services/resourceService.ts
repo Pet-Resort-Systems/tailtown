@@ -60,11 +60,6 @@ export const resourceService = {
     try {
       // If a large limit is requested (like 1000), fetch all pages
       if (limit && limit > 100) {
-        console.log(
-          "[ResourceService] Large limit detected:",
-          limit,
-          "- fetching all pages"
-        );
         let allResources: Resource[] = [];
         let currentPage = 1;
         let totalPages = 1;
@@ -80,25 +75,6 @@ export const resourceService = {
           },
         });
 
-        console.log(
-          "[ResourceService] Response keys:",
-          Object.keys(firstResponse.data)
-        );
-        console.log(
-          "[ResourceService] Response status:",
-          firstResponse.data.status
-        );
-        console.log(
-          "[ResourceService] Response data type:",
-          typeof firstResponse.data.data,
-          "isArray:",
-          Array.isArray(firstResponse.data.data)
-        );
-        console.log(
-          "[ResourceService] Response data length:",
-          firstResponse.data.data?.length
-        );
-
         if (firstResponse.data.status === "success") {
           allResources = firstResponse.data.data || [];
           // If we have data but no totalPages, we got all data in one response
@@ -109,20 +85,9 @@ export const resourceService = {
           ) {
             // All data was returned in this single response, no pagination needed
             totalPages = 1;
-            console.log(
-              "[ResourceService] No pagination metadata in response, got all",
-              allResources.length,
-              "resources in one response"
-            );
           } else {
             totalPages = firstResponse.data.totalPages || 1;
           }
-          console.log(
-            "[ResourceService] First page fetched:",
-            allResources.length,
-            "resources, totalPages:",
-            totalPages
-          );
 
           // Fetch remaining pages if there are any
           while (currentPage < totalPages) {
@@ -145,22 +110,10 @@ export const resourceService = {
               pageResponse.data.data
             ) {
               allResources = [...allResources, ...pageResponse.data.data];
-              console.log(
-                "[ResourceService] Page",
-                currentPage,
-                "fetched:",
-                pageResponse.data.data.length,
-                "resources. Total so far:",
-                allResources.length
-              );
             }
           }
         }
 
-        console.log(
-          "[ResourceService] All pages fetched! Total resources:",
-          allResources.length
-        );
         return {
           status: "success",
           data: allResources,

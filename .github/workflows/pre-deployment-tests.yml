@@ -29,12 +29,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: "20"
+          node-version: "20.19.0"
           cache: "npm"
 
       - name: Install dependencies - Customer Service
@@ -106,12 +106,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: "20"
+          node-version: "20.19.0"
           cache: "npm"
 
       - name: Install dependencies - Reservation Service
@@ -145,12 +145,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: "20"
+          node-version: "20.19.0"
           cache: "npm"
 
       - name: Install Customer Service Dependencies
@@ -197,18 +197,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-
-      - name: Install dependencies for Prisma validate
-        run: |
-          cd services/customer && npm ci
-          cd ../reservation-service && npm ci --legacy-peer-deps
+        uses: actions/checkout@v3
 
       - name: Check for required files
         run: |
@@ -234,8 +223,6 @@ jobs:
           echo "✅ All required files present"
 
       - name: Validate Prisma Schema Syntax
-        env:
-          DATABASE_URL: postgresql://test:test@localhost:5432/test
         run: |
           cd services/customer
           npx prisma validate
