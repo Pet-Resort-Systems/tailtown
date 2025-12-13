@@ -80,7 +80,16 @@ export const extractTenantContext = async (
       logger.debug("Using query parameter", { subdomain });
     }
 
-    // Method 4: Fail if no tenant context found
+    // Method 4: Default to dev tenant in non-production
+    if (!subdomain && process.env.NODE_ENV !== "production") {
+      subdomain = "dev";
+      logger.debug("No tenant provided; defaulting to dev tenant", {
+        hostname,
+        path: req.path,
+      });
+    }
+
+    // Method 5: Fail if no tenant context found
     if (!subdomain) {
       logger.error("No tenant context found", { hostname, path: req.path });
       return res.status(400).json({
