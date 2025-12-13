@@ -3,67 +3,67 @@ name: Deploy to Production
 on:
   push:
     branches:
-      - main  # Change to your production branch
-  workflow_dispatch:  # Allow manual trigger
+      - main # Change to your production branch
+  workflow_dispatch: # Allow manual trigger
 
 jobs:
   test:
     name: Run Tests
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          cache: 'npm'
-      
+          node-version: "20"
+          cache: "npm"
+
       - name: Install dependencies - Customer Service
         working-directory: ./services/customer
         run: npm ci
-      
+
       - name: Run tests - Customer Service
         working-directory: ./services/customer
         run: npm test
-      
+
       - name: Install dependencies - Frontend
         working-directory: ./frontend
         run: npm ci
-      
+
       - name: Run tests - Frontend
         working-directory: ./frontend
         run: npm test -- --watchAll=false
-  
+
   build:
     name: Build Applications
     runs-on: ubuntu-latest
     needs: test
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          cache: 'npm'
-      
+          node-version: "20"
+          cache: "npm"
+
       - name: Build Customer Service
         working-directory: ./services/customer
         run: |
           npm ci
           npm run build
-      
+
       - name: Build Reservation Service
         working-directory: ./services/reservation-service
         run: |
           npm ci
           npm run build
-      
+
       - name: Build Frontend
         working-directory: ./frontend
         env:
@@ -71,31 +71,31 @@ jobs:
         run: |
           npm ci
           npm run build
-      
+
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: |
             frontend/build
             services/customer/dist
             services/reservation-service/dist
-  
+
   deploy:
     name: Deploy to Server
     runs-on: ubuntu-latest
     needs: build
     if: github.ref == 'refs/heads/main'
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
+
       - name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-      
+
       - name: Deploy to production server
         uses: appleboy/ssh-action@master
         with:
@@ -106,11 +106,11 @@ jobs:
             cd /var/www/tailtown
             git pull origin main
             ./scripts/deploy.sh
-      
+
       - name: Notify deployment success
         if: success()
         run: echo "Deployment successful!"
-      
+
       - name: Notify deployment failure
         if: failure()
         run: echo "Deployment failed!"

@@ -2,80 +2,80 @@ name: Build Tests
 
 on:
   push:
-    branches: [ main, develop, 'fix/**', 'feature/**' ]
+    branches: [main, develop, "fix/**", "feature/**"]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
 
 jobs:
   test-builds:
     name: Test Service Builds
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
-        node-version: [16.x, 18.x]
-    
+        node-version: [20.x]
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-    
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    
-    - name: Install Customer Service Dependencies
-      run: |
-        cd services/customer
-        npm ci
-    
-    - name: Build Customer Service
-      run: |
-        cd services/customer
-        npm run build
-    
-    - name: Install Reservation Service Dependencies
-      run: |
-        cd services/reservation-service
-        npm ci
-    
-    - name: Build Reservation Service
-      run: |
-        cd services/reservation-service
-        npm run build
-    
-    - name: Check for TypeScript Errors
-      run: |
-        echo "Checking Customer Service..."
-        cd services/customer
-        npx tsc --noEmit || echo "Customer service has TypeScript warnings"
-        cd ../..
-        
-        echo "Checking Reservation Service..."
-        cd services/reservation-service
-        npx tsc --noEmit || echo "Reservation service has TypeScript warnings"
-        cd ../..
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: Install Customer Service Dependencies
+        run: |
+          cd services/customer
+          npm ci
+
+      - name: Build Customer Service
+        run: |
+          cd services/customer
+          npm run build
+
+      - name: Install Reservation Service Dependencies
+        run: |
+          cd services/reservation-service
+          npm ci
+
+      - name: Build Reservation Service
+        run: |
+          cd services/reservation-service
+          npm run build
+
+      - name: Check for TypeScript Errors
+        run: |
+          echo "Checking Customer Service..."
+          cd services/customer
+          npx tsc --noEmit || echo "Customer service has TypeScript warnings"
+          cd ../..
+
+          echo "Checking Reservation Service..."
+          cd services/reservation-service
+          npx tsc --noEmit || echo "Reservation service has TypeScript warnings"
+          cd ../..
 
   test-docker-builds:
     name: Test Docker Builds
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-    
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-    
-    - name: Test Customer Service Docker Build
-      run: |
-        docker build -f services/customer/Dockerfile.prod -t test-customer services/customer
-    
-    - name: Test Reservation Service Docker Build
-      run: |
-        docker build -f services/reservation-service/Dockerfile.prod -t test-reservation services/reservation-service
-    
-    - name: Test Frontend Docker Build
-      run: |
-        docker build -f frontend/Dockerfile.prod -t test-frontend frontend
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Test Customer Service Docker Build
+        run: |
+          docker build -f services/customer/Dockerfile.prod -t test-customer services/customer
+
+      - name: Test Reservation Service Docker Build
+        run: |
+          docker build -f services/reservation-service/Dockerfile.prod -t test-reservation services/reservation-service
+
+      - name: Test Frontend Docker Build
+        run: |
+          docker build -f frontend/Dockerfile.prod -t test-frontend frontend

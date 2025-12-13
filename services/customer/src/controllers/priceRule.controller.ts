@@ -1,6 +1,12 @@
-import { Request, Response, NextFunction } from 'express';
-import { PrismaClient, PriceRuleType, DiscountType, PriceAdjustmentType, ServiceCategory } from '@prisma/client';
-import { AppError } from '../middleware/error.middleware';
+import { Request, Response, NextFunction } from "express";
+import {
+  PrismaClient,
+  PriceRuleType,
+  DiscountType,
+  PriceAdjustmentType,
+  ServiceCategory,
+} from "@prisma/client";
+import { AppError } from "../middleware/error.middleware";
 
 const prisma = new PrismaClient();
 
@@ -14,9 +20,14 @@ export const getAllPriceRules = async (
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-    const isActive = req.query.isActive === 'true' ? true : req.query.isActive === 'false' ? false : undefined;
+    const isActive =
+      req.query.isActive === "true"
+        ? true
+        : req.query.isActive === "false"
+        ? false
+        : undefined;
     const ruleType = req.query.ruleType as PriceRuleType | undefined;
-    
+
     // Build where condition
     const where: any = {};
     if (isActive !== undefined) {
@@ -25,7 +36,7 @@ export const getAllPriceRules = async (
     if (ruleType) {
       where.ruleType = ruleType;
     }
-    
+
     const priceRules = await prisma.priceRule.findMany({
       where,
       skip,
@@ -34,21 +45,21 @@ export const getAllPriceRules = async (
         serviceCategories: true,
         services: {
           include: {
-            service: true
-          }
-        }
+            service: true,
+          },
+        },
       },
-      orderBy: { priority: 'desc' }
+      orderBy: { priority: "desc" },
     });
-    
+
     const total = await prisma.priceRule.count({ where });
-    
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       results: priceRules.length,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
-      data: priceRules
+      data: priceRules,
     });
   } catch (error) {
     next(error);
@@ -63,26 +74,26 @@ export const getPriceRuleById = async (
 ) => {
   try {
     const { id } = req.params;
-    
+
     const priceRule = await prisma.priceRule.findUnique({
       where: { id },
       include: {
         serviceCategories: true,
         services: {
           include: {
-            service: true
-          }
-        }
-      }
+            service: true,
+          },
+        },
+      },
     });
-    
+
     if (!priceRule) {
-      return next(new AppError('Price rule not found', 404));
+      return next(new AppError("Price rule not found", 404));
     }
-    
+
     res.status(200).json({
-      status: 'success',
-      data: priceRule
+      status: "success",
+      data: priceRule,
     });
   } catch (error) {
     next(error);
@@ -111,24 +122,34 @@ export const createPriceRule = async (
       isActive,
       priority,
       serviceCategories,
-      services
+      services,
     } = req.body;
-    
+
     // Validate required fields
     if (!name || !ruleType || !discountType || discountValue === undefined) {
-      return next(new AppError('Missing required fields', 400));
+      return next(new AppError("Missing required fields", 400));
     }
-    
+
     // Validate discount value
-    if (discountType === 'PERCENTAGE' && (discountValue < 0 || discountValue > 100)) {
-      return next(new AppError('Percentage discount must be between 0 and 100', 400));
+    if (
+      discountType === "PERCENTAGE" &&
+      (discountValue < 0 || discountValue > 100)
+    ) {
+      return next(
+        new AppError("Percentage discount must be between 0 and 100", 400)
+      );
     }
-    
+
     // Validate days of week if applicable
-    if (ruleType === 'DAY_OF_WEEK' && (!daysOfWeek || daysOfWeek.length === 0)) {
-      return next(new AppError('Days of week are required for DAY_OF_WEEK rule type', 400));
+    if (
+      ruleType === "DAY_OF_WEEK" &&
+      (!daysOfWeek || daysOfWeek.length === 0)
+    ) {
+      return next(
+        new AppError("Days of week are required for DAY_OF_WEEK rule type", 400)
+      );
     }
-    
+
     // Create price rule with transaction to handle related records
     const newPriceRule = await prisma.$transaction(async (prismaClient) => {
       // Create the main price rule
@@ -137,7 +158,7 @@ export const createPriceRule = async (
           name,
           description,
           ruleType,
-          adjustmentType: adjustmentType || 'DISCOUNT',
+          adjustmentType: adjustmentType || "DISCOUNT",
           discountType,
           discountValue,
           minQuantity,
@@ -146,38 +167,38 @@ export const createPriceRule = async (
           endDate: endDate ? new Date(endDate) : null,
           daysOfWeek: daysOfWeek ? JSON.stringify(daysOfWeek) : null,
           isActive: isActive !== undefined ? isActive : true,
-          priority: priority || 10
-        }
+          priority: priority || 10,
+        },
       });
-      
+
       // Create service category relations if provided
       if (serviceCategories && serviceCategories.length > 0) {
         await Promise.all(
-          serviceCategories.map((category: ServiceCategory) => 
+          serviceCategories.map((category: ServiceCategory) =>
             prismaClient.priceRuleServiceCategory.create({
               data: {
                 priceRuleId: priceRule.id,
-                serviceCategory: category
-              }
+                serviceCategory: category,
+              },
             })
           )
         );
       }
-      
+
       // Create service relations if provided
       if (services && services.length > 0) {
         await Promise.all(
-          services.map((serviceId: string) => 
+          services.map((serviceId: string) =>
             prismaClient.priceRuleService.create({
               data: {
                 priceRuleId: priceRule.id,
-                serviceId
-              }
+                serviceId,
+              },
             })
           )
         );
       }
-      
+
       // Return the price rule with related records
       return prismaClient.priceRule.findUnique({
         where: { id: priceRule.id },
@@ -185,16 +206,16 @@ export const createPriceRule = async (
           serviceCategories: true,
           services: {
             include: {
-              service: true
-            }
-          }
-        }
+              service: true,
+            },
+          },
+        },
       });
     });
-    
+
     res.status(201).json({
-      status: 'success',
-      data: newPriceRule
+      status: "success",
+      data: newPriceRule,
     });
   } catch (error) {
     next(error);
@@ -224,24 +245,30 @@ export const updatePriceRule = async (
       isActive,
       priority,
       serviceCategories,
-      services
+      services,
     } = req.body;
-    
+
     // Check if price rule exists
     const priceRuleExists = await prisma.priceRule.findUnique({
       where: { id },
-      select: { id: true }
+      select: { id: true },
     });
-    
+
     if (!priceRuleExists) {
-      return next(new AppError('Price rule not found', 404));
+      return next(new AppError("Price rule not found", 404));
     }
-    
+
     // Validate discount value if provided
-    if (discountType === 'PERCENTAGE' && discountValue !== undefined && (discountValue < 0 || discountValue > 100)) {
-      return next(new AppError('Percentage discount must be between 0 and 100', 400));
+    if (
+      discountType === "PERCENTAGE" &&
+      discountValue !== undefined &&
+      (discountValue < 0 || discountValue > 100)
+    ) {
+      return next(
+        new AppError("Percentage discount must be between 0 and 100", 400)
+      );
     }
-    
+
     // Update price rule with transaction to handle related records
     const updatedPriceRule = await prisma.$transaction(async (prismaClient) => {
       // Update the main price rule
@@ -260,54 +287,54 @@ export const updatePriceRule = async (
           endDate: endDate ? new Date(endDate) : undefined,
           daysOfWeek: daysOfWeek ? JSON.stringify(daysOfWeek) : undefined,
           isActive,
-          priority
-        }
+          priority,
+        },
       });
-      
+
       // Update service category relations if provided
       if (serviceCategories) {
         // Delete existing relations
         await prismaClient.priceRuleServiceCategory.deleteMany({
-          where: { priceRuleId: id }
+          where: { priceRuleId: id },
         });
-        
+
         // Create new relations
         if (serviceCategories.length > 0) {
           await Promise.all(
-            serviceCategories.map((category: ServiceCategory) => 
+            serviceCategories.map((category: ServiceCategory) =>
               prismaClient.priceRuleServiceCategory.create({
                 data: {
                   priceRuleId: priceRule.id,
-                  serviceCategory: category
-                }
+                  serviceCategory: category,
+                },
               })
             )
           );
         }
       }
-      
+
       // Update service relations if provided
       if (services) {
         // Delete existing relations
         await prismaClient.priceRuleService.deleteMany({
-          where: { priceRuleId: id }
+          where: { priceRuleId: id },
         });
-        
+
         // Create new relations
         if (services.length > 0) {
           await Promise.all(
-            services.map((serviceId: string) => 
+            services.map((serviceId: string) =>
               prismaClient.priceRuleService.create({
                 data: {
                   priceRuleId: priceRule.id,
-                  serviceId
-                }
+                  serviceId,
+                },
               })
             )
           );
         }
       }
-      
+
       // Return the updated price rule with related records
       return prismaClient.priceRule.findUnique({
         where: { id: priceRule.id },
@@ -315,16 +342,16 @@ export const updatePriceRule = async (
           serviceCategories: true,
           services: {
             include: {
-              service: true
-            }
-          }
-        }
+              service: true,
+            },
+          },
+        },
       });
     });
-    
+
     res.status(200).json({
-      status: 'success',
-      data: updatedPriceRule
+      status: "success",
+      data: updatedPriceRule,
     });
   } catch (error) {
     next(error);
@@ -339,22 +366,22 @@ export const deletePriceRule = async (
 ) => {
   try {
     const { id } = req.params;
-    
+
     // Check if price rule exists
     const priceRuleExists = await prisma.priceRule.findUnique({
       where: { id },
-      select: { id: true }
+      select: { id: true },
     });
-    
+
     if (!priceRuleExists) {
-      return next(new AppError('Price rule not found', 404));
+      return next(new AppError("Price rule not found", 404));
     }
-    
+
     // Delete price rule (related records will be deleted via cascade)
     await prisma.priceRule.delete({
-      where: { id }
+      where: { id },
     });
-    
+
     res.status(204).send();
   } catch (error) {
     next(error);
@@ -368,72 +395,73 @@ export const calculatePrice = async (
   next: NextFunction
 ) => {
   try {
-    const {
-      serviceId,
-      startDate,
-      endDate,
-      petCount = 1
-    } = req.body;
-    
+    const { serviceId, startDate, endDate, petCount = 1 } = req.body;
+
     if (!serviceId || !startDate || !endDate) {
-      return next(new AppError('Missing required fields', 400));
+      return next(new AppError("Missing required fields", 400));
     }
-    
+
     // Get service details
     const service = await prisma.service.findUnique({
-      where: { id: serviceId }
+      where: { id: serviceId },
     });
-    
+
     if (!service) {
-      return next(new AppError('Service not found', 404));
+      return next(new AppError("Service not found", 404));
     }
-    
+
+    const parseDateInput = (value: string) => {
+      // Date-only values are interpreted inconsistently across timezones.
+      // Treat them as UTC midnight so calculations are deterministic in CI/local.
+      if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        return new Date(`${value}T00:00:00.000Z`);
+      }
+      return new Date(value);
+    };
+
     // Calculate base price
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const durationInDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+    const start = parseDateInput(startDate);
+    const end = parseDateInput(endDate);
+    const durationInDays = Math.max(
+      1,
+      Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
+    );
     let basePrice = service.price * durationInDays * petCount;
-    
+
     // Get applicable price rules
     const today = new Date();
-    const dayOfWeek = start.getDay(); // 0 = Sunday, 6 = Saturday
-    
+    const dayOfWeek = start.getUTCDay(); // 0 = Sunday, 6 = Saturday
+
     const applicableRules = await prisma.priceRule.findMany({
       where: {
         isActive: true,
         OR: [
           {
             // Day of week rules
-            ruleType: 'DAY_OF_WEEK',
-            daysOfWeek: { contains: String(dayOfWeek) }
+            ruleType: "DAY_OF_WEEK",
+            daysOfWeek: { contains: String(dayOfWeek) },
           },
           {
             // Multi-day rules
-            ruleType: 'MULTI_DAY',
+            ruleType: "MULTI_DAY",
             minQuantity: { lte: durationInDays },
             OR: [
               { maxQuantity: { gte: durationInDays } },
-              { maxQuantity: null }
-            ]
+              { maxQuantity: null },
+            ],
           },
           {
             // Multi-pet rules
-            ruleType: 'MULTI_PET',
+            ruleType: "MULTI_PET",
             minQuantity: { lte: petCount },
-            OR: [
-              { maxQuantity: { gte: petCount } },
-              { maxQuantity: null }
-            ]
+            OR: [{ maxQuantity: { gte: petCount } }, { maxQuantity: null }],
           },
           {
             // Seasonal/promotional rules
-            ruleType: { in: ['SEASONAL', 'PROMOTIONAL', 'CUSTOM'] },
+            ruleType: { in: ["SEASONAL", "PROMOTIONAL", "CUSTOM"] },
             startDate: { lte: today },
-            OR: [
-              { endDate: { gte: today } },
-              { endDate: null }
-            ]
-          }
+            OR: [{ endDate: { gte: today } }, { endDate: null }],
+          },
         ],
         AND: [
           {
@@ -442,85 +470,134 @@ export const calculatePrice = async (
                 // Rules for specific service categories
                 serviceCategories: {
                   some: {
-                    serviceCategory: service.serviceCategory
-                  }
-                }
+                    serviceCategory: service.serviceCategory,
+                  },
+                },
               },
               {
                 // Rules for specific services
                 services: {
                   some: {
-                    serviceId: service.id
-                  }
-                }
+                    serviceId: service.id,
+                  },
+                },
               },
               {
                 // Rules with no specific service or category (apply to all)
                 serviceCategories: { none: {} },
-                services: { none: {} }
-              }
-            ]
-          }
-        ]
+                services: { none: {} },
+              },
+            ],
+          },
+        ],
       },
-      orderBy: { priority: 'desc' },
+      orderBy: { priority: "desc" },
       include: {
         serviceCategories: true,
-        services: true
-      }
+        services: true,
+      },
     });
-    
+
     // Apply discounts
     let appliedRules = [];
     let finalPrice = basePrice;
     const appliedRuleTypes = new Set();
-    
+
+    const isRuleApplicable = (rule: any) => {
+      if (!rule?.isActive) return false;
+
+      if (rule.ruleType === "DAY_OF_WEEK") {
+        const rawDays = rule.daysOfWeek;
+        const parsedDays: number[] = Array.isArray(rawDays)
+          ? rawDays
+          : typeof rawDays === "string"
+          ? (() => {
+              try {
+                return JSON.parse(rawDays);
+              } catch {
+                return [];
+              }
+            })()
+          : [];
+        return parsedDays.map(Number).includes(dayOfWeek);
+      }
+
+      if (rule.ruleType === "MULTI_DAY") {
+        if (rule.minQuantity != null && durationInDays < rule.minQuantity)
+          return false;
+        if (rule.maxQuantity != null && durationInDays > rule.maxQuantity)
+          return false;
+        return true;
+      }
+
+      if (rule.ruleType === "MULTI_PET") {
+        if (rule.minQuantity != null && petCount < rule.minQuantity)
+          return false;
+        if (rule.maxQuantity != null && petCount > rule.maxQuantity)
+          return false;
+        return true;
+      }
+
+      if (["SEASONAL", "PROMOTIONAL", "CUSTOM"].includes(rule.ruleType)) {
+        const startOk = !rule.startDate || today >= new Date(rule.startDate);
+        const endOk = !rule.endDate || today <= new Date(rule.endDate);
+        return startOk && endOk;
+      }
+
+      return true;
+    };
+
     for (const rule of applicableRules) {
+      if (!isRuleApplicable(rule)) {
+        continue;
+      }
+
       // Only apply one rule of each type (to prevent stacking similar discounts)
       if (appliedRuleTypes.has(rule.ruleType)) {
         continue;
       }
-      
+
       let adjustmentAmount = 0;
-      
-      if (rule.discountType === 'PERCENTAGE') {
+
+      if (rule.discountType === "PERCENTAGE") {
         adjustmentAmount = basePrice * (rule.discountValue / 100);
-      } else { // FIXED_AMOUNT
+      } else {
+        // FIXED_AMOUNT
         adjustmentAmount = rule.discountValue;
       }
-      
+
       // Apply adjustment based on type (DISCOUNT reduces, SURCHARGE increases)
-      if (rule.adjustmentType === 'SURCHARGE') {
+      if (rule.adjustmentType === "SURCHARGE") {
         finalPrice += adjustmentAmount;
       } else {
         finalPrice -= adjustmentAmount;
       }
-      
+
       appliedRuleTypes.add(rule.ruleType);
-      
+
       appliedRules.push({
         ruleId: rule.id,
         ruleName: rule.name,
         adjustmentType: rule.adjustmentType,
         adjustmentAmount,
         discountType: rule.discountType,
-        discountValue: rule.discountValue
+        discountValue: rule.discountValue,
       });
     }
-    
+
     // Ensure final price is not negative
     finalPrice = Math.max(0, finalPrice);
-    
+
     res.status(200).json({
-      status: 'success',
+      status: "success",
       data: {
         basePrice,
         finalPrice,
         discount: basePrice - finalPrice,
         durationInDays,
         petCount,
-        appliedRules
-      }
+        appliedRules,
+      },
     });
   } catch (error) {
     next(error);

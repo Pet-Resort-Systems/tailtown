@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { useDashboardData } from "../useDashboardData";
 import { reservationService } from "../../services/reservationService";
 
@@ -147,13 +147,15 @@ describe("useDashboardData - Timezone Tests", () => {
       });
 
       // Filter for check-ins (starting today)
-      result.current.filterReservations("in");
+      act(() => {
+        result.current.filterReservations("in");
+      });
 
       await waitFor(() => {
-        // Should only show reservation #1 (starts today in UTC)
         expect(result.current.filteredReservations).toHaveLength(1);
-        expect(result.current.filteredReservations[0].id).toBe("1");
       });
+
+      expect(result.current.filteredReservations[0].id).toBe("1");
     });
 
     it("should correctly filter check-outs for today regardless of timezone", async () => {
@@ -210,13 +212,15 @@ describe("useDashboardData - Timezone Tests", () => {
       });
 
       // Filter for check-outs (ending today)
-      result.current.filterReservations("out");
+      act(() => {
+        result.current.filterReservations("out");
+      });
 
       await waitFor(() => {
-        // Should only show reservation #1 (ends today in UTC)
         expect(result.current.filteredReservations).toHaveLength(1);
-        expect(result.current.filteredReservations[0].id).toBe("1");
       });
+
+      expect(result.current.filteredReservations[0].id).toBe("1");
     });
 
     it("should correctly calculate overnight count across timezone boundaries", async () => {
