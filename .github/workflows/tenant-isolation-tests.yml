@@ -2,16 +2,16 @@ name: Tenant Isolation Tests
 
 on:
   push:
-    branches: [ main, sept25-stable, develop ]
+    branches: [main, sept25-stable, develop]
   pull_request:
-    branches: [ main, sept25-stable, develop ]
+    branches: [main, sept25-stable, develop]
   workflow_dispatch:
 
 jobs:
   tenant-isolation-tests:
     name: Comprehensive Tenant Isolation Tests
     runs-on: ubuntu-latest
-    
+
     services:
       postgres:
         image: postgres:14
@@ -26,81 +26,81 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-    
+
     defaults:
       run:
         working-directory: services/customer
-    
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18.x'
-        cache: 'npm'
-        cache-dependency-path: services/customer/package-lock.json
-    
-    - name: Install dependencies
-      run: npm install
-    
-    - name: Setup test database
-      env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/customer_test
-      run: |
-        echo "Setting up test database..."
-        npx prisma generate
-        npx prisma db push --skip-generate
-        echo "Test database ready"
-    
-    - name: Run tenant isolation tests
-      env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/customer_test
-        NODE_ENV: test
-        JWT_SECRET: test-secret-key-for-ci
-      run: |
-        echo "Running comprehensive tenant isolation tests..."
-        npm test -- tenant-isolation-comprehensive --watchAll=false --verbose --forceExit
-    
-    - name: Run middleware tests
-      env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/customer_test
-        NODE_ENV: test
-      run: |
-        echo "Running tenant middleware tests..."
-        npm test -- tenant.middleware.test --watchAll=false --verbose
-      continue-on-error: true
-    
-    - name: Generate test coverage report
-      env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/customer_test
-        NODE_ENV: test
-        JWT_SECRET: test-secret-key-for-ci
-      run: |
-        echo "Generating coverage report for tenant isolation..."
-        npm test -- tenant-isolation --coverage --watchAll=false --collectCoverageFrom='src/middleware/tenant.middleware.ts' --collectCoverageFrom='src/controllers/**/*.ts'
-      continue-on-error: true
-    
-    - name: Upload coverage to artifacts
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: tenant-isolation-coverage
-        path: services/customer/coverage/
-        retention-days: 30
-      continue-on-error: true
-    
-    - name: Test Summary
-      if: always()
-      run: |
-        echo "## Tenant Isolation Test Results" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "✅ Tests completed" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### Test Coverage:" >> $GITHUB_STEP_SUMMARY
-        echo "- Middleware UUID conversion" >> $GITHUB_STEP_SUMMARY
-        echo "- Controller tenant filtering" >> $GITHUB_STEP_SUMMARY
-        echo "- Cross-tenant data leakage prevention" >> $GITHUB_STEP_SUMMARY
-        echo "- Tenant context validation" >> $GITHUB_STEP_SUMMARY
-        echo "- Database query isolation" >> $GITHUB_STEP_SUMMARY
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20.19.0"
+          cache: "npm"
+          cache-dependency-path: services/customer/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Setup test database
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/customer_test
+        run: |
+          echo "Setting up test database..."
+          npx prisma generate
+          npx prisma migrate deploy
+          echo "Test database ready"
+
+      - name: Run tenant isolation tests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/customer_test
+          NODE_ENV: test
+          JWT_SECRET: test-secret-key-for-ci
+        run: |
+          echo "Running comprehensive tenant isolation tests..."
+          npm test -- tenant-isolation-comprehensive --watchAll=false --verbose --forceExit
+
+      - name: Run middleware tests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/customer_test
+          NODE_ENV: test
+        run: |
+          echo "Running tenant middleware tests..."
+          npm test -- tenant.middleware.test --watchAll=false --verbose
+        continue-on-error: true
+
+      - name: Generate test coverage report
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/customer_test
+          NODE_ENV: test
+          JWT_SECRET: test-secret-key-for-ci
+        run: |
+          echo "Generating coverage report for tenant isolation..."
+          npm test -- tenant-isolation --coverage --watchAll=false --collectCoverageFrom='src/middleware/tenant.middleware.ts' --collectCoverageFrom='src/controllers/**/*.ts'
+        continue-on-error: true
+
+      - name: Upload coverage to artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tenant-isolation-coverage
+          path: services/customer/coverage/
+          retention-days: 30
+        continue-on-error: true
+
+      - name: Test Summary
+        if: always()
+        run: |
+          echo "## Tenant Isolation Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Tests completed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Test Coverage:" >> $GITHUB_STEP_SUMMARY
+          echo "- Middleware UUID conversion" >> $GITHUB_STEP_SUMMARY
+          echo "- Controller tenant filtering" >> $GITHUB_STEP_SUMMARY
+          echo "- Cross-tenant data leakage prevention" >> $GITHUB_STEP_SUMMARY
+          echo "- Tenant context validation" >> $GITHUB_STEP_SUMMARY
+          echo "- Database query isolation" >> $GITHUB_STEP_SUMMARY

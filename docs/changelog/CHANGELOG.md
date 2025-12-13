@@ -7,7 +7,76 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.20] - 2025-12-09
+
 ### Added
+
+- **Customer Portal Password Authentication** - Secure login for booking portal
+  - **Password storage**: Bcrypt-hashed passwords with 10 rounds
+  - **Password reset flow**: Email-based reset with 24-hour expiring tokens
+  - **Login verification**: Proper password checking instead of email-only lookup
+  - **Rate limiting**: 10 requests per 15 minutes on auth endpoints (production)
+  - **UI pages**: ForgotPassword and ResetPassword pages for customers
+  - **Error handling**: PASSWORD_NOT_SET detection prompts customers to set up password
+  - Files: `services/customer/src/controllers/customer-auth.controller.ts`, `frontend/src/pages/booking/ForgotPassword.tsx`, `frontend/src/pages/booking/ResetPassword.tsx`
+
+## [1.6.19] - 2025-12-09
+
+### Added
+
+- **Check-in Workflow Enhancements** - Final polish for check-in process
+
+  - **Quick-add for missing info**: Inline editing for vet, emergency contact, and vaccines in PetSummaryCard
+  - **Pet history access**: Collapsible "Previous Visits" section showing last 5 check-ins with notes
+  - **Belongings quick-edit**: Edit inventory after check-in completion via dialog on CheckInComplete page
+  - **Step validation indicators**: Visual status (complete/error/warning/pending) on stepper steps
+  - **Integration links**: Quick links to reservation details and customer account from check-in
+  - Files: `frontend/src/components/check-in/PetSummaryCard.tsx`, `frontend/src/pages/check-in/CheckInComplete.tsx`, `frontend/src/pages/check-in/CheckInWorkflow.tsx`
+
+- **E2E Test Suite Expansion** - Comprehensive Playwright tests for production
+  - **Production smoke tests**: 12 read-only tests verifying all major pages load correctly
+  - **Check-in flow tests**: Full workflow from dashboard to completion
+  - **Check-out flow tests**: Belongings return, balance handling, status updates
+  - **Dashboard flow tests**: Metrics display, navigation, date filtering
+  - **Production workflow tests**: Test customer reservation and check-in against live site
+  - **Online booking portal tests**: Customer-facing booking flow with auth, service selection, accessibility
+  - Files: `e2e/production-smoke.spec.ts`, `e2e/check-in-flow.spec.ts`, `e2e/checkout-flow.spec.ts`, `e2e/dashboard-flow.spec.ts`, `e2e/production-workflow.spec.ts`, `e2e/online-booking.spec.ts`
+
+### Changed
+
+- **Documentation Updates** - Updated architecture and quick-start docs
+  - Fixed port numbers in SERVICE-ARCHITECTURE.md (Customer Service is 4004, not 3003)
+  - Added dev workflow commands to QUICK-START.md (`npm run dev:restart`, etc.)
+  - Updated README.md with December 2025 changes and correct folder paths
+
+### Fixed
+
+- **Console Warning Cleanup** - Reduced production console noise
+  - Fixed duplicate React key warnings in customer Autocomplete (use unique IDs)
+  - Fixed MUI Select out-of-range value warning (normalize JUNIOR_KENNEL → JUNIOR)
+  - Made API request/response logging conditional on development environment
+  - Replaced verbose console.log with logger.debug in hooks and services
+
+## [1.6.18] - 2025-12-04
+
+### Added
+
+- **Check-in Workflow Improvements** - Enhanced check-in process for pet boarding
+
+  - **Signature Capture**: Digital signature with canvas-based capture, persists across navigation
+  - **Read-only Agreement View**: Shows signed agreement when revisiting completed check-ins
+  - **Draft/Resume Capability**: Save partial check-ins to localStorage and server, resume later
+  - **Belongings Checklist**: Track items brought (food, meds, toys, bedding) with photo upload support
+  - **Medication Schedule**: Capture dosage, frequency, and special instructions at check-in
+  - **Tenant ID Resolution**: Fixed subdomain-to-UUID resolution for check-in API calls
+  - **Timezone Support**: Date filtering now respects user's local timezone
+  - Files: `frontend/src/pages/check-in/CheckInWorkflow.tsx`, `frontend/src/components/check-in/SignatureCapture.tsx`, `frontend/src/components/check-in/BelongingsForm.tsx`, `services/reservation-service/src/controllers/check-in.controller.ts`
+
+- **Multi-Pet Room Reservations** - Multiple pets sharing same room
+  - Room capacity validation (`multiPet.controller.ts`)
+  - Batch check-in API for multiple pets (`MultiPetCheckIn` component)
+  - Billing for shared rooms (`multiPetService.ts` pricing)
+  - Kennel card per pet (`PrintKennelCards` generates one card per reservation)
 
 ### Fixed
 

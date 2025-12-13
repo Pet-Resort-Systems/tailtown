@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, TextField, Button, IconButton } from "@mui/material";
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
 import {
   Today as TodayIcon,
   ChevronLeft,
   ChevronRight,
+  Label as LabelIcon,
 } from "@mui/icons-material";
 import DashboardMetrics from "../components/dashboard/DashboardMetrics";
 import ReservationList from "../components/dashboard/ReservationList";
@@ -16,6 +24,7 @@ import announcementService from "../services/announcementService";
 import type { Announcement } from "../components/announcements/AnnouncementModal";
 import { dashboardHelp } from "../content/help/dashboardHelp";
 import { useAuth } from "../contexts/AuthContext";
+import BatchLabelPrintDialog from "../components/labels/BatchLabelPrintDialog";
 
 /**
  * Dashboard component displays key business metrics and upcoming reservations.
@@ -37,6 +46,7 @@ const Dashboard = () => {
     inCount,
     outCount,
     overnightCount,
+    allReservations,
     filteredReservations,
     loading,
     error,
@@ -50,6 +60,7 @@ const Dashboard = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
   const { user } = useAuth();
+  const [showBatchLabelPrint, setShowBatchLabelPrint] = useState(false);
 
   // Load announcements on mount
   useEffect(() => {
@@ -121,6 +132,13 @@ const Dashboard = () => {
         onClose={() => setShowAnnouncementModal(false)}
         onDismiss={handleDismissAnnouncement}
         isAuthenticated={!!user}
+      />
+
+      <BatchLabelPrintDialog
+        open={showBatchLabelPrint}
+        onClose={() => setShowBatchLabelPrint(false)}
+        reservations={allReservations}
+        selectedDate={selectedDate}
       />
 
       {/* Header with Date Selector */}
@@ -207,6 +225,22 @@ const Dashboard = () => {
           >
             {isMobile ? <TodayIcon /> : "Today"}
           </Button>
+
+          <Tooltip title="Print Labels">
+            <IconButton
+              size={getResponsiveButtonSize(isMobile)}
+              onClick={() => setShowBatchLabelPrint(true)}
+              sx={{
+                border: "1px solid",
+                borderColor: "divider",
+                borderRadius: 1,
+                flexShrink: 0,
+              }}
+              aria-label="Print Labels"
+            >
+              <LabelIcon />
+            </IconButton>
+          </Tooltip>
         </Box>
       </Box>
 

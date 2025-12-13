@@ -1,11 +1,17 @@
 # Tailtown Current System Architecture
 
-**Last Updated**: December 1, 2025  
+**Last Updated**: December 9, 2025  
 **Status**: ✅ Production - All Systems Operational  
 **Architecture**: Microservices with HTTP Communication, Redis Caching, Sentry Monitoring
 
 ## 🆕 Recent Additions (v1.6.x)
 
+- **Check-in Workflow Enhancements** (v1.6.18): Enhanced check-in process
+  - Quick-add for missing info: Inline editing for vet, emergency contact, vaccines
+  - Pet history access: View previous visits and notes from pet summary card
+  - Belongings quick-edit: Edit inventory after check-in completion
+  - Multi-pet check-in: Support for checking in multiple pets sharing a room
+  - Step validation: Visual indicators for check-in step completion status
 - **Setup Wizard** (v1.6.14): `/setup` - Complete tenant onboarding wizard
   - 11 steps: Business, Rooms, Services, Pricing, Hours, Staff, Payment, Notifications, Branding, Policies, Review
   - API: `POST /api/onboarding/complete` - Creates tenant with all resources

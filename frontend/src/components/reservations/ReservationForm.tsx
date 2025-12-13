@@ -50,6 +50,28 @@ import {
 import { parseGingrDate } from "../../utils/dateUtils";
 
 /**
+ * Normalize resource type to suite size for the dropdown
+ * Maps backend resource types (JUNIOR_KENNEL, QUEEN_KENNEL, etc.) to UI values (JUNIOR, QUEEN, etc.)
+ */
+function normalizeToSuiteSize(resourceType: string): string {
+  const mapping: Record<string, string> = {
+    JUNIOR_KENNEL: "JUNIOR",
+    QUEEN_KENNEL: "QUEEN",
+    KING_KENNEL: "KING",
+    VIP_ROOM: "VIP",
+    CAT_CONDO: "CAT",
+    // Already normalized values pass through
+    JUNIOR: "JUNIOR",
+    QUEEN: "QUEEN",
+    KING: "KING",
+    VIP: "VIP",
+    CAT: "CAT",
+    OVERFLOW: "OVERFLOW",
+  };
+  return mapping[resourceType] || resourceType;
+}
+
+/**
  * Props for the ReservationForm component
  */
 interface ReservationFormProps {
@@ -209,8 +231,6 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
       // Only load initial data once to prevent duplicate initializations
       if (initialDataLoaded.current) return;
 
-      console.log("ReservationForm initialData:", initialData);
-
       try {
         setLoading(true);
 
@@ -295,12 +315,6 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                   initialData.customerId
                 );
                 let petsData = petsResponse.data || [];
-                console.log(
-                  "Loaded pets:",
-                  petsData.length,
-                  "Looking for petId:",
-                  initialData.petId
-                );
 
                 // Check if pet exists in the list
                 let petExists =
@@ -309,7 +323,6 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
 
                 // If not in list, add the pet from initialData
                 if (!petExists && initialData.pet) {
-                  console.log("Adding pet from initialData:", initialData.pet);
                   petsData.push(initialData.pet);
                   petExists = true;
                 }
@@ -319,7 +332,6 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
 
                 // Set pet ID if it exists
                 if (petExists && initialData.petId) {
-                  console.log("Setting selected pet:", initialData.petId);
                   setSelectedPet(initialData.petId);
                   // Also set selectedPets array for the multi-select dropdown
                   setSelectedPets([initialData.petId]);
@@ -340,12 +352,6 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
 
           // Only set service ID - add service from initialData if not in list
           const servicesList = servicesResponse.data || [];
-          console.log(
-            "Services loaded:",
-            servicesList.length,
-            "Looking for serviceId:",
-            initialData.serviceId
-          );
           if (initialData.serviceId) {
             let serviceExists = servicesList.some(
               (s: Service) => s.id === initialData.serviceId
@@ -353,17 +359,12 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
 
             // If not in list, add the service from initialData
             if (!serviceExists && initialData.service) {
-              console.log(
-                "Adding service from initialData:",
-                initialData.service
-              );
               servicesList.push(initialData.service);
               setServices(servicesList);
               serviceExists = true;
             }
 
             if (serviceExists) {
-              console.log("Setting selected service:", initialData.serviceId);
               setSelectedService(initialData.serviceId);
             } else {
               console.warn(
@@ -404,7 +405,8 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                 setPreSelectedResource(resource);
 
                 if (resourceType) {
-                  setSelectedSuiteType(resourceType);
+                  // Normalize resource type to suite size for the dropdown
+                  setSelectedSuiteType(normalizeToSuiteSize(resourceType));
 
                   // Auto-select service based on resource type
                   if (shouldAutoSelectService(resourceType)) {
@@ -416,17 +418,15 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                         (s: Service) => s.name === serviceName
                       );
                       if (matchingService) {
-                        console.log(
-                          "Auto-selecting service based on resource type:",
-                          serviceName
-                        );
                         setSelectedService(matchingService.id);
                         setServiceAutoSelected(true);
                       }
                     }
                   }
                 } else if (initialData.suiteType) {
-                  setSelectedSuiteType(initialData.suiteType);
+                  setSelectedSuiteType(
+                    normalizeToSuiteSize(initialData.suiteType)
+                  );
                 }
               }
             } catch (err) {
@@ -434,11 +434,13 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
 
               // Fallback to suite type if resource fetch fails
               if (initialData.suiteType) {
-                setSelectedSuiteType(initialData.suiteType);
+                setSelectedSuiteType(
+                  normalizeToSuiteSize(initialData.suiteType)
+                );
               }
             }
           } else if (initialData.suiteType) {
-            setSelectedSuiteType(initialData.suiteType);
+            setSelectedSuiteType(normalizeToSuiteSize(initialData.suiteType));
           }
         }
         // End of initialData handling
@@ -470,10 +472,6 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
             (s: Service) => s.name === serviceName
           );
           if (matchingService) {
-            console.log(
-              "Auto-selecting service (delayed) based on resource type:",
-              serviceName
-            );
             setSelectedService(matchingService.id);
             setServiceAutoSelected(true);
           }
@@ -970,7 +968,6 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
       return;
     }
 
-    console.log("Deleting reservation:", initialData.id);
     setDeleting(true);
     try {
       const response = await fetch(
@@ -992,7 +989,6 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
         throw new Error(`Failed to delete: ${response.status} - ${errorData}`);
       }
 
-      console.log("Delete successful");
       setDeleteConfirmOpen(false);
 
       // Close the form and refresh
@@ -1455,6 +1451,8 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
               if (option.type !== value.type) return false;
               return option.data.id === value.data.id;
             }}
+            // Use unique ID as key to avoid duplicate key warnings when customers have same name
+            getOptionKey={(option) => `${option.type}-${option.data.id}`}
             groupBy={(option) =>
               option.type === "customer" ? "👤 Customers" : "🐕 Pets"
             }
@@ -1791,13 +1789,6 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                         variant="outlined"
                         color="primary"
                         onClick={() => {
-                          console.log("Board Together clicked");
-                          console.log(
-                            "Available suites:",
-                            availableSuites.length
-                          );
-                          console.log("Selected pets:", selectedPets.length);
-
                           // Get the first pet's assigned suite (or first available multi-pet suite)
                           const firstPetSuite =
                             petSuiteAssignments[selectedPets[0]];
@@ -1810,17 +1801,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                               const isAvailable =
                                 capacity >= selectedPets.length &&
                                 !occupiedSuiteIds.has(s.id);
-                              console.log(
-                                `Suite ${s.name}: capacity=${capacity}, needed=${selectedPets.length}, available=${isAvailable}`
-                              );
                               return isAvailable;
                             });
                             targetSuiteId = multiPetSuite?.id || "";
-                            console.log(
-                              "Found multi-pet suite:",
-                              multiPetSuite?.name,
-                              targetSuiteId
-                            );
                           }
 
                           // Assign all pets to the same suite
@@ -1910,17 +1893,6 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
 
                             // Get suite capacity (default to 1 if not specified)
                             const suiteCapacity = (option as any).maxPets || 1;
-
-                            // Debug logging
-                            if (suiteCapacity > 1) {
-                              console.log(
-                                `Kennel ${
-                                  option.name
-                                }: ${petsInSuite}/${suiteCapacity} pets, disabled: ${
-                                  petsInSuite >= suiteCapacity
-                                }`
-                              );
-                            }
 
                             // Disable if suite is at capacity
                             return petsInSuite >= suiteCapacity;

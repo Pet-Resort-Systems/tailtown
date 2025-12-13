@@ -7,15 +7,6 @@
 
 ## 🔴 This Week
 
-### ~~Fix Multi-Pet Room Reservations~~ ✅
-
-Multiple pets sharing same room:
-
-- ✅ Room capacity validation (multiPet.controller.ts)
-- ✅ Check-in for multiple pets (batch check-in API + MultiPetCheckIn component)
-- ✅ Billing for shared rooms (multiPetService.ts pricing)
-- ✅ Kennel card per pet (PrintKennelCards generates one card per reservation)
-
 ### SendGrid/Twilio Integration
 
 - Configure API keys in setup wizard
@@ -28,50 +19,6 @@ Multiple pets sharing same room:
 - Payment processor integration
 - Merchant account setup flow
 - PCI compliance handling
-
-### Check-in Process
-
-#### Pet Information at a Glance
-
-- Pet summary card - Show photo, icons, vet info, vaccine status, and alerts in one view
-- Vaccination expiration warnings - Highlight expired or soon-to-expire vaccines
-- Special handling notes - Prominently display aggression, medical, and behavior flags
-
-#### Streamlined Data Entry
-
-- Pre-populated forms - Auto-fill from customer/pet records
-- Quick-add for missing info - Inline editing for vet, emergency contact, vaccines
-- Signature capture - Digital waivers and consent forms
-
-#### Inventory & Belongings (per-visit)
-
-- Belongings checklist - Track items brought (food, meds, toys, bedding)
-- Photo documentation - Snap photos of belongings at check-in
-- Medication schedule - Capture dosage, frequency, and special instructions
-
-#### Workflow Continuity
-
-- Draft/resume capability - Save partial check-ins and return to finish
-- Check-in status indicator - Show what's complete vs pending
-- Required fields validation - Block completion until critical info is captured
-
-#### Auto-populated from Pet Profile (saved across visits)
-
-- Play group assignment - Based on pet's ideal play group
-- Feeding schedule - Confirm or update feeding preferences
-- Special handling instructions - Medical, behavior, and care notes
-
-#### Integration Points
-
-- Kennel suite already assigned from reservation
-- Link to reservation details and customer account
-- Quick access to pet history and previous visit notes
-
-### test on line booking process
-
-- E2E tests for on line booking process
-
-###
 
 ---
 
@@ -120,6 +67,36 @@ Zero-downtime deploys:
 
 ## 📋 Future Features
 
+### AI Belongings Scanner (OpenCV Microservice)
+
+**Phase 1 - COMPLETED (Dec 2025):**
+
+- ✅ Quick-add buttons for common items (Collar, Leash, Toy, Bedding, Food, Bowl, Medication, Treats)
+- ✅ Color quick-select chips (10 common colors)
+- ✅ "Use Previous" button to load belongings from pet's last visit
+- ✅ Bulk photo upload for all belongings
+- ✅ Photo documentation per item
+
+**Phase 2 - Future:**
+
+- Docker-based OpenCV microservice for image classification
+- Webcam capture integration at check-in
+- Auto-classify pet belongings: leashes, collars, meds, toys, bedding, harnesses
+- Generate item descriptions automatically
+- Pre-populate belongings list from photo analysis
+
+### Staff Onboarding Wizard ✅ COMPLETED (Dec 2025)
+
+- ✅ First-time walkthrough for new staff users
+- ✅ Interactive tutorial covering:
+  - How to navigate the Dashboard
+  - How to create a reservation
+  - How to check in a pet
+  - How to check out and process payment
+- ✅ Skip option for experienced users
+- ✅ Progress tracking per user (localStorage)
+- ✅ Auto-triggers on first login
+
 ### Tenant Onboarding
 
 - Self-service signup
@@ -153,7 +130,7 @@ Zero-downtime deploys:
 ### Third-Party Integrations
 
 - QuickBooks
-- Mailchimp
+
 - Zapier webhooks
 
 ### Enhanced Security
@@ -164,4 +141,4 @@ Zero-downtime deploys:
 
 ---
 
-**Last Updated**: December 4, 2025
+**Last Updated**: December 9, 2025

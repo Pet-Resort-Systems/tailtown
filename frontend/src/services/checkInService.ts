@@ -200,6 +200,21 @@ const checkInService = {
   },
 
   /**
+   * Get all check-ins with optional filters
+   */
+  getAllCheckIns: async (filters?: {
+    petId?: string;
+    reservationId?: string;
+    startDate?: string;
+    endDate?: string;
+  }) => {
+    const response = await reservationApi.get("/api/check-ins", {
+      params: filters,
+    });
+    return response.data;
+  },
+
+  /**
    * Update a check-in
    */
   updateCheckIn: async (id: string, updates: Partial<CheckIn>) => {
@@ -342,6 +357,42 @@ const checkInService = {
       draftData
     );
     return response.data;
+  },
+
+  /**
+   * Get the last completed check-in for a pet (for reusing belongings)
+   */
+  getLastCheckInForPet: async (petId: string) => {
+    const response = await reservationApi.get("/api/check-ins", {
+      params: {
+        petId,
+        status: "COMPLETED",
+        limit: 1,
+        sortBy: "checkInTime",
+        sortOrder: "desc",
+      },
+    });
+    const checkIns = response.data?.data || [];
+    return checkIns.length > 0 ? checkIns[0] : null;
+  },
+
+  /**
+   * Get previous belongings for a pet from their last check-in
+   */
+  getPreviousBelongings: async (petId: string): Promise<CheckInBelonging[]> => {
+    const lastCheckIn = await checkInService.getLastCheckInForPet(petId);
+    if (lastCheckIn?.belongings && lastCheckIn.belongings.length > 0) {
+      // Return belongings without IDs (they'll be new entries)
+      return lastCheckIn.belongings.map((b: CheckInBelonging) => ({
+        itemType: b.itemType,
+        description: b.description,
+        quantity: b.quantity,
+        color: b.color,
+        brand: b.brand,
+        notes: b.notes,
+      }));
+    }
+    return [];
   },
 };
 
