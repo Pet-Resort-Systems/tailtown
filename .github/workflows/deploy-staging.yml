@@ -18,7 +18,7 @@ on:
         type: boolean
 
 env:
-  NODE_VERSION: "18"
+  NODE_VERSION: "20"
 
 jobs:
   test:
@@ -68,6 +68,8 @@ jobs:
           REDIS_URL: redis://localhost:6379
         run: |
           npm ci
+          npx prisma migrate deploy
+          npx prisma generate
           npm test
 
       - name: Install and test Reservation Service
@@ -77,6 +79,8 @@ jobs:
           REDIS_URL: redis://localhost:6379
         run: |
           npm ci
+          npx prisma migrate deploy
+          npx prisma generate
           npm test
 
       - name: Install and test Frontend
