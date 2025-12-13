@@ -200,7 +200,7 @@ app.use(
 );
 
 // Add OPTIONS handling for preflight requests
-app.options("*", cors());
+app.options(/.*/, cors());
 
 // Serve static files (uploaded photos)
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));

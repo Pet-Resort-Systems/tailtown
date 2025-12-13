@@ -5,6 +5,7 @@
   "private": true,
   "main": "dist/index.js",
   "scripts": {
+    "prebuild": "prisma generate",
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
@@ -26,7 +27,7 @@
     "prisma:seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
-    "@prisma/client": "7.1.0",
+    "@prisma/client": "6.19.0",
     "@sendgrid/mail": "^8.1.6",
     "@sentry/node": "^10.29.0",
     "@sentry/profiling-node": "^10.27.0",
@@ -67,10 +68,10 @@
     "@typescript-eslint/parser": "^5.62.0",
     "eslint": "^9.39.1",
     "jest": "^30.2.0",
-    "prisma": "7.1.0",
+    "prisma": "6.19.0",
     "supertest": "^7.1.4",
     "ts-jest": "^29.1.0",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.0.4"
+    "typescript": "^5.1.6"
   }
 }

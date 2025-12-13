@@ -196,7 +196,7 @@ export const createStaff = async (
     await tenantAuditLog.logStaff(
       req,
       AuditAction.CREATE,
-      newStaff.id as string,
+      String(newStaff.id),
       `${newStaff.firstName} ${newStaff.lastName}`,
       { newValue: newStaff, metadata: { role: newStaff.role } }
     );

@@ -1,6 +1,6 @@
 /**
  * Alternative Dates Component
- * 
+ *
  * Shows alternative date suggestions when requested dates are unavailable.
  * Features:
  * - Sorted by proximity to requested dates
@@ -9,7 +9,7 @@
  * - Click to select alternative
  */
 
-import React from 'react';
+import React from "react";
 import {
   Box,
   Typography,
@@ -20,16 +20,16 @@ import {
   Chip,
   Grid,
   Alert,
-  Divider
-} from '@mui/material';
+  Divider,
+} from "@mui/material";
 import {
   CalendarToday as CalendarIcon,
   TrendingDown as SavingsIcon,
-  CheckCircle as AvailableIcon
-} from '@mui/icons-material';
-import { AlternativeDateSuggestion } from '../../types/availability';
-import { availabilityService } from '../../services/availabilityService';
-import { formatCurrency } from '../../utils/formatters';
+  CheckCircle as AvailableIcon,
+} from "@mui/icons-material";
+import { AlternativeDateSuggestion } from "../../types/availability";
+import { availabilityService } from "../../services/availabilityService";
+import { formatCurrency } from "../../utils/formatters";
 
 interface AlternativeDatesProps {
   alternatives: AlternativeDateSuggestion[];
@@ -42,12 +42,13 @@ export const AlternativeDates: React.FC<AlternativeDatesProps> = ({
   alternatives,
   requestedStartDate,
   requestedEndDate,
-  onSelectAlternative
+  onSelectAlternative,
 }) => {
   if (alternatives.length === 0) {
     return (
       <Alert severity="info">
-        No alternative dates available at this time. Please try different dates or join the waitlist.
+        No alternative dates available at this time. Please try different dates
+        or join the waitlist.
       </Alert>
     );
   }
@@ -58,7 +59,10 @@ export const AlternativeDates: React.FC<AlternativeDatesProps> = ({
     requestedStartDate
   );
 
-  const requestedRange = availabilityService.formatDateRange(requestedStartDate, requestedEndDate);
+  const requestedRange = availabilityService.formatDateRange(
+    requestedStartDate,
+    requestedEndDate
+  );
 
   return (
     <Box>
@@ -67,7 +71,8 @@ export const AlternativeDates: React.FC<AlternativeDatesProps> = ({
           Alternative Dates Available
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Your requested dates ({requestedRange}) are not available. Here are some alternatives:
+          Your requested dates ({requestedRange}) are not available. Here are
+          some alternatives:
         </Typography>
       </Box>
 
@@ -84,15 +89,15 @@ export const AlternativeDates: React.FC<AlternativeDatesProps> = ({
 
           return (
             <Grid item xs={12} md={6} key={index}>
-              <Card 
+              <Card
                 variant="outlined"
                 sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
                   border: index === 0 ? 2 : 1,
-                  borderColor: index === 0 ? 'primary.main' : 'divider',
-                  position: 'relative'
+                  borderColor: index === 0 ? "primary.main" : "divider",
+                  position: "relative",
                 }}
               >
                 {index === 0 && (
@@ -101,9 +106,9 @@ export const AlternativeDates: React.FC<AlternativeDatesProps> = ({
                     color="primary"
                     size="small"
                     sx={{
-                      position: 'absolute',
+                      position: "absolute",
                       top: 8,
-                      right: 8
+                      right: 8,
                     }}
                   />
                 )}
@@ -112,14 +117,16 @@ export const AlternativeDates: React.FC<AlternativeDatesProps> = ({
                   {/* Date Range */}
                   <Box display="flex" alignItems="center" gap={1} mb={2}>
                     <CalendarIcon color="primary" />
-                    <Typography variant="h6">
-                      {dateRange}
-                    </Typography>
+                    <Typography variant="h6">{dateRange}</Typography>
                   </Box>
 
                   {/* Nights */}
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    {nights} night{nights !== 1 ? 's' : ''}
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    gutterBottom
+                  >
+                    {nights} night{nights !== 1 ? "s" : ""}
                   </Typography>
 
                   <Divider sx={{ my: 2 }} />
@@ -128,12 +135,18 @@ export const AlternativeDates: React.FC<AlternativeDatesProps> = ({
                   <Box display="flex" alignItems="center" gap={1} mb={1}>
                     <AvailableIcon color="success" fontSize="small" />
                     <Typography variant="body2">
-                      {alternative.availableCount} suite{alternative.availableCount !== 1 ? 's' : ''} available
+                      {alternative.availableCount} suite
+                      {alternative.availableCount !== 1 ? "s" : ""} available
                     </Typography>
                   </Box>
 
                   {/* Price */}
-                  <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    mb={1}
+                  >
                     <Typography variant="body2" color="text.secondary">
                       Total Price:
                     </Typography>
