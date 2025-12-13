@@ -2,46 +2,46 @@ name: Test Coverage
 
 on:
   push:
-    branches: [ main, sept25-stable ]
+    branches: [main, sept25-stable]
   pull_request:
-    branches: [ main, sept25-stable ]
+    branches: [main, sept25-stable]
 
 jobs:
   frontend-coverage:
     name: Frontend Test Coverage
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
           cache-dependency-path: frontend/package-lock.json
-      
+
       - name: Install dependencies
         working-directory: frontend
         run: npm ci
-      
+
       - name: Run tests with coverage
         working-directory: frontend
         run: npm run test:coverage -- --watchAll=false
-      
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
           files: ./frontend/coverage/lcov.info
           flags: frontend
           name: frontend-coverage
-      
+
       - name: Generate coverage badge
         uses: cicirello/jacoco-badge-generator@v2
         with:
           badges-directory: badges
           coverage-badge-filename: frontend-coverage.svg
-      
+
       - name: Comment coverage on PR
         if: github.event_name == 'pull_request'
         uses: romeovs/lcov-reporter-action@v0.3.1
@@ -52,7 +52,7 @@ jobs:
   backend-coverage:
     name: Backend Test Coverage
     runs-on: ubuntu-latest
-    
+
     services:
       postgres:
         image: postgres:14
@@ -67,40 +67,40 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-    
+
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
           cache-dependency-path: services/reservation-service/package-lock.json
-      
+
       - name: Install dependencies
         working-directory: services/reservation-service
         run: npm ci
-      
+
       - name: Run Prisma migrations
         working-directory: services/reservation-service
         run: npx prisma migrate deploy
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/reservation
-      
+
       - name: Run unit tests with coverage
         working-directory: services/reservation-service
         run: npm run test:coverage
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/reservation
-      
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
           files: ./services/reservation-service/coverage/lcov.info
           flags: backend
           name: backend-coverage
-      
+
       - name: Comment coverage on PR
         if: github.event_name == 'pull_request'
         uses: romeovs/lcov-reporter-action@v0.3.1
@@ -111,7 +111,7 @@ jobs:
   e2e-coverage:
     name: E2E Test Coverage
     runs-on: ubuntu-latest
-    
+
     services:
       postgres:
         image: postgres:14
@@ -126,22 +126,22 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-    
+
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          cache: 'npm'
-      
+          node-version: "18"
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
-      
+
       - name: Start services
         run: |
           cd services/reservation-service && npm start &
@@ -149,13 +149,13 @@ jobs:
           sleep 30
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/reservation
-      
+
       - name: Run E2E tests
         run: npm run test:e2e
-      
+
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: playwright-report/
@@ -165,13 +165,13 @@ jobs:
     name: Generate Coverage Report
     needs: [frontend-coverage, backend-coverage]
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Download all coverage reports
-        uses: actions/download-artifact@v3
-      
+        uses: actions/download-artifact@v4
+
       - name: Generate combined coverage report
         run: |
           echo "# Test Coverage Report" > coverage-report.md
@@ -186,9 +186,9 @@ jobs:
           echo "## Details" >> coverage-report.md
           echo "" >> coverage-report.md
           echo "See individual coverage reports for detailed breakdown." >> coverage-report.md
-      
+
       - name: Upload coverage report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage-report.md
