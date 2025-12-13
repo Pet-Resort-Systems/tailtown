@@ -42,9 +42,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd frontend && npm ci
-          cd ../services/customer && npm ci
-          cd ../services/reservation-service && npm ci
+          npm ci --prefix frontend
+          npm ci --prefix services/customer
+          npm ci --prefix services/reservation-service
 
       - name: Run linting
         run: |

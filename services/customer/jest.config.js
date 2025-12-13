@@ -9,7 +9,7 @@ module.exports = {
       {
         isolatedModules: true, // Skip type checking for faster tests
         tsconfig: {
-          esModuleInterop: false,
+          esModuleInterop: true,
           allowSyntheticDefaultImports: true,
         },
       },
