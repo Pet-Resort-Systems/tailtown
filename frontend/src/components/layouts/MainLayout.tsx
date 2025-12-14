@@ -140,9 +140,13 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
       const tenantId =
         localStorage.getItem("tailtown_tenant_id") ||
         localStorage.getItem("tenantId");
-      const headers: Record<string, string> = {
-        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-      };
+      const token =
+        localStorage.getItem("accessToken") || localStorage.getItem("token");
+      const headers: Record<string, string> = {};
+
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
 
       // Add tenant subdomain header if available (backend expects x-tenant-subdomain)
       if (tenantId) {
