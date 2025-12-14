@@ -26,17 +26,15 @@ import {
   CloudUpload as UploadIcon,
   Delete as DeleteIcon,
 } from "@mui/icons-material";
-import { useAuth } from "../../contexts/AuthContext";
 import { tenantService } from "../../services/tenantService";
 
-interface BusinessSettings {
+interface BusinessSettingsData {
   logoUrl?: string;
   timezone?: string;
 }
 
 const BusinessSettings: React.FC = () => {
-  const { user } = useAuth();
-  const [settings, setSettings] = useState<BusinessSettings>({});
+  const [settings, setSettings] = useState<BusinessSettingsData>({});
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -68,11 +66,16 @@ const BusinessSettings: React.FC = () => {
     try {
       setLoading(true);
 
+      const token =
+        localStorage.getItem("accessToken") || localStorage.getItem("token");
+      const authHeaders: Record<string, string> = {};
+      if (token) {
+        authHeaders.Authorization = `Bearer ${token}`;
+      }
+
       // Load business settings (logo)
       const response = await fetch(`${API_URL}/api/business-settings`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
+        headers: authHeaders,
       });
 
       if (response.ok) {
@@ -116,14 +119,19 @@ const BusinessSettings: React.FC = () => {
     setSuccess("");
 
     try {
+      const token =
+        localStorage.getItem("accessToken") || localStorage.getItem("token");
+      const authHeaders: Record<string, string> = {};
+      if (token) {
+        authHeaders.Authorization = `Bearer ${token}`;
+      }
+
       const formData = new FormData();
       formData.append("logo", file);
 
       const response = await fetch(`${API_URL}/api/business-settings/logo`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
+        headers: authHeaders,
         body: formData,
       });
 
@@ -156,11 +164,16 @@ const BusinessSettings: React.FC = () => {
     setSuccess("");
 
     try {
+      const token =
+        localStorage.getItem("accessToken") || localStorage.getItem("token");
+      const authHeaders: Record<string, string> = {};
+      if (token) {
+        authHeaders.Authorization = `Bearer ${token}`;
+      }
+
       const response = await fetch(`${API_URL}/api/business-settings/logo`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
+        headers: authHeaders,
       });
 
       if (!response.ok) {
@@ -187,13 +200,19 @@ const BusinessSettings: React.FC = () => {
     setSuccess("");
 
     try {
+      const token =
+        localStorage.getItem("accessToken") || localStorage.getItem("token");
+      const authHeaders: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (token) {
+        authHeaders.Authorization = `Bearer ${token}`;
+      }
+
       // Update tenant timezone using the new endpoint
       const response = await fetch(`${API_URL}/api/tenants/me/settings`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
+        headers: authHeaders,
         body: JSON.stringify({ timezone: newTimezone }),
       });
 

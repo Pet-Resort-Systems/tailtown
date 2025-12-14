@@ -42,34 +42,55 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const clearSession = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("tokenTimestamp");
+    localStorage.removeItem("user");
+  };
+
+  const isJwtExpired = (token: string): boolean => {
+    try {
+      const parts = token.split(".");
+      if (parts.length !== 3) return true;
+      const payloadJson = atob(parts[1]);
+      const payload = JSON.parse(payloadJson) as { exp?: number };
+      if (!payload.exp) return false;
+      const nowSeconds = Math.floor(Date.now() / 1000);
+      return nowSeconds >= payload.exp;
+    } catch (_) {
+      return true;
+    }
+  };
+
   // Check if the user is already logged in on component mount
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token =
+          localStorage.getItem("accessToken") || localStorage.getItem("token");
         const tokenTimestamp = localStorage.getItem("tokenTimestamp");
         const userJson = localStorage.getItem("user");
 
         if (token && tokenTimestamp && userJson) {
-          // Check if token is expired (24 hour expiration)
+          const expiredByJwt = isJwtExpired(token);
+          // Fallback safety net if token doesn't have exp
           const tokenAge = Date.now() - parseInt(tokenTimestamp);
-          const tokenExpiration = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+          const tokenExpiration = 8 * 60 * 60 * 1000; // 8 hours in milliseconds
+          const expiredByTimestamp = tokenAge >= tokenExpiration;
 
-          if (tokenAge < tokenExpiration) {
+          if (!expiredByJwt && !expiredByTimestamp) {
             setUser(JSON.parse(userJson));
           } else {
-            // Token expired, clear everything
-            localStorage.removeItem("token");
-            localStorage.removeItem("tokenTimestamp");
-            localStorage.removeItem("user");
+            clearSession();
+            setUser(null);
           }
         }
       } catch (err) {
         console.error("Auth check failed:", err);
         // On error, clear everything to be safe
-        localStorage.removeItem("token");
-        localStorage.removeItem("tokenTimestamp");
-        localStorage.removeItem("user");
+        clearSession();
+        setUser(null);
       } finally {
         setIsLoading(false);
       }

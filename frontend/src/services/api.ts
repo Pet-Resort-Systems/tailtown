@@ -89,6 +89,19 @@ const addResponseInterceptor = (instance: AxiosInstance) => {
       return response;
     },
     (error: AxiosError) => {
+      // If auth fails, clear session so UI can prompt for login again
+      if (error.response?.status === 401) {
+        try {
+          localStorage.removeItem("token");
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("tokenTimestamp");
+          localStorage.removeItem("user");
+          localStorage.removeItem("impersonationToken");
+        } catch (_) {
+          // ignore
+        }
+      }
+
       console.error("API Response Error:", {
         message: error.message,
         status: error.response?.status,
