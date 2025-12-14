@@ -42,6 +42,15 @@ export const createReportCard = async (
       return next(new AppError("Tenant ID and Staff ID are required", 400));
     }
 
+    // Verify staff exists in this tenant
+    const staff = await prisma.staff.findFirst({
+      where: { id: staffId, tenantId: tenantId },
+    });
+
+    if (!staff) {
+      return next(new AppError("Staff member not found", 404));
+    }
+
     const {
       petId,
       customerId,
