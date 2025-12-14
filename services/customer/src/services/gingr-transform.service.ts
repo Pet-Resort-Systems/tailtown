@@ -36,7 +36,7 @@ function getBreedMap(): Map<string, string> {
   return breedMap;
 }
 
-function lookupBreedName(breedId: string | undefined): string {
+export function lookupBreedName(breedId: string | undefined): string {
   if (!breedId) return "Mixed";
   const map = getBreedMap();
   return map.get(breedId) || breedId; // Return ID if not found, for debugging

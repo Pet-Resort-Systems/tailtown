@@ -11,6 +11,7 @@ import {
   extractGingrLodging,
   getServiceNameForResourceType,
 } from "./gingr-resource-mapper.service";
+import { lookupBreedName } from "./gingr-transform.service";
 
 const prisma = new PrismaClient();
 
@@ -324,7 +325,7 @@ export class GingrSyncService {
         const gingrCoreData: any = {
           name: animal.first_name,
           type: animal.species_id === "1" ? "DOG" : "CAT", // Assuming 1=Dog, 2=Cat
-          breed: animal.breed_id,
+          breed: lookupBreedName(animal.breed_id),
           color: animal.color,
           gender:
             animal.gender === "M"
