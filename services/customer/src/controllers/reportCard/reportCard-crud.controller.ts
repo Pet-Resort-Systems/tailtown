@@ -48,7 +48,12 @@ export const createReportCard = async (
     });
 
     if (!staff) {
-      return next(new AppError("Staff member not found", 404));
+      return next(
+        new AppError(
+          `Staff member not found: ${staffId} in tenant ${tenantId}`,
+          404
+        )
+      );
     }
 
     const {
