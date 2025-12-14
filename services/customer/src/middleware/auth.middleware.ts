@@ -24,18 +24,7 @@ export const authenticate = (
   const apiKey = req.headers["x-api-key"] as string;
   const authHeader = req.headers["authorization"] as string;
 
-  // For development: Accept a simple API key
-  // In production: Validate JWT token
-  if (apiKey === process.env.SUPER_ADMIN_API_KEY) {
-    req.user = {
-      id: "super-admin",
-      email: "admin@tailtown.com",
-      role: "SUPER_ADMIN",
-    };
-    return next();
-  }
-
-  // Check for Bearer token and validate JWT
+  // Prefer Bearer token auth when present
   if (authHeader && authHeader.startsWith("Bearer ")) {
     const token = authHeader.substring(7);
 
@@ -61,6 +50,18 @@ export const authenticate = (
         message: "Invalid or expired token",
       });
     }
+  }
+
+  // For development: Accept a simple API key
+  // In production: Validate JWT token
+  const superAdminApiKey = process.env.SUPER_ADMIN_API_KEY;
+  if (apiKey && superAdminApiKey && apiKey === superAdminApiKey) {
+    req.user = {
+      id: "super-admin",
+      email: "admin@tailtown.com",
+      role: "SUPER_ADMIN",
+    };
+    return next();
   }
 
   // No valid authentication found
