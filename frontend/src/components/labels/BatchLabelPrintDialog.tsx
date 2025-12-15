@@ -24,7 +24,7 @@ import {
   printKennelLabelsBatch,
 } from "../../services/labelPrintService";
 
-type PrintMethod = "server" | "usb" | "download";
+type PrintMethod = "local" | "browser" | "server" | "usb" | "download";
 
 type ReservationLike = {
   id: string;
@@ -79,7 +79,7 @@ const BatchLabelPrintDialog: React.FC<BatchLabelPrintDialogProps> = ({
   reservations,
   selectedDate,
 }) => {
-  const [method, setMethod] = useState<PrintMethod>("server");
+  const [method, setMethod] = useState<PrintMethod>("local");
   const [printing, setPrinting] = useState(false);
   const [progressText, setProgressText] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -248,9 +248,11 @@ const BatchLabelPrintDialog: React.FC<BatchLabelPrintDialogProps> = ({
             onChange={(e) => setMethod(e.target.value as PrintMethod)}
             disabled={printing}
           >
-            <MenuItem value="server">Server (recommended)</MenuItem>
-            <MenuItem value="usb">USB (Web Serial)</MenuItem>
+            <MenuItem value="local">Local Agent (automatic)</MenuItem>
+            <MenuItem value="browser">Browser Print</MenuItem>
             <MenuItem value="download">Download ZPL</MenuItem>
+            <MenuItem value="usb">USB Direct (requires setup)</MenuItem>
+            <MenuItem value="server">Server Print</MenuItem>
           </Select>
         </FormControl>
 
