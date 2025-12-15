@@ -117,7 +117,11 @@ export const requireTenantAdmin = (
     });
   }
 
-  if (!["SUPER_ADMIN", "TENANT_ADMIN", "ADMIN"].includes(req.user.role)) {
+  if (
+    !["SUPER_ADMIN", "TENANT_ADMIN", "ADMIN", "Administrator"].includes(
+      req.user.role
+    )
+  ) {
     return res.status(403).json({
       success: false,
       error: "Forbidden",
