@@ -22,6 +22,7 @@ import { Reservation } from "../../services/reservationService";
 import { serviceManagement } from "../../services/serviceManagement";
 import { resourceService, type Resource } from "../../services/resourceService";
 import { Service } from "../../types/service";
+import { sortByRoomAndNumber } from "../../utils/sortingUtils";
 
 export default function ReservationEdit() {
   const { id } = useParams<{ id: string }>();
@@ -67,7 +68,7 @@ export default function ReservationEdit() {
 
       setReservation(reservationData);
       setServices(servicesResponse.data || []);
-      setResources(resourcesResponse.data || []);
+      setResources(sortByRoomAndNumber(resourcesResponse.data || []));
 
       setFormData({
         startDate: new Date(reservationData.startDate),

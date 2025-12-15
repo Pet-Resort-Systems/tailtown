@@ -48,6 +48,7 @@ import {
   shouldAutoSelectService,
 } from "../../config/resource-service-mapping";
 import { parseGingrDate } from "../../utils/dateUtils";
+import { sortByRoomAndNumber } from "../../utils/sortingUtils";
 
 /**
  * Normalize resource type to suite size for the dropdown
@@ -735,8 +736,11 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
           }
         }
 
+        // Sort suites by room letter then number (A1, A2, ..., B1, B2, etc.)
+        const sortedSuites = sortByRoomAndNumber(suites);
+
         // First update available suites
-        setAvailableSuites(suites);
+        setAvailableSuites(sortedSuites);
 
         // Mark that suite options are available if we have suites
         selectsWithOptions.current.suiteId = suites.length > 0;
