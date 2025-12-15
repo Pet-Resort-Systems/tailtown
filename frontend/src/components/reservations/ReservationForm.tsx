@@ -722,13 +722,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
               ) {
                 const resourceData = resourceResponse.data;
 
-                // Only add it if it matches the selected suite type
-                const resourceType =
-                  resourceData.type || resourceData.attributes?.suiteType;
-
-                if (resourceType === selectedSuiteType) {
-                  suites.push(resourceData);
-                }
+                // Always add the currently assigned resource when editing
+                // This ensures the kennel dropdown shows the current assignment
+                suites.push(resourceData);
               }
             } catch (err) {
               console.error("Error fetching specific resource:", err);
