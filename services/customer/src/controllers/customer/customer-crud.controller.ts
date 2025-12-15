@@ -69,14 +69,51 @@ export const getAllCustomers = async (
       where.tags = { hasSome: tags };
     }
     if (search) {
-      where.OR = [
-        { firstName: { contains: search, mode: "insensitive" } },
-        { lastName: { contains: search, mode: "insensitive" } },
-        { email: { contains: search, mode: "insensitive" } },
-        { phone: { contains: search } },
-        // Search by pet name - find customers who have pets matching the search
-        { pets: { some: { name: { contains: search, mode: "insensitive" } } } },
-      ];
+      // Split search into words for multi-word queries (e.g., "Rob Weinstein")
+      const searchWords = search
+        .trim()
+        .split(/\s+/)
+        .filter((w) => w.length > 0);
+
+      if (searchWords.length > 1) {
+        // Multi-word search: match firstName AND lastName across words
+        // e.g., "Rob Weinstein" should match firstName=Rob, lastName=Weinstein
+        where.OR = [
+          // First word in firstName, second in lastName
+          {
+            AND: [
+              { firstName: { contains: searchWords[0], mode: "insensitive" } },
+              {
+                lastName: {
+                  contains: searchWords.slice(1).join(" "),
+                  mode: "insensitive",
+                },
+              },
+            ],
+          },
+          // Also try each word individually
+          ...searchWords.flatMap((word) => [
+            { firstName: { contains: word, mode: "insensitive" } },
+            { lastName: { contains: word, mode: "insensitive" } },
+          ]),
+          { email: { contains: search, mode: "insensitive" } },
+          { phone: { contains: search } },
+          {
+            pets: { some: { name: { contains: search, mode: "insensitive" } } },
+          },
+        ];
+      } else {
+        // Single word search
+        where.OR = [
+          { firstName: { contains: search, mode: "insensitive" } },
+          { lastName: { contains: search, mode: "insensitive" } },
+          { email: { contains: search, mode: "insensitive" } },
+          { phone: { contains: search } },
+          {
+            pets: { some: { name: { contains: search, mode: "insensitive" } } },
+          },
+        ];
+      }
 
       // Phone number format matching
       const digitsOnly = search.replace(/\D/g, "");
@@ -99,7 +136,7 @@ export const getAllCustomers = async (
     }
 
     // Use optimized select for list view - only fetch needed fields
-    const customers = await prisma.customer.findMany({
+    let customers = await prisma.customer.findMany({
       where,
       skip,
       take: limit,
@@ -109,6 +146,47 @@ export const getAllCustomers = async (
       },
       orderBy: { createdAt: "desc" },
     });
+
+    // Sort results to prioritize exact matches when searching
+    if (search) {
+      const searchLower = search.toLowerCase().trim();
+      const searchWords = searchLower.split(/\s+/).filter((w) => w.length > 0);
+
+      customers = customers.sort((a, b) => {
+        const aFirst = (a.firstName || "").toLowerCase();
+        const aLast = (a.lastName || "").toLowerCase();
+        const bFirst = (b.firstName || "").toLowerCase();
+        const bLast = (b.lastName || "").toLowerCase();
+        const aFull = `${aFirst} ${aLast}`;
+        const bFull = `${bFirst} ${bLast}`;
+
+        // Exact full name match (highest priority)
+        const aExactFull = aFull === searchLower;
+        const bExactFull = bFull === searchLower;
+        if (aExactFull && !bExactFull) return -1;
+        if (bExactFull && !aExactFull) return 1;
+
+        // First word matches firstName AND second matches lastName
+        if (searchWords.length > 1) {
+          const aMatchBoth =
+            aFirst.includes(searchWords[0]) && aLast.includes(searchWords[1]);
+          const bMatchBoth =
+            bFirst.includes(searchWords[0]) && bLast.includes(searchWords[1]);
+          if (aMatchBoth && !bMatchBoth) return -1;
+          if (bMatchBoth && !aMatchBoth) return 1;
+        }
+
+        // Starts with search term (firstName or lastName)
+        const aStartsWith =
+          aFirst.startsWith(searchWords[0]) || aLast.startsWith(searchWords[0]);
+        const bStartsWith =
+          bFirst.startsWith(searchWords[0]) || bLast.startsWith(searchWords[0]);
+        if (aStartsWith && !bStartsWith) return -1;
+        if (bStartsWith && !aStartsWith) return 1;
+
+        return 0;
+      });
+    }
 
     const total = await prisma.customer.count({ where });
 
