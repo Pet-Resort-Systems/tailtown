@@ -13,7 +13,7 @@
     "@mui/icons-material": "5.16.14",
     "@mui/material": "5.16.14",
     "@mui/system": "5.16.14",
-    "@mui/x-date-pickers": "^7.0.0",
+    "@mui/x-date-pickers": "^8.22.0",
     "@sentry/react": "^10.29.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^14.2.1",
