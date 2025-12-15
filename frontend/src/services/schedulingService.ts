@@ -30,6 +30,28 @@ const getTenantId = () => {
   );
 };
 
+// Helper to get auth token from localStorage
+const getAuthToken = () => {
+  return (
+    localStorage.getItem("impersonationToken") ||
+    localStorage.getItem("accessToken") ||
+    localStorage.getItem("token")
+  );
+};
+
+// Helper to build headers with auth
+const getHeaders = () => {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    "x-tenant-id": getTenantId() || "dev",
+  };
+  const token = getAuthToken();
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  return headers;
+};
+
 // Use dynamic API URL based on environment
 const API_BASE_URL = getApiBaseUrl();
 
@@ -53,10 +75,7 @@ export const groomerAppointmentService = {
     const response = await fetch(
       `${API_BASE_URL}/api/groomer-appointments?${params.toString()}`,
       {
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId() || "dev",
-        },
+        headers: getHeaders(),
       }
     );
 
@@ -72,10 +91,7 @@ export const groomerAppointmentService = {
     const response = await fetch(
       `${API_BASE_URL}/api/groomer-appointments/${id}`,
       {
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
-        },
+        headers: getHeaders(),
       }
     );
 
@@ -92,10 +108,7 @@ export const groomerAppointmentService = {
   ): Promise<GroomerAppointment> {
     const response = await fetch(`${API_BASE_URL}/api/groomer-appointments`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-tenant-id": getTenantId(),
-      },
+      headers: getHeaders(),
       body: JSON.stringify(appointment),
     });
 
@@ -115,10 +128,7 @@ export const groomerAppointmentService = {
       `${API_BASE_URL}/api/groomer-appointments/${id}`,
       {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
-        },
+        headers: getHeaders(),
         body: JSON.stringify(updates),
       }
     );
@@ -139,10 +149,7 @@ export const groomerAppointmentService = {
       `${API_BASE_URL}/api/groomer-appointments/${id}/reassign`,
       {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
-        },
+        headers: getHeaders(),
         body: JSON.stringify(request),
       }
     );
@@ -160,10 +167,7 @@ export const groomerAppointmentService = {
       `${API_BASE_URL}/api/groomer-appointments/${id}/start`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
-        },
+        headers: getHeaders(),
       }
     );
 
@@ -180,10 +184,7 @@ export const groomerAppointmentService = {
       `${API_BASE_URL}/api/groomer-appointments/${id}/complete`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
-        },
+        headers: getHeaders(),
         body: JSON.stringify({ notes }),
       }
     );
@@ -201,10 +202,7 @@ export const groomerAppointmentService = {
       `${API_BASE_URL}/api/groomer-appointments/${id}/cancel`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
-        },
+        headers: getHeaders(),
         body: JSON.stringify({ reason }),
       }
     );
@@ -222,10 +220,7 @@ export const groomerAppointmentService = {
       `${API_BASE_URL}/api/groomer-appointments/${id}`,
       {
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
-        },
+        headers: getHeaders(),
       }
     );
 
@@ -243,10 +238,7 @@ export const groomerAppointmentService = {
     const response = await fetch(
       `${API_BASE_URL}/api/groomers/${groomerId}/schedule?startDate=${startDate}&endDate=${endDate}`,
       {
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId() || "dev",
-        },
+        headers: getHeaders(),
       }
     );
 
@@ -270,10 +262,7 @@ export const groomerAppointmentService = {
     const response = await fetch(
       `${API_BASE_URL}/api/groomers/available?${params.toString()}`,
       {
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId() || "dev",
-        },
+        headers: getHeaders(),
       }
     );
 
@@ -304,10 +293,7 @@ export const trainingClassService = {
     const response = await fetch(
       `${API_BASE_URL}/api/training-classes?${params.toString()}`,
       {
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId() || "dev",
-        },
+        headers: getHeaders(),
       }
     );
 
@@ -321,10 +307,7 @@ export const trainingClassService = {
    */
   async getById(id: string): Promise<TrainingClass> {
     const response = await fetch(`${API_BASE_URL}/api/training-classes/${id}`, {
-      headers: {
-        "Content-Type": "application/json",
-        "x-tenant-id": getTenantId(),
-      },
+      headers: getHeaders(),
     });
 
     if (!response.ok) throw new Error("Failed to fetch training class");
@@ -338,10 +321,7 @@ export const trainingClassService = {
   async create(classData: CreateTrainingClassRequest): Promise<TrainingClass> {
     const response = await fetch(`${API_BASE_URL}/api/training-classes`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-tenant-id": getTenantId(),
-      },
+      headers: getHeaders(),
       body: JSON.stringify(classData),
     });
 
@@ -359,10 +339,7 @@ export const trainingClassService = {
   ): Promise<TrainingClass> {
     const response = await fetch(`${API_BASE_URL}/api/training-classes/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "x-tenant-id": getTenantId(),
-      },
+      headers: getHeaders(),
       body: JSON.stringify(updates),
     });
 
@@ -377,10 +354,7 @@ export const trainingClassService = {
   async delete(id: string): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/api/training-classes/${id}`, {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "x-tenant-id": getTenantId(),
-      },
+      headers: getHeaders(),
     });
 
     if (!response.ok) throw new Error("Failed to delete training class");
@@ -394,10 +368,7 @@ export const trainingClassService = {
       `${API_BASE_URL}/api/training-classes/${id}/duplicate`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
-        },
+        headers: getHeaders(),
         body: JSON.stringify({ startDate }),
       }
     );
@@ -414,10 +385,7 @@ export const trainingClassService = {
     const response = await fetch(
       `${API_BASE_URL}/api/training-classes/${classId}/sessions`,
       {
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
-        },
+        headers: getHeaders(),
       }
     );
 
@@ -435,10 +403,7 @@ export const trainingClassService = {
   ): Promise<ClassSession> {
     const response = await fetch(`${API_BASE_URL}/api/sessions/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "x-tenant-id": getTenantId(),
-      },
+      headers: getHeaders(),
       body: JSON.stringify(updates),
     });
 
@@ -453,10 +418,7 @@ export const trainingClassService = {
   async startSession(id: string): Promise<ClassSession> {
     const response = await fetch(`${API_BASE_URL}/api/sessions/${id}/start`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-tenant-id": getTenantId(),
-      },
+      headers: getHeaders(),
     });
 
     if (!response.ok) throw new Error("Failed to start session");
@@ -472,10 +434,7 @@ export const trainingClassService = {
       `${API_BASE_URL}/api/sessions/${id}/complete`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
-        },
+        headers: getHeaders(),
         body: JSON.stringify({ notes }),
       }
     );
@@ -502,10 +461,7 @@ export const enrollmentService = {
       `${API_BASE_URL}/api/training-classes/${classId}/enroll`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
-        },
+        headers: getHeaders(),
         body: JSON.stringify(enrollment),
       }
     );
@@ -520,10 +476,7 @@ export const enrollmentService = {
    */
   async getById(id: string): Promise<ClassEnrollment> {
     const response = await fetch(`${API_BASE_URL}/api/enrollments/${id}`, {
-      headers: {
-        "Content-Type": "application/json",
-        "x-tenant-id": getTenantId(),
-      },
+      headers: getHeaders(),
     });
 
     if (!response.ok) throw new Error("Failed to fetch enrollment");
@@ -540,10 +493,7 @@ export const enrollmentService = {
   ): Promise<ClassEnrollment> {
     const response = await fetch(`${API_BASE_URL}/api/enrollments/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "x-tenant-id": getTenantId(),
-      },
+      headers: getHeaders(),
       body: JSON.stringify(updates),
     });
 
@@ -558,10 +508,7 @@ export const enrollmentService = {
   async drop(id: string, reason?: string): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/api/enrollments/${id}/drop`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "x-tenant-id": getTenantId(),
-      },
+      headers: getHeaders(),
       body: JSON.stringify({ reason }),
     });
 
@@ -579,10 +526,7 @@ export const enrollmentService = {
     const response = await fetch(
       `${API_BASE_URL}/api/customers/${customerId}/enrollments${params}`,
       {
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId() || "dev",
-        },
+        headers: getHeaders(),
       }
     );
 
@@ -598,10 +542,7 @@ export const enrollmentService = {
     const response = await fetch(
       `${API_BASE_URL}/api/pets/${petId}/enrollments`,
       {
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
-        },
+        headers: getHeaders(),
       }
     );
 
@@ -618,10 +559,7 @@ export const enrollmentService = {
       `${API_BASE_URL}/api/enrollments/${id}/certificate`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
-        },
+        headers: getHeaders(),
       }
     );
 
@@ -642,10 +580,7 @@ export const enrollmentService = {
       `${API_BASE_URL}/api/training-classes/${classId}/waitlist`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
-        },
+        headers: getHeaders(),
         body: JSON.stringify({ petId, customerId }),
       }
     );
@@ -661,10 +596,7 @@ export const enrollmentService = {
   async removeFromWaitlist(id: string): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/api/waitlist/${id}`, {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "x-tenant-id": getTenantId(),
-      },
+      headers: getHeaders(),
     });
 
     if (!response.ok) throw new Error("Failed to remove from waitlist");
@@ -677,10 +609,7 @@ export const enrollmentService = {
     const response = await fetch(
       `${API_BASE_URL}/api/training-classes/${classId}/waitlist`,
       {
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
-        },
+        headers: getHeaders(),
       }
     );
 
