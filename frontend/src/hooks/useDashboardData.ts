@@ -73,16 +73,23 @@ export const useDashboardData = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date()); // Always default to today
 
   /**
-   * Extract date string from ISO date, converting to local timezone
-   * The database stores dates in UTC, so we need to convert to local time
+   * Extract date string from ISO date, treating it as local time
+   * Gingr stores dates as local time but with 'Z' suffix - we need to
+   * strip the 'Z' and parse as local time to avoid timezone conversion
    */
   const getLocalDateString = useCallback((dateString: string): string => {
-    // Parse the UTC date and convert to local timezone
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
+    // Gingr dates are stored as local time but returned with 'Z' suffix
+    // Strip the 'Z' and parse as local time (same as parseGingrDate)
+    const localString = dateString.replace("Z", "");
+    const match = localString.match(
+      /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/
+    );
+    if (match) {
+      const [, year, month, day] = match;
+      return `${year}-${month}-${day}`;
+    }
+    // Fallback: just extract the date portion directly
+    return dateString.split("T")[0];
   }, []);
 
   /**

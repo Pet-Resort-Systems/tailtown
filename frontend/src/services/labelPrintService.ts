@@ -36,11 +36,7 @@ export interface BatchPrintResult {
 
 /**
  * Generate ZPL code for a kennel label
- * For 1" x 3" continuous labels on Zebra GK420d
- *
- * At 203 DPI:
- * - 1" = 203 dots
- * - 3" = 609 dots
+ * Simple format that works with Zebra GK420d
  */
 export const generateKennelLabelZPL = (data: KennelLabelData): string => {
   const { dogName, customerLastName, kennelNumber, groupSize } = data;
@@ -53,29 +49,31 @@ export const generateKennelLabelZPL = (data: KennelLabelData): string => {
       ? customerLastName.substring(0, 6) + ".."
       : customerLastName;
 
-  // Build the main line: Name (LastName)   #Kennel   Group
+  // Build the main line: Name (LastName) #Kennel Group
   const mainLine = `${truncatedDogName} (${truncatedLastName})   #${kennelNumber}   ${groupSize}`;
 
-  // ZPL Commands:
-  // ^XA = Start format
-  // ^FO = Field Origin (x,y position in dots)
-  // ^FD = Field Data
-  // ^FS = Field Separator
-  // ^XZ = End format
-
-  // For 1" wide label with duplicated content for neck collar readability
-  // ^FWR rotates all fields 90° so text runs along the label length
-  // X controls vertical stacking (0=bottom, 203=top of 1" width)
-  // Y controls horizontal position along the length
-  // Label length: ~14" (2842 dots) to fit both copies with 2" gap
+  // ZPL for 1" continuous roll - prints twice with spacing for collar tags
+  // ^MNN = Continuous media mode (no media tracking)
+  // ^FWR = Rotate 90° so text runs along label length
+  // ^PW203 = Print width 203 dots (1" at 203 DPI)
+  // ^LL2030 = First label 10" (8" content + 2" leading space)
+  // ^LL2436 = Second label 12" (8" content + 4" trailing space)
+  // ^CF0,90 = Font 0 at 90 dots height
+  // Two sequential labels for duplicate content
   const zpl = `^XA
+^MNN
 ^FWR
 ^PW203
-^LL2842
+^LL2030
 ^CF0,90
-^FO60,10^FD${mainLine}^FS
-^FO60,1626^FD${mainLine}^FS
-^PQ1
+^FO60,50^FD${mainLine}^FS
+^XZ^XA
+^MNN
+^FWR
+^PW203
+^LL2436
+^CF0,90
+^FO60,50^FD${mainLine}^FS
 ^XZ`;
 
   return zpl;
@@ -90,13 +88,13 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
  */
 export const printKennelLabelsBatch = async (
   labels: KennelLabelData[],
-  method: "server" | "usb" | "download" = "server",
+  method: "local" | "browser" | "server" | "usb" | "download" = "local",
   options?: {
     delayMs?: number;
     onProgress?: (progress: BatchPrintProgress) => void;
     printFn?: (
       data: KennelLabelData,
-      method: "server" | "usb" | "download"
+      method: "local" | "browser" | "server" | "usb" | "download"
     ) => Promise<boolean>;
   }
 ): Promise<BatchPrintResult> => {
@@ -141,10 +139,9 @@ export const printKennelLabelsBatch = async (
 };
 
 /**
- * Print label using browser's print dialog
- * This creates a hidden iframe with the ZPL content
+ * Download ZPL file for manual printing
  */
-export const printLabelViaBrowser = async (
+export const downloadZPLFile = async (
   data: KennelLabelData
 ): Promise<boolean> => {
   const zpl = generateKennelLabelZPL(data);
@@ -154,7 +151,6 @@ export const printLabelViaBrowser = async (
   const url = URL.createObjectURL(blob);
 
   // Create a hidden link and trigger download
-  // User can then send this to the printer
   const link = document.createElement("a");
   link.href = url;
   link.download = `kennel-label-${data.kennelNumber}.zpl`;
@@ -162,6 +158,96 @@ export const printLabelViaBrowser = async (
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
+
+  return true;
+};
+
+/**
+ * Print label using browser's print dialog with HTML rendering
+ * This creates a popup window with the label formatted for printing
+ */
+export const printLabelViaBrowser = async (
+  data: KennelLabelData
+): Promise<boolean> => {
+  const { dogName, customerLastName, kennelNumber, groupSize } = data;
+
+  // Truncate names to fit on label (same logic as ZPL)
+  const truncatedDogName =
+    dogName.length > 10 ? dogName.substring(0, 8) + ".." : dogName;
+  const truncatedLastName =
+    customerLastName.length > 8
+      ? customerLastName.substring(0, 6) + ".."
+      : customerLastName;
+
+  // Create HTML content for the label
+  // Designed for 1" x 14" continuous label with text rotated 90°
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Kennel Label - ${kennelNumber}</title>
+      <style>
+        @page {
+          size: 14in 1in;
+          margin: 0;
+        }
+        @media print {
+          body { margin: 0; padding: 0; }
+        }
+        body {
+          margin: 0;
+          padding: 0;
+          font-family: Arial, sans-serif;
+        }
+        .label-container {
+          width: 14in;
+          height: 1in;
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          background: white;
+        }
+        .label-text {
+          font-size: 48px;
+          font-weight: bold;
+          white-space: nowrap;
+        }
+        .kennel-number {
+          color: #1976d2;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="label-container">
+        <div class="label-text">
+          ${truncatedDogName} (${truncatedLastName}) 
+          <span class="kennel-number">#${kennelNumber}</span> 
+          ${groupSize}
+        </div>
+        <div class="label-text">
+          ${truncatedDogName} (${truncatedLastName}) 
+          <span class="kennel-number">#${kennelNumber}</span> 
+          ${groupSize}
+        </div>
+      </div>
+      <script>
+        window.onload = function() {
+          window.print();
+          setTimeout(function() { window.close(); }, 500);
+        };
+      </script>
+    </body>
+    </html>
+  `;
+
+  // Open a new window with the label content
+  const printWindow = window.open("", "_blank", "width=800,height=200");
+  if (!printWindow) {
+    throw new Error("Could not open print window. Please allow popups.");
+  }
+
+  printWindow.document.write(htmlContent);
+  printWindow.document.close();
 
   return true;
 };
@@ -237,20 +323,73 @@ export const printLabelViaServer = async (
 };
 
 /**
- * Main print function - server is default, with fallbacks
+ * Print label via local print agent running on localhost:9100
+ * This sends ZPL directly to the printer via the local agent
+ */
+export const printLabelViaLocalAgent = async (
+  data: KennelLabelData
+): Promise<boolean> => {
+  const zpl = generateKennelLabelZPL(data);
+  const LOCAL_AGENT_URL = "http://localhost:9101";
+
+  try {
+    const response = await fetch(`${LOCAL_AGENT_URL}/print`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ zpl }),
+    });
+
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error(result.error || "Print failed");
+    }
+    return true;
+  } catch (error: any) {
+    if (error.message?.includes("Failed to fetch")) {
+      throw new Error(
+        "Local Print Agent not running. Start it with: node tools/local-print-agent/server.js"
+      );
+    }
+    throw error;
+  }
+};
+
+/**
+ * Check if local print agent is running
+ */
+export const checkLocalAgentStatus = async (): Promise<{
+  running: boolean;
+  printer?: string;
+}> => {
+  const LOCAL_AGENT_URL = "http://localhost:9101";
+  try {
+    const response = await fetch(`${LOCAL_AGENT_URL}/health`);
+    const result = await response.json();
+    return { running: result.status === "ok", printer: result.printer };
+  } catch {
+    return { running: false };
+  }
+};
+
+/**
+ * Main print function - local agent is default for automatic printing
  */
 export const printKennelLabel = async (
   data: KennelLabelData,
-  method: "server" | "usb" | "download" = "server"
+  method: "local" | "browser" | "server" | "usb" | "download" = "local"
 ): Promise<boolean> => {
   switch (method) {
+    case "local":
+      return printLabelViaLocalAgent(data);
+    case "browser":
+      return printLabelViaBrowser(data);
     case "server":
       const result = await printLabelViaServer(data);
       return result.success;
     case "usb":
       return printLabelViaUSB(data);
     case "download":
-      return printLabelViaBrowser(data);
+      return downloadZPLFile(data);
     default:
       return printLabelViaBrowser(data);
   }

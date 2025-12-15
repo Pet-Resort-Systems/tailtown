@@ -69,6 +69,26 @@ interface Category {
   description?: string;
 }
 
+// Helper to get auth headers
+const getAuthHeaders = () => {
+  const tenantId =
+    localStorage.getItem("tailtown_tenant_id") ||
+    localStorage.getItem("tenantId") ||
+    "dev";
+  const token =
+    localStorage.getItem("impersonationToken") ||
+    localStorage.getItem("accessToken") ||
+    localStorage.getItem("token");
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    "x-tenant-id": tenantId,
+  };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  return headers;
+};
+
 const Products: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -133,14 +153,8 @@ const Products: React.FC = () => {
   const loadProducts = async () => {
     try {
       const apiUrl = getApiBaseUrl();
-      const tenantId =
-        localStorage.getItem("tailtown_tenant_id") ||
-        localStorage.getItem("tenantId") ||
-        "dev";
       const response = await fetch(`${apiUrl}/api/products`, {
-        headers: {
-          "x-tenant-id": tenantId,
-        },
+        headers: getAuthHeaders(),
       });
       const data = await response.json();
       if (data.status === "success") {
@@ -154,14 +168,8 @@ const Products: React.FC = () => {
   const loadCategories = async () => {
     try {
       const apiUrl = getApiBaseUrl();
-      const tenantId =
-        localStorage.getItem("tailtown_tenant_id") ||
-        localStorage.getItem("tenantId") ||
-        "dev";
       const response = await fetch(`${apiUrl}/api/products/categories`, {
-        headers: {
-          "x-tenant-id": tenantId,
-        },
+        headers: getAuthHeaders(),
       });
       const data = await response.json();
       if (data.status === "success") {
@@ -266,13 +274,7 @@ const Products: React.FC = () => {
 
       const response = await fetch(url, {
         method: editingProduct ? "PUT" : "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id":
-            localStorage.getItem("tailtown_tenant_id") ||
-            localStorage.getItem("tenantId") ||
-            "dev",
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           ...formData,
           price: parseFloat(formData.price),
@@ -318,12 +320,7 @@ const Products: React.FC = () => {
       const apiUrl = getApiBaseUrl();
       const response = await fetch(`${apiUrl}/api/products/${id}`, {
         method: "DELETE",
-        headers: {
-          "x-tenant-id":
-            localStorage.getItem("tailtown_tenant_id") ||
-            localStorage.getItem("tenantId") ||
-            "dev",
-        },
+        headers: getAuthHeaders(),
       });
 
       if (!response.ok) throw new Error("Failed to delete product");
@@ -384,13 +381,7 @@ const Products: React.FC = () => {
         `${apiUrl}/api/products/${selectedProduct.id}/inventory/adjust`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-tenant-id":
-              localStorage.getItem("tailtown_tenant_id") ||
-              localStorage.getItem("tenantId") ||
-              "dev",
-          },
+          headers: getAuthHeaders(),
           body: JSON.stringify({
             quantity: parseInt(inventoryAdjustment.quantity),
             changeType: inventoryAdjustment.changeType,

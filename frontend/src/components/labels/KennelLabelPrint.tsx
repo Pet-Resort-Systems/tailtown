@@ -68,7 +68,9 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
     groupSize,
   };
 
-  const handlePrint = async (method: "server" | "usb" | "download") => {
+  const handlePrint = async (
+    method: "local" | "browser" | "server" | "usb" | "download"
+  ) => {
     if (!dogName || !kennelNumber) {
       setError("Please fill in dog name and kennel number");
       return;
@@ -270,13 +272,13 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
             </Button>
           </Tooltip>
 
-          <Tooltip title="Print to Zebra printer">
+          <Tooltip title="Print via Local Agent (automatic)">
             <Button
               variant="contained"
               startIcon={
                 printing ? <CircularProgress size={20} /> : <PrintIcon />
               }
-              onClick={() => handlePrint("server")}
+              onClick={() => handlePrint("local")}
               disabled={printing || !dogName || !kennelNumber}
             >
               {printing ? "Printing..." : "Print"}
