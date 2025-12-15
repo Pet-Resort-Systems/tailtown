@@ -50,9 +50,11 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoPreview, setPhotoPreview] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   // Form state
   const [petId, setPetId] = useState(initialPetId || "");
@@ -264,18 +266,53 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
           sendEmail: true,
           sendSMS: true,
         });
+        console.log(
+          "QuickReportCard: Report card sent successfully, setting success message"
+        );
+        setSuccess("Report card created and sent successfully!");
+      } else {
+        console.log(
+          "QuickReportCard: Report card created (not sent), setting success message"
+        );
+        setSuccess("Report card created successfully!");
       }
 
+      // Reset form after success (but keep success message visible)
+      resetForm();
       onSuccess?.();
+
+      // Scroll card into view to show success message
+      setTimeout(() => {
+        cardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
     } catch (err: any) {
       setError(err.message || "Failed to create report card");
+      setSuccess(null);
     } finally {
       setLoading(false);
     }
   };
 
+  const resetForm = () => {
+    setPetId("");
+    setCustomerId("");
+    setSelectedCustomer(null);
+    setSelectedPet(null);
+    setTitle("");
+    setSummary("");
+    setMoodRating(4);
+    setEnergyRating(4);
+    setAppetiteRating(4);
+    setSocialRating(4);
+    setActivities([]);
+    setBehaviorNotes("");
+    setHighlights([]);
+    setPhotos([]);
+    setPhotoPreview([]);
+  };
+
   return (
-    <Card>
+    <Card ref={cardRef}>
       <CardContent>
         <Box
           sx={{
@@ -296,6 +333,16 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
         {error && (
           <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
             {error}
+          </Alert>
+        )}
+
+        {success && (
+          <Alert
+            severity="success"
+            sx={{ mb: 2 }}
+            onClose={() => setSuccess(null)}
+          >
+            {success}
           </Alert>
         )}
 
