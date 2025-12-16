@@ -9,6 +9,7 @@ import { PrismaClient } from "@prisma/client";
 import { GingrApiClient } from "./gingr-api.service";
 import {
   extractGingrLodging,
+  findOrCreateResource,
   getServiceNameForResourceType,
 } from "./gingr-resource-mapper.service";
 import { lookupBreedName } from "./gingr-transform.service";
@@ -561,8 +562,19 @@ export class GingrSyncService {
           where: { tenantId, externalId: reservation.owner.id },
         });
 
+        const gingrAnimalId = reservation.animal?.id;
         const pet = await prisma.pet.findFirst({
-          where: { tenantId, externalId: reservation.animal.id },
+          where: {
+            tenantId,
+            OR: [
+              { externalId: gingrAnimalId },
+              {
+                externalId: gingrAnimalId
+                  ? `${gingrAnimalId}-tailtown`
+                  : undefined,
+              },
+            ],
+          },
         });
 
         if (!customer || !pet) {
@@ -681,6 +693,25 @@ export class GingrSyncService {
           });
         }
 
+        // If Gingr provides lodging, map it to an internal resource (and backfill suiteNumber)
+        let mappedResourceId: string | undefined;
+        const reservationServiceUrl =
+          process.env.RESERVATION_SERVICE_URL || "http://localhost:4003";
+
+        if (gingrLodging) {
+          try {
+            const resource = await findOrCreateResource(
+              gingrLodging,
+              reservationServiceUrl
+            );
+            mappedResourceId = resource.id;
+          } catch (error: any) {
+            console.warn(
+              `      Warning: Could not map Gingr lodging "${gingrLodging}" for reservation ${reservation.reservation_id}: ${error.message}`
+            );
+          }
+        }
+
         const reservationData: any = {
           customerId: customer.id,
           petId: pet.id,
@@ -698,6 +729,7 @@ export class GingrSyncService {
             : "PENDING",
           notes: reservation.notes?.reservation_notes,
           externalId: reservation.reservation_id,
+          ...(mappedResourceId ? { resourceId: mappedResourceId } : {}),
         };
 
         let savedReservation;

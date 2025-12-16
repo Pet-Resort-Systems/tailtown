@@ -74,8 +74,12 @@ export default function ReservationEdit() {
         startDate: new Date(reservationData.startDate),
         endDate: new Date(reservationData.endDate),
         status: reservationData.status,
-        serviceId: reservationData.service?.id || "",
-        resourceId: reservationData.resource?.id || "",
+        serviceId:
+          reservationData.serviceId || reservationData.service?.id || "",
+        resourceId:
+          (reservationData as any).resourceId ||
+          reservationData.resource?.id ||
+          "",
         notes: reservationData.notes || "",
         staffNotes: reservationData.staffNotes || "",
       });

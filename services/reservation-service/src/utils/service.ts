@@ -194,6 +194,28 @@ export function tenantMiddleware(options: {
           );
 
         if (!isUUID) {
+          // In non-production, allow simple tenant IDs like "dev" without requiring
+          // a Tenant table lookup (local dev often uses literal tenant IDs).
+          if (process.env.NODE_ENV !== "production") {
+            finalTenantId = tenantIdOrSubdomain;
+            (req as any).tenantId = finalTenantId;
+
+            if (options.validateTenant) {
+              const isValid = await options.validateTenant(finalTenantId);
+              if (!isValid) {
+                return res.status(403).json({
+                  success: false,
+                  error: {
+                    type: "FORBIDDEN_ERROR",
+                    message: `Invalid tenant: ${tenantIdOrSubdomain}`,
+                  },
+                });
+              }
+            }
+
+            return next();
+          }
+
           // It's a subdomain, need to convert to UUID
           const { prisma } = require("../config/prisma");
           const tenant = await prisma.tenant.findUnique({

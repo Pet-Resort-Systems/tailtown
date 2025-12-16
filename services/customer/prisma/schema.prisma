@@ -89,6 +89,17 @@ model Pet {
   behaviorNotes      String?
   allergies          String?
   idealPlayGroup     PlayGroupType?
+  
+  // Comprehensive Compatibility System (from Gingr flags)
+  playgroupCompatibility PlaygroupCompatibility?
+  specialRequirements    SpecialRequirement[]    @default([])
+  compatibilityNotes     String?
+  healthFlags            Json?                    // Array of health flag objects from Gingr
+  behaviorFlags          Json?                    // Array of behavior flag objects from Gingr
+  aggressionFlags        Json?                    // Array of aggression flag objects from Gingr
+  groomingPreferences    Json?                    // Grooming preferences from Gingr
+  staffRequirements      Json?                    // Staff requirements from Gingr
+  
   vaccinationStatus  Json?
   vaccineExpirations Json?
   vaccineRecordFiles Json?           // Array of uploaded vaccine record files
@@ -981,8 +992,57 @@ enum PlayGroupType {
   HIGH_ENERGY
   LOW_ENERGY
   PUPPIES
-  SENIORS
+  SENIOR_DOGS
   SPECIAL_NEEDS
+}
+
+enum PlaygroupCompatibility {
+  LARGE_DOG
+  MEDIUM_DOG
+  SMALL_DOG
+  NON_COMPATIBLE
+  SENIOR_STAFF_REQUIRED
+  UNKNOWN
+}
+
+enum SpecialRequirement {
+  HAS_MEDICATION
+  MEDICAL_MONITORING
+  ALLERGIES
+  HEAT_SENSITIVE
+  NO_POOL
+  NO_LEASH_ON_NECK
+  BLIND
+  DEAF
+  SPECIAL_NEEDS
+  SEIZURE_WATCH
+  HEART_ISSUE
+  CONTROLLED_SUBSTANCE
+  NEEDS_EXTRA_BEDDING
+  SEPARATE_FEEDING
+  POOP_EATER
+  STRONG_PULLER
+  CHEWER
+  NO_BEDDING
+  EXCESSIVE_MOUNTER
+  LOVES_POOL
+  RUNNER
+  NO_COT
+  EXCESSIVE_DRINKER
+  TOY_AGGRESSIVE
+  LEASH_AGGRESSIVE
+  BITER
+  USE_CAUTION
+  FENCE_FIGHTER
+  ROOM_AGGRESSIVE
+  MALE_AGGRESSIVE
+  GENERAL_AGGRESSION
+  PREFERRED_GROOMER
+  GROOMING_NOTES
+  SENSITIVE_SKIN
+  PERMANENT_RUN_CARD
+  SENIOR_DISCOUNT
+  DO_NOT_BOOK
 }
 
 enum ContactMethod {

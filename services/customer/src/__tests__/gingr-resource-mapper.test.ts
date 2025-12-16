@@ -8,12 +8,18 @@
 
 import {
   extractGingrLodging,
+  clearResourceCache,
+  findOrCreateResource,
   getServiceNameForResourceType,
   getSupportedResourceTypes,
   isValidResourceType,
 } from "../services/gingr-resource-mapper.service";
 
 describe("Gingr Resource Mapper", () => {
+  beforeEach(() => {
+    clearResourceCache();
+  });
+
   describe("extractGingrLodging", () => {
     it("should extract lodging_label", () => {
       const reservation = { lodging_label: "A02" };
@@ -47,6 +53,68 @@ describe("Gingr Resource Mapper", () => {
 
     it("should return null for empty reservation", () => {
       expect(extractGingrLodging({})).toBeNull();
+    });
+  });
+
+  describe("findOrCreateResource", () => {
+    const reservationServiceUrl = "http://localhost:4003";
+
+    it("should include suiteNumber when creating a resource", async () => {
+      const fetchMock = jest.fn();
+
+      // GET /api/resources?limit=1000
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ data: [] }),
+      });
+
+      // POST /api/resources
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ data: { id: "new-resource", name: "A02" } }),
+      });
+
+      (global as any).fetch = fetchMock;
+
+      await findOrCreateResource("A 02", reservationServiceUrl);
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        `${reservationServiceUrl}/api/resources`,
+        expect.objectContaining({
+          method: "POST",
+          body: expect.stringContaining('"suiteNumber":2'),
+        })
+      );
+    });
+
+    it("should backfill suiteNumber when existing resource is missing it", async () => {
+      const fetchMock = jest.fn();
+
+      // GET /api/resources?limit=1000 returns existing resource but suiteNumber null
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: [{ id: "res-1", name: "B11K", suiteNumber: null }],
+        }),
+      });
+
+      // PATCH /api/resources/:id
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ data: { id: "res-1" } }),
+      });
+
+      (global as any).fetch = fetchMock;
+
+      await findOrCreateResource("B11K", reservationServiceUrl);
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        `${reservationServiceUrl}/api/resources/res-1`,
+        expect.objectContaining({
+          method: "PATCH",
+          body: expect.stringContaining('"suiteNumber":11'),
+        })
+      );
     });
   });
 

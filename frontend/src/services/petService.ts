@@ -57,6 +57,22 @@ export interface Pet {
   vaccineExpirations?: {
     [key: string]: string; // ISO date string
   };
+  // Compatibility data from Gingr
+  playgroupCompatibility?:
+    | "LARGE_DOG"
+    | "MEDIUM_DOG"
+    | "SMALL_DOG"
+    | "NON_COMPATIBLE"
+    | "SENIOR_STAFF_REQUIRED"
+    | "UNKNOWN"
+    | null;
+  specialRequirements?: string[];
+  compatibilityNotes?: string | null;
+  healthFlags?: any[];
+  behaviorFlags?: any[];
+  aggressionFlags?: any[];
+  groomingPreferences?: any;
+  staffRequirements?: any;
 }
 
 export const petService = {
