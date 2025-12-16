@@ -199,8 +199,19 @@ async function importPetDataBatch() {
       if (data.medicines && data.medicines.toLowerCase() !== "none") {
         specialReqs.add("HAS_MEDICATION");
       }
-      if (data.allergies && data.allergies.toLowerCase() !== "none") {
-        specialReqs.add("ALLERGIES");
+      // Only add ALLERGIES if there's a real allergy (not "none", "no", "n/a", etc.)
+      if (data.allergies) {
+        const allergiesLower = data.allergies.toLowerCase().trim();
+        const isFalsePositive =
+          allergiesLower === "none" ||
+          allergiesLower === "no" ||
+          allergiesLower === "n/a" ||
+          allergiesLower === "na" ||
+          allergiesLower === "unknown";
+
+        if (!isFalsePositive) {
+          specialReqs.add("ALLERGIES");
+        }
       }
 
       if (specialReqs.size > (pet.specialRequirements?.length || 0)) {
