@@ -90,7 +90,25 @@ export const getAllPets = async (
         skip,
         take: limit,
         orderBy: { name: "asc" },
-        include: {
+        select: {
+          id: true,
+          name: true,
+          type: true,
+          breed: true,
+          color: true,
+          birthdate: true,
+          weight: true,
+          gender: true,
+          isNeutered: true,
+          microchipNumber: true,
+          profilePhoto: true,
+          customerId: true,
+          isActive: true,
+          playgroupCompatibility: true,
+          specialRequirements: true,
+          petIcons: true,
+          vaccinationStatus: true,
+          vaccineExpirations: true,
           owner: {
             select: {
               id: true,
