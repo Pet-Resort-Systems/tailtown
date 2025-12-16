@@ -22,12 +22,18 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import { Search as SearchIcon } from "@mui/icons-material";
+import {
+  Search as SearchIcon,
+  CameraAlt as CameraIcon,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { Pet, petService } from "../../services/petService";
 import PetNameWithIcons from "../../components/pets/PetNameWithIcons";
 import SimpleVaccinationBadge from "../../components/pets/SimpleVaccinationBadge";
-import { PlaygroupBadge } from "../../components/compatibility";
+import {
+  PlaygroupBadge,
+  SpecialRequirementIcons,
+} from "../../components/compatibility";
 import { debounce } from "lodash";
 
 const DEFAULT_PAGE_SIZE = 50;
@@ -224,6 +230,7 @@ const Pets = () => {
                   <TableCell sx={{ py: 1 }}>Gender</TableCell>
                   <TableCell sx={{ py: 1 }}>Weight</TableCell>
                   <TableCell sx={{ py: 1 }}>Playgroup</TableCell>
+                  <TableCell sx={{ py: 1 }}>Special Requirements</TableCell>
                   <TableCell sx={{ py: 1 }}>Vaccination</TableCell>
                   <TableCell sx={{ py: 1 }} align="right">
                     Actions
@@ -233,7 +240,7 @@ const Pets = () => {
               <TableBody>
                 {pets.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} align="center">
+                    <TableCell colSpan={9} align="center">
                       No pets registered
                     </TableCell>
                   </TableRow>
@@ -249,18 +256,30 @@ const Pets = () => {
                         onClick={() => handleRowClick(pet.id)}
                         sx={{ cursor: "pointer", py: 0.5 }}
                       >
-                        <PetNameWithIcons
-                          petName={`${pet.name}${
-                            pet.owner ? ` (${pet.owner.lastName})` : ""
-                          }`}
-                          petIcons={pet.petIcons}
-                          iconNotes={pet.iconNotes}
-                          petType={pet.type}
-                          profilePhoto={pet.profilePhoto}
-                          size="small"
-                          nameVariant="body2"
-                          showPhoto={false}
-                        />
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
+                          {pet.profilePhoto && (
+                            <CameraIcon
+                              sx={{
+                                fontSize: 16,
+                                color: "primary.main",
+                              }}
+                            />
+                          )}
+                          <PetNameWithIcons
+                            petName={`${pet.name}${
+                              pet.owner ? ` (${pet.owner.lastName})` : ""
+                            }`}
+                            petIcons={pet.petIcons}
+                            iconNotes={pet.iconNotes}
+                            petType={pet.type}
+                            profilePhoto={pet.profilePhoto}
+                            size="small"
+                            nameVariant="body2"
+                            showPhoto={false}
+                          />
+                        </Box>
                       </TableCell>
                       <TableCell
                         onClick={() => handleRowClick(pet.id)}
@@ -292,6 +311,20 @@ const Pets = () => {
                       >
                         <PlaygroupBadge
                           compatibility={pet.playgroupCompatibility || null}
+                        />
+                      </TableCell>
+                      <TableCell
+                        onClick={() => handleRowClick(pet.id)}
+                        sx={{ cursor: "pointer", py: 0.5 }}
+                      >
+                        <SpecialRequirementIcons
+                          requirements={
+                            [
+                              ...(pet.specialRequirements || []),
+                              ...(pet.aggressionFlags || []),
+                            ] as any
+                          }
+                          size="small"
                         />
                       </TableCell>
                       <TableCell

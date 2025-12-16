@@ -3,7 +3,6 @@ import { getApiBaseUrl } from "../../services/api";
 import { Box, Typography, Tooltip, Dialog, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ClickableAvatar from "./ClickableAvatar";
-import { mapPetIconsToEmojis } from "../../utils/petIconMapping";
 
 interface PetNameWithIconsProps {
   petName: string;
@@ -42,12 +41,9 @@ const PetNameWithIcons: React.FC<PetNameWithIconsProps> = memo(
   }) => {
     const [photoModalOpen, setPhotoModalOpen] = useState(false);
 
-    // Convert icon IDs to emojis
-    const emojiIcons = useMemo(() => mapPetIconsToEmojis(petIcons), [petIcons]);
-    const hasIcons = useMemo(
-      () => emojiIcons && emojiIcons.length > 0,
-      [emojiIcons]
-    );
+    // Disable old petIcons system - we now use SpecialRequirementIcons instead
+    const emojiIcons = useMemo(() => [], []);
+    const hasIcons = useMemo(() => false, []);
 
     // Memoized size mapping for avatars
     const avatarSize = useMemo(() => {
