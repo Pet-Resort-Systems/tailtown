@@ -70,7 +70,7 @@ async function fixUnknownVaccines() {
         status = unknownStatus === "current" ? "CURRENT" : "EXPIRED";
       }
 
-      // Map to rabies (the most critical vaccine for all pets)
+      // Map to Rabies (capitalized to match frontend expectations)
       const newVaccinationStatus = { ...(pet.vaccinationStatus || {}) };
       const newVaccineExpirations = { ...(pet.vaccineExpirations || {}) };
 
@@ -78,15 +78,15 @@ async function fixUnknownVaccines() {
       delete newVaccinationStatus.Unknown;
       delete newVaccineExpirations.Unknown;
 
-      // Add rabies with the same data
+      // Add Rabies with the same data (using capitalized key)
       if (unknownExpiration) {
-        newVaccineExpirations.rabies = unknownExpiration;
-        newVaccinationStatus.rabies = {
+        newVaccineExpirations.Rabies = unknownExpiration;
+        newVaccinationStatus.Rabies = {
           status: status,
           expiration: unknownExpiration,
         };
       } else if (unknownStatus) {
-        newVaccinationStatus.rabies = unknownStatus;
+        newVaccinationStatus.Rabies = unknownStatus;
       }
 
       // Update the pet
