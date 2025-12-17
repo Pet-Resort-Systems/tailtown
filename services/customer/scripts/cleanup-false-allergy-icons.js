@@ -46,7 +46,17 @@ async function cleanupFalseAllergyIcons() {
 
   for (const pet of petsWithAllergyFlag) {
     try {
-      const allergies = (pet.allergies || "").toLowerCase().trim();
+      // Clean up the allergies value - remove HTML tags, newlines, extra spaces
+      let allergies = (pet.allergies || "")
+        .replace(/<[^>]*>/g, "") // Remove HTML tags
+        .replace(/&nbsp;/g, " ") // Replace &nbsp; with space
+        .replace(/\n/g, " ") // Replace newlines with space
+        .replace(/\s+/g, " ") // Collapse multiple spaces
+        .toLowerCase()
+        .trim();
+
+      // Remove trailing punctuation
+      allergies = allergies.replace(/[.,!?]+$/, "");
 
       // Check if allergies is empty, "none", "no", or other false positive values
       const isFalsePositive =
@@ -55,7 +65,22 @@ async function cleanupFalseAllergyIcons() {
         allergies === "no" ||
         allergies === "n/a" ||
         allergies === "na" ||
-        allergies === "unknown";
+        allergies === "nan" ||
+        allergies === "nka" ||
+        allergies === "n" ||
+        allergies === "unknown" ||
+        allergies === "no allergies" ||
+        allergies === "no known allergies" ||
+        allergies === "none known" ||
+        allergies === "none to-date" ||
+        allergies === "no alergies" ||
+        allergies === "no know allergies" ||
+        allergies === "nnone" ||
+        allergies === "no e" ||
+        allergies === "an" ||
+        allergies === "!" ||
+        allergies === "mmm" ||
+        allergies.startsWith("kkjg");
 
       if (isFalsePositive) {
         // Remove ALLERGIES from specialRequirements
