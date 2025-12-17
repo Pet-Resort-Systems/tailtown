@@ -110,6 +110,19 @@ model Pet {
   petIcons           Json?           // Array of icon IDs for quick visual reference
   iconNotes          Json?           // Custom notes for generic flag icons
   externalId         String?         // ID from external system (Gingr, etc.) for migration tracking
+  
+  // Additional Gingr fields
+  isVip              Boolean         @default(false) // VIP status from Gingr
+  temperament        String?         // Temperament description (Playful, Shy, Aggressive, etc.)
+  feedingSchedule    String?         // Feeding schedule (AM/PM times and amounts)
+  feedingMethod      String?         // How to feed (bowl, slow feeder, hand feed, etc.)
+  foodType           String?         // Type of food (dry, wet, raw, prescription, etc.)
+  nextVaccineDate    DateTime?       // Next immunization expiration date
+  evaluationCategories String?       // Behavior evaluation categories
+  evaluationNotes    String?         // Behavior evaluation notes
+  incidentCount      Int             @default(0) // Number of behavioral incidents
+  createdBy          String?         // Staff member who created the record
+  
   isActive           Boolean         @default(true)
   isPickyEater       Boolean         @default(false) // Flag for picky eater tracking
   deactivatedAt      DateTime?       // Date when pet was deactivated (e.g., passed away)
