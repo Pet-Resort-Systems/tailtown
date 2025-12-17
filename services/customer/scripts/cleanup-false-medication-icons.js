@@ -162,11 +162,19 @@ async function cleanupFalseMedicationIcons() {
         medNotes === "none" ||
         medNotes === "no" ||
         medNotes === "no meds" ||
+        medNotes === "no medications" ||
         medNotes === "n/a" ||
         medNotes === "na" ||
         medNotes === "nan" ||
         medNotes === "nka" ||
         medNotes === "unknown" ||
+        medNotes === "none that we are aware of" ||
+        medNotes === "none that we know of" ||
+        medNotes === "none known" ||
+        medNotes === "not that we know of" ||
+        medNotes.startsWith("none that") ||
+        medNotes.startsWith("no meds") ||
+        medNotes.startsWith("no medications") ||
         // Only instructions, no actual medication mentioned
         (medNotes.includes("mod feed") && !hasMedicationKeyword(medNotes)) ||
         (medNotes.includes("owner") &&
@@ -179,7 +187,10 @@ async function cleanupFalseMedicationIcons() {
           !hasMedicationKeyword(medNotes)) ||
         (medNotes.includes("use pill") && !hasMedicationKeyword(medNotes)) ||
         (medNotes.includes("with food") && !hasMedicationKeyword(medNotes)) ||
-        (medNotes.includes("without food") && !hasMedicationKeyword(medNotes));
+        (medNotes.includes("without food") &&
+          !hasMedicationKeyword(medNotes)) ||
+        // If the note is short (less than 100 chars) and contains no medication keywords, it's likely not a medication
+        (medNotes.length < 100 && !hasMedicationKeyword(medNotes));
 
       if (isFalsePositive) {
         // Remove HAS_MEDICATION from specialRequirements

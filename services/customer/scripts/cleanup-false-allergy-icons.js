@@ -59,6 +59,7 @@ async function cleanupFalseAllergyIcons() {
       allergies = allergies.replace(/[.,!?]+$/, "");
 
       // Check if allergies is empty, "none", "no", or other false positive values
+      // Use pattern matching for more flexibility
       const isFalsePositive =
         !allergies ||
         allergies === "none" ||
@@ -80,7 +81,33 @@ async function cleanupFalseAllergyIcons() {
         allergies === "an" ||
         allergies === "!" ||
         allergies === "mmm" ||
-        allergies.startsWith("kkjg");
+        allergies === "none that we are aware of" ||
+        allergies === "none that we know of" ||
+        allergies === "none known at this time" ||
+        allergies === "not that we know of" ||
+        allergies === "none at this time" ||
+        allergies === "none discovered" ||
+        allergies === "none known right now" ||
+        allergies === "none known to owner" ||
+        allergies === "n none" ||
+        allergies === "neon none" ||
+        allergies === "none per mom" ||
+        allergies === "none per owner" ||
+        allergies === "no known" ||
+        allergies.startsWith("kkjg") ||
+        allergies.startsWith("none that") ||
+        allergies.startsWith("none known") ||
+        allergies.startsWith("none at") ||
+        allergies.startsWith("nka") ||
+        allergies.startsWith("n/a") ||
+        allergies.startsWith("none per") ||
+        allergies.startsWith("no known") ||
+        allergies.startsWith("no allergies") ||
+        /^none[\s.]*$/.test(allergies) ||
+        /^no[\s.]*$/.test(allergies) ||
+        /^n\/a[\s.]*$/.test(allergies) ||
+        /^no allergies[:\s;,.]/.test(allergies) ||
+        /^none[\s;,.]/.test(allergies);
 
       if (isFalsePositive) {
         // Remove ALLERGIES from specialRequirements

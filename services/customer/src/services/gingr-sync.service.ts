@@ -364,69 +364,14 @@ export class GingrSyncService {
             }
           }
 
-          // Import profile photo if missing in Tailtown but exists in Gingr
-          if (!existing.profilePhoto && (animal as any).image) {
-            updateData.profilePhoto = (animal as any).image;
-          }
-
-          // Import notes fields if they're empty in Tailtown but exist in Gingr
-          if (!existing.notes && animal.notes) {
-            updateData.notes = animal.notes;
-          }
-          if (!existing.medicationNotes && animal.medicines) {
-            updateData.medicationNotes = animal.medicines;
-          }
-          if (!existing.allergies && animal.allergies) {
-            updateData.allergies = animal.allergies;
-          }
-          if (!existing.foodNotes && animal.feeding_notes) {
-            updateData.foodNotes = animal.feeding_notes;
-          }
-          if (!existing.behaviorNotes && animal.grooming_notes) {
-            updateData.behaviorNotes = animal.grooming_notes;
-          }
-          if (!existing.specialNeeds && animal.temperment) {
-            updateData.specialNeeds = animal.temperment;
-          }
-
-          // Import vaccinations if pet has none (stored as JSON fields)
-          const hasVaccines =
-            existing.vaccinationStatus &&
-            typeof existing.vaccinationStatus === "object" &&
-            Object.keys(existing.vaccinationStatus as object).length > 0;
-
-          if (!hasVaccines) {
-            try {
-              const immunizations = await gingrClient.fetchAnimalImmunizations(
-                animal.id
-              );
-              if (immunizations && immunizations.length > 0) {
-                const vaccinationStatus: Record<string, string> = {};
-                const vaccineExpirations: Record<string, string> = {};
-
-                for (const imm of immunizations) {
-                  const name = imm.name || imm.immunization_name || "Unknown";
-                  // Set status to 'current' if has expiration in future, otherwise 'expired'
-                  const expDate = imm.expiration_date
-                    ? new Date(imm.expiration_date * 1000)
-                    : null;
-                  vaccinationStatus[name] =
-                    expDate && expDate > new Date() ? "current" : "expired";
-                  if (expDate) {
-                    vaccineExpirations[name] = expDate
-                      .toISOString()
-                      .split("T")[0];
-                  }
-                  vaccinesImported++;
-                }
-
-                updateData.vaccinationStatus = vaccinationStatus;
-                updateData.vaccineExpirations = vaccineExpirations;
-              }
-            } catch (immErr: any) {
-              // Skip if can't fetch immunizations
-            }
-          }
+          // IMPORTANT: Do NOT import the following fields for existing pets.
+          // These are now managed by Tailtown and have been curated to remove false positives.
+          // The hourly sync should only update core Gingr fields (name, breed, weight, etc.)
+          // and NOT overwrite:
+          // - profilePhoto (imported via separate batch script)
+          // - notes, medicationNotes, allergies, foodNotes, behaviorNotes, specialNeeds
+          // - vaccinationStatus, vaccineExpirations
+          // - petIcons, specialRequirements (managed by Tailtown)
 
           await prisma.pet.update({
             where: { id: existing.id },

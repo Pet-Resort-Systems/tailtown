@@ -22,18 +22,12 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import {
-  Search as SearchIcon,
-  CameraAlt as CameraIcon,
-} from "@mui/icons-material";
+import { Search as SearchIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { Pet, petService } from "../../services/petService";
 import PetNameWithIcons from "../../components/pets/PetNameWithIcons";
 import SimpleVaccinationBadge from "../../components/pets/SimpleVaccinationBadge";
-import {
-  PlaygroupBadge,
-  SpecialRequirementIcons,
-} from "../../components/compatibility";
+import { PlaygroupBadge } from "../../components/compatibility";
 import { debounce } from "lodash";
 
 const DEFAULT_PAGE_SIZE = 50;
@@ -256,30 +250,18 @@ const Pets = () => {
                         onClick={() => handleRowClick(pet.id)}
                         sx={{ cursor: "pointer", py: 0.5 }}
                       >
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                        >
-                          {pet.profilePhoto && (
-                            <CameraIcon
-                              sx={{
-                                fontSize: 16,
-                                color: "primary.main",
-                              }}
-                            />
-                          )}
-                          <PetNameWithIcons
-                            petName={`${pet.name}${
-                              pet.owner ? ` (${pet.owner.lastName})` : ""
-                            }`}
-                            petIcons={pet.petIcons}
-                            iconNotes={pet.iconNotes}
-                            petType={pet.type}
-                            profilePhoto={pet.profilePhoto}
-                            size="small"
-                            nameVariant="body2"
-                            showPhoto={false}
-                          />
-                        </Box>
+                        <PetNameWithIcons
+                          petName={`${pet.name}${
+                            pet.owner ? ` (${pet.owner.lastName})` : ""
+                          }`}
+                          petIcons={pet.petIcons}
+                          iconNotes={pet.iconNotes}
+                          petType={pet.type}
+                          profilePhoto={pet.profilePhoto}
+                          size="small"
+                          nameVariant="body2"
+                          showPhoto={true}
+                        />
                       </TableCell>
                       <TableCell
                         onClick={() => handleRowClick(pet.id)}
@@ -317,15 +299,7 @@ const Pets = () => {
                         onClick={() => handleRowClick(pet.id)}
                         sx={{ cursor: "pointer", py: 0.5 }}
                       >
-                        <SpecialRequirementIcons
-                          requirements={
-                            [
-                              ...(pet.specialRequirements || []),
-                              ...(pet.aggressionFlags || []),
-                            ] as any
-                          }
-                          size="small"
-                        />
+                        {/* Icons removed */}
                       </TableCell>
                       <TableCell
                         onClick={() => handleRowClick(pet.id)}

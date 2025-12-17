@@ -22,8 +22,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import PetNameWithIcons from "../pets/PetNameWithIcons";
 import KennelCard from "../kennels/KennelCard";
-import { PlaygroupBadge, SpecialRequirementIcons } from "../compatibility";
-import { Warning, CameraAlt } from "@mui/icons-material";
+import { PlaygroupBadge } from "../compatibility";
 import {
   formatGingrTime,
   formatGingrDate,
@@ -406,49 +405,8 @@ const ReservationList: React.FC<ReservationListProps> = ({
                       petName={reservation.pet?.name || "Unknown Pet"}
                       petIcons={reservation.pet?.petIcons}
                       profilePhoto={reservation.pet?.profilePhoto}
-                      showPhoto={false}
+                      showPhoto={true}
                     />
-                    {reservation.pet?.profilePhoto && (
-                      <Tooltip title="View Photo" arrow>
-                        <Box
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            const photoUrl = reservation.pet?.profilePhoto;
-                            if (!photoUrl) return;
-                            const modal = document.createElement("div");
-                            modal.style.cssText =
-                              "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:9999;cursor:pointer";
-                            const img = document.createElement("img");
-                            img.src = photoUrl.startsWith("http")
-                              ? photoUrl
-                              : `${window.location.origin}${photoUrl}`;
-                            img.style.cssText =
-                              "max-width:90%;max-height:90%;border-radius:8px";
-                            modal.appendChild(img);
-                            modal.onclick = () =>
-                              document.body.removeChild(modal);
-                            document.body.appendChild(modal);
-                          }}
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            cursor: "pointer",
-                            padding: "2px 4px",
-                            borderRadius: "4px",
-                            backgroundColor: "rgba(25, 118, 210, 0.1)",
-                            "&:hover": {
-                              backgroundColor: "rgba(25, 118, 210, 0.2)",
-                              transform: "scale(1.1)",
-                            },
-                            transition: "all 0.2s",
-                          }}
-                        >
-                          <CameraAlt
-                            sx={{ fontSize: 16, color: "primary.main" }}
-                          />
-                        </Box>
-                      </Tooltip>
-                    )}
                     <Typography
                       variant="body2"
                       color="text.secondary"
@@ -463,24 +421,6 @@ const ReservationList: React.FC<ReservationListProps> = ({
                         size="small"
                       />
                     )}
-                    {reservation.pet?.aggressionFlags &&
-                      reservation.pet.aggressionFlags.length > 0 && (
-                        <Tooltip
-                          title={`${reservation.pet.aggressionFlags.length} aggression warning(s)`}
-                        >
-                          <Warning sx={{ color: "error.main", fontSize: 18 }} />
-                        </Tooltip>
-                      )}
-                    {reservation.pet?.specialRequirements &&
-                      reservation.pet.specialRequirements.length > 0 && (
-                        <SpecialRequirementIcons
-                          requirements={
-                            reservation.pet.specialRequirements as any
-                          }
-                          maxDisplay={5}
-                          size="small"
-                        />
-                      )}
                   </Box>
                   {/* Row 2: Kennel, Service, Time */}
                   <Box

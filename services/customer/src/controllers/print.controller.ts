@@ -21,16 +21,27 @@ interface KennelLabelData {
 const generateKennelLabelZPL = (data: KennelLabelData): string => {
   const { dogName, customerLastName, kennelNumber, groupSize } = data;
 
+  // Use blank space for missing data
+  const safeDogName = dogName || "";
+  const safeLastName = customerLastName || "";
+  const safeKennel = kennelNumber || "";
+  const safeGroup = groupSize || "";
+
   // Truncate names to fit on label
   const truncatedDogName =
-    dogName.length > 10 ? dogName.substring(0, 8) + ".." : dogName;
+    safeDogName.length > 10 ? safeDogName.substring(0, 8) + ".." : safeDogName;
   const truncatedLastName =
-    customerLastName.length > 8
-      ? customerLastName.substring(0, 6) + ".."
-      : customerLastName;
+    safeLastName.length > 8
+      ? safeLastName.substring(0, 6) + ".."
+      : safeLastName;
 
   // Build the main line: Name (LastName)   #Kennel   Group
-  const mainLine = `${truncatedDogName} (${truncatedLastName})   #${kennelNumber}   ${groupSize}`;
+  // Leave blank spaces for missing info
+  const namePart = truncatedDogName ? `${truncatedDogName}` : "";
+  const lastNamePart = truncatedLastName ? ` (${truncatedLastName})` : "";
+  const kennelPart = safeKennel ? `   #${safeKennel}` : "";
+  const groupPart = safeGroup ? `   ${safeGroup}` : "";
+  const mainLine = `${namePart}${lastNamePart}${kennelPart}${groupPart}`;
 
   // ZPL with duplicated content for collar readability
   const zpl = `^XA
@@ -56,20 +67,12 @@ export const printKennelLabel = async (
   try {
     const { dogName, customerLastName, kennelNumber, groupSize } = req.body;
 
-    // Validate required fields
-    if (!dogName || !kennelNumber) {
-      res.status(400).json({
-        success: false,
-        error: "dogName and kennelNumber are required",
-      });
-      return;
-    }
-
+    // Allow missing fields - they will be blank on the label
     const labelData: KennelLabelData = {
-      dogName,
+      dogName: dogName || "",
       customerLastName: customerLastName || "",
-      kennelNumber,
-      groupSize: groupSize || "Medium",
+      kennelNumber: kennelNumber || "",
+      groupSize: groupSize || "",
     };
 
     // Generate ZPL
@@ -109,10 +112,22 @@ export const printKennelLabel = async (
       }
 
       console.error("Print error:", printError);
-      res.status(500).json({
+
+      // Return a more helpful error - not 500 for printer issues
+      const errorMessage = printError.message || "Unknown error";
+      const isPrinterOffline =
+        errorMessage.includes("not exist") ||
+        errorMessage.includes("not found") ||
+        errorMessage.includes("No such") ||
+        errorMessage.includes("disabled");
+
+      res.status(isPrinterOffline ? 503 : 500).json({
         success: false,
-        error: "Failed to send to printer",
-        details: printError.message,
+        error: isPrinterOffline
+          ? "Printer is offline or not available"
+          : "Failed to send to printer",
+        details: errorMessage,
+        labelData,
       });
     }
   } catch (error: any) {

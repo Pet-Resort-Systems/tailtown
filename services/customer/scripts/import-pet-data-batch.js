@@ -196,9 +196,27 @@ async function importPetDataBatch() {
 
       // Add special requirements
       const specialReqs = new Set(pet.specialRequirements || []);
-      if (data.medicines && data.medicines.toLowerCase() !== "none") {
-        specialReqs.add("HAS_MEDICATION");
+
+      // Only add HAS_MEDICATION if there's actual medication (not "none", "no", etc.)
+      if (data.medicines) {
+        const medLower = data.medicines.toLowerCase().trim();
+        const isFalsePositive =
+          medLower === "none" ||
+          medLower === "no" ||
+          medLower === "no meds" ||
+          medLower === "n/a" ||
+          medLower === "na" ||
+          medLower === "nan" ||
+          medLower === "nka" ||
+          medLower === "unknown" ||
+          medLower === "no medications" ||
+          medLower === "";
+
+        if (!isFalsePositive) {
+          specialReqs.add("HAS_MEDICATION");
+        }
       }
+
       // Only add ALLERGIES if there's a real allergy (not "none", "no", "n/a", etc.)
       if (data.allergies) {
         const allergiesLower = data.allergies.toLowerCase().trim();
@@ -207,7 +225,22 @@ async function importPetDataBatch() {
           allergiesLower === "no" ||
           allergiesLower === "n/a" ||
           allergiesLower === "na" ||
-          allergiesLower === "unknown";
+          allergiesLower === "nan" ||
+          allergiesLower === "nka" ||
+          allergiesLower === "n" ||
+          allergiesLower === "unknown" ||
+          allergiesLower === "no allergies" ||
+          allergiesLower === "no known allergies" ||
+          allergiesLower === "none known" ||
+          allergiesLower === "none to-date" ||
+          allergiesLower === "no alergies" ||
+          allergiesLower === "no know allergies" ||
+          allergiesLower === "nnone" ||
+          allergiesLower === "no e" ||
+          allergiesLower === "an" ||
+          allergiesLower === "!" ||
+          allergiesLower === "mmm" ||
+          allergiesLower === "";
 
         if (!isFalsePositive) {
           specialReqs.add("ALLERGIES");
