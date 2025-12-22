@@ -202,10 +202,10 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
                 {dogName || "Dog Name"} ({customerLastName || "Last Name"})
                 {"   "}
                 <Box component="span" color="primary.main">
-                  #{kennelNumber || "---"}
+                  #{kennelNumber || "___"}
                 </Box>
                 {"   "}
-                {groupSize}
+                {groupSize || "___"}
               </Typography>
               <Typography
                 variant="caption"
