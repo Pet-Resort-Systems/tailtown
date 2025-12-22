@@ -33,7 +33,7 @@ const LabelPrinterTest: React.FC = () => {
   const [dogName, setDogName] = useState("Max");
   const [customerLastName, setCustomerLastName] = useState("Smith");
   const [kennelNumber, setKennelNumber] = useState("A-12");
-  const [groupSize, setGroupSize] = useState("Medium");
+  const [groupSize, setGroupSize] = useState("");
   const [printing, setPrinting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);

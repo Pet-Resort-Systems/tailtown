@@ -53,9 +53,7 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
   const [kennelNumber, setKennelNumber] = useState(
     initialData?.kennelNumber || ""
   );
-  const [groupSize, setGroupSize] = useState(
-    initialData?.groupSize || "Medium"
-  );
+  const [groupSize, setGroupSize] = useState(initialData?.groupSize || "");
   const [showPreview, setShowPreview] = useState(false);
   const [printing, setPrinting] = useState(false);
   const [error, setError] = useState<string | null>(null);
