@@ -11,6 +11,7 @@ import {
   TableHead,
   TableRow,
   CircularProgress,
+  TextField,
 } from "@mui/material";
 import PrintIcon from "@mui/icons-material/Print";
 import { format } from "date-fns";
@@ -25,7 +26,7 @@ interface DogEntry {
 }
 
 const DailyCheckInOutReport: React.FC = () => {
-  const [date] = useState(new Date());
+  const [date, setDate] = useState(new Date());
   const [dogs, setDogs] = useState<DogEntry[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -40,7 +41,14 @@ const DailyCheckInOutReport: React.FC = () => {
       const todaysReservations = allReservations.filter((r: any) => {
         const startDate = r.startDate?.split("T")[0];
         const endDate = r.endDate?.split("T")[0];
-        return startDate <= dateStr && endDate >= dateStr;
+        const isInDateRange = startDate <= dateStr && endDate >= dateStr;
+
+        // Only include boarding and daycamp reservations
+        const serviceType = r.serviceType?.toLowerCase();
+        const isBoardingOrDaycamp =
+          serviceType === "boarding" || serviceType === "daycamp";
+
+        return isInDateRange && isBoardingOrDaycamp;
       });
 
       // Map to dog entries
@@ -94,16 +102,26 @@ const DailyCheckInOutReport: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      {/* Print button - hidden when printing */}
+      {/* Controls - hidden when printing */}
       <Box sx={{ mb: 3, "@media print": { display: "none" } }}>
-        <Button
-          variant="contained"
-          startIcon={<PrintIcon />}
-          onClick={handlePrint}
-          disabled={loading}
-        >
-          Print Report
-        </Button>
+        <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+          <TextField
+            label="Report Date"
+            type="date"
+            value={format(date, "yyyy-MM-dd")}
+            onChange={(e) => setDate(new Date(e.target.value))}
+            InputLabelProps={{ shrink: true }}
+            sx={{ width: 200 }}
+          />
+          <Button
+            variant="contained"
+            startIcon={<PrintIcon />}
+            onClick={handlePrint}
+            disabled={loading}
+          >
+            Print Report
+          </Button>
+        </Box>
       </Box>
 
       {/* Report content */}
