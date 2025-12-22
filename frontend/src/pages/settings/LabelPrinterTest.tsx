@@ -216,7 +216,7 @@ const LabelPrinterTest: React.FC = () => {
               size="large"
               startIcon={<PrintIcon />}
               onClick={() => handlePrint("server")}
-              disabled={printing || !dogName || !kennelNumber}
+              disabled={printing || !dogName}
             >
               {printing ? "Printing..." : "Print"}
             </Button>
@@ -226,7 +226,7 @@ const LabelPrinterTest: React.FC = () => {
               size="large"
               startIcon={<DownloadIcon />}
               onClick={() => handlePrint("download")}
-              disabled={printing || !dogName || !kennelNumber}
+              disabled={printing || !dogName}
             >
               Download ZPL File
             </Button>

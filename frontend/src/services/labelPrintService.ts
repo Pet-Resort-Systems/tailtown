@@ -15,8 +15,8 @@ import { customerApi } from "./api";
 export interface KennelLabelData {
   dogName: string;
   customerLastName: string;
-  kennelNumber: string;
-  groupSize: string; // e.g., "Small", "Medium", "Large"
+  kennelNumber?: string; // Optional - will show blank space if not assigned
+  groupSize?: string; // Optional - e.g., "Small", "Medium", "Large"
 }
 
 export interface BatchPrintProgress {

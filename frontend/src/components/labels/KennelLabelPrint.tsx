@@ -71,8 +71,8 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
   const handlePrint = async (
     method: "local" | "browser" | "server" | "usb" | "download"
   ) => {
-    if (!dogName || !kennelNumber) {
-      setError("Please fill in dog name and kennel number");
+    if (!dogName) {
+      setError("Please fill in dog name");
       return;
     }
 
