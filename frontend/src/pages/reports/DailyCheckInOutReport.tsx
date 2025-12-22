@@ -113,7 +113,10 @@ const DailyCheckInOutReport: React.FC = () => {
             label="Report Date"
             type="date"
             value={format(date, "yyyy-MM-dd")}
-            onChange={(e) => setDate(new Date(e.target.value))}
+            onChange={(e) => {
+              const [year, month, day] = e.target.value.split("-").map(Number);
+              setDate(new Date(year, month - 1, day));
+            }}
             InputLabelProps={{ shrink: true }}
             sx={{ width: 200 }}
           />
