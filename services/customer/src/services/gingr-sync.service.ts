@@ -672,7 +672,6 @@ export class GingrSyncService {
           try {
             const resource = await findOrCreateResource(
               gingrLodging,
-              tenantId,
               reservationServiceUrl
             );
             mappedResourceId = resource.id;
