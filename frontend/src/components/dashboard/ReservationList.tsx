@@ -21,7 +21,6 @@ import PrintIcon from "@mui/icons-material/Print";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import ContentCutIcon from "@mui/icons-material/ContentCut";
-import PetsIcon from "@mui/icons-material/Pets";
 import PetNameWithIcons from "../pets/PetNameWithIcons";
 import KennelCard from "../kennels/KennelCard";
 import { PlaygroupBadge } from "../compatibility";
@@ -461,12 +460,15 @@ const ReservationList: React.FC<ReservationListProps> = ({
                             reservation.resource.name
                               .toUpperCase()
                               .startsWith("K")) && (
-                            <PetsIcon
+                            <Box
+                              component="span"
                               sx={{
                                 fontSize: "0.875rem",
-                                color: "#ff6b6b",
+                                lineHeight: 1,
                               }}
-                            />
+                            >
+                              😺
+                            </Box>
                           )}
                           <Chip
                             label={
