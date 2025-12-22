@@ -38,15 +38,38 @@ const DailyCheckInOutReport: React.FC = () => {
       // Filter for reservations on the selected date
       const dateStr = format(date, "yyyy-MM-dd");
       const allReservations = response.data || [];
+
+      console.log("Total reservations:", allReservations.length);
+      console.log("Sample reservation:", allReservations[0]);
+
       const todaysReservations = allReservations.filter((r: any) => {
         const startDate = r.startDate?.split("T")[0];
         const endDate = r.endDate?.split("T")[0];
         const isInDateRange = startDate <= dateStr && endDate >= dateStr;
 
         // Only include boarding and daycamp reservations
-        const serviceType = r.serviceType?.toLowerCase();
+        // Check multiple possible field names and formats
+        const serviceType =
+          r.serviceType?.toLowerCase() ||
+          r.service?.type?.toLowerCase() ||
+          r.type?.toLowerCase();
+        const serviceName = r.service?.name?.toLowerCase() || "";
+
         const isBoardingOrDaycamp =
-          serviceType === "boarding" || serviceType === "daycamp";
+          serviceType === "boarding" ||
+          serviceType === "daycamp" ||
+          serviceName.includes("boarding") ||
+          serviceName.includes("daycamp") ||
+          serviceName.includes("day camp");
+
+        if (isInDateRange) {
+          console.log("Reservation in date range:", {
+            pet: r.pet?.name,
+            serviceType,
+            serviceName,
+            isBoardingOrDaycamp,
+          });
+        }
 
         return isInDateRange && isBoardingOrDaycamp;
       });
