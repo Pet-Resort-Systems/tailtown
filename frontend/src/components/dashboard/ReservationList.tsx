@@ -20,6 +20,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PrintIcon from "@mui/icons-material/Print";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
+import ContentCutIcon from "@mui/icons-material/ContentCut";
 import PetNameWithIcons from "../pets/PetNameWithIcons";
 import KennelCard from "../kennels/KennelCard";
 import { PlaygroupBadge } from "../compatibility";
@@ -188,13 +189,29 @@ const ReservationList: React.FC<ReservationListProps> = ({
 
   /**
    * Gets background color based on service category
-   * DAYCARE = orange tint, BOARDING = default (blue tint)
+   * DAYCARE = orange tint, BOARDING = blue tint, GROOMING = purple tint
    */
   const getServiceColor = (serviceCategory?: string) => {
     if (serviceCategory === "DAYCARE") {
       return "rgba(255, 152, 0, 0.08)"; // Orange tint
     }
+    if (serviceCategory === "GROOMING") {
+      return "rgba(156, 39, 176, 0.08)"; // Purple tint
+    }
     return "rgba(25, 118, 210, 0.08)"; // Blue tint (default)
+  };
+
+  /**
+   * Gets hover color based on service category
+   */
+  const getServiceHoverColor = (serviceCategory?: string) => {
+    if (serviceCategory === "DAYCARE") {
+      return "rgba(255, 152, 0, 0.15)"; // Orange hover
+    }
+    if (serviceCategory === "GROOMING") {
+      return "rgba(156, 39, 176, 0.15)"; // Purple hover
+    }
+    return "rgba(25, 118, 210, 0.15)"; // Blue hover (default)
   };
 
   /**
@@ -339,10 +356,9 @@ const ReservationList: React.FC<ReservationListProps> = ({
                     reservation.service?.serviceCategory
                   ),
                   "&:hover": {
-                    bgcolor:
-                      reservation.service?.serviceCategory === "DAYCARE"
-                        ? "rgba(255, 152, 0, 0.15)"
-                        : "rgba(25, 118, 210, 0.15)",
+                    bgcolor: getServiceHoverColor(
+                      reservation.service?.serviceCategory
+                    ),
                   },
                 }}
                 secondaryAction={
@@ -457,9 +473,26 @@ const ReservationList: React.FC<ReservationListProps> = ({
                     )}
                     {reservation.service?.name && (
                       <>
-                        <Typography variant="caption" color="text.secondary">
-                          {reservation.service.name}
-                        </Typography>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.5,
+                          }}
+                        >
+                          {reservation.service.serviceCategory ===
+                            "GROOMING" && (
+                            <ContentCutIcon
+                              sx={{
+                                fontSize: "0.875rem",
+                                color: "#9c27b0",
+                              }}
+                            />
+                          )}
+                          <Typography variant="caption" color="text.secondary">
+                            {reservation.service.name}
+                          </Typography>
+                        </Box>
                         <Typography variant="caption" color="text.secondary">
                           •
                         </Typography>
