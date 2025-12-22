@@ -230,6 +230,12 @@ async function syncReservations(tenantId, gingrClient) {
             ? "Day Camp | Half Day"
             : "Day Camp | Full Day";
           serviceCategory = "DAYCARE";
+        } else if (
+          gingrType.includes("Grooming") ||
+          gingrType.includes("grooming")
+        ) {
+          serviceName = "Grooming | Appointment";
+          serviceCategory = "GROOMING";
         } else {
           serviceName = "Boarding | Indoor Suite";
         }

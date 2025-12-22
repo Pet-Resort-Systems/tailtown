@@ -558,42 +558,61 @@ export class GingrSyncService {
         // First, try to extract lodging info and determine resource type
         const gingrLodging = extractGingrLodging(reservation);
         let serviceName: string;
-        let serviceCategory: "BOARDING" | "DAYCARE" = "BOARDING";
+        let serviceCategory: "BOARDING" | "DAYCARE" | "GROOMING" = "BOARDING";
 
         if (gingrLodging) {
           // Determine resource type from lodging name
           const lodgingUpper = gingrLodging.toUpperCase();
-          let resourceType = "JUNIOR_KENNEL"; // default
 
-          if (lodgingUpper.includes("VIP") || lodgingUpper.startsWith("V")) {
-            resourceType = "VIP_ROOM";
-          } else if (
-            lodgingUpper.includes("CAT") ||
-            lodgingUpper.includes("CONDO")
+          // Check for daycare first
+          if (
+            lodgingUpper.includes("DAYCAMP") ||
+            lodgingUpper.includes("DAY CAMP")
           ) {
-            resourceType = "CAT_CONDO";
-          } else if (
-            lodgingUpper.endsWith("K") ||
-            lodgingUpper.includes("KING")
-          ) {
-            resourceType = "KING_KENNEL";
-          } else if (
-            lodgingUpper.endsWith("Q") ||
-            lodgingUpper.includes("QUEEN")
-          ) {
-            resourceType = "QUEEN_KENNEL";
-          } else if (
-            lodgingUpper.endsWith("R") ||
-            lodgingUpper.includes("JUNIOR")
-          ) {
-            resourceType = "JUNIOR_KENNEL";
+            const gingrType =
+              (reservation.reservation_type as any)?.type ||
+              "Day Camp | Full Day";
+            serviceName = gingrType.includes("Half")
+              ? "Day Camp | Half Day"
+              : "Day Camp | Full Day";
+            serviceCategory = "DAYCARE";
+            console.log(
+              `      Detected daycare lodging "${gingrLodging}" → "${serviceName}"`
+            );
+          } else {
+            // Boarding resource type detection
+            let resourceType = "JUNIOR_KENNEL"; // default
+
+            if (lodgingUpper.includes("VIP") || lodgingUpper.startsWith("V")) {
+              resourceType = "VIP_ROOM";
+            } else if (
+              lodgingUpper.includes("CAT") ||
+              lodgingUpper.includes("CONDO")
+            ) {
+              resourceType = "CAT_CONDO";
+            } else if (
+              lodgingUpper.endsWith("K") ||
+              lodgingUpper.includes("KING")
+            ) {
+              resourceType = "KING_KENNEL";
+            } else if (
+              lodgingUpper.endsWith("Q") ||
+              lodgingUpper.includes("QUEEN")
+            ) {
+              resourceType = "QUEEN_KENNEL";
+            } else if (
+              lodgingUpper.endsWith("R") ||
+              lodgingUpper.includes("JUNIOR")
+            ) {
+              resourceType = "JUNIOR_KENNEL";
+            }
+
+            // Get service name from resource type
+            serviceName = getServiceNameForResourceType(resourceType);
+            console.log(
+              `      Mapped lodging "${gingrLodging}" → ${resourceType} → "${serviceName}"`
+            );
           }
-
-          // Get service name from resource type
-          serviceName = getServiceNameForResourceType(resourceType);
-          console.log(
-            `      Mapped lodging "${gingrLodging}" → ${resourceType} → "${serviceName}"`
-          );
         } else {
           // Fallback: Use Gingr reservation type
           const gingrType =
@@ -607,6 +626,12 @@ export class GingrSyncService {
               ? "Day Camp | Half Day"
               : "Day Camp | Full Day";
             serviceCategory = "DAYCARE";
+          } else if (
+            gingrType.includes("Grooming") ||
+            gingrType.includes("grooming")
+          ) {
+            serviceName = "Grooming | Appointment";
+            serviceCategory = "GROOMING";
           } else {
             serviceName = "Boarding | Indoor Suite"; // Default boarding service
           }
@@ -647,6 +672,7 @@ export class GingrSyncService {
           try {
             const resource = await findOrCreateResource(
               gingrLodging,
+              tenantId,
               reservationServiceUrl
             );
             mappedResourceId = resource.id;
@@ -1177,20 +1203,35 @@ export class GingrSyncService {
     // Determine service
     const gingrLodging = extractGingrLodging(reservation);
     let serviceName = "Boarding | Indoor Suite";
-    let serviceCategory: "BOARDING" | "DAYCARE" = "BOARDING";
+    let serviceCategory: "BOARDING" | "DAYCARE" | "GROOMING" = "BOARDING";
 
     if (gingrLodging) {
       const lodgingUpper = gingrLodging.toUpperCase();
-      let resourceType = "JUNIOR_KENNEL";
-      if (lodgingUpper.includes("VIP") || lodgingUpper.startsWith("V"))
-        resourceType = "VIP_ROOM";
-      else if (lodgingUpper.includes("CAT") || lodgingUpper.includes("CONDO"))
-        resourceType = "CAT_CONDO";
-      else if (lodgingUpper.endsWith("K") || lodgingUpper.includes("KING"))
-        resourceType = "KING_KENNEL";
-      else if (lodgingUpper.endsWith("Q") || lodgingUpper.includes("QUEEN"))
-        resourceType = "QUEEN_KENNEL";
-      serviceName = getServiceNameForResourceType(resourceType);
+
+      // Check for daycare first
+      if (
+        lodgingUpper.includes("DAYCAMP") ||
+        lodgingUpper.includes("DAY CAMP")
+      ) {
+        const gingrType =
+          reservation.reservation_type?.type || "Day Camp | Full Day";
+        serviceName = gingrType.includes("Half")
+          ? "Day Camp | Half Day"
+          : "Day Camp | Full Day";
+        serviceCategory = "DAYCARE";
+      } else {
+        // Boarding resource type detection
+        let resourceType = "JUNIOR_KENNEL";
+        if (lodgingUpper.includes("VIP") || lodgingUpper.startsWith("V"))
+          resourceType = "VIP_ROOM";
+        else if (lodgingUpper.includes("CAT") || lodgingUpper.includes("CONDO"))
+          resourceType = "CAT_CONDO";
+        else if (lodgingUpper.endsWith("K") || lodgingUpper.includes("KING"))
+          resourceType = "KING_KENNEL";
+        else if (lodgingUpper.endsWith("Q") || lodgingUpper.includes("QUEEN"))
+          resourceType = "QUEEN_KENNEL";
+        serviceName = getServiceNameForResourceType(resourceType);
+      }
     } else {
       const gingrType = reservation.reservation_type?.type || "Boarding";
       if (gingrType.includes("Day Camp") && !gingrType.includes("Lodging")) {
