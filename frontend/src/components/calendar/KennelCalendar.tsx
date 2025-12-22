@@ -68,6 +68,14 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
     useState<Reservation | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
 
+  // State for drag-and-drop
+  const [draggedReservation, setDraggedReservation] = useState<string | null>(
+    null
+  );
+
+  // State to force refresh of kennel data
+  const [refreshKey, setRefreshKey] = useState<number>(0);
+
   // Function to get the days to display based on the view type
   const getDaysToDisplay = useCallback((): Date[] => {
     const days: Date[] = [];
@@ -113,6 +121,7 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
     currentDate,
     getDaysToDisplay,
     kennelTypeFilter,
+    refreshTrigger: refreshKey,
   });
 
   // Function to check if a kennel is occupied on a specific date
@@ -275,6 +284,98 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
     setCurrentDate(new Date());
   }, []);
 
+  // Handle drag-and-drop reservation move
+  const handleReservationDrop = useCallback(
+    async (reservationId: string, targetKennelId: string, targetDate: Date) => {
+      console.log("[DragDrop] handleReservationDrop called", {
+        reservationId,
+        targetKennelId,
+        targetDate,
+      });
+      try {
+        // Find the original reservation to calculate date shift
+        const originalReservation = reservations.find(
+          (r) => r.id === reservationId
+        );
+
+        // Build update payload
+        const updatePayload: any = {
+          resourceId: targetKennelId,
+        };
+
+        // If we have the original reservation, calculate date shift
+        if (originalReservation) {
+          const originalStartDate = new Date(originalReservation.startDate);
+          originalStartDate.setHours(0, 0, 0, 0);
+
+          const newTargetDate = new Date(targetDate);
+          newTargetDate.setHours(0, 0, 0, 0);
+
+          // Calculate the day difference
+          const daysDiff = Math.round(
+            (newTargetDate.getTime() - originalStartDate.getTime()) /
+              (1000 * 60 * 60 * 24)
+          );
+
+          if (daysDiff !== 0) {
+            // Shift both start and end dates by the same amount
+            const newStartDate = new Date(originalReservation.startDate);
+            newStartDate.setDate(newStartDate.getDate() + daysDiff);
+
+            const newEndDate = new Date(originalReservation.endDate);
+            newEndDate.setDate(newEndDate.getDate() + daysDiff);
+
+            updatePayload.startDate = newStartDate.toISOString();
+            updatePayload.endDate = newEndDate.toISOString();
+
+            console.log("[DragDrop] Date shift:", daysDiff, "days", {
+              originalStart: originalReservation.startDate,
+              newStart: updatePayload.startDate,
+              originalEnd: originalReservation.endDate,
+              newEnd: updatePayload.endDate,
+            });
+          }
+        }
+
+        console.log(
+          "[DragDrop] Calling reservationService.updateReservation..."
+        );
+        const result = await reservationService.updateReservation(
+          reservationId,
+          updatePayload
+        );
+        console.log("[DragDrop] Update result:", result);
+
+        // Small delay to ensure database write is complete, then refresh
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        // Force a complete re-render by updating the refresh key
+        console.log("[DragDrop] Forcing calendar refresh...");
+        setRefreshKey((prev) => prev + 1);
+
+        // Show success feedback
+        console.log(
+          `Moved reservation ${reservationId} to kennel ${targetKennelId}`
+        );
+      } catch (error: any) {
+        console.error("[DragDrop] Error moving reservation:", error);
+        console.error("[DragDrop] Error details:", error.response?.data);
+        setFormError(error.message || "Failed to move reservation");
+      }
+    },
+    [reservations]
+  );
+
+  // Handle drag start
+  const handleDragStart = useCallback((reservationId: string) => {
+    setDraggedReservation(reservationId);
+  }, []);
+
+  // Handle drag end
+  const handleDragEnd = useCallback(() => {
+    setDraggedReservation(null);
+  }, []);
+
   // Listen for checkout completion and refresh calendar
   useEffect(() => {
     // Check if we need to refresh on mount (after checkout redirect)
@@ -341,6 +442,10 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
         getDaysToDisplay={getDaysToDisplay}
         onCellClick={handleCellClick}
         isKennelOccupied={isKennelOccupied}
+        onReservationDrop={handleReservationDrop}
+        draggedReservation={draggedReservation}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
       />
 
       {/* Reservation Form Dialog */}

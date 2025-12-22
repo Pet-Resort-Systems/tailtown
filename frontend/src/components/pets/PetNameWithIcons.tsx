@@ -3,7 +3,6 @@ import { getApiBaseUrl } from "../../services/api";
 import { Box, Typography, Tooltip, Dialog, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ClickableAvatar from "./ClickableAvatar";
-import { mapPetIconsToEmojis } from "../../utils/petIconMapping";
 
 interface PetNameWithIconsProps {
   petName: string;
@@ -28,7 +27,7 @@ interface PetNameWithIconsProps {
 const PetNameWithIcons: React.FC<PetNameWithIconsProps> = memo(
   ({
     petName,
-    petIcons = [],
+    petIcons: _petIcons = [],
     iconNotes: _iconNotes = {},
     petType: _petType,
     profilePhoto,
@@ -42,12 +41,9 @@ const PetNameWithIcons: React.FC<PetNameWithIconsProps> = memo(
   }) => {
     const [photoModalOpen, setPhotoModalOpen] = useState(false);
 
-    // Convert icon IDs to emojis
-    const emojiIcons = useMemo(() => mapPetIconsToEmojis(petIcons), [petIcons]);
-    const hasIcons = useMemo(
-      () => emojiIcons && emojiIcons.length > 0,
-      [emojiIcons]
-    );
+    // Disable old petIcons system - we now use SpecialRequirementIcons instead
+    const emojiIcons = useMemo(() => [], []);
+    const _hasIcons = useMemo(() => false, []);
 
     // Memoized size mapping for avatars
     const avatarSize = useMemo(() => {
@@ -65,21 +61,15 @@ const PetNameWithIcons: React.FC<PetNameWithIconsProps> = memo(
       return `${baseUrl}${profilePhoto}`;
     }, [profilePhoto]);
 
-    // Add photo icon to display icons if pet has a photo
+    // Display icons (photo icon now handled separately in parent components)
     const displayIcons = useMemo(() => {
-      if (photoUrl) {
-        return ["📷", ...emojiIcons];
-      }
       return emojiIcons;
-    }, [photoUrl, emojiIcons]);
+    }, [emojiIcons]);
 
     const hasDisplayIcons = displayIcons.length > 0;
 
-    const handleIconClick = (icon: string, e: React.MouseEvent) => {
-      if (icon === "📷" && photoUrl) {
-        e.stopPropagation();
-        setPhotoModalOpen(true);
-      }
+    const handleIconClick = (_icon: string, _e: React.MouseEvent) => {
+      // Icon click handling removed - photo icon now in parent components
     };
 
     return (

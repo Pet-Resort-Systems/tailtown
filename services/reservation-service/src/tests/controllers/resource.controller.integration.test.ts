@@ -346,6 +346,43 @@ describe("Resource Controller - Integration", () => {
       expect(mockResponse.status).toHaveBeenCalledWith(201);
     });
 
+    it("should persist suiteNumber when provided", async () => {
+      mockRequest.body = {
+        name: "A02",
+        type: "JUNIOR_KENNEL",
+        capacity: 1,
+        suiteNumber: 2,
+      };
+
+      const mockCreatedResource = {
+        id: "resource-new",
+        name: "A02",
+        type: "JUNIOR_KENNEL",
+        tenantId: "tenant-1",
+        capacity: 1,
+        suiteNumber: 2,
+        isActive: true,
+      };
+
+      (prisma.resource.create as jest.Mock).mockResolvedValue(
+        mockCreatedResource
+      );
+
+      await createResource(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext
+      );
+
+      expect(prisma.resource.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            suiteNumber: 2,
+          }),
+        })
+      );
+    });
+
     it("should require name field", async () => {
       mockRequest.body = {
         type: "JUNIOR_KENNEL",
@@ -415,6 +452,48 @@ describe("Resource Controller - Integration", () => {
           data: expect.objectContaining({
             name: "Updated Kennel",
             capacity: 2,
+          }),
+        })
+      );
+    });
+
+    it("should update suiteNumber when provided", async () => {
+      mockRequest.params = { id: "resource-1" };
+      mockRequest.body = {
+        suiteNumber: 11,
+      };
+
+      const mockExistingResource = {
+        id: "resource-1",
+        name: "B11K",
+        type: "KING_KENNEL",
+        tenantId: "tenant-1",
+        suiteNumber: null,
+      };
+
+      const mockUpdatedResource = {
+        ...mockExistingResource,
+        suiteNumber: 11,
+      };
+
+      (prisma.resource.findFirst as jest.Mock).mockResolvedValue(
+        mockExistingResource
+      );
+      (prisma.resource.update as jest.Mock).mockResolvedValue(
+        mockUpdatedResource
+      );
+
+      await updateResource(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext
+      );
+
+      expect(prisma.resource.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: "resource-1" },
+          data: expect.objectContaining({
+            suiteNumber: 11,
           }),
         })
       );

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.tailtown.print-agent</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/robweinstein/.nvm/versions/node/v16.20.2/bin/node</string>
+        <string>/Users/robweinstein/CascadeProjects/tailtown/tools/local-print-agent/server.js</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/Users/robweinstein/CascadeProjects/tailtown/tools/local-print-agent/print-agent.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/robweinstein/CascadeProjects/tailtown/tools/local-print-agent/print-agent-error.log</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PRINTER_NAME</key>
+        <string>Zebra_GK420d</string>
+    </dict>
+</dict>
+</plist>

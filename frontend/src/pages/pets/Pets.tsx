@@ -27,6 +27,7 @@ import { useNavigate } from "react-router-dom";
 import { Pet, petService } from "../../services/petService";
 import PetNameWithIcons from "../../components/pets/PetNameWithIcons";
 import SimpleVaccinationBadge from "../../components/pets/SimpleVaccinationBadge";
+import { PlaygroupBadge } from "../../components/compatibility";
 import { debounce } from "lodash";
 
 const DEFAULT_PAGE_SIZE = 50;
@@ -222,6 +223,8 @@ const Pets = () => {
                   <TableCell sx={{ py: 1 }}>Breed</TableCell>
                   <TableCell sx={{ py: 1 }}>Gender</TableCell>
                   <TableCell sx={{ py: 1 }}>Weight</TableCell>
+                  <TableCell sx={{ py: 1 }}>Playgroup</TableCell>
+                  <TableCell sx={{ py: 1 }}>Special Requirements</TableCell>
                   <TableCell sx={{ py: 1 }}>Vaccination</TableCell>
                   <TableCell sx={{ py: 1 }} align="right">
                     Actions
@@ -231,7 +234,7 @@ const Pets = () => {
               <TableBody>
                 {pets.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} align="center">
+                    <TableCell colSpan={9} align="center">
                       No pets registered
                     </TableCell>
                   </TableRow>
@@ -257,7 +260,7 @@ const Pets = () => {
                           profilePhoto={pet.profilePhoto}
                           size="small"
                           nameVariant="body2"
-                          showPhoto={false}
+                          showPhoto={true}
                         />
                       </TableCell>
                       <TableCell
@@ -283,6 +286,20 @@ const Pets = () => {
                         sx={{ cursor: "pointer", py: 0.5 }}
                       >
                         {pet.weight ? `${pet.weight} lbs` : "N/A"}
+                      </TableCell>
+                      <TableCell
+                        onClick={() => handleRowClick(pet.id)}
+                        sx={{ cursor: "pointer", py: 0.5 }}
+                      >
+                        <PlaygroupBadge
+                          compatibility={pet.playgroupCompatibility || null}
+                        />
+                      </TableCell>
+                      <TableCell
+                        onClick={() => handleRowClick(pet.id)}
+                        sx={{ cursor: "pointer", py: 0.5 }}
+                      >
+                        {/* Icons removed */}
                       </TableCell>
                       <TableCell
                         onClick={() => handleRowClick(pet.id)}

@@ -586,6 +586,10 @@ app.use(
 app.use("/api/addons", requireTenant, authenticate, addonRoutes);
 app.use("/api/pets", requireTenant, authenticate, vaccineUploadRoutes);
 
+// Pet Vaccine Compliance Routes (any authenticated user can check compliance)
+// These are separate from admin-only vaccine requirement management routes
+app.use("/api", requireTenant, authenticate, vaccineRequirementRoutes);
+
 // Reference Data Routes (breeds, vets, temperaments) - read-only, optional auth
 app.use("/api", requireTenant, optionalAuth, referenceDataRoutes);
 
@@ -596,15 +600,6 @@ app.use("/api", requireTenant, optionalAuth, referenceDataRoutes);
 app.use("/api", requireTenant, authenticate, groomerAppointmentRoutes);
 app.use("/api", requireTenant, authenticate, trainingClassRoutes);
 app.use("/api", requireTenant, authenticate, enrollmentRoutes);
-
-// Vaccine Requirement Routes (admin only)
-app.use(
-  "/api",
-  requireTenant,
-  authenticate,
-  requireTenantAdmin,
-  vaccineRequirementRoutes
-);
 
 // Custom Icon Routes (admin only)
 app.use(

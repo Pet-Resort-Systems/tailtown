@@ -31,7 +31,10 @@ type ReservationLike = {
   startDate: string;
   status?: string;
   customer?: { lastName?: string };
-  pet?: { name?: string };
+  pet?: {
+    name?: string;
+    playgroupCompatibility?: string;
+  };
   service?: { serviceCategory?: string };
   resource?: { name?: string };
 };
@@ -65,11 +68,23 @@ const toLabelData = (r: ReservationLike): KennelLabelData | null => {
 
   if (!dogName || !kennelNumber) return null;
 
+  // Map playgroupCompatibility enum to display labels
+  const playgroupMap: Record<string, string> = {
+    LARGE_DOG: "Large",
+    MEDIUM_DOG: "Medium",
+    SMALL_DOG: "Small",
+    SOLO_ONLY: "Solo",
+  };
+
+  const groupSize = r.pet?.playgroupCompatibility
+    ? playgroupMap[r.pet.playgroupCompatibility] || "Medium"
+    : "Medium";
+
   return {
     dogName,
     customerLastName,
     kennelNumber,
-    groupSize: "Medium",
+    groupSize,
   };
 };
 
@@ -84,6 +99,9 @@ const BatchLabelPrintDialog: React.FC<BatchLabelPrintDialogProps> = ({
   const [progressText, setProgressText] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [enrichedReservations, setEnrichedReservations] =
+    useState<ReservationLike[]>(reservations);
+  const [loading, setLoading] = useState(false);
 
   const selectedDateStr = useMemo(
     () => formatDateLocal(selectedDate),

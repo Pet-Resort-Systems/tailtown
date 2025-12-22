@@ -241,14 +241,13 @@ async function syncPetDetails(tenantId) {
         additionalNotes.push("🚫 BANNED");
       }
 
-      // Build combined notes
-      let combinedNotes = stripHtml(animal.notes) || "";
-      if (additionalNotes.length > 0) {
-        const separator = combinedNotes ? "\n\n--- Gingr Data ---\n" : "";
-        combinedNotes = combinedNotes + separator + additionalNotes.join("\n");
-      }
+      // IMPORTANT: Do NOT sync the following fields - they are managed by Tailtown
+      // and have been curated to remove false positives:
+      // - notes, foodNotes, medicationNotes, allergies, behaviorNotes, specialNeeds
+      // - profilePhoto (imported via separate batch script)
+      // - petIcons, specialRequirements (managed by Tailtown)
 
-      // Prepare update data
+      // Prepare update data - ONLY core Gingr fields
       const updateData = {
         breed: breedName,
         gender: gender,
@@ -257,13 +256,6 @@ async function syncPetDetails(tenantId) {
         color: animal.color || null,
         microchipNumber: animal.microchip || null,
         isNeutered: animal.fixed === "1",
-        notes: combinedNotes || null,
-        foodNotes: stripHtml(animal.feeding_notes) || null,
-        medicationNotes: stripHtml(animal.medicines) || null,
-        allergies: stripHtml(animal.allergies) || null,
-        behaviorNotes: stripHtml(animal.grooming_notes) || null,
-        specialNeeds: stripHtml(animal.temperment) || null,
-        profilePhoto: animal.image || null,
       };
 
       // Only update fields that have values (don't overwrite with null)

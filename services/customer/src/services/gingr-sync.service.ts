@@ -9,6 +9,7 @@ import { PrismaClient } from "@prisma/client";
 import { GingrApiClient } from "./gingr-api.service";
 import {
   extractGingrLodging,
+  findOrCreateResource,
   getServiceNameForResourceType,
 } from "./gingr-resource-mapper.service";
 import { lookupBreedName } from "./gingr-transform.service";
@@ -363,69 +364,14 @@ export class GingrSyncService {
             }
           }
 
-          // Import profile photo if missing in Tailtown but exists in Gingr
-          if (!existing.profilePhoto && (animal as any).image) {
-            updateData.profilePhoto = (animal as any).image;
-          }
-
-          // Import notes fields if they're empty in Tailtown but exist in Gingr
-          if (!existing.notes && animal.notes) {
-            updateData.notes = animal.notes;
-          }
-          if (!existing.medicationNotes && animal.medicines) {
-            updateData.medicationNotes = animal.medicines;
-          }
-          if (!existing.allergies && animal.allergies) {
-            updateData.allergies = animal.allergies;
-          }
-          if (!existing.foodNotes && animal.feeding_notes) {
-            updateData.foodNotes = animal.feeding_notes;
-          }
-          if (!existing.behaviorNotes && animal.grooming_notes) {
-            updateData.behaviorNotes = animal.grooming_notes;
-          }
-          if (!existing.specialNeeds && animal.temperment) {
-            updateData.specialNeeds = animal.temperment;
-          }
-
-          // Import vaccinations if pet has none (stored as JSON fields)
-          const hasVaccines =
-            existing.vaccinationStatus &&
-            typeof existing.vaccinationStatus === "object" &&
-            Object.keys(existing.vaccinationStatus as object).length > 0;
-
-          if (!hasVaccines) {
-            try {
-              const immunizations = await gingrClient.fetchAnimalImmunizations(
-                animal.id
-              );
-              if (immunizations && immunizations.length > 0) {
-                const vaccinationStatus: Record<string, string> = {};
-                const vaccineExpirations: Record<string, string> = {};
-
-                for (const imm of immunizations) {
-                  const name = imm.name || imm.immunization_name || "Unknown";
-                  // Set status to 'current' if has expiration in future, otherwise 'expired'
-                  const expDate = imm.expiration_date
-                    ? new Date(imm.expiration_date * 1000)
-                    : null;
-                  vaccinationStatus[name] =
-                    expDate && expDate > new Date() ? "current" : "expired";
-                  if (expDate) {
-                    vaccineExpirations[name] = expDate
-                      .toISOString()
-                      .split("T")[0];
-                  }
-                  vaccinesImported++;
-                }
-
-                updateData.vaccinationStatus = vaccinationStatus;
-                updateData.vaccineExpirations = vaccineExpirations;
-              }
-            } catch (immErr: any) {
-              // Skip if can't fetch immunizations
-            }
-          }
+          // IMPORTANT: Do NOT import the following fields for existing pets.
+          // These are now managed by Tailtown and have been curated to remove false positives.
+          // The hourly sync should only update core Gingr fields (name, breed, weight, etc.)
+          // and NOT overwrite:
+          // - profilePhoto (imported via separate batch script)
+          // - notes, medicationNotes, allergies, foodNotes, behaviorNotes, specialNeeds
+          // - vaccinationStatus, vaccineExpirations
+          // - petIcons, specialRequirements (managed by Tailtown)
 
           await prisma.pet.update({
             where: { id: existing.id },
@@ -561,8 +507,19 @@ export class GingrSyncService {
           where: { tenantId, externalId: reservation.owner.id },
         });
 
+        const gingrAnimalId = reservation.animal?.id;
         const pet = await prisma.pet.findFirst({
-          where: { tenantId, externalId: reservation.animal.id },
+          where: {
+            tenantId,
+            OR: [
+              { externalId: gingrAnimalId },
+              {
+                externalId: gingrAnimalId
+                  ? `${gingrAnimalId}-tailtown`
+                  : undefined,
+              },
+            ],
+          },
         });
 
         if (!customer || !pet) {
@@ -601,42 +558,61 @@ export class GingrSyncService {
         // First, try to extract lodging info and determine resource type
         const gingrLodging = extractGingrLodging(reservation);
         let serviceName: string;
-        let serviceCategory: "BOARDING" | "DAYCARE" = "BOARDING";
+        let serviceCategory: "BOARDING" | "DAYCARE" | "GROOMING" = "BOARDING";
 
         if (gingrLodging) {
           // Determine resource type from lodging name
           const lodgingUpper = gingrLodging.toUpperCase();
-          let resourceType = "JUNIOR_KENNEL"; // default
 
-          if (lodgingUpper.includes("VIP") || lodgingUpper.startsWith("V")) {
-            resourceType = "VIP_ROOM";
-          } else if (
-            lodgingUpper.includes("CAT") ||
-            lodgingUpper.includes("CONDO")
+          // Check for daycare first
+          if (
+            lodgingUpper.includes("DAYCAMP") ||
+            lodgingUpper.includes("DAY CAMP")
           ) {
-            resourceType = "CAT_CONDO";
-          } else if (
-            lodgingUpper.endsWith("K") ||
-            lodgingUpper.includes("KING")
-          ) {
-            resourceType = "KING_KENNEL";
-          } else if (
-            lodgingUpper.endsWith("Q") ||
-            lodgingUpper.includes("QUEEN")
-          ) {
-            resourceType = "QUEEN_KENNEL";
-          } else if (
-            lodgingUpper.endsWith("R") ||
-            lodgingUpper.includes("JUNIOR")
-          ) {
-            resourceType = "JUNIOR_KENNEL";
+            const gingrType =
+              (reservation.reservation_type as any)?.type ||
+              "Day Camp | Full Day";
+            serviceName = gingrType.includes("Half")
+              ? "Day Camp | Half Day"
+              : "Day Camp | Full Day";
+            serviceCategory = "DAYCARE";
+            console.log(
+              `      Detected daycare lodging "${gingrLodging}" → "${serviceName}"`
+            );
+          } else {
+            // Boarding resource type detection
+            let resourceType = "JUNIOR_KENNEL"; // default
+
+            if (lodgingUpper.includes("VIP") || lodgingUpper.startsWith("V")) {
+              resourceType = "VIP_ROOM";
+            } else if (
+              lodgingUpper.includes("CAT") ||
+              lodgingUpper.includes("CONDO")
+            ) {
+              resourceType = "CAT_CONDO";
+            } else if (
+              lodgingUpper.endsWith("K") ||
+              lodgingUpper.includes("KING")
+            ) {
+              resourceType = "KING_KENNEL";
+            } else if (
+              lodgingUpper.endsWith("Q") ||
+              lodgingUpper.includes("QUEEN")
+            ) {
+              resourceType = "QUEEN_KENNEL";
+            } else if (
+              lodgingUpper.endsWith("R") ||
+              lodgingUpper.includes("JUNIOR")
+            ) {
+              resourceType = "JUNIOR_KENNEL";
+            }
+
+            // Get service name from resource type
+            serviceName = getServiceNameForResourceType(resourceType);
+            console.log(
+              `      Mapped lodging "${gingrLodging}" → ${resourceType} → "${serviceName}"`
+            );
           }
-
-          // Get service name from resource type
-          serviceName = getServiceNameForResourceType(resourceType);
-          console.log(
-            `      Mapped lodging "${gingrLodging}" → ${resourceType} → "${serviceName}"`
-          );
         } else {
           // Fallback: Use Gingr reservation type
           const gingrType =
@@ -650,6 +626,12 @@ export class GingrSyncService {
               ? "Day Camp | Half Day"
               : "Day Camp | Full Day";
             serviceCategory = "DAYCARE";
+          } else if (
+            gingrType.includes("Grooming") ||
+            gingrType.includes("grooming")
+          ) {
+            serviceName = "Grooming | Appointment";
+            serviceCategory = "GROOMING";
           } else {
             serviceName = "Boarding | Indoor Suite"; // Default boarding service
           }
@@ -681,6 +663,25 @@ export class GingrSyncService {
           });
         }
 
+        // If Gingr provides lodging, map it to an internal resource (and backfill suiteNumber)
+        let mappedResourceId: string | undefined;
+        const reservationServiceUrl =
+          process.env.RESERVATION_SERVICE_URL || "http://localhost:4003";
+
+        if (gingrLodging) {
+          try {
+            const resource = await findOrCreateResource(
+              gingrLodging,
+              reservationServiceUrl
+            );
+            mappedResourceId = resource.id;
+          } catch (error: any) {
+            console.warn(
+              `      Warning: Could not map Gingr lodging "${gingrLodging}" for reservation ${reservation.reservation_id}: ${error.message}`
+            );
+          }
+        }
+
         const reservationData: any = {
           customerId: customer.id,
           petId: pet.id,
@@ -698,6 +699,7 @@ export class GingrSyncService {
             : "PENDING",
           notes: reservation.notes?.reservation_notes,
           externalId: reservation.reservation_id,
+          ...(mappedResourceId ? { resourceId: mappedResourceId } : {}),
         };
 
         let savedReservation;
@@ -1200,20 +1202,35 @@ export class GingrSyncService {
     // Determine service
     const gingrLodging = extractGingrLodging(reservation);
     let serviceName = "Boarding | Indoor Suite";
-    let serviceCategory: "BOARDING" | "DAYCARE" = "BOARDING";
+    let serviceCategory: "BOARDING" | "DAYCARE" | "GROOMING" = "BOARDING";
 
     if (gingrLodging) {
       const lodgingUpper = gingrLodging.toUpperCase();
-      let resourceType = "JUNIOR_KENNEL";
-      if (lodgingUpper.includes("VIP") || lodgingUpper.startsWith("V"))
-        resourceType = "VIP_ROOM";
-      else if (lodgingUpper.includes("CAT") || lodgingUpper.includes("CONDO"))
-        resourceType = "CAT_CONDO";
-      else if (lodgingUpper.endsWith("K") || lodgingUpper.includes("KING"))
-        resourceType = "KING_KENNEL";
-      else if (lodgingUpper.endsWith("Q") || lodgingUpper.includes("QUEEN"))
-        resourceType = "QUEEN_KENNEL";
-      serviceName = getServiceNameForResourceType(resourceType);
+
+      // Check for daycare first
+      if (
+        lodgingUpper.includes("DAYCAMP") ||
+        lodgingUpper.includes("DAY CAMP")
+      ) {
+        const gingrType =
+          reservation.reservation_type?.type || "Day Camp | Full Day";
+        serviceName = gingrType.includes("Half")
+          ? "Day Camp | Half Day"
+          : "Day Camp | Full Day";
+        serviceCategory = "DAYCARE";
+      } else {
+        // Boarding resource type detection
+        let resourceType = "JUNIOR_KENNEL";
+        if (lodgingUpper.includes("VIP") || lodgingUpper.startsWith("V"))
+          resourceType = "VIP_ROOM";
+        else if (lodgingUpper.includes("CAT") || lodgingUpper.includes("CONDO"))
+          resourceType = "CAT_CONDO";
+        else if (lodgingUpper.endsWith("K") || lodgingUpper.includes("KING"))
+          resourceType = "KING_KENNEL";
+        else if (lodgingUpper.endsWith("Q") || lodgingUpper.includes("QUEEN"))
+          resourceType = "QUEEN_KENNEL";
+        serviceName = getServiceNameForResourceType(resourceType);
+      }
     } else {
       const gingrType = reservation.reservation_type?.type || "Boarding";
       if (gingrType.includes("Day Camp") && !gingrType.includes("Lodging")) {

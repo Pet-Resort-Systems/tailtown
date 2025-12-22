@@ -90,7 +90,25 @@ export const getAllPets = async (
         skip,
         take: limit,
         orderBy: { name: "asc" },
-        include: {
+        select: {
+          id: true,
+          name: true,
+          type: true,
+          breed: true,
+          color: true,
+          birthdate: true,
+          weight: true,
+          gender: true,
+          isNeutered: true,
+          microchipNumber: true,
+          profilePhoto: true,
+          customerId: true,
+          isActive: true,
+          playgroupCompatibility: true,
+          specialRequirements: true,
+          petIcons: true,
+          vaccinationStatus: true,
+          vaccineExpirations: true,
           owner: {
             select: {
               id: true,
@@ -142,34 +160,64 @@ export const getPetById = async (
       return next(new AppError("Pet not found", 404));
     }
 
-    // Populate vaccination data from medical records if not already set
+    // Auto-sync vaccination data from medical records to vaccinationStatus field
     if (pet.medicalRecords && pet.medicalRecords.length > 0) {
       const vaccinationStatus: any = pet.vaccinationStatus || {};
       const vaccineExpirations: any = pet.vaccineExpirations || {};
+      let needsUpdate = false;
 
       // Map medical records to vaccination data
+      const vaccineMap: { [key: string]: string } = {
+        "rabies vaccination": "Rabies",
+        "dhpp vaccination": "DHPP",
+        "bordetella vaccination": "Bordetella",
+        "fvrcp vaccination": "FVRCP",
+        "canine influenza vaccination": "Influenza",
+        "feline leukemia vaccination": "Lepto",
+      };
+
       pet.medicalRecords.forEach((record: any) => {
-        const desc = record.description.toLowerCase();
-        let vaccineName = null;
+        if (record.recordType === "VACCINATION" && record.description) {
+          const vaccineName = vaccineMap[record.description.toLowerCase()];
 
-        if (desc.includes("rabies")) vaccineName = "rabies";
-        else if (desc.includes("dhpp")) vaccineName = "dhpp";
-        else if (desc.includes("bordetella")) vaccineName = "bordetella";
-        else if (desc.includes("fvrcp")) vaccineName = "fvrcp";
-        else if (desc.includes("lepto")) vaccineName = "lepto";
-        else if (desc.includes("influenza")) vaccineName = "influenza";
+          if (vaccineName && record.expirationDate) {
+            const expDate = new Date(record.expirationDate);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            expDate.setHours(0, 0, 0, 0);
+            const status = expDate >= today ? "CURRENT" : "EXPIRED";
 
-        if (vaccineName && record.expirationDate) {
-          const expDate = new Date(record.expirationDate);
-          const today = new Date();
-          const status = expDate >= today ? "CURRENT" : "EXPIRED";
-
-          vaccinationStatus[vaccineName] = { status };
-          vaccineExpirations[vaccineName] = record.expirationDate
-            .toISOString()
-            .split("T")[0];
+            // Check if this vaccine is missing or outdated in vaccinationStatus
+            if (
+              !vaccinationStatus[vaccineName] ||
+              vaccinationStatus[vaccineName].expiration !==
+                record.expirationDate.toISOString()
+            ) {
+              vaccinationStatus[vaccineName] = {
+                status: status,
+                expiration: record.expirationDate.toISOString(),
+                lastGiven: record.recordDate
+                  ? record.recordDate.toISOString()
+                  : undefined,
+              };
+              vaccineExpirations[vaccineName] =
+                record.expirationDate.toISOString();
+              needsUpdate = true;
+            }
+          }
         }
       });
+
+      // Auto-save to database if we found new vaccination data
+      if (needsUpdate) {
+        await prisma.pet.update({
+          where: { id: pet.id },
+          data: {
+            vaccinationStatus,
+            vaccineExpirations,
+          },
+        });
+      }
 
       // Update pet object with populated vaccination data
       pet.vaccinationStatus = vaccinationStatus;

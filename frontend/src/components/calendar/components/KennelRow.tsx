@@ -1,11 +1,5 @@
-import React, { memo } from "react";
-import {
-  TableRow,
-  TableCell,
-  Chip,
-  Box,
-  Typography,
-} from "@mui/material";
+import React, { memo, DragEvent } from "react";
+import { TableRow, TableCell, Chip, Box, Typography } from "@mui/material";
 import { ExtendedResource, Reservation } from "../../../hooks/useKennelData";
 
 // Define the view types
@@ -24,6 +18,14 @@ interface KennelRowProps {
     kennelId: string,
     date: Date
   ) => { occupied: boolean; reservation?: Reservation };
+  onReservationDrop?: (
+    reservationId: string,
+    targetKennelId: string,
+    date: Date
+  ) => void;
+  draggedReservation?: string | null;
+  onDragStart?: (reservationId: string) => void;
+  onDragEnd?: () => void;
 }
 
 /**
@@ -31,7 +33,67 @@ interface KennelRowProps {
  * Memoized to prevent unnecessary re-renders when other rows change
  */
 const KennelRow: React.FC<KennelRowProps> = memo(
-  ({ kennel, days, viewType, onCellClick, isKennelOccupied }) => {
+  ({
+    kennel,
+    days,
+    viewType,
+    onCellClick,
+    isKennelOccupied,
+    onReservationDrop,
+    draggedReservation,
+    onDragStart,
+    onDragEnd,
+  }) => {
+    // Handle drag start
+    const handleDragStart = (
+      e: DragEvent<HTMLTableCellElement>,
+      reservation: Reservation
+    ) => {
+      console.log("[DragDrop] Drag started for reservation:", reservation.id);
+      e.dataTransfer.setData("text/plain", reservation.id);
+      e.dataTransfer.effectAllowed = "move";
+      if (onDragStart) {
+        onDragStart(reservation.id);
+      }
+    };
+
+    // Handle drag over (allow drop)
+    const handleDragOver = (e: DragEvent<HTMLTableCellElement>) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+    };
+
+    // Handle drop
+    const handleDrop = (e: DragEvent<HTMLTableCellElement>, day: Date) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const reservationId = e.dataTransfer.getData("text/plain");
+      console.log(
+        "[DragDrop] Drop detected - reservationId:",
+        reservationId,
+        "targetKennel:",
+        kennel.id
+      );
+      if (reservationId && onReservationDrop) {
+        console.log("[DragDrop] Calling onReservationDrop");
+        onReservationDrop(reservationId, kennel.id, day);
+      } else {
+        console.log("[DragDrop] Missing reservationId or onReservationDrop", {
+          reservationId,
+          hasCallback: !!onReservationDrop,
+        });
+      }
+      if (onDragEnd) {
+        onDragEnd();
+      }
+    };
+
+    // Handle drag end
+    const handleDragEnd = () => {
+      if (onDragEnd) {
+        onDragEnd();
+      }
+    };
     // Get kennel display name and size
     const kennelName =
       kennel.suiteNumber || kennel.name || `Kennel ${kennel.id}`;
@@ -226,13 +288,33 @@ const KennelRow: React.FC<KennelRowProps> = memo(
             <TableCell
               key={dayIndex}
               align="center"
-              sx={getCellStyle(
-                occupancyInfo.occupied,
-                isAvailable,
-                isToday,
-                isWeekend,
+              draggable={!!activeReservation}
+              onDragStart={
                 activeReservation
-              )}
+                  ? (e) => handleDragStart(e, activeReservation)
+                  : undefined
+              }
+              onDragEnd={handleDragEnd}
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, day)}
+              sx={{
+                ...getCellStyle(
+                  occupancyInfo.occupied,
+                  isAvailable,
+                  isToday,
+                  isWeekend,
+                  activeReservation
+                ),
+                // Add visual feedback when dragging
+                ...(draggedReservation &&
+                  !activeReservation && {
+                    border: "2px dashed #1976d2",
+                    backgroundColor: "rgba(25, 118, 210, 0.08)",
+                  }),
+                // Cursor style for draggable cells
+                cursor: activeReservation ? "grab" : "pointer",
+                "&:active": activeReservation ? { cursor: "grabbing" } : {},
+              }}
               onClick={() => onCellClick(kennel, day, activeReservation)}
             >
               {activeReservation ? (
@@ -242,6 +324,7 @@ const KennelRow: React.FC<KennelRowProps> = memo(
                     flexDirection: "column",
                     height: "100%",
                     justifyContent: "center",
+                    pointerEvents: "none", // Prevent child elements from interfering with drag
                   }}
                 >
                   <Box

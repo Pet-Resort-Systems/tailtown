@@ -23,6 +23,15 @@ interface ResourceCache {
 
 const resourceCache: ResourceCache = {};
 
+function extractSuiteNumberFromResourceName(
+  resourceName: string
+): number | undefined {
+  const match = resourceName.match(/\d+/);
+  if (!match) return undefined;
+  const num = parseInt(match[0], 10);
+  return Number.isFinite(num) ? num : undefined;
+}
+
 /**
  * Extract lodging/kennel from Gingr reservation data
  *
@@ -199,7 +208,9 @@ export async function findOrCreateResource(
     );
 
     const searchData = (await searchResponse.json()) as any;
-    const resources = searchData.data?.resources || [];
+    const resources = Array.isArray(searchData.data)
+      ? searchData.data
+      : searchData.data?.resources || [];
 
     // Look for exact match
     const existingResource = resources.find(
@@ -208,6 +219,38 @@ export async function findOrCreateResource(
 
     if (existingResource) {
       resourceCache[normalizedName] = existingResource.id;
+
+      const extractedSuiteNumber =
+        extractSuiteNumberFromResourceName(normalizedName);
+      if (
+        extractedSuiteNumber !== undefined &&
+        (existingResource as any).suiteNumber == null
+      ) {
+        try {
+          const updateResponse = await fetch(
+            `${reservationServiceUrl}/api/resources/${existingResource.id}`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                "x-tenant-id": "dev",
+              },
+              body: JSON.stringify({ suiteNumber: extractedSuiteNumber }),
+            }
+          );
+
+          if (updateResponse.ok) {
+            console.log(
+              `[Resource Mapper] Updated suiteNumber for ${normalizedName} → ${extractedSuiteNumber}`
+            );
+          }
+        } catch (error: any) {
+          console.warn(
+            `[Resource Mapper] Failed to update suiteNumber for ${normalizedName}: ${error.message}`
+          );
+        }
+      }
+
       console.log(
         `[Resource Mapper] Found existing resource: ${normalizedName} (${existingResource.id})`
       );
@@ -234,6 +277,7 @@ export async function findOrCreateResource(
           isActive: true,
           tenantId: "dev",
           description: `Imported from Gingr: ${gingrLodging}`,
+          suiteNumber: extractSuiteNumberFromResourceName(normalizedName),
         }),
       }
     );
@@ -243,7 +287,15 @@ export async function findOrCreateResource(
       throw new Error(`Failed to create resource: ${errorText}`);
     }
 
-    const newResource = (await createResponse.json()) as any;
+    const createData = (await createResponse.json()) as any;
+    const newResource = createData?.data || createData;
+
+    if (!newResource?.id) {
+      throw new Error(
+        `Failed to parse created resource response for ${normalizedName}`
+      );
+    }
+
     resourceCache[normalizedName] = newResource.id;
 
     console.log(

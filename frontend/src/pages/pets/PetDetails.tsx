@@ -30,6 +30,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import VaccinationStatus from "../../components/VaccinationStatus";
 import EmojiPetIconSelector from "../../components/pets/EmojiPetIconSelector";
 import VaccineComplianceBadge from "../../components/pets/VaccineComplianceBadge";
+import {
+  PlaygroupBadge,
+  CompatibilityFlags,
+} from "../../components/compatibility";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { Pet, petService } from "../../services/petService";
 import { customerService } from "../../services/customerService";
@@ -1152,6 +1156,71 @@ const PetDetails = () => {
             </Box>
           </Box>
         </Paper>
+
+        {/* Compatibility Information from Gingr */}
+        {!isNewPet && (pet as any).playgroupCompatibility && (
+          <Paper sx={{ p: 3, mt: 3 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
+              <Typography variant="h6">
+                Compatibility & Special Requirements
+              </Typography>
+              <PlaygroupBadge
+                compatibility={(pet as any).playgroupCompatibility}
+                size="medium"
+              />
+            </Box>
+
+            <Divider sx={{ my: 2 }} />
+
+            <CompatibilityFlags
+              healthFlags={(pet as any).healthFlags}
+              behaviorFlags={(pet as any).behaviorFlags}
+              aggressionFlags={(pet as any).aggressionFlags}
+              specialRequirements={(pet as any).specialRequirements}
+            />
+
+            {(pet as any).compatibilityNotes && (
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="subtitle2" gutterBottom>
+                  Additional Notes
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {(pet as any).compatibilityNotes}
+                </Typography>
+              </Box>
+            )}
+
+            {(pet as any).staffRequirements &&
+              Object.keys((pet as any).staffRequirements).length > 0 && (
+                <Box
+                  sx={{
+                    mt: 2,
+                    p: 2,
+                    bgcolor: "warning.light",
+                    borderRadius: 1,
+                  }}
+                >
+                  <Typography
+                    variant="subtitle2"
+                    gutterBottom
+                    sx={{ fontWeight: 600 }}
+                  >
+                    ⚠️ Staff Requirements
+                  </Typography>
+                  {(pet as any).staffRequirements.seniorStaffRequired && (
+                    <Typography variant="body2">
+                      • Requires senior staff supervision
+                    </Typography>
+                  )}
+                  {(pet as any).staffRequirements.notes && (
+                    <Typography variant="body2">
+                      • {(pet as any).staffRequirements.notes}
+                    </Typography>
+                  )}
+                </Box>
+              )}
+          </Paper>
+        )}
 
         <Box
           sx={{

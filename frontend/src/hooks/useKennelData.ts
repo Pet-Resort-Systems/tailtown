@@ -36,6 +36,7 @@ interface UseKennelDataProps {
   currentDate: Date;
   getDaysToDisplay: () => Date[];
   kennelTypeFilter: KennelType | "ALL";
+  refreshTrigger?: number;
 }
 
 interface UseKennelDataReturn {
@@ -55,6 +56,7 @@ export const useKennelData = ({
   currentDate,
   getDaysToDisplay,
   kennelTypeFilter,
+  refreshTrigger = 0,
 }: UseKennelDataProps): UseKennelDataReturn => {
   // State for kennels and reservations
   const [kennels, setKennels] = useState<ExtendedResource[]>([]);
@@ -111,7 +113,7 @@ export const useKennelData = ({
 
         if (resourceIds.length > 0) {
           availabilityResponse = await reservationApi.post(
-            "/api/resources/availability/batch",
+            `/api/resources/availability/batch?_t=${Date.now()}`,
             {
               resourceIds: resourceIds,
               startDate: startDate,
@@ -326,11 +328,11 @@ export const useKennelData = ({
     }
   }, [getDaysToDisplay]);
 
-  // Load data when dependencies change
+  // Load data when dependencies change or refreshTrigger changes
   useEffect(() => {
     loadKennelsAndAvailability();
     loadReservations();
-  }, [loadKennelsAndAvailability, loadReservations]);
+  }, [loadKennelsAndAvailability, loadReservations, refreshTrigger]);
 
   // Derive room size from type (e.g., JUNIOR_KENNEL -> JUNIOR, QUEEN_KENNEL -> QUEEN)
   const getRoomSizeFromType = (type: string | undefined): string => {
@@ -350,12 +352,18 @@ export const useKennelData = ({
     return roomSize === kennelTypeFilter;
   });
 
+  // Combined refresh function that reloads both kennels/availability and reservations
+  const refreshData = useCallback(() => {
+    loadKennelsAndAvailability();
+    loadReservations();
+  }, [loadKennelsAndAvailability, loadReservations]);
+
   return {
     kennels: filteredKennels,
     reservations,
     loading,
     error,
     availabilityData,
-    refreshData: loadKennelsAndAvailability,
+    refreshData,
   };
 };

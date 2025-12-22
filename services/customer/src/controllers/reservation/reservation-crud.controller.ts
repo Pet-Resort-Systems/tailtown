@@ -465,12 +465,40 @@ export const deleteReservation = async (
 ) => {
   try {
     const { id } = req.params;
+    const tenantId = req.tenantId;
 
     // Get reservation before deletion for audit
     const existingReservation = await prisma.reservation.findUnique({
       where: { id },
       include: { customer: true, pet: true, resource: true },
     });
+
+    if (!existingReservation) {
+      return next(AppError.notFoundError("Reservation", id));
+    }
+
+    // First, unlink any invoices that reference this reservation
+    // This prevents foreign key constraint violations
+    await prisma.invoice.updateMany({
+      where: {
+        reservationId: id,
+        tenantId: tenantId,
+      },
+      data: {
+        reservationId: null,
+      },
+    });
+
+    logger.info(`Unlinked invoices for reservation ${id} before deletion`);
+
+    // Delete any add-on services linked to this reservation
+    await prisma.reservationAddOn.deleteMany({
+      where: {
+        reservationId: id,
+      },
+    });
+
+    logger.info(`Deleted add-ons for reservation ${id} before deletion`);
 
     await prisma.reservation.delete({
       where: { id },

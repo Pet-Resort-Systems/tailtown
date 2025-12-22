@@ -91,6 +91,19 @@ export const getAllResources = catchAsync(
             logger.debug(
               `Suite wildcard filter applied: all suite types including SUITE`
             );
+          } else if (typeStr.toLowerCase() === "kennel") {
+            // Handle 'kennel' as a wildcard for all kennel types
+            whereConditions.type = {
+              in: [
+                ResourceType.JUNIOR_KENNEL,
+                ResourceType.QUEEN_KENNEL,
+                ResourceType.KING_KENNEL,
+                ResourceType.VIP_ROOM,
+                ResourceType.CAT_CONDO,
+                ResourceType.KENNEL,
+              ],
+            };
+            logger.debug(`Kennel wildcard filter applied: all kennel types`);
           } else {
             const upperType = typeStr.toUpperCase();
             if (
@@ -233,8 +246,16 @@ export const createResource = catchAsync(
       throw AppError.authorizationError("Tenant ID is required");
     }
 
-    const { name, type, size, capacity, maxPets, description, isActive } =
-      req.body;
+    const {
+      name,
+      type,
+      size,
+      capacity,
+      maxPets,
+      description,
+      isActive,
+      suiteNumber,
+    } = req.body;
 
     // Validate required fields with factory methods
     if (!name) {
@@ -263,6 +284,13 @@ export const createResource = catchAsync(
           isActive: isActive !== undefined ? isActive : true,
           tenantId: tenantId,
         };
+
+        if (suiteNumber !== undefined) {
+          const parsedSuiteNumber = parseInt(String(suiteNumber), 10);
+          if (!Number.isNaN(parsedSuiteNumber)) {
+            data.suiteNumber = parsedSuiteNumber;
+          }
+        }
 
         return await prisma.resource.create({
           data,
@@ -307,8 +335,16 @@ export const updateResource = catchAsync(
       throw AppError.validationError("Resource ID is required");
     }
 
-    const { name, type, size, capacity, maxPets, description, isActive } =
-      req.body;
+    const {
+      name,
+      type,
+      size,
+      capacity,
+      maxPets,
+      description,
+      isActive,
+      suiteNumber,
+    } = req.body;
 
     // Validate that at least one field is being updated
     if (
@@ -318,7 +354,8 @@ export const updateResource = catchAsync(
       capacity === undefined &&
       maxPets === undefined &&
       description === undefined &&
-      isActive === undefined
+      isActive === undefined &&
+      suiteNumber === undefined
     ) {
       throw AppError.validationError(
         "At least one field must be provided for update"
@@ -337,6 +374,15 @@ export const updateResource = catchAsync(
     if (maxPets !== undefined) updateData.maxPets = parseInt(maxPets);
     if (description !== undefined) updateData.description = description;
     if (isActive !== undefined) updateData.isActive = isActive;
+
+    if (suiteNumber !== undefined) {
+      const parsedSuiteNumber = parseInt(String(suiteNumber), 10);
+      if (!Number.isNaN(parsedSuiteNumber)) {
+        updateData.suiteNumber = parsedSuiteNumber;
+      } else {
+        updateData.suiteNumber = null;
+      }
+    }
 
     // Ensure resource belongs to tenant before update
     const existingResource = await safeExecutePrismaQuery(

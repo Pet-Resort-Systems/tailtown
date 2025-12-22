@@ -970,16 +970,27 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
 
     setDeleting(true);
     try {
+      // Get auth token from localStorage
+      const token =
+        localStorage.getItem("tailtown_token") || localStorage.getItem("token");
+
+      const headers: Record<string, string> = {
+        "x-tenant-id":
+          localStorage.getItem("tailtown_tenant_id") ||
+          localStorage.getItem("tenantId") ||
+          "dev",
+      };
+
+      // Add Authorization header if token exists
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
       const response = await fetch(
         `${getApiBaseUrl()}/api/reservations/${initialData.id}`,
         {
           method: "DELETE",
-          headers: {
-            "x-tenant-id":
-              localStorage.getItem("tailtown_tenant_id") ||
-              localStorage.getItem("tenantId") ||
-              "dev",
-          },
+          headers,
         }
       );
 

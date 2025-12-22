@@ -20,8 +20,10 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PrintIcon from "@mui/icons-material/Print";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
+import ContentCutIcon from "@mui/icons-material/ContentCut";
 import PetNameWithIcons from "../pets/PetNameWithIcons";
 import KennelCard from "../kennels/KennelCard";
+import { PlaygroupBadge } from "../compatibility";
 import {
   formatGingrTime,
   formatGingrDate,
@@ -41,6 +43,16 @@ interface Reservation {
     breed?: string;
     profilePhoto?: string;
     petIcons?: any; // JSON array of icon IDs
+    playgroupCompatibility?:
+      | "LARGE_DOG"
+      | "MEDIUM_DOG"
+      | "SMALL_DOG"
+      | "NON_COMPATIBLE"
+      | "SENIOR_STAFF_REQUIRED"
+      | "UNKNOWN"
+      | null;
+    aggressionFlags?: any[];
+    specialRequirements?: string[];
   };
   startDate: string;
   endDate: string;
@@ -177,13 +189,29 @@ const ReservationList: React.FC<ReservationListProps> = ({
 
   /**
    * Gets background color based on service category
-   * DAYCARE = orange tint, BOARDING = default (blue tint)
+   * DAYCARE = orange tint, BOARDING = blue tint, GROOMING = purple tint
    */
   const getServiceColor = (serviceCategory?: string) => {
     if (serviceCategory === "DAYCARE") {
       return "rgba(255, 152, 0, 0.08)"; // Orange tint
     }
+    if (serviceCategory === "GROOMING") {
+      return "rgba(156, 39, 176, 0.08)"; // Purple tint
+    }
     return "rgba(25, 118, 210, 0.08)"; // Blue tint (default)
+  };
+
+  /**
+   * Gets hover color based on service category
+   */
+  const getServiceHoverColor = (serviceCategory?: string) => {
+    if (serviceCategory === "DAYCARE") {
+      return "rgba(255, 152, 0, 0.15)"; // Orange hover
+    }
+    if (serviceCategory === "GROOMING") {
+      return "rgba(156, 39, 176, 0.15)"; // Purple hover
+    }
+    return "rgba(25, 118, 210, 0.15)"; // Blue hover (default)
   };
 
   /**
@@ -328,10 +356,9 @@ const ReservationList: React.FC<ReservationListProps> = ({
                     reservation.service?.serviceCategory
                   ),
                   "&:hover": {
-                    bgcolor:
-                      reservation.service?.serviceCategory === "DAYCARE"
-                        ? "rgba(255, 152, 0, 0.15)"
-                        : "rgba(25, 118, 210, 0.15)",
+                    bgcolor: getServiceHoverColor(
+                      reservation.service?.serviceCategory
+                    ),
                   },
                 }}
                 secondaryAction={
@@ -381,13 +408,20 @@ const ReservationList: React.FC<ReservationListProps> = ({
                   }}
                   onClick={() => navigate(`/reservations/${reservation.id}`)}
                 >
-                  {/* Row 1: Pet Name & Customer Name */}
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  {/* Row 1: Pet Name, Customer Name, Playgroup Badge & Warnings */}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      flexWrap: "wrap",
+                    }}
+                  >
                     <PetNameWithIcons
                       petName={reservation.pet?.name || "Unknown Pet"}
                       petIcons={reservation.pet?.petIcons}
                       profilePhoto={reservation.pet?.profilePhoto}
-                      showPhoto={false}
+                      showPhoto={true}
                     />
                     <Typography
                       variant="body2"
@@ -397,6 +431,12 @@ const ReservationList: React.FC<ReservationListProps> = ({
                       • {reservation.customer?.firstName || ""}{" "}
                       {reservation.customer?.lastName || "Unknown"}
                     </Typography>
+                    {reservation.pet?.playgroupCompatibility && (
+                      <PlaygroupBadge
+                        compatibility={reservation.pet.playgroupCompatibility}
+                        size="small"
+                      />
+                    )}
                   </Box>
                   {/* Row 2: Kennel, Service, Time */}
                   <Box
@@ -409,23 +449,45 @@ const ReservationList: React.FC<ReservationListProps> = ({
                   >
                     {reservation.resource?.name && (
                       <>
-                        <Chip
-                          label={
-                            reservation.resource.name.length > 1
-                              ? reservation.resource.name.slice(0, -1) +
-                                " " +
-                                reservation.resource.name.slice(-1)
-                              : reservation.resource.name
-                          }
-                          size="small"
-                          variant="outlined"
+                        <Box
                           sx={{
-                            height: 18,
-                            fontSize: "0.75rem",
-                            fontWeight: 600,
-                            backgroundColor: "white",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.5,
                           }}
-                        />
+                        >
+                          {(reservation.pet?.type === "CAT" ||
+                            reservation.resource.name
+                              .toUpperCase()
+                              .startsWith("K")) && (
+                            <Box
+                              component="span"
+                              sx={{
+                                fontSize: "0.875rem",
+                                lineHeight: 1,
+                              }}
+                            >
+                              😺
+                            </Box>
+                          )}
+                          <Chip
+                            label={
+                              reservation.resource.name.length > 1
+                                ? reservation.resource.name.slice(0, -1) +
+                                  " " +
+                                  reservation.resource.name.slice(-1)
+                                : reservation.resource.name
+                            }
+                            size="small"
+                            variant="outlined"
+                            sx={{
+                              height: 18,
+                              fontSize: "0.75rem",
+                              fontWeight: 600,
+                              backgroundColor: "white",
+                            }}
+                          />
+                        </Box>
                         <Typography variant="caption" color="text.secondary">
                           •
                         </Typography>
@@ -433,9 +495,26 @@ const ReservationList: React.FC<ReservationListProps> = ({
                     )}
                     {reservation.service?.name && (
                       <>
-                        <Typography variant="caption" color="text.secondary">
-                          {reservation.service.name}
-                        </Typography>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.5,
+                          }}
+                        >
+                          {reservation.service.serviceCategory ===
+                            "GROOMING" && (
+                            <ContentCutIcon
+                              sx={{
+                                fontSize: "0.875rem",
+                                color: "#9c27b0",
+                              }}
+                            />
+                          )}
+                          <Typography variant="caption" color="text.secondary">
+                            {reservation.service.name}
+                          </Typography>
+                        </Box>
                         <Typography variant="caption" color="text.secondary">
                           •
                         </Typography>

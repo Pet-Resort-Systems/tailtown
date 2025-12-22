@@ -116,3 +116,6 @@ services/*/dist.tar.gz
 *.tar.gz
 playwright-report/
 test-results/
+# Large SQL backup files
+*.sql.gz
+*.sql
