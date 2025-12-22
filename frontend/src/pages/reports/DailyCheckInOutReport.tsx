@@ -294,10 +294,27 @@ const DailyCheckInOutReport: React.FC = () => {
       <style>
         {`
           @media print {
+            /* Hide navigation and other UI elements */
+            nav,
+            aside,
+            .MuiDrawer-root,
+            header,
+            [role="navigation"],
+            .sidebar {
+              display: none !important;
+            }
+            
+            /* Make content full width */
             body {
               margin: 0;
               padding: 0;
             }
+            
+            main {
+              margin: 0 !important;
+              padding: 0 !important;
+            }
+            
             @page {
               size: letter;
               margin: 0.5in;
