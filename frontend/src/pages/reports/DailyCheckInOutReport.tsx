@@ -253,19 +253,11 @@ const DailyCheckInOutReport: React.FC = () => {
                                 {dog.customerLastName})
                               </TableCell>
                               <TableCell>{dog.roomNumber}</TableCell>
-                              <TableCell
-                                sx={{
-                                  borderLeft: "2px solid #ddd",
-                                }}
-                              >
-                                __________
+                              <TableCell sx={{ borderLeft: "2px solid #ddd" }}>
+                                &nbsp;
                               </TableCell>
-                              <TableCell
-                                sx={{
-                                  borderLeft: "2px solid #ddd",
-                                }}
-                              >
-                                __________
+                              <TableCell sx={{ borderLeft: "2px solid #ddd" }}>
+                                &nbsp;
                               </TableCell>
                             </TableRow>
                           ))}
