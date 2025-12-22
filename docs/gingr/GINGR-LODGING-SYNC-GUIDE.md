@@ -1,8 +1,8 @@
 # Gingr Lodging/Kennel Assignment Sync Guide
 
-**Date:** December 15, 2025  
+**Date:** December 21, 2025  
 **Status:** Production Ready  
-**Method:** CSV Import (Gingr API does not expose lodging data)
+**Method:** Automatic via Gingr API + CSV Import (for historical corrections)
 
 ---
 
@@ -13,18 +13,46 @@ Tailtown reservations need to match Gingr's kennel/lodging assignments, but:
 - Gingr's `/api/v1/reservations` endpoint **does not include lodging fields**
 - Gingr's `/api/v1/reservations_by_animal` endpoint **does not include lodging fields**
 - Gingr's `/api/v1/back_of_house` endpoint only shows **checked-in boarding guests** (excludes Day Camp)
-- **Lodging assignments are only visible in Gingr's web UI**
-
-Example mismatch:
-
-- **Tailtown**: Cooper Newill on 12/16 → D04Q
-- **Gingr UI**: Cooper Newill on 12/16 → D18
 
 ---
 
-## 📋 Solution: CSV Export + Import
+## ✅ Current Solution: Automatic API Sync (Dec 2025)
 
-Since Gingr's API doesn't expose lodging data, we use a CSV export from Gingr's Calendar Details page.
+**UPDATE (Dec 21, 2025):** Gingr API now provides lodging data through undocumented fields. The automatic Gingr sync now correctly extracts and maps lodging assignments for both boarding and daycare reservations.
+
+### How It Works
+
+The Gingr sync service (`gingr-sync.service.ts`) automatically:
+
+1. **Extracts lodging data** from Gingr reservations using `extractGingrLodging()`:
+
+   - Checks `reservation.lodging`, `reservation.lodging_label`, `reservation.room`, etc.
+   - Handles various Gingr field formats
+
+2. **Normalizes lodging names** via `normalizeLodgingName()`:
+
+   - `"D. Daycamp D 27"` → `"D27"`
+   - `"A. Indoor - A 02"` → `"A02"`
+   - `"B  11"` → `"B11"`
+
+3. **Detects service category**:
+
+   - Lodging contains "DAYCAMP" → `serviceCategory: "DAYCARE"`
+   - Otherwise → `serviceCategory: "BOARDING"`
+
+4. **Maps to Tailtown resources**:
+   - Finds or creates matching resource (e.g., D27, A02)
+   - Updates `reservation.resourceId` automatically
+
+### Timezone Fix (Dec 2025)
+
+The sync now uses **local dates** instead of UTC when querying Gingr, preventing date-shifting issues that caused missing reservations.
+
+---
+
+## 📋 Legacy Solution: CSV Export + Import
+
+For historical data or manual corrections, you can still use CSV import.
 
 ### Step 1: Export from Gingr
 
@@ -309,6 +337,6 @@ The Gingr web UI **Calendar Details** page clearly shows lodging assignments:
 
 ---
 
-**Last Updated:** December 15, 2025  
+**Last Updated:** December 21, 2025  
 **Status:** Production Ready  
-**Tested:** Successfully matched Cooper Newill to D18 via CSV import
+**Tested:** Automatic sync correctly maps daycare lodging (e.g., Roxy → D27, Pancho → D22) and boarding assignments
