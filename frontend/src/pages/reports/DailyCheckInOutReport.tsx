@@ -147,16 +147,6 @@ const DailyCheckInOutReport: React.FC = () => {
           </Box>
         ) : (
           <>
-            {/* Header */}
-            <Box sx={{ mb: 3, textAlign: "center" }}>
-              <Typography variant="h4" gutterBottom>
-                Daily Check-In/Out Report
-              </Typography>
-              <Typography variant="h6" color="text.secondary">
-                {format(date, "MMMM d, yyyy")}
-              </Typography>
-            </Box>
-
             {/* Group by size - each group on its own page */}
             {Array.from(new Set(dogs.map((d) => d.groupSize))).map(
               (groupSize, groupIndex) => {
@@ -177,11 +167,26 @@ const DailyCheckInOutReport: React.FC = () => {
                     }}
                   >
                     {/* Group Header */}
-                    <Box sx={{ mb: 2, mt: groupIndex > 0 ? 3 : 0 }}>
+                    <Box
+                      sx={{
+                        mb: 2,
+                        mt: groupIndex > 0 ? 3 : 0,
+                        display: "flex",
+                        alignItems: "baseline",
+                        gap: 2,
+                      }}
+                    >
                       <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                         {groupSize} Play Group
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body1" color="text.secondary">
+                        {format(date, "M/d/yyyy")}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ ml: "auto" }}
+                      >
                         {groupDogs.length} dog
                         {groupDogs.length !== 1 ? "s" : ""}
                       </Typography>
@@ -251,7 +256,6 @@ const DailyCheckInOutReport: React.FC = () => {
                               <TableCell
                                 sx={{
                                   borderLeft: "2px solid #ddd",
-                                  borderBottom: "1px solid #ddd",
                                 }}
                               >
                                 __________
@@ -259,7 +263,6 @@ const DailyCheckInOutReport: React.FC = () => {
                               <TableCell
                                 sx={{
                                   borderLeft: "2px solid #ddd",
-                                  borderBottom: "1px solid #ddd",
                                 }}
                               >
                                 __________
