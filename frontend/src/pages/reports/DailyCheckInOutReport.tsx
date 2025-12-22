@@ -157,91 +157,131 @@ const DailyCheckInOutReport: React.FC = () => {
               </Typography>
             </Box>
 
-            {/* Table */}
-            <TableContainer>
-              <Table
-                sx={{
-                  "@media print": {
-                    "& td, & th": {
-                      fontSize: "12pt",
-                      padding: "8px",
-                    },
-                  },
-                }}
-              >
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: "bold", width: "40%" }}>
-                      Dog (Owner)
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: "bold", width: "15%" }}>
-                      Room
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: "bold", width: "15%" }}>
-                      Group Size
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        fontWeight: "bold",
-                        width: "15%",
-                        borderLeft: "2px solid #ddd",
-                      }}
-                    >
-                      In
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        fontWeight: "bold",
-                        width: "15%",
-                        borderLeft: "2px solid #ddd",
-                      }}
-                    >
-                      Out
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {dogs.map((dog, index) => (
-                    <TableRow
-                      key={index}
-                      sx={{
-                        "&:nth-of-type(odd)": {
-                          backgroundColor: "rgba(0, 0, 0, 0.02)",
-                        },
-                        "@media print": {
-                          pageBreakInside: "avoid",
-                        },
-                      }}
-                    >
-                      <TableCell>
-                        <strong>{dog.dogName}</strong> ({dog.customerLastName})
-                      </TableCell>
-                      <TableCell>{dog.roomNumber}</TableCell>
-                      <TableCell>{dog.groupSize}</TableCell>
-                      <TableCell
-                        sx={{
-                          borderLeft: "2px solid #ddd",
-                          borderBottom: "1px solid #ddd",
-                        }}
-                      >
-                        __________
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          borderLeft: "2px solid #ddd",
-                          borderBottom: "1px solid #ddd",
-                        }}
-                      >
-                        __________
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+            {/* Group by size - each group on its own page */}
+            {Array.from(new Set(dogs.map((d) => d.groupSize))).map(
+              (groupSize, groupIndex) => {
+                const groupDogs = dogs.filter((d) => d.groupSize === groupSize);
+                return (
+                  <Box
+                    key={groupSize}
+                    sx={{
+                      "@media print": {
+                        pageBreakAfter:
+                          groupIndex <
+                          Array.from(new Set(dogs.map((d) => d.groupSize)))
+                            .length -
+                            1
+                            ? "always"
+                            : "auto",
+                      },
+                    }}
+                  >
+                    {/* Group Header */}
+                    <Box sx={{ mb: 2, mt: groupIndex > 0 ? 3 : 0 }}>
+                      <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                        {groupSize} Play Group
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {groupDogs.length} dog
+                        {groupDogs.length !== 1 ? "s" : ""}
+                      </Typography>
+                    </Box>
 
-            {/* Summary */}
-            <Box sx={{ mt: 3, textAlign: "right" }}>
+                    <TableContainer>
+                      <Table
+                        sx={{
+                          "@media print": {
+                            "& td, & th": {
+                              fontSize: "12pt",
+                              padding: "8px",
+                            },
+                          },
+                        }}
+                      >
+                        <TableHead>
+                          <TableRow>
+                            <TableCell
+                              sx={{ fontWeight: "bold", width: "40%" }}
+                            >
+                              Dog (Owner)
+                            </TableCell>
+                            <TableCell
+                              sx={{ fontWeight: "bold", width: "15%" }}
+                            >
+                              Room
+                            </TableCell>
+                            <TableCell
+                              sx={{
+                                fontWeight: "bold",
+                                width: "22.5%",
+                                borderLeft: "2px solid #ddd",
+                              }}
+                            >
+                              In
+                            </TableCell>
+                            <TableCell
+                              sx={{
+                                fontWeight: "bold",
+                                width: "22.5%",
+                                borderLeft: "2px solid #ddd",
+                              }}
+                            >
+                              Out
+                            </TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {groupDogs.map((dog, index) => (
+                            <TableRow
+                              key={index}
+                              sx={{
+                                "&:nth-of-type(odd)": {
+                                  backgroundColor: "rgba(0, 0, 0, 0.02)",
+                                },
+                                "@media print": {
+                                  pageBreakInside: "avoid",
+                                },
+                              }}
+                            >
+                              <TableCell>
+                                <strong>{dog.dogName}</strong> (
+                                {dog.customerLastName})
+                              </TableCell>
+                              <TableCell>{dog.roomNumber}</TableCell>
+                              <TableCell
+                                sx={{
+                                  borderLeft: "2px solid #ddd",
+                                  borderBottom: "1px solid #ddd",
+                                }}
+                              >
+                                __________
+                              </TableCell>
+                              <TableCell
+                                sx={{
+                                  borderLeft: "2px solid #ddd",
+                                  borderBottom: "1px solid #ddd",
+                                }}
+                              >
+                                __________
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Box>
+                );
+              }
+            )}
+
+            {/* Summary - only show on screen */}
+            <Box
+              sx={{
+                mt: 3,
+                textAlign: "right",
+                "@media print": { display: "none" },
+              }}
+            >
               <Typography variant="body2" color="text.secondary">
                 Total Dogs: {dogs.length}
               </Typography>
