@@ -65,9 +65,11 @@ const DailyCheckInOutReport: React.FC = () => {
               SOLO_ONLY: { label: "Solo", order: 4 },
             };
 
-          const playgroup = r.pet?.playgroupCompatibility
-            ? playgroupMap[r.pet.playgroupCompatibility]
-            : { label: "Unknown", order: 5 };
+          const playgroup =
+            r.pet?.playgroupCompatibility &&
+            playgroupMap[r.pet.playgroupCompatibility]
+              ? playgroupMap[r.pet.playgroupCompatibility]
+              : { label: "Unknown", order: 5 };
 
           return {
             dogName: r.pet.name,
