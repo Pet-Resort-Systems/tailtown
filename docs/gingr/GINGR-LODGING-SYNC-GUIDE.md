@@ -52,6 +52,11 @@ Reservations display with color-coded backgrounds:
 - 🟧 **Orange** - Daycare
 - 🟪 **Purple** - Grooming (with ✂️ scissor icon)
 
+**Special Icons:**
+
+- 🐾 **Cat Icon** - Displayed for cat pets or cat condo kennels (K\* rooms)
+- ✂️ **Scissor Icon** - Displayed for grooming appointments
+
 Grooming appointments do not require room/kennel assignments.
 
 4. **Maps to Tailtown resources**:
