@@ -21,6 +21,7 @@ import PrintIcon from "@mui/icons-material/Print";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import ContentCutIcon from "@mui/icons-material/ContentCut";
+import PetsIcon from "@mui/icons-material/Pets";
 import PetNameWithIcons from "../pets/PetNameWithIcons";
 import KennelCard from "../kennels/KennelCard";
 import { PlaygroupBadge } from "../compatibility";
@@ -449,23 +450,42 @@ const ReservationList: React.FC<ReservationListProps> = ({
                   >
                     {reservation.resource?.name && (
                       <>
-                        <Chip
-                          label={
-                            reservation.resource.name.length > 1
-                              ? reservation.resource.name.slice(0, -1) +
-                                " " +
-                                reservation.resource.name.slice(-1)
-                              : reservation.resource.name
-                          }
-                          size="small"
-                          variant="outlined"
+                        <Box
                           sx={{
-                            height: 18,
-                            fontSize: "0.75rem",
-                            fontWeight: 600,
-                            backgroundColor: "white",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.5,
                           }}
-                        />
+                        >
+                          {(reservation.pet?.type === "CAT" ||
+                            reservation.resource.name
+                              .toUpperCase()
+                              .startsWith("K")) && (
+                            <PetsIcon
+                              sx={{
+                                fontSize: "0.875rem",
+                                color: "#ff6b6b",
+                              }}
+                            />
+                          )}
+                          <Chip
+                            label={
+                              reservation.resource.name.length > 1
+                                ? reservation.resource.name.slice(0, -1) +
+                                  " " +
+                                  reservation.resource.name.slice(-1)
+                                : reservation.resource.name
+                            }
+                            size="small"
+                            variant="outlined"
+                            sx={{
+                              height: 18,
+                              fontSize: "0.75rem",
+                              fontWeight: 600,
+                              backgroundColor: "white",
+                            }}
+                          />
+                        </Box>
                         <Typography variant="caption" color="text.secondary">
                           •
                         </Typography>
