@@ -1,7 +1,8 @@
-# Gingr Lodging/Kennel Assignment Sync Guide
+# Gingr Lodging & Resource Sync Guide
 
-**Date:** December 21, 2025  
+**Last Updated:** December 21, 2025  
 **Status:** Production Ready  
+**Version:** 2.1 - Added Grooming Service Detection  
 **Method:** Automatic via Gingr API + CSV Import (for historical corrections)
 
 ---
@@ -35,10 +36,23 @@ The Gingr sync service (`gingr-sync.service.ts`) automatically:
    - `"A. Indoor - A 02"` → `"A02"`
    - `"B  11"` → `"B11"`
 
-3. **Detects service category**:
+3. **Detects Service Category**
 
-   - Lodging contains "DAYCAMP" → `serviceCategory: "DAYCARE"`
-   - Otherwise → `serviceCategory: "BOARDING"`
+The sync automatically determines service categories:
+
+- **DAYCARE**: Detected when lodging contains "DAYCAMP" or "DAY CAMP"
+- **GROOMING**: Detected when `reservation_type.type` contains "Grooming" or "grooming"
+- **BOARDING**: Default for all other reservations with lodging assignments
+
+### Visual Distinction in Dashboard
+
+Reservations display with color-coded backgrounds:
+
+- 🟦 **Blue** - Boarding (default)
+- 🟧 **Orange** - Daycare
+- 🟪 **Purple** - Grooming (with ✂️ scissor icon)
+
+Grooming appointments do not require room/kennel assignments.
 
 4. **Maps to Tailtown resources**:
    - Finds or creates matching resource (e.g., D27, A02)
