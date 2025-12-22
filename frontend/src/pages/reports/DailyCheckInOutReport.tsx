@@ -33,23 +33,24 @@ const DailyCheckInOutReport: React.FC = () => {
   const loadData = React.useCallback(async () => {
     setLoading(true);
     try {
-      const response = await reservationService.getAllReservations();
-
-      // Filter for reservations on the selected date
       const dateStr = format(date, "yyyy-MM-dd");
+
+      // Fetch all reservations for the selected date (API handles date filtering)
+      const response = await reservationService.getAllReservations(
+        1,
+        1000,
+        "startDate",
+        "asc",
+        undefined,
+        dateStr
+      );
+
       const allReservations = response.data || [];
 
+      // Filter for boarding and daycamp only
       const todaysReservations = allReservations.filter((r: any) => {
-        const startDate = r.startDate?.split("T")[0];
-        const endDate = r.endDate?.split("T")[0];
-        const isInDateRange = startDate <= dateStr && endDate >= dateStr;
-
-        // Only include boarding and daycamp reservations
         const serviceCategory = r.service?.serviceCategory?.toUpperCase();
-        const isBoardingOrDaycamp =
-          serviceCategory === "BOARDING" || serviceCategory === "DAYCAMP";
-
-        return isInDateRange && isBoardingOrDaycamp;
+        return serviceCategory === "BOARDING" || serviceCategory === "DAYCAMP";
       });
 
       // Map to dog entries
