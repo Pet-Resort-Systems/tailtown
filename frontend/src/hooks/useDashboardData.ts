@@ -317,11 +317,13 @@ export const useDashboardData = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate]); // Reload when date changes
 
-  // Refresh on window focus
+  // Reset to today and refresh on window focus
   useEffect(() => {
     const handleFocus = () => {
-      logger.debug("Window focused, refreshing dashboard");
-      loadData();
+      logger.debug(
+        "Window focused, resetting to today and refreshing dashboard"
+      );
+      setSelectedDate(new Date()); // Reset to today when returning to dashboard
     };
 
     window.addEventListener("focus", handleFocus);
