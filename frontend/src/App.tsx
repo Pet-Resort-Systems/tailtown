@@ -51,6 +51,9 @@ const CustomerValueReport = lazy(
   () => import("./pages/analytics/CustomerValueReport")
 );
 const ReportsPage = lazy(() => import("./pages/reports/ReportsPage"));
+const DailyCheckInOutReport = lazy(
+  () => import("./pages/reports/DailyCheckInOutReport")
+);
 
 // Lazy loaded pages - Pet Management
 const Pets = lazy(() => import("./pages/pets/Pets"));
@@ -577,6 +580,16 @@ const AppRoutes = () => {
             path="/reports"
             element={
               isAuthenticated ? <ReportsPage /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/reports/daily-check-in-out"
+            element={
+              isAuthenticated ? (
+                <DailyCheckInOutReport />
+              ) : (
+                <Navigate to="/login" />
+              )
             }
           />
           <Route
