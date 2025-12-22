@@ -37,7 +37,7 @@
     "react-helmet-async": "^2.0.5",
     "react-router-dom": "7.10.1",
     "react-scripts": "5.0.1",
-    "recharts": "^3.5.1",
+    "recharts": "^3.6.0",
     "uuid": "^13.0.0",
     "typescript": "5.1.6",
     "web-vitals": "^5.1.0",
