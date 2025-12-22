@@ -62,6 +62,11 @@ const Dashboard = () => {
   const { user } = useAuth();
   const [showBatchLabelPrint, setShowBatchLabelPrint] = useState(false);
 
+  // Reset to today when component mounts (navigating back to dashboard)
+  useEffect(() => {
+    setSelectedDate(new Date());
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Load announcements on mount
   useEffect(() => {
     loadAnnouncements();
