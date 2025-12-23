@@ -543,15 +543,16 @@ export class GingrSyncService {
           },
         });
 
-        // Parse Gingr dates correctly - preserve local date without timezone conversion
-        // Gingr sends dates like "2025-11-28T19:00:00-07:00" which when parsed as UTC
-        // becomes "2025-11-29T02:00:00Z" - we need to preserve the local date (2025-11-28)
+        // Parse Gingr dates correctly - preserve the local date/time as UTC
+        // Gingr sends dates like "2025-12-23T12:00:00-07:00" (noon MST on Dec 23)
+        // We want to store the DATE portion (2025-12-23) at midnight UTC for consistency
+        // This ensures the date displays correctly regardless of server timezone
         const parseGingrDate = (dateStr: string): Date => {
           if (!dateStr) return new Date();
-          // Extract the local date and time parts, ignoring timezone
-          // Format: "2025-11-28T19:00:00-07:00" -> use "2025-11-28T19:00:00"
-          const localPart = dateStr.replace(/[+-]\d{2}:\d{2}$/, "");
-          return new Date(localPart);
+          // Extract just the date portion (YYYY-MM-DD)
+          const datePart = dateStr.substring(0, 10); // "2025-12-23"
+          // Create a Date at midnight UTC for this date
+          return new Date(datePart + "T00:00:00.000Z");
         };
 
         // Determine service based on resource type (new approach - Nov 2025)
@@ -1195,8 +1196,9 @@ export class GingrSyncService {
 
     const parseGingrDate = (dateStr: string): Date => {
       if (!dateStr) return new Date();
-      const localPart = dateStr.replace(/[+-]\d{2}:\d{2}$/, "");
-      return new Date(localPart);
+      // Extract just the date portion (YYYY-MM-DD) and create at midnight UTC
+      const datePart = dateStr.substring(0, 10);
+      return new Date(datePart + "T00:00:00.000Z");
     };
 
     // Determine service
