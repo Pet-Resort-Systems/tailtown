@@ -10,7 +10,7 @@
     "@fullcalendar/interaction": "^6.1.17",
     "@fullcalendar/react": "^6.1.17",
     "@fullcalendar/timegrid": "^6.1.17",
-    "@mui/icons-material": "5.16.14",
+    "@mui/icons-material": "7.3.6",
     "@mui/material": "5.16.14",
     "@mui/system": "5.16.14",
     "@mui/x-date-pickers": "^8.22.1",
