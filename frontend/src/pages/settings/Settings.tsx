@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { getApiBaseUrl } from "../../services/api";
 import {
   Container,
   Typography,
@@ -42,6 +43,26 @@ import {
 const Settings: React.FC = () => {
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState<string | false>("business-setup");
+  const [productCount, setProductCount] = useState<number>(0);
+
+  useEffect(() => {
+    const fetchProductCount = async () => {
+      try {
+        const apiUrl = getApiBaseUrl();
+        const tenantId = localStorage.getItem("tailtown_tenant_id") || "dev";
+        const response = await fetch(`${apiUrl}/api/products`, {
+          headers: { "x-tenant-id": tenantId },
+        });
+        const data = await response.json();
+        if (data.status === "success" && Array.isArray(data.data)) {
+          setProductCount(data.data.length);
+        }
+      } catch (error) {
+        console.error("Error fetching product count:", error);
+      }
+    };
+    fetchProductCount();
+  }, []);
 
   const handleAccordionChange =
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
@@ -213,7 +234,7 @@ const Settings: React.FC = () => {
           description: "Manage retail products, inventory, and point-of-sale",
           icon: <ProductsIcon sx={{ fontSize: 40, color: "success.main" }} />,
           path: "/products",
-          stats: "Products: 0",
+          stats: `Products: ${productCount}`,
         },
       ],
     },
