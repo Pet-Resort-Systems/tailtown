@@ -33,6 +33,7 @@ export {
   getProfitLoss,
   getOutstanding,
   getRefunds,
+  getReconciliation,
 } from "./reports-financial.controller";
 
 // Customer Reports

@@ -16,6 +16,7 @@ import {
   getProfitLossReport,
   getOutstandingBalances,
   getRefundsReport,
+  getReconciliationReport,
 } from "../../services/financialReportService";
 import { logger } from "../../utils/logger";
 
@@ -196,5 +197,42 @@ export const getRefunds = async (
   } catch (error) {
     logger.error("Error generating refunds report", { error });
     return next(new AppError("Failed to generate refunds report", 500));
+  }
+};
+
+/**
+ * GET /api/reports/financial/reconciliation
+ */
+export const getReconciliation = async (
+  req: TenantRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const tenantId =
+      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+    const { date } = req.query;
+
+    // Default to today if no date provided
+    const reportDate = date
+      ? (date as string)
+      : new Date().toISOString().split("T")[0];
+
+    const report = await getReconciliationReport(tenantId, reportDate);
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        reportType: "financial_reconciliation",
+        title: `End-of-Day Reconciliation - ${reportDate}`,
+        generatedAt: new Date(),
+        filters: { date: reportDate },
+        summary: report.summary,
+        data: report,
+      },
+    });
+  } catch (error) {
+    logger.error("Error generating reconciliation report", { error });
+    return next(new AppError("Failed to generate reconciliation report", 500));
   }
 };
