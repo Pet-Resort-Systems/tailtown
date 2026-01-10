@@ -596,6 +596,110 @@ export class EmailService {
   }
 
   /**
+   * Send welcome email to new staff member with password setup link
+   */
+  async sendStaffWelcomeEmail(
+    email: string,
+    firstName: string,
+    lastName: string,
+    role: string,
+    resetToken: string,
+    businessName: string = "Tailtown Pet Resort",
+    adminUrl?: string
+  ): Promise<void> {
+    // Build password setup URL
+    const baseUrl =
+      adminUrl || process.env.FRONTEND_URL || "https://tailtown.canicloud.com";
+    const setupUrl = `${baseUrl}/set-password?token=${resetToken}&new=true`;
+
+    const roleDisplay =
+      role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background-color: #2e7d32; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+            .content { background-color: #f9f9f9; padding: 30px; border-radius: 0 0 5px 5px; }
+            .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #777; text-align: center; }
+            .button { display: inline-block; padding: 14px 28px; background-color: #2e7d32; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; font-weight: bold; }
+            .button:hover { background-color: #1b5e20; }
+            .info-box { background-color: #e3f2fd; border-left: 4px solid #2196f3; padding: 15px; margin: 20px 0; }
+            .warning { background-color: #fff3cd; border-left: 4px solid #ff9800; padding: 15px; margin: 20px 0; }
+            .detail-row { margin: 10px 0; }
+            .label { font-weight: bold; color: #555; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Welcome to ${businessName}!</h1>
+            </div>
+            <div class="content">
+              <p>Hi ${firstName},</p>
+              
+              <p>You've been added as a team member at <strong>${businessName}</strong>. We're excited to have you on board!</p>
+              
+              <div class="info-box">
+                <div class="detail-row">
+                  <span class="label">Your Role:</span> ${roleDisplay}
+                </div>
+                <div class="detail-row">
+                  <span class="label">Email:</span> ${email}
+                </div>
+              </div>
+              
+              <p>To get started, please set up your password by clicking the button below:</p>
+              
+              <p style="text-align: center;">
+                <a href="${setupUrl}" class="button">Set Up Your Password</a>
+              </p>
+              
+              <p>Or copy and paste this link into your browser:</p>
+              <p style="word-break: break-all; background: #eee; padding: 10px; border-radius: 4px; font-size: 12px;">
+                ${setupUrl}
+              </p>
+              
+              <div class="warning">
+                <strong>⏰ This link will expire in 48 hours.</strong><br>
+                If it expires, please contact your administrator for a new invitation.
+              </div>
+              
+              <p><strong>What's Next?</strong></p>
+              <ul>
+                <li>Set up your password using the link above</li>
+                <li>Log in to access the staff dashboard</li>
+                <li>Review the schedule and assigned tasks</li>
+                <li>Familiarize yourself with the system</li>
+              </ul>
+              
+              <p>If you have any questions, reach out to your manager or administrator.</p>
+              
+              <p>Welcome to the team!</p>
+              
+              <p>Best regards,<br>
+              The ${businessName} Team</p>
+            </div>
+            <div class="footer">
+              <p>This is an automated message from ${businessName}.</p>
+              <p>If you weren't expecting this email, please contact ${businessName} directly.</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    await this.sendEmail({
+      to: email,
+      subject: `Welcome to ${businessName} - Set Up Your Account`,
+      html,
+    });
+  }
+
+  /**
    * Strip HTML tags from string (simple implementation)
    */
   private stripHtml(html: string): string {
