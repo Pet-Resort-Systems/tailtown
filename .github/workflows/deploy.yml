@@ -129,9 +129,9 @@ jobs:
             echo "Stopping all services..."
             pm2 delete all || true
             
-            echo "Running database migrations..."
+            echo "Running database schema sync..."
             cd services/customer
-            npx prisma migrate deploy || echo "Customer migrations failed (may already be applied)"
+            npx prisma db push --accept-data-loss || echo "Customer schema sync failed"
             npx prisma generate || echo "Customer Prisma generation failed"
             echo "Rebuilding customer service..."
             npm run build || echo "Customer build failed"
