@@ -107,6 +107,12 @@ model Pet {
   vetName            String?         // Legacy field - kept for backward compatibility
   vetPhone           String?         // Legacy field - kept for backward compatibility
   veterinarianId     String?         // Link to veterinarians table
+  
+  // Emergency contact (separate from owner, e.g., spouse, pet sitter, neighbor)
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  emergencyContactRelation String?   // e.g., "Spouse", "Pet Sitter", "Neighbor"
+  
   profilePhoto       String?
   petIcons           Json?           // Array of icon IDs for quick visual reference
   iconNotes          Json?           // Custom notes for generic flag icons
@@ -147,6 +153,7 @@ model Pet {
   feedingLogs         FeedingLog[]
   medicationLogs      MedicationLog[]
   medications         PetMedication[]
+  incidents           Incident[]
 
   @@index([customerId], map: "pets_customer_id_idx")
   @@index([isActive, type], map: "pets_active_type_idx")
@@ -367,6 +374,134 @@ model MedicationLog {
   @@map("medication_logs")
 }
 
+// Incident/Injury reporting
+model Incident {
+  id              String          @id @default(uuid())
+  tenantId        String          @default("dev")
+  petId           String
+  pet             Pet             @relation(fields: [petId], references: [id], onDelete: Cascade)
+  reservationId   String?
+  
+  // Incident details
+  incidentType    IncidentType
+  severity        IncidentSeverity
+  occurredAt      DateTime
+  location        String?         // Where in facility
+  description     String          // Detailed description
+  
+  // Parties involved
+  reportedById    String          // Staff who reported
+  reportedBy      Staff           @relation("IncidentReporter", fields: [reportedById], references: [id])
+  witnessedById   String?         // Optional witness
+  witnessedBy     Staff?          @relation("IncidentWitness", fields: [witnessedById], references: [id])
+  otherPetId      String?         // If another pet was involved
+  
+  // Injury specifics (if applicable)
+  injuryType      String?         // Bite, scratch, fall, etc.
+  bodyPart        String?         // Where on pet
+  treatmentGiven  String?         // First aid, vet visit, etc.
+  vetVisitRequired Boolean        @default(false)
+  vetNotified     Boolean         @default(false)
+  
+  // Owner notification
+  ownerNotified   Boolean         @default(false)
+  ownerNotifiedAt DateTime?
+  ownerNotifiedBy String?
+  ownerResponse   String?         // Owner's reaction/instructions
+  
+  // Photos
+  photos          Json?           // Array of photo URLs
+  
+  // Resolution
+  status          IncidentStatus  @default(OPEN)
+  resolutionNotes String?
+  resolvedAt      DateTime?
+  resolvedById    String?
+  
+  // Follow-up
+  followUpRequired Boolean        @default(false)
+  followUpNotes   String?
+  followUpDate    DateTime?
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([tenantId, occurredAt], map: "incidents_tenant_date_idx")
+  @@index([tenantId, petId], map: "incidents_tenant_pet_idx")
+  @@index([tenantId, status], map: "incidents_tenant_status_idx")
+  @@map("incidents")
+}
+
+enum IncidentType {
+  INJURY
+  ILLNESS
+  BEHAVIOR
+  ESCAPE_ATTEMPT
+  PROPERTY_DAMAGE
+  ALTERCATION
+  OTHER
+}
+
+enum IncidentSeverity {
+  LOW       // Minor, no treatment needed
+  MEDIUM    // Some treatment, monitor
+  HIGH      // Vet visit recommended
+  CRITICAL  // Immediate vet attention
+}
+
+enum IncidentStatus {
+  OPEN
+  INVESTIGATING
+  OWNER_NOTIFIED
+  RESOLVED
+  CLOSED
+}
+
+// Daily staff handoff notes between shifts
+model ShiftNote {
+  id              String          @id @default(uuid())
+  tenantId        String          @default("dev")
+  
+  // Shift info
+  shiftDate       DateTime        // Date of shift
+  shiftType       ShiftType       // MORNING, AFTERNOON, EVENING, OVERNIGHT
+  
+  // Author
+  staffId         String
+  staff           Staff           @relation("ShiftNoteAuthor", fields: [staffId], references: [id])
+  
+  // Content
+  generalNotes    String?         // General notes for next shift
+  urgentItems     String?         // Urgent items that need immediate attention
+  petUpdates      Json?           // Array of {petId, petName, note} for specific pet updates
+  maintenanceItems String?        // Facility maintenance notes
+  supplyNotes     String?         // Supplies running low, etc.
+  
+  // Acknowledgment
+  acknowledgedById String?
+  acknowledgedBy   Staff?         @relation("ShiftNoteAcknowledger", fields: [acknowledgedById], references: [id])
+  acknowledgedAt   DateTime?
+  
+  // Status
+  isUrgent        Boolean         @default(false)
+  isRead          Boolean         @default(false)
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([tenantId, shiftDate], map: "shift_notes_tenant_date_idx")
+  @@index([tenantId, shiftType, shiftDate], map: "shift_notes_tenant_type_date_idx")
+  @@unique([tenantId, shiftDate, shiftType, staffId], map: "shift_notes_unique")
+  @@map("shift_notes")
+}
+
+enum ShiftType {
+  MORNING
+  AFTERNOON
+  EVENING
+  OVERNIGHT
+}
+
 model Service {
   id              String             @id @default(uuid())
   tenantId        String             @default("dev")
@@ -539,6 +674,10 @@ model Staff {
   scheduleTemplates    ScheduleTemplate[]   @relation("StaffScheduleTemplates")
   feedingLogs          FeedingLog[]
   medicationLogs       MedicationLog[]
+  incidentsReported    Incident[]           @relation("IncidentReporter")
+  incidentsWitnessed   Incident[]           @relation("IncidentWitness")
+  shiftNotesAuthored   ShiftNote[]          @relation("ShiftNoteAuthor")
+  shiftNotesAcknowledged ShiftNote[]        @relation("ShiftNoteAcknowledger")
 
   @@unique([tenantId, email], map: "staff_tenant_email_unique")
   @@index([tenantId, isActive], map: "staff_tenant_active_idx")
