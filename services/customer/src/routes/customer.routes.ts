@@ -11,6 +11,7 @@ import {
   setCustomerPermanentCoupon,
   removeCustomerPermanentCoupon,
 } from "../controllers/customer";
+import customerPaymentMethodRoutes from "./customer-payment-method.routes";
 
 const router = Router();
 
@@ -39,5 +40,8 @@ router.delete("/:id", deleteCustomer);
 router.get("/:id/permanent-coupon", getCustomerPermanentCoupon);
 router.put("/:id/permanent-coupon", setCustomerPermanentCoupon);
 router.delete("/:id/permanent-coupon", removeCustomerPermanentCoupon);
+
+// Payment methods (card on file) routes
+router.use("/:customerId/payment-methods", customerPaymentMethodRoutes);
 
 export { router as customerRoutes };

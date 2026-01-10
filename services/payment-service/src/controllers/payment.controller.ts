@@ -335,6 +335,77 @@ export async function inquireTransaction(req: Request, res: Response) {
 }
 
 /**
+ * Charge a saved card token
+ * Used for card-on-file transactions
+ */
+export async function chargeToken(req: Request, res: Response) {
+  try {
+    const { token, amount, expiry, orderId, description } = req.body;
+
+    if (!token || !amount) {
+      return res.status(400).json({
+        status: "error",
+        message: "Token and amount are required",
+      });
+    }
+
+    // Format amount (CardConnect expects amount in cents without decimal)
+    const formattedAmount = Math.round(amount * 100).toString();
+
+    // Call CardConnect API with token instead of card number
+    const result = await cardConnectService.authorize({
+      amount: formattedAmount,
+      account: token, // Token is used as the account for saved cards
+      expiry: expiry || "1299", // Use stored expiry or far-future fallback
+      orderid: orderId,
+      capture: "Y",
+    });
+
+    if (result.respstat === "A") {
+      logger.info("Token charge successful", {
+        retref: result.retref,
+        amount: formattedAmount,
+      });
+
+      return res.status(200).json({
+        status: "success",
+        message: "Payment processed successfully",
+        data: {
+          transactionId: result.retref,
+          authCode: result.authcode,
+          amount: amount,
+          approved: true,
+          responseCode: result.respcode,
+          responseText: result.resptext,
+        },
+      });
+    } else {
+      logger.warn("Token charge declined", {
+        respstat: result.respstat,
+        resptext: result.resptext,
+      });
+
+      return res.status(402).json({
+        status: "declined",
+        message: "Payment declined",
+        data: {
+          approved: false,
+          responseCode: result.respcode,
+          responseText: result.resptext,
+        },
+      });
+    }
+  } catch (error) {
+    logger.error("Token charge error", { error });
+    return res.status(500).json({
+      status: "error",
+      message: "Payment processing failed",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+}
+
+/**
  * Get test card numbers (for development only)
  */
 export function getTestCards(req: Request, res: Response) {
