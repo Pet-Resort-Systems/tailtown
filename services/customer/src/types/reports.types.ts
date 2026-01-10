@@ -214,6 +214,40 @@ export interface RefundData {
   refundMethod: string;
 }
 
+export interface ReconciliationTransaction {
+  time: string;
+  invoiceNumber: string;
+  customerName: string;
+  paymentMethod: string;
+  amount: number;
+  tip: number;
+  total: number;
+  staffName: string;
+}
+
+export interface ReconciliationData {
+  date: string;
+  openingBalance: number;
+  closingBalance: number;
+  expectedDrawer: number;
+  transactions: ReconciliationTransaction[];
+  summary: {
+    cashSales: number;
+    cardSales: number;
+    otherSales: number;
+    totalSales: number;
+    tipsCollected: number;
+    refundsIssued: number;
+    netRevenue: number;
+    transactionCount: number;
+  };
+  paymentBreakdown: {
+    method: string;
+    count: number;
+    amount: number;
+  }[];
+}
+
 // ============================================================================
 // Customer Report Types
 // ============================================================================

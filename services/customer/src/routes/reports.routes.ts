@@ -18,6 +18,7 @@ import {
   getProfitLoss,
   getOutstanding,
   getRefunds,
+  getReconciliation,
   getCustomerAcquisition,
   getCustomerRetention,
   getCustomerLifetimeValue,
@@ -145,6 +146,14 @@ router.get("/financial/outstanding", getOutstanding);
  * @access  Private
  */
 router.get("/financial/refunds", getRefunds);
+
+/**
+ * @route   GET /api/reports/financial/reconciliation
+ * @desc    Get end-of-day reconciliation report
+ * @query   date (YYYY-MM-DD, optional - defaults to today)
+ * @access  Private
+ */
+router.get("/financial/reconciliation", getReconciliation);
 
 // ============================================================================
 // Customer Reports

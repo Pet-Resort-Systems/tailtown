@@ -54,6 +54,9 @@ const ReportsPage = lazy(() => import("./pages/reports/ReportsPage"));
 const DailyCheckInOutReport = lazy(
   () => import("./pages/reports/DailyCheckInOutReport")
 );
+const ReconciliationReport = lazy(
+  () => import("./pages/reports/ReconciliationReport")
+);
 
 // Lazy loaded pages - Pet Management
 const Pets = lazy(() => import("./pages/pets/Pets"));
@@ -590,6 +593,16 @@ const AppRoutes = () => {
             element={
               isAuthenticated ? (
                 <DailyCheckInOutReport />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/reports/reconciliation"
+            element={
+              isAuthenticated ? (
+                <ReconciliationReport />
               ) : (
                 <Navigate to="/login" />
               )
