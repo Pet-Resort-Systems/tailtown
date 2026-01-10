@@ -68,6 +68,15 @@ interface Pet {
   foodNotes?: string;
   behaviorNotes?: string;
   specialNeeds?: string;
+  // Detailed feeding fields
+  feedingSchedule?: string;
+  feedingMethod?: string;
+  foodType?: string;
+  isPickyEater?: boolean;
+  // Emergency contact (per pet)
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  emergencyContactRelation?: string;
 }
 
 interface PetSummaryCardProps {
@@ -480,17 +489,56 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
 
       {/* Notes Sections */}
       <Grid container spacing={2}>
-        {/* Food & Feeding */}
-        {pet.foodNotes && (
+        {/* Food & Feeding - Always show if any feeding info exists */}
+        {(pet.foodNotes ||
+          pet.feedingSchedule ||
+          pet.feedingMethod ||
+          pet.foodType ||
+          pet.isPickyEater) && (
           <Grid item xs={12} md={6}>
-            <Paper variant="outlined" sx={{ p: 2, height: "100%" }}>
+            <Paper
+              variant="outlined"
+              sx={{
+                p: 2,
+                height: "100%",
+                bgcolor: pet.isPickyEater ? "warning.50" : undefined,
+                borderColor: pet.isPickyEater ? "warning.main" : undefined,
+              }}
+            >
               <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
                 <FoodIcon
                   sx={{ mr: 1, verticalAlign: "middle", fontSize: 18 }}
                 />
-                Feeding Notes
+                Feeding Instructions
+                {pet.isPickyEater && (
+                  <Chip
+                    label="Picky Eater"
+                    size="small"
+                    color="warning"
+                    sx={{ ml: 1 }}
+                  />
+                )}
               </Typography>
-              <Typography variant="body2">{pet.foodNotes}</Typography>
+              {pet.feedingSchedule && (
+                <Typography variant="body2" sx={{ mb: 0.5 }}>
+                  <strong>Schedule:</strong> {pet.feedingSchedule}
+                </Typography>
+              )}
+              {pet.foodType && (
+                <Typography variant="body2" sx={{ mb: 0.5 }}>
+                  <strong>Food Type:</strong> {pet.foodType}
+                </Typography>
+              )}
+              {pet.feedingMethod && (
+                <Typography variant="body2" sx={{ mb: 0.5 }}>
+                  <strong>Method:</strong> {pet.feedingMethod}
+                </Typography>
+              )}
+              {pet.foodNotes && (
+                <Typography variant="body2" sx={{ mt: 1, fontStyle: "italic" }}>
+                  {pet.foodNotes}
+                </Typography>
+              )}
             </Paper>
           </Grid>
         )}
