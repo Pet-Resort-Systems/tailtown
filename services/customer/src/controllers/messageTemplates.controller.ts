@@ -491,6 +491,75 @@ export const seedDefaultTemplates = async (
           "businessName",
         ],
       },
+      // SMS Templates
+      {
+        name: "SMS - Welcome",
+        type: "SMS",
+        category: "MARKETING",
+        body: `Welcome to {{businessName}}! 🐾 We're excited to have you & {{petName}} join our family. Questions? Reply to this text or call {{businessPhone}}.`,
+        variables: ["businessName", "petName", "businessPhone"],
+      },
+      {
+        name: "SMS - Reservation Confirmed",
+        type: "SMS",
+        category: "CONFIRMATION",
+        body: `✅ Confirmed! {{petName}}'s {{serviceName}} is booked for {{startDate}}. Check-in time: {{checkInTime}}. See you soon! - {{businessName}}`,
+        variables: [
+          "petName",
+          "serviceName",
+          "startDate",
+          "checkInTime",
+          "businessName",
+        ],
+      },
+      {
+        name: "SMS - Appointment Reminder",
+        type: "SMS",
+        category: "APPOINTMENT_REMINDER",
+        body: `📅 Reminder: {{petName}} has an appointment tomorrow at {{appointmentTime}} for {{serviceName}}. Please arrive 10 min early. Reply C to confirm or R to reschedule.`,
+        variables: ["petName", "appointmentTime", "serviceName"],
+      },
+      {
+        name: "SMS - Ready for Pickup",
+        type: "SMS",
+        category: "CONFIRMATION",
+        body: `🐕 {{petName}} is ready for pickup! We're open until {{closeTime}}. Can't wait to tell you about their stay! - {{businessName}}`,
+        variables: ["petName", "closeTime", "businessName"],
+      },
+      {
+        name: "SMS - Thank You",
+        type: "SMS",
+        category: "FOLLOW_UP",
+        body: `Thanks for visiting {{businessName}}! 🙏 We loved having {{petName}}. Book your next visit at {{bookingUrl}} or reply for assistance.`,
+        variables: ["businessName", "petName", "bookingUrl"],
+      },
+      {
+        name: "SMS - Vaccination Reminder",
+        type: "SMS",
+        category: "APPOINTMENT_REMINDER",
+        body: `⚠️ Hi {{customerName}}, {{petName}}'s vaccinations need updating before their next visit. Please send updated records or call {{businessPhone}}.`,
+        variables: ["customerName", "petName", "businessPhone"],
+      },
+      {
+        name: "SMS - Holiday Booking",
+        type: "SMS",
+        category: "MARKETING",
+        body: `🎄 Holiday boarding fills fast! Book {{petName}}'s stay now to secure your spot. Call {{businessPhone}} or book online. - {{businessName}}`,
+        variables: ["petName", "businessPhone", "businessName"],
+      },
+      {
+        name: "SMS - Special Offer",
+        type: "SMS",
+        category: "PROMOTIONAL",
+        body: `🎁 {{customerName}}, enjoy {{promotionDetails}}! Valid thru {{expirationDate}}. Book now: {{businessPhone}}. - {{businessName}}`,
+        variables: [
+          "customerName",
+          "promotionDetails",
+          "expirationDate",
+          "businessPhone",
+          "businessName",
+        ],
+      },
     ];
 
     const createdTemplates = [];
