@@ -457,6 +457,51 @@ enum IncidentStatus {
   CLOSED
 }
 
+// Daily staff handoff notes between shifts
+model ShiftNote {
+  id              String          @id @default(uuid())
+  tenantId        String          @default("dev")
+  
+  // Shift info
+  shiftDate       DateTime        // Date of shift
+  shiftType       ShiftType       // MORNING, AFTERNOON, EVENING, OVERNIGHT
+  
+  // Author
+  staffId         String
+  staff           Staff           @relation("ShiftNoteAuthor", fields: [staffId], references: [id])
+  
+  // Content
+  generalNotes    String?         // General notes for next shift
+  urgentItems     String?         // Urgent items that need immediate attention
+  petUpdates      Json?           // Array of {petId, petName, note} for specific pet updates
+  maintenanceItems String?        // Facility maintenance notes
+  supplyNotes     String?         // Supplies running low, etc.
+  
+  // Acknowledgment
+  acknowledgedById String?
+  acknowledgedBy   Staff?         @relation("ShiftNoteAcknowledger", fields: [acknowledgedById], references: [id])
+  acknowledgedAt   DateTime?
+  
+  // Status
+  isUrgent        Boolean         @default(false)
+  isRead          Boolean         @default(false)
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([tenantId, shiftDate], map: "shift_notes_tenant_date_idx")
+  @@index([tenantId, shiftType, shiftDate], map: "shift_notes_tenant_type_date_idx")
+  @@unique([tenantId, shiftDate, shiftType, staffId], map: "shift_notes_unique")
+  @@map("shift_notes")
+}
+
+enum ShiftType {
+  MORNING
+  AFTERNOON
+  EVENING
+  OVERNIGHT
+}
+
 model Service {
   id              String             @id @default(uuid())
   tenantId        String             @default("dev")
@@ -631,6 +676,8 @@ model Staff {
   medicationLogs       MedicationLog[]
   incidentsReported    Incident[]           @relation("IncidentReporter")
   incidentsWitnessed   Incident[]           @relation("IncidentWitness")
+  shiftNotesAuthored   ShiftNote[]          @relation("ShiftNoteAuthor")
+  shiftNotesAcknowledged ShiftNote[]        @relation("ShiftNoteAcknowledger")
 
   @@unique([tenantId, email], map: "staff_tenant_email_unique")
   @@index([tenantId, isActive], map: "staff_tenant_active_idx")
