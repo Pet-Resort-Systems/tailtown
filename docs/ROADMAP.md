@@ -36,7 +36,59 @@
 
 ---
 
-## 🔴 This Week
+## � PRE-BETA CHECKLIST (Top Priority)
+
+> Must complete before live testing at dog resort
+
+### Data Safety & Recovery
+
+- [ ] Database backup strategy (automated daily backups)
+- [ ] Point-in-time recovery capability
+- [ ] Data export (customers, pets, reservations to CSV/JSON)
+
+### Monitoring & Reliability
+
+- [ ] Error logging/alerting (Sentry or similar)
+- [ ] Uptime monitoring
+- [ ] What happens if internet drops mid-checkout? (offline handling)
+
+### Payment Operations
+
+- [ ] Refund transaction flow
+- [ ] Void/cancel payment flow
+- [ ] End-of-day reconciliation report
+- [ ] Integrate saved cards into checkout flow
+
+### Booking Integrity
+
+- [ ] Overbooking prevention (verify kennel conflicts)
+- [ ] Vaccination expiration alerts (block booking if expired)
+- [ ] Double-booking detection
+
+### Printing & Receipts
+
+- [ ] Receipt printing after payment
+- [ ] Daily reports printing
+
+### Important for Operations
+
+- [ ] Waitlist management (notify when spot opens)
+- [ ] Emergency contact per pet
+- [ ] Feeding instructions per pet (visible to staff)
+- [ ] Medication administration logging
+- [ ] Incident/injury reporting
+- [ ] Daily staff handoff notes
+
+### Nice-to-Have
+
+- [ ] Bulk check-in (multiple pets, same owner)
+- [ ] Customer self-service portal
+- [ ] Automated vaccination reminder emails
+- [ ] Revenue forecasting from future bookings
+
+---
+
+## �🔴 This Week
 
 ### CardConnect Sign Up Flow
 
