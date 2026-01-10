@@ -27,7 +27,7 @@ import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import Grid from "@mui/material/Grid";
 import { Customer } from "../../types/customer";
 import { Pet } from "../../types/pet";
