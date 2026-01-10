@@ -107,6 +107,12 @@ model Pet {
   vetName            String?         // Legacy field - kept for backward compatibility
   vetPhone           String?         // Legacy field - kept for backward compatibility
   veterinarianId     String?         // Link to veterinarians table
+  
+  // Emergency contact (separate from owner, e.g., spouse, pet sitter, neighbor)
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  emergencyContactRelation String?   // e.g., "Spouse", "Pet Sitter", "Neighbor"
+  
   profilePhoto       String?
   petIcons           Json?           // Array of icon IDs for quick visual reference
   iconNotes          Json?           // Custom notes for generic flag icons

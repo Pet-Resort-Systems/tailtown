@@ -149,6 +149,9 @@ const PetDetails = () => {
     vetName: null,
     vetPhone: null,
     veterinarianId: null,
+    emergencyContactName: null,
+    emergencyContactPhone: null,
+    emergencyContactRelation: null,
     customerId: "",
     isActive: true,
     deactivatedAt: null,
@@ -392,6 +395,9 @@ const PetDetails = () => {
         vetName: pet.vetName,
         vetPhone: pet.vetPhone,
         veterinarianId: pet.veterinarianId,
+        emergencyContactName: pet.emergencyContactName,
+        emergencyContactPhone: pet.emergencyContactPhone,
+        emergencyContactRelation: pet.emergencyContactRelation,
         petIcons: pet.petIcons || [],
         iconNotes: pet.iconNotes || {},
         vaccinationStatus: pet.vaccinationStatus || {},
@@ -1030,6 +1036,66 @@ const PetDetails = () => {
                   helperText="Auto-filled when selecting from list"
                 />
               </FormControl>
+            </Box>
+
+            {/* Emergency Contact Section */}
+            <Box sx={{ mt: 3 }}>
+              <Typography
+                variant="subtitle1"
+                gutterBottom
+                sx={{ fontWeight: 600 }}
+              >
+                Emergency Contact
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Contact person other than the owner (e.g., spouse, pet sitter,
+                neighbor)
+              </Typography>
+              <Box
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr 1fr" },
+                  gap: 2,
+                }}
+              >
+                <TextField
+                  label="Contact Name"
+                  name="emergencyContactName"
+                  value={pet.emergencyContactName || ""}
+                  onChange={handleTextChange}
+                  placeholder="John Smith"
+                />
+                <TextField
+                  label="Contact Phone"
+                  name="emergencyContactPhone"
+                  value={pet.emergencyContactPhone || ""}
+                  onChange={handleTextChange}
+                  placeholder="(555) 123-4567"
+                />
+                <FormControl fullWidth>
+                  <InputLabel>Relationship</InputLabel>
+                  <Select
+                    name="emergencyContactRelation"
+                    value={pet.emergencyContactRelation || ""}
+                    label="Relationship"
+                    onChange={(e: SelectChangeEvent) =>
+                      setPet((prev) => ({
+                        ...prev,
+                        emergencyContactRelation: e.target.value || null,
+                      }))
+                    }
+                  >
+                    <MenuItem value="">None</MenuItem>
+                    <MenuItem value="Spouse">Spouse</MenuItem>
+                    <MenuItem value="Partner">Partner</MenuItem>
+                    <MenuItem value="Family Member">Family Member</MenuItem>
+                    <MenuItem value="Pet Sitter">Pet Sitter</MenuItem>
+                    <MenuItem value="Neighbor">Neighbor</MenuItem>
+                    <MenuItem value="Friend">Friend</MenuItem>
+                    <MenuItem value="Other">Other</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
             </Box>
 
             {/* Vaccination Status */}

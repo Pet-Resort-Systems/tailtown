@@ -31,6 +31,9 @@ export interface Pet {
   vetName: string | null;
   vetPhone: string | null;
   veterinarianId?: string | null;
+  emergencyContactName?: string | null;
+  emergencyContactPhone?: string | null;
+  emergencyContactRelation?: string | null;
   customerId: string;
   owner?: {
     id: string;
