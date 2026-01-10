@@ -120,6 +120,9 @@ const EmailMarketing = lazy(
 const MessageTemplates = lazy(
   () => import("./pages/admin/marketing/MessageTemplates")
 );
+const MarketingAnalytics = lazy(
+  () => import("./pages/admin/marketing/MarketingAnalytics")
+);
 
 // Lazy loaded pages - Check-In
 const CheckInWorkflow = lazy(() => import("./pages/check-in/CheckInWorkflow"));
@@ -643,6 +646,14 @@ const AppRoutes = () => {
             element={
               <AdminOnlyRoute>
                 <MessageTemplates />
+              </AdminOnlyRoute>
+            }
+          />
+          <Route
+            path="/admin/marketing/analytics"
+            element={
+              <AdminOnlyRoute>
+                <MarketingAnalytics />
               </AdminOnlyRoute>
             }
           />
