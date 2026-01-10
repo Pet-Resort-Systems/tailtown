@@ -1,7 +1,7 @@
 # Tailtown Pet Resort Management System - Features Overview
 
-**Date:** November 29, 2025  
-**Version:** 1.6.3  
+**Date:** December 22, 2025  
+**Version:** 1.6.4  
 **Status:** Production Ready
 
 ---
@@ -391,6 +391,26 @@ A comprehensive system for creating and delivering photo-rich report cards to pe
 ---
 
 ## 📊 Reporting & Analytics
+
+### Daily Check-In/Out Report (NEW - v1.6.4)
+
+A printable report for manual tracking of pet check-in and check-out times throughout the day.
+
+- **Features**
+
+  - Date selection with timezone-aware handling
+  - Automatic filtering for BOARDING and DAYCAMP reservations
+  - Groups dogs by play group size (Large, Medium, Small, Solo, Unknown)
+  - Each group prints on its own page
+  - Clean layout with empty cells for handwritten times
+  - Shows dog name, owner, room number, and In/Out columns
+  - Print-optimized (hides navigation, proper page breaks)
+
+- **Use Cases**
+  - Daily operations tracking
+  - Manual backup for digital check-in system
+  - Compliance documentation
+  - Staff reference throughout the day
 
 ### Dashboard Analytics
 
@@ -1014,8 +1034,8 @@ Mobile-optimized interface for staff at `/mobile` routes.
 ---
 
 **System Status:** ✅ Production Ready  
-**Last Updated:** November 29, 2025  
-**Version:** 1.6.3  
+**Last Updated:** December 22, 2025  
+**Version:** 1.6.4  
 **Branch:** main
 
 ---

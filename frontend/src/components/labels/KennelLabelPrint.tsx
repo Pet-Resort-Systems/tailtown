@@ -53,9 +53,7 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
   const [kennelNumber, setKennelNumber] = useState(
     initialData?.kennelNumber || ""
   );
-  const [groupSize, setGroupSize] = useState(
-    initialData?.groupSize || "Medium"
-  );
+  const [groupSize, setGroupSize] = useState(initialData?.groupSize || "");
   const [showPreview, setShowPreview] = useState(false);
   const [printing, setPrinting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,8 +69,8 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
   const handlePrint = async (
     method: "local" | "browser" | "server" | "usb" | "download"
   ) => {
-    if (!dogName || !kennelNumber) {
-      setError("Please fill in dog name and kennel number");
+    if (!dogName) {
+      setError("Please fill in dog name");
       return;
     }
 
@@ -204,10 +202,10 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
                 {dogName || "Dog Name"} ({customerLastName || "Last Name"})
                 {"   "}
                 <Box component="span" color="primary.main">
-                  #{kennelNumber || "---"}
+                  #{kennelNumber || "___"}
                 </Box>
                 {"   "}
-                {groupSize}
+                {groupSize || "___"}
               </Typography>
               <Typography
                 variant="caption"

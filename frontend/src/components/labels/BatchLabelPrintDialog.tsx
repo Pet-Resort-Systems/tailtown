@@ -64,9 +64,10 @@ const getLocalDateString = (dateString: string): string => {
 const toLabelData = (r: ReservationLike): KennelLabelData | null => {
   const dogName = r.pet?.name?.trim() || "";
   const customerLastName = r.customer?.lastName?.trim() || "";
-  const kennelNumber = r.resource?.name?.trim() || "";
+  const kennelNumber = r.resource?.name?.trim() || undefined;
 
-  if (!dogName || !kennelNumber) return null;
+  // Only require dog name - kennel and group can be blank
+  if (!dogName) return null;
 
   // Map playgroupCompatibility enum to display labels
   const playgroupMap: Record<string, string> = {
@@ -77,8 +78,8 @@ const toLabelData = (r: ReservationLike): KennelLabelData | null => {
   };
 
   const groupSize = r.pet?.playgroupCompatibility
-    ? playgroupMap[r.pet.playgroupCompatibility] || "Medium"
-    : "Medium";
+    ? playgroupMap[r.pet.playgroupCompatibility]
+    : undefined;
 
   return {
     dogName,

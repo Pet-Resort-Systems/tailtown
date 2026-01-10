@@ -18,7 +18,6 @@ import {
   MenuItem,
   Grid,
   Divider,
-  Chip,
   Link,
   Tooltip,
 } from "@mui/material";
@@ -446,6 +445,35 @@ const CheckInWorkflow: React.FC = () => {
       default:
         return "pending";
     }
+  };
+
+  // Extract feeding schedule summary from questionnaire responses
+  const getFeedingScheduleSummary = (): string | null => {
+    if (!template || Object.keys(responses).length === 0) return null;
+
+    const feedingSection = template.sections.find((s) =>
+      s.title.toLowerCase().includes("feeding")
+    );
+    if (!feedingSection) return null;
+
+    const parts: string[] = [];
+
+    for (const question of feedingSection.questions) {
+      const response = responses[question.id];
+      if (!response) continue;
+
+      const qText = question.questionText.toLowerCase();
+
+      if (qText.includes("when") && qText.includes("fed")) {
+        parts.push(response);
+      } else if (qText.includes("how much") || qText.includes("per meal")) {
+        parts.push(response);
+      } else if (qText.includes("meals per day")) {
+        parts.push(`${response} meals/day`);
+      }
+    }
+
+    return parts.length > 0 ? parts.join(", ") : null;
   };
 
   // Check if all required steps are complete for final submission
@@ -959,7 +987,12 @@ const CheckInWorkflow: React.FC = () => {
             {STEPS.map((label, index) => {
               const status = getStepStatus(index);
               return (
-                <Step key={label} completed={status === "complete"}>
+                <Step
+                  key={label}
+                  completed={status === "complete"}
+                  sx={{ cursor: "pointer" }}
+                  onClick={() => setActiveStep(index)}
+                >
                   <StepLabel
                     error={status === "error"}
                     optional={
@@ -981,6 +1014,13 @@ const CheckInWorkflow: React.FC = () => {
                             : status === "warning"
                             ? "warning.main"
                             : undefined,
+                        cursor: "pointer",
+                      },
+                    }}
+                    sx={{
+                      cursor: "pointer",
+                      "& .MuiStepLabel-label": {
+                        cursor: "pointer",
                       },
                     }}
                   >
@@ -1060,45 +1100,159 @@ const CheckInWorkflow: React.FC = () => {
                   Pet Profile (Auto-populated)
                 </Typography>
                 <Grid container spacing={2}>
-                  {pet.idealPlayGroup && (
-                    <Grid item xs={12} sm={4}>
-                      <Chip
-                        icon={<GroupsIcon />}
-                        label={`Play Group: ${pet.idealPlayGroup}`}
-                        color="primary"
-                        variant="outlined"
-                      />
+                  {/* Playgroup */}
+                  {(pet.playgroupCompatibility || pet.idealPlayGroup) && (
+                    <Grid item xs={12} sm={6} md={4}>
+                      <Box
+                        sx={{ p: 1.5, bgcolor: "primary.50", borderRadius: 1 }}
+                      >
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          display="block"
+                        >
+                          <GroupsIcon
+                            sx={{
+                              fontSize: 14,
+                              verticalAlign: "middle",
+                              mr: 0.5,
+                            }}
+                          />
+                          Play Group
+                        </Typography>
+                        <Typography variant="body2" fontWeight="medium">
+                          {pet.playgroupCompatibility?.replace(/_/g, " ") ||
+                            pet.idealPlayGroup}
+                        </Typography>
+                      </Box>
                     </Grid>
                   )}
-                  {pet.foodNotes && (
-                    <Grid item xs={12} sm={4}>
-                      <Tooltip title={pet.foodNotes}>
-                        <Chip
-                          icon={<RestaurantIcon />}
-                          label="Feeding Schedule"
-                          color="info"
-                          variant="outlined"
-                        />
-                      </Tooltip>
+
+                  {/* Feeding - prioritize questionnaire responses over stale pet data */}
+                  {(getFeedingScheduleSummary() || pet.foodNotes) && (
+                    <Grid item xs={12} sm={6} md={4}>
+                      <Box sx={{ p: 1.5, bgcolor: "info.50", borderRadius: 1 }}>
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          display="block"
+                        >
+                          <RestaurantIcon
+                            sx={{
+                              fontSize: 14,
+                              verticalAlign: "middle",
+                              mr: 0.5,
+                            }}
+                          />
+                          {getFeedingScheduleSummary()
+                            ? "Feeding Schedule"
+                            : "Feeding Notes (from profile)"}
+                        </Typography>
+                        <Typography variant="body2" fontWeight="medium">
+                          {getFeedingScheduleSummary() || pet.foodNotes}
+                        </Typography>
+                      </Box>
                     </Grid>
                   )}
-                  {(pet.specialNeeds || pet.behaviorNotes) && (
-                    <Grid item xs={12} sm={4}>
-                      <Tooltip title={pet.specialNeeds || pet.behaviorNotes}>
-                        <Chip
-                          icon={<WarningIcon />}
-                          label="Special Handling"
-                          color="warning"
-                          variant="outlined"
-                        />
-                      </Tooltip>
+
+                  {/* Allergies */}
+                  {pet.allergies && (
+                    <Grid item xs={12} sm={6} md={4}>
+                      <Box
+                        sx={{ p: 1.5, bgcolor: "error.50", borderRadius: 1 }}
+                      >
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          display="block"
+                        >
+                          <WarningIcon
+                            sx={{
+                              fontSize: 14,
+                              verticalAlign: "middle",
+                              mr: 0.5,
+                            }}
+                          />
+                          Allergies
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          fontWeight="medium"
+                          color="error.dark"
+                        >
+                          {pet.allergies}
+                        </Typography>
+                      </Box>
+                    </Grid>
+                  )}
+
+                  {/* Medications */}
+                  {pet.medicationNotes && (
+                    <Grid item xs={12} sm={6} md={4}>
+                      <Box
+                        sx={{ p: 1.5, bgcolor: "warning.50", borderRadius: 1 }}
+                      >
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          display="block"
+                        >
+                          💊 Medications
+                        </Typography>
+                        <Typography variant="body2" fontWeight="medium">
+                          {pet.medicationNotes}
+                        </Typography>
+                      </Box>
+                    </Grid>
+                  )}
+
+                  {/* Behavior Notes */}
+                  {pet.behaviorNotes && (
+                    <Grid item xs={12} sm={6} md={4}>
+                      <Box
+                        sx={{ p: 1.5, bgcolor: "warning.50", borderRadius: 1 }}
+                      >
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          display="block"
+                        >
+                          ⚠️ Behavior Notes
+                        </Typography>
+                        <Typography variant="body2" fontWeight="medium">
+                          {pet.behaviorNotes}
+                        </Typography>
+                      </Box>
+                    </Grid>
+                  )}
+
+                  {/* Special Needs */}
+                  {pet.specialNeeds && (
+                    <Grid item xs={12} sm={6} md={4}>
+                      <Box
+                        sx={{ p: 1.5, bgcolor: "warning.50", borderRadius: 1 }}
+                      >
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          display="block"
+                        >
+                          🏥 Special Needs
+                        </Typography>
+                        <Typography variant="body2" fontWeight="medium">
+                          {pet.specialNeeds}
+                        </Typography>
+                      </Box>
                     </Grid>
                   )}
                 </Grid>
-                {!pet.idealPlayGroup &&
+                {!pet.playgroupCompatibility &&
+                  !pet.idealPlayGroup &&
                   !pet.foodNotes &&
-                  !pet.specialNeeds &&
-                  !pet.behaviorNotes && (
+                  !pet.allergies &&
+                  !pet.medicationNotes &&
+                  !pet.behaviorNotes &&
+                  !pet.specialNeeds && (
                     <Typography variant="body2" color="text.secondary">
                       No special preferences on file for this pet.
                     </Typography>

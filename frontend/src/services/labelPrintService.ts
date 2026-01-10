@@ -15,8 +15,8 @@ import { customerApi } from "./api";
 export interface KennelLabelData {
   dogName: string;
   customerLastName: string;
-  kennelNumber: string;
-  groupSize: string; // e.g., "Small", "Medium", "Large"
+  kennelNumber?: string; // Optional - will show blank space if not assigned
+  groupSize?: string; // Optional - e.g., "Small", "Medium", "Large"
 }
 
 export interface BatchPrintProgress {
@@ -49,8 +49,12 @@ export const generateKennelLabelZPL = (data: KennelLabelData): string => {
       ? customerLastName.substring(0, 6) + ".."
       : customerLastName;
 
+  // Use placeholders for missing data
+  const displayKennel = kennelNumber || "___";
+  const displayGroup = groupSize || "___";
+
   // Build the main line: Name (LastName) #Kennel Group
-  const mainLine = `${truncatedDogName} (${truncatedLastName})   #${kennelNumber}   ${groupSize}`;
+  const mainLine = `${truncatedDogName} (${truncatedLastName})   #${displayKennel}   ${displayGroup}`;
 
   // ZPL for 1" continuous roll - prints twice with spacing for collar tags
   // ^MNN = Continuous media mode (no media tracking)
@@ -179,13 +183,17 @@ export const printLabelViaBrowser = async (
       ? customerLastName.substring(0, 6) + ".."
       : customerLastName;
 
+  // Use placeholders for missing data
+  const displayKennel = kennelNumber || "___";
+  const displayGroup = groupSize || "___";
+
   // Create HTML content for the label
   // Designed for 1" x 14" continuous label with text rotated 90°
   const htmlContent = `
     <!DOCTYPE html>
     <html>
     <head>
-      <title>Kennel Label - ${kennelNumber}</title>
+      <title>Kennel Label - ${displayKennel}</title>
       <style>
         @page {
           size: 14in 1in;
@@ -221,13 +229,13 @@ export const printLabelViaBrowser = async (
       <div class="label-container">
         <div class="label-text">
           ${truncatedDogName} (${truncatedLastName}) 
-          <span class="kennel-number">#${kennelNumber}</span> 
-          ${groupSize}
+          <span class="kennel-number">#${displayKennel}</span> 
+          ${displayGroup}
         </div>
         <div class="label-text">
           ${truncatedDogName} (${truncatedLastName}) 
-          <span class="kennel-number">#${kennelNumber}</span> 
-          ${groupSize}
+          <span class="kennel-number">#${displayKennel}</span> 
+          ${displayGroup}
         </div>
       </div>
       <script>

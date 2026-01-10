@@ -3,7 +3,7 @@
  * Displays operational analytics and reports
  */
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -25,28 +25,37 @@ import {
   TableRow,
   CircularProgress,
   Alert,
-  LinearProgress
-} from '@mui/material';
+  LinearProgress,
+} from "@mui/material";
 import {
   Business as BusinessIcon,
-  GetApp as ExportIcon
-} from '@mui/icons-material';
-import { 
-  formatCurrency, 
+  GetApp as ExportIcon,
+  Assignment as AssignmentIcon,
+} from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import {
+  formatCurrency,
   formatPercentage,
   getOperationalStaffReport,
   getOperationalResourcesReport,
   getOperationalBookingsReport,
   getOperationalCapacityReport,
-  exportReportCSV
-} from '../../services/reportService';
+  exportReportCSV,
+} from "../../services/reportService";
 
-type ReportType = 'staff' | 'resources' | 'bookings' | 'capacity';
+type ReportType = "staff" | "resources" | "bookings" | "capacity";
 
 const OperationalReports: React.FC = () => {
-  const [reportType, setReportType] = useState<ReportType>('resources');
-  const [startDate, setStartDate] = useState(new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString().split('T')[0]);
-  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+  const navigate = useNavigate();
+  const [reportType, setReportType] = useState<ReportType>("resources");
+  const [startDate, setStartDate] = useState(
+    new Date(new Date().setMonth(new Date().getMonth() - 1))
+      .toISOString()
+      .split("T")[0]
+  );
+  const [endDate, setEndDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reportData, setReportData] = useState<any>(null);
@@ -55,29 +64,29 @@ const OperationalReports: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       let response;
       switch (reportType) {
-        case 'staff':
+        case "staff":
           response = await getOperationalStaffReport(startDate, endDate);
           break;
-        case 'resources':
+        case "resources":
           response = await getOperationalResourcesReport(startDate, endDate);
           break;
-        case 'bookings':
+        case "bookings":
           response = await getOperationalBookingsReport(startDate, endDate);
           break;
-        case 'capacity':
+        case "capacity":
           response = await getOperationalCapacityReport(startDate, endDate);
           break;
       }
-      
+
       // Extract the actual data from the response
       const data = response?.data || response;
       setReportData(data);
     } catch (err: any) {
-      console.error('Error loading report:', err);
-      setError(err.response?.data?.message || 'Failed to load report');
+      console.error("Error loading report:", err);
+      setError(err.response?.data?.message || "Failed to load report");
     } finally {
       setLoading(false);
     }
@@ -93,7 +102,7 @@ const OperationalReports: React.FC = () => {
     if (!reportData?.summary) return null;
 
     switch (reportType) {
-      case 'staff':
+      case "staff":
         return (
           <>
             <Grid item xs={12} sm={4}>
@@ -135,7 +144,7 @@ const OperationalReports: React.FC = () => {
           </>
         );
 
-      case 'resources':
+      case "resources":
         return (
           <>
             <Grid item xs={12} sm={4}>
@@ -157,7 +166,9 @@ const OperationalReports: React.FC = () => {
                     Average Utilization
                   </Typography>
                   <Typography variant="h4">
-                    {formatPercentage(reportData.summary.averageUtilization || 0)}
+                    {formatPercentage(
+                      reportData.summary.averageUtilization || 0
+                    )}
                   </Typography>
                 </CardContent>
               </Card>
@@ -177,7 +188,7 @@ const OperationalReports: React.FC = () => {
           </>
         );
 
-      case 'bookings':
+      case "bookings":
         return (
           <>
             <Grid item xs={12} sm={4}>
@@ -199,7 +210,7 @@ const OperationalReports: React.FC = () => {
                     Peak Day
                   </Typography>
                   <Typography variant="h4">
-                    {reportData.summary.peakDay || '-'}
+                    {reportData.summary.peakDay || "-"}
                   </Typography>
                 </CardContent>
               </Card>
@@ -219,7 +230,7 @@ const OperationalReports: React.FC = () => {
           </>
         );
 
-      case 'capacity':
+      case "capacity":
         return (
           <>
             <Grid item xs={12} sm={4}>
@@ -268,10 +279,51 @@ const OperationalReports: React.FC = () => {
 
   return (
     <Box>
+      {/* Quick Access Card */}
+      <Card
+        sx={{ mb: 3, bgcolor: "primary.light", color: "primary.contrastText" }}
+      >
+        <CardContent>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <AssignmentIcon sx={{ fontSize: 40, mr: 2 }} />
+              <Box>
+                <Typography variant="h6">Daily Check-In/Out Report</Typography>
+                <Typography variant="body2">
+                  Print today's expected dogs with room numbers and manual time
+                  tracking
+                </Typography>
+              </Box>
+            </Box>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => navigate("/reports/daily-check-in-out")}
+              sx={{ whiteSpace: "nowrap" }}
+            >
+              Open Report
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
+
       {/* Header */}
-      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box
+        sx={{
+          mb: 3,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <Typography variant="h5">
-          <BusinessIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
+          <BusinessIcon sx={{ mr: 1, verticalAlign: "middle" }} />
           Operational Reports
         </Typography>
         <Button
@@ -349,7 +401,7 @@ const OperationalReports: React.FC = () => {
 
       {/* Loading */}
       {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
           <CircularProgress />
         </Box>
       )}
@@ -368,7 +420,7 @@ const OperationalReports: React.FC = () => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    {reportType === 'staff' && (
+                    {reportType === "staff" && (
                       <>
                         <TableCell>Staff Name</TableCell>
                         <TableCell>Role</TableCell>
@@ -377,7 +429,7 @@ const OperationalReports: React.FC = () => {
                         <TableCell align="right">Efficiency</TableCell>
                       </>
                     )}
-                    {reportType === 'resources' && (
+                    {reportType === "resources" && (
                       <>
                         <TableCell>Resource Name</TableCell>
                         <TableCell>Type</TableCell>
@@ -386,7 +438,7 @@ const OperationalReports: React.FC = () => {
                         <TableCell align="right">Revenue</TableCell>
                       </>
                     )}
-                    {reportType === 'bookings' && (
+                    {reportType === "bookings" && (
                       <>
                         <TableCell>Date/Period</TableCell>
                         <TableCell align="right">Bookings</TableCell>
@@ -394,7 +446,7 @@ const OperationalReports: React.FC = () => {
                         <TableCell align="right">Avg Duration</TableCell>
                       </>
                     )}
-                    {reportType === 'capacity' && (
+                    {reportType === "capacity" && (
                       <>
                         <TableCell>Date/Period</TableCell>
                         <TableCell align="right">Capacity Used</TableCell>
@@ -408,18 +460,32 @@ const OperationalReports: React.FC = () => {
                   {reportData.data && reportData.data.length > 0 ? (
                     reportData.data.map((row: any, index: number) => (
                       <TableRow key={index}>
-                        {reportType === 'staff' && (
+                        {reportType === "staff" && (
                           <>
-                            <TableCell>{row.staffName || '-'}</TableCell>
-                            <TableCell>{row.role || '-'}</TableCell>
-                            <TableCell align="right">{row.services || 0}</TableCell>
-                            <TableCell align="right">{formatCurrency(row.revenue || 0)}</TableCell>
+                            <TableCell>{row.staffName || "-"}</TableCell>
+                            <TableCell>{row.role || "-"}</TableCell>
                             <TableCell align="right">
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <LinearProgress 
-                                  variant="determinate" 
-                                  value={row.efficiency || 0} 
-                                  sx={{ flexGrow: 1, height: 8, borderRadius: 1 }}
+                              {row.services || 0}
+                            </TableCell>
+                            <TableCell align="right">
+                              {formatCurrency(row.revenue || 0)}
+                            </TableCell>
+                            <TableCell align="right">
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 1,
+                                }}
+                              >
+                                <LinearProgress
+                                  variant="determinate"
+                                  value={row.efficiency || 0}
+                                  sx={{
+                                    flexGrow: 1,
+                                    height: 8,
+                                    borderRadius: 1,
+                                  }}
                                 />
                                 <Typography variant="body2">
                                   {formatPercentage(row.efficiency || 0)}
@@ -428,45 +494,79 @@ const OperationalReports: React.FC = () => {
                             </TableCell>
                           </>
                         )}
-                        {reportType === 'resources' && (
+                        {reportType === "resources" && (
                           <>
-                            <TableCell>{row.resourceName || '-'}</TableCell>
-                            <TableCell>{row.resourceType || '-'}</TableCell>
+                            <TableCell>{row.resourceName || "-"}</TableCell>
+                            <TableCell>{row.resourceType || "-"}</TableCell>
                             <TableCell align="right">
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <LinearProgress 
-                                  variant="determinate" 
-                                  value={row.utilization || 0} 
-                                  sx={{ flexGrow: 1, height: 8, borderRadius: 1 }}
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 1,
+                                }}
+                              >
+                                <LinearProgress
+                                  variant="determinate"
+                                  value={row.utilization || 0}
+                                  sx={{
+                                    flexGrow: 1,
+                                    height: 8,
+                                    borderRadius: 1,
+                                  }}
                                 />
                                 <Typography variant="body2">
                                   {formatPercentage(row.utilization || 0)}
                                 </Typography>
                               </Box>
                             </TableCell>
-                            <TableCell align="right">{row.hoursBooked || 0}</TableCell>
-                            <TableCell align="right">{formatCurrency(row.revenue || 0)}</TableCell>
-                          </>
-                        )}
-                        {reportType === 'bookings' && (
-                          <>
-                            <TableCell>{row.period || '-'}</TableCell>
-                            <TableCell align="right">{row.bookings || 0}</TableCell>
-                            <TableCell align="right">{row.peakTime || '-'}</TableCell>
-                            <TableCell align="right">{row.avgDuration || '-'}</TableCell>
-                          </>
-                        )}
-                        {reportType === 'capacity' && (
-                          <>
-                            <TableCell>{row.period || '-'}</TableCell>
-                            <TableCell align="right">{row.capacityUsed || 0}</TableCell>
-                            <TableCell align="right">{row.available || 0}</TableCell>
                             <TableCell align="right">
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <LinearProgress 
-                                  variant="determinate" 
-                                  value={row.utilization || 0} 
-                                  sx={{ flexGrow: 1, height: 8, borderRadius: 1 }}
+                              {row.hoursBooked || 0}
+                            </TableCell>
+                            <TableCell align="right">
+                              {formatCurrency(row.revenue || 0)}
+                            </TableCell>
+                          </>
+                        )}
+                        {reportType === "bookings" && (
+                          <>
+                            <TableCell>{row.period || "-"}</TableCell>
+                            <TableCell align="right">
+                              {row.bookings || 0}
+                            </TableCell>
+                            <TableCell align="right">
+                              {row.peakTime || "-"}
+                            </TableCell>
+                            <TableCell align="right">
+                              {row.avgDuration || "-"}
+                            </TableCell>
+                          </>
+                        )}
+                        {reportType === "capacity" && (
+                          <>
+                            <TableCell>{row.period || "-"}</TableCell>
+                            <TableCell align="right">
+                              {row.capacityUsed || 0}
+                            </TableCell>
+                            <TableCell align="right">
+                              {row.available || 0}
+                            </TableCell>
+                            <TableCell align="right">
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 1,
+                                }}
+                              >
+                                <LinearProgress
+                                  variant="determinate"
+                                  value={row.utilization || 0}
+                                  sx={{
+                                    flexGrow: 1,
+                                    height: 8,
+                                    borderRadius: 1,
+                                  }}
                                 />
                                 <Typography variant="body2">
                                   {formatPercentage(row.utilization || 0)}
@@ -495,12 +595,13 @@ const OperationalReports: React.FC = () => {
 
       {/* Instructions */}
       {!loading && !reportData && !error && (
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
+        <Paper sx={{ p: 4, textAlign: "center" }}>
           <Typography variant="h6" gutterBottom>
             Operational Reports
           </Typography>
           <Typography color="textSecondary">
-            Select a report type and date range, then click "Generate Report" to view operational metrics.
+            Select a report type and date range, then click "Generate Report" to
+            view operational metrics.
           </Typography>
         </Paper>
       )}

@@ -33,7 +33,7 @@ const LabelPrinterTest: React.FC = () => {
   const [dogName, setDogName] = useState("Max");
   const [customerLastName, setCustomerLastName] = useState("Smith");
   const [kennelNumber, setKennelNumber] = useState("A-12");
-  const [groupSize, setGroupSize] = useState("Medium");
+  const [groupSize, setGroupSize] = useState("");
   const [printing, setPrinting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -216,7 +216,7 @@ const LabelPrinterTest: React.FC = () => {
               size="large"
               startIcon={<PrintIcon />}
               onClick={() => handlePrint("server")}
-              disabled={printing || !dogName || !kennelNumber}
+              disabled={printing || !dogName}
             >
               {printing ? "Printing..." : "Print"}
             </Button>
@@ -226,7 +226,7 @@ const LabelPrinterTest: React.FC = () => {
               size="large"
               startIcon={<DownloadIcon />}
               onClick={() => handlePrint("download")}
-              disabled={printing || !dogName || !kennelNumber}
+              disabled={printing || !dogName}
             >
               Download ZPL File
             </Button>
