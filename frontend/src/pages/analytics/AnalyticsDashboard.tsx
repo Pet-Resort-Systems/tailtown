@@ -749,10 +749,7 @@ const AnalyticsDashboard = () => {
                             ))}
                           </Pie>
                           <Tooltip
-                            formatter={(value: number) => [
-                              `${value} usages`,
-                              "Count",
-                            ]}
+                            formatter={(value) => [`${value} usages`, "Count"]}
                           />
                           <Legend
                             layout="horizontal"
