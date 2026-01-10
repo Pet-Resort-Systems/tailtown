@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -18,15 +18,20 @@ import { WifiOff as OfflineIcon } from "@mui/icons-material";
 import useOnlineStatus, {
   queuePendingAction,
 } from "../../hooks/useOnlineStatus";
+import customerPaymentMethodService, {
+  SavedPaymentMethod,
+} from "../../services/customerPaymentMethodService";
 
 interface FinalPaymentProps {
   invoice: any;
+  customerId?: string;
   onContinue: (paymentData: any) => void;
   onBack: () => void;
 }
 
 const FinalPayment: React.FC<FinalPaymentProps> = ({
   invoice,
+  customerId,
   onContinue,
   onBack,
 }) => {
@@ -38,6 +43,38 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [offlineQueued, setOfflineQueued] = useState(false);
+
+  // Saved cards state
+  const [savedCards, setSavedCards] = useState<SavedPaymentMethod[]>([]);
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const [loadingCards, setLoadingCards] = useState(false);
+
+  // Load saved cards when component mounts
+  useEffect(() => {
+    const loadSavedCards = async () => {
+      if (!customerId) return;
+
+      setLoadingCards(true);
+      try {
+        const cards = await customerPaymentMethodService.getPaymentMethods(
+          customerId
+        );
+        setSavedCards(cards);
+        // Auto-select default card if available
+        const defaultCard = cards.find((c) => c.isDefault);
+        if (defaultCard) {
+          setSelectedCardId(defaultCard.id);
+          setPaymentMethod("SAVED_CARD");
+        }
+      } catch (err) {
+        console.error("Failed to load saved cards:", err);
+      } finally {
+        setLoadingCards(false);
+      }
+    };
+
+    loadSavedCards();
+  }, [customerId]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -87,7 +124,36 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
         return;
       }
 
-      // Online payment processing
+      // Handle saved card payment
+      if (paymentMethod === "SAVED_CARD" && selectedCardId && customerId) {
+        const chargeResult =
+          await customerPaymentMethodService.chargePaymentMethod(
+            customerId,
+            selectedCardId,
+            {
+              amount: paymentAmount,
+              invoiceId: invoice?.id,
+              description: `Payment for Invoice ${
+                invoice?.invoiceNumber || ""
+              }`,
+            }
+          );
+
+        const paymentData = {
+          method: "SAVED_CARD",
+          amount: paymentAmount,
+          status: "PAID",
+          timestamp: new Date().toISOString(),
+          transactionId: chargeResult.transactionId,
+          cardBrand: chargeResult.cardBrand,
+          lastFour: chargeResult.lastFour,
+        };
+
+        onContinue(paymentData);
+        return;
+      }
+
+      // Standard payment processing (cash, new card, check)
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const paymentData = {
@@ -190,15 +256,91 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
                   <Select
                     value={paymentMethod}
                     label="Payment Method"
-                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    onChange={(e) => {
+                      setPaymentMethod(e.target.value);
+                      if (e.target.value !== "SAVED_CARD") {
+                        setSelectedCardId(null);
+                      }
+                    }}
                   >
+                    {savedCards.length > 0 && (
+                      <MenuItem value="SAVED_CARD">
+                        <CardIcon sx={{ mr: 1, fontSize: 20 }} />
+                        Card on File
+                      </MenuItem>
+                    )}
                     <MenuItem value="CASH">Cash</MenuItem>
-                    <MenuItem value="CREDIT_CARD">Credit Card</MenuItem>
-                    <MenuItem value="DEBIT_CARD">Debit Card</MenuItem>
+                    <MenuItem value="CREDIT_CARD">
+                      Credit Card (Terminal)
+                    </MenuItem>
+                    <MenuItem value="DEBIT_CARD">
+                      Debit Card (Terminal)
+                    </MenuItem>
                     <MenuItem value="CHECK">Check</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
+
+              {/* Saved Card Selection */}
+              {paymentMethod === "SAVED_CARD" && savedCards.length > 0 && (
+                <Grid item xs={12}>
+                  <Typography variant="subtitle2" gutterBottom>
+                    Select a saved card:
+                  </Typography>
+                  {loadingCards ? (
+                    <CircularProgress size={20} />
+                  ) : (
+                    <RadioGroup
+                      value={selectedCardId || ""}
+                      onChange={(e) => setSelectedCardId(e.target.value)}
+                    >
+                      {savedCards.map((card) => (
+                        <FormControlLabel
+                          key={card.id}
+                          value={card.id}
+                          control={<Radio />}
+                          label={
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                              }}
+                            >
+                              <CardIcon fontSize="small" />
+                              <span>
+                                {customerPaymentMethodService.formatCardBrand(
+                                  card.cardBrand
+                                )}{" "}
+                                ****{card.lastFour}
+                              </span>
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                              >
+                                Exp:{" "}
+                                {customerPaymentMethodService.formatExpiry(
+                                  card.expiryMonth,
+                                  card.expiryYear
+                                )}
+                              </Typography>
+                              {card.isDefault && (
+                                <Typography
+                                  variant="caption"
+                                  color="primary"
+                                  sx={{ ml: 1 }}
+                                >
+                                  (Default)
+                                </Typography>
+                              )}
+                            </Box>
+                          }
+                        />
+                      ))}
+                    </RadioGroup>
+                  )}
+                </Grid>
+              )}
 
               <Grid item xs={12} sm={6}>
                 <TextField
