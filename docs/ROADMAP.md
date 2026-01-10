@@ -81,10 +81,10 @@
 
 ### Nice-to-Have
 
-- [ ] Bulk check-in (multiple pets, same owner)
-- [ ] Customer self-service portal
-- [ ] Automated vaccination reminder emails
-- [ ] Revenue forecasting from future bookings
+- [x] Bulk check-in (multiple pets, same owner) ✅ `MultiPetCheckIn` component
+- [x] Customer self-service portal ✅ `CustomerDashboard` with reservations, pets, passes
+- [x] Automated vaccination reminder emails ✅ `vaccinationReminderService.ts`
+- [x] Revenue forecasting from future bookings ✅ `revenueForecastService.ts`
 
 ---
 
