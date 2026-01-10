@@ -29,6 +29,7 @@ jobs:
 
       - name: Build frontend
         env:
+          CI: false
           REACT_APP_TENANT_ID: dev
           REACT_APP_API_URL: https://dev.canicloud.com
           REACT_APP_RESERVATION_API_URL: https://dev.canicloud.com
