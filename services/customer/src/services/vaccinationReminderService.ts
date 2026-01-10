@@ -4,10 +4,11 @@
  */
 
 import { PrismaClient } from "@prisma/client";
-import { sendEmail } from "./emailService";
+import { EmailService } from "./email.service";
 import { logger } from "../utils/logger";
 
 const prisma = new PrismaClient();
+const emailService = new EmailService();
 
 interface ExpiringVaccine {
   petId: string;
@@ -124,7 +125,7 @@ export async function sendVaccinationReminders(tenantId: string): Promise<{
           )
           .join("\n");
 
-        await sendEmail({
+        await emailService.sendEmail({
           to: firstVaccine.customerEmail,
           subject: `Vaccination Reminder for Your Pet${
             vaccines.length > 1 ? "s" : ""
