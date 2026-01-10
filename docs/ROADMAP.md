@@ -72,12 +72,12 @@
 
 ### Important for Operations
 
-- [ ] Waitlist management (notify when spot opens)
-- [ ] Emergency contact per pet
-- [ ] Feeding instructions per pet (visible to staff)
-- [ ] Medication administration logging
-- [ ] Incident/injury reporting
-- [ ] Daily staff handoff notes
+- [x] Waitlist management (notify when spot opens) ✅ `WaitlistDashboard`, `WaitlistDialog`
+- [x] Emergency contact per pet ✅ `PetDetails.tsx` with contact form
+- [x] Feeding instructions per pet (visible to staff) ✅ `PetSummaryCard` displays schedule/method/type
+- [x] Medication administration logging ✅ `MedicationTracker` component
+- [x] Incident/injury reporting ✅ `Incident` model with types/severity/photos
+- [x] Daily staff handoff notes ✅ `ShiftNote` model with acknowledgment
 
 ### Nice-to-Have
 
