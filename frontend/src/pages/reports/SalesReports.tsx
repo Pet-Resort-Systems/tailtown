@@ -30,6 +30,7 @@ import {
 import {
   TrendingUp as TrendingUpIcon,
   GetApp as ExportIcon,
+  Print as PrintIcon,
 } from "@mui/icons-material";
 import {
   getSalesDailyReport,
@@ -136,14 +137,24 @@ const SalesReports: React.FC = () => {
           <TrendingUpIcon sx={{ mr: 1, verticalAlign: "middle" }} />
           Sales Reports
         </Typography>
-        <Button
-          variant="outlined"
-          startIcon={<ExportIcon />}
-          onClick={handleExport}
-          disabled={!reportData || loading}
-        >
-          Export CSV
-        </Button>
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <Button
+            variant="outlined"
+            startIcon={<PrintIcon />}
+            onClick={() => window.print()}
+            disabled={!reportData || loading}
+          >
+            Print
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<ExportIcon />}
+            onClick={handleExport}
+            disabled={!reportData || loading}
+          >
+            Export CSV
+          </Button>
+        </Box>
       </Box>
 
       {/* Filters */}

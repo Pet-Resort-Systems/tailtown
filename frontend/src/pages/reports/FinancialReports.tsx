@@ -3,7 +3,7 @@
  * Displays financial analytics and reports
  */
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -24,27 +24,34 @@ import {
   TableHead,
   TableRow,
   CircularProgress,
-  Alert
-} from '@mui/material';
+  Alert,
+} from "@mui/material";
 import {
   AttachMoney as MoneyIcon,
-  GetApp as ExportIcon
-} from '@mui/icons-material';
-import { 
+  GetApp as ExportIcon,
+  Print as PrintIcon,
+} from "@mui/icons-material";
+import {
   formatCurrency,
   getFinancialRevenueReport,
   getFinancialProfitLossReport,
   getFinancialOutstandingReport,
   getFinancialRefundsReport,
-  exportReportCSV
-} from '../../services/reportService';
+  exportReportCSV,
+} from "../../services/reportService";
 
-type ReportType = 'revenue' | 'profit-loss' | 'outstanding' | 'refunds';
+type ReportType = "revenue" | "profit-loss" | "outstanding" | "refunds";
 
 const FinancialReports: React.FC = () => {
-  const [reportType, setReportType] = useState<ReportType>('revenue');
-  const [startDate, setStartDate] = useState(new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString().split('T')[0]);
-  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+  const [reportType, setReportType] = useState<ReportType>("revenue");
+  const [startDate, setStartDate] = useState(
+    new Date(new Date().setMonth(new Date().getMonth() - 1))
+      .toISOString()
+      .split("T")[0]
+  );
+  const [endDate, setEndDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reportData, setReportData] = useState<any>(null);
@@ -53,29 +60,29 @@ const FinancialReports: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       let response;
       switch (reportType) {
-        case 'revenue':
+        case "revenue":
           response = await getFinancialRevenueReport(startDate, endDate);
           break;
-        case 'profit-loss':
+        case "profit-loss":
           response = await getFinancialProfitLossReport(startDate, endDate);
           break;
-        case 'outstanding':
+        case "outstanding":
           response = await getFinancialOutstandingReport();
           break;
-        case 'refunds':
+        case "refunds":
           response = await getFinancialRefundsReport(startDate, endDate);
           break;
       }
-      
+
       // Extract the actual data from the response
       const data = response?.data || response;
       setReportData(data);
     } catch (err: any) {
-      console.error('Error loading report:', err);
-      setError(err.response?.data?.message || 'Failed to load report');
+      console.error("Error loading report:", err);
+      setError(err.response?.data?.message || "Failed to load report");
     } finally {
       setLoading(false);
     }
@@ -90,19 +97,36 @@ const FinancialReports: React.FC = () => {
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box
+        sx={{
+          mb: 3,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <Typography variant="h5">
-          <MoneyIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
+          <MoneyIcon sx={{ mr: 1, verticalAlign: "middle" }} />
           Financial Reports
         </Typography>
-        <Button
-          variant="outlined"
-          startIcon={<ExportIcon />}
-          onClick={handleExport}
-          disabled={!reportData || loading}
-        >
-          Export CSV
-        </Button>
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <Button
+            variant="outlined"
+            startIcon={<PrintIcon />}
+            onClick={() => window.print()}
+            disabled={!reportData || loading}
+          >
+            Print
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<ExportIcon />}
+            onClick={handleExport}
+            disabled={!reportData || loading}
+          >
+            Export CSV
+          </Button>
+        </Box>
       </Box>
 
       {/* Filters */}
@@ -124,7 +148,7 @@ const FinancialReports: React.FC = () => {
             </FormControl>
           </Grid>
 
-          {reportType !== 'outstanding' && (
+          {reportType !== "outstanding" && (
             <>
               <Grid item xs={12} sm={3}>
                 <TextField
@@ -173,7 +197,7 @@ const FinancialReports: React.FC = () => {
 
       {/* Loading */}
       {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
           <CircularProgress />
         </Box>
       )}
@@ -236,9 +260,11 @@ const FinancialReports: React.FC = () => {
                   {reportData.data && reportData.data.length > 0 ? (
                     reportData.data.map((row: any, index: number) => (
                       <TableRow key={index}>
-                        <TableCell>{row.date || '-'}</TableCell>
-                        <TableCell>{row.description || '-'}</TableCell>
-                        <TableCell align="right">{formatCurrency(row.amount || 0)}</TableCell>
+                        <TableCell>{row.date || "-"}</TableCell>
+                        <TableCell>{row.description || "-"}</TableCell>
+                        <TableCell align="right">
+                          {formatCurrency(row.amount || 0)}
+                        </TableCell>
                       </TableRow>
                     ))
                   ) : (
@@ -259,12 +285,13 @@ const FinancialReports: React.FC = () => {
 
       {/* Instructions */}
       {!loading && !reportData && !error && (
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
+        <Paper sx={{ p: 4, textAlign: "center" }}>
           <Typography variant="h6" gutterBottom>
             Financial Reports
           </Typography>
           <Typography color="textSecondary">
-            Select a report type and date range, then click "Generate Report" to view financial data.
+            Select a report type and date range, then click "Generate Report" to
+            view financial data.
           </Typography>
         </Paper>
       )}
