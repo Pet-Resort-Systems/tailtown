@@ -5,20 +5,50 @@
 
 ---
 
+## ✅ Recently Completed (January 2026)
+
+### Card-on-File / Saved Payment Methods
+
+- ✅ `CustomerPaymentMethod` database model for tokenized cards
+- ✅ Backend CRUD API endpoints (`/api/customers/:id/payment-methods`)
+- ✅ Charge saved cards via `/api/payments/charge-token`
+- ✅ Frontend service and `SavedPaymentMethods` React component
+- ✅ Updated deploy workflow to use `prisma db push` for schema sync
+
+### Marketing System Enhancements
+
+- ✅ Marketing Analytics page with real data (customer reach, template counts)
+- ✅ Email Marketing page connected to real templates and customer data
+- ✅ 8 Email templates (Welcome, Confirmation, Reminder, Thank You, Newsletter, Holiday, Vaccination, Promo)
+- ✅ 8 SMS templates (Welcome, Confirmed, Reminder, Pickup Ready, Thank You, Vaccination, Holiday, Offer)
+- ✅ Template seeding endpoint: `POST /api/message-templates/seed`
+
+### SendGrid/Twilio Integration ✅
+
+- ✅ Email service with SendGrid (global env config)
+- ✅ SMS service with Twilio (global env config)
+- ✅ Staff welcome email template with password setup link
+- ✅ Setup wizard UI for API keys (informational - uses global env vars)
+
+### Settings & Dashboard
+
+- ✅ Products count displays real data in Settings page
+
+---
+
 ## 🔴 This Week
 
-### SendGrid/Twilio Integration
+### CardConnect Sign Up Flow
 
-- Configure API keys in setup wizard
-- Email templates (reservations, invoices)
-- SMS templates (reminders, alerts)
-- Welcome emails for new staff with password reset
+- Payment processor merchant account setup
+- Self-service onboarding for new merchants
+- PCI compliance documentation
 
-### CardConnect Sign Up
+### Checkout Integration
 
-- Payment processor integration
-- Merchant account setup flow
-- PCI compliance handling
+- Integrate saved cards into checkout flow
+- "Save card for future use" checkbox
+- Default card selection
 
 ---
 
@@ -27,9 +57,15 @@
 ### Test Coverage (Target: 70%+)
 
 - Currently at ~30% with 1,100+ tests
-- Need integration tests that exercise actual controller code
-- Payment processing integration tests
-- Reservation flow integration tests
+- Integration tests for controllers
+- Payment processing tests
+- Reservation flow tests
+
+### Loyalty & Coupons Testing
+
+- Verify coupon creation and redemption
+- Test loyalty points accumulation
+- Validate discount calculations
 
 ---
 
@@ -56,12 +92,6 @@ Zero-downtime deploys:
 - Database indexes
 - Redis caching for availability
 - Target: <200ms response
-
-### Notification System Audit
-
-- Email/SMS delivery testing
-- Notification preferences
-- Delivery tracking
 
 ---
 
@@ -141,4 +171,4 @@ Zero-downtime deploys:
 
 ---
 
-**Last Updated**: December 9, 2025
+**Last Updated**: January 10, 2026
