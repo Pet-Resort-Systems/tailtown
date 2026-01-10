@@ -36,38 +36,38 @@
 
 ---
 
-## � PRE-BETA CHECKLIST (Top Priority)
+## 🚨 PRE-BETA CHECKLIST (Top Priority)
 
 > Must complete before live testing at dog resort
 
 ### Data Safety & Recovery
 
-- [ ] Database backup strategy (automated daily backups)
+- [x] Database backup strategy (automated daily backups) ✅ `scripts/backup-now.sh`
 - [ ] Point-in-time recovery capability
-- [ ] Data export (customers, pets, reservations to CSV/JSON)
+- [x] Data export (customers, pets, reservations to CSV/JSON) ✅ `reportService.ts`
 
 ### Monitoring & Reliability
 
-- [ ] Error logging/alerting (Sentry or similar)
+- [x] Error logging/alerting (Sentry or similar) ✅ `utils/sentry.ts`
 - [ ] Uptime monitoring
-- [ ] What happens if internet drops mid-checkout? (offline handling)
+- [x] Offline checkout handling ✅ `useOnlineStatus` hook, cash payments work offline
 
 ### Payment Operations
 
-- [ ] Refund transaction flow
-- [ ] Void/cancel payment flow
-- [ ] End-of-day reconciliation report
-- [ ] Integrate saved cards into checkout flow
+- [x] Refund transaction flow ✅ `POST /api/payments/refund`
+- [x] Void/cancel payment flow ✅ `POST /api/payments/void`
+- [x] End-of-day reconciliation report ✅ `/reports/reconciliation`
+- [x] Integrate saved cards into checkout flow ✅ `FinalPayment.tsx`
 
 ### Booking Integrity
 
-- [ ] Overbooking prevention (verify kennel conflicts)
-- [ ] Vaccination expiration alerts (block booking if expired)
-- [ ] Double-booking detection
+- [x] Overbooking prevention (verify kennel conflicts) ✅ `AvailabilityChecker`
+- [x] Vaccination expiration alerts ✅ `vaccineUtils.ts`
+- [x] Double-booking detection ✅ Existing tests
 
 ### Printing & Receipts
 
-- [ ] Receipt printing after payment
+- [x] Receipt printing after payment ✅ `labelPrintService.ts`
 - [ ] Daily reports printing
 
 ### Important for Operations
@@ -88,7 +88,7 @@
 
 ---
 
-## �🔴 This Week
+## �� This Week
 
 ### CardConnect Sign Up Flow
 
