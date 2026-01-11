@@ -43,13 +43,13 @@
 ### Data Safety & Recovery
 
 - [x] Database backup strategy (automated daily backups) ✅ `scripts/backup-now.sh`
-- [ ] Point-in-time recovery capability
+- [x] Point-in-time recovery capability ✅ `docs/operations/POINT-IN-TIME-RECOVERY.md`
 - [x] Data export (customers, pets, reservations to CSV/JSON) ✅ `reportService.ts`
 
 ### Monitoring & Reliability
 
 - [x] Error logging/alerting (Sentry or similar) ✅ `utils/sentry.ts`
-- [ ] Uptime monitoring
+- [x] Uptime monitoring ✅ `SystemHealthDashboard` in Super Admin console
 - [x] Offline checkout handling ✅ `useOnlineStatus` hook, cash payments work offline
 
 ### Payment Operations
@@ -68,7 +68,7 @@
 ### Printing & Receipts
 
 - [x] Receipt printing after payment ✅ `labelPrintService.ts`
-- [ ] Daily reports printing
+- [x] Daily reports printing ✅ Print buttons on `FinancialReports` and `SalesReports`
 
 ### Important for Operations
 
