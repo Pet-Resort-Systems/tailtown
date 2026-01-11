@@ -8,6 +8,10 @@ import {
 import { prisma } from "../../config/prisma";
 import { safeExecutePrismaQuery } from "../../utils/schemaUtils";
 import { logger } from "../../utils/logger";
+import { getCache, setCache, getCacheKey } from "../../utils/redis";
+
+// Cache TTL for availability checks (60 seconds - short to ensure accuracy)
+const AVAILABILITY_CACHE_TTL = 60;
 
 /**
  * Check if a resource is available (not occupied) for a specific date or date range
@@ -77,6 +81,22 @@ export const checkResourceAvailability = async (
           400
         )
       );
+    }
+
+    // Generate cache key based on query parameters
+    const cacheKey = getCacheKey(
+      tenantId as string,
+      "availability",
+      `${resourceId || resourceType}:${
+        checkStartDate.toISOString().split("T")[0]
+      }:${checkEndDate.toISOString().split("T")[0]}`
+    );
+
+    // Check cache first
+    const cachedResult = await getCache<any>(cacheKey);
+    if (cachedResult) {
+      logger.debug("Availability cache hit", { cacheKey });
+      return res.status(200).json(cachedResult);
     }
 
     // First, find all resources that match the criteria (either by ID or type)
@@ -190,8 +210,8 @@ export const checkResourceAvailability = async (
       occupyingReservations: reservationsByResource[resource.id] || [],
     }));
 
-    // Return the result including availability status for all resources
-    res.status(200).json({
+    // Build response
+    const response = {
       status: "success",
       data: {
         checkDate: date ? date : null,
@@ -199,7 +219,17 @@ export const checkResourceAvailability = async (
         checkEndDate: endDate ? endDate : checkEndDate.toISOString(),
         resources: resourcesData,
       },
+    };
+
+    // Cache the result
+    await setCache(cacheKey, response, AVAILABILITY_CACHE_TTL);
+    logger.debug("Availability cached", {
+      cacheKey,
+      ttl: AVAILABILITY_CACHE_TTL,
     });
+
+    // Return the result including availability status for all resources
+    res.status(200).json(response);
   } catch (error: any) {
     logger.error("Error checking resource availability", {
       resourceId: req.query.resourceId,
