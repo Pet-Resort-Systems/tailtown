@@ -7,6 +7,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-01-11
+
+### Added
+
+- **Pre-Beta Checklist Complete** - All items ready for live testing
+
+  - See: `docs/changelog/2026-01-11-pre-beta-complete.md`
+
+- **Card-on-File / Saved Payment Methods**
+
+  - `CustomerPaymentMethod` database model for tokenized cards
+  - Backend CRUD API (`/api/customers/:id/payment-methods`)
+  - Charge saved cards via `/api/payments/charge-token`
+  - Frontend `SavedPaymentMethods` React component
+
+- **Marketing System**
+
+  - Marketing Analytics page with real data
+  - 8 Email templates, 8 SMS templates
+  - Template seeding endpoint
+
+- **SendGrid/Twilio Integration**
+
+  - Email service with SendGrid
+  - SMS service with Twilio
+  - Staff welcome email with password setup
+
+- **Data Safety & Recovery**
+
+  - Database backup strategy (`scripts/backup-now.sh`)
+  - Point-in-time recovery docs (`docs/operations/POINT-IN-TIME-RECOVERY.md`)
+  - Data export to CSV/JSON
+
+- **Operations Features**
+
+  - Incident/injury reporting (`Incident` model)
+  - Daily staff handoff notes (`ShiftNote` model)
+  - Vaccination reminder service
+  - Revenue forecasting service
+  - Daily reports printing (Print buttons on reports)
+
+- **Performance Improvements**
+  - Composite database indexes for availability queries
+  - Redis caching for availability checks (60s TTL)
+
+### Fixed
+
+- CI/CD deployment issues (AdapterDateFns imports, Prisma 6.x pinning)
+
 ## [1.6.20] - 2025-12-09
 
 ### Added

@@ -5,102 +5,19 @@
 
 ---
 
-## ✅ Recently Completed (January 2026)
+## ✅ Pre-Beta Complete (January 2026)
 
-### Card-on-File / Saved Payment Methods
-
-- ✅ `CustomerPaymentMethod` database model for tokenized cards
-- ✅ Backend CRUD API endpoints (`/api/customers/:id/payment-methods`)
-- ✅ Charge saved cards via `/api/payments/charge-token`
-- ✅ Frontend service and `SavedPaymentMethods` React component
-- ✅ Updated deploy workflow to use `prisma db push` for schema sync
-
-### Marketing System Enhancements
-
-- ✅ Marketing Analytics page with real data (customer reach, template counts)
-- ✅ Email Marketing page connected to real templates and customer data
-- ✅ 8 Email templates (Welcome, Confirmation, Reminder, Thank You, Newsletter, Holiday, Vaccination, Promo)
-- ✅ 8 SMS templates (Welcome, Confirmed, Reminder, Pickup Ready, Thank You, Vaccination, Holiday, Offer)
-- ✅ Template seeding endpoint: `POST /api/message-templates/seed`
-
-### SendGrid/Twilio Integration ✅
-
-- ✅ Email service with SendGrid (global env config)
-- ✅ SMS service with Twilio (global env config)
-- ✅ Staff welcome email template with password setup link
-- ✅ Setup wizard UI for API keys (informational - uses global env vars)
-
-### Settings & Dashboard
-
-- ✅ Products count displays real data in Settings page
+All pre-beta checklist items completed. See [changelog/2026-01-11-pre-beta-complete.md](changelog/2026-01-11-pre-beta-complete.md) for details.
 
 ---
 
-## 🚨 PRE-BETA CHECKLIST (Top Priority)
-
-> Must complete before live testing at dog resort
-
-### Data Safety & Recovery
-
-- [x] Database backup strategy (automated daily backups) ✅ `scripts/backup-now.sh`
-- [x] Point-in-time recovery capability ✅ `docs/operations/POINT-IN-TIME-RECOVERY.md`
-- [x] Data export (customers, pets, reservations to CSV/JSON) ✅ `reportService.ts`
-
-### Monitoring & Reliability
-
-- [x] Error logging/alerting (Sentry or similar) ✅ `utils/sentry.ts`
-- [x] Uptime monitoring ✅ `SystemHealthDashboard` in Super Admin console
-- [x] Offline checkout handling ✅ `useOnlineStatus` hook, cash payments work offline
-
-### Payment Operations
-
-- [x] Refund transaction flow ✅ `POST /api/payments/refund`
-- [x] Void/cancel payment flow ✅ `POST /api/payments/void`
-- [x] End-of-day reconciliation report ✅ `/reports/reconciliation`
-- [x] Integrate saved cards into checkout flow ✅ `FinalPayment.tsx`
-
-### Booking Integrity
-
-- [x] Overbooking prevention (verify kennel conflicts) ✅ `AvailabilityChecker`
-- [x] Vaccination expiration alerts ✅ `vaccineUtils.ts`
-- [x] Double-booking detection ✅ Existing tests
-
-### Printing & Receipts
-
-- [x] Receipt printing after payment ✅ `labelPrintService.ts`
-- [x] Daily reports printing ✅ Print buttons on `FinancialReports` and `SalesReports`
-
-### Important for Operations
-
-- [x] Waitlist management (notify when spot opens) ✅ `WaitlistDashboard`, `WaitlistDialog`
-- [x] Emergency contact per pet ✅ `PetDetails.tsx` with contact form
-- [x] Feeding instructions per pet (visible to staff) ✅ `PetSummaryCard` displays schedule/method/type
-- [x] Medication administration logging ✅ `MedicationTracker` component
-- [x] Incident/injury reporting ✅ `Incident` model with types/severity/photos
-- [x] Daily staff handoff notes ✅ `ShiftNote` model with acknowledgment
-
-### Nice-to-Have
-
-- [x] Bulk check-in (multiple pets, same owner) ✅ `MultiPetCheckIn` component
-- [x] Customer self-service portal ✅ `CustomerDashboard` with reservations, pets, passes
-- [x] Automated vaccination reminder emails ✅ `vaccinationReminderService.ts`
-- [x] Revenue forecasting from future bookings ✅ `revenueForecastService.ts`
-
----
-
-## �� This Week
+## 📅 This Week
 
 ### CardConnect Sign Up Flow
 
-- Payment processor merchant account setup
-- Self-service onboarding for new merchants
-- PCI compliance documentation
-
-### Checkout Integration
-
-- Integrate saved cards into checkout flow
-- "Save card for future use" checkbox
-- Default card selection
+- [ ] Payment processor merchant account setup
+- [ ] Self-service onboarding for new merchants
+- [ ] PCI compliance documentation
 
 ---
 
@@ -109,15 +26,15 @@
 ### Test Coverage (Target: 70%+)
 
 - Currently at ~30% with 1,100+ tests
-- Integration tests for controllers
-- Payment processing tests
-- Reservation flow tests
+- [ ] Integration tests for controllers
+- [ ] Payment processing tests
+- [ ] Reservation flow tests
 
 ### Loyalty & Coupons Testing
 
-- Verify coupon creation and redemption
-- Test loyalty points accumulation
-- Validate discount calculations
+- [ ] Verify coupon creation and redemption
+- [ ] Test loyalty points accumulation
+- [ ] Validate discount calculations
 
 ---
 
@@ -127,23 +44,17 @@
 
 Background job processing:
 
-- Non-blocking email/SMS
-- Report generation
-- Retry failed jobs
+- [ ] Non-blocking email/SMS
+- [ ] Report generation
+- [ ] Retry failed jobs
 
 ### Blue-Green Deployment
 
 Zero-downtime deploys:
 
-- Two environments
-- Traffic switching
-- Auto rollback
-
-### Reservation Performance
-
-- Database indexes
-- Redis caching for availability
-- Target: <200ms response
+- [ ] Two environments
+- [ ] Traffic switching
+- [ ] Auto rollback
 
 ---
 
@@ -151,76 +62,52 @@ Zero-downtime deploys:
 
 ### AI Belongings Scanner (OpenCV Microservice)
 
-**Phase 1 - COMPLETED (Dec 2025):**
-
-- ✅ Quick-add buttons for common items (Collar, Leash, Toy, Bedding, Food, Bowl, Medication, Treats)
-- ✅ Color quick-select chips (10 common colors)
-- ✅ "Use Previous" button to load belongings from pet's last visit
-- ✅ Bulk photo upload for all belongings
-- ✅ Photo documentation per item
-
-**Phase 2 - Future:**
-
-- Docker-based OpenCV microservice for image classification
-- Webcam capture integration at check-in
-- Auto-classify pet belongings: leashes, collars, meds, toys, bedding, harnesses
-- Generate item descriptions automatically
-- Pre-populate belongings list from photo analysis
-
-### Staff Onboarding Wizard ✅ COMPLETED (Dec 2025)
-
-- ✅ First-time walkthrough for new staff users
-- ✅ Interactive tutorial covering:
-  - How to navigate the Dashboard
-  - How to create a reservation
-  - How to check in a pet
-  - How to check out and process payment
-- ✅ Skip option for experienced users
-- ✅ Progress tracking per user (localStorage)
-- ✅ Auto-triggers on first login
+- [ ] Docker-based OpenCV microservice for image classification
+- [ ] Webcam capture integration at check-in
+- [ ] Auto-classify pet belongings
+- [ ] Pre-populate belongings list from photo analysis
 
 ### Tenant Onboarding
 
-- Self-service signup
-- Automated provisioning
-- Onboarding wizard
+- [ ] Self-service signup
+- [ ] Automated provisioning
+- [ ] Onboarding wizard
 
 ### Billing & Subscriptions
 
-- /Card Connect
-- Subscription plans
-- Usage-based billing
+- [ ] CardConnect integration
+- [ ] Subscription plans
+- [ ] Usage-based billing
 
 ### Multi-Timezone Support
 
-- Tenant timezone config
-- DST handling
-- Local time display
+- [ ] Tenant timezone config
+- [ ] DST handling
+- [ ] Local time display
 
 ### Advanced Reporting
 
-- Custom report builder
-- Scheduled reports
-- PDF/Excel export
+- [ ] Custom report builder
+- [ ] Scheduled reports
+- [ ] PDF/Excel export
 
 ### Native Mobile Apps
 
-- iOS/Android (React Native)
-- Push notifications
-- Offline mode
+- [ ] iOS/Android (React Native)
+- [ ] Push notifications
+- [ ] Offline mode
 
 ### Third-Party Integrations
 
-- QuickBooks
-
-- Zapier webhooks
+- [ ] QuickBooks
+- [ ] Zapier webhooks
 
 ### Enhanced Security
 
-- Two-factor auth
-- SSO
-- SOC 2 / HIPAA compliance
+- [ ] Two-factor auth
+- [ ] SSO
+- [ ] SOC 2 / HIPAA compliance
 
 ---
 
-**Last Updated**: January 10, 2026
+**Last Updated**: January 11, 2026
