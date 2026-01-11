@@ -61,6 +61,8 @@ model Reservation {
   @@index([tenantId, startDate, endDate], map: "reservations_tenant_date_range_idx")
   @@index([tenantId, status, startDate], map: "reservations_tenant_status_date_idx")
   @@index([tenantId, customerId, status], map: "reservations_tenant_customer_status_idx")
+  @@index([tenantId, resourceId, status, startDate, endDate], map: "reservations_tenant_resource_availability_idx")
+  @@index([tenantId, petId, status, startDate], map: "reservations_tenant_pet_status_idx")
   @@unique([tenantId, id], map: "reservations_tenant_id_unique")
   @@map("reservations")
 }
