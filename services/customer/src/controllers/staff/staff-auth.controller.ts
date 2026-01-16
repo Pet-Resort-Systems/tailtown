@@ -162,6 +162,7 @@ export const loginStaff = async (
       position: (staff as any).position,
       department: (staff as any).department,
       hireDate: (staff as any).hireDate,
+      profilePhoto: (staff as any).profilePhoto,
     };
 
     // Audit log successful login
