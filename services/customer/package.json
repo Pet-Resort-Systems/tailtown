@@ -4,6 +4,9 @@
   "description": "Customer and pet management service for Tailtown Pet Resort",
   "private": true,
   "main": "dist/index.js",
+  "engines": {
+    "node": ">=24.14.0"
+  },
   "scripts": {
     "prebuild": "prisma generate",
     "build": "tsc",

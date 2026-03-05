@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Reservation management service for Tailtown",
   "main": "dist/index.js",
+  "engines": {
+    "node": ">=24.14.0"
+  },
   "scripts": {
     "prebuild": "prisma generate",
     "build": "tsc",

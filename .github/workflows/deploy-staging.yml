@@ -12,13 +12,13 @@ on:
   workflow_dispatch:
     inputs:
       skip_tests:
-        description: "Skip tests (use with caution)"
+        description: 'Skip tests (use with caution)'
         required: false
         default: false
         type: boolean
 
 env:
-  NODE_VERSION: "20.19.0"
+  NODE_VERSION: '24.14.0'
 
 jobs:
   test:
@@ -59,7 +59,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
+          cache: 'npm'
 
       - name: Install and test Customer Service
         working-directory: ./services/customer
@@ -99,7 +99,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
+          cache: 'npm'
 
       - name: Build Customer Service
         working-directory: ./services/customer
@@ -118,7 +118,7 @@ jobs:
         env:
           REACT_APP_API_URL: ${{ secrets.STAGING_API_URL }}
           REACT_APP_ENVIRONMENT: staging
-          REACT_APP_SENTRY_ENABLED: "true"
+          REACT_APP_SENTRY_ENABLED: 'true'
           REACT_APP_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
         run: |
           npm ci
