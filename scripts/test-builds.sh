@@ -20,8 +20,8 @@ FAILED=0
 
 # Test Customer Service Build
 echo -e "${BLUE}Testing Customer Service Build...${NC}"
-cd services/customer
-if npm run build > /tmp/customer-build.log 2>&1; then
+cd apps/customer-service
+if pnpm run build > /tmp/customer-build.log 2>&1; then
     echo -e "${GREEN}✅ Customer Service: Build successful${NC}"
 else
     echo -e "${RED}❌ Customer Service: Build failed${NC}"
@@ -35,8 +35,8 @@ echo ""
 
 # Test Reservation Service Build
 echo -e "${BLUE}Testing Reservation Service Build...${NC}"
-cd services/reservation-service
-if npm run build > /tmp/reservation-build.log 2>&1; then
+cd apps/reservation-service
+if pnpm run build > /tmp/reservation-build.log 2>&1; then
     echo -e "${GREEN}✅ Reservation Service: Build successful${NC}"
 else
     echo -e "${RED}❌ Reservation Service: Build failed${NC}"
@@ -49,15 +49,15 @@ cd ../..
 echo ""
 
 # Test Frontend Build (optional - takes longer)
-if [ "$1" == "--with-frontend" ]; then
+if [ "$1" == "--with-apps/frontend" ]; then
     echo -e "${BLUE}Testing Frontend Build...${NC}"
-    cd frontend
-    if npm run build > /tmp/frontend-build.log 2>&1; then
+    cd apps/frontend
+    if pnpm run build > /tmp/apps/frontend-build.log 2>&1; then
         echo -e "${GREEN}✅ Frontend: Build successful${NC}"
     else
         echo -e "${RED}❌ Frontend: Build failed${NC}"
         echo "Error log:"
-        tail -20 /tmp/frontend-build.log
+        tail -20 /tmp/apps/frontend-build.log
         FAILED=1
     fi
     cd ..

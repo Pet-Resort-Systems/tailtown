@@ -18,16 +18,16 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "20.19.0"
-          cache: "npm"
+          cache: "pnpm"
 
       - name: Install dependencies
         run: |
-          npm ci
-          cd frontend && npm ci
-          cd ../services/customer && npm ci
-          cd ../reservation-service && npm ci
+          pnpm install --frozen-lockfile
+          cd apps/frontend && pnpm install --frozen-lockfile
+          cd ../apps/customer-service && pnpm install --frozen-lockfile
+          cd ../reservation-service && pnpm install --frozen-lockfile
 
-      - name: Build frontend
+      - name: Build apps/frontend
         env:
           CI: false
           REACT_APP_TENANT_ID: dev
@@ -35,32 +35,32 @@ jobs:
           REACT_APP_RESERVATION_API_URL: https://dev.canicloud.com
           DISABLE_ESLINT_PLUGIN: true
         run: |
-          cd frontend
-          npm run build
+          cd apps/frontend
+          pnpm run build
 
       - name: Build backend services
         run: |
-          cd services/customer
-          npm run build
+          cd apps/customer-service
+          pnpm run build
           cd ../reservation-service
-          npm run build
+          pnpm run build
 
       - name: Create deployment package
         run: |
-          mkdir -p deploy/frontend
+          mkdir -p deploy/apps/frontend
           mkdir -p deploy/customer
           mkdir -p deploy/reservation
-          cp -r frontend/build/* deploy/frontend/
-          cp -r services/customer/dist deploy/customer/
-          cp -r services/customer/src deploy/customer/
-          cp -r services/customer/prisma deploy/customer/
-          cp services/customer/package.json deploy/customer/
-          cp services/customer/tsconfig.json deploy/customer/
-          cp -r services/reservation-service/dist deploy/reservation/
-          cp -r services/reservation-service/src deploy/reservation/
-          cp -r services/reservation-service/prisma deploy/reservation/
-          cp services/reservation-service/package.json deploy/reservation/
-          cp services/reservation-service/tsconfig.json deploy/reservation/
+          cp -r apps/frontend/build/* deploy/apps/frontend/
+          cp -r apps/customer-service/dist deploy/customer/
+          cp -r apps/customer-service/src deploy/customer/
+          cp -r apps/customer-service/prisma deploy/customer/
+          cp apps/customer-service/package.json deploy/customer/
+          cp apps/customer-service/tsconfig.json deploy/customer/
+          cp -r apps/reservation-service/dist deploy/reservation/
+          cp -r apps/reservation-service/src deploy/reservation/
+          cp -r apps/reservation-service/prisma deploy/reservation/
+          cp apps/reservation-service/package.json deploy/reservation/
+          cp apps/reservation-service/tsconfig.json deploy/reservation/
           tar -czf deploy.tar.gz deploy/
 
       - name: Deploy to Digital Ocean
@@ -83,15 +83,15 @@ jobs:
             cd /opt/tailtown
             
             # Backup current deployment
-            tar -czf backup-$(date +%Y%m%d_%H%M%S).tar.gz frontend/build services/customer/dist services/reservation-service/dist 2>/dev/null || true
+            tar -czf backup-$(date +%Y%m%d_%H%M%S).tar.gz apps/frontend/build apps/customer-service/dist apps/reservation-service/dist 2>/dev/null || true
             
             # Extract new deployment
             tar -xzf /tmp/deploy.tar.gz -C /tmp/
             
             # Update files
-            cp -r /tmp/deploy/frontend/* frontend/build/
-            cp -r /tmp/deploy/customer/* services/customer/
-            cp -r /tmp/deploy/reservation/* services/reservation-service/
+            cp -r /tmp/deploy/apps/frontend/* apps/frontend/build/
+            cp -r /tmp/deploy/customer/* apps/customer-service/
+            cp -r /tmp/deploy/reservation/* apps/reservation-service/
             
             # DIAGNOSTICS - Check what's actually wrong
             echo "================================"
@@ -111,13 +111,13 @@ jobs:
             
             echo ""
             echo "🔌 Testing Database Connection:"
-            cd services/customer
+            cd apps/customer-service
             node -e "const { PrismaClient } = require('@prisma/client'); const prisma = new PrismaClient(); prisma.\$connect().then(() => { console.log('✅ Customer DB: Connected'); return prisma.\$disconnect(); }).catch(e => { console.error('❌ Customer DB Error:', e.message); });" || echo "Failed to test DB"
             cd ../..
             
             echo ""
             echo "📦 Prisma Client Version:"
-            cd services/customer
+            cd apps/customer-service
             node -e "try { const pkg = require('@prisma/client/package.json'); console.log('Version:', pkg.version); } catch(e) { console.log('❌ Not found'); }" || echo "Failed to check version"
             cd ../..
             
@@ -131,27 +131,27 @@ jobs:
             pm2 delete all || true
             
             echo "Running database schema sync..."
-            cd services/customer
-            npx prisma db push --accept-data-loss || echo "Customer schema sync failed"
-            npx prisma generate || echo "Customer Prisma generation failed"
+            cd apps/customer-service
+            pnpm exec prisma db push --accept-data-loss || echo "Customer schema sync failed"
+            pnpm exec prisma generate || echo "Customer Prisma generation failed"
             echo "Rebuilding customer service..."
-            npm run build || echo "Customer build failed"
+            pnpm run build || echo "Customer build failed"
             cd ../reservation-service
-            npx prisma migrate deploy || echo "Reservation migrations failed (may already be applied)"
+            pnpm exec prisma migrate deploy || echo "Reservation migrations failed (may already be applied)"
             # NUCLEAR OPTION: Delete and reinstall node_modules
             echo "Cleaning reservation service node_modules..."
             rm -rf node_modules
-            echo "Installing dependencies with npm install (more forgiving than npm ci)..."
-            npm install --legacy-peer-deps || echo "npm install failed"
-            npx prisma generate || echo "Reservation Prisma generation failed"
+            echo "Installing dependencies with pnpm install (more forgiving than pnpm install --frozen-lockfile)..."
+            pnpm install --legacy-peer-deps || echo "pnpm install failed"
+            pnpm exec prisma generate || echo "Reservation Prisma generation failed"
             echo "Rebuilding reservation service..."
-            npm run build || echo "Reservation build failed"
+            pnpm run build || echo "Reservation build failed"
             cd ../..
             
             echo "Starting services fresh..."
             pm2 start ecosystem.config.js --only customer-service
             pm2 start ecosystem.config.js --only reservation-service
-            pm2 start ecosystem.config.js --only frontend
+            pm2 start ecosystem.config.js --only apps/frontend
             pm2 save
             echo "Waiting for services to stabilize..."
             sleep 5
@@ -171,7 +171,7 @@ jobs:
           curl -f http://$SERVER_HOST:4004/health || exit 1
           echo "Checking reservation service (port 4003)..."
           curl -f http://$SERVER_HOST:4003/health || echo "Warning: Reservation service not responding"
-          echo "Checking frontend (port 3000)..."
+          echo "Checking apps/frontend (port 3000)..."
           curl -f http://$SERVER_HOST:3000 || exit 1
           echo "✅ Critical services are healthy"
 

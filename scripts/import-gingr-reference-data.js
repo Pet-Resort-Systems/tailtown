@@ -418,7 +418,7 @@ async function main() {
     console.log('   2. Decide which data to import into Tailtown');
     console.log('   3. Update database schema if needed');
     console.log('   4. Create migration scripts for selected data');
-    console.log('   5. Update frontend forms with new options\n');
+    console.log('   5. Update apps/frontend forms with new options\n');
     
   } catch (error) {
     console.error('\n❌ Error:', error.message);

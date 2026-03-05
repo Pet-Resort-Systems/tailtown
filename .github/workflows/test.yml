@@ -38,61 +38,61 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "npm"
+          cache: "pnpm"
 
       - name: Install dependencies
         run: |
-          npm ci
-          cd frontend && npm ci
-          cd ../services/customer && npm ci
-          cd ../reservation-service && npm ci
+          pnpm install --frozen-lockfile
+          cd apps/frontend && pnpm install --frozen-lockfile
+          cd ../apps/customer-service && pnpm install --frozen-lockfile
+          cd ../reservation-service && pnpm install --frozen-lockfile
 
       - name: Run linting
         run: |
-          cd services/customer && npm run lint || true
-          cd ../reservation-service && npm run lint || true
+          cd apps/customer-service && pnpm run lint || true
+          cd ../reservation-service && pnpm run lint || true
 
       - name: Setup database
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5433/customer
         run: |
-          cd services/customer
-          npx prisma migrate deploy
-          npx prisma generate
+          cd apps/customer-service
+          pnpm exec prisma migrate deploy
+          pnpm exec prisma generate
           cd ../reservation-service
-          npx prisma migrate deploy
-          npx prisma generate
+          pnpm exec prisma migrate deploy
+          pnpm exec prisma generate
 
-      - name: Run frontend tests
+      - name: Run apps/frontend tests
         run: |
-          cd frontend
-          npm test -- --watchAll=false --passWithNoTests
+          cd apps/frontend
+          pnpm test -- --watchAll=false --passWithNoTests
 
       - name: Run customer service tests
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5433/customer
           NODE_ENV: test
         run: |
-          cd services/customer
-          npm test
+          cd apps/customer-service
+          pnpm test
 
       - name: Run reservation service tests
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5433/customer
           NODE_ENV: test
         run: |
-          cd services/reservation-service
-          npm test
+          cd apps/reservation-service
+          pnpm test
 
       - name: Generate coverage report
         if: matrix.node-version == '20.19.0'
-        run: npm run test:coverage || true
+        run: pnpm run test:coverage || true
 
       - name: Upload coverage to Codecov
         if: matrix.node-version == '20.19.0'
         uses: codecov/codecov-action@v3
         with:
-          files: ./frontend/coverage/lcov.info,./services/customer/coverage/lcov.info,./services/reservation-service/coverage/lcov.info
+          files: ./apps/frontend/coverage/lcov.info,./apps/customer-service/coverage/lcov.info,./apps/reservation-service/coverage/lcov.info
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: false

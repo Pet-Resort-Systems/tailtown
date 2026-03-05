@@ -46,7 +46,7 @@ async function updateTenantTimezone() {
     });
 
     console.log(`✅ Successfully updated timezone to: ${updated.timezone}`);
-    console.log('\n💡 The frontend will use this timezone on next page load!');
+    console.log('\n💡 The apps/frontend will use this timezone on next page load!');
 
   } catch (error) {
     console.error('❌ Error:', error.message);

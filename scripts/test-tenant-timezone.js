@@ -59,7 +59,7 @@ async function testTenantTimezone() {
 
     console.log('✅ Tenant timezone test complete!');
     console.log('\n💡 To update timezone, run:');
-    console.log(`   npx prisma studio`);
+    console.log(`   pnpm exec prisma studio`);
     console.log('   Then edit the Tenant record\n');
 
   } catch (error) {

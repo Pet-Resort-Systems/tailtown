@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script to clean up excessive console.logs in frontend code
+# Script to clean up excessive console.logs in apps/frontend code
 # This script will:
 # 1. Remove debug console.logs
 # 2. Keep error console.errors (will be converted to logger.error later)
@@ -10,11 +10,11 @@ echo "🧹 Starting console.log cleanup..."
 
 # Files to clean (top offenders)
 FILES=(
-  "frontend/src/pages/Dashboard.tsx"
-  "frontend/src/components/reservations/ReservationForm.tsx"
-  "frontend/src/components/calendar/Calendar.tsx"
-  "frontend/src/pages/orders/OrderEntry.tsx"
-  "frontend/src/pages/kennels/PrintKennelCards.tsx"
+  "apps/frontend/src/pages/Dashboard.tsx"
+  "apps/frontend/src/components/reservations/ReservationForm.tsx"
+  "apps/frontend/src/components/calendar/Calendar.tsx"
+  "apps/frontend/src/pages/orders/OrderEntry.tsx"
+  "apps/frontend/src/pages/kennels/PrintKennelCards.tsx"
 )
 
 # Backup directory

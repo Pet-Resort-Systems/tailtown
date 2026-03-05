@@ -35,22 +35,22 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "20.19.0"
-          cache: "npm"
+          cache: "pnpm"
 
       - name: Install dependencies - Customer Service
         run: |
-          cd services/customer
-          npm ci
+          cd apps/customer-service
+          pnpm install --frozen-lockfile
 
       - name: Check Prisma Client Generation
         run: |
-          cd services/customer
-          npx prisma generate
+          cd apps/customer-service
+          pnpm exec prisma generate
           echo "✅ Prisma client generated successfully"
 
       - name: Verify Prisma Client Files
         run: |
-          cd services/customer
+          cd apps/customer-service
           if [ ! -d "node_modules/@prisma/client" ]; then
             echo "❌ Prisma client not found"
             exit 1
@@ -61,8 +61,8 @@ jobs:
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/tailtown_test
         run: |
-          cd services/customer
-          npx prisma migrate deploy
+          cd apps/customer-service
+          pnpm exec prisma migrate deploy
           echo "✅ Migrations applied successfully"
 
       - name: Run Prisma Schema Validation Tests
@@ -71,8 +71,8 @@ jobs:
           JWT_SECRET: test-secret-key-for-testing-only
           NODE_ENV: test
         run: |
-          cd services/customer
-          npm test -- prisma-schema-validation.test.ts
+          cd apps/customer-service
+          pnpm test -- prisma-schema-validation.test.ts
           echo "✅ Schema validation tests passed"
 
       - name: Run Service Health Tests
@@ -81,8 +81,8 @@ jobs:
           JWT_SECRET: test-secret-key-for-testing-only
           NODE_ENV: test
         run: |
-          cd services/customer
-          npm test -- service-health.test.ts
+          cd apps/customer-service
+          pnpm test -- service-health.test.ts
           echo "✅ Service health tests passed"
 
   reservation-service-validation:
@@ -112,31 +112,31 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "20.19.0"
-          cache: "npm"
+          cache: "pnpm"
 
       - name: Install dependencies - Reservation Service
         run: |
-          cd services/reservation-service
-          npm ci --legacy-peer-deps
+          cd apps/reservation-service
+          pnpm install --frozen-lockfile --legacy-peer-deps
 
       - name: Check Prisma Client Generation
         run: |
-          cd services/reservation-service
-          npx prisma generate
+          cd apps/reservation-service
+          pnpm exec prisma generate
           echo "✅ Reservation service Prisma client generated"
 
       - name: Run Database Migrations
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/tailtown_test
         run: |
-          cd services/reservation-service
-          npx prisma migrate deploy
+          cd apps/reservation-service
+          pnpm exec prisma migrate deploy
           echo "✅ Reservation service migrations applied"
 
       - name: Build TypeScript
         run: |
-          cd services/reservation-service
-          npm run build
+          cd apps/reservation-service
+          pnpm run build
           echo "✅ Reservation service built successfully"
 
   typescript-compilation:
@@ -151,38 +151,38 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "20.19.0"
-          cache: "npm"
+          cache: "pnpm"
 
       - name: Install Customer Service Dependencies
         run: |
-          cd services/customer
-          npm ci
+          cd apps/customer-service
+          pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client - Customer
         run: |
-          cd services/customer
-          npx prisma generate
+          cd apps/customer-service
+          pnpm exec prisma generate
 
       - name: Build Customer Service
         run: |
-          cd services/customer
-          npm run build
+          cd apps/customer-service
+          pnpm run build
           echo "✅ Customer service TypeScript compiled"
 
       - name: Install Reservation Service Dependencies
         run: |
-          cd services/reservation-service
-          npm ci --legacy-peer-deps
+          cd apps/reservation-service
+          pnpm install --frozen-lockfile --legacy-peer-deps
 
       - name: Generate Prisma Client - Reservation
         run: |
-          cd services/reservation-service
-          npx prisma generate
+          cd apps/reservation-service
+          pnpm exec prisma generate
 
       - name: Build Reservation Service
         run: |
-          cd services/reservation-service
-          npm run build
+          cd apps/reservation-service
+          pnpm run build
           echo "✅ Reservation service TypeScript compiled"
 
   deployment-readiness:
@@ -210,13 +210,13 @@ jobs:
           fi
 
           # Check .env.example files
-          if [ ! -f "services/customer/.env.example" ]; then
-            echo "❌ services/customer/.env.example not found"
+          if [ ! -f "apps/customer-service/.env.example" ]; then
+            echo "❌ apps/customer-service/.env.example not found"
             exit 1
           fi
 
-          if [ ! -f "services/reservation-service/.env.example" ]; then
-            echo "❌ services/reservation-service/.env.example not found"
+          if [ ! -f "apps/reservation-service/.env.example" ]; then
+            echo "❌ apps/reservation-service/.env.example not found"
             exit 1
           fi
 
@@ -224,12 +224,12 @@ jobs:
 
       - name: Validate Prisma Schema Syntax
         run: |
-          cd services/customer
-          npx prisma validate
+          cd apps/customer-service
+          pnpm exec prisma validate
           echo "✅ Customer service schema valid"
 
           cd ../reservation-service
-          npx prisma validate
+          pnpm exec prisma validate
           echo "✅ Reservation service schema valid"
 
       - name: Summary

@@ -5,8 +5,8 @@
 
 echo "🔍 Checking logger synchronization..."
 
-FILE1="services/customer/src/utils/logger.ts"
-FILE2="services/reservation-service/src/utils/logger.ts"
+FILE1="apps/customer-service/src/utils/logger.ts"
+FILE2="apps/reservation-service/src/utils/logger.ts"
 
 if [ ! -f "$FILE1" ]; then
   echo "❌ Error: $FILE1 not found"

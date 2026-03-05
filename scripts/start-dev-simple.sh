@@ -23,24 +23,24 @@ echo ""
 
 # Start customer service
 echo "Starting Customer Service (port 4004)..."
-cd "$PROJECT_ROOT/services/customer"
-PORT=4004 npm run dev > "$PROJECT_ROOT/.logs/customer-service.log" 2>&1 &
+cd "$PROJECT_ROOT/apps/customer-service"
+PORT=4004 pnpm run dev > "$PROJECT_ROOT/.logs/customer-service.log" 2>&1 &
 CUSTOMER_PID=$!
 echo "  PID: $CUSTOMER_PID"
 sleep 2
 
 # Start reservation service
 echo "Starting Reservation Service (port 4003)..."
-cd "$PROJECT_ROOT/services/reservation-service"
-PORT=4003 npm run dev > "$PROJECT_ROOT/.logs/reservation-service.log" 2>&1 &
+cd "$PROJECT_ROOT/apps/reservation-service"
+PORT=4003 pnpm run dev > "$PROJECT_ROOT/.logs/reservation-service.log" 2>&1 &
 RESERVATION_PID=$!
 echo "  PID: $RESERVATION_PID"
 sleep 2
 
-# Start frontend
+# Start apps/frontend
 echo "Starting Frontend (port 3000)..."
-cd "$PROJECT_ROOT/frontend"
-npm start > "$PROJECT_ROOT/.logs/frontend.log" 2>&1 &
+cd "$PROJECT_ROOT/apps/frontend"
+pnpm start > "$PROJECT_ROOT/.logs/apps/frontend.log" 2>&1 &
 FRONTEND_PID=$!
 echo "  PID: $FRONTEND_PID"
 
@@ -55,6 +55,6 @@ echo ""
 echo "Logs:"
 echo "  tail -f $PROJECT_ROOT/.logs/customer-service.log"
 echo "  tail -f $PROJECT_ROOT/.logs/reservation-service.log"
-echo "  tail -f $PROJECT_ROOT/.logs/frontend.log"
+echo "  tail -f $PROJECT_ROOT/.logs/apps/frontend.log"
 echo ""
-echo "To stop: npm run dev:stop"
+echo "To stop: pnpm run dev:stop"

@@ -69,7 +69,7 @@ A modern, full-featured SaaS management system for pet resorts, providing compre
 
 **Prerequisites:**
 
-- Node.js 18+ and npm
+- Node.js 18+ and pnpm
 - PostgreSQL 14+
 - Git
 
@@ -81,21 +81,21 @@ git clone https://github.com/moosecreates/tailtown.git
 cd tailtown
 
 # Install dependencies
-npm install
-cd frontend && npm install && cd ..
-cd services/customer && npm install && cd ../..
-cd services/reservation-service && npm install && cd ../..
+pnpm install
+cd apps/frontend && pnpm install && cd ..
+cd apps/customer-service && pnpm install && cd ../..
+cd apps/reservation-service && pnpm install && cd ../..
 
 # Set up environment variables
-cp services/customer/.env.example services/customer/.env
-cp services/reservation-service/.env.example services/reservation-service/.env
+cp apps/customer-service/.env.example apps/customer-service/.env
+cp apps/reservation-service/.env.example apps/reservation-service/.env
 # Edit .env files with your database credentials
 
 # Start all services
-npm run start:services
+pnpm run start:services
 
 # In a new terminal, start the frontend
-cd frontend && npm start
+cd apps/frontend && pnpm start
 ```
 
 **Local Development URLs:**
@@ -204,17 +204,17 @@ For detailed architecture, see [CURRENT-SYSTEM-ARCHITECTURE.md](docs/CURRENT-SYS
 
 ```bash
 # All tests
-npm test
+pnpm test
 
 # Specific service
-cd services/customer && npm test
-cd services/reservation && npm test
+cd apps/customer-service && pnpm test
+cd apps/reservation-service && pnpm test
 
 # Frontend tests
-cd frontend && npm test
+cd apps/frontend && pnpm test
 
 # Integration tests
-npm run test:integration
+pnpm run test:integration
 ```
 
 ### Test Coverage
@@ -236,14 +236,14 @@ See [PRODUCTION-DEPLOYMENT-NOV-2025.md](PRODUCTION-DEPLOYMENT-NOV-2025.md) for t
 
 ```bash
 # Build frontend
-cd frontend && NODE_ENV=production npm run build
+cd apps/frontend && NODE_ENV=production pnpm run build
 
 # Deploy to server
 scp -i ~/ttkey build.tar.gz root@129.212.178.244:/opt/tailtown/frontend/
 ssh -i ~/ttkey root@129.212.178.244 "cd /opt/tailtown/frontend && tar -xzf build.tar.gz && pm2 restart frontend"
 
 # Deploy backend
-ssh -i ~/ttkey root@129.212.178.244 "cd /opt/tailtown && git pull && cd services/customer && npm run build && pm2 restart customer-service"
+ssh -i ~/ttkey root@129.212.178.244 "cd /opt/tailtown && git pull && cd apps/customer-service && pnpm run build && pm2 restart customer-service"
 ```
 
 For detailed deployment instructions, see [docs/deployment/DEPLOYMENT-GUIDE.md](docs/deployment/DEPLOYMENT-GUIDE.md).
@@ -256,19 +256,19 @@ For detailed deployment instructions, see [docs/deployment/DEPLOYMENT-GUIDE.md](
 
 ```bash
 # Start all services
-npm run start:services
+pnpm run start:services
 
 # Stop all services
-npm run stop:services
+pnpm run stop:services
 
 # Check service health
-npm run health:check
+pnpm run health:check
 
 # Kill zombie processes
-npm run kill:zombies
+pnpm run kill:zombies
 
 # Run database migrations
-cd services/customer && npx prisma migrate dev
+cd apps/customer-service && npx prisma migrate dev
 ```
 
 See [docs/development/](docs/development/) for development guides.
@@ -277,13 +277,13 @@ See [docs/development/](docs/development/) for development guides.
 
 ```bash
 # Lint
-npm run lint
+pnpm run lint
 
 # Format
-npm run format
+pnpm run format
 
 # Type check
-npm run type-check
+pnpm run type-check
 ```
 
 ---
@@ -329,7 +329,7 @@ For tenant strategy details, see [docs/features/TENANT-STRATEGY.md](docs/feature
 
 1. Create a feature branch from `main`
 2. Make your changes with tests
-3. Run `npm test` to verify
+3. Run `pnpm test` to verify
 4. Commit with descriptive messages
 5. Push and create a pull request
 

@@ -12,7 +12,7 @@ This directory contains automated workflows for continuous integration and deplo
 - Sets up PostgreSQL database
 - Installs dependencies
 - Runs linting
-- Executes all tests (frontend, customer service, reservation service)
+- Executes all tests (apps/frontend, customer service, reservation service)
 - Generates coverage reports
 - Uploads coverage to Codecov
 
@@ -22,7 +22,7 @@ This directory contains automated workflows for continuous integration and deplo
 **Triggers**: Push to `main` branch, Manual dispatch
 
 **What it does**:
-- Builds frontend with production environment variables
+- Builds apps/frontend with production environment variables
 - Builds backend services
 - Creates deployment package
 - Deploys to Digital Ocean server (129.212.178.244)
@@ -174,20 +174,20 @@ Some workflows generate artifacts (coverage reports, build files):
 ### Before Pushing
 ```bash
 # Run tests locally
-npm run test:quick
+pnpm run test:quick
 
 # Check environment
-npm run env:status
+pnpm run env:status
 
 # Verify builds
-cd frontend && npm run build
-cd ../services/customer && npm run build
-cd ../services/reservation-service && npm run build
+cd apps/frontend && pnpm run build
+cd ../apps/customer-service && pnpm run build
+cd ../apps/reservation-service && pnpm run build
 ```
 
 ### Creating Pull Requests
 1. Ensure all local tests pass
-2. Run `npm run test:changed` to test your changes
+2. Run `pnpm run test:changed` to test your changes
 3. Create PR with descriptive title and description
 4. Wait for CI checks to pass
 5. Address any failures before requesting review
@@ -250,7 +250,7 @@ cd ../services/reservation-service && npm run build
 
 ### Updating Dependencies
 1. Update package.json files
-2. Run `npm ci` locally to verify
+2. Run `ppnpm install --frozen-lockfile` locally to verify
 3. Push changes
 4. CI will use new dependencies automatically
 

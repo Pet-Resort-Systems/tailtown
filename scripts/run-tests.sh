@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Automated Test Runner for Tailtown
-# Runs all tests across frontend and backend services
+# Runs all tests across apps/frontend and backend services
 
 set -e  # Exit on error
 
@@ -10,9 +10,9 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
 # Ensure npm is available
-if ! command -v npm &> /dev/null; then
-    echo "❌ npm not found in PATH"
-    echo "Please ensure Node.js and npm are installed"
+if ! command -v pnpm &> /dev/null; then
+    echo "❌ pnpm not found in PATH"
+    echo "Please ensure Node.js and pnpm are installed"
     exit 1
 fi
 
@@ -66,19 +66,19 @@ echo ""
 
 # Install dependencies if needed
 if [ ! -d "node_modules" ]; then
-    npm install
+    pnpm install
 fi
 
-if [ ! -d "frontend/node_modules" ]; then
-    cd frontend && npm install && cd ..
+if [ ! -d "apps/frontend/node_modules" ]; then
+    cd apps/frontend && pnpm install && cd ..
 fi
 
-if [ ! -d "services/customer/node_modules" ]; then
-    cd services/customer && npm install && cd ../..
+if [ ! -d "apps/customer-service/node_modules" ]; then
+    cd apps/customer-service && pnpm install && cd ../..
 fi
 
-if [ ! -d "services/reservation-service/node_modules" ]; then
-    cd services/reservation-service && npm install && cd ../..
+if [ ! -d "apps/reservation-service/node_modules" ]; then
+    cd apps/reservation-service && pnpm install && cd ../..
 fi
 
 echo ""
@@ -95,9 +95,9 @@ else
     export NODE_ENV="test"
     
     # Run migrations for test database
-    cd services/customer
-    npx prisma migrate deploy --preview-feature 2>/dev/null || echo "Migrations already applied"
-    npx prisma generate 2>/dev/null || echo "Prisma client already generated"
+    cd apps/customer-service
+    pnpm exec prisma migrate deploy --preview-feature 2>/dev/null || echo "Migrations already applied"
+    pnpm exec prisma generate 2>/dev/null || echo "Prisma client already generated"
     cd ../..
 fi
 
@@ -106,15 +106,15 @@ echo "🧪 Running Tests..."
 echo "================================"
 echo ""
 
-# Run frontend tests
-run_test "Frontend Tests" "npm test -- --watchAll=false --passWithNoTests" "frontend"
+# Run apps/frontend tests
+run_test "Frontend Tests" "pnpm test -- --watchAll=false --passWithNoTests" "apps/frontend"
 
 # Run customer service tests (skip if no database)
 if [ "$SKIP_DB_TESTS" = true ]; then
     echo -e "${YELLOW}Skipping Customer Service Tests (requires database)${NC}"
     echo ""
 else
-    run_test "Customer Service Tests" "npm test" "services/customer"
+    run_test "Customer Service Tests" "pnpm test" "apps/customer-service"
 fi
 
 # Run reservation service tests (skip if no database)
@@ -122,7 +122,7 @@ if [ "$SKIP_DB_TESTS" = true ]; then
     echo -e "${YELLOW}Skipping Reservation Service Tests (requires database)${NC}"
     echo ""
 else
-    run_test "Reservation Service Tests" "npm test" "services/reservation-service"
+    run_test "Reservation Service Tests" "pnpm test" "apps/reservation-service"
 fi
 
 # Run messaging API tests specifically (skip if no database)
@@ -130,19 +130,19 @@ if [ "$SKIP_DB_TESTS" = true ]; then
     echo -e "${YELLOW}Skipping Messaging API Tests (requires database)${NC}"
     echo ""
 else
-    run_test "Messaging API Tests" "npm test -- messaging.api.test.ts" "services/customer"
+    run_test "Messaging API Tests" "pnpm test -- messaging.api.test.ts" "apps/customer-service"
 fi
 
 # Run linting
 echo -e "${YELLOW}Running linting checks...${NC}"
 echo ""
 
-cd services/customer
-npm run lint 2>/dev/null || echo "Linting completed with warnings"
+cd apps/customer-service
+pnpm run lint 2>/dev/null || echo "Linting completed with warnings"
 cd ../..
 
-cd services/reservation-service
-npm run lint 2>/dev/null || echo "Linting completed with warnings"
+cd apps/reservation-service
+pnpm run lint 2>/dev/null || echo "Linting completed with warnings"
 cd ../..
 
 echo ""

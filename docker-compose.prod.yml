@@ -26,7 +26,7 @@ services:
   # Customer Service
   customer-service:
     build:
-      context: ./services/customer
+      context: ./apps/customer-service
       dockerfile: Dockerfile.prod
     container_name: tailtown-customer-prod
     restart: always
@@ -56,7 +56,7 @@ services:
   # Reservation Service
   reservation-service:
     build:
-      context: ./services/reservation-service
+      context: ./apps/reservation-service
       dockerfile: Dockerfile.prod
     container_name: tailtown-reservation-prod
     restart: always
@@ -86,7 +86,7 @@ services:
   # Frontend (Nginx)
   frontend:
     build:
-      context: ./frontend
+      context: ./apps/frontend
       dockerfile: Dockerfile.prod
     container_name: tailtown-frontend-prod
     restart: always

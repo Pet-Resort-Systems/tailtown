@@ -23,38 +23,38 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "npm"
+          cache: "pnpm"
 
       - name: Install Customer Service Dependencies
         run: |
-          cd services/customer
-          npm ci
+          cd apps/customer-service
+          pnpm install --frozen-lockfile
 
       - name: Build Customer Service
         run: |
-          cd services/customer
-          npm run build
+          cd apps/customer-service
+          pnpm run build
 
       - name: Install Reservation Service Dependencies
         run: |
-          cd services/reservation-service
-          npm ci
+          cd apps/reservation-service
+          pnpm install --frozen-lockfile
 
       - name: Build Reservation Service
         run: |
-          cd services/reservation-service
-          npm run build
+          cd apps/reservation-service
+          pnpm run build
 
       - name: Check for TypeScript Errors
         run: |
           echo "Checking Customer Service..."
-          cd services/customer
-          npx tsc --noEmit || echo "Customer service has TypeScript warnings"
+          cd apps/customer-service
+          pnpm exec tsc --noEmit || echo "Customer service has TypeScript warnings"
           cd ../..
 
           echo "Checking Reservation Service..."
-          cd services/reservation-service
-          npx tsc --noEmit || echo "Reservation service has TypeScript warnings"
+          cd apps/reservation-service
+          pnpm exec tsc --noEmit || echo "Reservation service has TypeScript warnings"
           cd ../..
 
   test-docker-builds:
@@ -70,12 +70,12 @@ jobs:
 
       - name: Test Customer Service Docker Build
         run: |
-          docker build -f services/customer/Dockerfile.prod -t test-customer services/customer
+          docker build -f apps/customer-service/Dockerfile.prod -t test-customer apps/customer-service
 
       - name: Test Reservation Service Docker Build
         run: |
-          docker build -f services/reservation-service/Dockerfile.prod -t test-reservation services/reservation-service
+          docker build -f apps/reservation-service/Dockerfile.prod -t test-reservation apps/reservation-service
 
       - name: Test Frontend Docker Build
         run: |
-          docker build -f frontend/Dockerfile.prod -t test-frontend frontend
+          docker build -f apps/frontend/Dockerfile.prod -t test-apps/frontend apps/frontend

@@ -87,7 +87,7 @@ apt install -y certbot python3-certbot-nginx
 
 # Install PM2 globally
 log "Installing PM2..."
-npm install -g pm2
+pnpm install -g pm2
 
 # Create application user
 log "Creating application user..."

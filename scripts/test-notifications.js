@@ -51,7 +51,7 @@ async function main() {
 
     if (testEmail && testEmail.includes('@')) {
       try {
-        const { emailService } = require('../services/customer/dist/services/email.service');
+        const { emailService } = require('../apps/customer-service/dist/services/email.service');
         
         await emailService.sendEmail({
           to: testEmail,
@@ -86,7 +86,7 @@ async function main() {
 
     if (testPhone && testPhone.match(/^\+?\d{10,15}$/)) {
       try {
-        const { smsService } = require('../services/customer/dist/services/sms.service');
+        const { smsService } = require('../apps/customer-service/dist/services/sms.service');
         
         const result = await smsService.sendSMS({
           to: testPhone,

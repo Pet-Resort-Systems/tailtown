@@ -156,6 +156,6 @@ console.log(`   Other breeds: ${breedsBySpecies.OTHER.length}`);
 
 console.log(`\n🚀 Next Steps:`);
 console.log(`   1. Review the migration file`);
-console.log(`   2. Run: npx prisma migrate dev --name add_breeds`);
+console.log(`   2. Run: pnpm exec prisma migrate dev --name add_breeds`);
 console.log(`   3. Or run SQL directly: psql -U postgres -d tailtown -f "${migrationFile}"`);
 console.log('');

@@ -19,14 +19,14 @@ PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PIDS_DIR="$PROJECT_ROOT/.pids"
 CUSTOMER_PID="$PIDS_DIR/customer-service.pid"
 RESERVATION_PID="$PIDS_DIR/reservation-service.pid"
-FRONTEND_PID="$PIDS_DIR/frontend.pid"
+FRONTEND_PID="$PIDS_DIR/apps/frontend.pid"
 ADMIN_PID="$PIDS_DIR/admin-portal.pid"
 
 # Log file locations
 LOGS_DIR="$PROJECT_ROOT/.logs"
 CUSTOMER_LOG="$LOGS_DIR/customer-service.log"
 RESERVATION_LOG="$LOGS_DIR/reservation-service.log"
-FRONTEND_LOG="$LOGS_DIR/frontend.log"
+FRONTEND_LOG="$LOGS_DIR/apps/frontend.log"
 ADMIN_LOG="$LOGS_DIR/admin-portal.log"
 
 # Create directories if they don't exist
@@ -240,15 +240,15 @@ start_all() {
     kill_zombies
     
     # Start backend services first
-    start_service "Customer Service" "services/customer" "$CUSTOMER_PID" "$CUSTOMER_LOG" 4004 "npm run dev"
-    start_service "Reservation Service" "services/reservation-service" "$RESERVATION_PID" "$RESERVATION_LOG" 4003 "npm run dev"
+    start_service "Customer Service" "apps/customer-service" "$CUSTOMER_PID" "$CUSTOMER_LOG" 4004 "pnpm run dev"
+    start_service "Reservation Service" "apps/reservation-service" "$RESERVATION_PID" "$RESERVATION_LOG" 4003 "pnpm run dev"
     
-    # Then start frontend
-    start_service "Frontend" "frontend" "$FRONTEND_PID" "$FRONTEND_LOG" 3000 "npm start"
+    # Then start apps/frontend
+    start_service "Frontend" "apps/frontend" "$FRONTEND_PID" "$FRONTEND_LOG" 3000 "pnpm start"
     
     # Optionally start admin portal
     if [ -d "$PROJECT_ROOT/admin-portal" ]; then
-        start_service "Admin Portal" "admin-portal" "$ADMIN_PID" "$ADMIN_LOG" 3001 "npm start"
+        start_service "Admin Portal" "admin-portal" "$ADMIN_PID" "$ADMIN_LOG" 3001 "pnpm start"
     fi
     
     echo ""
@@ -291,7 +291,7 @@ show_logs() {
         reservation)
             tail -f "$RESERVATION_LOG"
             ;;
-        frontend)
+        apps/frontend)
             tail -f "$FRONTEND_LOG"
             ;;
         admin)
@@ -302,7 +302,7 @@ show_logs() {
             ;;
         *)
             print_error "Unknown service: $service"
-            echo "Available services: customer, reservation, frontend, admin, all"
+            echo "Available services: customer, reservation, apps/frontend, admin, all"
             exit 1
             ;;
     esac
@@ -339,7 +339,7 @@ case "${1:-}" in
         echo "  restart  - Restart all development servers"
         echo "  status   - Show status of all servers"
         echo "  cleanup  - Kill zombie processes and clean up"
-        echo "  logs     - Show logs (usage: logs [customer|reservation|frontend|admin|all])"
+        echo "  logs     - Show logs (usage: logs [customer|reservation|apps/frontend|admin|all])"
         echo ""
         exit 1
         ;;

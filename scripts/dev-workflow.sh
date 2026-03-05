@@ -42,8 +42,8 @@ preflight_checks() {
     fi
     
     # Check npm
-    if ! command -v npm &> /dev/null; then
-        echo -e "${RED}✗ npm not found${NC}"
+    if ! command -v pnpm &> /dev/null; then
+        echo -e "${RED}✗ pnpm not found${NC}"
         errors=$((errors + 1))
     else
         echo -e "${GREEN}✓ npm $(npm --version)${NC}"
@@ -68,17 +68,17 @@ preflight_checks() {
     
     # Check .env files
     local env_files=(
-        "frontend/.env"
-        "services/customer/.env"
-        "services/reservation-service/.env"
+        "apps/frontend/.env"
+        "apps/customer-service/.env"
+        "apps/reservation-service/.env"
     )
     
     for env_file in "${env_files[@]}"; do
         if [ -f "$PROJECT_ROOT/$env_file" ]; then
             echo -e "${GREEN}✓ $env_file exists${NC}"
             
-            # Validate frontend .env points to localhost
-            if [[ "$env_file" == "frontend/.env" ]]; then
+            # Validate apps/frontend .env points to localhost
+            if [[ "$env_file" == "apps/frontend/.env" ]]; then
                 if grep -Eq "129\.212\.178\.244|canicloud\.com" "$PROJECT_ROOT/$env_file"; then
                     echo -e "${RED}  ✗ Frontend .env points to production IP!${NC}"
                     echo -e "${YELLOW}  Should be: REACT_APP_API_URL=http://localhost:4004${NC}"
@@ -171,8 +171,8 @@ start_services() {
     
     # Start customer service
     echo -e "${BLUE}Starting Customer Service (port 4004)...${NC}"
-    cd "$PROJECT_ROOT/services/customer"
-    PORT=4004 npm run dev > "$LOGS_DIR/customer-service.log" 2>&1 &
+    cd "$PROJECT_ROOT/apps/customer-service"
+    PORT=4004 pnpm run dev > "$LOGS_DIR/customer-service.log" 2>&1 &
     CUSTOMER_PID=$!
     echo $CUSTOMER_PID > "$PIDS_DIR/customer.pid"
     echo "  PID: $CUSTOMER_PID"
@@ -180,19 +180,19 @@ start_services() {
     
     # Start reservation service
     echo -e "${BLUE}Starting Reservation Service (port 4003)...${NC}"
-    cd "$PROJECT_ROOT/services/reservation-service"
-    PORT=4003 npm run dev > "$LOGS_DIR/reservation-service.log" 2>&1 &
+    cd "$PROJECT_ROOT/apps/reservation-service"
+    PORT=4003 pnpm run dev > "$LOGS_DIR/reservation-service.log" 2>&1 &
     RESERVATION_PID=$!
     echo $RESERVATION_PID > "$PIDS_DIR/reservation.pid"
     echo "  PID: $RESERVATION_PID"
     wait_for_service "Reservation Service" "http://localhost:4003/health"
     
-    # Start frontend
+    # Start apps/frontend
     echo -e "${BLUE}Starting Frontend (port 3000)...${NC}"
-    cd "$PROJECT_ROOT/frontend"
-    npm start > "$LOGS_DIR/frontend.log" 2>&1 &
+    cd "$PROJECT_ROOT/apps/frontend"
+    pnpm start > "$LOGS_DIR/apps/frontend.log" 2>&1 &
     FRONTEND_PID=$!
-    echo $FRONTEND_PID > "$PIDS_DIR/frontend.pid"
+    echo $FRONTEND_PID > "$PIDS_DIR/apps/frontend.pid"
     echo "  PID: $FRONTEND_PID"
     echo "  (Frontend takes ~15-30 seconds to compile)"
     
@@ -207,13 +207,13 @@ start_services() {
     echo -e "${BLUE}Logs:${NC}"
     echo "  tail -f $LOGS_DIR/customer-service.log"
     echo "  tail -f $LOGS_DIR/reservation-service.log"
-    echo "  tail -f $LOGS_DIR/frontend.log"
+    echo "  tail -f $LOGS_DIR/apps/frontend.log"
     echo ""
     echo -e "${BLUE}Commands:${NC}"
-    echo "  npm run dev:stop     - Stop all services"
-    echo "  npm run dev:status   - Check service status"
-    echo "  npm run dev:logs     - View all logs"
-    echo "  npm run health:check - Check service health"
+    echo "  pnpm run dev:stop     - Stop all services"
+    echo "  pnpm run dev:status   - Check service status"
+    echo "  pnpm run dev:logs     - View all logs"
+    echo "  pnpm run health:check - Check service health"
     echo ""
 }
 
@@ -224,7 +224,7 @@ stop_services() {
     local stopped=0
     
     # Stop services using PID files
-    for service in customer reservation frontend; do
+    for service in customer reservation apps/frontend; do
         if [ -f "$PIDS_DIR/$service.pid" ]; then
             local pid=$(cat "$PIDS_DIR/$service.pid")
             if kill -0 $pid 2>/dev/null; then
@@ -255,7 +255,7 @@ status_services() {
     local services=(
         "Customer Service:4004:customer"
         "Reservation Service:4003:reservation"
-        "Frontend:3000:frontend"
+        "Frontend:3000:apps/frontend"
     )
     
     for service_info in "${services[@]}"; do
@@ -310,7 +310,7 @@ show_logs() {
     
     if [ -f "$LOGS_DIR/customer-service.log" ] || \
        [ -f "$LOGS_DIR/reservation-service.log" ] || \
-       [ -f "$LOGS_DIR/frontend.log" ]; then
+       [ -f "$LOGS_DIR/apps/frontend.log" ]; then
         tail -f "$LOGS_DIR"/*.log 2>/dev/null
     else
         echo -e "${YELLOW}No log files found${NC}"
@@ -359,11 +359,11 @@ case "${1:-}" in
         echo "  cleanup   - Clean up zombie processes"
         echo ""
         echo "npm shortcuts:"
-        echo "  npm run dev:start"
-        echo "  npm run dev:stop"
-        echo "  npm run dev:restart"
-        echo "  npm run dev:status"
-        echo "  npm run dev:logs"
+        echo "  pnpm run dev:start"
+        echo "  pnpm run dev:stop"
+        echo "  pnpm run dev:restart"
+        echo "  pnpm run dev:status"
+        echo "  pnpm run dev:logs"
         exit 1
         ;;
 esac

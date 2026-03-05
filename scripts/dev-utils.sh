@@ -41,7 +41,7 @@ generate_component() {
     
     print_header "Generating React Component: $name"
     
-    local component_dir="$PROJECT_ROOT/frontend/src/components/$name"
+    local component_dir="$PROJECT_ROOT/apps/frontend/src/components/$name"
     mkdir -p "$component_dir"
     
     # Create component file
@@ -104,7 +104,7 @@ generate_service() {
     
     print_header "Generating Frontend Service: $name"
     
-    local service_file="$PROJECT_ROOT/frontend/src/services/${name}Service.ts"
+    local service_file="$PROJECT_ROOT/apps/frontend/src/services/${name}Service.ts"
     
     cat > "$service_file" << EOF
 import { customerApi } from './api';
@@ -389,12 +389,12 @@ fix_node_modules() {
     find "$PROJECT_ROOT" -name "package-lock.json" -type f -delete
     
     echo "Reinstalling dependencies..."
-    cd "$PROJECT_ROOT" && npm install
-    cd "$PROJECT_ROOT/frontend" && npm install
-    cd "$PROJECT_ROOT/services/customer" && npm install
-    cd "$PROJECT_ROOT/services/reservation-service" && npm install
-    cd "$PROJECT_ROOT/services/reservation-service/scripts" && npm install
-    cd "$PROJECT_ROOT/services/payment-service" && npm install
+    cd "$PROJECT_ROOT" && pnpm install
+    cd "$PROJECT_ROOT/apps/frontend" && pnpm install
+    cd "$PROJECT_ROOT/apps/customer-service" && pnpm install
+    cd "$PROJECT_ROOT/apps/reservation-service" && pnpm install
+    cd "$PROJECT_ROOT/apps/reservation-service/scripts" && pnpm install
+    cd "$PROJECT_ROOT/apps/payment-service" && pnpm install
     
     echo -e "${GREEN}✅ node_modules fixed${NC}"
 }
@@ -404,16 +404,16 @@ fix_prisma() {
     
     echo "Regenerating Prisma clients..."
     
-    cd "$PROJECT_ROOT/services/customer"
-    npx prisma generate
+    cd "$PROJECT_ROOT/apps/customer-service"
+    pnpm exec prisma generate
     
-    cd "$PROJECT_ROOT/services/reservation-service"
-    npx prisma generate
+    cd "$PROJECT_ROOT/apps/reservation-service"
+    pnpm exec prisma generate
     
     echo -e "${GREEN}✅ Prisma clients regenerated${NC}"
     echo ""
     echo "Restart services to pick up changes:"
-    echo "  npm run dev:restart"
+    echo "  pnpm run dev:restart"
 }
 
 #############################################
@@ -485,7 +485,7 @@ case "${1:-}" in
         echo ""
         echo "Code Generators:"
         echo "  generate:component <name>      - Generate React component"
-        echo "  generate:service <name>         - Generate frontend service"
+        echo "  generate:service <name>         - Generate apps/frontend service"
         echo "  generate:controller <name> <service> - Generate backend controller"
         echo ""
         echo "Data Utilities:"
@@ -503,10 +503,10 @@ case "${1:-}" in
         echo "  info                            - Show project information"
         echo ""
         echo "npm shortcuts:"
-        echo "  npm run util:component <name>"
-        echo "  npm run util:service <name>"
-        echo "  npm run util:logs"
-        echo "  npm run util:fix-prisma"
+        echo "  pnpm run util:component <name>"
+        echo "  pnpm run util:service <name>"
+        echo "  pnpm run util:logs"
+        echo "  pnpm run util:fix-prisma"
         echo ""
         exit 1
         ;;

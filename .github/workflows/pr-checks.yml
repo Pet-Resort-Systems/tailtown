@@ -19,21 +19,21 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "20.19.0"
-          cache: "npm"
+          cache: "pnpm"
           cache-dependency-path: |
-            frontend/package-lock.json
-            services/*/package-lock.json
+            apps/frontend/pnpm-lock.yaml
+            apps/*/pnpm-lock.yaml
 
-      - name: Install frontend dependencies
-        working-directory: ./frontend
+      - name: Install apps/frontend dependencies
+        working-directory: ./apps/frontend
         run: |
-          npm ci
+          pnpm install --frozen-lockfile
           echo "✓ Frontend dependencies installed"
 
       - name: Install service dependencies
         run: |
-          cd services/customer && npm ci
-          cd ../reservation-service && npm ci
+          cd apps/customer-service && pnpm install --frozen-lockfile
+          cd ../reservation-service && pnpm install --frozen-lockfile
 
       - name: Check for console.logs
         run: |
@@ -57,22 +57,22 @@ jobs:
           done
         continue-on-error: true
 
-      - name: Lint frontend
+      - name: Lint apps/frontend
         run: |
-          cd frontend
-          npm run lint || true
+          cd apps/frontend
+          pnpm run lint || true
         continue-on-error: true
 
       - name: Lint customer service
         run: |
-          cd services/customer
-          npm run lint || true
+          cd apps/customer-service
+          pnpm run lint || true
         continue-on-error: true
 
       - name: Lint reservation service
         run: |
-          cd services/reservation-service
-          npm run lint || true
+          cd apps/reservation-service
+          pnpm run lint || true
         continue-on-error: true
 
   quick-tests:
@@ -102,21 +102,21 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "20.19.0"
-          cache: "npm"
+          cache: "pnpm"
           cache-dependency-path: |
-            frontend/package-lock.json
-            services/*/package-lock.json
+            apps/frontend/pnpm-lock.yaml
+            apps/*/pnpm-lock.yaml
 
-      - name: Install frontend dependencies
-        working-directory: ./frontend
+      - name: Install apps/frontend dependencies
+        working-directory: ./apps/frontend
         run: |
-          npm ci
+          pnpm install --frozen-lockfile
           echo "✓ Frontend dependencies installed"
 
       - name: Install service dependencies
         run: |
-          cd services/customer && npm ci
-          cd ../reservation-service && npm ci
+          cd apps/customer-service && pnpm install --frozen-lockfile
+          cd ../reservation-service && pnpm install --frozen-lockfile
 
       - name: Setup database
         env:
@@ -127,12 +127,12 @@ jobs:
           PGHOST: localhost
           PGPORT: 5433
         run: |
-          cd services/customer
-          npx prisma migrate deploy
-          npx prisma generate
+          cd apps/customer-service
+          pnpm exec prisma migrate deploy
+          pnpm exec prisma generate
           cd ../reservation-service
-          npx prisma migrate deploy
-          npx prisma generate
+          pnpm exec prisma migrate deploy
+          pnpm exec prisma generate
 
       - name: Run quick tests
         env:
@@ -145,7 +145,7 @@ jobs:
           PGDATABASE: customer
           PGHOST: localhost
           PGPORT: 5433
-        run: npm run test:quick
+        run: pnpm run test:quick
 
   build-check:
     name: Build Verification
@@ -159,37 +159,37 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "20.19.0"
-          cache: "npm"
+          cache: "pnpm"
           cache-dependency-path: |
-            frontend/package-lock.json
-            services/*/package-lock.json
+            apps/frontend/pnpm-lock.yaml
+            apps/*/pnpm-lock.yaml
 
-      - name: Install frontend dependencies
-        working-directory: ./frontend
+      - name: Install apps/frontend dependencies
+        working-directory: ./apps/frontend
         run: |
-          npm ci
+          pnpm install --frozen-lockfile
           echo "✓ Frontend dependencies installed"
 
       - name: Install service dependencies
         run: |
-          cd services/customer && npm ci
-          cd ../reservation-service && npm ci
+          cd apps/customer-service && pnpm install --frozen-lockfile
+          cd ../reservation-service && pnpm install --frozen-lockfile
 
-      - name: Build frontend
+      - name: Build apps/frontend
         env:
           REACT_APP_TENANT_ID: dev
           REACT_APP_API_URL: http://localhost:4004
           REACT_APP_RESERVATION_API_URL: http://localhost:4003
           CI: false
         run: |
-          cd frontend
-          npm run build
+          cd apps/frontend
+          pnpm run build
 
       - name: Build customer service
         run: |
-          cd services/customer
+          cd apps/customer-service
           rm -rf dist
-          npm run build || true
+          pnpm run build || true
           # Verify dist was created despite type errors
           if [ ! -d "dist" ]; then
             echo "ERROR: Build failed to create dist folder"
@@ -199,9 +199,9 @@ jobs:
 
       - name: Build reservation service
         run: |
-          cd services/reservation-service
+          cd apps/reservation-service
           rm -rf dist
-          npm run build || true
+          pnpm run build || true
           # Verify dist was created despite type errors
           if [ ! -d "dist" ]; then
             echo "ERROR: Build failed to create dist folder"
@@ -212,11 +212,11 @@ jobs:
       - name: Check build sizes
         run: |
           echo "Frontend build size:"
-          du -sh frontend/build
+          du -sh apps/frontend/build
           echo "Customer service build size:"
-          du -sh services/customer/dist
+          du -sh apps/customer-service/dist
           echo "Reservation service build size:"
-          du -sh services/reservation-service/dist
+          du -sh apps/reservation-service/dist
 
   pr-summary:
     name: PR Summary

@@ -47,7 +47,7 @@
     "backup:now": "./scripts/backup-now.sh",
     "backup:list": "ls -lh backups/",
     "test:notifications": "node scripts/test-notifications.js",
-    "test": "lerna run test",
+    "test": "pnpm -r run test",
     "test:all": "./scripts/test-runner.sh all",
     "test:quick": "./scripts/test-runner.sh quick",
     "test:changed": "./scripts/test-runner.sh changed",
@@ -68,7 +68,7 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
     "test:e2e:report": "playwright show-report",
-    "test:full": "npm run test:all && npm run test:e2e",
+    "test:full": "pnpm run test:all && pnpm run test:e2e",
     "test:perf": "./performance/run-all-tests.sh",
     "test:perf:load": "k6 run performance/reservation-load-test.js",
     "test:perf:concurrent": "k6 run performance/concurrent-booking-test.js",
@@ -76,7 +76,7 @@
     "coverage": "./scripts/generate-coverage-report.sh",
     "coverage:badge": "node scripts/coverage-badge.js",
     "coverage:open": "open frontend/coverage/lcov-report/index.html && open services/reservation-service/coverage/lcov-report/index.html",
-    "build": "lerna run build",
+    "build": "pnpm -r run build",
     "import:staff": "node scripts/import-staff-data.js",
     "import:staff:gingr": "node scripts/import-staff-data.js gingr",
     "import:staff:csv": "node scripts/import-staff-data.js csv",
@@ -110,5 +110,6 @@
   },
   "overrides": {
     "eslint": "^8.57.1"
-  }
+  },
+  "packageManager": "pnpm@9.12.3"
 }

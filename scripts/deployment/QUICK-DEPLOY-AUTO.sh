@@ -50,19 +50,19 @@ ENDSSH
 echo ""
 echo "📦 Step 3: Installing dependencies and generating Prisma client..."
 ssh -i $SSH_KEY $REMOTE_USER@$REMOTE_HOST << 'ENDSSH'
-  cd /opt/tailtown/services/customer
+  cd /opt/tailtown/apps/customer-service
   echo "Installing dependencies..."
-  npm install
+  pnpm install
   echo ""
   echo "Generating Prisma client..."
-  npx prisma generate
+  pnpm exec prisma generate
 ENDSSH
 
 # Step 4: Run database migration
 echo ""
 echo "🗃️  Step 4: Running database migration..."
 ssh -i $SSH_KEY $REMOTE_USER@$REMOTE_HOST << 'ENDSSH'
-  cd /opt/tailtown/services/customer
+  cd /opt/tailtown/apps/customer-service
   echo "Running migration..."
   docker exec -i tailtown-postgres psql -U postgres -d customer < prisma/migrations/20251106_add_missing_schema_fields/migration.sql
   echo ""
@@ -77,9 +77,9 @@ echo "✅ Migration completed successfully"
 echo ""
 echo "🔨 Step 5: Building application..."
 ssh -i $SSH_KEY $REMOTE_USER@$REMOTE_HOST << 'ENDSSH'
-  cd /opt/tailtown/services/customer
+  cd /opt/tailtown/apps/customer-service
   echo "Building..."
-  npm run build
+  pnpm run build
   echo "Build complete!"
 ENDSSH
 
@@ -116,5 +116,5 @@ echo "3. Verify revenue numbers are tenant-specific"
 echo "4. Monitor logs: ssh -i $SSH_KEY $REMOTE_USER@$REMOTE_HOST 'pm2 logs customer-service'"
 echo ""
 echo "🔄 Rollback command (if needed):"
-echo "ssh -i $SSH_KEY $REMOTE_USER@$REMOTE_HOST 'cd /opt/tailtown && git checkout HEAD~1 && cd services/customer && npm run build && pm2 restart customer-service'"
+echo "ssh -i $SSH_KEY $REMOTE_USER@$REMOTE_HOST 'cd /opt/tailtown && git checkout HEAD~1 && cd apps/customer-service && pnpm run build && pm2 restart customer-service'"
 echo ""
