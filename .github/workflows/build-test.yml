@@ -78,4 +78,4 @@ jobs:
 
       - name: Test Frontend Docker Build
         run: |
-          docker build -f apps/frontend/Dockerfile.prod -t test-apps/frontend apps/frontend
+          docker build -f apps/frontend/Dockerfile.prod -t test-frontend apps/frontend
