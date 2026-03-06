@@ -44,7 +44,7 @@ jobs:
         run: |
           pnpm install --frozen-lockfile
           cd apps/frontend && pnpm install --frozen-lockfile
-          cd ../apps/customer-service && pnpm install --frozen-lockfile
+          cd ../customer-service && pnpm install --frozen-lockfile
           cd ../reservation-service && pnpm install --frozen-lockfile
 
       - name: Run linting
