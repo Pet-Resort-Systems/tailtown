@@ -7,7 +7,7 @@ on:
     branches: [main, sept25-stable, develop]
 
 jobs:
-  apps/frontend-tests:
+  frontend-tests:
     name: Frontend Tests & Build
     runs-on: ubuntu-latest
 
@@ -22,8 +22,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "20.19.0"
-          cache: "pnpm"
+          node-version: '20.19.0'
+          cache: 'pnpm'
           cache-dependency-path: apps/frontend/pnpm-lock.yaml
 
       - name: Install dependencies
@@ -90,7 +90,7 @@ jobs:
         if: steps.check_service.outputs.exists == 'true'
         uses: actions/setup-node@v3
         with:
-          node-version: "20.19.0"
+          node-version: '20.19.0'
 
       - name: Check for package.json
         if: steps.check_service.outputs.exists == 'true'

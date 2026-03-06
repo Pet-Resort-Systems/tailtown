@@ -7,7 +7,7 @@ on:
     branches: [main, sept25-stable]
 
 jobs:
-  apps/frontend-coverage:
+  frontend-coverage:
     name: Frontend Test Coverage
     runs-on: ubuntu-latest
 
@@ -17,8 +17,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "20.19.0"
-          cache: "pnpm"
+          node-version: '20.19.0'
+          cache: 'pnpm'
           cache-dependency-path: apps/frontend/pnpm-lock.yaml
 
       - name: Install dependencies
@@ -74,8 +74,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "20.19.0"
-          cache: "pnpm"
+          node-version: '20.19.0'
+          cache: 'pnpm'
           cache-dependency-path: apps/reservation-service/pnpm-lock.yaml
 
       - name: Install dependencies
@@ -133,8 +133,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "20.19.0"
-          cache: "pnpm"
+          node-version: '20.19.0'
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -163,7 +163,7 @@ jobs:
 
   coverage-report:
     name: Generate Coverage Report
-    needs: [apps/frontend-coverage, backend-coverage]
+    needs: [frontend-coverage, backend-coverage]
     runs-on: ubuntu-latest
 
     steps:
