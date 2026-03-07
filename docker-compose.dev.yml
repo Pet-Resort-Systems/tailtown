@@ -81,6 +81,6 @@ services:
     environment:
       - NODE_ENV=development
       - REACT_APP_API_URL=http://localhost:3000
-    command: npm start
+    command: pnpm start
     ports:
       - "8080:3000"
