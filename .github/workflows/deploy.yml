@@ -151,7 +151,7 @@ jobs:
             echo "Starting services fresh..."
             pm2 start ecosystem.config.js --only customer-service
             pm2 start ecosystem.config.js --only reservation-service
-            pm2 start ecosystem.config.js --only apps/frontend
+            pm2 start ecosystem.config.js --only frontend
             pm2 save
             echo "Waiting for services to stabilize..."
             sleep 5
