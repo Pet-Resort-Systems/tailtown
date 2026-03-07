@@ -181,8 +181,8 @@ pnpm run env:status
 
 # Verify builds
 cd apps/frontend && pnpm run build
-cd ../apps/customer-service && pnpm run build
-cd ../apps/reservation-service && pnpm run build
+cd ../customer-service && pnpm run build
+cd ../reservation-service && pnpm run build
 ```
 
 ### Creating Pull Requests
