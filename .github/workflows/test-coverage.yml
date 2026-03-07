@@ -157,8 +157,8 @@ jobs:
 
       - name: Start services
         run: |
-          cd apps/reservation-service && npm start &
-          cd apps/frontend && npm start &
+          cd apps/reservation-service && pnpm start &
+          cd apps/frontend && pnpm start &
           sleep 30
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/reservation
