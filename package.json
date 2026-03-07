@@ -75,7 +75,7 @@
     "test:perf:db": "k6 run performance/database-query-test.js",
     "coverage": "./scripts/generate-coverage-report.sh",
     "coverage:badge": "node scripts/coverage-badge.js",
-    "coverage:open": "open frontend/coverage/lcov-report/index.html && open services/reservation-service/coverage/lcov-report/index.html",
+    "coverage:open": "open apps/frontend/coverage/lcov-report/index.html && open apps/reservation-service/coverage/lcov-report/index.html",
     "build": "pnpm -r run build",
     "import:staff": "node scripts/import-staff-data.js",
     "import:staff:gingr": "node scripts/import-staff-data.js gingr",
