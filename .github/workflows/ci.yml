@@ -68,7 +68,7 @@ jobs:
 
     strategy:
       matrix:
-        service: [customer, reservation-service]
+        service: [customer-service, reservation-service]
       fail-fast: false
 
     steps:
@@ -78,12 +78,12 @@ jobs:
       - name: Check if service exists
         id: check_service
         run: |
-          if [ -d "services/${{ matrix.service }}" ]; then
+          if [ -d "apps/${{ matrix.service }}" ]; then
             echo "exists=true" >> $GITHUB_OUTPUT
-            echo "Service directory found: services/${{ matrix.service }}"
+            echo "Service directory found: apps/${{ matrix.service }}"
           else
             echo "exists=false" >> $GITHUB_OUTPUT
-            echo "Service directory not found: services/${{ matrix.service }}"
+            echo "Service directory not found: apps/${{ matrix.service }}"
           fi
 
       - name: Setup Node.js
@@ -94,7 +94,7 @@ jobs:
 
       - name: Check for package.json
         if: steps.check_service.outputs.exists == 'true'
-        working-directory: services/${{ matrix.service }}
+        working-directory: apps/${{ matrix.service }}
         run: |
           if [ -f "package.json" ]; then
             echo "package.json found"
@@ -106,7 +106,7 @@ jobs:
 
       - name: Install dependencies
         if: steps.check_service.outputs.exists == 'true'
-        working-directory: services/${{ matrix.service }}
+        working-directory: apps/${{ matrix.service }}
         run: |
           if [ -f "pnpm-lock.yaml" ]; then
             pnpm install --frozen-lockfile
@@ -117,7 +117,7 @@ jobs:
 
       - name: Run TypeScript type check
         if: steps.check_service.outputs.exists == 'true'
-        working-directory: services/${{ matrix.service }}
+        working-directory: apps/${{ matrix.service }}
         run: |
           if [ -f "tsconfig.json" ]; then
             pnpm exec tsc --noEmit || echo "TypeScript check completed with warnings"
@@ -128,7 +128,7 @@ jobs:
 
       - name: Check for Prisma schema
         if: steps.check_service.outputs.exists == 'true'
-        working-directory: services/${{ matrix.service }}
+        working-directory: apps/${{ matrix.service }}
         run: |
           if [ -f "prisma/schema.prisma" ]; then
             echo "Prisma schema found"
