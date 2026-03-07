@@ -50,11 +50,12 @@ ENDSSH
 echo ""
 echo "📦 Step 3: Installing dependencies and generating Prisma client..."
 ssh -i $SSH_KEY $REMOTE_USER@$REMOTE_HOST << 'ENDSSH'
-  cd /opt/tailtown/apps/customer-service
+  cd /opt/tailtown
   echo "Installing dependencies..."
-  pnpm install
+  pnpm install --frozen-lockfile
   echo ""
   echo "Generating Prisma client..."
+  cd apps/customer-service
   pnpm exec prisma generate
 ENDSSH
 

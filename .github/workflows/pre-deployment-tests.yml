@@ -42,10 +42,8 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'pnpm'
 
-      - name: Install dependencies - Customer Service
-        run: |
-          cd apps/customer-service
-          pnpm install --frozen-lockfile
+      - name: Install monorepo dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Check Prisma Client Generation
         run: |
@@ -124,10 +122,8 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'pnpm'
 
-      - name: Install dependencies - Reservation Service
-        run: |
-          cd apps/reservation-service
-          pnpm install --frozen-lockfile --legacy-peer-deps
+      - name: Install monorepo dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Check Prisma Client Generation
         run: |
@@ -168,10 +164,8 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'pnpm'
 
-      - name: Install Customer Service Dependencies
-        run: |
-          cd apps/customer-service
-          pnpm install --frozen-lockfile
+      - name: Install monorepo dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client - Customer
         run: |
@@ -183,11 +177,6 @@ jobs:
           cd apps/customer-service
           pnpm run build
           echo "✅ Customer service TypeScript compiled"
-
-      - name: Install Reservation Service Dependencies
-        run: |
-          cd apps/reservation-service
-          pnpm install --frozen-lockfile --legacy-peer-deps
 
       - name: Generate Prisma Client - Reservation
         run: |

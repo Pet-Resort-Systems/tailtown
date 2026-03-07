@@ -390,11 +390,6 @@ fix_node_modules() {
     
     echo "Reinstalling dependencies..."
     cd "$PROJECT_ROOT" && pnpm install
-    cd "$PROJECT_ROOT/apps/frontend" && pnpm install
-    cd "$PROJECT_ROOT/apps/customer-service" && pnpm install
-    cd "$PROJECT_ROOT/apps/reservation-service" && pnpm install
-    cd "$PROJECT_ROOT/apps/reservation-service/scripts" && pnpm install
-    cd "$PROJECT_ROOT/apps/payment-service" && pnpm install
     
     echo -e "${GREEN}✅ node_modules fixed${NC}"
 }

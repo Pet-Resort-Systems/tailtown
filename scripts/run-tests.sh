@@ -69,18 +69,6 @@ if [ ! -d "node_modules" ]; then
     pnpm install
 fi
 
-if [ ! -d "apps/frontend/node_modules" ]; then
-    cd apps/frontend && pnpm install && cd ..
-fi
-
-if [ ! -d "apps/customer-service/node_modules" ]; then
-    cd apps/customer-service && pnpm install && cd ../..
-fi
-
-if [ ! -d "apps/reservation-service/node_modules" ]; then
-    cd apps/reservation-service && pnpm install && cd ../..
-fi
-
 echo ""
 echo "🔧 Setting up test database..."
 echo ""

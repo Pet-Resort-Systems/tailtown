@@ -82,9 +82,6 @@ cd tailtown
 
 # Install dependencies
 pnpm install
-cd apps/frontend && pnpm install && cd ..
-cd apps/customer-service && pnpm install && cd ../..
-cd apps/reservation-service && pnpm install && cd ../..
 
 # Set up environment variables
 cp apps/customer-service/.env.example apps/customer-service/.env

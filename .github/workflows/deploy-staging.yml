@@ -66,29 +66,26 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
-      - name: Install and test Customer Service
+      - name: Install monorepo dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Test Customer Service
         working-directory: ./apps/customer-service
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/tailtown_test
           REDIS_URL: redis://localhost:6379
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm test
+        run: pnpm test
 
-      - name: Install and test Reservation Service
+      - name: Test Reservation Service
         working-directory: ./apps/reservation-service
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/tailtown_test
           REDIS_URL: redis://localhost:6379
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm test
+        run: pnpm test
 
-      - name: Install and test Frontend
+      - name: Test Frontend
         working-directory: ./apps/frontend
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm test -- --watchAll=false --passWithNoTests
+        run: pnpm test -- --watchAll=false --passWithNoTests
 
   build:
     name: Build for Staging
@@ -111,17 +108,16 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
+      - name: Install monorepo dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: Build Customer Service
         working-directory: ./apps/customer-service
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm run build
+        run: pnpm run build
 
       - name: Build Reservation Service
         working-directory: ./apps/reservation-service
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm run build
+        run: pnpm run build
 
       - name: Build Frontend (Staging)
         working-directory: ./apps/frontend
@@ -130,9 +126,7 @@ jobs:
           REACT_APP_ENVIRONMENT: staging
           REACT_APP_SENTRY_ENABLED: 'true'
           REACT_APP_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm run build
+        run: pnpm run build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -175,8 +169,7 @@ jobs:
             git pull origin staging
 
             # Install dependencies
-            cd apps/customer-service && pnpm install --frozen-lockfile --production && cd ../..
-            cd apps/reservation-service && pnpm install --frozen-lockfile --production && cd ../..
+            pnpm install --frozen-lockfile --prod
 
             # Run database migrations
             cd apps/customer-service && pnpm exec prisma migrate deploy && cd ../..

@@ -85,20 +85,7 @@ git pull origin main || error "Git pull failed"
 
 # Install dependencies
 log "Installing dependencies..."
-
-log "  → Customer service dependencies..."
-cd apps/customer-service
-pnpm install --frozen-lockfile --production || error "Customer service pnpm install failed"
-
-log "  → Reservation service dependencies..."
-cd ../reservation-service
-pnpm install --frozen-lockfile --production || error "Reservation service pnpm install failed"
-
-log "  → Frontend dependencies..."
-cd ../../apps/frontend
-pnpm install --frozen-lockfile --production || error "Frontend pnpm install failed"
-
-cd "$PROJECT_ROOT"
+pnpm install --frozen-lockfile --prod || error "Root pnpm install failed"
 
 # Run database migrations
 log "Running database migrations..."

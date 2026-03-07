@@ -30,20 +30,13 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
 
-      - name: Install Customer Service Dependencies
-        run: |
-          cd apps/customer-service
-          pnpm install --frozen-lockfile
+      - name: Install monorepo dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Build Customer Service
         run: |
           cd apps/customer-service
           pnpm run build
-
-      - name: Install Reservation Service Dependencies
-        run: |
-          cd apps/reservation-service
-          pnpm install --frozen-lockfile
 
       - name: Build Reservation Service
         run: |

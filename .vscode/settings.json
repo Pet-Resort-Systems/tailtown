@@ -1,6 +1,4 @@
 {
-  "workbench.colorTheme": "Red",
-  "window.autoDetectColorScheme": true,
   // Editor
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {

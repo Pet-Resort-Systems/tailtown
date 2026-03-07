@@ -26,17 +26,12 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'pnpm'
 
-      - name: Install dependencies - Customer Service
-        working-directory: ./apps/customer-service
+      - name: Install monorepo dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Run tests - Customer Service
         working-directory: ./apps/customer-service
         run: pnpm test
-
-      - name: Install dependencies - Frontend
-        working-directory: ./apps/frontend
-        run: pnpm install --frozen-lockfile
 
       - name: Run tests - Frontend
         working-directory: ./apps/frontend
@@ -62,25 +57,22 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'pnpm'
 
+      - name: Install monorepo dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: Build Customer Service
         working-directory: ./apps/customer-service
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm run build
+        run: pnpm run build
 
       - name: Build Reservation Service
         working-directory: ./apps/reservation-service
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm run build
+        run: pnpm run build
 
       - name: Build Frontend
         working-directory: ./apps/frontend
         env:
           REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm run build
+        run: pnpm run build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

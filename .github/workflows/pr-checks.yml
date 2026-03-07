@@ -26,16 +26,8 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'pnpm'
 
-      - name: Install apps/frontend dependencies
-        working-directory: ./apps/frontend
-        run: |
-          pnpm install --frozen-lockfile
-          echo "✓ Frontend dependencies installed"
-
-      - name: Install service dependencies
-        run: |
-          cd apps/customer-service && pnpm install --frozen-lockfile
-          cd ../reservation-service && pnpm install --frozen-lockfile
+      - name: Install monorepo dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Check for console.logs
         run: |
@@ -111,16 +103,8 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'pnpm'
 
-      - name: Install apps/frontend dependencies
-        working-directory: ./apps/frontend
-        run: |
-          pnpm install --frozen-lockfile
-          echo "✓ Frontend dependencies installed"
-
-      - name: Install service dependencies
-        run: |
-          cd apps/customer-service && pnpm install --frozen-lockfile
-          cd ../reservation-service && pnpm install --frozen-lockfile
+      - name: Install monorepo dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Setup database
         env:
@@ -170,18 +154,11 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'pnpm'
 
-      - name: Install apps/frontend dependencies
-        working-directory: ./apps/frontend
-        run: |
-          pnpm install --frozen-lockfile
-          echo "✓ Frontend dependencies installed"
-
-      - name: Install service dependencies
-        run: |
-          cd apps/customer-service && pnpm install --frozen-lockfile
-          cd ../reservation-service && pnpm install --frozen-lockfile
+      - name: Install monorepo dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Build apps/frontend
+        working-directory: ./apps/frontend
         env:
           REACT_APP_TENANT_ID: dev
           REACT_APP_API_URL: http://localhost:4004
