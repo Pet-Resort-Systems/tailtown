@@ -47,12 +47,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-          cache-dependency-path: apps/customer-service/pnpm-lock.yaml
 
       - name: Install dependencies
         working-directory: apps/customer-service
@@ -100,12 +104,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-          cache-dependency-path: apps/reservation-service/pnpm-lock.yaml
 
       - name: Install dependencies
         working-directory: apps/reservation-service
@@ -137,12 +145,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-          cache-dependency-path: apps/frontend/pnpm-lock.yaml
 
       - name: Install dependencies
         working-directory: apps/frontend
@@ -169,6 +181,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -204,6 +221,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

@@ -15,14 +15,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: "20.19.0"
-          cache: "pnpm"
-          cache-dependency-path: |
-            apps/frontend/pnpm-lock.yaml
-            apps/*/pnpm-lock.yaml
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
 
       - name: Install apps/frontend dependencies
         working-directory: ./apps/frontend
@@ -98,14 +100,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: "20.19.0"
-          cache: "pnpm"
-          cache-dependency-path: |
-            apps/frontend/pnpm-lock.yaml
-            apps/*/pnpm-lock.yaml
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
 
       - name: Install apps/frontend dependencies
         working-directory: ./apps/frontend
@@ -155,14 +159,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: "20.19.0"
-          cache: "pnpm"
-          cache-dependency-path: |
-            apps/frontend/pnpm-lock.yaml
-            apps/*/pnpm-lock.yaml
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
 
       - name: Install apps/frontend dependencies
         working-directory: ./apps/frontend

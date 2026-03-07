@@ -14,12 +14,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: '20.19.0'
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
           cache: 'pnpm'
-          cache-dependency-path: apps/frontend/pnpm-lock.yaml
 
       - name: Install dependencies
         working-directory: apps/frontend
@@ -71,12 +75,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: '20.19.0'
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
           cache: 'pnpm'
-          cache-dependency-path: apps/reservation-service/pnpm-lock.yaml
 
       - name: Install dependencies
         working-directory: apps/reservation-service
@@ -130,10 +138,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: '20.19.0'
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
           cache: 'pnpm'
 
       - name: Install dependencies

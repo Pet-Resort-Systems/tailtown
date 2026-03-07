@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.19.0]
+        node-version: ['24.14.0']
 
     services:
       postgres:
@@ -34,11 +34,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
       - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "pnpm"
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: |
@@ -85,11 +90,11 @@ jobs:
           pnpm test
 
       - name: Generate coverage report
-        if: matrix.node-version == '20.19.0'
+        if: matrix.node-version == '24.14.0'
         run: pnpm run test:coverage || true
 
       - name: Upload coverage to Codecov
-        if: matrix.node-version == '20.19.0'
+        if: matrix.node-version == '24.14.0'
         uses: codecov/codecov-action@v3
         with:
           files: ./apps/frontend/coverage/lcov.info,./apps/customer-service/coverage/lcov.info,./apps/reservation-service/coverage/lcov.info
