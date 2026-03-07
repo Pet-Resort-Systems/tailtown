@@ -84,8 +84,8 @@
     "hash:password": "node scripts/import-staff-data.js hash-password"
   },
   "engines": {
-    "node": ">=16.0.0",
-    "npm": ">=8.0.0"
+    "node": ">=24.14.0",
+    "pnpm": ">=9.12.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",
