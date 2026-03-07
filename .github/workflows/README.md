@@ -250,7 +250,7 @@ cd ../apps/reservation-service && pnpm run build
 
 ### Updating Dependencies
 1. Update package.json files
-2. Run `ppnpm install --frozen-lockfile` locally to verify
+2. Run `pnpm install --frozen-lockfile` locally to verify
 3. Push changes
 4. CI will use new dependencies automatically
 
