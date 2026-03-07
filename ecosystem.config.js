@@ -77,8 +77,8 @@ module.exports = {
       env_production: {
         NODE_ENV: 'production'
       },
-      error_file: './logs/apps/frontend-error.log',
-      out_file: './logs/apps/frontend-out.log',
+      error_file: './logs/frontend-error.log',
+      out_file: './logs/frontend-out.log',
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
       merge_logs: true,
       autorestart: true,
