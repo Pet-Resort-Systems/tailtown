@@ -76,8 +76,8 @@ module.exports = {
       env: {
         NODE_ENV: "staging",
       },
-      error_file: "./logs/staging-apps/frontend-error.log",
-      out_file: "./logs/staging-apps/frontend-out.log",
+      error_file: "./logs/staging-frontend-error.log",
+      out_file: "./logs/staging-frontend-out.log",
       log_date_format: "YYYY-MM-DD HH:mm:ss Z",
       merge_logs: true,
       autorestart: true,
