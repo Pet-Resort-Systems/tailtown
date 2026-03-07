@@ -46,7 +46,7 @@ create_results_dir() {
 # Test Runners
 #############################################
 
-run_apps/frontend_tests() {
+run_frontend_tests() {
     print_section "Frontend Tests"
     
     if [ ! -d "$FRONTEND_DIR" ]; then
@@ -161,7 +161,7 @@ run_all_tests() {
     local failed=0
     
     # Run each test suite
-    run_apps/frontend_tests || failed=$((failed + 1))
+    run_frontend_tests || failed=$((failed + 1))
     run_customer_service_tests || failed=$((failed + 1))
     run_reservation_service_tests || failed=$((failed + 1))
     run_integration_tests || failed=$((failed + 1))
@@ -250,13 +250,13 @@ run_changed_tests() {
     echo ""
     
     # Determine which tests to run based on changed files
-    local run_apps/frontend=false
+    local run_frontend=false
     local run_customer=false
     local run_reservation=false
     
     while IFS= read -r file; do
         if [[ "$file" == apps/frontend/* ]]; then
-            run_apps/frontend=true
+            run_frontend=true
         elif [[ "$file" == apps/customer-service/* ]]; then
             run_customer=true
         elif [[ "$file" == apps/reservation-service/* ]]; then
@@ -267,8 +267,8 @@ run_changed_tests() {
     create_results_dir
     local failed=0
     
-    if [ "$run_apps/frontend" = true ]; then
-        run_apps/frontend_tests || failed=$((failed + 1))
+    if [ "$run_frontend" = true ]; then
+        run_frontend_tests || failed=$((failed + 1))
     fi
     
     if [ "$run_customer" = true ]; then
@@ -279,7 +279,7 @@ run_changed_tests() {
         run_reservation_service_tests || failed=$((failed + 1))
     fi
     
-    if [ "$run_apps/frontend" = false ] && [ "$run_customer" = false ] && [ "$run_reservation" = false ]; then
+    if [ "$run_frontend" = false ] && [ "$run_customer" = false ] && [ "$run_reservation" = false ]; then
         echo -e "${YELLOW}No test-related changes detected${NC}"
         return 0
     fi
@@ -365,11 +365,11 @@ show_test_status() {
     echo -e "${CYAN}Test Files:${NC}"
     
     # Count test files
-    local apps/frontend_tests=$(find "$FRONTEND_DIR/src" -name "*.test.ts*" 2>/dev/null | wc -l)
+    local frontend_tests=$(find "$FRONTEND_DIR/src" -name "*.test.ts*" 2>/dev/null | wc -l)
     local customer_tests=$(find "$CUSTOMER_SERVICE_DIR/src" -name "*.test.ts" 2>/dev/null | wc -l)
     local reservation_tests=$(find "$RESERVATION_SERVICE_DIR/src" -name "*.test.ts" 2>/dev/null | wc -l)
     
-    echo "  Frontend: $apps/frontend_tests test files"
+    echo "  Frontend: $frontend_tests test files"
     echo "  Customer Service: $customer_tests test files"
     echo "  Reservation Service: $reservation_tests test files"
     echo ""
@@ -414,8 +414,8 @@ case "${1:-}" in
     coverage)
         run_coverage
         ;;
-    apps/frontend)
-        run_apps/frontend_tests
+    frontend)
+        run_frontend_tests
         ;;
     customer)
         run_customer_service_tests

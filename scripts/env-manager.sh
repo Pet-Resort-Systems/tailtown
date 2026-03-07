@@ -166,7 +166,7 @@ backup_env_files() {
     echo ""
 }
 
-write_apps/frontend_env() {
+write_frontend_env() {
     local env=$1
     local api_url=$2
     local reservation_api_url=$3
@@ -211,7 +211,7 @@ switch_to_dev() {
     # Write new configuration
     echo -e "${CYAN}Writing development configuration...${NC}"
     
-    write_apps/frontend_env "development" "$DEV_FRONTEND_API_URL" "$DEV_FRONTEND_RESERVATION_API_URL"
+    write_frontend_env "development" "$DEV_FRONTEND_API_URL" "$DEV_FRONTEND_RESERVATION_API_URL"
     echo -e "  ${GREEN}✓${NC} Updated apps/frontend/.env"
     
     write_backend_env "$PROJECT_ROOT/apps/customer-service" "development" "$DEV_BACKEND_DATABASE_URL" "$DEV_CUSTOMER_PORT" "$DEV_NODE_ENV"
@@ -271,7 +271,7 @@ switch_to_prod() {
     # Write new configuration
     echo -e "${CYAN}Writing production configuration...${NC}"
     
-    write_apps/frontend_env "production" "$PROD_FRONTEND_API_URL" "$PROD_FRONTEND_RESERVATION_API_URL"
+    write_frontend_env "production" "$PROD_FRONTEND_API_URL" "$PROD_FRONTEND_RESERVATION_API_URL"
     echo -e "  ${GREEN}✓${NC} Updated apps/frontend/.env"
     
     write_backend_env "$PROJECT_ROOT/apps/customer-service" "production" "$PROD_BACKEND_DATABASE_URL" "$PROD_CUSTOMER_PORT" "$PROD_NODE_ENV"
