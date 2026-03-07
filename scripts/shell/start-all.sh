@@ -14,7 +14,7 @@ osascript -e 'tell app "Terminal" to do script "cd /Users/robweinstein/CascadePr
 sleep 2
 osascript -e 'tell app "Terminal" to do script "cd /Users/robweinstein/CascadeProjects/tailtown && ./start-reservation.sh"'
 sleep 2
-osascript -e 'tell app "Terminal" to do script "cd /Users/robweinstein/CascadeProjects/tailtown && ./start-apps/frontend.sh"'
+osascript -e 'tell app "Terminal" to do script "cd /Users/robweinstein/CascadeProjects/tailtown && ./start-frontend.sh"'
 
 echo "✅ Services starting in 3 terminal windows"
 echo ""
