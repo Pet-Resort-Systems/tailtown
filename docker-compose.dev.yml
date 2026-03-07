@@ -40,7 +40,7 @@ services:
     build:
       target: development
     volumes:
-      - ./services/reservation:/app
+      - ./apps/reservation-service:/app
       - /app/node_modules
     environment:
       - NODE_ENV=development
