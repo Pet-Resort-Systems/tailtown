@@ -11,17 +11,17 @@ This document outlines the procedures, resources, and checklist for disaster rec
 ### Service Configuration
 - **Customer Service**
   - Port: 4004
-  - Environment Variables: See `/services/customer/.env.example`
+  - Environment Variables: See `/apps/customer-service/.env.example`
   - **Critical:** JWT_SECRET, JWT_REFRESH_SECRET, DATABASE_URL
   
 - **Reservation Service**
   - Port: 4003
-  - Environment Variables: See `/services/reservation-service/.env.example`
+  - Environment Variables: See `/apps/reservation-service/.env.example`
   - **Critical:** DATABASE_URL
   
 - **Frontend Application**
   - Port: 3000
-  - Environment Variables: See `/frontend/.env.example`
+  - Environment Variables: See `/apps/frontend/.env.example`
   - **Critical:** REACT_APP_API_URL
 
 ### Database Configuration
@@ -58,8 +58,8 @@ This document outlines the procedures, resources, and checklist for disaster rec
 - ✅ **CRITICAL:** Verify tenant_id exists on all tables (multi-tenancy)
 - ✅ Run database migrations: 
   ```bash
-  cd services/customer && npx prisma migrate deploy
-  cd services/reservation-service && npx prisma migrate deploy
+  cd apps/customer-service && pnpm exec prisma migrate deploy
+  cd ../reservation-service && pnpm exec prisma migrate deploy
   ```
 - ✅ Verify database schema matches Prisma schema definitions
 - ✅ **CRITICAL:** Verify RefreshToken table exists (added Nov 2025)
@@ -70,15 +70,13 @@ This document outlines the procedures, resources, and checklist for disaster rec
 ### 4. Service Deployment
 - ✅ Install dependencies in all services:
   ```
-  cd services/customer && npm install
-  cd services/reservation-service && npm install
-  cd frontend && npm install
+  pnpm install
   ```
 - ✅ Build services:
   ```
-  cd services/customer && npm run build
-  cd services/reservation-service && npm run build
-  cd frontend && npm run build
+  cd apps/customer-service && pnpm run build
+  cd ../reservation-service && pnpm run build
+  cd ../frontend && pnpm run build
   ```
 - ✅ Start services in the correct order:
   1. Database service
@@ -222,10 +220,10 @@ Ensure the following documentation is up-to-date and aligned:
 
 ## Version History
 
-| Version | Date | Author | Description |
-|---------|------|--------|-------------|
-| 1.0 | August 3, 2025 | System | Initial disaster recovery plan |
-| 2.0 | November 7, 2025 | System | Updated for multi-tenancy, security features, new file structure |
+| Version | Date             | Author | Description                                                      |
+| ------- | ---------------- | ------ | ---------------------------------------------------------------- |
+| 1.0     | August 3, 2025   | System | Initial disaster recovery plan                                   |
+| 2.0     | November 7, 2025 | System | Updated for multi-tenancy, security features, new file structure |
 
 ## Additional Resources
 
@@ -274,24 +272,21 @@ git clone https://github.com/moosecreates/tailtown.git
 cd tailtown
 
 # 2. Install dependencies
-npm install
-cd services/customer && npm install && cd ../..
-cd services/reservation-service && npm install && cd ../..
-cd frontend && npm install && cd ../..
+pnpm install
 
 # 3. Setup environment variables
-cp services/customer/.env.example services/customer/.env
-cp services/reservation-service/.env.example services/reservation-service/.env
-cp frontend/.env.example frontend/.env
+cp apps/customer-service/.env.example apps/customer-service/.env
+cp apps/reservation-service/.env.example apps/reservation-service/.env
+cp apps/frontend/.env.example apps/frontend/.env
 # EDIT .env files with production values!
 
 # 4. Run migrations
-cd services/customer && npx prisma migrate deploy && cd ../..
-cd services/reservation-service && npx prisma migrate deploy && cd ../..
+cd apps/customer-service && pnpm exec prisma migrate deploy && cd ../..
+cd apps/reservation-service && pnpm exec prisma migrate deploy && cd ../..
 
 # 5. Start services
-npm run start:services
-cd frontend && npm start
+pnpm run start:services
+cd apps/frontend && pnpm start
 ```
 
 ### Verification
@@ -301,8 +296,8 @@ curl http://localhost:4004/health
 curl http://localhost:4003/health
 
 # Run security tests
-cd services/customer
-npm test -- --testPathPattern=security
+cd apps/customer-service
+pnpm test -- --testPathPattern=security
 ```
 
 ---

@@ -267,7 +267,7 @@ curl "http://localhost:4004/api/pets?search=Beaucoup" | jq '.data[] | {name, vac
 ## 📚 Related Documentation
 
 - [Gingr API Reference](./GINGR-API-REFERENCE.md)
-- [Vaccination System Tests](../frontend/src/components/pets/__tests__/SimpleVaccinationBadge.test.tsx)
+- [Vaccination System Tests](../../apps/frontend/src/components/pets/__tests__/SimpleVaccinationBadge.test.tsx)
 - [Original Import Script](../scripts/import-gingr-vaccination-data.js)
 - [Enhancement Script](../scripts/enhance-vaccination-data.js)
 

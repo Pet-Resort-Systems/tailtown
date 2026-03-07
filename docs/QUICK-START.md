@@ -16,45 +16,38 @@
 # 1. Clone and install
 git clone <repository-url>
 cd tailtown
-npm install
+pnpm install
 
-# 2. Install frontend dependencies
-cd frontend && npm install && cd ..
-
-# 3. Install service dependencies
-cd services/customer && npm install && cd ../..
-cd services/reservation-service && npm install && cd ../..
-
-# 4. Start PostgreSQL (if not running)
+# 2. Start PostgreSQL (if not running)
 docker ps | grep postgres || docker start tailtown-postgres
 
-# 5. Start all services (use 3 separate terminals)
+# 3. Start all services (use 3 separate terminals)
 ```
 
 ### Terminal 1: Customer Service
 
 ```bash
-cd services/customer
+cd apps/customer-service
 source ~/.nvm/nvm.sh
-npm run dev
+pnpm run dev
 # Wait for: "Customer service running on port 4004"
 ```
 
 ### Terminal 2: Reservation Service
 
 ```bash
-cd services/reservation-service
+cd apps/reservation-service
 source ~/.nvm/nvm.sh
-PORT=4003 npm run dev
+PORT=4003 pnpm run dev
 # Wait for: "Reservation service running on port 4003"
 ```
 
 ### Terminal 3: Frontend
 
 ```bash
-cd frontend
+cd apps/frontend
 source ~/.nvm/nvm.sh
-npm start
+pnpm start
 # Wait for: "Compiled successfully!"
 # Browser opens automatically at http://localhost:3000
 ```
@@ -104,8 +97,8 @@ pkill -f "react-scripts"
 
 # Restart individual service
 pkill -f "reservation-service"
-cd services/reservation-service
-source ~/.nvm/nvm.sh && PORT=4003 npm run dev
+cd apps/reservation-service
+source ~/.nvm/nvm.sh && PORT=4003 pnpm run dev
 ```
 
 ### Database
@@ -118,11 +111,11 @@ docker ps | grep postgres
 psql -h localhost -p 5433 -U postgres -d customer
 
 # Run migrations
-cd services/customer
-npx prisma migrate deploy
+cd apps/customer-service
+pnpm exec prisma migrate deploy
 
 cd ../reservation-service
-npx prisma migrate deploy
+pnpm exec prisma migrate deploy
 ```
 
 ---
@@ -156,15 +149,15 @@ kill -9 <PID>
 source ~/.nvm/nvm.sh
 
 # 4. Try starting again
-PORT=4003 npm run dev
+PORT=4003 pnpm run dev
 ```
 
 ### ERR_CONNECTION_REFUSED
 
 ```bash
 # Service isn't running - start it
-cd services/reservation-service
-source ~/.nvm/nvm.sh && PORT=4003 npm run dev
+cd apps/reservation-service
+source ~/.nvm/nvm.sh && PORT=4003 pnpm run dev
 ```
 
 ### Database Connection Failed
@@ -184,9 +177,9 @@ psql -h localhost -p 5433 -U postgres -d customer -c "SELECT 1;"
 
 ```bash
 # Clear cache and restart
-cd frontend
+cd apps/frontend
 rm -rf node_modules/.cache
-npm start
+pnpm start
 ```
 
 ---
@@ -262,7 +255,7 @@ pip install -r requirements.txt
 
 ```bash
 # Enable verbose logging
-DEBUG=* npm run dev
+DEBUG=* pnpm run dev
 
 # Watch API calls in browser
 # Open DevTools → Network tab → Filter by "localhost:4003"

@@ -219,9 +219,9 @@ After these implementations:
 
 ### Test Security Features
 ```bash
-cd services/customer
+cd apps/customer-service
 source ~/.nvm/nvm.sh
-npm test -- --testPathPattern=security --forceExit
+pnpm test -- --testPathPattern=security --forceExit
 ```
 
 ### Test Request Size Limits

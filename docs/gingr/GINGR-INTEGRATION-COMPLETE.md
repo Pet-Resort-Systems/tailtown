@@ -138,9 +138,9 @@ CREATE TABLE pet_temperaments (
 
 #### Backend API Created:
 **New Files:**
-- `services/customer/src/controllers/referenceData.controller.ts`
-- `services/customer/src/routes/referenceData.routes.ts`
-- `frontend/src/services/referenceDataService.ts`
+- `apps/customer-service/src/controllers/referenceData.controller.ts`
+- `apps/customer-service/src/routes/referenceData.routes.ts`
+- `apps/frontend/src/services/referenceDataService.ts`
 
 **API Endpoints:**
 ```
@@ -152,7 +152,7 @@ PUT  /api/pets/:petId/temperaments     - Update pet's temperaments
 ```
 
 #### Frontend Updates:
-**File:** `frontend/src/pages/pets/PetDetails.tsx`
+**File:** `apps/frontend/src/pages/pets/PetDetails.tsx`
 
 **New Features:**
 1. **Breed Autocomplete**
@@ -242,14 +242,14 @@ PUT  /api/pets/:petId/temperaments     - Update pet's temperaments
 ## 📊 Complete Data Inventory
 
 ### **Reference Data:**
-| Type | Count | Status |
-|------|-------|--------|
-| Breeds | 952 | ✅ Imported |
-| Veterinarians | 1,169 | ✅ Imported |
-| Temperament Types | 5 | ✅ Imported |
-| Suites/Kennels | 166 | ✅ Previously imported |
-| Services | 42 | ✅ Analyzed |
-| Gingr Services | 27 | ✅ Available |
+| Type              | Count | Status                |
+| ----------------- | ----- | --------------------- |
+| Breeds            | 952   | ✅ Imported            |
+| Veterinarians     | 1,169 | ✅ Imported            |
+| Temperament Types | 5     | ✅ Imported            |
+| Suites/Kennels    | 166   | ✅ Previously imported |
+| Services          | 42    | ✅ Analyzed            |
+| Gingr Services    | 27    | ✅ Available           |
 
 ### **Database Tables Created:**
 1. `breeds` - 952 records

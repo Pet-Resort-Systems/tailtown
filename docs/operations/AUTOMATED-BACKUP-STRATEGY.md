@@ -305,9 +305,9 @@ mkdir -p "$BACKUP_DIR"
 
 # Collect .env files (DO NOT commit to git!)
 tar -czf "$BACKUP_DIR/env_files_$DATE.tar.gz" \
-  services/customer/.env \
-  services/reservation-service/.env \
-  frontend/.env
+  apps/customer-service/.env \
+  apps/reservation-service/.env \
+  apps/frontend/.env
 
 # Encrypt with strong password
 openssl enc -aes-256-cbc -salt -pbkdf2 \

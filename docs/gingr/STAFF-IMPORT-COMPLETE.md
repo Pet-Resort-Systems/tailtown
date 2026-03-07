@@ -28,7 +28,7 @@ A comprehensive staff data import system that supports importing staff members, 
 - **`docs/STAFF-IMPORT-COMPLETE.md`** - This completion summary
 
 ### Package Scripts
-Added convenient npm scripts to `package.json`:
+Added convenient package scripts to `package.json`:
 ```json
 {
   "import:staff": "node scripts/import-staff-data.js",
@@ -82,12 +82,12 @@ Vet → Staff → Veterinary
 ```
 
 ### Permission Matrix
-| Role | Manage Staff | Customers | Billing | Reports | Schedule | Department Access |
-|------|--------------|-----------|---------|---------|----------|------------------|
-| Administrator | ✅ | ✅ | ✅ | ✅ | ✅ | All Departments |
-| Manager | ✅ | ✅ | ✅ | ✅ | ✅ | All Departments |
-| Instructor | ❌ | ✅ | ❌ | ✅ | ✅ | Training Only |
-| Staff | ❌ | ❌ | ❌ | ❌ | ❌ | Assigned Department |
+| Role          | Manage Staff | Customers | Billing | Reports | Schedule | Department Access   |
+| ------------- | ------------ | --------- | ------- | ------- | -------- | ------------------- |
+| Administrator | ✅            | ✅         | ✅       | ✅       | ✅        | All Departments     |
+| Manager       | ✅            | ✅         | ✅       | ✅       | ✅        | All Departments     |
+| Instructor    | ❌            | ✅         | ❌       | ✅       | ✅        | Training Only       |
+| Staff         | ❌            | ❌         | ❌       | ❌       | ❌        | Assigned Department |
 
 ---
 
@@ -96,16 +96,16 @@ Vet → Staff → Veterinary
 ### Quick Import Commands
 ```bash
 # Import from Gingr API
-npm run import:staff:gingr tailtown abc123api789
+pnpm run import:staff:gingr tailtown abc123api789
 
 # Import from CSV template
-npm run import:staff:csv templates/staff-import-template.csv
+pnpm run import:staff:csv templates/staff-import-template.csv
 
 # Import from JSON template
-npm run import:staff:json templates/staff-import-template.json
+pnpm run import:staff:json templates/staff-import-template.json
 
 # Generate password hash
-npm run hash:password
+pnpm run hash:password
 ```
 
 ### Custom File Import
@@ -113,10 +113,10 @@ npm run hash:password
 # Copy and edit template
 cp templates/staff-import-template.csv my-staff.csv
 # Edit in Excel/Google Sheets
-npm run import:staff:csv my-staff.csv > staff-import.sql
+pnpm run import:staff:csv my-staff.csv > staff-import.sql
 
 # Hash password
-npm run hash:password
+pnpm run hash:password
 # Replace placeholder in SQL
 
 # Execute in database
@@ -132,7 +132,7 @@ psql -U postgres -d customer -f staff-import.sql
 2. **JSON Import** - Handles combined staff and availability data correctly
 3. **Password Hashing** - Provides clear instructions for secure hash generation
 4. **Template Validation** - All template files are valid and importable
-5. **NPM Scripts** - All convenience scripts work as expected
+5. **Package Scripts** - All convenience scripts work as expected
 
 ### ✅ Error Handling
 - Invalid file paths handled gracefully
@@ -189,7 +189,7 @@ The staff data import system is now production-ready with:
 - ✅ **Thorough Testing** - All import methods tested and working
 - ✅ **Error Handling** - Robust error handling and user guidance
 - ✅ **Security Features** - Secure password handling and data validation
-- ✅ **Convenience Scripts** - Easy-to-use npm scripts
+- ✅ **Convenience Scripts** - Easy-to-use pnpm package scripts
 - ✅ **Template Files** - Ready-to-use import templates
 - ✅ **Multi-Source Support** - Gingr API, CSV, and JSON import options
 

@@ -137,10 +137,10 @@ function PetProfile({ petId, petName }) {
 
 ### Component Props
 
-| Prop | Type | Required | Description |
-|------|------|----------|-------------|
-| `petId` | string | Yes | The unique ID of the pet |
-| `petName` | string | Yes | The name of the pet (for display) |
+| Prop      | Type   | Required | Description                       |
+| --------- | ------ | -------- | --------------------------------- |
+| `petId`   | string | Yes      | The unique ID of the pet          |
+| `petName` | string | Yes      | The name of the pet (for display) |
 
 ### Component Features
 
@@ -216,7 +216,7 @@ No additional environment variables required. The system uses the existing custo
 
 Files are stored in:
 ```
-services/customer/uploads/vaccine-records/
+apps/customer-service/uploads/vaccine-records/
 ```
 
 This directory is automatically created if it doesn't exist.
@@ -286,7 +286,7 @@ Example: abc123-1698172800000-rabies_vaccine.jpg
 The system includes a safe migration script that adds the `vaccineRecordFiles` column without losing data:
 
 ```bash
-node services/customer/prisma/migrations/add_vaccine_record_files.js
+node apps/customer-service/prisma/migrations/add_vaccine_record_files.js
 ```
 
 This script:
@@ -300,8 +300,8 @@ This script:
 After migration, regenerate Prisma client:
 
 ```bash
-cd services/customer
-npx prisma generate
+cd apps/customer-service
+pnpm exec prisma generate
 ```
 
 ## Testing

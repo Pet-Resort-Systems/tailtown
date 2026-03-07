@@ -10,26 +10,25 @@ git clone https://github.com/moosecreates/tailtown.git
 cd tailtown
 
 # Install dependencies
-cd frontend && npm install
-cd ../services/customer && npm install
+pnpm install
 
 # Set up environment variables
-cp frontend/.env.example frontend/.env
-cp services/customer/.env.example services/customer/.env
+cp apps/frontend/.env.example apps/frontend/.env
+cp apps/customer-service/.env.example apps/customer-service/.env
 ```
 
 ### 2. Starting the Development Servers
 
 ```bash
 # Terminal 1: Backend
-cd services/customer
+cd apps/customer-service
 source ~/.nvm/nvm.sh
-npm run dev
+pnpm run dev
 
 # Terminal 2: Frontend
-cd frontend
+cd apps/frontend
 source ~/.nvm/nvm.sh
-npm start
+pnpm start
 ```
 
 ### 3. Development Process
@@ -61,7 +60,7 @@ npm start
 ### Frontend Structure
 
 ```
-frontend/
+apps/frontend/
 ├── src/
 │   ├── components/     # Reusable UI components
 │   │   ├── calendar/
@@ -80,7 +79,7 @@ frontend/
 ### Backend Structure
 
 ```
-services/customer/
+apps/customer-service/
 ├── src/
 │   ├── controllers/   # Route handlers
 │   ├── routes/        # API routes

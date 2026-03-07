@@ -48,7 +48,7 @@ scp -i ~/ttkey gingr-calendar-2025-12-16.tsv root@129.212.178.244:/tmp/
 ssh -i ~/ttkey root@129.212.178.244
 
 # Navigate to customer service
-cd /opt/tailtown/services/customer
+cd /opt/tailtown/apps/customer-service
 
 # Run the import
 node scripts/import-gingr-lodging-csv.js /tmp/gingr-calendar-2025-12-16.tsv b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05
@@ -137,7 +137,7 @@ id	start_date	a_first	o_last	run_name	area_name
 
 1. Run Gingr sync first to import reservations:
    ```bash
-   cd /opt/tailtown/services/customer
+   cd /opt/tailtown/apps/customer-service
    node scripts/incremental-gingr-sync.js b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05
    ```
 2. Check pet name spelling matches between Gingr and Tailtown
@@ -186,7 +186,7 @@ id	start_date	a_first	o_last	run_name	area_name
 **Script:**
 
 ```
-/opt/tailtown/services/customer/scripts/import-gingr-lodging-csv.js
+/opt/tailtown/apps/customer-service/scripts/import-gingr-lodging-csv.js
 ```
 
 **Documentation:**

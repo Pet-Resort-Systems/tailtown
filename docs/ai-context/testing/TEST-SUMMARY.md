@@ -24,7 +24,7 @@ The Tailtown frontend has a comprehensive test suite with **52 total test suites
 - Tests loading, data fetching, JSON parsing, error handling, and auto-print
 - **Status**: All passing
 
-### 2. Timezone Management Tests ✅
+### 2. Timezone Management Tests 
 **File**: `src/services/__tests__/tenantService.timezone.test.ts`
 - 9 tests covering timezone caching, API fetching, and error handling
 - Tests authorization headers and multiple timezone formats
@@ -34,31 +34,31 @@ The Tailtown frontend has a comprehensive test suite with **52 total test suites
 
 ### For CI/CD Pipeline (Recommended)
 ```bash
-npm run test:ci
+pnpm run test:ci
 ```
 Runs only the 27 passing test suites (570 tests). **Exit code 0 guaranteed**.
 
 ### Run All Tests (Including Failing)
 ```bash
-npm run test:all
+pnpm run test:all
 ```
 Runs all 52 test suites. Some will fail - use for local development only.
 
 ### Run Only New Tests
 ```bash
-npm run test:new
+pnpm run test:new
 ```
 Runs only the kennel card and timezone tests we created today (17 tests).
 
 ### Run Tests with Coverage
 ```bash
-npm run test:coverage
+pnpm run test:coverage
 ```
 Generates coverage report for all passing tests.
 
 ### Run Specific Test
 ```bash
-npm test -- KennelCardPrint.test --watchAll=false
+pnpm test -- KennelCardPrint.test --watchAll=false
 ```
 
 ## CI/CD Integration
@@ -81,20 +81,18 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
+          cache: 'pnpm'
       
       - name: Install dependencies
-        working-directory: ./frontend
-        run: npm ci
+        run: pnpm install --frozen-lockfile
       
       - name: Run tests
-        working-directory: ./frontend
-        run: npm run test:ci
+        working-directory: ./apps/frontend
+        run: pnpm run test:ci
       
       - name: Generate coverage
-        working-directory: ./frontend
-        run: npm run test:coverage
+        working-directory: ./apps/frontend
+        run: pnpm run test:coverage
         continue-on-error: true
 ```
 
@@ -154,13 +152,13 @@ jobs:
 
 ## Key Metrics
 
-| Metric | Value | Target |
-|--------|-------|--------|
-| Total Tests | 806 | - |
-| Passing Tests | 570 | 806 (100%) |
+| Metric              | Value | Target       |
+| ------------------- | ----- | ------------ |
+| Total Tests         | 806   | -            |
+| Passing Tests       | 570   | 806 (100%)   |
 | Test Suites Passing | 27/52 | 52/52 (100%) |
-| Code Coverage | ~65% | 80% |
-| CI/CD Ready | ✅ Yes | ✅ Yes |
+| Code Coverage       | ~65%  | 80%          |
+| CI/CD Ready         | ✅ Yes | ✅ Yes        |
 
 ## Documentation
 
@@ -187,4 +185,4 @@ jobs:
 For questions about tests or to report issues:
 - Check `TESTING.md` for common patterns
 - Check `TEST-MAINTENANCE.md` for fixing strategies
-- Run `npm test -- --help` for Jest options
+- Run `pnpm test -- --help` for Jest options

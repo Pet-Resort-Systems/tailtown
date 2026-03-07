@@ -9,20 +9,20 @@ Quick recipes for frequent tasks.
 ### Add a New Field
 ```bash
 # 1. Edit schema
-vim services/customer/prisma/schema.prisma
+vim apps/customer-service/prisma/schema.prisma
 
 # 2. Create migration
-cd services/customer
-npx prisma migrate dev --name add_my_field
+cd apps/customer-service
+pnpm exec prisma migrate dev --name add_my_field
 
 # 3. Regenerate client
-npx prisma generate
+pnpm exec prisma generate
 ```
 
 ### Reset Database
 ```bash
-cd services/customer
-npx prisma migrate reset
+cd apps/customer-service
+pnpm exec prisma migrate reset
 ```
 
 ---
@@ -78,7 +78,7 @@ app.use('/api/my-feature', myFeatureRoutes);
 
 ### Add a Test
 ```typescript
-// services/customer/src/__tests__/myFeature.test.ts
+// apps/customer-service/src/__tests__/myFeature.test.ts
 import request from 'supertest';
 import app from '../index';
 
@@ -97,13 +97,13 @@ describe('My Feature', () => {
 ### Run Specific Tests
 ```bash
 # Single file
-npm test -- myFeature.test.ts
+pnpm test -- myFeature.test.ts
 
 # Pattern
-npm test -- --testPathPattern=security
+pnpm test -- --testPathPattern=security
 
 # Watch mode
-npm test -- --watch
+pnpm test -- --watch
 ```
 
 ---
@@ -153,8 +153,8 @@ git push origin main
 ssh production-server
 
 # Run migrations
-cd /app/services/customer
-npx prisma migrate deploy
+cd /app/apps/customer-service
+pnpm exec prisma migrate deploy
 ```
 
 ---
@@ -164,7 +164,7 @@ npx prisma migrate deploy
 ### View Logs
 ```bash
 # Development
-npm run dev # Logs to console
+pnpm run dev # Logs to console
 
 # Production
 pm2 logs customer-service
@@ -181,8 +181,8 @@ debugger; // Then run: node --inspect-brk
 
 ### Check Database
 ```bash
-cd services/customer
-npx prisma studio
+cd apps/customer-service
+pnpm exec prisma studio
 # Opens GUI at http://localhost:5555
 ```
 
@@ -192,19 +192,19 @@ npx prisma studio
 
 ### Add a Package
 ```bash
-cd services/customer
-npm install package-name
+cd apps/customer-service
+pnpm add package-name
 
 # Dev dependency
-npm install -D package-name
+pnpm add -D package-name
 ```
 
 ### Update Packages
 ```bash
-npm update
+pnpm update
 
 # Check outdated
-npm outdated
+pnpm outdated
 ```
 
 ---

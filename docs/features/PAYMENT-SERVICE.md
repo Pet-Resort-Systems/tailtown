@@ -269,16 +269,16 @@ GET /api/payments/test-cards
 
 ### Test Card Numbers
 
-| Card Type | Number | Expiry | CVV | Result |
-|-----------|--------|--------|-----|--------|
-| Visa | `4788250000028291` | 1225 | 123 | Approved |
-| Visa | `4387751111111053` | 1225 | 123 | Declined |
-| Mastercard | `5454545454545454` | 1225 | 123 | Approved |
-| Mastercard | `5112345112345114` | 1225 | 123 | Declined |
-| Amex | `371449635398431` | 1225 | 1234 | Approved |
-| Amex | `371449635392431` | 1225 | 1234 | Declined |
-| Discover | `6011000991001201` | 1225 | 123 | Approved |
-| Discover | `6011000991001111` | 1225 | 123 | Declined |
+| Card Type  | Number             | Expiry | CVV  | Result   |
+| ---------- | ------------------ | ------ | ---- | -------- |
+| Visa       | `4788250000028291` | 1225   | 123  | Approved |
+| Visa       | `4387751111111053` | 1225   | 123  | Declined |
+| Mastercard | `5454545454545454` | 1225   | 123  | Approved |
+| Mastercard | `5112345112345114` | 1225   | 123  | Declined |
+| Amex       | `371449635398431`  | 1225   | 1234 | Approved |
+| Amex       | `371449635392431`  | 1225   | 1234 | Declined |
+| Discover   | `6011000991001201` | 1225   | 123  | Approved |
+| Discover   | `6011000991001111` | 1225   | 123  | Declined |
 
 ## Response Codes
 
@@ -290,38 +290,38 @@ GET /api/payments/test-cards
 
 ### Common Response Codes (respcode)
 
-| Code | Description |
-|------|-------------|
-| 00 | Approval |
-| 02 | Referral |
-| 05 | Do not honor |
-| 14 | Invalid card number |
-| 41 | Lost card |
-| 43 | Stolen card |
-| 51 | Insufficient funds |
-| 54 | Expired card |
-| 57 | Transaction not permitted |
-| 61 | Exceeds withdrawal limit |
-| 65 | Activity limit exceeded |
+| Code | Description               |
+| ---- | ------------------------- |
+| 00   | Approval                  |
+| 02   | Referral                  |
+| 05   | Do not honor              |
+| 14   | Invalid card number       |
+| 41   | Lost card                 |
+| 43   | Stolen card               |
+| 51   | Insufficient funds        |
+| 54   | Expired card              |
+| 57   | Transaction not permitted |
+| 61   | Exceeds withdrawal limit  |
+| 65   | Activity limit exceeded   |
 
 ### AVS Response Codes (avsresp)
 
-| Code | Description |
-|------|-------------|
-| Y | Address and ZIP match |
-| Z | ZIP matches, address does not |
-| A | Address matches, ZIP does not |
-| N | Neither address nor ZIP match |
-| U | Address information unavailable |
+| Code | Description                     |
+| ---- | ------------------------------- |
+| Y    | Address and ZIP match           |
+| Z    | ZIP matches, address does not   |
+| A    | Address matches, ZIP does not   |
+| N    | Neither address nor ZIP match   |
+| U    | Address information unavailable |
 
 ### CVV Response Codes (cvvresp)
 
-| Code | Description |
-|------|-------------|
-| M | CVV matches ✅ |
-| N | CVV does not match ❌ |
-| P | Not processed |
-| U | Unavailable |
+| Code | Description          |
+| ---- | -------------------- |
+| M    | CVV matches ✅        |
+| N    | CVV does not match ❌ |
+| P    | Not processed        |
+| U    | Unavailable          |
 
 ## Security
 
@@ -378,19 +378,20 @@ RATE_LIMIT_MAX_REQUESTS=100
 
 1. **Install Dependencies:**
    ```bash
-   cd services/payment-service
-   npm install
+   cd /path/to/tailtown
+   pnpm install
    ```
 
 2. **Configure Environment:**
    ```bash
+   cd apps/payment-service
    cp .env.example .env
    # Edit .env with your settings
    ```
 
 3. **Start Development Server:**
    ```bash
-   npm run dev
+   pnpm run dev
    ```
 
 4. **Test:**
@@ -417,12 +418,12 @@ RATE_LIMIT_MAX_REQUESTS=100
 
 **Build:**
 ```bash
-npm run build
+pnpm run build
 ```
 
 **Start:**
 ```bash
-npm start
+pnpm start
 ```
 
 ## Integration Guide
@@ -431,7 +432,7 @@ npm start
 
 1. **Create Payment API Client:**
    ```typescript
-   // frontend/src/services/paymentService.ts
+   // apps/frontend/src/services/paymentService.ts
    import axios from 'axios';
 
    const paymentApi = axios.create({

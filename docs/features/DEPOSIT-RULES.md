@@ -55,7 +55,7 @@ The Flexible Deposit Rules System is a comprehensive, multi-tenant configurable 
 ### Components
 
 ```
-frontend/src/
+apps/frontend/src/
 ├── types/
 │   └── deposit.ts                    # Type definitions
 ├── services/
@@ -527,7 +527,7 @@ GET    /api/deposits/overdue
 
 Run tests:
 ```bash
-npm test -- depositService.test
+pnpm test -- depositService.test
 ```
 
 **Test Coverage (25 passing tests):**

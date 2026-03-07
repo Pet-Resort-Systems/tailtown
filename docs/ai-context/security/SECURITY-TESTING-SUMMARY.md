@@ -276,26 +276,26 @@ Implemented comprehensive security tests for the Tailtown application to ensure 
 
 ### Run All Security Tests
 ```bash
-cd services/customer
-npm test -- --testPathPattern=security
+cd apps/customer-service
+pnpm test -- --testPathPattern=security
 ```
 
 ### Run Specific Test Suite
 ```bash
-npm test -- injection-prevention.test.ts
-npm test -- authentication-security.test.ts
-npm test -- authorization.test.ts
-npm test -- rate-limiting.test.ts
+pnpm test -- injection-prevention.test.ts
+pnpm test -- authentication-security.test.ts
+pnpm test -- authorization.test.ts
+pnpm test -- rate-limiting.test.ts
 ```
 
 ### Run with Coverage
 ```bash
-npm test -- --coverage --testPathPattern=security
+pnpm test -- --coverage --testPathPattern=security
 ```
 
 ### CI/CD Integration
 ```bash
-npm run test:security  # Add this script to package.json
+pnpm run test:security  # Add this script to package.json
 ```
 
 ---
@@ -412,7 +412,7 @@ npm run test:security  # Add this script to package.json
 - JWT (Token Management)
 
 ### Documentation
-- `/services/customer/src/__tests__/security/README.md`
+- `/apps/customer-service/src/__tests__/security/README.md`
 - `/docs/SECURITY-CHECKLIST.md`
 
 ---
