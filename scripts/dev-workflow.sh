@@ -224,7 +224,7 @@ stop_services() {
     local stopped=0
     
     # Stop services using PID files
-    for service in customer reservation apps/frontend; do
+    for service in customer reservation frontend; do
         if [ -f "$PIDS_DIR/$service.pid" ]; then
             local pid=$(cat "$PIDS_DIR/$service.pid")
             if kill -0 $pid 2>/dev/null; then
