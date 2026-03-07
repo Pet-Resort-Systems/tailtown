@@ -162,10 +162,8 @@ jobs:
         env:
           REACT_APP_TENANT_ID: dev
           REACT_APP_API_URL: http://localhost:4004
-          REACT_APP_RESERVATION_API_URL: http://localhost:4003
           CI: false
         run: |
-          cd apps/frontend
           pnpm run build
 
       - name: Build customer service
