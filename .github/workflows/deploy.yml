@@ -143,7 +143,7 @@ jobs:
             echo "Cleaning reservation service node_modules..."
             rm -rf node_modules
             echo "Installing dependencies with pnpm install (more forgiving than pnpm install --frozen-lockfile)..."
-            pnpm install --legacy-peer-deps || echo "pnpm install failed"
+            pnpm install || echo "pnpm install failed"
             pnpm exec prisma generate || echo "Reservation Prisma generation failed"
             echo "Rebuilding reservation service..."
             pnpm run build || echo "Reservation build failed"
