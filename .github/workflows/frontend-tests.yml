@@ -5,7 +5,7 @@ on:
     branches: [main, sept25-stable, develop]
     paths:
       - 'apps/frontend/**'
-      - '.github/workflows/apps/frontend-tests.yml'
+      - '.github/workflows/frontend-tests.yml'
   pull_request:
     branches: [main, sept25-stable, develop]
     paths:
