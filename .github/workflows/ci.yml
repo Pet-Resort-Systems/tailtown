@@ -116,12 +116,9 @@ jobs:
 
       - name: Install dependencies
         if: steps.check_service.outputs.exists == 'true'
-        working-directory: apps/${{ matrix.service }}
         run: |
-          if [ -f "pnpm-lock.yaml" ]; then
+          if [ -f "package.json" ]; then
             pnpm install --frozen-lockfile
-          elif [ -f "package.json" ]; then
-            pnpm install
           fi
         continue-on-error: true
 
