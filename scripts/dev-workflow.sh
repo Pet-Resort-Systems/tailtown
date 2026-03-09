@@ -46,7 +46,7 @@ preflight_checks() {
         echo -e "${RED}✗ pnpm not found${NC}"
         errors=$((errors + 1))
     else
-        echo -e "${GREEN}✓ npm $(npm --version)${NC}"
+        echo -e "${GREEN}✓ pnpm $(pnpm --version)${NC}"
     fi
     
     # Check Docker
