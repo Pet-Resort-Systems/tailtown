@@ -67,7 +67,7 @@ services:
   # Reservation Service
   reservation:
     build:
-      context: ./services/reservation
+      context: ./apps/reservation-service
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://postgres:postgres@reservation-db:5432/reservation

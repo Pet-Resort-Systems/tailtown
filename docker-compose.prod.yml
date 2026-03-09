@@ -117,7 +117,7 @@ services:
   health-monitor:
     build:
       context: .
-      dockerfile: Dockerfile.health
+      dockerfile: docker/Dockerfile.health
     container_name: tailtown-health-monitor
     restart: always
     environment:

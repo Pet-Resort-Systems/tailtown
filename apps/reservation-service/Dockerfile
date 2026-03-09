@@ -16,14 +16,14 @@ RUN pnpm install --no-frozen-lockfile
 # Development stage - includes everything for live reload.
 FROM dependencies AS development
 COPY . .
-RUN pnpm run prisma:generate
-EXPOSE 3002
+RUN pnpm exec prisma generate
+EXPOSE 3003
 CMD ["pnpm", "run", "dev"]
 
 # Production build stage.
 FROM dependencies AS build
 COPY . .
-RUN pnpm run prisma:generate
+RUN pnpm exec prisma generate
 RUN pnpm run build
 
 # Production stage.
@@ -40,9 +40,9 @@ COPY package.json ./
 RUN pnpm install --no-frozen-lockfile
 
 COPY prisma ./prisma
-RUN pnpm run prisma:generate
+RUN pnpm exec prisma generate
 
 COPY --from=build /app/dist ./dist
 
-EXPOSE 3002
+EXPOSE 3003
 CMD ["node", "dist/index.js"]

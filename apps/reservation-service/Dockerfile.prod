@@ -1,40 +1,50 @@
 # Multi-stage build for production
 FROM node:24.14.0-alpine AS builder
 
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+RUN corepack enable
+
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-COPY tsconfig.json ./
+# Copy package metadata and install app-local dependencies.
+COPY package.json ./
+COPY tsconfig.json tsconfig.json
 
-# Install all dependencies (including dev)
-RUN npm ci
+# Install all dependencies needed to build the service.
+RUN pnpm install --no-frozen-lockfile
 
 # Copy source code
 COPY src ./src
 COPY prisma ./prisma
 
-# Generate Prisma client
-RUN npx prisma generate
-
-# Build TypeScript
-RUN npm run build
+# Generate Prisma client and build TypeScript
+RUN pnpm exec prisma generate
+RUN pnpm run build
 
 # Production stage
 FROM node:24.14.0-alpine
 
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+RUN corepack enable
+
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package metadata and install runtime dependencies.
+COPY package.json ./
 
-# Install only production dependencies
-RUN npm ci --only=production
+# Install runtime dependencies plus Prisma CLI used for client generation.
+RUN pnpm install --no-frozen-lockfile
+
+# Copy Prisma schema and generate runtime client
+COPY prisma ./prisma
+RUN pnpm exec prisma generate
 
 # Copy built files from builder
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
