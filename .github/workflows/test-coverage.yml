@@ -44,7 +44,7 @@ jobs:
         uses: cicirello/jacoco-badge-generator@v2
         with:
           badges-directory: badges
-          coverage-badge-filename: apps/frontend-coverage.svg
+          coverage-badge-filename: frontend-coverage.svg
 
       - name: Comment coverage on PR
         if: github.event_name == 'pull_request'
