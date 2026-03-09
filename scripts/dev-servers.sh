@@ -339,7 +339,7 @@ case "${1:-}" in
         echo "  restart  - Restart all development servers"
         echo "  status   - Show status of all servers"
         echo "  cleanup  - Kill zombie processes and clean up"
-        echo "  logs     - Show logs (usage: logs [customer|reservation|apps/frontend|admin|all])"
+        echo "  logs     - Show logs (usage: logs [customer|reservation|frontend|admin|all])"
         echo ""
         exit 1
         ;;
