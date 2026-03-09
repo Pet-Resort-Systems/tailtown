@@ -127,29 +127,33 @@ jobs:
             echo "🔧 ATTEMPTING FIX"
             echo "================================"
             
-            # Now try to fix
+            # 1. Stop services
             echo "Stopping all services..."
             pm2 delete all || true
             
-            echo "Running database schema sync..."
-            cd apps/customer-service
-            pnpm exec prisma db push --accept-data-loss || echo "Customer schema sync failed"
-            pnpm exec prisma generate || echo "Customer Prisma generation failed"
-            echo "Rebuilding customer service..."
-            pnpm run build || echo "Customer build failed"
-            cd ../reservation-service
-            pnpm exec prisma migrate deploy || echo "Reservation migrations failed (may already be applied)"
-            # NUCLEAR OPTION: Delete and reinstall node_modules
-            echo "Cleaning reservation service node_modules..."
-            rm -rf node_modules
-            echo "Installing dependencies with pnpm install (more forgiving than pnpm install --frozen-lockfile)..."
-            pnpm install || echo "pnpm install failed"
-            pnpm exec prisma generate || echo "Reservation Prisma generation failed"
-            echo "Rebuilding reservation service..."
-            pnpm run build || echo "Reservation build failed"
-            cd ../..
+            # 2. Run install at ROOT to ensure all workspace symlinks are correct
+            # This replaces the nuclear rm -rf in the sub-folder
+            echo "Updating dependencies at workspace root..."
+            cd /opt/tailtown
+            pnpm install --frozen-lockfile
             
+            # 3. Handle database migrations (using workspace scope)
+            echo "Running database migrations..."
+            pnpm --filter customer-service exec prisma db push --accept-data-loss
+            pnpm --filter customer-service exec prisma generate
+            
+            pnpm --filter reservation-service exec prisma migrate deploy
+            pnpm --filter reservation-service exec prisma generate
+            
+            # 4. Build services
+            echo "Rebuilding services..."
+            pnpm --filter customer-service run build
+            pnpm --filter reservation-service run build
+            
+            # 5. Start services
             echo "Starting services fresh..."
+            cd /opt/tailtown
+            
             pm2 start ecosystem.config.js --only customer-service
             pm2 start ecosystem.config.js --only reservation-service
             pm2 start ecosystem.config.js --only frontend
