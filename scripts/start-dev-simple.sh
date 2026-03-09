@@ -40,7 +40,7 @@ sleep 2
 # Start apps/frontend
 echo "Starting Frontend (port 3000)..."
 cd "$PROJECT_ROOT/apps/frontend"
-pnpm start > "$PROJECT_ROOT/.logs/apps/frontend.log" 2>&1 &
+pnpm start > "$PROJECT_ROOT/.logs/frontend.log" 2>&1 &
 FRONTEND_PID=$!
 echo "  PID: $FRONTEND_PID"
 
@@ -55,6 +55,6 @@ echo ""
 echo "Logs:"
 echo "  tail -f $PROJECT_ROOT/.logs/customer-service.log"
 echo "  tail -f $PROJECT_ROOT/.logs/reservation-service.log"
-echo "  tail -f $PROJECT_ROOT/.logs/apps/frontend.log"
+echo "  tail -f $PROJECT_ROOT/.logs/frontend.log"
 echo ""
 echo "To stop: pnpm run dev:stop"

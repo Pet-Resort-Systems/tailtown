@@ -67,7 +67,7 @@ echo "🔄 Restarting apps/frontend server..."
 ssh -i $SSH_KEY ${REMOTE_USER}@${REMOTE_HOST} << 'ENDSSH'
 pkill -f "serve -s build" || true
 cd /opt/tailtown/apps/frontend
-nohup serve -s build -l 3000 > /var/log/apps/frontend.log 2>&1 &
+nohup serve -s build -l 3000 > /var/log/frontend.log 2>&1 &
 sleep 2
 
 # Verify server is running

@@ -19,14 +19,14 @@ PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PIDS_DIR="$PROJECT_ROOT/.pids"
 CUSTOMER_PID="$PIDS_DIR/customer-service.pid"
 RESERVATION_PID="$PIDS_DIR/reservation-service.pid"
-FRONTEND_PID="$PIDS_DIR/apps/frontend.pid"
+FRONTEND_PID="$PIDS_DIR/frontend.pid"
 ADMIN_PID="$PIDS_DIR/admin-portal.pid"
 
 # Log file locations
 LOGS_DIR="$PROJECT_ROOT/.logs"
 CUSTOMER_LOG="$LOGS_DIR/customer-service.log"
 RESERVATION_LOG="$LOGS_DIR/reservation-service.log"
-FRONTEND_LOG="$LOGS_DIR/apps/frontend.log"
+FRONTEND_LOG="$LOGS_DIR/frontend.log"
 ADMIN_LOG="$LOGS_DIR/admin-portal.log"
 
 # Create directories if they don't exist
@@ -291,7 +291,7 @@ show_logs() {
         reservation)
             tail -f "$RESERVATION_LOG"
             ;;
-        apps/frontend)
+        frontend)
             tail -f "$FRONTEND_LOG"
             ;;
         admin)
@@ -302,7 +302,7 @@ show_logs() {
             ;;
         *)
             print_error "Unknown service: $service"
-            echo "Available services: customer, reservation, apps/frontend, admin, all"
+            echo "Available services: customer, reservation, frontend, admin, all"
             exit 1
             ;;
     esac

@@ -190,9 +190,9 @@ start_services() {
     # Start apps/frontend
     echo -e "${BLUE}Starting Frontend (port 3000)...${NC}"
     cd "$PROJECT_ROOT/apps/frontend"
-    pnpm start > "$LOGS_DIR/apps/frontend.log" 2>&1 &
+    pnpm start > "$LOGS_DIR/frontend.log" 2>&1 &
     FRONTEND_PID=$!
-    echo $FRONTEND_PID > "$PIDS_DIR/apps/frontend.pid"
+    echo $FRONTEND_PID > "$PIDS_DIR/frontend.pid"
     echo "  PID: $FRONTEND_PID"
     echo "  (Frontend takes ~15-30 seconds to compile)"
     
@@ -207,7 +207,7 @@ start_services() {
     echo -e "${BLUE}Logs:${NC}"
     echo "  tail -f $LOGS_DIR/customer-service.log"
     echo "  tail -f $LOGS_DIR/reservation-service.log"
-    echo "  tail -f $LOGS_DIR/apps/frontend.log"
+    echo "  tail -f $LOGS_DIR/frontend.log"
     echo ""
     echo -e "${BLUE}Commands:${NC}"
     echo "  pnpm run dev:stop     - Stop all services"
