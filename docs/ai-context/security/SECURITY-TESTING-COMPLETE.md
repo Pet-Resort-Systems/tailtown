@@ -234,32 +234,32 @@ We have successfully implemented **comprehensive security testing** for the Tail
 
 ### Run All Security Tests
 ```bash
-cd services/customer
-npm test -- --testPathPattern=security
+cd apps/customer-service
+pnpm test -- --testPathPattern=security
 ```
 
 ### Run by Phase
 ```bash
 # Phase 1: Critical Security
-npm test -- injection-prevention.test.ts
-npm test -- authentication-security.test.ts
-npm test -- authorization.test.ts
-npm test -- rate-limiting.test.ts
+pnpm test -- injection-prevention.test.ts
+pnpm test -- authentication-security.test.ts
+pnpm test -- authorization.test.ts
+pnpm test -- rate-limiting.test.ts
 
 # Phase 2: API & Input Security
-npm test -- api-security.test.ts
-npm test -- input-validation.test.ts
-npm test -- file-upload-security.test.ts
+pnpm test -- api-security.test.ts
+pnpm test -- input-validation.test.ts
+pnpm test -- file-upload-security.test.ts
 
 # Phase 3: Session & Data Protection
-npm test -- session-security.test.ts
-npm test -- data-protection.test.ts
-npm test -- error-handling-security.test.ts
+pnpm test -- session-security.test.ts
+pnpm test -- data-protection.test.ts
+pnpm test -- error-handling-security.test.ts
 ```
 
 ### Run with Coverage
 ```bash
-npm test -- --coverage --testPathPattern=security
+pnpm test -- --coverage --testPathPattern=security
 ```
 
 ### CI/CD Integration
@@ -336,7 +336,7 @@ npm test -- --coverage --testPathPattern=security
 ## 📚 Documentation
 
 ### Test Documentation
-- `/services/customer/src/__tests__/security/README.md` - Complete test guide
+- `/apps/customer-service/src/__tests__/security/README.md` - Complete test guide
 - `/SECURITY-TESTING-SUMMARY.md` - Executive summary
 - `/SECURITY-TESTING-COMPLETE.md` - This document
 - `/docs/SECURITY-CHECKLIST.md` - Security requirements
@@ -418,7 +418,7 @@ npm test -- --coverage --testPathPattern=security
 For security-related questions or to report vulnerabilities:
 - **Email:** security@tailtown.com
 - **Documentation:** `/docs/SECURITY-CHECKLIST.md`
-- **Test Guide:** `/services/customer/src/__tests__/security/README.md`
+- **Test Guide:** `/apps/customer-service/src/__tests__/security/README.md`
 
 ---
 

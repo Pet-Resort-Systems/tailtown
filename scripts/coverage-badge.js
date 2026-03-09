@@ -103,7 +103,7 @@ function main() {
   const badges = [];
 
   // Frontend badges
-  const frontendSummary = path.join(__dirname, '../frontend/coverage/coverage-summary.json');
+  const frontendSummary = path.join(__dirname, '../apps/frontend/coverage/coverage-summary.json');
   if (fs.existsSync(frontendSummary)) {
     const frontendBadges = generateBadges('Frontend', frontendSummary);
     if (frontendBadges) {
@@ -115,7 +115,7 @@ function main() {
   }
 
   // Backend badges
-  const backendSummary = path.join(__dirname, '../services/reservation-service/coverage/coverage-summary.json');
+  const backendSummary = path.join(__dirname, '../apps/reservation-service/coverage/coverage-summary.json');
   if (fs.existsSync(backendSummary)) {
     const backendBadges = generateBadges('Backend', backendSummary);
     if (backendBadges) {

@@ -291,7 +291,7 @@ function main() {
   
   console.log('\n📝 NEXT STEPS:');
   console.log('═══════════════════════════════');
-  console.log('1. Hash the default password: npm run hash:password');
+  console.log('1. Hash the default password: pnpm run hash:password');
   console.log('2. Replace "$2b$10$YourHashedPasswordHere" with the actual hash');
   console.log('3. Run the SQL in your PostgreSQL database:');
   console.log(`   psql -U postgres -d customer -f ${sqlFileName}`);

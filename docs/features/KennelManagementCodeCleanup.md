@@ -21,10 +21,10 @@ This document outlines the code cleanup and refactoring performed on the Kennel 
 - Improved code readability by removing unnecessary comments and verbose code
 
 ### 4. Affected Files
-- `/frontend/src/utils/dateUtils.ts` (new file)
-- `/frontend/src/pages/suites/SuitesPage.tsx`
-- `/frontend/src/components/suites/SuiteBoard.tsx`
-- `/frontend/src/services/resourceService.ts`
+- `/apps/frontend/src/utils/dateUtils.ts` (new file)
+- `/apps/frontend/src/pages/suites/SuitesPage.tsx`
+- `/apps/frontend/src/components/suites/SuiteBoard.tsx`
+- `/apps/frontend/src/services/resourceService.ts`
 
 ## Benefits
 - **Improved Maintainability**: Centralized date formatting logic makes future changes easier

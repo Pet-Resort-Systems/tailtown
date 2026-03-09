@@ -4,7 +4,7 @@ Quick guide to set up your local environment for running tests.
 
 ## Prerequisites
 
-- Node.js 16.x or 18.x
+- Node.js 24.x
 - PostgreSQL (for backend tests)
 - npm or yarn
 

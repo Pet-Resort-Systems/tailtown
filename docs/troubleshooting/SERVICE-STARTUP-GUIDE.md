@@ -64,9 +64,9 @@ lsof -i :4004  # Customer service
 **Solution:**
 ```bash
 # Start the missing service
-cd services/reservation-service  # or services/customer
+cd apps/reservation-service  # or apps/customer-service
 source ~/.nvm/nvm.sh
-npm run dev
+pnpm run dev
 ```
 
 ---
@@ -98,8 +98,8 @@ pkill -f "reservation-service"
 pkill -f "customer"
 
 # Then restart the service
-cd services/reservation-service
-source ~/.nvm/nvm.sh && PORT=4003 npm run dev
+cd apps/reservation-service
+source ~/.nvm/nvm.sh && PORT=4003 pnpm run dev
 ```
 
 ---
@@ -113,7 +113,7 @@ source ~/.nvm/nvm.sh && PORT=4003 npm run dev
 **Diagnosis:**
 ```bash
 # Check .env file
-cat services/reservation-service/.env | grep PORT
+cat apps/reservation-service/.env | grep PORT
 
 # Check what's actually running
 ps aux | grep "ts-node-dev" | grep -v grep
@@ -122,12 +122,12 @@ ps aux | grep "ts-node-dev" | grep -v grep
 **Solution:**
 ```bash
 # Explicitly set PORT when starting
-cd services/reservation-service
-source ~/.nvm/nvm.sh && PORT=4003 npm run dev
+cd apps/reservation-service
+source ~/.nvm/nvm.sh && PORT=4003 pnpm run dev
 
 # Or update .env and restart
 echo "PORT=4003" >> .env
-npm run dev
+pnpm run dev
 ```
 
 ---
@@ -161,7 +161,7 @@ docker run -d --name tailtown-postgres \
   -p 5433:5432 postgres:14
 
 # Verify DATABASE_URL in .env
-cat services/reservation-service/.env | grep DATABASE_URL
+cat apps/reservation-service/.env | grep DATABASE_URL
 ```
 
 ---
@@ -218,7 +218,7 @@ curl -H "x-tenant-id: dev" http://localhost:4003/api/reservations
 ### Issue 7: Frontend Won't Start
 
 **Symptoms:**
-- `npm start` fails
+- `pnpm start` fails
 - Port 3000 already in use
 
 **Diagnosis:**
@@ -236,9 +236,9 @@ ps aux | grep "react-scripts" | grep -v grep
 pkill -f "react-scripts"
 
 # Clear cache and restart
-cd frontend
+cd apps/frontend
 rm -rf node_modules/.cache
-npm start
+pnpm start
 ```
 
 ---
@@ -256,18 +256,18 @@ pkill -f "react-scripts"
 lsof -i :3000 :4003 :4004
 
 # 3. Start customer service
-cd services/customer
-source ~/.nvm/nvm.sh && npm run dev &
+cd apps/customer-service
+source ~/.nvm/nvm.sh && pnpm run dev &
 sleep 3
 
 # 4. Start reservation service
 cd ../reservation-service
-source ~/.nvm/nvm.sh && PORT=4003 npm run dev &
+source ~/.nvm/nvm.sh && PORT=4003 pnpm run dev &
 sleep 3
 
 # 5. Start frontend
-cd ../../frontend
-source ~/.nvm/nvm.sh && npm start
+cd ../../apps/frontend
+source ~/.nvm/nvm.sh && pnpm start
 ```
 
 ### Quick Restart (Single Service)
@@ -275,24 +275,24 @@ source ~/.nvm/nvm.sh && npm start
 ```bash
 # Restart reservation service only
 pkill -f "reservation-service"
-cd services/reservation-service
-source ~/.nvm/nvm.sh && PORT=4003 npm run dev
+cd apps/reservation-service
+source ~/.nvm/nvm.sh && PORT=4003 pnpm run dev
 ```
 
 ### Development Workflow
 
 ```bash
 # Terminal 1: Customer Service
-cd services/customer
-source ~/.nvm/nvm.sh && npm run dev
+cd apps/customer-service
+source ~/.nvm/nvm.sh && pnpm run dev
 
 # Terminal 2: Reservation Service
-cd services/reservation-service
-source ~/.nvm/nvm.sh && PORT=4003 npm run dev
+cd apps/reservation-service
+source ~/.nvm/nvm.sh && PORT=4003 pnpm run dev
 
 # Terminal 3: Frontend
-cd frontend
-source ~/.nvm/nvm.sh && npm start
+cd apps/frontend
+source ~/.nvm/nvm.sh && pnpm start
 ```
 
 ---
@@ -349,7 +349,7 @@ curl -s http://localhost:4004/health | jq
 
 ### Required Variables
 
-**Reservation Service** (`services/reservation-service/.env`):
+**Reservation Service** (`apps/reservation-service/.env`):
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5434/reservation"
 PORT=4003
@@ -357,7 +357,7 @@ NODE_ENV=development
 CUSTOMER_SERVICE_URL="http://localhost:4004/health"
 ```
 
-**Customer Service** (`services/customer/.env`):
+**Customer Service** (`apps/customer-service/.env`):
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5433/customer"
 PORT=4004
@@ -365,7 +365,7 @@ NODE_ENV=development
 JWT_SECRET=your-secret-key
 ```
 
-**Frontend** (`frontend/.env`):
+**Frontend** (`apps/frontend/.env`):
 ```env
 REACT_APP_API_URL=http://localhost:4003
 REACT_APP_CUSTOMER_API_URL=http://localhost:4004
@@ -379,10 +379,10 @@ REACT_APP_TENANT_ID=dev
 ### Enable Verbose Logging
 ```bash
 # Start with debug logging
-DEBUG=* npm run dev
+DEBUG=* pnpm run dev
 
 # Or specific namespaces
-DEBUG=express:* npm run dev
+DEBUG=express:* pnpm run dev
 ```
 
 ### Check Service Dependencies

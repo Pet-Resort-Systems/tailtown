@@ -2,7 +2,7 @@ name: Build Tests
 
 on:
   push:
-    branches: [main, develop, "fix/**", "feature/**"]
+    branches: [main, develop, 'fix/**', 'feature/**']
   pull_request:
     branches: [main, develop]
 
@@ -13,48 +13,46 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.19.0]
+        node-version: ['24.14.0']
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
       - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "npm"
+          cache: 'pnpm'
 
-      - name: Install Customer Service Dependencies
-        run: |
-          cd services/customer
-          npm ci
+      - name: Install monorepo dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Build Customer Service
         run: |
-          cd services/customer
-          npm run build
-
-      - name: Install Reservation Service Dependencies
-        run: |
-          cd services/reservation-service
-          npm ci
+          cd apps/customer-service
+          pnpm run build
 
       - name: Build Reservation Service
         run: |
-          cd services/reservation-service
-          npm run build
+          cd apps/reservation-service
+          pnpm run build
 
       - name: Check for TypeScript Errors
         run: |
           echo "Checking Customer Service..."
-          cd services/customer
-          npx tsc --noEmit || echo "Customer service has TypeScript warnings"
+          cd apps/customer-service
+          pnpm exec tsc --noEmit || echo "Customer service has TypeScript warnings"
           cd ../..
 
           echo "Checking Reservation Service..."
-          cd services/reservation-service
-          npx tsc --noEmit || echo "Reservation service has TypeScript warnings"
+          cd apps/reservation-service
+          pnpm exec tsc --noEmit || echo "Reservation service has TypeScript warnings"
           cd ../..
 
   test-docker-builds:
@@ -70,12 +68,12 @@ jobs:
 
       - name: Test Customer Service Docker Build
         run: |
-          docker build -f services/customer/Dockerfile.prod -t test-customer services/customer
+          docker build -f apps/customer-service/Dockerfile.prod -t test-customer .
 
       - name: Test Reservation Service Docker Build
         run: |
-          docker build -f services/reservation-service/Dockerfile.prod -t test-reservation services/reservation-service
+          docker build -f apps/reservation-service/Dockerfile.prod -t test-reservation .
 
       - name: Test Frontend Docker Build
         run: |
-          docker build -f frontend/Dockerfile.prod -t test-frontend frontend
+          docker build -f apps/frontend/Dockerfile.prod -t test-frontend .

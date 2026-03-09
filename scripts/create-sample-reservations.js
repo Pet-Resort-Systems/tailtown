@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // This script creates sample reservations in the reservation-service database
-// Run from: cd /opt/tailtown/services/reservation-service && node ../../scripts/create-sample-reservations.js rainy
+// Run from: cd /opt/tailtown/apps/reservation-service && node ../../scripts/create-sample-reservations.js rainy
 
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
@@ -125,7 +125,7 @@ if (args.length < 1 || args.length > 2) {
   console.log('Example: node create-sample-reservations.js rainy 10');
   console.log('Default: 10 reservations');
   console.log('\nIMPORTANT: Run from reservation-service directory:');
-  console.log('cd /opt/tailtown/services/reservation-service && node ../../scripts/create-sample-reservations.js rainy');
+  console.log('cd /opt/tailtown/apps/reservation-service && node ../../scripts/create-sample-reservations.js rainy');
   process.exit(1);
 }
 

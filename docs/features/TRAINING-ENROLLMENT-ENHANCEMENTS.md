@@ -281,7 +281,7 @@ CardConnect Settings:
 
 ### Frontend Components
 ```
-frontend/src/
+apps/frontend/src/
 ├── components/dashboard/
 │   ├── UpcomingClasses.tsx (major redesign)
 │   └── __tests__/

@@ -21,10 +21,7 @@ This guide covers the complete development workflow for Tailtown, from starting 
 
 1. **Install Dependencies**
    ```bash
-   npm install
-   cd frontend && npm install
-   cd ../services/customer && npm install
-   cd ../reservation-service && npm install
+   pnpm install
    ```
 
 2. **Start Databases**
@@ -34,12 +31,12 @@ This guide covers the complete development workflow for Tailtown, from starting 
 
 3. **Verify Environment Files**
    ```bash
-   npm run dev:check
+   pnpm run dev:check
    ```
 
 4. **Start All Services**
    ```bash
-   npm run dev:start
+   pnpm run dev:start
    ```
 
 5. **Access Application**
@@ -55,39 +52,39 @@ This guide covers the complete development workflow for Tailtown, from starting 
 
 ```bash
 # 1. Check service status
-npm run dev:status
+pnpm run dev:status
 
 # 2. Run pre-flight checks
-npm run dev:check
+pnpm run dev:check
 
 # 3. Start services (if not running)
-npm run dev:start
+pnpm run dev:start
 
 # 4. Verify health
-npm run health:check
+pnpm run health:check
 ```
 
 ### During Development
 
 ```bash
 # Check what's running
-npm run dev:status
+pnpm run dev:status
 
 # View live logs
-npm run dev:logs
+pnpm run dev:logs
 
 # Restart a specific service (manual)
-cd services/customer && npm run dev
+cd apps/customer-service && pnpm run dev
 
 # Restart all services
-npm run dev:restart
+pnpm run dev:restart
 ```
 
 ### End of Day
 
 ```bash
 # Stop all services
-npm run dev:stop
+pnpm run dev:stop
 
 # Or let them run overnight (they'll auto-cleanup zombies)
 ```
@@ -98,16 +95,16 @@ npm run dev:stop
 
 ### Available Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev:start` | Start all development services with pre-flight checks |
-| `npm run dev:stop` | Stop all services gracefully |
-| `npm run dev:restart` | Restart all services |
-| `npm run dev:status` | Show detailed status of all services |
-| `npm run dev:check` | Run pre-flight checks without starting |
-| `npm run dev:cleanup` | Clean up zombie processes |
-| `npm run dev:logs` | View live logs from all services |
-| `npm run health:check` | Check health endpoints |
+| Command                 | Description                                           |
+| ----------------------- | ----------------------------------------------------- |
+| `pnpm run dev:start`    | Start all development services with pre-flight checks |
+| `pnpm run dev:stop`     | Stop all services gracefully                          |
+| `pnpm run dev:restart`  | Restart all services                                  |
+| `pnpm run dev:status`   | Show detailed status of all services                  |
+| `pnpm run dev:check`    | Run pre-flight checks without starting                |
+| `pnpm run dev:cleanup`  | Clean up zombie processes                             |
+| `pnpm run dev:logs`     | View live logs from all services                      |
+| `pnpm run health:check` | Check health endpoints                                |
 
 ### Service Architecture
 
@@ -150,10 +147,10 @@ npm run dev:stop
 ### Quick Environment Commands
 
 ```bash
-npm run env:status    # Check current environment
-npm run env:dev       # Switch to development (localhost)
-npm run env:prod      # Switch to production (Digital Ocean)
-npm run env:backups   # List environment backups
+pnpm run env:status    # Check current environment
+pnpm run env:dev       # Switch to development (localhost)
+pnpm run env:prod      # Switch to production (Digital Ocean)
+pnpm run env:backups   # List environment backups
 ```
 
 ### Switching Environments
@@ -162,14 +159,14 @@ The environment manager safely switches between development and production:
 
 **Development** (default):
 ```bash
-npm run env:dev
-npm run dev:restart
+pnpm run env:dev
+pnpm run dev:restart
 ```
 
 **Production** (requires confirmation):
 ```bash
-npm run env:prod
-npm run dev:restart
+pnpm run env:prod
+pnpm run dev:restart
 ```
 
 ### Safety Features
@@ -186,13 +183,13 @@ npm run dev:restart
 
 ```bash
 # Check environment
-npm run env:status
+pnpm run env:status
 
 # If not in development, switch
-npm run env:dev
+pnpm run env:dev
 
 # Then start services
-npm run dev:start
+pnpm run dev:start
 ```
 
 **📖 See [ENVIRONMENT-MANAGEMENT.md](./ENVIRONMENT-MANAGEMENT.md) for complete guide**
@@ -205,7 +202,7 @@ npm run dev:start
 
 **Development** (localhost):
 ```bash
-# frontend/.env
+# apps/frontend/.env
 REACT_APP_TENANT_ID=dev
 REACT_APP_API_URL=http://localhost:4004
 REACT_APP_RESERVATION_API_URL=http://localhost:4003
@@ -213,7 +210,7 @@ REACT_APP_RESERVATION_API_URL=http://localhost:4003
 
 **Production** (Digital Ocean):
 ```bash
-# frontend/.env
+# apps/frontend/.env
 REACT_APP_TENANT_ID=dev
 REACT_APP_API_URL=http://129.212.178.244:4004
 REACT_APP_RESERVATION_API_URL=http://129.212.178.244:4003
@@ -224,8 +221,8 @@ REACT_APP_RESERVATION_API_URL=http://129.212.178.244:4003
 Both services use the same database configuration:
 
 ```bash
-# services/customer/.env
-# services/reservation-service/.env
+# apps/customer-service/.env
+# apps/reservation-service/.env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5433/customer"
 PORT=4004  # or 4003 for reservation service
 NODE_ENV=development
@@ -237,12 +234,12 @@ NODE_ENV=development
 
 ```bash
 # Check frontend configuration
-grep "REACT_APP_API_URL" frontend/.env
+grep "REACT_APP_API_URL" apps/frontend/.env
 
 # Should show: http://localhost:4004 (NOT production IP)
 ```
 
-The `npm run dev:check` command automatically validates this.
+The `pnpm run dev:check` command automatically validates this.
 
 ---
 
@@ -257,13 +254,13 @@ The `npm run dev:check` command automatically validates this.
 **Solution**:
 ```bash
 # Clean up zombie processes
-npm run dev:cleanup
+pnpm run dev:cleanup
 
 # Check what's using the ports
 lsof -i :3000 -i :4003 -i :4004
 
 # Force restart
-npm run dev:restart
+pnpm run dev:restart
 ```
 
 #### 2. Database Connection Errors
@@ -279,7 +276,7 @@ docker ps --filter "name=tailtown"
 docker-compose up -d
 
 # Verify connection
-npm run dev:check
+pnpm run dev:check
 ```
 
 #### 3. Frontend Shows Production IP Error
@@ -289,11 +286,11 @@ npm run dev:check
 **Solution**:
 ```bash
 # Fix frontend .env
-echo "REACT_APP_API_URL=http://localhost:4004" > frontend/.env
-echo "REACT_APP_RESERVATION_API_URL=http://localhost:4003" >> frontend/.env
+echo "REACT_APP_API_URL=http://localhost:4004" > apps/frontend/.env
+echo "REACT_APP_RESERVATION_API_URL=http://localhost:4003" >> apps/frontend/.env
 
 # Restart frontend
-npm run dev:restart
+pnpm run dev:restart
 ```
 
 #### 4. Zombie Processes Consuming CPU
@@ -303,14 +300,14 @@ npm run dev:restart
 **Solution**:
 ```bash
 # Automatic cleanup (recommended)
-npm run dev:cleanup
+pnpm run dev:cleanup
 
 # Manual cleanup
 pkill -9 -f "ts-node-dev"
 pkill -9 -f "react-scripts"
 
 # Enable automatic daemon (optional)
-npm run daemon:start
+pnpm run daemon:start
 ```
 
 #### 5. Service Health Check Fails
@@ -320,7 +317,7 @@ npm run daemon:start
 **Solution**:
 ```bash
 # Check service logs
-npm run dev:logs
+pnpm run dev:logs
 
 # Or check individual service
 tail -f .logs/customer-service.log
@@ -328,7 +325,7 @@ tail -f .logs/reservation-service.log
 tail -f .logs/frontend.log
 
 # Restart specific service
-cd services/customer && npm run dev
+cd apps/customer-service && pnpm run dev
 ```
 
 ### Debug Mode
@@ -337,8 +334,8 @@ For detailed debugging:
 
 ```bash
 # Start services with verbose logging
-cd services/customer
-DEBUG=* npm run dev
+cd apps/customer-service
+DEBUG=* pnpm run dev
 
 # Or check the log files
 tail -f .logs/*.log
@@ -348,42 +345,42 @@ tail -f .logs/*.log
 
 ## Best Practices
 
-### 1. Always Use npm Scripts
+### 1. Always Use pnpm Scripts
 
 ✅ **Do this**:
 ```bash
-npm run dev:start
-npm run dev:stop
+pnpm run dev:start
+pnpm run dev:stop
 ```
 
 ❌ **Not this**:
 ```bash
-cd services/customer && npm run dev &
-cd services/reservation-service && npm run dev &
-cd frontend && npm start &
+cd apps/customer-service && pnpm run dev &
+cd apps/reservation-service && pnpm run dev &
+cd apps/frontend && pnpm start &
 ```
 
-**Why**: npm scripts include proper cleanup, health checks, and logging.
+**Why**: pnpm scripts include proper cleanup, health checks, and logging.
 
 ### 2. Check Status Before Starting
 
 ```bash
 # Always check first
-npm run dev:status
+pnpm run dev:status
 
 # Then start if needed
-npm run dev:start
+pnpm run dev:start
 ```
 
 ### 3. Use Pre-flight Checks
 
 ```bash
 # Before starting work
-npm run dev:check
+pnpm run dev:check
 ```
 
 This validates:
-- Node.js and npm versions
+- Node.js and pnpm versions
 - Database containers running
 - Environment files exist and are correct
 - No zombie processes
@@ -393,17 +390,17 @@ This validates:
 
 ```bash
 # Keep a terminal open with logs
-npm run dev:logs
+pnpm run dev:logs
 
 # Or use health checks
-npm run health:check
+pnpm run health:check
 ```
 
 ### 5. Clean Shutdown
 
 ```bash
 # Always stop services properly
-npm run dev:stop
+pnpm run dev:stop
 
 # Not Ctrl+C on individual terminals (creates zombies)
 ```
@@ -412,7 +409,7 @@ npm run dev:stop
 
 ```bash
 # Run cleanup if you notice performance issues
-npm run dev:cleanup
+pnpm run dev:cleanup
 
 # Check for zombies
 ps aux | grep -E '(ts-node-dev|react-scripts)' | grep -v grep
@@ -422,7 +419,7 @@ ps aux | grep -E '(ts-node-dev|react-scripts)' | grep -v grep
 
 - Never commit `.env` files (they're gitignored)
 - Use `.env.example` as template
-- Verify configuration with `npm run dev:check`
+- Verify configuration with `pnpm run dev:check`
 - Keep `DEVELOPMENT-STATUS.md` updated
 
 ### 8. Branch Workflow
@@ -446,28 +443,28 @@ git push origin development
 
 ```bash
 # Generate migration
-cd services/customer
-npx prisma migrate dev --name description
+cd apps/customer-service
+pnpm exec prisma migrate dev --name description
 
 # Apply to reservation service too
 cd ../reservation-service
-npx prisma migrate dev --name description
+pnpm exec prisma migrate dev --name description
 
 # Regenerate clients
-npx prisma generate
+pnpm exec prisma generate
 ```
 
 ### 10. Testing Before Commits
 
 ```bash
 # Run pre-flight checks
-npm run dev:check
+pnpm run dev:check
 
 # Check service health
-npm run health:check
+pnpm run health:check
 
 # Run tests (if available)
-npm test
+pnpm test
 ```
 
 ---
@@ -478,17 +475,17 @@ npm test
 
 ```bash
 # Terminal 1: Services
-npm run dev:start
+pnpm run dev:start
 
 # Terminal 2: Logs
-npm run dev:logs
+pnpm run dev:logs
 
 # Terminal 3: Development work
 git checkout -b feature/new-feature
 # ... make changes ...
 
 # Terminal 4: Testing
-npm run health:check
+pnpm run health:check
 ```
 
 ### Hot Reload Behavior
@@ -501,13 +498,13 @@ npm run health:check
 
 ```bash
 # Check for zombie processes
-npm run dev:status
+pnpm run dev:status
 
 # Monitor resource usage
-npm run health:check
+pnpm run health:check
 
 # View detailed logs
-npm run dev:logs
+pnpm run dev:logs
 ```
 
 ---
@@ -518,31 +515,31 @@ npm run dev:logs
 
 ```bash
 # Full restart
-npm run dev:restart
+pnpm run dev:restart
 
 # Status check
-npm run dev:status && npm run health:check
+pnpm run dev:status && pnpm run health:check
 
 # Clean start
-npm run dev:cleanup && npm run dev:start
+pnpm run dev:cleanup && pnpm run dev:start
 
 # View logs
-npm run dev:logs
+pnpm run dev:logs
 
 # Pre-flight
-npm run dev:check
+pnpm run dev:check
 ```
 
 ### Emergency Recovery
 
 ```bash
 # Nuclear option - clean everything and restart
-npm run dev:stop
-npm run dev:cleanup
+pnpm run dev:stop
+pnpm run dev:cleanup
 docker-compose restart
 sleep 5
-npm run dev:check
-npm run dev:start
+pnpm run dev:check
+pnpm run dev:start
 ```
 
 ---
@@ -551,27 +548,27 @@ npm run dev:start
 
 ### Check These First
 
-1. Run `npm run dev:check` - validates environment
-2. Run `npm run dev:status` - shows what's running
+1. Run `pnpm run dev:check` - validates environment
+2. Run `pnpm run dev:status` - shows what's running
 3. Check `DEVELOPMENT-STATUS.md` - current configuration
-4. View logs: `npm run dev:logs`
+4. View logs: `pnpm run dev:logs`
 
 ### Common Commands Cheat Sheet
 
 ```bash
 # Start/Stop
-npm run dev:start      # Start all services
-npm run dev:stop       # Stop all services
-npm run dev:restart    # Restart everything
+pnpm run dev:start      # Start all services
+pnpm run dev:stop       # Stop all services
+pnpm run dev:restart    # Restart everything
 
 # Status
-npm run dev:status     # Detailed status
-npm run health:check   # Health endpoints
-npm run dev:check      # Pre-flight checks
+pnpm run dev:status     # Detailed status
+pnpm run health:check   # Health endpoints
+pnpm run dev:check      # Pre-flight checks
 
 # Debugging
-npm run dev:logs       # Live logs
-npm run dev:cleanup    # Clean zombies
+pnpm run dev:logs       # Live logs
+pnpm run dev:cleanup    # Clean zombies
 
 # Database
 docker ps              # Check containers
@@ -590,4 +587,4 @@ docker-compose restart # Restart databases
 
 ---
 
-**Remember**: When in doubt, run `npm run dev:check` first!
+**Remember**: When in doubt, run `pnpm run dev:check` first!

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Simple script to test API connectivity between frontend and backend
+ * Simple script to test API connectivity between apps/frontend and backend
  */
 
 const http = require('http');

@@ -10,7 +10,7 @@ Comprehensive testing suite for the check-in system covering backend API, fronte
 
 ### Backend Tests (API)
 
-**Location**: `/services/reservation-service/src/tests/check-in.test.ts`
+**Location**: `/apps/reservation-service/src/tests/check-in.test.ts`
 
 **Coverage**:
 - ✅ Check-In Template CRUD operations
@@ -26,15 +26,15 @@ Comprehensive testing suite for the check-in system covering backend API, fronte
 
 **Run Tests**:
 ```bash
-cd services/reservation-service
-npm test check-in.test.ts
+cd apps/reservation-service
+pnpm test -- check-in.test.ts
 ```
 
 ---
 
 ### Frontend Tests (Components)
 
-**Location**: `/frontend/src/components/check-in/__tests__/`
+**Location**: `/apps/frontend/src/components/check-in/__tests__/`
 
 **Files**:
 1. `MedicationForm.test.tsx` - Medication form component
@@ -52,9 +52,9 @@ npm test check-in.test.ts
 
 **Run Tests**:
 ```bash
-cd frontend
-npm test MedicationForm
-npm test BelongingsForm
+cd apps/frontend
+pnpm test -- MedicationForm
+pnpm test -- BelongingsForm
 ```
 
 ---
@@ -175,28 +175,28 @@ it('adds a new medication when button is clicked', async () => {
 
 ```bash
 # Run all reservation service tests
-cd services/reservation-service
-npm test
+cd apps/reservation-service
+pnpm test
 
 # Run only check-in tests
-npm test check-in
+pnpm test -- check-in
 
 # Run with coverage
-npm test -- --coverage
+pnpm test -- --coverage
 ```
 
 ### Frontend Tests
 
 ```bash
 # Run all frontend tests
-cd frontend
-npm test
+cd apps/frontend
+pnpm test
 
 # Run only check-in component tests
-npm test check-in
+pnpm test -- check-in
 
 # Run with coverage
-npm test -- --coverage --watchAll=false
+pnpm test -- --coverage --watchAll=false
 ```
 
 ---
@@ -251,9 +251,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run backend tests
         run: |
-          cd services/reservation-service
-          npm install
-          npm test check-in.test.ts
+          cd apps/reservation-service
+          pnpm test -- check-in.test.ts
 
   frontend-tests:
     runs-on: ubuntu-latest
@@ -261,9 +260,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run frontend tests
         run: |
-          cd frontend
-          npm install
-          npm test check-in
+          cd apps/frontend
+          pnpm test -- check-in
 ```
 
 ---
@@ -321,7 +319,7 @@ describe('NewComponent', () => {
 **Solution**: Ensure PostgreSQL is running and DATABASE_URL is set
 
 **Issue**: Frontend tests fail with "Cannot find module"
-**Solution**: Run `npm install` in frontend directory
+**Solution**: Run `pnpm install` at the repo root
 
 **Issue**: Tests timeout
 **Solution**: Increase timeout in jest.config.js

@@ -186,13 +186,13 @@ enum SpecialRequirement {
 ### Step 1: Run Database Migration
 
 ```bash
-cd /opt/tailtown/services/customer
+cd /opt/tailtown/apps/customer-service
 
 # Run migration
-npx prisma migrate deploy
+pnpm exec prisma migrate deploy
 
 # Regenerate Prisma client
-npx prisma generate
+pnpm exec prisma generate
 
 # Restart service
 pm2 restart customer-service
@@ -202,13 +202,13 @@ pm2 restart customer-service
 
 ```bash
 # Upload import script to production
-scp -i ~/ttkey services/customer/scripts/import-gingr-compatibility.js root@129.212.178.244:/opt/tailtown/services/customer/scripts/
+scp -i ~/ttkey apps/customer-service/scripts/import-gingr-compatibility.js root@129.212.178.244:/opt/tailtown/apps/customer-service/scripts/
 
 # SSH into production
 ssh -i ~/ttkey root@129.212.178.244
 
 # Run import for all dates
-cd /opt/tailtown/services/customer
+cd /opt/tailtown/apps/customer-service
 for file in /tmp/Reservations*.csv; do
   echo "Processing: $file"
   node scripts/import-gingr-compatibility.js "$file" b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05
@@ -219,7 +219,7 @@ done
 
 ```bash
 # Check compatibility data
-cd /opt/tailtown/services/customer
+cd /opt/tailtown/apps/customer-service
 node -e "
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
@@ -427,7 +427,7 @@ Run the compatibility import script weekly to capture any flag changes in Gingr.
 
 ```bash
 # Add to cron (runs every Sunday at 2 AM)
-0 2 * * 0 cd /opt/tailtown/services/customer && node scripts/import-gingr-compatibility.js /path/to/latest-export.csv b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05
+0 2 * * 0 cd /opt/tailtown/apps/customer-service && node scripts/import-gingr-compatibility.js /path/to/latest-export.csv b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05
 ```
 
 ### Option 3: On-Demand Import

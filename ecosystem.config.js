@@ -12,7 +12,7 @@ module.exports = {
   apps: [
     {
       name: 'customer-service',
-      cwd: './services/customer',
+      cwd: './apps/customer-service',
       script: 'dist/index.js',
       instances: 2,
       exec_mode: 'cluster',
@@ -39,7 +39,7 @@ module.exports = {
     },
     {
       name: 'reservation-service',
-      cwd: './services/reservation-service',
+      cwd: './apps/reservation-service',
       script: 'dist/index.js',
       instances: 2,
       exec_mode: 'cluster',
@@ -66,7 +66,7 @@ module.exports = {
     },
     {
       name: 'frontend',
-      cwd: './frontend',
+      cwd: './apps/frontend',
       script: 'npx',
       args: 'serve -s build -l 3000',
       instances: 1,
@@ -109,7 +109,7 @@ module.exports = {
       ref: 'origin/main',
       repo: 'git@github.com:yourusername/tailtown.git',
       path: '/opt/tailtown',
-      'post-deploy': 'npm install && npm run build && pm2 reload ecosystem.config.js --env production',
+      'post-deploy': 'pnpm install && pnpm run build && pm2 reload ecosystem.config.js --env production',
       'pre-setup': 'mkdir -p /opt/tailtown/logs'
     }
   }

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # PostgreSQL Database
   postgres:
@@ -14,9 +12,9 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./deployment/init-db.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - "5432:5432"
+      - '5432:5432'
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -26,8 +24,8 @@ services:
   # Customer Service
   customer-service:
     build:
-      context: ./services/customer
-      dockerfile: Dockerfile.prod
+      context: .
+      dockerfile: apps/customer-service/Dockerfile.prod
     container_name: tailtown-customer-prod
     restart: always
     environment:
@@ -35,12 +33,18 @@ services:
       PORT: 4004
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/tailtown
     ports:
-      - "4004:4004"
+      - '4004:4004'
     depends_on:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:4004/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"]
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "require('http').get('http://localhost:4004/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -48,16 +52,16 @@ services:
     networks:
       - tailtown-network
     logging:
-      driver: "json-file"
+      driver: 'json-file'
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: '10m'
+        max-file: '3'
 
   # Reservation Service
   reservation-service:
     build:
-      context: ./services/reservation-service
-      dockerfile: Dockerfile.prod
+      context: .
+      dockerfile: apps/reservation-service/Dockerfile.prod
     container_name: tailtown-reservation-prod
     restart: always
     environment:
@@ -65,12 +69,18 @@ services:
       PORT: 4003
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/tailtown
     ports:
-      - "4003:4003"
+      - '4003:4003'
     depends_on:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:4003/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"]
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "require('http').get('http://localhost:4003/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -78,21 +88,21 @@ services:
     networks:
       - tailtown-network
     logging:
-      driver: "json-file"
+      driver: 'json-file'
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: '10m'
+        max-file: '3'
 
   # Frontend (Nginx)
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile.prod
+      context: .
+      dockerfile: apps/frontend/Dockerfile.prod
     container_name: tailtown-frontend-prod
     restart: always
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     depends_on:
       - customer-service
       - reservation-service
@@ -101,23 +111,23 @@ services:
       - ./deployment/nginx/ssl:/etc/nginx/ssl:ro
       - ./deployment/nginx/logs:/var/log/nginx
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost/health']
       interval: 30s
       timeout: 10s
       retries: 3
     networks:
       - tailtown-network
     logging:
-      driver: "json-file"
+      driver: 'json-file'
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: '10m'
+        max-file: '3'
 
   # Health Monitor
   health-monitor:
     build:
       context: .
-      dockerfile: Dockerfile.health
+      dockerfile: docker/Dockerfile.health
     container_name: tailtown-health-monitor
     restart: always
     environment:
@@ -132,10 +142,10 @@ services:
     networks:
       - tailtown-network
     logging:
-      driver: "json-file"
+      driver: 'json-file'
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: '10m'
+        max-file: '3'
 
 volumes:
   postgres_data:

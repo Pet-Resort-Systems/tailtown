@@ -140,7 +140,7 @@ The Customer Booking Portal is a fully-featured, mobile-optimized web applicatio
 ### File Structure
 
 ```
-frontend/src/pages/booking/
+apps/frontend/src/pages/booking/
 ├── BookingPortal.tsx              # Main portal container
 ├── CustomerAuth.tsx               # Login/signup
 └── steps/
@@ -153,7 +153,7 @@ frontend/src/pages/booking/
     ├── ReviewBooking.tsx          # Payment form
     └── BookingConfirmation.tsx    # Success page
 
-frontend/src/services/
+apps/frontend/src/services/
 ├── paymentService.ts              # CardConnect integration
 ├── serviceManagement.ts           # Service API
 ├── petService.ts                  # Pet API
@@ -358,9 +358,9 @@ CARDCONNECT_SITE=fts-uat
 
 **Payment Service Not Running:**
 ```bash
-cd services/payment-service
+cd apps/payment-service
 source ~/.nvm/nvm.sh
-npm run dev
+pnpm run dev
 ```
 
 **Date Picker Not Opening:**

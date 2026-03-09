@@ -76,17 +76,17 @@ Fix or rewrite integration and E2E tests:
 
 ### Run all passing tests only
 ```bash
-npm test -- --watchAll=false --testPathIgnore="(SimpleVaccinationBadge|sortingUtils|availabilityLogic|ReservationForm|GroomerSelector|GroomerAvailability|MedicationForm|BelongingsForm|StaffScheduleForm|TenantStatusManager|UpcomingClasses|TrainingClasses|BookingFlow|critical-paths)"
+pnpm test -- --watchAll=false --testPathIgnorePatterns="(SimpleVaccinationBadge|sortingUtils|availabilityLogic|ReservationForm|GroomerSelector|GroomerAvailability|MedicationForm|BelongingsForm|StaffScheduleForm|TenantStatusManager|UpcomingClasses|TrainingClasses|BookingFlow|critical-paths)"
 ```
 
 ### Run specific failing test to debug
 ```bash
-npm test -- SimpleVaccinationBadge.test --watchAll=false
+pnpm test -- SimpleVaccinationBadge.test --watchAll=false
 ```
 
 ### Run tests with coverage
 ```bash
-npm run test:coverage -- --watchAll=false
+pnpm run test:coverage -- --watchAll=false
 ```
 
 ## CI/CD Integration
@@ -98,7 +98,7 @@ Until all tests are fixed, run only passing tests in CI/CD:
 # .github/workflows/test.yml or similar
 test:
   script:
-    - npm test -- --watchAll=false --testPathIgnore="(SimpleVaccinationBadge|sortingUtils|availabilityLogic|ReservationForm|GroomerSelector|GroomerAvailability|MedicationForm|BelongingsForm|StaffScheduleForm|TenantStatusManager|UpcomingClasses|TrainingClasses|BookingFlow|critical-paths)"
+    - pnpm test -- --watchAll=false --testPathIgnore="(SimpleVaccinationBadge|sortingUtils|availabilityLogic|ReservationForm|GroomerSelector|GroomerAvailability|MedicationForm|BelongingsForm|StaffScheduleForm|TenantStatusManager|UpcomingClasses|TrainingClasses|BookingFlow|critical-paths)"
 ```
 
 ### Future Goal
@@ -107,8 +107,8 @@ Once all tests are fixed:
 ```yaml
 test:
   script:
-    - npm test -- --watchAll=false --coverage
-    - npm run test:coverage -- --watchAll=false --coverageThreshold='{"global":{"branches":80,"functions":80,"lines":80,"statements":80}}'
+    - pnpm test -- --watchAll=false --coverage
+    - pnpm run test:coverage -- --watchAll=false --coverageThreshold='{"global":{"branches":80,"functions":80,"lines":80,"statements":80}}'
 ```
 
 ## Test Maintenance Checklist

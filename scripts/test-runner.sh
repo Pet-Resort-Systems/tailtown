@@ -17,9 +17,9 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 # Test configuration
-FRONTEND_DIR="$PROJECT_ROOT/frontend"
-CUSTOMER_SERVICE_DIR="$PROJECT_ROOT/services/customer"
-RESERVATION_SERVICE_DIR="$PROJECT_ROOT/services/reservation-service"
+FRONTEND_DIR="$PROJECT_ROOT/apps/frontend"
+CUSTOMER_SERVICE_DIR="$PROJECT_ROOT/apps/customer-service"
+RESERVATION_SERVICE_DIR="$PROJECT_ROOT/apps/reservation-service"
 
 #############################################
 # Helper Functions
@@ -67,8 +67,8 @@ run_frontend_tests() {
         return 0
     fi
     
-    echo "Running frontend tests..."
-    npm test -- --watchAll=false --passWithNoTests 2>&1 | tee "$TEST_RESULTS_DIR/frontend.log"
+    echo "Running apps/frontend tests..."
+    pnpm test -- --watchAll=false --passWithNoTests 2>&1 | tee "$TEST_RESULTS_DIR/apps/frontend.log"
     local exit_code=${PIPESTATUS[0]}
     
     if [ $exit_code -eq 0 ]; then
@@ -91,7 +91,7 @@ run_customer_service_tests() {
     cd "$CUSTOMER_SERVICE_DIR"
     
     echo "Running customer service tests..."
-    npm test 2>&1 | tee "$TEST_RESULTS_DIR/customer-service.log"
+    pnpm test 2>&1 | tee "$TEST_RESULTS_DIR/customer-service.log"
     local exit_code=${PIPESTATUS[0]}
     
     if [ $exit_code -eq 0 ]; then
@@ -114,7 +114,7 @@ run_reservation_service_tests() {
     cd "$RESERVATION_SERVICE_DIR"
     
     echo "Running reservation service tests..."
-    npm test 2>&1 | tee "$TEST_RESULTS_DIR/reservation-service.log"
+    pnpm test 2>&1 | tee "$TEST_RESULTS_DIR/reservation-service.log"
     local exit_code=${PIPESTATUS[0]}
     
     if [ $exit_code -eq 0 ]; then
@@ -137,7 +137,7 @@ run_integration_tests() {
     fi
     
     echo "Running integration tests..."
-    npm run test:integration 2>&1 | tee "$TEST_RESULTS_DIR/integration.log"
+    pnpm run test:integration 2>&1 | tee "$TEST_RESULTS_DIR/integration.log"
     local exit_code=${PIPESTATUS[0]}
     
     if [ $exit_code -eq 0 ]; then
@@ -207,15 +207,15 @@ run_quick_tests() {
     # Run unit tests only (faster)
     print_section "Frontend Unit Tests"
     cd "$FRONTEND_DIR"
-    npm test -- --watchAll=false --passWithNoTests --testPathIgnorePatterns=integration 2>&1 | tee "$TEST_RESULTS_DIR/frontend-quick.log" || failed=$((failed + 1))
+    pnpm test -- --watchAll=false --passWithNoTests --testPathIgnorePatterns=integration 2>&1 | tee "$TEST_RESULTS_DIR/apps/frontend-quick.log" || failed=$((failed + 1))
     
     print_section "Customer Service Unit Tests"
     cd "$CUSTOMER_SERVICE_DIR"
-    npm test -- --passWithNoTests 2>&1 | tee "$TEST_RESULTS_DIR/customer-quick.log" || failed=$((failed + 1))
+    pnpm test -- --passWithNoTests 2>&1 | tee "$TEST_RESULTS_DIR/customer-quick.log" || failed=$((failed + 1))
     
     print_section "Reservation Service Unit Tests"
     cd "$RESERVATION_SERVICE_DIR"
-    npm test -- --passWithNoTests 2>&1 | tee "$TEST_RESULTS_DIR/reservation-quick.log" || failed=$((failed + 1))
+    pnpm test -- --passWithNoTests 2>&1 | tee "$TEST_RESULTS_DIR/reservation-quick.log" || failed=$((failed + 1))
     
     # Summary
     echo ""
@@ -255,11 +255,11 @@ run_changed_tests() {
     local run_reservation=false
     
     while IFS= read -r file; do
-        if [[ "$file" == frontend/* ]]; then
+        if [[ "$file" == apps/frontend/* ]]; then
             run_frontend=true
-        elif [[ "$file" == services/customer/* ]]; then
+        elif [[ "$file" == apps/customer-service/* ]]; then
             run_customer=true
-        elif [[ "$file" == services/reservation-service/* ]]; then
+        elif [[ "$file" == apps/reservation-service/* ]]; then
             run_reservation=true
         fi
     done <<< "$changed_files"
@@ -309,21 +309,21 @@ run_watch_mode() {
     case $choice in
         1)
             echo ""
-            echo "Starting frontend tests in watch mode..."
+            echo "Starting apps/frontend tests in watch mode..."
             cd "$FRONTEND_DIR"
-            npm test
+            pnpm test
             ;;
         2)
             echo ""
             echo "Starting customer service tests in watch mode..."
             cd "$CUSTOMER_SERVICE_DIR"
-            npm run test:watch
+            pnpm run test:watch
             ;;
         3)
             echo ""
             echo "Starting reservation service tests in watch mode..."
             cd "$RESERVATION_SERVICE_DIR"
-            npm run test:watch
+            pnpm run test:watch
             ;;
         *)
             echo -e "${RED}Invalid choice${NC}"
@@ -339,15 +339,15 @@ run_coverage() {
     
     print_section "Frontend Coverage"
     cd "$FRONTEND_DIR"
-    npm test -- --coverage --watchAll=false --passWithNoTests
+    pnpm test -- --coverage --watchAll=false --passWithNoTests
     
     print_section "Customer Service Coverage"
     cd "$CUSTOMER_SERVICE_DIR"
-    npm run test:coverage
+    pnpm run test:coverage
     
     print_section "Reservation Service Coverage"
     cd "$RESERVATION_SERVICE_DIR"
-    npm run test:coverage
+    pnpm run test:coverage
     
     echo ""
     echo -e "${GREEN}✅ Coverage reports generated${NC}"
@@ -386,11 +386,11 @@ show_test_status() {
     fi
     
     echo -e "${CYAN}Available Commands:${NC}"
-    echo "  npm run test:all      - Run all tests"
-    echo "  npm run test:quick    - Run unit tests only"
-    echo "  npm run test:changed  - Test changed files"
-    echo "  npm run test:watch    - Watch mode"
-    echo "  npm run test:coverage - Generate coverage"
+    echo "  pnpm run test:all      - Run all tests"
+    echo "  pnpm run test:quick    - Run unit tests only"
+    echo "  pnpm run test:changed  - Test changed files"
+    echo "  pnpm run test:watch    - Watch mode"
+    echo "  pnpm run test:coverage - Generate coverage"
     echo ""
 }
 
@@ -440,18 +440,18 @@ case "${1:-}" in
         echo "  changed      - Run tests for changed files"
         echo "  watch        - Run tests in watch mode"
         echo "  coverage     - Generate coverage reports"
-        echo "  frontend     - Run frontend tests only"
+        echo "  apps/frontend     - Run apps/frontend tests only"
         echo "  customer     - Run customer service tests only"
         echo "  reservation  - Run reservation service tests only"
         echo "  integration  - Run integration tests only"
         echo "  status       - Show test status"
         echo ""
         echo "npm shortcuts:"
-        echo "  npm run test:all"
-        echo "  npm run test:quick"
-        echo "  npm run test:changed"
-        echo "  npm run test:watch"
-        echo "  npm run test:coverage"
+        echo "  pnpm run test:all"
+        echo "  pnpm run test:quick"
+        echo "  pnpm run test:changed"
+        echo "  pnpm run test:watch"
+        echo "  pnpm run test:coverage"
         echo ""
         echo "Pre-commit:"
         echo "  Tests automatically run on git commit (quick tests)"

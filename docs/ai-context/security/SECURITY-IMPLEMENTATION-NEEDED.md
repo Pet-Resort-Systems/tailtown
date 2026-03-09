@@ -46,11 +46,11 @@ Based on test failures, here are the security features that need to be added or 
 
 **Implementation:**
 ```bash
-npm install express-rate-limit
+pnpm add express-rate-limit
 ```
 
 ```typescript
-// src/middleware/rate-limit.middleware.ts
+// apps/customer-service/src/middleware/rate-limit.middleware.ts
 import rateLimit from 'express-rate-limit';
 
 // Strict rate limit for authentication endpoints
@@ -353,7 +353,7 @@ app.use(validateContentType);
 
 **Implementation:**
 ```bash
-npm install helmet
+pnpm add helmet
 ```
 
 ```typescript
@@ -393,7 +393,7 @@ app.disable('x-powered-by');
 
 **Implementation:**
 ```bash
-npm install cors
+pnpm add cors
 ```
 
 ```typescript
@@ -436,8 +436,8 @@ app.use(cors(corsOptions));
 
 **Implementation:**
 ```bash
-npm install multer
-npm install file-type
+pnpm add multer
+pnpm add file-type
 ```
 
 ```typescript
@@ -520,9 +520,9 @@ export default router;
 
 **Implementation:**
 ```bash
-npm install joi
+pnpm add joi
 # or
-npm install zod
+pnpm add zod
 ```
 
 ```typescript
@@ -593,14 +593,14 @@ export const validateCustomer = (req: Request, res: Response, next: NextFunction
 
 ### 1. Install Required Packages
 ```bash
-cd services/customer
-npm install express-rate-limit helmet cors multer joi
-npm install --save-dev @types/multer @types/cors
+cd apps/customer-service
+pnpm add express-rate-limit helmet cors multer joi
+pnpm add -D @types/multer @types/cors
 ```
 
 ### 2. Run Migrations
 ```bash
-npx prisma migrate dev --name add-security-fields
+pnpm exec prisma migrate dev --name add-security-fields
 ```
 
 ### 3. Update Environment Variables
@@ -616,7 +616,7 @@ RATE_LIMIT_MAX_REQUESTS=100
 
 ### 4. Run Security Tests
 ```bash
-npm test -- --testPathPattern=security --forceExit
+pnpm test -- --testPathPattern=security --forceExit
 ```
 
 ---

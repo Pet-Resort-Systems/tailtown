@@ -1,7 +1,7 @@
 /**
  * Tests for Health Check Script
  * 
- * Run with: npm test -- scripts/__tests__/health-check.test.js
+ * Run with: pnpm test -- scripts/__tests__/health-check.test.js
  */
 
 const { exec } = require('child_process');

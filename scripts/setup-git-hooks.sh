@@ -66,7 +66,7 @@ if [ "$zombie_count" -gt 3 ]; then
     pkill -9 -f "react-scripts" 2>/dev/null || true
     
     echo "✅ Cleanup complete"
-    echo "   Remember to restart servers: npm run dev:start"
+    echo "   Remember to restart servers: pnpm run dev:start"
 fi
 
 exit 0
@@ -94,7 +94,7 @@ if [ "$zombie_count" -gt 3 ]; then
     pkill -9 -f "react-scripts" 2>/dev/null || true
     
     echo "✅ Cleanup complete"
-    echo "   Remember to restart servers: npm run dev:start"
+    echo "   Remember to restart servers: pnpm run dev:start"
 fi
 
 exit 0

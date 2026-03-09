@@ -390,7 +390,7 @@ await schedulingService.enrollments.issueCertificate(enrollmentId);
 ## Frontend Components
 
 ### ClassEnrollments.tsx
-**Location**: `/frontend/src/pages/training/ClassEnrollments.tsx`
+**Location**: `/apps/frontend/src/pages/training/ClassEnrollments.tsx`
 
 **Features**:
 - View all enrollments for a class

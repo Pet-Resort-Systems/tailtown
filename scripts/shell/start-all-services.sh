@@ -7,17 +7,17 @@ echo "Press Ctrl+C in each window to stop the services."
 echo ""
 
 # Start customer service in new terminal
-osascript -e 'tell app "Terminal" to do script "cd /Users/robweinstein/CascadeProjects/tailtown/services/customer && source ~/.nvm/nvm.sh && npm run dev"'
+osascript -e 'tell app "Terminal" to do script "cd /Users/robweinstein/CascadeProjects/tailtown/apps/customer-service && source ~/.nvm/nvm.sh && pnpm run dev"'
 
 sleep 2
 
 # Start reservation service in new terminal  
-osascript -e 'tell app "Terminal" to do script "cd /Users/robweinstein/CascadeProjects/tailtown/services/reservation-service && source ~/.nvm/nvm.sh && npm run dev"'
+osascript -e 'tell app "Terminal" to do script "cd /Users/robweinstein/CascadeProjects/tailtown/apps/reservation-service && source ~/.nvm/nvm.sh && pnpm run dev"'
 
 sleep 2
 
-# Start frontend in new terminal
-osascript -e 'tell app "Terminal" to do script "cd /Users/robweinstein/CascadeProjects/tailtown/frontend && source ~/.nvm/nvm.sh && npm start"'
+# Start apps/frontend in new terminal
+osascript -e 'tell app "Terminal" to do script "cd /Users/robweinstein/CascadeProjects/tailtown/apps/frontend && source ~/.nvm/nvm.sh && pnpm start"'
 
 echo "✅ All services starting in separate terminal windows!"
 echo ""

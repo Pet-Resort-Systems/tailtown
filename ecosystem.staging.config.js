@@ -18,7 +18,7 @@ module.exports = {
   apps: [
     {
       name: "staging-customer-service",
-      cwd: "./services/customer",
+      cwd: "./apps/customer-service",
       script: "dist/index.js",
       instances: 1, // Single instance for staging
       exec_mode: "fork",
@@ -43,7 +43,7 @@ module.exports = {
     },
     {
       name: "staging-reservation-service",
-      cwd: "./services/reservation-service",
+      cwd: "./apps/reservation-service",
       script: "dist/index.js",
       instances: 1,
       exec_mode: "fork",
@@ -68,7 +68,7 @@ module.exports = {
     },
     {
       name: "staging-frontend",
-      cwd: "./frontend",
+      cwd: "./apps/frontend",
       script: "npx",
       args: "serve -s build -l 5000",
       instances: 1,
@@ -96,7 +96,7 @@ module.exports = {
       path: "/opt/tailtown-staging",
       "pre-deploy": "git fetch --all",
       "post-deploy":
-        "npm install && npm run build:staging && pm2 reload ecosystem.staging.config.js",
+        "pnpm install && pnpm run build:staging && pm2 reload ecosystem.staging.config.js",
       "pre-setup": "mkdir -p /opt/tailtown-staging/logs",
     },
   },

@@ -78,7 +78,7 @@ cd /opt/tailtown
 
 ```bash
 # Already included in deployment setup
-npm install node-fetch pg
+pnpm install
 ```
 
 ### Step 2: Configure Environment
@@ -186,17 +186,17 @@ For each new reservation:
 - ✅ `scripts/README-GINGR-SYNC.md` - Quick reference
 
 ### Tests
-- ✅ `services/reservation-service/src/__tests__/reservation-overlap.test.ts`
+- ✅ `apps/reservation-service/src/__tests__/reservation-overlap.test.ts`
 
 ## Differences: Local vs Production
 
-| Feature | Local | Production |
-|---------|-------|------------|
-| Database Access | `docker exec` | Direct `psql` |
-| Connection | `localhost:5433` | `$DATABASE_URL` |
-| Script | `sync-gingr.sh` | `sync-gingr-prod.sh` |
-| Node Script | `sync-gingr-reservations.mjs` | `sync-gingr-reservations-prod.mjs` |
-| Environment | Docker containers | Managed DB or container |
+| Feature         | Local                         | Production                         |
+| --------------- | ----------------------------- | ---------------------------------- |
+| Database Access | `docker exec`                 | Direct `psql`                      |
+| Connection      | `localhost:5433`              | `$DATABASE_URL`                    |
+| Script          | `sync-gingr.sh`               | `sync-gingr-prod.sh`               |
+| Node Script     | `sync-gingr-reservations.mjs` | `sync-gingr-reservations-prod.mjs` |
+| Environment     | Docker containers             | Managed DB or container            |
 
 ## Commands Reference
 

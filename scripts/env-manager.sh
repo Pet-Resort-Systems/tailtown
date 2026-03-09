@@ -50,8 +50,8 @@ print_header() {
 }
 
 detect_current_env() {
-    if [ -f "$PROJECT_ROOT/frontend/.env" ]; then
-        local api_url=$(grep "REACT_APP_API_URL" "$PROJECT_ROOT/frontend/.env" | cut -d'=' -f2)
+    if [ -f "$PROJECT_ROOT/apps/frontend/.env" ]; then
+        local api_url=$(grep "REACT_APP_API_URL" "$PROJECT_ROOT/apps/frontend/.env" | cut -d'=' -f2)
         if [[ "$api_url" == *"localhost"* ]]; then
             echo "development"
         elif [[ "$api_url" == *"129.212.178.244"* ]]; then
@@ -89,30 +89,30 @@ show_status() {
     echo -e "${CYAN}Configuration Files:${NC}"
     
     # Frontend
-    if [ -f "$PROJECT_ROOT/frontend/.env" ]; then
-        echo -e "  ${GREEN}✓${NC} frontend/.env"
-        echo "    API URL: $(grep REACT_APP_API_URL frontend/.env | cut -d'=' -f2)"
-        echo "    Reservation API: $(grep REACT_APP_RESERVATION_API_URL frontend/.env | cut -d'=' -f2 2>/dev/null || echo 'not set')"
+    if [ -f "$PROJECT_ROOT/apps/frontend/.env" ]; then
+        echo -e "  ${GREEN}✓${NC} apps/frontend/.env"
+        echo "    API URL: $(grep REACT_APP_API_URL apps/frontend/.env | cut -d'=' -f2)"
+        echo "    Reservation API: $(grep REACT_APP_RESERVATION_API_URL apps/frontend/.env | cut -d'=' -f2 2>/dev/null || echo 'not set')"
     else
-        echo -e "  ${RED}✗${NC} frontend/.env (missing)"
+        echo -e "  ${RED}✗${NC} apps/frontend/.env (missing)"
     fi
     
     # Customer Service
-    if [ -f "$PROJECT_ROOT/services/customer/.env" ]; then
-        echo -e "  ${GREEN}✓${NC} services/customer/.env"
-        echo "    Port: $(grep ^PORT services/customer/.env | cut -d'=' -f2)"
-        echo "    Node Env: $(grep NODE_ENV services/customer/.env | cut -d'=' -f2)"
+    if [ -f "$PROJECT_ROOT/apps/customer-service/.env" ]; then
+        echo -e "  ${GREEN}✓${NC} apps/customer-service/.env"
+        echo "    Port: $(grep ^PORT apps/customer-service/.env | cut -d'=' -f2)"
+        echo "    Node Env: $(grep NODE_ENV apps/customer-service/.env | cut -d'=' -f2)"
     else
-        echo -e "  ${RED}✗${NC} services/customer/.env (missing)"
+        echo -e "  ${RED}✗${NC} apps/customer-service/.env (missing)"
     fi
     
     # Reservation Service
-    if [ -f "$PROJECT_ROOT/services/reservation-service/.env" ]; then
-        echo -e "  ${GREEN}✓${NC} services/reservation-service/.env"
-        echo "    Port: $(grep ^PORT services/reservation-service/.env | cut -d'=' -f2)"
-        echo "    Node Env: $(grep NODE_ENV services/reservation-service/.env | cut -d'=' -f2)"
+    if [ -f "$PROJECT_ROOT/apps/reservation-service/.env" ]; then
+        echo -e "  ${GREEN}✓${NC} apps/reservation-service/.env"
+        echo "    Port: $(grep ^PORT apps/reservation-service/.env | cut -d'=' -f2)"
+        echo "    Node Env: $(grep NODE_ENV apps/reservation-service/.env | cut -d'=' -f2)"
     else
-        echo -e "  ${RED}✗${NC} services/reservation-service/.env (missing)"
+        echo -e "  ${RED}✗${NC} apps/reservation-service/.env (missing)"
     fi
     
     echo ""
@@ -148,19 +148,19 @@ backup_env_files() {
     
     echo -e "${CYAN}Creating backup...${NC}"
     
-    if [ -f "$PROJECT_ROOT/frontend/.env" ]; then
-        cp "$PROJECT_ROOT/frontend/.env" "$backup_dir/frontend.env.$timestamp"
-        echo -e "  ${GREEN}✓${NC} Backed up frontend/.env"
+    if [ -f "$PROJECT_ROOT/apps/frontend/.env" ]; then
+        cp "$PROJECT_ROOT/apps/frontend/.env" "$backup_dir/apps/frontend.env.$timestamp"
+        echo -e "  ${GREEN}✓${NC} Backed up apps/frontend/.env"
     fi
     
-    if [ -f "$PROJECT_ROOT/services/customer/.env" ]; then
-        cp "$PROJECT_ROOT/services/customer/.env" "$backup_dir/customer.env.$timestamp"
-        echo -e "  ${GREEN}✓${NC} Backed up services/customer/.env"
+    if [ -f "$PROJECT_ROOT/apps/customer-service/.env" ]; then
+        cp "$PROJECT_ROOT/apps/customer-service/.env" "$backup_dir/customer.env.$timestamp"
+        echo -e "  ${GREEN}✓${NC} Backed up apps/customer-service/.env"
     fi
     
-    if [ -f "$PROJECT_ROOT/services/reservation-service/.env" ]; then
-        cp "$PROJECT_ROOT/services/reservation-service/.env" "$backup_dir/reservation.env.$timestamp"
-        echo -e "  ${GREEN}✓${NC} Backed up services/reservation-service/.env"
+    if [ -f "$PROJECT_ROOT/apps/reservation-service/.env" ]; then
+        cp "$PROJECT_ROOT/apps/reservation-service/.env" "$backup_dir/reservation.env.$timestamp"
+        echo -e "  ${GREEN}✓${NC} Backed up apps/reservation-service/.env"
     fi
     
     echo ""
@@ -171,7 +171,7 @@ write_frontend_env() {
     local api_url=$2
     local reservation_api_url=$3
     
-    cat > "$PROJECT_ROOT/frontend/.env" << EOF
+    cat > "$PROJECT_ROOT/apps/frontend/.env" << EOF
 REACT_APP_TENANT_ID=$TENANT_ID
 REACT_APP_API_URL=$api_url
 REACT_APP_RESERVATION_API_URL=$reservation_api_url
@@ -212,13 +212,13 @@ switch_to_dev() {
     echo -e "${CYAN}Writing development configuration...${NC}"
     
     write_frontend_env "development" "$DEV_FRONTEND_API_URL" "$DEV_FRONTEND_RESERVATION_API_URL"
-    echo -e "  ${GREEN}✓${NC} Updated frontend/.env"
+    echo -e "  ${GREEN}✓${NC} Updated apps/frontend/.env"
     
-    write_backend_env "$PROJECT_ROOT/services/customer" "development" "$DEV_BACKEND_DATABASE_URL" "$DEV_CUSTOMER_PORT" "$DEV_NODE_ENV"
-    echo -e "  ${GREEN}✓${NC} Updated services/customer/.env"
+    write_backend_env "$PROJECT_ROOT/apps/customer-service" "development" "$DEV_BACKEND_DATABASE_URL" "$DEV_CUSTOMER_PORT" "$DEV_NODE_ENV"
+    echo -e "  ${GREEN}✓${NC} Updated apps/customer-service/.env"
     
-    write_backend_env "$PROJECT_ROOT/services/reservation-service" "development" "$DEV_BACKEND_DATABASE_URL" "$DEV_RESERVATION_PORT" "$DEV_NODE_ENV"
-    echo -e "  ${GREEN}✓${NC} Updated services/reservation-service/.env"
+    write_backend_env "$PROJECT_ROOT/apps/reservation-service" "development" "$DEV_BACKEND_DATABASE_URL" "$DEV_RESERVATION_PORT" "$DEV_NODE_ENV"
+    echo -e "  ${GREEN}✓${NC} Updated apps/reservation-service/.env"
     
     echo ""
     echo -e "${GREEN}✅ Switched to development environment${NC}"
@@ -231,7 +231,7 @@ switch_to_dev() {
         echo -e "${YELLOW}⚠ Services are currently running${NC}"
         echo -e "${YELLOW}  You should restart them to apply the new configuration:${NC}"
         echo ""
-        echo -e "  ${CYAN}npm run dev:restart${NC}"
+        echo -e "  ${CYAN}pnpm run dev:restart${NC}"
         echo ""
     fi
     
@@ -272,13 +272,13 @@ switch_to_prod() {
     echo -e "${CYAN}Writing production configuration...${NC}"
     
     write_frontend_env "production" "$PROD_FRONTEND_API_URL" "$PROD_FRONTEND_RESERVATION_API_URL"
-    echo -e "  ${GREEN}✓${NC} Updated frontend/.env"
+    echo -e "  ${GREEN}✓${NC} Updated apps/frontend/.env"
     
-    write_backend_env "$PROJECT_ROOT/services/customer" "production" "$PROD_BACKEND_DATABASE_URL" "$PROD_CUSTOMER_PORT" "$PROD_NODE_ENV"
-    echo -e "  ${GREEN}✓${NC} Updated services/customer/.env"
+    write_backend_env "$PROJECT_ROOT/apps/customer-service" "production" "$PROD_BACKEND_DATABASE_URL" "$PROD_CUSTOMER_PORT" "$PROD_NODE_ENV"
+    echo -e "  ${GREEN}✓${NC} Updated apps/customer-service/.env"
     
-    write_backend_env "$PROJECT_ROOT/services/reservation-service" "production" "$PROD_BACKEND_DATABASE_URL" "$PROD_RESERVATION_PORT" "$PROD_NODE_ENV"
-    echo -e "  ${GREEN}✓${NC} Updated services/reservation-service/.env"
+    write_backend_env "$PROJECT_ROOT/apps/reservation-service" "production" "$PROD_BACKEND_DATABASE_URL" "$PROD_RESERVATION_PORT" "$PROD_NODE_ENV"
+    echo -e "  ${GREEN}✓${NC} Updated apps/reservation-service/.env"
     
     echo ""
     echo -e "${GREEN}✅ Switched to production environment${NC}"
@@ -291,7 +291,7 @@ switch_to_prod() {
         echo -e "${YELLOW}⚠ Services are currently running${NC}"
         echo -e "${YELLOW}  You should restart them to apply the new configuration:${NC}"
         echo ""
-        echo -e "  ${CYAN}npm run dev:restart${NC}"
+        echo -e "  ${CYAN}pnpm run dev:restart${NC}"
         echo ""
     fi
     
@@ -358,10 +358,10 @@ case "${1:-}" in
         echo "  backups          - List environment backups"
         echo ""
         echo "npm shortcuts:"
-        echo "  npm run env:dev"
-        echo "  npm run env:prod"
-        echo "  npm run env:status"
-        echo "  npm run env:backups"
+        echo "  pnpm run env:dev"
+        echo "  pnpm run env:prod"
+        echo "  pnpm run env:status"
+        echo "  pnpm run env:backups"
         echo ""
         echo "Current environment: $(detect_current_env)"
         exit 1

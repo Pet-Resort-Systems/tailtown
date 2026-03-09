@@ -14,9 +14,9 @@
 
 const path = require('path');
 
-require('dotenv').config({ path: path.join(__dirname, '../services/customer/.env') });
+require('dotenv').config({ path: path.join(__dirname, '../apps/customer-service/.env') });
 
-const { gingrSyncService } = require(path.join(__dirname, '../services/customer/dist/services/gingr-sync.service'));
+const { gingrSyncService } = require(path.join(__dirname, '../apps/customer-service/dist/services/gingr-sync.service'));
 
 async function main() {
   console.log('🔄 Gingr Sync Started');

@@ -558,7 +558,7 @@ async function hashPassword(password) {
   console.log('https://bcrypt-generator.com/');
   console.log('');
   console.log('Or install bcrypt separately:');
-  console.log('npm install bcrypt');
+  console.log('pnpm install bcrypt');
   console.log('node -e "const bcrypt = require(\"bcrypt\"); bcrypt.hash(\"TempPass@2024!\", 10).then(console.log)"');
   return '$2b$10$YourHashedPasswordHere';
 }

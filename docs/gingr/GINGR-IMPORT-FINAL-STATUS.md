@@ -10,16 +10,16 @@
 
 ### ✅ Successfully Imported
 
-| Data Type | Count | Status | Notes |
-|-----------|-------|--------|-------|
-| Customers | 11,793 | ✅ Complete | Full contact info, addresses |
-| Pets | 18,363 | ✅ Complete | With breeds, vets, medical records |
-| Reservations | 6,535 | ✅ Complete | May-Dec 2025 |
-| Services | 35 | ✅ Complete | All service types |
-| Staff | 24 | ✅ Complete | 21 from Gingr + 3 existing |
-| Vaccine Records | 35,020 | ✅ Complete | Auto-populating to pet profiles |
-| Veterinarians | 9,720 | ✅ Complete | Linked to pets |
-| Breeds | 954 | ✅ Complete | Dog and cat breeds |
+| Data Type       | Count  | Status     | Notes                              |
+| --------------- | ------ | ---------- | ---------------------------------- |
+| Customers       | 11,793 | ✅ Complete | Full contact info, addresses       |
+| Pets            | 18,363 | ✅ Complete | With breeds, vets, medical records |
+| Reservations    | 6,535  | ✅ Complete | May-Dec 2025                       |
+| Services        | 35     | ✅ Complete | All service types                  |
+| Staff           | 24     | ✅ Complete | 21 from Gingr + 3 existing         |
+| Vaccine Records | 35,020 | ✅ Complete | Auto-populating to pet profiles    |
+| Veterinarians   | 9,720  | ✅ Complete | Linked to pets                     |
+| Breeds          | 954    | ✅ Complete | Dog and cat breeds                 |
 
 ### 📈 Data Quality Improvements
 
@@ -60,7 +60,7 @@
 **Problem:** Breeds, vets, and temperaments APIs returning 500 errors  
 **Solution:** Updated controllers to use appropriate data sources  
 **Files:**
-- `services/customer/src/controllers/referenceData.controller.ts`
+- `apps/customer-service/src/controllers/referenceData.controller.ts`
 - Breeds: Load from `data/gingr-reference/breeds.json` (954 breeds)
 - Vets: Query unique vets from pets table (1,007 vets)
 - Temperaments: Return static list (7 types)
@@ -68,13 +68,13 @@
 ### 5. Medical Records in Pet API
 **Problem:** Vaccine records not appearing in pet details  
 **Solution:** Added `medicalRecords` relation to pet query  
-**File:** `services/customer/src/controllers/pet.controller.ts` (line 118-124)  
+**File:** `apps/customer-service/src/controllers/pet.controller.ts` (line 118-124)  
 **Result:** Pet API now includes all medical records
 
 ### 6. Calendar Reservations
 **Problem:** Reservations not loading in calendar view  
 **Solution:** Added `loadReservations()` function to fetch data  
-**File:** `frontend/src/hooks/useKennelData.ts` (line 249-272)  
+**File:** `apps/frontend/src/hooks/useKennelData.ts` (line 249-272)  
 **Result:** Calendar now displays all reservations
 
 ---
@@ -126,25 +126,25 @@
 
 ### All Services Operational
 
-| Service | Port | Status | Health Check |
-|---------|------|--------|--------------|
-| Frontend | 3000 | ✅ Running | http://localhost:3000 |
-| Customer Service | 4004 | ✅ Running | http://localhost:4004/health |
+| Service             | Port | Status    | Health Check                 |
+| ------------------- | ---- | --------- | ---------------------------- |
+| Frontend            | 3000 | ✅ Running | http://localhost:3000        |
+| Customer Service    | 4004 | ✅ Running | http://localhost:4004/health |
 | Reservation Service | 4003 | ✅ Running | http://localhost:4003/health |
-| PostgreSQL | 5433 | ✅ Running | Database: customer |
+| PostgreSQL          | 5433 | ✅ Running | Database: customer           |
 
 ### API Endpoints Working
 
-| Endpoint | Status | Records |
-|----------|--------|---------|
-| `/api/customers` | ✅ | 11,793 |
-| `/api/pets` | ✅ | 18,363 |
-| `/api/reservations` | ✅ | 6,535 |
-| `/api/staff` | ✅ | 24 |
-| `/api/services` | ✅ | 35 |
-| `/api/breeds` | ✅ | 954 |
-| `/api/veterinarians` | ✅ | 1,007 |
-| `/api/temperament-types` | ✅ | 7 |
+| Endpoint                 | Status | Records |
+| ------------------------ | ------ | ------- |
+| `/api/customers`         | ✅      | 11,793  |
+| `/api/pets`              | ✅      | 18,363  |
+| `/api/reservations`      | ✅      | 6,535   |
+| `/api/staff`             | ✅      | 24      |
+| `/api/services`          | ✅      | 35      |
+| `/api/breeds`            | ✅      | 954     |
+| `/api/veterinarians`     | ✅      | 1,007   |
+| `/api/temperament-types` | ✅      | 7       |
 
 ---
 

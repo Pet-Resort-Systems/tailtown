@@ -107,7 +107,7 @@ CREATE TABLE "invoices" (
 
 The current database schema is out of sync with the Prisma schema. We need to:
 
-1. Run `npx prisma db push` to sync the schema
+1. Run `pnpm exec prisma db push` to sync the schema
 2. This will create missing tables and columns
 3. **OR** run a full Prisma migration
 
@@ -119,9 +119,9 @@ The current database schema is out of sync with the Prisma schema. We need to:
 
 Once schema is synced, run:
 ```bash
-cd services/reservation-service
+cd apps/reservation-service
 source ~/.nvm/nvm.sh
-npx prisma db push
+pnpm exec prisma db push
 ```
 
 This will:
@@ -133,8 +133,8 @@ This will:
 ### Step 3: Regenerate Prisma Client
 
 ```bash
-cd services/reservation-service
-npx prisma generate
+cd apps/reservation-service
+pnpm exec prisma generate
 ```
 
 ### Step 4: Restart Services
@@ -144,8 +144,8 @@ npx prisma generate
 lsof -ti:4003 | xargs kill -9
 
 # Start reservation service
-cd services/reservation-service
-source ~/.nvm/nvm.sh && PORT=4003 npm run dev
+cd apps/reservation-service
+source ~/.nvm/nvm.sh && PORT=4003 pnpm run dev
 ```
 
 ## Verification Steps
@@ -193,14 +193,14 @@ lsof -ti:4003 | xargs kill -9
 docker exec -i tailtown-postgres psql -U postgres -d reservation < backups/reservation_backup_20251023_111002.sql
 
 # Revert Prisma schema changes
-git checkout HEAD -- services/reservation-service/prisma/schema.prisma
+git checkout HEAD -- apps/reservation-service/prisma/schema.prisma
 
 # Regenerate client
-cd services/reservation-service
-npx prisma generate
+cd apps/reservation-service
+pnpm exec prisma generate
 
 # Restart services
-source ~/.nvm/nvm.sh && PORT=4003 npm run dev
+source ~/.nvm/nvm.sh && PORT=4003 pnpm run dev
 ```
 
 ## Risk Assessment

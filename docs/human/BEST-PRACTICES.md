@@ -52,10 +52,10 @@ await prisma.user.findMany({ where: { name } }); // Prisma prevents SQL injectio
 ### Test Before You Push
 ```bash
 # Always run tests
-npm test
+pnpm test
 
 # Run specific tests
-npm test -- myFeature.test.ts
+pnpm test -- myFeature.test.ts
 ```
 
 ### Write Tests for New Features
@@ -96,7 +96,7 @@ test('rejects invalid email', async () => {
 psql -c "ALTER TABLE users ADD COLUMN age INT"
 
 # ✅ Good - Migration
-npx prisma migrate dev --name add_age_to_users
+pnpm exec prisma migrate dev --name add_age_to_users
 ```
 
 ### Use Transactions for Multiple Operations
@@ -364,8 +364,8 @@ model User {
 
 Before submitting a PR:
 
-- [ ] Tests pass (`npm test`)
-- [ ] TypeScript compiles (`npm run build`)
+- [ ] Tests pass (`pnpm test`)
+- [ ] TypeScript compiles (`pnpm run build`)
 - [ ] Input validation added
 - [ ] Authentication/authorization checked
 - [ ] Error handling implemented
@@ -418,10 +418,10 @@ const apiUrl = process.env.API_URL;
 ### Don't Use `prisma db push` in Production
 ```bash
 # ❌ Bad - Can cause data loss
-npx prisma db push
+pnpm exec prisma db push
 
 # ✅ Good - Safe migrations
-npx prisma migrate deploy
+pnpm exec prisma migrate deploy
 ```
 
 ---

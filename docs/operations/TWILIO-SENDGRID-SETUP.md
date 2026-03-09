@@ -46,7 +46,7 @@ Tailtown has built-in SMS (Twilio) and email (SendGrid) services that are curren
 
 ### Step 4: Configure Environment Variables
 
-Add to `/opt/tailtown/services/customer/.env`:
+Add to `/opt/tailtown/apps/customer-service/.env`:
 
 ```bash
 # SendGrid Configuration
@@ -62,7 +62,7 @@ SENDGRID_FROM_NAME="Tailtown Pet Resort"
 ssh -i ~/ttkey root@129.212.178.244
 
 # Test email service
-cd /opt/tailtown/services/customer
+cd /opt/tailtown/apps/customer-service
 node -e "
 const { emailService } = require('./dist/services/email.service');
 emailService.sendEmail({
@@ -101,7 +101,7 @@ emailService.sendEmail({
 
 ### Step 4: Configure Environment Variables
 
-Add to `/opt/tailtown/services/customer/.env`:
+Add to `/opt/tailtown/apps/customer-service/.env`:
 
 ```bash
 # Twilio Configuration
@@ -117,7 +117,7 @@ TWILIO_PHONE_NUMBER=+1234567890
 ssh -i ~/ttkey root@129.212.178.244
 
 # Test SMS service
-cd /opt/tailtown/services/customer
+cd /opt/tailtown/apps/customer-service
 node -e "
 const { smsService } = require('./dist/services/sms.service');
 smsService.sendSMS({
@@ -180,7 +180,7 @@ The system includes these pre-built email templates:
 
 ### Customize Email Templates
 
-Edit `/services/customer/src/services/email.service.ts` to customize:
+Edit `/apps/customer-service/src/services/email.service.ts` to customize:
 - Email styling (colors, fonts)
 - Email content
 - Business information
@@ -201,7 +201,7 @@ The system includes these pre-built SMS templates:
 
 ### Customize SMS Templates
 
-Edit `/services/customer/src/services/sms.service.ts` to customize:
+Edit `/apps/customer-service/src/services/sms.service.ts` to customize:
 - Message content
 - Timing
 - Opt-out handling
@@ -212,20 +212,20 @@ Edit `/services/customer/src/services/sms.service.ts` to customize:
 
 ### SendGrid Pricing
 
-| Plan | Price | Emails/Month |
-|------|-------|--------------|
-| Free | $0 | 100/day (3,000/month) |
-| Essentials | $19.95/mo | 50,000 |
-| Pro | $89.95/mo | 100,000 |
+| Plan       | Price     | Emails/Month          |
+| ---------- | --------- | --------------------- |
+| Free       | $0        | 100/day (3,000/month) |
+| Essentials | $19.95/mo | 50,000                |
+| Pro        | $89.95/mo | 100,000               |
 
 **Recommendation**: Start with Free plan, upgrade if you exceed 100 emails/day
 
 ### Twilio Pricing
 
-| Item | Price |
-|------|-------|
-| Phone Number | $1.00/month |
-| SMS (US) | $0.0079 per message |
+| Item         | Price               |
+| ------------ | ------------------- |
+| Phone Number | $1.00/month         |
+| SMS (US)     | $0.0079 per message |
 | SMS (Canada) | $0.0075 per message |
 
 **Example**: 1,000 SMS/month = $1 + (1,000 × $0.0079) = **$8.90/month**
@@ -292,7 +292,7 @@ Once configured, the system will automatically send:
 
 ```bash
 # Set proper file permissions
-chmod 600 /opt/tailtown/services/customer/.env
+chmod 600 /opt/tailtown/apps/customer-service/.env
 
 # Never commit .env to git
 # (already in .gitignore)

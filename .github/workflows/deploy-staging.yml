@@ -55,35 +55,37 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: 'pnpm'
 
-      - name: Install and test Customer Service
-        working-directory: ./services/customer
+      - name: Install monorepo dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Test Customer Service
+        working-directory: ./apps/customer-service
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/tailtown_test
           REDIS_URL: redis://localhost:6379
-        run: |
-          npm ci
-          npm test
+        run: pnpm test
 
-      - name: Install and test Reservation Service
-        working-directory: ./services/reservation-service
+      - name: Test Reservation Service
+        working-directory: ./apps/reservation-service
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/tailtown_test
           REDIS_URL: redis://localhost:6379
-        run: |
-          npm ci
-          npm test
+        run: pnpm test
 
-      - name: Install and test Frontend
-        working-directory: ./frontend
-        run: |
-          npm ci
-          npm test -- --watchAll=false --passWithNoTests
+      - name: Test Frontend
+        working-directory: ./apps/frontend
+        run: pnpm test -- --watchAll=false --passWithNoTests
 
   build:
     name: Build for Staging
@@ -95,43 +97,45 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: 'pnpm'
+
+      - name: Install monorepo dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Build Customer Service
-        working-directory: ./services/customer
-        run: |
-          npm ci
-          npm run build
+        working-directory: ./apps/customer-service
+        run: pnpm run build
 
       - name: Build Reservation Service
-        working-directory: ./services/reservation-service
-        run: |
-          npm ci
-          npm run build
+        working-directory: ./apps/reservation-service
+        run: pnpm run build
 
       - name: Build Frontend (Staging)
-        working-directory: ./frontend
+        working-directory: ./apps/frontend
         env:
           REACT_APP_API_URL: ${{ secrets.STAGING_API_URL }}
           REACT_APP_ENVIRONMENT: staging
           REACT_APP_SENTRY_ENABLED: 'true'
           REACT_APP_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-        run: |
-          npm ci
-          npm run build
+        run: pnpm run build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: staging-build
           path: |
-            frontend/build
-            services/customer/dist
-            services/reservation-service/dist
+            apps/frontend/build
+            apps/customer-service/dist
+            apps/reservation-service/dist
           retention-days: 7
 
   deploy:
@@ -165,11 +169,10 @@ jobs:
             git pull origin staging
 
             # Install dependencies
-            cd services/customer && npm ci --production && cd ../..
-            cd services/reservation-service && npm ci --production && cd ../..
+            pnpm install --frozen-lockfile --prod
 
             # Run database migrations
-            cd services/customer && npx prisma migrate deploy && cd ../..
+            cd apps/customer-service && pnpm exec prisma migrate deploy && cd ../..
 
             # Reload services
             pm2 reload ecosystem.staging.config.js

@@ -24,18 +24,18 @@ No installation needed! 🎉
 ```bash
 git clone https://github.com/moosecreates/tailtown.git
 cd tailtown
-npm install
+pnpm install
 ```
 
 ### 2. Setup Environment
 
 ```bash
 # Use the environment manager to set up development
-npm run env:dev
+pnpm run env:dev
 
 # Or manually copy templates:
-cp services/customer/.env.example services/customer/.env
-cp services/reservation-service/.env.example services/reservation-service/.env
+cp apps/customer-service/.env.example apps/customer-service/.env
+cp apps/reservation-service/.env.example apps/reservation-service/.env
 
 # Edit .env files and set:
 # - DATABASE_URL (PostgreSQL connection)
@@ -47,13 +47,13 @@ cp services/reservation-service/.env.example services/reservation-service/.env
 
 ```bash
 # Customer service database
-cd services/customer
-npx prisma migrate dev
-npx prisma generate
+cd apps/customer-service
+pnpm exec prisma migrate dev
+pnpm exec prisma generate
 
 # Reservation service database (uses same DB)
 cd ../reservation-service
-npx prisma generate
+pnpm exec prisma generate
 ```
 
 ### 4. Start Development Server
@@ -62,32 +62,32 @@ npx prisma generate
 
 ```bash
 # Start all services at once
-npm run dev:restart
+pnpm run dev:restart
 
 # Check status
-npm run dev:status
+pnpm run dev:status
 
 # View logs
-npm run dev:logs
+pnpm run dev:logs
 
 # Stop all services
-npm run dev:stop
+pnpm run dev:stop
 ```
 
 **Option B: Start services manually**
 
 ```bash
 # Terminal 1: Customer Service
-cd services/customer
-npm run dev
+cd apps/customer-service
+pnpm run dev
 
 # Terminal 2: Reservation Service
-cd services/reservation-service
-npm run dev
+cd apps/reservation-service
+pnpm run dev
 
 # Terminal 3: Frontend
-cd frontend
-npm start
+cd apps/frontend
+pnpm start
 ```
 
 ### 5. Verify Local Development Works
@@ -104,13 +104,13 @@ npm start
 
 ```bash
 # All tests
-npm test
+pnpm test
 
 # Specific service
-cd services/customer && npm test
+cd apps/customer-service && pnpm test
 
 # Security tests
-cd services/customer && npm test -- --testPathPattern=security
+cd apps/customer-service && pnpm test -- --testPathPattern=security
 ```
 
 ---
@@ -119,13 +119,13 @@ cd services/customer && npm test -- --testPathPattern=security
 
 ### Add a New API Endpoint
 
-1. **Create route** in `services/customer/src/routes/`:
+1. **Create route** in `apps/customer-service/src/routes/`:
 
 ```typescript
 router.get("/my-endpoint", myHandler);
 ```
 
-2. **Create controller** in `services/customer/src/controllers/`:
+2. **Create controller** in `apps/customer-service/src/controllers/`:
 
 ```typescript
 export const myHandler = async (req, res) => {
@@ -133,7 +133,7 @@ export const myHandler = async (req, res) => {
 };
 ```
 
-3. **Add test** in `services/customer/src/__tests__/`:
+3. **Add test** in `apps/customer-service/src/__tests__/`:
 
 ```typescript
 test("my endpoint works", async () => {
@@ -145,7 +145,7 @@ test("my endpoint works", async () => {
 4. **Run test**:
 
 ```bash
-npm test
+pnpm test
 ```
 
 ---
@@ -185,8 +185,8 @@ kill -9 <PID>
 ```bash
 # Clear and rebuild
 rm -rf node_modules
-npm install
-npm test
+pnpm install
+pnpm test
 ```
 
 ---

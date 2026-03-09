@@ -8,9 +8,9 @@
  * Example: node clone-tenant-data.js demo-template rainy
  */
 
-require('dotenv').config({ path: './services/customer/.env' });
+require('dotenv').config({ path: './apps/customer-service/.env' });
 
-const { PrismaClient } = require('../services/customer/node_modules/@prisma/client');
+const { PrismaClient } = require('../apps/customer-service/node_modules/@prisma/client');
 const prisma = new PrismaClient();
 
 async function cloneTenantData(sourceSubdomain, targetSubdomain) {
