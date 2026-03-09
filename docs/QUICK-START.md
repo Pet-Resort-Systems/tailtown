@@ -6,7 +6,7 @@
 
 ### Prerequisites
 
-- Node.js 16.x or 18.x
+- Node.js 24.x
 - Docker Desktop
 - Git
 

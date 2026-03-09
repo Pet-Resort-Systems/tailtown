@@ -8,7 +8,7 @@ This directory contains automated workflows for continuous integration and deplo
 **Triggers**: Push to `development` or `main`, Pull Requests
 
 **What it does**:
-- Runs on Node.js 16.x and 18.x
+- Runs on Node.js 24.x
 - Sets up PostgreSQL database
 - Installs dependencies
 - Runs linting
@@ -154,7 +154,7 @@ Some workflows generate artifacts (coverage reports, build files):
 ## Troubleshooting
 
 ### Tests Failing in CI but Pass Locally
-- Check Node.js version (CI uses 16.x and 18.x)
+- Check Node.js version (CI uses 24.x)
 - Verify environment variables
 - Check database connection settings
 

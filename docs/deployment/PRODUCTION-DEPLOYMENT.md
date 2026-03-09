@@ -24,7 +24,7 @@
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ installed
+- Node.js 24+ installed
 - PostgreSQL 14+ database
 - **Redis 6+ installed** (NEW - for caching)
 - Domain name with SSL certificate

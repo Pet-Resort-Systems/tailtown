@@ -6,7 +6,7 @@ This document provides step-by-step instructions for setting up the Tailtown pet
 
 These tools must be installed on your system:
 
-1. **Node.js and pnpm** (v18+ recommended)
+1. **Node.js and pnpm** (v24+ recommended)
    ```bash
    # Install via nvm (recommended)
    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash

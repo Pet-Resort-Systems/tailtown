@@ -146,7 +146,7 @@ psql -U postgres -d customer -f staff-import.sql
 
 ### Dependencies
 - **Built-in Node.js modules only** - No external dependencies required
-- **Compatible with Node.js 16+** - Works with existing project requirements
+- **Compatible with Node.js 24+** - Works with existing project requirements
 - **Cross-platform compatible** - Works on macOS, Linux, and Windows
 
 ### Security Considerations

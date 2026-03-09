@@ -468,7 +468,7 @@ server {
 
 ### Backend
 
-- **Runtime**: Node.js 18+
+- **Runtime**: Node.js 24+
 - **Framework**: Express.js 4.x
 - **Language**: TypeScript 5.x
 - **ORM**: Prisma 5.x
