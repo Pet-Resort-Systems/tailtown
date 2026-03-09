@@ -7,22 +7,27 @@ RUN corepack enable
 
 WORKDIR /app
 
-# Copy package metadata and install app-local dependencies.
-COPY package.json ./
+# Copy workspace metadata and the target app manifest first for cached installs.
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/reservation-service/package.json ./apps/reservation-service/package.json
 
 FROM base AS dependencies
-RUN pnpm install --no-frozen-lockfile
+# Install all dependencies needed to build the service.
+# `...` means this package and its dependencies https://pnpm.io/filtering#--filter-package_name-1
+RUN pnpm install --filter @tailtown/reservation-service... --frozen-lockfile
 
 # Development stage - includes everything for live reload.
 FROM dependencies AS development
-COPY . .
+COPY apps/reservation-service ./apps/reservation-service
+WORKDIR /app/apps/reservation-service
 RUN pnpm exec prisma generate
 EXPOSE 3003
 CMD ["pnpm", "run", "dev"]
 
 # Production build stage.
 FROM dependencies AS build
-COPY . .
+COPY apps/reservation-service ./apps/reservation-service
+WORKDIR /app/apps/reservation-service
 RUN pnpm exec prisma generate
 RUN pnpm run build
 
@@ -36,13 +41,17 @@ RUN corepack enable
 
 WORKDIR /app
 
-COPY package.json ./
-RUN pnpm install --no-frozen-lockfile
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/reservation-service/package.json ./apps/reservation-service/package.json
+# Install runtime dependencies plus Prisma CLI used for client generation.
+# `...` means this package and its dependencies https://pnpm.io/filtering#--filter-package_name-1
+RUN pnpm install --filter @tailtown/reservation-service... --frozen-lockfile
 
-COPY prisma ./prisma
+COPY apps/reservation-service/prisma ./apps/reservation-service/prisma
+WORKDIR /app/apps/reservation-service
 RUN pnpm exec prisma generate
 
-COPY --from=build /app/dist ./dist
+COPY --from=build /app/apps/reservation-service/dist ./dist
 
 EXPOSE 3003
 CMD ["node", "dist/index.js"]

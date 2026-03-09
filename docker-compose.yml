@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # API Gateway
   gateway:
@@ -44,7 +42,8 @@ services:
   # Customer Service
   customer:
     build:
-      context: ./apps/customer-service
+      context: .
+      dockerfile: apps/customer-service/Dockerfile
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://postgres:postgres@customer-db:5432/customer
@@ -67,7 +66,8 @@ services:
   # Reservation Service
   reservation:
     build:
-      context: ./apps/reservation-service
+      context: .
+      dockerfile: apps/reservation-service/Dockerfile
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://postgres:postgres@reservation-db:5432/reservation
@@ -132,7 +132,8 @@ services:
   # Frontend
   frontend:
     build:
-      context: ./apps/frontend
+      context: .
+      dockerfile: apps/frontend/Dockerfile
     ports:
       - "80:80"
     depends_on:

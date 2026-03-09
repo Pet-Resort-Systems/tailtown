@@ -12,6 +12,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY scripts/health-check.js ./scripts/
 
 # Install only production dependencies
+# `...` means this package and its dependencies https://pnpm.io/filtering#--filter-package_name-1
 RUN pnpm install --prod --frozen-lockfile
 
 # Run health check every 5 minutes

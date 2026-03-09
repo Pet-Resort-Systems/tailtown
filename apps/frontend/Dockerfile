@@ -7,26 +7,31 @@ RUN corepack enable
 
 WORKDIR /app
 
-# Copy package metadata and install app-local dependencies.
-COPY package.json ./
+# Copy workspace metadata and the target app manifest first for cached installs.
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/frontend/package.json ./apps/frontend/package.json
 
 FROM base AS dependencies
-RUN pnpm install --no-frozen-lockfile
+# Install all dependencies needed to build the service.
+# `...` means this package and its dependencies https://pnpm.io/filtering#--filter-package_name-1
+RUN pnpm install --filter tailtown-frontend... --frozen-lockfile
 
 # Development stage
 FROM dependencies AS development
-COPY . .
+COPY apps/frontend ./apps/frontend
+WORKDIR /app/apps/frontend
 EXPOSE 3000
 CMD ["pnpm", "start"]
 
 # Build stage
 FROM dependencies AS build
-COPY . .
+COPY apps/frontend ./apps/frontend
+WORKDIR /app/apps/frontend
 RUN pnpm run build
 
 # Production stage - serve using nginx
 FROM nginx:alpine AS production
-COPY --from=build /app/build /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/apps/frontend/build /usr/share/nginx/html
+COPY apps/frontend/nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

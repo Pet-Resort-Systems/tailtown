@@ -7,22 +7,27 @@ RUN corepack enable
 
 WORKDIR /app
 
-# Copy package metadata and install app-local dependencies.
-COPY package.json ./
+# Copy workspace metadata and the target app manifest first for cached installs.
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/customer-service/package.json ./apps/customer-service/package.json
 
 FROM base AS dependencies
-RUN pnpm install --no-frozen-lockfile
+# Install all dependencies needed to build the service.
+# `...` means this package and its dependencies https://pnpm.io/filtering#--filter-package_name-1
+RUN pnpm install --filter @tailtown/customer-service... --frozen-lockfile
 
 # Development stage - includes everything for live reload.
 FROM dependencies AS development
-COPY . .
+COPY apps/customer-service ./apps/customer-service
+WORKDIR /app/apps/customer-service
 RUN pnpm run prisma:generate
 EXPOSE 3002
 CMD ["pnpm", "run", "dev"]
 
 # Production build stage.
 FROM dependencies AS build
-COPY . .
+COPY apps/customer-service ./apps/customer-service
+WORKDIR /app/apps/customer-service
 RUN pnpm run prisma:generate
 RUN pnpm run build
 
@@ -36,13 +41,15 @@ RUN corepack enable
 
 WORKDIR /app
 
-COPY package.json ./
-RUN pnpm install --no-frozen-lockfile
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/customer-service/package.json ./apps/customer-service/package.json
+RUN pnpm install --filter @tailtown/customer-service... --frozen-lockfile
 
-COPY prisma ./prisma
+COPY apps/customer-service/prisma ./apps/customer-service/prisma
+WORKDIR /app/apps/customer-service
 RUN pnpm run prisma:generate
 
-COPY --from=build /app/dist ./dist
+COPY --from=build /app/apps/customer-service/dist ./dist
 
 EXPOSE 3002
 CMD ["node", "dist/index.js"]
