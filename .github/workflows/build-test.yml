@@ -68,12 +68,12 @@ jobs:
 
       - name: Test Customer Service Docker Build
         run: |
-          docker build -f apps/customer-service/Dockerfile.prod -t test-customer apps/customer-service
+          docker build -f apps/customer-service/Dockerfile.prod -t test-customer .
 
       - name: Test Reservation Service Docker Build
         run: |
-          docker build -f apps/reservation-service/Dockerfile.prod -t test-reservation apps/reservation-service
+          docker build -f apps/reservation-service/Dockerfile.prod -t test-reservation .
 
       - name: Test Frontend Docker Build
         run: |
-          docker build -f apps/frontend/Dockerfile.prod -t test-frontend apps/frontend
+          docker build -f apps/frontend/Dockerfile.prod -t test-frontend .
