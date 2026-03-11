@@ -57,16 +57,16 @@ cd "$PROJECT_ROOT" || error "Failed to change to project directory"
 
 # Check for required files
 log "Checking environment configuration..."
-if [ ! -f ".env.production" ]; then
-    error ".env.production not found. Copy from .env.production.example and configure."
+if [ ! -f "apps/frontend/.env" ]; then
+    error "apps/frontend/.env not found. Copy from apps/frontend/.env.example and configure."
 fi
 
-if [ ! -f "apps/frontend/.env.production" ]; then
-    error "apps/frontend/.env.production not found"
+if [ ! -f "apps/customer-service/.env" ]; then
+    error "apps/customer-service/.env not found. Copy from apps/customer-service/.env.example and configure."
 fi
 
-if [ ! -f "apps/customer-service/.env.production" ]; then
-    error "apps/customer-service/.env.production not found"
+if [ ! -f "apps/reservation-service/.env" ]; then
+    error "apps/reservation-service/.env not found. Copy from apps/reservation-service/.env.example and configure."
 fi
 
 # Git status check

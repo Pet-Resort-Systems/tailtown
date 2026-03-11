@@ -8,10 +8,29 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+load_env_file() {
+    local env_file="$1"
+    if [ ! -f "$env_file" ]; then
+        echo "❌ Missing env file: $env_file"
+        exit 1
+    fi
+
+    set -a
+    # shellcheck disable=SC1090
+    source "$env_file"
+    set +a
+}
+
+
 # Pull latest code
 echo -e "${BLUE}📥 Pulling latest code from GitHub...${NC}"
 cd /opt/tailtown
 git pull origin sept25-stable
+
+# Validate required per-service env files
+load_env_file /opt/tailtown/apps/customer-service/.env
+load_env_file /opt/tailtown/apps/reservation-service/.env
+load_env_file /opt/tailtown/apps/frontend/.env
 
 # Rebuild customer service
 echo -e "${BLUE}🔨 Building customer service...${NC}"
@@ -42,21 +61,12 @@ else
     
     # Start customer service
     cd /opt/tailtown/apps/customer-service
-    DATABASE_URL="postgresql://postgres:TailtownSecure2025ProductionDB@localhost:5432/customer" \
-    NODE_ENV=production \
-    PORT=4004 \
-    DATA_DIR=/opt/tailtown/data \
-    DISABLE_HTTPS_REDIRECT=true \
-    ALLOWED_ORIGINS="http://129.212.178.244:3000" \
+    load_env_file .env
     pnpm start > /tmp/customer-service.log 2>&1 &
     
     # Start reservation service
     cd /opt/tailtown/apps/reservation-service
-    DATABASE_URL="postgresql://postgres:TailtownSecure2025ProductionDB@localhost:5432/customer" \
-    NODE_ENV=production \
-    PORT=4003 \
-    DISABLE_HTTPS_REDIRECT=true \
-    ALLOWED_ORIGINS="http://129.212.178.244:3000" \
+    load_env_file .env
     pnpm start > /tmp/reservation-service.log 2>&1 &
     
     # Start apps/frontend

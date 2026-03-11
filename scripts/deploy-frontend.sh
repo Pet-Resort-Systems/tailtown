@@ -20,22 +20,15 @@ cd "$FRONTEND_DIR"
 # Step 1: Build with production environment
 echo ""
 echo "📦 Building apps/frontend for production..."
-echo "   (Temporarily removing .env.development to prevent localhost URLs)"
+echo "   (using apps/frontend/.env)"
 
-# CRITICAL: Temporarily rename .env.development so it doesn't get loaded
-# CRA loads .env.development even during production builds if it exists
-if [ -f .env.development ]; then
-    mv .env.development .env.development.bak
-    RESTORE_ENV=true
+if [ ! -f .env ]; then
+    echo "❌ Error: apps/frontend/.env missing. Copy from .env.example and configure."
+    exit 1
 fi
 
 # Build for production
 pnpm run build
-
-# Restore .env.development
-if [ "$RESTORE_ENV" = true ]; then
-    mv .env.development.bak .env.development
-fi
 
 # Verify build was created
 if ls build/static/js/*.js 1> /dev/null 2>&1; then
