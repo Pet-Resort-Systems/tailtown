@@ -11,7 +11,6 @@ import {
   Button,
   CircularProgress,
   Alert,
-  Grid,
   Avatar,
   Chip,
   Dialog,
@@ -22,6 +21,7 @@ import {
   MenuItem,
   IconButton,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   Pets as PetsIcon,
   Edit as EditIcon,

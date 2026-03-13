@@ -17,7 +17,6 @@ import {
   Card,
   CardContent,
   CardActions,
-  Grid,
   Chip,
   IconButton,
   Switch,
@@ -34,8 +33,9 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemSecondaryAction
+  ListItemSecondaryAction,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   Add as AddIcon,
   Edit as EditIcon,

@@ -9,7 +9,6 @@ import {
   Box,
   Typography,
   Button,
-  Grid,
   TextField,
   Switch,
   FormControlLabel,
@@ -21,6 +20,7 @@ import {
   DialogActions,
   Chip,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import { ArrowForward, ArrowBack, Add } from "@mui/icons-material";
 import { useSetupWizard } from "../SetupWizardContext";
 import { DayHours, HolidayConfig } from "../types";

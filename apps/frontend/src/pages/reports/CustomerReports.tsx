@@ -8,7 +8,6 @@ import {
   Box,
   Typography,
   Paper,
-  Grid,
   Card,
   CardContent,
   Button,
@@ -27,6 +26,7 @@ import {
   Alert,
   Chip,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   People as PeopleIcon,
   GetApp as ExportIcon,

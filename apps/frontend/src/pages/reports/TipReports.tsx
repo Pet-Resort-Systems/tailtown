@@ -8,7 +8,6 @@ import {
   Box,
   Typography,
   Paper,
-  Grid,
   Card,
   CardContent,
   Button,
@@ -26,6 +25,7 @@ import {
   Tabs,
   Tab,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   Favorite as TipIcon,
   GetApp as ExportIcon,

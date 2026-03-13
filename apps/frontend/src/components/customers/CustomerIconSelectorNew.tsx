@@ -4,7 +4,6 @@ import {
   Typography,
   Tabs,
   Tab,
-  Grid,
   Tooltip,
   Chip,
   Paper,
@@ -14,8 +13,9 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button
+  Button,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   STATUS_ICONS,
   PAYMENT_ICONS,

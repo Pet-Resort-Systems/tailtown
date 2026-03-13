@@ -10,7 +10,6 @@ import {
   Typography,
   Card,
   CardContent,
-  Grid,
   Divider,
   Alert,
   CircularProgress,
@@ -21,6 +20,7 @@ import {
   Avatar,
   InputAdornment,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   ArrowBack as ArrowBackIcon,
   CheckCircle as CheckCircleIcon,

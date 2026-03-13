@@ -10,12 +10,12 @@ import {
   Typography,
   Card,
   CardContent,
-  Grid,
   CircularProgress,
   Alert,
   Chip,
   Avatar,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   ArrowBack as ArrowBackIcon,
   ArrowForward as ArrowForwardIcon,

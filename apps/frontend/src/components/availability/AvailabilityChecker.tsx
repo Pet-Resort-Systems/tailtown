@@ -14,11 +14,11 @@ import {
   Typography,
   Button,
   TextField,
-  Grid,
   Alert,
   CircularProgress,
-  Paper
+  Paper,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   Search as SearchIcon,
   CheckCircle as AvailableIcon,

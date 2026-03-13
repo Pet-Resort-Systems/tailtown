@@ -4,10 +4,10 @@ import {
   Typography,
   Paper,
   Button,
-  Grid,
   Divider,
   Alert,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   CheckCircle as CheckCircleIcon,
   Print as PrintIcon,

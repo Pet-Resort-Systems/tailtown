@@ -15,8 +15,8 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  Grid,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";

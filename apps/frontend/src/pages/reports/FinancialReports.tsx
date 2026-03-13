@@ -8,7 +8,6 @@ import {
   Box,
   Typography,
   Paper,
-  Grid,
   Card,
   CardContent,
   Button,
@@ -26,6 +25,7 @@ import {
   CircularProgress,
   Alert,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   AttachMoney as MoneyIcon,
   GetApp as ExportIcon,

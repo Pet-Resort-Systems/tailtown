@@ -6,7 +6,6 @@ import {
   CardContent,
   Chip,
   Container,
-  Grid,
   IconButton,
   Paper,
   Table,
@@ -27,6 +26,7 @@ import {
   InputLabel,
   Tooltip,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   Add as AddIcon,
   Edit as EditIcon,

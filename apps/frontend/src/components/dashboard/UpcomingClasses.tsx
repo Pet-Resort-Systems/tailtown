@@ -10,7 +10,6 @@ import {
   Button,
   Box,
   LinearProgress,
-  Grid,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -26,6 +25,7 @@ import {
   ListItem,
   ListItemText,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import { School as TrainingIcon, ArrowForward as ViewAllIcon, PersonAdd as EnrollIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';

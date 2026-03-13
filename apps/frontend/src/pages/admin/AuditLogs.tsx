@@ -27,7 +27,6 @@ import {
   Tooltip,
   CircularProgress,
   Alert,
-  Grid,
   Card,
   CardContent,
   Dialog,
@@ -37,6 +36,7 @@ import {
   Button,
   Collapse,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   Search as SearchIcon,
   Refresh as RefreshIcon,

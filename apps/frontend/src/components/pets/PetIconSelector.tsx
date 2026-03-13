@@ -4,12 +4,12 @@ import {
   Typography,
   Tabs,
   Tab,
-  Grid,
   Tooltip,
   Chip,
   Paper,
-  Divider
+  Divider,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   GROUP_ICONS,
   SIZE_ICONS,

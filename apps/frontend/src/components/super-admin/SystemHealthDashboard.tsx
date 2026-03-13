@@ -10,7 +10,6 @@ import {
   Box,
   Card,
   CardContent,
-  Grid,
   Typography,
   Chip,
   CircularProgress,
@@ -19,6 +18,7 @@ import {
   IconButton,
   Tooltip,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   CheckCircle as HealthyIcon,
   Warning as WarningIcon,

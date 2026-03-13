@@ -16,7 +16,6 @@ import {
   CardContent,
   Button,
   Chip,
-  Grid,
   Alert,
   CircularProgress,
   Divider,
@@ -28,8 +27,9 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   ArrowBack as BackIcon,
   Edit as EditIcon,

@@ -1,20 +1,20 @@
 import React from 'react';
-import { 
-  Box, 
-  Card, 
-  CardContent, 
-  Typography, 
-  Divider, 
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  Divider,
   Paper,
-  Grid,
   styled,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import PrintablePetIcons from './PrintablePetIcons';
 import { format, addDays, startOfWeek } from 'date-fns';
 

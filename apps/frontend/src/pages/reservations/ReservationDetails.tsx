@@ -12,12 +12,12 @@ import {
   Menu,
   MenuItem,
   Link,
-  Grid,
   Card,
   CardContent,
   Collapse,
   IconButton,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   reservationService,

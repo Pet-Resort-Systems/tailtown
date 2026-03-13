@@ -31,10 +31,10 @@ import {
   MenuItem,
   FormControlLabel,
   Checkbox,
-  Grid,
   Alert,
-  Tooltip
+  Tooltip,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   Add as AddIcon,
   Edit as EditIcon,

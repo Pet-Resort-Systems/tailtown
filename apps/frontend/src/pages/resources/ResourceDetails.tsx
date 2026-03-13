@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import {
+  useParams,
+  useNavigate } from "react-router-dom";
 import {
   Container,
   Box,
   Typography,
   TextField,
   Button,
-  Grid,
   MenuItem,
   Paper,
   Switch,
@@ -15,6 +16,7 @@ import {
   Alert,
   CircularProgress,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
   Resource,

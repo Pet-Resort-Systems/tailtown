@@ -18,10 +18,10 @@ import {
   CardActions,
   Button,
   Chip,
-  Grid,
   Alert,
   Divider,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   CalendarToday as CalendarIcon,
   TrendingDown as SavingsIcon,

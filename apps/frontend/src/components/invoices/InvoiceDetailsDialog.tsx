@@ -5,7 +5,6 @@ import {
   DialogActions,
   Button,
   Typography,
-  Grid,
   Divider,
   Chip,
   Box,
@@ -16,8 +15,9 @@ import {
   TableHead,
   TableRow,
   Paper,
-  CircularProgress
+  CircularProgress,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import { format } from 'date-fns';
 import { Invoice } from '../../services/invoiceService';
 import { reservationService, Reservation } from '../../services/reservationService';

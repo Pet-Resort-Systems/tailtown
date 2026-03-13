@@ -5,12 +5,12 @@ import {
   Card,
   CardContent,
   Container,
-  Grid,
   TextField,
   Typography,
   Alert,
   MenuItem,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import { useNavigate } from 'react-router-dom';
 import { tenantService, CreateTenantDto } from '../../services/tenantService';
 

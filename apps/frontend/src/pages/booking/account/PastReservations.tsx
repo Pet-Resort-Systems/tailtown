@@ -11,10 +11,10 @@ import {
   Chip,
   CircularProgress,
   Alert,
-  Grid,
   Divider,
   Button,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   History as HistoryIcon,
   CalendarMonth as CalendarIcon,

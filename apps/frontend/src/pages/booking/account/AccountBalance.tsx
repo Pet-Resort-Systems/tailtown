@@ -11,7 +11,6 @@ import {
   Button,
   CircularProgress,
   Alert,
-  Grid,
   Chip,
   Table,
   TableBody,
@@ -21,6 +20,7 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   AccountBalance as BalanceIcon,
   Receipt as ReceiptIcon,

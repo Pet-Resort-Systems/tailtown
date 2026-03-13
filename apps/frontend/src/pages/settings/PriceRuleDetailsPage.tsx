@@ -6,14 +6,15 @@
  * including rule type, discount settings, and conditional parameters.
  */
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import {
+  useParams,
+  useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
   Card,
   CardContent,
   Container,
-  Grid,
   TextField,
   Typography,
   FormControl,
@@ -29,6 +30,7 @@ import {
   Breadcrumbs,
   Link as MuiLink,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import { ArrowBack as ArrowBackIcon } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import priceRuleService from "../../services/priceRuleService";

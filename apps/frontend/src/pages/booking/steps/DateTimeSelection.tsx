@@ -8,9 +8,9 @@ import {
   Box,
   Button,
   Typography,
-  Grid,
-  Paper
+  Paper,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   ArrowBack as ArrowBackIcon,
   ArrowForward as ArrowForwardIcon

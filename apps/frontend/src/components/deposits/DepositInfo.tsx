@@ -18,8 +18,8 @@ import {
   ListItemIcon,
   ListItemText,
   CircularProgress,
-  Grid
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   AttachMoney as MoneyIcon,
   Event as EventIcon,

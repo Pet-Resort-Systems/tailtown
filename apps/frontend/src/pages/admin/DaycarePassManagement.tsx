@@ -27,7 +27,6 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  Grid,
   Alert,
   Tooltip,
   Card,
@@ -36,6 +35,7 @@ import {
   Switch,
   FormControlLabel,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   Add as AddIcon,
   Edit as EditIcon,

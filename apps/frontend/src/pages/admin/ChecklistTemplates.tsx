@@ -11,7 +11,6 @@ import {
   IconButton,
   TextField,
   Typography,
-  Grid,
   Chip,
   Select,
   MenuItem,
@@ -24,8 +23,9 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Divider,
-  Alert
+  Alert,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   Add as AddIcon,
   Edit as EditIcon,

@@ -10,7 +10,6 @@ import {
   Card,
   CardContent,
   CardActions,
-  Grid,
   Chip,
   IconButton,
   Dialog,
@@ -24,8 +23,9 @@ import {
   Select,
   Alert,
   CircularProgress,
-  Snackbar
+  Snackbar,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   Add as AddIcon,
   Edit as EditIcon,

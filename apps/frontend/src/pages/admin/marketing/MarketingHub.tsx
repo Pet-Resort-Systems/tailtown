@@ -1,15 +1,15 @@
 import React from 'react';
-import { 
-  Container, 
-  Typography, 
-  Box, 
-  Paper, 
-  Grid,
+import {
+  Container,
+  Typography,
+  Box,
+  Paper,
   Card,
   CardContent,
   Button,
-  Chip
+  Chip,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import { useNavigate } from 'react-router-dom';
 import { 
   Sms as SmsIcon,

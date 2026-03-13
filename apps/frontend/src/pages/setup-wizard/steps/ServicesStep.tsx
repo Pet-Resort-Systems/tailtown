@@ -9,7 +9,6 @@ import {
   Box,
   Typography,
   Button,
-  Grid,
   Card,
   CardContent,
   Switch,
@@ -17,6 +16,7 @@ import {
   TextField,
   Chip,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   ArrowForward,
   ArrowBack,

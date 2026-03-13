@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import {
   Box,
   TextField,
-  Grid,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
   InputAdornment,
-  FormHelperText
+  FormHelperText,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 
 interface PaymentStepProps {
   paymentMethod: string;

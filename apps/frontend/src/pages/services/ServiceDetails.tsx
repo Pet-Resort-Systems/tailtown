@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import {
+  useParams,
+  useNavigate } from "react-router-dom";
 import {
   Container,
   Box,
@@ -10,7 +12,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Grid,
   Switch,
   FormControlLabel,
   Divider,
@@ -20,6 +21,7 @@ import {
   Alert,
   SelectChangeEvent,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { serviceManagement } from "../../services/serviceManagement";

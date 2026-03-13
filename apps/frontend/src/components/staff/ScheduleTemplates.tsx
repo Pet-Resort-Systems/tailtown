@@ -32,8 +32,8 @@ import {
   CircularProgress,
   Tooltip,
   Collapse,
-  Grid,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   Add as AddIcon,
   Edit as EditIcon,

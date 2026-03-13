@@ -8,7 +8,6 @@ import {
   Box,
   Typography,
   Paper,
-  Grid,
   Card,
   CardContent,
   Button,
@@ -24,6 +23,7 @@ import {
   Divider,
   Chip,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   PointOfSale as POSIcon,
   Print as PrintIcon,

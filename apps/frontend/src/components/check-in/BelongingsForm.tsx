@@ -5,7 +5,6 @@ import {
   Paper,
   Typography,
   IconButton,
-  Grid,
   Chip,
   Button,
   ImageList,
@@ -16,6 +15,7 @@ import {
   Tooltip,
   Collapse,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import CloseIcon from "@mui/icons-material/Close";

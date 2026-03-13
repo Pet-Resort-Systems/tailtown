@@ -2,12 +2,12 @@ import React from "react";
 import {
   Box,
   Typography,
-  Grid,
   Chip,
   Paper,
   Tooltip,
   Divider,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import { ALL_PET_ICONS, getIconsByCategory } from "../../constants/petIcons";
 
 interface EmojiPetIconSelectorProps {

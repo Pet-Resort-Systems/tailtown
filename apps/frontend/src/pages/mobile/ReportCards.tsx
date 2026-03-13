@@ -1,6 +1,6 @@
 /**
  * Mobile Report Cards Page
- * 
+ *
  * Mobile-optimized page for creating and managing pet report cards
  */
 
@@ -14,6 +14,7 @@ import {
   Button,
   List,
   ListItem,
+  ListItemButton,
   ListItemText,
   ListItemAvatar,
   Avatar,
@@ -21,18 +22,21 @@ import {
   CircularProgress,
   Alert,
   Fab,
-  Badge
+  Badge,
 } from '@mui/material';
 import {
   Add as AddIcon,
   Pets as PetIcon,
   PhotoCamera as PhotoIcon,
-  Send as SendIcon
+  Send as SendIcon,
 } from '@mui/icons-material';
 import { MobileHeader } from '../../components/mobile/MobileHeader';
 import { BottomNav } from '../../components/mobile/BottomNav';
 import QuickReportCard from '../../components/reportCards/QuickReportCard';
-import { reportCardService, ReportCard } from '../../services/reportCardService';
+import {
+  reportCardService,
+  ReportCard,
+} from '../../services/reportCardService';
 import { useAuth } from '../../contexts/AuthContext';
 
 const ReportCards: React.FC = () => {
@@ -54,12 +58,12 @@ const ReportCards: React.FC = () => {
       setLoading(true);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      
+
       const result = await reportCardService.listReportCards({
         startDate: today.toISOString(),
-        limit: 50
+        limit: 50,
       });
-      
+
       setReportCards(result.reportCards);
     } catch (err: any) {
       setError(err.message || 'Failed to load report cards');
@@ -75,7 +79,7 @@ const ReportCards: React.FC = () => {
       setTodaysPets([
         { id: 'pet-1', name: 'Max', hasReport: false },
         { id: 'pet-2', name: 'Bella', hasReport: false },
-        { id: 'pet-3', name: 'Charlie', hasReport: true }
+        { id: 'pet-3', name: 'Charlie', hasReport: true },
       ]);
     } catch (err) {
       console.error('Failed to load pets:', err);
@@ -88,7 +92,7 @@ const ReportCards: React.FC = () => {
     loadTodaysPets();
   };
 
-  const petsWithoutReports = todaysPets.filter(p => !p.hasReport).length;
+  const petsWithoutReports = todaysPets.filter((p) => !p.hasReport).length;
 
   if (showCreateForm) {
     return (
@@ -127,22 +131,24 @@ const ReportCards: React.FC = () => {
         {/* Quick Stats */}
         <Card sx={{ mb: 2, bgcolor: 'primary.main', color: 'white' }}>
           <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
               <Box>
                 <Typography variant="h4" fontWeight="bold">
                   {reportCards.length}
                 </Typography>
-                <Typography variant="body2">
-                  Reports Today
-                </Typography>
+                <Typography variant="body2">Reports Today</Typography>
               </Box>
               <Box sx={{ textAlign: 'right' }}>
                 <Typography variant="h4" fontWeight="bold">
                   {petsWithoutReports}
                 </Typography>
-                <Typography variant="body2">
-                  Pets Waiting
-                </Typography>
+                <Typography variant="body2">Pets Waiting</Typography>
               </Box>
             </Box>
           </CardContent>
@@ -152,35 +158,36 @@ const ReportCards: React.FC = () => {
         {petsWithoutReports > 0 && (
           <Card sx={{ mb: 2 }}>
             <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6">
-                  Pets Needing Reports
-                </Typography>
-                <Chip
-                  label={petsWithoutReports}
-                  color="warning"
-                  size="small"
-                />
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  mb: 2,
+                }}
+              >
+                <Typography variant="h6">Pets Needing Reports</Typography>
+                <Chip label={petsWithoutReports} color="warning" size="small" />
               </Box>
               <List dense>
-                {todaysPets.filter(p => !p.hasReport).map((pet) => (
-                  <ListItem
-                    key={pet.id}
-                    button
-                    onClick={() => setShowCreateForm(true)}
-                  >
-                    <ListItemAvatar>
-                      <Avatar>
-                        <PetIcon />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={pet.name}
-                      secondary="No report yet"
-                    />
-                    <PhotoIcon color="action" />
-                  </ListItem>
-                ))}
+                {todaysPets
+                  .filter((p) => !p.hasReport)
+                  .map((pet) => (
+                    <ListItem key={pet.id} disablePadding>
+                      <ListItemButton onClick={() => setShowCreateForm(true)}>
+                        <ListItemAvatar>
+                          <Avatar>
+                            <PetIcon />
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary={pet.name}
+                          secondary="No report yet"
+                        />
+                        <PhotoIcon color="action" />
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
               </List>
             </CardContent>
           </Card>
@@ -198,7 +205,9 @@ const ReportCards: React.FC = () => {
         ) : reportCards.length === 0 ? (
           <Card>
             <CardContent sx={{ textAlign: 'center', py: 4 }}>
-              <PhotoIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+              <PhotoIcon
+                sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }}
+              />
               <Typography variant="h6" color="text.secondary" gutterBottom>
                 No Reports Yet
               </Typography>
@@ -219,7 +228,14 @@ const ReportCards: React.FC = () => {
             {reportCards.map((report) => (
               <Card key={report.id} sx={{ mb: 2 }}>
                 <CardContent>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      mb: 1,
+                    }}
+                  >
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <Avatar>
                         <PetIcon />
@@ -229,7 +245,8 @@ const ReportCards: React.FC = () => {
                           {report.pet?.name}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
-                          {report.customer?.firstName} {report.customer?.lastName}
+                          {report.customer?.firstName}{' '}
+                          {report.customer?.lastName}
                         </Typography>
                       </Box>
                     </Box>
@@ -241,7 +258,11 @@ const ReportCards: React.FC = () => {
                   </Box>
 
                   {report.summary && (
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mb: 1 }}
+                    >
                       {report.summary}
                     </Typography>
                   )}
@@ -269,7 +290,7 @@ const ReportCards: React.FC = () => {
                         try {
                           await reportCardService.sendReportCard(report.id, {
                             sendEmail: true,
-                            sendSMS: true
+                            sendSMS: true,
                           });
                           loadReportCards();
                         } catch (err: any) {
@@ -293,7 +314,7 @@ const ReportCards: React.FC = () => {
         sx={{
           position: 'fixed',
           bottom: 80,
-          right: 16
+          right: 16,
         }}
         onClick={() => setShowCreateForm(true)}
       >

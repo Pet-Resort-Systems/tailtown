@@ -6,7 +6,6 @@ import {
   TextField,
   Button,
   Autocomplete,
-  Grid,
   CircularProgress,
   Alert,
   FormControl,
@@ -15,6 +14,7 @@ import {
   MenuItem,
   InputAdornment,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import SearchIcon from '@mui/icons-material/Search';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PetsIcon from '@mui/icons-material/Pets';

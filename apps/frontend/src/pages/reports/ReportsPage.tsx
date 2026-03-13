@@ -3,7 +3,6 @@ import {
   Box,
   Typography,
   Container,
-  Grid,
   Card,
   CardContent,
   CardActions,
@@ -20,6 +19,7 @@ import {
   Alert,
   IconButton,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   Assessment as ReportsIcon,
   Pets as PetIcon,

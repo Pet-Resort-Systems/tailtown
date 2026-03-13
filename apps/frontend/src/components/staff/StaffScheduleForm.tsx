@@ -10,10 +10,10 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Grid,
   FormHelperText,
   SelectChangeEvent,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import {
   LocalizationProvider,

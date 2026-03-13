@@ -10,7 +10,6 @@ import {
   TextField,
   Typography,
   Button,
-  Grid,
   FormControl,
   InputLabel,
   Select,
@@ -27,6 +26,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   Add,
   Delete,

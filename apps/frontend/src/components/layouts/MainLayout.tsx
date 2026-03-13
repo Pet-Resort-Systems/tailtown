@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { SvgIconComponent } from "@mui/icons-material";
+import React, { useState, useEffect } from 'react';
+import { SvgIconComponent } from '@mui/icons-material';
 import {
   Outlet,
   Link,
   useLocation,
   useNavigate,
   Navigate,
-} from "react-router-dom";
-import logoImage from "../../assets/images/tail town logo.jpg";
+} from 'react-router-dom';
+import logoImage from '../../assets/images/tail town logo.jpg';
 import {
   AppBar,
   Box,
@@ -26,7 +26,7 @@ import {
   Avatar,
   Menu,
   MenuItem,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Menu as MenuIcon,
   Dashboard as DashboardIcon,
@@ -48,16 +48,16 @@ import {
   ShoppingCart as ShoppingCartIcon,
   PhotoCamera as ReportCardIcon,
   NotificationsActive as WaitlistIcon,
-} from "@mui/icons-material";
-import { useAuth } from "../../contexts/AuthContext";
-import { canAccessSettings } from "../../utils/permissions";
-import ImpersonationBanner from "../super-admin/ImpersonationBanner";
-import AnnouncementBell from "../announcements/AnnouncementBell";
-import AnnouncementModal from "../announcements/AnnouncementModal";
-import announcementService from "../../services/announcementService";
-import type { Announcement } from "../announcements/AnnouncementModal";
-import { useHelp } from "../../contexts/HelpContext";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+} from '@mui/icons-material';
+import { useAuth } from '../../contexts/AuthContext';
+import { canAccessSettings } from '../../utils/permissions';
+import ImpersonationBanner from '../super-admin/ImpersonationBanner';
+import AnnouncementBell from '../announcements/AnnouncementBell';
+import AnnouncementModal from '../announcements/AnnouncementModal';
+import announcementService from '../../services/announcementService';
+import type { Announcement } from '../announcements/AnnouncementModal';
+import { useHelp } from '../../contexts/HelpContext';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 const drawerWidth = 240;
 
@@ -74,7 +74,7 @@ interface NavItem {
  * @returns Full URL to profile photo or undefined if invalid
  */
 const getProfilePhotoUrl = (
-  profilePhoto: string | null | undefined
+  profilePhoto: string | null | undefined,
 ): string | undefined => {
   if (!profilePhoto) return undefined;
 
@@ -84,12 +84,12 @@ const getProfilePhotoUrl = (
       envUrl && envUrl.length > 0 ? envUrl : window.location.origin;
 
     // Ensure profilePhoto starts with /
-    const path = profilePhoto.startsWith("/")
+    const path = profilePhoto.startsWith('/')
       ? profilePhoto
       : `/${profilePhoto}`;
     return `${baseUrl}${path}`;
   } catch (error) {
-    console.error("Error constructing profile photo URL:", error);
+    console.error('Error constructing profile photo URL:', error);
     return undefined;
   }
 };
@@ -138,10 +138,10 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
       const API_URL =
         envUrl && envUrl.length > 0 ? envUrl : window.location.origin;
       const tenantId =
-        localStorage.getItem("tailtown_tenant_id") ||
-        localStorage.getItem("tenantId");
+        localStorage.getItem('tailtown_tenant_id') ||
+        localStorage.getItem('tenantId');
       const token =
-        localStorage.getItem("accessToken") || localStorage.getItem("token");
+        localStorage.getItem('accessToken') || localStorage.getItem('token');
       const headers: Record<string, string> = {};
 
       if (token) {
@@ -150,7 +150,7 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
 
       // Add tenant subdomain header if available (backend expects x-tenant-subdomain)
       if (tenantId) {
-        headers["x-tenant-subdomain"] = tenantId;
+        headers['x-tenant-subdomain'] = tenantId;
       }
 
       const response = await fetch(`${API_URL}/api/business-settings`, {
@@ -163,14 +163,14 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
           const logoUrl = `${API_URL}${data.logoUrl}`;
           setCustomLogo(logoUrl);
           // Cache in localStorage to prevent flash on reload
-          localStorage.setItem("businessLogo", logoUrl);
+          localStorage.setItem('businessLogo', logoUrl);
         } else {
           // No custom logo, remove from cache
-          localStorage.removeItem("businessLogo");
+          localStorage.removeItem('businessLogo');
         }
       }
     } catch (error) {
-      console.error("Error loading business settings:", error);
+      console.error('Error loading business settings:', error);
     }
   };
 
@@ -179,11 +179,11 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
       await announcementService.dismissAnnouncement(id);
       // Only remove if dismiss was successful
       setAnnouncements((prev) => prev.filter((a) => a.id !== id));
-      console.log("Announcement dismissed successfully");
+      console.log('Announcement dismissed successfully');
     } catch (error) {
-      console.error("Failed to dismiss announcement:", error);
+      console.error('Failed to dismiss announcement:', error);
       // Don't remove from state if dismiss failed
-      alert("Unable to dismiss announcement. Please try again later.");
+      alert('Unable to dismiss announcement. Please try again later.');
     }
   };
 
@@ -202,7 +202,7 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    navigate('/login');
   };
 
   // 3. Early returns for loading and unauthenticated states
@@ -210,10 +210,10 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
     return (
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
         }}
       >
         <CircularProgress />
@@ -230,24 +230,24 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
   };
 
   const navItems: NavItem[] = [
-    { path: "/dashboard", label: "Dashboard", icon: DashboardIcon },
-    { path: "/calendar", label: "Boarding & Daycare", icon: DaycareIcon },
-    { path: "/calendar/grooming", label: "Grooming", icon: GroomingIcon },
-    { path: "/calendar/training", label: "Training", icon: TrainingIcon },
-    { path: "/customers", label: "Customers", icon: PeopleIcon },
-    { path: "/pets", label: "Pets", icon: PetsIcon },
-    { path: "/report-cards", label: "Report Cards", icon: ReportCardIcon },
-    { path: "/waitlist", label: "Waitlist", icon: WaitlistIcon },
-    { path: "/products", label: "Products & POS", icon: ShoppingCartIcon },
+    { path: '/dashboard', label: 'Dashboard', icon: DashboardIcon },
+    { path: '/calendar', label: 'Boarding & Daycare', icon: DaycareIcon },
+    { path: '/calendar/grooming', label: 'Grooming', icon: GroomingIcon },
+    { path: '/calendar/training', label: 'Training', icon: TrainingIcon },
+    { path: '/customers', label: 'Customers', icon: PeopleIcon },
+    { path: '/pets', label: 'Pets', icon: PetsIcon },
+    { path: '/report-cards', label: 'Report Cards', icon: ReportCardIcon },
+    { path: '/waitlist', label: 'Waitlist', icon: WaitlistIcon },
+    { path: '/products', label: 'Products & POS', icon: ShoppingCartIcon },
     {
-      path: "/suites",
-      label: "Kennels",
+      path: '/suites',
+      label: 'Kennels',
       icon: SuitesIcon,
       children: [
-        { path: "/suites", label: "Kennel Board", icon: SuitesIcon },
+        { path: '/suites', label: 'Kennel Board', icon: SuitesIcon },
         {
-          path: "/kennels/print-cards",
-          label: "Print Kennel Cards",
+          path: '/kennels/print-cards',
+          label: 'Print Kennel Cards',
           icon: PrintIcon,
         },
       ],
@@ -256,15 +256,15 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
     // { path: '/reservations', label: 'Reservations', icon: EventNoteIcon },
     // { path: '/orders/new', label: 'New Order', icon: OrdersIcon },
     {
-      path: "/reports",
-      label: "Reports",
+      path: '/reports',
+      label: 'Reports',
       icon: AnalyticsIcon,
       children: [
-        { path: "/reports", label: "All Reports", icon: ReportIcon },
-        { path: "/analytics", label: "Sales Dashboard", icon: ReportIcon },
+        { path: '/reports', label: 'All Reports', icon: ReportIcon },
+        { path: '/analytics', label: 'Sales Dashboard', icon: ReportIcon },
         {
-          path: "/analytics/customers",
-          label: "Customer Value",
+          path: '/analytics/customers',
+          label: 'Customer Value',
           icon: PaymentIcon,
         },
       ],
@@ -275,31 +275,31 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
     <div>
       <Toolbar
         sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           py: 2,
           px: 1,
         }}
       >
         <Box
           sx={{
-            width: "140px",
-            height: "140px",
-            overflow: "hidden",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            width: '140px',
+            height: '140px',
+            overflow: 'hidden',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
         >
           <img
             src={customLogo || logoImage}
             alt="Business Logo"
             style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "contain",
-              transform: customLogo ? "scale(1)" : "scale(1.2)",
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              transform: customLogo ? 'scale(1)' : 'scale(1.2)',
             }}
           />
         </Box>
@@ -314,14 +314,14 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
                   onClick={() => handleSubMenuToggle(item.label)}
                   selected={location.pathname.startsWith(item.path)}
                   sx={{
-                    "&.Mui-selected": {
-                      backgroundColor: "primary.light",
-                      color: "primary.contrastText",
-                      "&:hover": {
-                        backgroundColor: "primary.main",
+                    '&.Mui-selected': {
+                      backgroundColor: 'primary.light',
+                      color: 'primary.contrastText',
+                      '&:hover': {
+                        backgroundColor: 'primary.main',
                       },
-                      "& .MuiListItemIcon-root": {
-                        color: "primary.contrastText",
+                      '& .MuiListItemIcon-root': {
+                        color: 'primary.contrastText',
                       },
                     },
                   }}
@@ -348,14 +348,14 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
                         onClick={handleDrawerToggle}
                         sx={{
                           pl: 4,
-                          "&.Mui-selected": {
-                            backgroundColor: "primary.light",
-                            color: "primary.contrastText",
-                            "&:hover": {
-                              backgroundColor: "primary.main",
+                          '&.Mui-selected': {
+                            backgroundColor: 'primary.light',
+                            color: 'primary.contrastText',
+                            '&:hover': {
+                              backgroundColor: 'primary.main',
                             },
-                            "& .MuiListItemIcon-root": {
-                              color: "primary.contrastText",
+                            '& .MuiListItemIcon-root': {
+                              color: 'primary.contrastText',
                             },
                           },
                         }}
@@ -378,14 +378,14 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
                 selected={location.pathname === item.path}
                 onClick={handleDrawerToggle}
                 sx={{
-                  "&.Mui-selected": {
-                    backgroundColor: "primary.light",
-                    color: "primary.contrastText",
-                    "&:hover": {
-                      backgroundColor: "primary.main",
+                  '&.Mui-selected': {
+                    backgroundColor: 'primary.light',
+                    color: 'primary.contrastText',
+                    '&:hover': {
+                      backgroundColor: 'primary.main',
                     },
-                    "& .MuiListItemIcon-root": {
-                      color: "primary.contrastText",
+                    '& .MuiListItemIcon-root': {
+                      color: 'primary.contrastText',
                     },
                   },
                 }}
@@ -396,7 +396,7 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
                 <ListItemText primary={item.label} />
               </ListItemButton>
             </ListItem>
-          )
+          ),
         )}
       </List>
       {/* Admin link - only visible to Managers and Administrators */}
@@ -419,7 +419,7 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
   );
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: 'flex' }}>
       <CssBaseline />
 
       {/* Announcement Modal */}
@@ -444,19 +444,19 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
+            sx={{ mr: 2, display: { sm: 'none' } }}
           >
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             {navItems.find((item) => item.path === location.pathname)?.label ||
-              "Dashboard"}
+              'Dashboard'}
           </Typography>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <Box sx={{ display: { xs: "none", sm: "block" } }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
               <Typography
                 variant="body2"
-                sx={{ textAlign: "right", lineHeight: 1.2 }}
+                sx={{ textAlign: 'right', lineHeight: 1.2 }}
               >
                 {user?.firstName} {user?.lastName}
               </Typography>
@@ -465,13 +465,13 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
                 color="inherit"
                 sx={{ opacity: 0.8 }}
               >
-                {user?.role || "Staff"}
+                {user?.role || 'Staff'}
               </Typography>
             </Box>
             <AnnouncementBell
               announcements={announcements}
               onAnnouncementClick={() => setShowAnnouncementModal(true)}
-              onCreateClick={() => navigate("/admin/announcements")}
+              onCreateClick={() => navigate('/admin/announcements')}
             />
             <IconButton
               color="inherit"
@@ -493,11 +493,11 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
               <Avatar
                 src={getProfilePhotoUrl((user as any)?.profilePhoto)}
                 sx={{
-                  bgcolor: "secondary.main",
-                  border: "2px solid white",
+                  bgcolor: 'secondary.main',
+                  border: '2px solid white',
                 }}
               >
-                {!(user as any)?.profilePhoto && (user?.firstName?.[0] || "U")}
+                {!(user as any)?.profilePhoto && (user?.firstName?.[0] || 'U')}
               </Avatar>
             </IconButton>
           </Box>
@@ -505,13 +505,13 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
             id="menu-appbar"
             anchorEl={anchorEl}
             anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
+              vertical: 'bottom',
+              horizontal: 'right',
             }}
             keepMounted
             transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
+              vertical: 'top',
+              horizontal: 'right',
             }}
             open={Boolean(anchorEl)}
             onClose={handleProfileMenuClose}
@@ -519,7 +519,7 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
             <MenuItem
               onClick={() => {
                 handleProfileMenuClose();
-                navigate("/profile");
+                navigate('/profile');
               }}
             >
               <ListItemIcon>
@@ -549,9 +549,9 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
             keepMounted: true, // Better open performance on mobile
           }}
           sx={{
-            display: { xs: "block", sm: "none" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
+            display: { xs: 'block', sm: 'none' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
               width: drawerWidth,
             },
           }}
@@ -561,9 +561,9 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
         <Drawer
           variant="permanent"
           sx={{
-            display: { xs: "none", sm: "block" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
+            display: { xs: 'none', sm: 'block' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
               width: drawerWidth,
             },
           }}
@@ -578,13 +578,13 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
           flexGrow: 1,
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-          minHeight: "100vh",
-          backgroundColor: "background.default",
+          minHeight: '100vh',
+          backgroundColor: 'background.default',
         }}
       >
         <Toolbar />
         {/* Show impersonation banner if active */}
-        {localStorage.getItem("impersonationSession") && (
+        {localStorage.getItem('impersonationSession') && (
           <ImpersonationBanner onExit={() => {}} />
         )}
         {children || <Outlet />}

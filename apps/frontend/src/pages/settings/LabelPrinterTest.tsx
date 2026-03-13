@@ -12,8 +12,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Grid,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import PrintIcon from "@mui/icons-material/Print";
 import DownloadIcon from "@mui/icons-material/Download";
 import SettingsIcon from "@mui/icons-material/Settings";

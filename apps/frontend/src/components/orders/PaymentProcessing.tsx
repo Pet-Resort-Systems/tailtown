@@ -5,7 +5,6 @@ import {
   Paper,
   TextField,
   Button,
-  Grid,
   MenuItem,
   FormControl,
   InputLabel,
@@ -15,6 +14,7 @@ import {
   Divider,
   InputAdornment,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import { customerService } from '../../services/customerService';
 import { invoiceService } from '../../services/invoiceService';
 

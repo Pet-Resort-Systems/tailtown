@@ -10,12 +10,12 @@ import {
   DialogContent,
   DialogActions,
   CircularProgress,
-  Grid,
   Card,
   CardContent,
   Stack,
   Chip,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import SuiteBoard from "../../components/suites/SuiteBoard";
 import { resourceService } from "../../services";

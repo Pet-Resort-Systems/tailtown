@@ -7,7 +7,6 @@ import {
   Chip,
   Container,
   Divider,
-  Grid,
   IconButton,
   Table,
   TableBody,
@@ -22,6 +21,7 @@ import {
   DialogActions,
   Alert,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   ArrowBack as BackIcon,
   Edit as EditIcon,

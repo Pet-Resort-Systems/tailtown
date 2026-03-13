@@ -22,8 +22,8 @@ import {
   DialogTitle,
   TextField,
   MenuItem,
-  Grid
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import InvoiceDetailsDialog from '../invoices/InvoiceDetailsDialog';
 import { 
   AccountBalance as AccountBalanceIcon,

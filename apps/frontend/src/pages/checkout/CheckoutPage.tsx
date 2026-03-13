@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { getApiBaseUrl } from "../../services/api";
+import {
+  getApiBaseUrl } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -8,12 +9,12 @@ import {
   Paper,
   Button,
   Divider,
-  Grid,
   CircularProgress,
   Alert,
   FormControlLabel,
   Checkbox,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PaymentIcon from "@mui/icons-material/Payment";
 import { useShoppingCart, CartItem } from "../../contexts/ShoppingCartContext";

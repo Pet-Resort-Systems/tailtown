@@ -5,13 +5,13 @@ import {
   Card,
   CardContent,
   Container,
-  Grid,
   TextField,
   Typography,
   Alert,
   MenuItem,
   IconButton,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import { ArrowBack as BackIcon } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { tenantService, UpdateTenantDto } from '../../services/tenantService';

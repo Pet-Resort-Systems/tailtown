@@ -4,7 +4,6 @@ import {
   Paper,
   Typography,
   Avatar,
-  Grid,
   Chip,
   Alert,
   AlertTitle,
@@ -18,6 +17,7 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   Warning as WarningIcon,
   CheckCircle as CheckCircleIcon,

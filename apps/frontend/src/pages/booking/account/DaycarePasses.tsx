@@ -11,7 +11,6 @@ import {
   Button,
   CircularProgress,
   Alert,
-  Grid,
   Chip,
   LinearProgress,
   Dialog,
@@ -19,6 +18,7 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   CardGiftcard as PassIcon,
   ShoppingCart as CartIcon,

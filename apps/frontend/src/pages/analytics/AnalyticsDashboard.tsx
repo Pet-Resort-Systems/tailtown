@@ -4,7 +4,6 @@ import {
   Container,
   Typography,
   Paper,
-  Grid,
   FormControl,
   InputLabel,
   Select,
@@ -17,6 +16,7 @@ import {
   CardHeader,
   useTheme,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import { SelectChangeEvent } from "@mui/material/Select";
 import {
   BarChart,

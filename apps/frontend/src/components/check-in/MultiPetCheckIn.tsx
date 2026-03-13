@@ -11,11 +11,11 @@ import {
   Alert,
   CircularProgress,
   Divider,
-  Grid,
   Card,
   CardContent,
   CardActions,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   CheckCircle as CheckCircleIcon,
   Pets as PetsIcon,

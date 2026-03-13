@@ -12,7 +12,6 @@ import {
   Button,
   CircularProgress,
   Alert,
-  Grid,
   Divider,
   Dialog,
   DialogTitle,
@@ -20,6 +19,7 @@ import {
   DialogActions,
   TextField,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   CalendarMonth as CalendarIcon,
   Pets as PetsIcon,

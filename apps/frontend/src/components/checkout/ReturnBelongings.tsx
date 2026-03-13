@@ -5,6 +5,7 @@ import {
   Paper,
   List,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   Checkbox,
@@ -25,7 +26,9 @@ const ReturnBelongings: React.FC<ReturnBelongingsProps> = ({
   onContinue,
   onBack,
 }) => {
-  const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
+  const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>(
+    {},
+  );
 
   const handleToggle = (itemId: string) => {
     setCheckedItems({
@@ -34,11 +37,12 @@ const ReturnBelongings: React.FC<ReturnBelongingsProps> = ({
     });
   };
 
-  const allItemsReturned = belongings.length === 0 || 
-    belongings.every(item => checkedItems[item.id]);
+  const allItemsReturned =
+    belongings.length === 0 ||
+    belongings.every((item) => checkedItems[item.id]);
 
   const handleContinue = () => {
-    const updatedBelongings = belongings.map(item => ({
+    const updatedBelongings = belongings.map((item) => ({
       ...item,
       returned: checkedItems[item.id] || false,
     }));
@@ -56,49 +60,55 @@ const ReturnBelongings: React.FC<ReturnBelongingsProps> = ({
 
       {belongings.length === 0 ? (
         <Alert severity="info" sx={{ mt: 3 }}>
-          No belongings were recorded during check-in. You can proceed to the next step.
+          No belongings were recorded during check-in. You can proceed to the
+          next step.
         </Alert>
       ) : (
         <Paper elevation={0} sx={{ mt: 3, bgcolor: 'grey.50' }}>
           <List>
             {belongings.map((item, index) => (
-              <ListItem
-                key={item.id || index}
-                dense
-                button
-                onClick={() => handleToggle(item.id || index.toString())}
-                sx={{
-                  borderBottom: index < belongings.length - 1 ? '1px solid' : 'none',
-                  borderColor: 'divider',
-                  '&:hover': {
-                    bgcolor: 'action.hover',
-                  },
-                }}
-              >
-                <ListItemIcon>
-                  <Checkbox
-                    edge="start"
-                    checked={checkedItems[item.id || index.toString()] || false}
-                    tabIndex={-1}
-                    disableRipple
+              <ListItem key={item.id || index} disablePadding>
+                <ListItemButton
+                  dense
+                  onClick={() => handleToggle(item.id || index.toString())}
+                  sx={{
+                    borderBottom:
+                      index < belongings.length - 1 ? '1px solid' : 'none',
+                    borderColor: 'divider',
+                    '&:hover': {
+                      bgcolor: 'action.hover',
+                    },
+                  }}
+                >
+                  <ListItemIcon>
+                    <Checkbox
+                      edge="start"
+                      checked={
+                        checkedItems[item.id || index.toString()] || false
+                      }
+                      tabIndex={-1}
+                      disableRipple
+                    />
+                  </ListItemIcon>
+                  <ListItemIcon>
+                    <InventoryIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      <Box
+                        sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                      >
+                        <Typography variant="body1">
+                          {item.item || item.name || 'Unknown Item'}
+                        </Typography>
+                        {item.quantity > 1 && (
+                          <Chip label={`×${item.quantity}`} size="small" />
+                        )}
+                      </Box>
+                    }
+                    secondary={item.notes || item.description}
                   />
-                </ListItemIcon>
-                <ListItemIcon>
-                  <InventoryIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography variant="body1">
-                        {item.item || item.name || 'Unknown Item'}
-                      </Typography>
-                      {item.quantity > 1 && (
-                        <Chip label={`×${item.quantity}`} size="small" />
-                      )}
-                    </Box>
-                  }
-                  secondary={item.notes || item.description}
-                />
+                </ListItemButton>
               </ListItem>
             ))}
           </List>
@@ -118,9 +128,7 @@ const ReturnBelongings: React.FC<ReturnBelongingsProps> = ({
       )}
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
-        <Button onClick={onBack}>
-          Back
-        </Button>
+        <Button onClick={onBack}>Back</Button>
         <Button
           variant="contained"
           onClick={handleContinue}

@@ -11,12 +11,12 @@ import {
   Card,
   CardContent,
   CardActionArea,
-  Grid,
   Chip,
   Avatar,
   CircularProgress,
   Alert,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   ArrowBack as ArrowBackIcon,
   ArrowForward as ArrowForwardIcon,

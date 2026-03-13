@@ -21,7 +21,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Grid,
   Chip,
   Divider,
   SelectChangeEvent,
@@ -29,6 +28,7 @@ import {
   Tab,
   LinearProgress,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   Add as AddIcon,
   Edit as EditIcon,

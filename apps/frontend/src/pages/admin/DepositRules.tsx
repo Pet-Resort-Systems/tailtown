@@ -11,7 +11,6 @@ import {
   Button,
   Card,
   CardContent,
-  Grid,
   Switch,
   FormControlLabel,
   TextField,
@@ -33,6 +32,7 @@ import {
   TableRow,
   Divider,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   Add as AddIcon,
   Edit as EditIcon,

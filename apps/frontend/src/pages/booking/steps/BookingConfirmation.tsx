@@ -10,10 +10,10 @@ import {
   Button,
   Card,
   CardContent,
-  Grid,
   Divider,
-  Alert
+  Alert,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   CheckCircle as CheckCircleIcon,
   Email as EmailIcon,

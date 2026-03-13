@@ -7,10 +7,10 @@ import {
   Button,
   Box,
   Typography,
-  Grid,
   Avatar,
   Paper,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   Person,
   Face,

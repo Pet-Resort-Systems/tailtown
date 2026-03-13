@@ -7,7 +7,6 @@ import {
   Box,
   Typography,
   Button,
-  Grid,
   TextField,
   Card,
   CardContent,
@@ -19,6 +18,7 @@ import {
   InputAdornment,
   IconButton,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   ArrowForward,
   ArrowBack,

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { getApiBaseUrl } from "../../services/api";
+import {
+  getApiBaseUrl } from "../../services/api";
 import {
   Container,
   Typography,
   Box,
-  Grid,
   Card,
   CardContent,
   Accordion,
@@ -12,6 +12,7 @@ import {
   AccordionDetails,
   Chip,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import { useNavigate } from "react-router-dom";
 import {
   LocalOffer as ServicesIcon,

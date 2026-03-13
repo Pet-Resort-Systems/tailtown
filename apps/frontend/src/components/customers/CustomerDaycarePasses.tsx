@@ -17,7 +17,6 @@ import {
   Card,
   CardContent,
   Chip,
-  Grid,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -37,6 +36,7 @@ import {
   MenuItem,
   TextField,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   Add as AddIcon,
   ConfirmationNumber as PassIcon,

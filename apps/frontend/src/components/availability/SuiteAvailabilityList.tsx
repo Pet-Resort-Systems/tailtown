@@ -1,6 +1,6 @@
 /**
  * Suite Availability List Component
- * 
+ *
  * Displays available suites for a date range with:
  * - Availability status
  * - Conflicting reservations
@@ -16,15 +16,15 @@ import {
   CardContent,
   Chip,
   List,
-  ListItem,
+  ListItemButton,
   ListItemText,
   Divider,
-  Alert
+  Alert,
 } from '@mui/material';
 import {
   CheckCircle as AvailableIcon,
   Cancel as UnavailableIcon,
-  Info as InfoIcon
+  Info as InfoIcon,
 } from '@mui/icons-material';
 import { SuiteAvailability } from '../../types/availability';
 import { formatDate } from '../../utils/formatters';
@@ -38,18 +38,19 @@ interface SuiteAvailabilityListProps {
 export const SuiteAvailabilityList: React.FC<SuiteAvailabilityListProps> = ({
   suites,
   onSuiteSelect,
-  selectedSuiteId
+  selectedSuiteId,
 }) => {
   if (suites.length === 0) {
     return (
       <Alert severity="info" icon={<InfoIcon />}>
-        No suites match your search criteria. Try different dates or suite types.
+        No suites match your search criteria. Try different dates or suite
+        types.
       </Alert>
     );
   }
 
-  const availableSuites = suites.filter(s => s.isAvailable);
-  const unavailableSuites = suites.filter(s => !s.isAvailable);
+  const availableSuites = suites.filter((s) => s.isAvailable);
+  const unavailableSuites = suites.filter((s) => !s.isAvailable);
 
   return (
     <Box>
@@ -62,15 +63,18 @@ export const SuiteAvailabilityList: React.FC<SuiteAvailabilityListProps> = ({
           <List>
             {availableSuites.map((suite, index) => (
               <React.Fragment key={suite.suiteId}>
-                <ListItem
-                  component={onSuiteSelect ? "button" : "div"}
+                <ListItemButton
+                  component={onSuiteSelect ? 'button' : 'div'}
                   onClick={() => onSuiteSelect && onSuiteSelect(suite.suiteId)}
                   selected={selectedSuiteId === suite.suiteId}
                   sx={{
                     border: selectedSuiteId === suite.suiteId ? 2 : 1,
-                    borderColor: selectedSuiteId === suite.suiteId ? 'primary.main' : 'divider',
+                    borderColor:
+                      selectedSuiteId === suite.suiteId
+                        ? 'primary.main'
+                        : 'divider',
                     borderRadius: 1,
-                    mb: 1
+                    mb: 1,
                   }}
                 >
                   <AvailableIcon color="success" sx={{ mr: 2 }} />
@@ -90,12 +94,13 @@ export const SuiteAvailabilityList: React.FC<SuiteAvailabilityListProps> = ({
                     }
                     secondary={
                       <Typography variant="body2" color="text.secondary">
-                        Capacity: {suite.capacity} pet{suite.capacity !== 1 ? 's' : ''}
+                        Capacity: {suite.capacity} pet
+                        {suite.capacity !== 1 ? 's' : ''}
                       </Typography>
                     }
                   />
                   <Chip label="Available" color="success" size="small" />
-                </ListItem>
+                </ListItemButton>
                 {index < availableSuites.length - 1 && <Divider />}
               </React.Fragment>
             ))}
@@ -127,23 +132,43 @@ export const SuiteAvailabilityList: React.FC<SuiteAvailabilityListProps> = ({
                             variant="outlined"
                           />
                         </Box>
-                        
-                        <Typography variant="body2" color="text.secondary" gutterBottom>
-                          Capacity: {suite.capacity} pet{suite.capacity !== 1 ? 's' : ''}
+
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          gutterBottom
+                        >
+                          Capacity: {suite.capacity} pet
+                          {suite.capacity !== 1 ? 's' : ''}
                         </Typography>
 
-                        {suite.conflictingReservations && suite.conflictingReservations.length > 0 && (
-                          <Box mt={1}>
-                            <Typography variant="caption" color="error" display="block" gutterBottom>
-                              Conflicting Reservations:
-                            </Typography>
-                            {suite.conflictingReservations.map((reservation, idx) => (
-                              <Typography key={idx} variant="caption" display="block" color="text.secondary">
-                                • {reservation.petName}: {formatDate(reservation.startDate)} - {formatDate(reservation.endDate)}
+                        {suite.conflictingReservations &&
+                          suite.conflictingReservations.length > 0 && (
+                            <Box mt={1}>
+                              <Typography
+                                variant="caption"
+                                color="error"
+                                display="block"
+                                gutterBottom
+                              >
+                                Conflicting Reservations:
                               </Typography>
-                            ))}
-                          </Box>
-                        )}
+                              {suite.conflictingReservations.map(
+                                (reservation, idx) => (
+                                  <Typography
+                                    key={idx}
+                                    variant="caption"
+                                    display="block"
+                                    color="text.secondary"
+                                  >
+                                    • {reservation.petName}:{' '}
+                                    {formatDate(reservation.startDate)} -{' '}
+                                    {formatDate(reservation.endDate)}
+                                  </Typography>
+                                ),
+                              )}
+                            </Box>
+                          )}
 
                         {suite.nextAvailableDate && (
                           <Box mt={1}>
@@ -159,7 +184,9 @@ export const SuiteAvailabilityList: React.FC<SuiteAvailabilityListProps> = ({
                     </Box>
                   </CardContent>
                 </Card>
-                {index < unavailableSuites.length - 1 && <Divider sx={{ my: 1 }} />}
+                {index < unavailableSuites.length - 1 && (
+                  <Divider sx={{ my: 1 }} />
+                )}
               </React.Fragment>
             ))}
           </List>

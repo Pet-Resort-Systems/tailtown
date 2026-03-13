@@ -10,13 +10,13 @@ import {
   TextField,
   Typography,
   Button,
-  Grid,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
   Avatar,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import { PhotoCamera, ArrowForward } from "@mui/icons-material";
 import { useSetupWizard } from "../SetupWizardContext";
 

@@ -15,9 +15,9 @@ import {
   Tabs,
   Alert,
   CircularProgress,
-  Grid,
   Link,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   Login as LoginIcon,
   PersonAdd as SignupIcon,

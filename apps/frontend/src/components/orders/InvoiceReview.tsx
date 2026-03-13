@@ -3,7 +3,6 @@ import {
   Box,
   Typography,
   Paper,
-  Grid,
   Table,
   TableBody,
   TableCell,
@@ -14,6 +13,7 @@ import {
   Button,
   Divider,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 
 interface InvoiceReviewProps {
   onContinue: (invoiceData: any) => void;

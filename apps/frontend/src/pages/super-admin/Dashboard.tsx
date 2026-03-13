@@ -6,7 +6,8 @@
  */
 
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import {
+  useNavigate } from "react-router-dom";
 import {
   Container,
   Box,
@@ -14,8 +15,8 @@ import {
   Button,
   Card,
   CardContent,
-  Grid,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   Logout as LogoutIcon,
   Business as TenantIcon,

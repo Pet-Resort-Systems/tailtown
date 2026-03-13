@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import {
+  useParams,
+  useNavigate } from "react-router-dom";
 import {
   Container,
   Box,
@@ -9,13 +11,13 @@ import {
   CircularProgress,
   Alert,
   Divider,
-  Grid,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   IconButton,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PrintIcon from "@mui/icons-material/Print";
 import LabelIcon from "@mui/icons-material/Label";

@@ -8,7 +8,6 @@ import {
   Box,
   Typography,
   Paper,
-  Grid,
   Card,
   CardContent,
   Button,
@@ -25,8 +24,9 @@ import {
   TableRow,
   CircularProgress,
   Alert,
-  Chip
+  Chip,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   Receipt as TaxIcon,
   GetApp as ExportIcon

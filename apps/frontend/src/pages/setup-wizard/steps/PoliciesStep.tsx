@@ -7,7 +7,6 @@ import {
   Box,
   Typography,
   Button,
-  Grid,
   TextField,
   Card,
   CardContent,
@@ -17,6 +16,7 @@ import {
   Slider,
   InputAdornment,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import { ArrowForward, ArrowBack } from "@mui/icons-material";
 import { useSetupWizard } from "../SetupWizardContext";
 import { DEFAULT_VACCINATIONS } from "../types";

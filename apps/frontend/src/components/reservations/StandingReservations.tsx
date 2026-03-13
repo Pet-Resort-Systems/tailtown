@@ -30,11 +30,11 @@ import {
   CircularProgress,
   Switch,
   FormControlLabel,
-  Grid,
   ToggleButton,
   ToggleButtonGroup,
   Tooltip,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   Add as AddIcon,
   Edit as EditIcon,

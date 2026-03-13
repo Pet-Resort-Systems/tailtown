@@ -4,12 +4,12 @@ import {
   Typography,
   Paper,
   Button,
-  Grid,
   TextField,
   InputAdornment,
   Avatar,
   Chip,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import GroupsIcon from "@mui/icons-material/Groups";
 import ContentCutIcon from "@mui/icons-material/ContentCut";
 

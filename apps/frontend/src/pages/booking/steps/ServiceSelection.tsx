@@ -6,7 +6,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Box,
-  Grid,
   Card,
   CardContent,
   Typography,
@@ -16,6 +15,7 @@ import {
   Button,
   Avatar,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   Hotel as BoardingIcon,
   WbSunny as DaycareIcon,

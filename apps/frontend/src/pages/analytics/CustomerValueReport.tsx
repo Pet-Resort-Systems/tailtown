@@ -4,7 +4,6 @@ import {
   Container,
   Typography,
   Paper,
-  Grid,
   FormControl,
   InputLabel,
   Select,
@@ -26,6 +25,7 @@ import {
   useTheme,
   Button,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import { SelectChangeEvent } from "@mui/material/Select";
 import SearchIcon from "@mui/icons-material/Search";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";

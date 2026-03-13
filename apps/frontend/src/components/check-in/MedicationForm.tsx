@@ -12,9 +12,9 @@ import {
   Paper,
   Typography,
   IconButton,
-  Grid,
   Divider,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { CheckInMedication } from "../../services/checkInService";

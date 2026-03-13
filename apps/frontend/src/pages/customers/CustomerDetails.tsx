@@ -6,7 +6,6 @@ import {
   Paper,
   Button,
   TextField,
-  Grid,
   CircularProgress,
   Snackbar,
   Alert,
@@ -23,6 +22,7 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";

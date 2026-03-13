@@ -12,9 +12,9 @@ import {
   Alert,
   Card,
   CardContent,
-  Grid,
   Chip,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   CreditCard as CreditCardIcon,
   Money as CashIcon,

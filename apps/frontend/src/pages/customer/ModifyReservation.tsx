@@ -19,7 +19,6 @@ import {
   Alert,
   CircularProgress,
   TextField,
-  Grid,
   Divider,
   Stack,
   Dialog,
@@ -29,8 +28,9 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
-  Paper
+  Paper,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   ArrowBack as BackIcon,
   CalendarToday as CalendarIcon,

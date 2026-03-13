@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Typography,
-  Grid,
   Button,
   FormControl,
   InputLabel,
@@ -19,8 +18,9 @@ import {
   TableRow,
   Chip,
   SelectChangeEvent,
-  CircularProgress
+  CircularProgress,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import staffService, { StaffTimeOff, TimeOffType, TimeOffStatus } from '../../services/staffService';
 

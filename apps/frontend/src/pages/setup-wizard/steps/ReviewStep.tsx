@@ -3,12 +3,12 @@
  */
 
 import React, { useState } from "react";
-import { getApiBaseUrl } from "../../../services/api";
+import {
+  getApiBaseUrl } from "../../../services/api";
 import {
   Box,
   Typography,
   Button,
-  Grid,
   Card,
   CardContent,
   Divider,
@@ -20,6 +20,7 @@ import {
   CircularProgress,
   Chip,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   ArrowBack,
   CheckCircle,

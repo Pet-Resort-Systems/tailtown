@@ -19,14 +19,14 @@ import {
   CardActions,
   Button,
   Chip,
-  Grid,
   Tabs,
   Tab,
   Alert,
   CircularProgress,
   Divider,
-  Stack
+  Stack,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   CalendarToday as CalendarIcon,
   Pets as PetsIcon,

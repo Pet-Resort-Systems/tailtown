@@ -46,7 +46,8 @@ const VaccineRequirements: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
-  const [editingRequirement, setEditingRequirement] = useState<VaccineRequirement | null>(null);
+  const [editingRequirement, setEditingRequirement] =
+    useState<VaccineRequirement | null>(null);
   const [formData, setFormData] = useState<CreateVaccineRequirementRequest>({
     name: '',
     description: '',
@@ -85,7 +86,10 @@ const VaccineRequirements: React.FC = () => {
         name: requirement.name,
         description: requirement.description || '',
         petType: requirement.petType === null ? undefined : requirement.petType,
-        serviceType: requirement.serviceType === null ? undefined : requirement.serviceType,
+        serviceType:
+          requirement.serviceType === null
+            ? undefined
+            : requirement.serviceType,
         isRequired: requirement.isRequired,
         validityPeriodMonths: requirement.validityPeriodMonths,
         reminderDaysBefore: requirement.reminderDaysBefore,
@@ -122,9 +126,10 @@ const VaccineRequirements: React.FC = () => {
       const dataToSave = {
         ...formData,
         petType: formData.petType === undefined ? null : formData.petType,
-        serviceType: formData.serviceType === undefined ? null : formData.serviceType,
+        serviceType:
+          formData.serviceType === undefined ? null : formData.serviceType,
       };
-      
+
       if (editingRequirement) {
         await vaccineService.update(editingRequirement.id, dataToSave);
       } else {
@@ -138,7 +143,11 @@ const VaccineRequirements: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this vaccine requirement?')) {
+    if (
+      window.confirm(
+        'Are you sure you want to delete this vaccine requirement?',
+      )
+    ) {
       try {
         await vaccineService.delete(id);
         await loadRequirements();
@@ -171,7 +180,12 @@ const VaccineRequirements: React.FC = () => {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -179,7 +193,12 @@ const VaccineRequirements: React.FC = () => {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
         <Typography variant="h4">Vaccine Requirements</Typography>
         <Button
           variant="contained"
@@ -218,7 +237,8 @@ const VaccineRequirements: React.FC = () => {
                 <TableRow>
                   <TableCell colSpan={9} align="center">
                     <Typography color="textSecondary" py={4}>
-                      No vaccine requirements found. Click "Add Requirement" to create one.
+                      No vaccine requirements found. Click "Add Requirement" to
+                      create one.
                     </Typography>
                   </TableCell>
                 </TableRow>
@@ -227,7 +247,9 @@ const VaccineRequirements: React.FC = () => {
                   <TableRow key={requirement.id}>
                     <TableCell>
                       <Tooltip title="Drag to reorder">
-                        <DragIcon sx={{ cursor: 'move', color: 'text.secondary' }} />
+                        <DragIcon
+                          sx={{ cursor: 'move', color: 'text.secondary' }}
+                        />
                       </Tooltip>
                     </TableCell>
                     <TableCell>
@@ -305,16 +327,25 @@ const VaccineRequirements: React.FC = () => {
       </Paper>
 
       {/* Add/Edit Dialog */}
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>
-          {editingRequirement ? 'Edit Vaccine Requirement' : 'Add Vaccine Requirement'}
+          {editingRequirement
+            ? 'Edit Vaccine Requirement'
+            : 'Add Vaccine Requirement'}
         </DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
             <TextField
               label="Vaccine Name"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               required
               fullWidth
             />
@@ -322,7 +353,9 @@ const VaccineRequirements: React.FC = () => {
             <TextField
               label="Description"
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               multiline
               rows={2}
               fullWidth
@@ -336,7 +369,10 @@ const VaccineRequirements: React.FC = () => {
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      petType: (e.target.value || undefined) as 'DOG' | 'CAT' | undefined,
+                      petType: (e.target.value || undefined) as
+                        | 'DOG'
+                        | 'CAT'
+                        | undefined,
                     })
                   }
                   label="Pet Type"
@@ -354,12 +390,17 @@ const VaccineRequirements: React.FC = () => {
                 <InputLabel shrink>Service Type</InputLabel>
                 <Select
                   value={formData.serviceType ?? ''}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const value = e.target.value as
+                      | ''
+                      | 'BOARDING'
+                      | 'DAYCARE'
+                      | 'GROOMING';
                     setFormData({
                       ...formData,
-                      serviceType: e.target.value === '' ? undefined : (e.target.value as 'BOARDING' | 'DAYCARE' | 'GROOMING'),
-                    })
-                  }
+                      serviceType: value || undefined,
+                    });
+                  }}
                   label="Service Type"
                   displayEmpty
                   notched
@@ -388,7 +429,9 @@ const VaccineRequirements: React.FC = () => {
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    validityPeriodMonths: e.target.value ? parseInt(e.target.value) : undefined,
+                    validityPeriodMonths: e.target.value
+                      ? parseInt(e.target.value)
+                      : undefined,
                   })
                 }
                 fullWidth
@@ -401,7 +444,9 @@ const VaccineRequirements: React.FC = () => {
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    reminderDaysBefore: e.target.value ? parseInt(e.target.value) : undefined,
+                    reminderDaysBefore: e.target.value
+                      ? parseInt(e.target.value)
+                      : undefined,
                   })
                 }
                 fullWidth
@@ -413,7 +458,9 @@ const VaccineRequirements: React.FC = () => {
                 control={
                   <Switch
                     checked={formData.isRequired}
-                    onChange={(e) => setFormData({ ...formData, isRequired: e.target.checked })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, isRequired: e.target.checked })
+                    }
                   />
                 }
                 label="Required"
@@ -423,7 +470,9 @@ const VaccineRequirements: React.FC = () => {
                 control={
                   <Switch
                     checked={formData.isActive}
-                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, isActive: e.target.checked })
+                    }
                   />
                 }
                 label="Active"
@@ -433,7 +482,9 @@ const VaccineRequirements: React.FC = () => {
             <TextField
               label="Notes"
               value={formData.notes}
-              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, notes: e.target.value })
+              }
               multiline
               rows={3}
               fullWidth

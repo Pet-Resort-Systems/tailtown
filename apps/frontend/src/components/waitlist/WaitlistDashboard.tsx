@@ -21,9 +21,9 @@ import {
   DialogActions,
   Alert,
   CircularProgress,
-  Grid,
   Divider,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   Notifications as NotificationsIcon,
   Info as InfoIcon,

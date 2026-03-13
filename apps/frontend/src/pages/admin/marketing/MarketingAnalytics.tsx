@@ -4,7 +4,6 @@ import {
   Typography,
   Box,
   Paper,
-  Grid,
   Card,
   CardContent,
   CircularProgress,
@@ -16,6 +15,7 @@ import {
   ListItemIcon,
   Chip,
 } from "@mui/material";
+import Grid from "@mui/material/GridLegacy";
 import {
   Email as EmailIcon,
   Sms as SmsIcon,

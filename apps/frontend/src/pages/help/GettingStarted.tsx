@@ -9,12 +9,12 @@ import {
   Typography,
   Box,
   Paper,
-  Grid,
   Card,
   CardContent,
   CardActionArea,
-  Chip
+  Chip,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import { usePageHelp } from '../../hooks/usePageHelp';
 import { gettingStartedHelp } from '../../content/help/gettingStartedHelp';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';

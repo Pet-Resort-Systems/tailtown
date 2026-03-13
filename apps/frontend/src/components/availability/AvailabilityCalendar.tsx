@@ -14,13 +14,13 @@ import {
   Box,
   Typography,
   Paper,
-  Grid,
   Chip,
   IconButton,
   Tooltip,
   CircularProgress,
-  Alert
+  Alert,
 } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   ChevronLeft as PrevIcon,
   ChevronRight as NextIcon,
