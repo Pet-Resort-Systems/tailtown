@@ -1,0 +1,84 @@
+/* Print-specific styles for kennel cards */
+
+/* Hide elements with no-print class when printing */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  /* Ensure each card starts on a new page */
+  .kennel-card-container {
+    page-break-after: always !important;
+    page-break-inside: avoid !important;
+    break-after: page !important;
+    break-inside: avoid !important;
+    display: block !important;
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Style the card itself */
+  .MuiCard-root {
+    box-shadow: none !important;
+    border: 1px solid #000 !important;
+    margin: 0 !important;
+    padding: 0.5in !important;
+    width: 8.5in !important;
+    height: 11in !important;
+    overflow: visible !important;
+  }
+  
+  /* Fix for pet icons */
+  .pet-icon-box {
+    display: inline-flex !important;
+    background-color: #f9f9f9 !important;
+    border: 1px solid #e0e0e0 !important;
+    padding: 2px 4px !important;
+    margin: 2px !important;
+    border-radius: 4px !important;
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+  
+  /* Make sure emoji icons print */
+  .pet-icon-emoji {
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+    font-size: 1.5rem !important;
+    line-height: 1.5 !important;
+  }
+  
+  /* Remove any margins from the body and html */
+  body, html {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-color: white !important;
+  }
+  
+  /* Ensure container takes full width */
+  .MuiContainer-root {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  /* Ensure the page doesn't scale */
+  @page {
+    size: letter portrait;
+    margin: 0;
+  }
+}
+
+/* Regular view styles */
+.kennel-card-container {
+  margin-bottom: 2rem;
+}
+
+/* Ensure proper spacing between cards in normal view */
+.MuiBox-root > .MuiCard-root {
+  margin-bottom: 2rem !important;
+}

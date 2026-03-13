@@ -1,0 +1,59 @@
+.fc .fc-button-primary {
+  background-color: #4c8bf5;
+  border-color: #4c8bf5;
+}
+
+.fc .fc-button-primary:not(:disabled):active,
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  background-color: #3b7de4;
+  border-color: #3b7de4;
+}
+
+.fc .fc-button-primary:hover {
+  background-color: #3b7de4;
+  border-color: #3b7de4;
+}
+
+.fc .fc-highlight {
+  background-color: rgba(76, 139, 245, 0.2);
+}
+
+.fc .fc-col-header-cell {
+  background-color: #f5f5f5;
+}
+
+.fc .fc-toolbar-title {
+  color: #4c8bf5;
+}
+
+.fc .fc-today-button:disabled {
+  opacity: 0.7;
+}
+
+.fc .fc-timegrid-now-indicator-line {
+  border-color: #4c8bf5;
+}
+
+.fc .fc-timegrid-now-indicator-arrow {
+  border-color: #4c8bf5;
+  border-width: 5px;
+}
+
+/* Custom styles for time display */
+.fc-timegrid-slot-label-cushion,
+.fc-timegrid-axis-cushion,
+.fc-event-time {
+  text-transform: lowercase !important;
+}
+
+/* Force AM/PM to be lowercase */
+.fc-timegrid-slot-label-cushion::after,
+.fc-event-time::after {
+  content: " ";
+  text-transform: lowercase;
+}
+
+/* Ensure time slots have consistent formatting */
+.fc-timegrid-slot-label {
+  font-variant-numeric: tabular-nums;
+}
