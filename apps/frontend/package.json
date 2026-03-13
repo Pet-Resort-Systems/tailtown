@@ -47,15 +47,15 @@
     "yup": "1.6.1"
   },
   "scripts": {
-    "start": "craco start",
-    "build": "FAST_REFRESH=false GENERATE_SOURCEMAP=false craco build",
-    "build:analyze": "GENERATE_SOURCEMAP=false craco build && npx webpack-bundle-analyzer build/static/js/*.js",
+    "start": "DISABLE_ESLINT_PLUGIN=true craco start",
+    "build": "DISABLE_ESLINT_PLUGIN=true FAST_REFRESH=false GENERATE_SOURCEMAP=false craco build",
+    "build:analyze": "DISABLE_ESLINT_PLUGIN=true GENERATE_SOURCEMAP=false craco build && npx webpack-bundle-analyzer build/static/js/*.js",
     "test": "craco test",
     "test:coverage": "craco test --coverage --watchAll=false",
     "test:coverage:watch": "craco test --coverage",
     "eject": "react-scripts eject",
     "verify-build": "node scripts/check-build.js",
-    "predeploy": "npm run verify-build"
+    "predeploy": "pnpm run verify-build"
   },
   "eslintConfig": {
     "extends": [
@@ -104,7 +104,8 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "@types/react": "18.2.64",
-    "@types/react-dom": "18.2.21"
+    "@types/react-dom": "18.2.21",
+    "eslint": "8.57.1"
   },
   "devDependencies": {
     "@craco/craco": "7.1.0",
@@ -113,6 +114,7 @@
     "@types/recharts": "2.0.1",
     "@types/uuid": "11.0.0",
     "compression-webpack-plugin": "12.0.0",
+    "eslint": "8.57.1",
     "eslint-plugin-unused-imports": "4.4.1",
     "webpack-bundle-analyzer": "5.2.0"
   }
