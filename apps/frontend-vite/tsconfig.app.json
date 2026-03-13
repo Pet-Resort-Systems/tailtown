@@ -1,0 +1,8 @@
+{
+  "extends": "../../tsconfig.bundler.json",
+  "compilerOptions": {
+    "noFallthroughCasesInSwitch": true,
+    "types": ["vite/client", "node"]
+  },
+  "include": ["src"]
+}

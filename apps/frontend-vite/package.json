@@ -48,7 +48,7 @@
     "@types/uuid": "11.0.0",
     "@types/yup": "0.32.0",
     "@vitejs/plugin-react": "5.0.2",
-    "typescript": "5.9.3",
+    "typescript": "catalog:",
     "vite": "7.1.5"
   },
   "overrides": {
