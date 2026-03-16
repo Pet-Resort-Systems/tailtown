@@ -108,9 +108,7 @@ const SuperAdminDashboard: React.FC = () => {
                 fullWidth
                 onClick={() => {
                   const analyticsUrl =
-                    process.env.NODE_ENV === "production"
-                      ? `${window.location.origin}/analytics`
-                      : "http://localhost:3001/analytics";
+                    `${window.location.origin}/admin-portal/analytics`;
                   window.open(analyticsUrl, "_blank");
                 }}
               >

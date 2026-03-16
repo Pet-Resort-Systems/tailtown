@@ -109,7 +109,7 @@ const PriceRuleRedirect = lazy(
 // Lazy loaded pages - Staff & Operations
 const Scheduling = lazy(() => import("./pages/staff/Scheduling"));
 
-// Tenant Management moved to separate admin-portal app (port 3001)
+// Embedded Admin Portal (mounted at /admin-portal)
 const OrderEntry = lazy(() => import("./pages/orders/OrderEntry"));
 const CheckoutPage = lazy(() => import("./pages/checkout/CheckoutPage"));
 const PrintKennelCards = lazy(() => import("./pages/kennels/PrintKennelCards"));
@@ -143,6 +143,9 @@ const AdminOnlyRoute = lazy(() => import("./components/auth/AdminOnlyRoute"));
 
 // Lazy loaded pages - Tenant Management
 const TenantManagement = lazy(() => import("./pages/admin/TenantManagement"));
+const AdminPortalApp = lazy(
+  () => import("./admin-portal/AdminPortalApp")
+);
 const CheckInComplete = lazy(() => import("./pages/check-in/CheckInComplete"));
 const CheckInTemplateManager = lazy(
   () => import("./pages/admin/CheckInTemplateManager")
@@ -299,6 +302,7 @@ const AppRoutes = () => {
             </SuperAdminOnlyRoute>
           }
         />
+        <Route path="/admin-portal/*" element={<AdminPortalApp />} />
 
         {/* Public Booking Portal - No authentication required */}
         <Route path="/book" element={<BookingPortal />} />
