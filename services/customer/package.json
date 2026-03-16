@@ -65,7 +65,7 @@
     "@types/twilio": "^3.19.3",
     "@types/uuid": "^11.0.0",
     "@typescript-eslint/eslint-plugin": "^8.56.0",
-    "@typescript-eslint/parser": "^8.56.1",
+    "@typescript-eslint/parser": "^8.57.0",
     "eslint": "^10.0.3",
     "jest": "^30.3.0",
     "prisma": "^7.4.2",
