@@ -4,6 +4,45 @@
 
 The Tailtown platform implements multi-layered security to protect tenant data and restrict administrative access.
 
+## Quick Reference
+
+### What's Protected
+
+- ✅ **Brute Force** - Rate limiting (5 attempts/15 min)
+- ✅ **Account Takeover** - Auto-lockout after 5 failed logins
+- ✅ **Token Theft** - Short-lived tokens (8h) with rotation
+- ✅ **Injection** - Input validation on all endpoints
+- ✅ **DoS** - Request size limits (10MB max)
+- ✅ **XSS** - Input sanitization + security headers
+
+### Common Issues
+
+**"Too many requests" error:**
+
+- Rate limit hit
+- Wait 15 minutes or use different IP
+
+**"Account locked" error:**
+
+- 5 failed login attempts
+- Wait 15 minutes for auto-unlock
+
+**"Invalid token" error:**
+
+- Token expired (8 hours)
+- Use refresh token to get new one
+
+**Validation error:**
+
+- Check `error.errors` array for field-specific messages
+- Fix input and retry
+
+### More Details
+
+- **Security Checklist:** [SECURITY-CHECKLIST.md](./SECURITY-CHECKLIST.md)
+- **Full Security Docs:** [../ai-context/security/](../ai-context/security/)
+- **OWASP Top 10:** [../ai-context/security/SECURITY-FINAL-SUMMARY.md](../ai-context/security/SECURITY-FINAL-SUMMARY.md)
+
 ---
 
 ## Authentication System
@@ -13,11 +52,13 @@ The Tailtown platform implements multi-layered security to protect tenant data a
 **Purpose**: Protect tenant management endpoints from unauthorized access.
 
 **Implementation**:
+
 - All `/api/tenants` endpoints require authentication
 - Uses `X-API-Key` header for verification
 - Only super admins can access tenant management
 
 **Configuration**:
+
 ```bash
 # Backend (.env)
 SUPER_ADMIN_API_KEY=your_secure_key_here
@@ -39,22 +80,22 @@ REACT_APP_SUPER_ADMIN_API_KEY=your_secure_key_here
 **Functions**:
 
 1. **`authenticate`**
-   - Validates API key or Bearer token
-   - Attaches user info to request
-   - Returns 401 if authentication fails
+    - Validates API key or Bearer token
+    - Attaches user info to request
+    - Returns 401 if authentication fails
 
 2. **`requireSuperAdmin`**
-   - Checks if user has SUPER_ADMIN role
-   - Returns 403 if not authorized
-   - Must be used after `authenticate`
+    - Checks if user has SUPER_ADMIN role
+    - Returns 403 if not authorized
+    - Must be used after `authenticate`
 
 3. **`requireTenantAdmin`**
-   - Allows SUPER_ADMIN or TENANT_ADMIN roles
-   - For tenant-specific admin operations
+    - Allows SUPER_ADMIN or TENANT_ADMIN roles
+    - For tenant-specific admin operations
 
 4. **`requireTenantAccess`**
-   - Ensures users can only access their own tenant data
-   - Super admins can access any tenant
+    - Ensures users can only access their own tenant data
+    - Super admins can access any tenant
 
 ---
 
@@ -77,6 +118,7 @@ GET    /api/tenants/:id/usage    - Get usage stats
 ```
 
 **Example Request**:
+
 ```bash
 curl -H "X-API-Key: your-api-key" \
   http://localhost:4004/api/tenants
@@ -92,6 +134,7 @@ curl -H "X-API-Key: your-api-key" \
 **Future**: Add login page with password protection
 
 **Configuration**:
+
 ```env
 # admin-portal/.env
 REACT_APP_SUPER_ADMIN_API_KEY=your_secure_key_here
@@ -110,12 +153,14 @@ REACT_APP_SUPER_ADMIN_API_KEY=your_secure_key_here
 ## Testing Security
 
 ### Test 1: No Authentication (Should Fail)
+
 ```bash
 curl http://localhost:4004/api/tenants
 # Expected: 401 Unauthorized
 ```
 
 ### Test 2: Wrong API Key (Should Fail)
+
 ```bash
 curl -H "X-API-Key: wrong-key" \
   http://localhost:4004/api/tenants
@@ -123,6 +168,7 @@ curl -H "X-API-Key: wrong-key" \
 ```
 
 ### Test 3: Correct API Key (Should Succeed)
+
 ```bash
 curl -H "X-API-Key: dev-super-admin-key-12345" \
   http://localhost:4004/api/tenants
@@ -134,22 +180,26 @@ curl -H "X-API-Key: dev-super-admin-key-12345" \
 ## Future Enhancements
 
 ### Phase 1: JWT Tokens (Recommended)
+
 - Replace API key with JWT tokens
 - Add login endpoint
 - Implement token refresh
 - Store tokens securely
 
 ### Phase 2: Role-Based Access Control (RBAC)
+
 - Define granular permissions
 - Implement permission checks
 - Add role management UI
 
 ### Phase 3: Multi-Factor Authentication (MFA)
+
 - Add 2FA for super admins
 - SMS or authenticator app
 - Backup codes
 
 ### Phase 4: Audit Logging
+
 - Log all admin actions
 - Track API access
 - Security monitoring
@@ -173,6 +223,7 @@ curl -H "X-API-Key: dev-super-admin-key-12345" \
 - [ ] Set up backup authentication method
 
 ### Strong API Key Generation:
+
 ```bash
 # Generate secure random key
 openssl rand -base64 32
@@ -188,32 +239,34 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ### If API Key is Compromised:
 
 1. **Immediately**:
-   - Change `SUPER_ADMIN_API_KEY` in backend .env
-   - Restart customer service
-   - Update admin portal .env
-   - Restart admin portal
+    - Change `SUPER_ADMIN_API_KEY` in backend .env
+    - Restart customer service
+    - Update admin portal .env
+    - Restart admin portal
 
 2. **Review**:
-   - Check access logs
-   - Identify unauthorized access
-   - Assess data exposure
+    - Check access logs
+    - Identify unauthorized access
+    - Assess data exposure
 
 3. **Prevent**:
-   - Rotate keys regularly
-   - Use secrets management (AWS Secrets Manager, etc.)
-   - Implement key rotation policy
+    - Rotate keys regularly
+    - Use secrets management (AWS Secrets Manager, etc.)
+    - Implement key rotation policy
 
 ---
 
 ## Best Practices
 
 ### Development:
+
 - ✅ Use different API keys for dev/staging/prod
 - ✅ Never commit API keys to git
 - ✅ Use `.env` files (gitignored)
 - ✅ Document all security measures
 
 ### Production:
+
 - ✅ Use strong, random API keys (32+ characters)
 - ✅ Rotate keys every 90 days
 - ✅ Monitor for suspicious activity
@@ -227,6 +280,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ## Contact
 
 For security concerns or to report vulnerabilities:
+
 - Email: security@tailtown.com
 - Do not publicly disclose vulnerabilities
 - Allow 90 days for fixes before disclosure

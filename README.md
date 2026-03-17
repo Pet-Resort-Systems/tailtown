@@ -23,7 +23,7 @@ A modern, full-featured SaaS management system for pet resorts, providing compre
 
 ### For Developers Only
 
-- **Local Development:** http://localhost:3000 (requires setup. See [Quick Start](docs/human/QUICK-START.md) guide)
+- **Local Development:** http://localhost:3000 (requires setup. See [Quick Start](docs/QUICK-START.md) guide)
 
 ---
 
@@ -31,10 +31,10 @@ A modern, full-featured SaaS management system for pet resorts, providing compre
 
 ### For Developers (Quick Guides)
 
-- **[Quick Start](docs/human/QUICK-START.md)** - Get running in 10 minutes
+- **[Quick Start](docs/QUICK-START.md)** - Get running in 10 minutes
 - **[Best Practices](docs/development/DEVELOPMENT-BEST-PRACTICES.md)** - Code standards and patterns
-- **[Security](docs/human/SECURITY.md)** - Security features and how to use them
-- **[Roadmap](docs/human/ROADMAP.md)** - What's next for Tailtown
+- **[Security](docs/security/SECURITY.md)** - Security features and how to use them
+- **[Roadmap](docs/ROADMAP.md)** - What's next for Tailtown
 
 ### For Technical Leadership
 

@@ -60,8 +60,7 @@ docs/
 │   └── CHANGELOG.md
 │
 ├── human/                         # Human-readable guides
-│   ├── QUICK-START.md
-│   └── COMMON-TASKS.md
+│   └── SECURITY.md
 │
 ├── ai-context/                    # AI assistant context
 │   └── security/

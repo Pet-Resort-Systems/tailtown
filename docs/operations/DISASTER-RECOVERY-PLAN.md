@@ -9,22 +9,22 @@ This document outlines the procedures, resources, and checklist for disaster rec
 ## System Architecture Documentation
 
 ### Service Configuration
+
 - **Customer Service**
-  - Port: 4004
-  - Environment Variables: See `/apps/customer-service/.env.example`
-  - **Critical:** JWT_SECRET, JWT_REFRESH_SECRET, DATABASE_URL
-  
+    - Port: 4004
+    - Environment Variables: See `/apps/customer-service/.env.example`
+    - **Critical:** JWT_SECRET, JWT_REFRESH_SECRET, DATABASE_URL
 - **Reservation Service**
-  - Port: 4003
-  - Environment Variables: See `/apps/reservation-service/.env.example`
-  - **Critical:** DATABASE_URL
-  
+    - Port: 4003
+    - Environment Variables: See `/apps/reservation-service/.env.example`
+    - **Critical:** DATABASE_URL
 - **Frontend Application**
-  - Port: 3000
-  - Environment Variables: See `/apps/frontend/.env.example`
-  - **Critical:** REACT_APP_API_URL
+    - Port: 3000
+    - Environment Variables: See `/apps/frontend/.env.example`
+    - **Critical:** REACT_APP_API_URL
 
 ### Database Configuration
+
 - **PostgreSQL** database on port 5432 (default) or 5433
 - **Multi-tenant architecture** with tenant isolation
 - Shared database with tenant_id on all tables
@@ -32,6 +32,7 @@ This document outlines the procedures, resources, and checklist for disaster rec
 - **Critical tables:** Staff, Customer, Pet, Reservation, RefreshToken
 
 ### Security Features (Critical for Recovery)
+
 - **Rate Limiting:** 5 login attempts per 15 minutes
 - **Account Lockout:** Auto-locks after 5 failed attempts (15 min)
 - **Refresh Tokens:** 8-hour access tokens, 7-day refresh tokens
@@ -41,11 +42,13 @@ This document outlines the procedures, resources, and checklist for disaster rec
 ## Disaster Recovery Checklist
 
 ### 1. Repository Recovery
+
 - ✅ Full codebase is version controlled in Git
 - ✅ Ensure access to the repository backup or main branch
 - ✅ Clone repository: `git clone [repository-url]`
 
 ### 2. Environment Setup
+
 - ✅ Create `.env` files in each service based on `.env.example` templates
 - ✅ **CRITICAL:** Set JWT_SECRET and JWT_REFRESH_SECRET (must be different!)
 - ✅ Configure database connection (default port 5432)
@@ -54,13 +57,14 @@ This document outlines the procedures, resources, and checklist for disaster rec
 - ✅ Set NODE_ENV=production for production deployment
 
 ### 3. Database Recovery
+
 - ✅ Restore PostgreSQL database from latest backup
 - ✅ **CRITICAL:** Verify tenant_id exists on all tables (multi-tenancy)
-- ✅ Run database migrations: 
-  ```bash
-  cd apps/customer-service && pnpm exec prisma migrate deploy
-  cd ../reservation-service && pnpm exec prisma migrate deploy
-  ```
+- ✅ Run database migrations:
+    ```bash
+    cd apps/customer-service && pnpm exec prisma migrate deploy
+    cd ../reservation-service && pnpm exec prisma migrate deploy
+    ```
 - ✅ Verify database schema matches Prisma schema definitions
 - ✅ **CRITICAL:** Verify RefreshToken table exists (added Nov 2025)
 - ✅ **CRITICAL:** Verify Staff table has lockout fields (failedLoginAttempts, lockedUntil, lastFailedLogin)
@@ -68,63 +72,69 @@ This document outlines the procedures, resources, and checklist for disaster rec
 - ✅ Verify tenant isolation is working (test cross-tenant queries fail)
 
 ### 4. Service Deployment
+
 - ✅ Install dependencies in all services:
-  ```
-  pnpm install
-  ```
+    ```
+    pnpm install
+    ```
 - ✅ Build services:
-  ```
-  cd apps/customer-service && pnpm run build
-  cd ../reservation-service && pnpm run build
-  cd ../frontend && pnpm run build
-  ```
+    ```
+    cd apps/customer-service && pnpm run build
+    cd ../reservation-service && pnpm run build
+    cd ../frontend && pnpm run build
+    ```
 - ✅ Start services in the correct order:
-  1. Database service
-  2. Customer service
-  3. Reservation service
-  4. Frontend application
+    1. Database service
+    2. Customer service
+    3. Reservation service
+    4. Frontend application
 
 ### 5. Verification and Testing
+
 - ✅ Verify all services are running on correct ports
 - ✅ Test basic CRUD operations for all entities
 - ✅ **CRITICAL:** Test authentication and authorization
-  - Login with valid credentials
-  - Verify JWT token generation
-  - Test refresh token flow
-  - Verify account lockout after 5 failed attempts
-  - Test rate limiting (5 attempts/15 min)
+    - Login with valid credentials
+    - Verify JWT token generation
+    - Test refresh token flow
+    - Verify account lockout after 5 failed attempts
+    - Test rate limiting (5 attempts/15 min)
 - ✅ **CRITICAL:** Verify tenant isolation
-  - Login as user from Tenant A
-  - Verify cannot access Tenant B data
-  - Test cross-tenant queries are blocked
+    - Login as user from Tenant A
+    - Verify cannot access Tenant B data
+    - Test cross-tenant queries are blocked
 - ✅ Verify reservation workflow and resource allocation
 - ✅ **Security Tests:**
-  - Test input validation (try invalid data)
-  - Verify security headers are present
-  - Test CORS configuration
-  - Verify no sensitive data in error messages
+    - Test input validation (try invalid data)
+    - Verify security headers are present
+    - Test CORS configuration
+    - Verify no sensitive data in error messages
 
 ## Documentation Validation Checklist
 
 Ensure the following documentation is up-to-date and aligned:
 
 ### 1. Environment Variables
+
 - ✅ `.env.example` files exist for all services
 - ✅ Port numbers are consistent across all documentation
 - ✅ Database connection parameters are consistent
 
 ### 2. Service Documentation
+
 - ✅ Service architecture documentation reflects current implementation
 - ✅ API endpoints are documented with examples
 - ✅ Service dependencies and communication patterns are documented
 
 ### 3. Database Documentation
+
 - ✅ Schema alignment strategy is documented
 - ✅ Migration procedures are documented
 - ✅ Data models match actual database schema
 - ✅ Shared database approach is documented
 
 ### 4. Security Documentation
+
 - ✅ Authentication and authorization flow is documented
 - ✅ JWT secret handling procedures are documented
 - ✅ Tenant isolation mechanism is documented
@@ -134,6 +144,7 @@ Ensure the following documentation is up-to-date and aligned:
 - ✅ **NEW:** Input validation (Zod) documented
 
 ### 5. Current Documentation Structure
+
 - ✅ `/docs/human/` - Quick guides for developers
 - ✅ `/docs/ai-context/` - Complete context for AI assistants
 - ✅ `/docs/features/` - Feature documentation
@@ -144,6 +155,7 @@ Ensure the following documentation is up-to-date and aligned:
 ## Backup Procedures
 
 ### DigitalOcean Droplet Backups (Primary)
+
 - **Automated daily backups** enabled in DigitalOcean
 - **Entire server** backed up (database, code, configuration)
 - **Retention:** Last 4 backups (rolling)
@@ -152,6 +164,7 @@ Ensure the following documentation is up-to-date and aligned:
 - **CRITICAL:** Test restore procedure quarterly
 
 ### Database Backup (Additional - Optional)
+
 - **Manual backups** available via `/scripts/database/backup-database.sh`
 - **Use for:** Point-in-time recovery, migration, testing
 - **Backup rotation:** 7 daily, 4 weekly, 12 monthly (if configured)
@@ -159,12 +172,14 @@ Ensure the following documentation is up-to-date and aligned:
 - **Backup location:** Local or DigitalOcean Spaces (if configured)
 
 ### Code and Configuration Backup
+
 - Regular commits to version control system (GitHub)
 - Documentation updates synchronized with code changes
 - Environment configuration templates in version control
 - **CRITICAL:** Secure storage of production secrets (not in git)
 
 ### Security Configuration Backup
+
 - JWT secrets (stored securely, not in version control)
 - Rate limiting configuration
 - CORS allowed origins
@@ -188,12 +203,14 @@ Ensure the following documentation is up-to-date and aligned:
 ## Multi-Tenant Recovery Considerations
 
 ### Tenant Data Isolation
+
 - ✅ Verify tenant_id on all restored tables
 - ✅ Test tenant isolation after recovery
 - ✅ Verify no cross-tenant data leakage
 - ✅ Test tenant-specific queries work correctly
 
 ### Tenant-Specific Recovery
+
 - Ability to restore single tenant if needed
 - Tenant data export/import procedures
 - Tenant isolation verification scripts
@@ -201,6 +218,7 @@ Ensure the following documentation is up-to-date and aligned:
 ## Security Recovery Checklist
 
 ### Post-Recovery Security Verification
+
 - ✅ Rotate all JWT secrets
 - ✅ Verify rate limiting is active
 - ✅ Test account lockout mechanism
@@ -228,12 +246,14 @@ Ensure the following documentation is up-to-date and aligned:
 ## Additional Resources
 
 ### Internal Documentation
-- [Quick Start Guide](/docs/human/QUICK-START.md)
+
+- [Quick Start Guide](/docs/QUICK-START.md)
 - [Security Documentation](/docs/security/)
 - [Deployment Guide](/docs/deployment/)
 - [Documentation Strategy](/docs/DOCUMENTATION-STRATEGY.md)
 
 ### External Resources
+
 - [PostgreSQL Backup and Recovery](https://www.postgresql.org/docs/current/backup.html)
 - [Prisma Migrations](https://www.prisma.io/docs/concepts/components/prisma-migrate)
 - [Node.js Best Practices](https://nodejs.org/en/docs/guides/nodejs-docker-webapp/)
@@ -241,19 +261,21 @@ Ensure the following documentation is up-to-date and aligned:
 ## Quick Recovery from DigitalOcean Backup
 
 ### Option 1: Restore Entire Droplet (Fastest)
+
 1. **Log into DigitalOcean dashboard**
 2. **Go to your droplet** → Backups tab
 3. **Select backup** to restore from
 4. **Click "Restore from this backup"**
 5. **Wait 5-15 minutes** for restore to complete
 6. **Verify services** are running:
-   ```bash
-   ssh root@your-droplet-ip
-   pm2 status
-   systemctl status postgresql
-   ```
+    ```bash
+    ssh root@your-droplet-ip
+    pm2 status
+    systemctl status postgresql
+    ```
 
 ### Option 2: Create New Droplet from Backup
+
 1. **Go to Create → Droplets**
 2. **Choose an image** → Backups tab
 3. **Select your backup**
@@ -266,6 +288,7 @@ Ensure the following documentation is up-to-date and aligned:
 ## Quick Recovery Commands
 
 ### Clone and Setup (Manual Recovery)
+
 ```bash
 # 1. Clone repository
 git clone https://github.com/moosecreates/tailtown.git
@@ -290,6 +313,7 @@ cd apps/frontend && pnpm start
 ```
 
 ### Verification
+
 ```bash
 # Test services are running
 curl http://localhost:4004/health
