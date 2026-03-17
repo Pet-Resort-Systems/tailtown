@@ -6,8 +6,8 @@
 **Status:** 🟢 **LIVE IN PRODUCTION**  
 **Production URL:** https://canicloud.com (multi-tenant subdomains)  
 **Version:** 1.6.18  
-**Last Updated:** December 9, 2025  
-**Codebase:** ~205,000 lines of TypeScript
+**Last Updated:** Mon, Mar 16, 2026
+**Codebase:** ~260,000 lines of TypeScript
 
 A modern, full-featured SaaS management system for pet resorts, providing comprehensive tools for reservations, customer management, and pet care services.
 
@@ -18,11 +18,12 @@ A modern, full-featured SaaS management system for pet resorts, providing compre
 ### For Users & Staff
 
 - **Production (Tailtown):** https://tailtown.canicloud.com
-- **Demo Site (BranGro):** https://brangro.canicloud.com
+- **Demo Site - Staging (BranGro):** https://brangro.canicloud.com
+    - See [Tenant Strategy](docs/features/TENANT-STRATEGY.md).
 
 ### For Developers Only
 
-- **Local Development:** http://localhost:3000 (requires setup below)
+- **Local Development:** http://localhost:3000 (requires setup. See [Quick Start](docs/human/QUICK-START.md) guide)
 
 ---
 
@@ -30,10 +31,8 @@ A modern, full-featured SaaS management system for pet resorts, providing compre
 
 ### For Developers (Quick Guides)
 
-- **[📖 Wiki Home](docs/HOME.md)** - Complete documentation hub
 - **[Quick Start](docs/human/QUICK-START.md)** - Get running in 10 minutes
-- **[Common Tasks](docs/human/COMMON-TASKS.md)** - How to add features, run tests, deploy
-- **[Best Practices](docs/human/BEST-PRACTICES.md)** - Code standards and patterns
+- **[Best Practices](docs/development/DEVELOPMENT-BEST-PRACTICES.md)** - Code standards and patterns
 - **[Security](docs/human/SECURITY.md)** - Security features and how to use them
 - **[Roadmap](docs/human/ROADMAP.md)** - What's next for Tailtown
 
@@ -53,57 +52,6 @@ A modern, full-featured SaaS management system for pet resorts, providing compre
 
 - **[Security Checklist](docs/security/SECURITY-CHECKLIST.md)** - Security verification
 - **[Development Best Practices](docs/development/DEVELOPMENT-BEST-PRACTICES.md)** - Code standards
-
----
-
-## 🚀 Quick Start
-
-### For End Users
-
-**Just visit the production site** - no setup needed!
-
-- **Tailtown (Production):** https://tailtown.canicloud.com
-- **BranGro (Demo):** https://brangro.canicloud.com
-
-### For Developers (Local Setup)
-
-**Prerequisites:**
-
-- Node.js 18+ and pnpm
-- PostgreSQL 14+
-- Git
-
-**Installation:**
-
-```bash
-# Clone the repository
-git clone https://github.com/moosecreates/tailtown.git
-cd tailtown
-
-# Install dependencies
-pnpm install
-
-# Set up environment variables
-cp apps/customer-service/.env.example apps/customer-service/.env
-cp apps/reservation-service/.env.example apps/reservation-service/.env
-# Edit .env files with your database credentials
-
-# Start all services
-pnpm run start:services
-
-# In a new terminal, start the frontend
-cd apps/frontend && pnpm start
-```
-
-**Local Development URLs:**
-
-- **Frontend:** http://localhost:3000
-- **Customer API:** http://localhost:4004
-- **Reservation API:** http://localhost:4003
-
-**See:** [Quick Start Guide](docs/human/QUICK-START.md) for detailed setup instructions
-
----
 
 ## 📚 Documentation
 
@@ -143,25 +91,25 @@ cd apps/frontend && pnpm start
 - **Loyalty & Coupons** - Rewards and promotional campaigns
 - **🆕 Daycare Passes** - Multi-day pass packages with discounts and expiration tracking
 
-### 🆕 In Development (Q4 2025 - Q1 2026)
+### 🆕 In Development (Q2 2026 - Q4 2026)
 
 - **📱 Mobile Web App (PWA)** - Mobile-optimized staff portal
-  - Daily checklists with photo upload
-  - Pet health notes with camera integration
-  - Real-time team communication
-  - Personal schedule viewing
-  - Quick pet lookup
-  - Works on iOS, Android, tablets
-  - Installable as PWA (no app store needed)
+    - Daily checklists with photo upload
+    - Pet health notes with camera integration
+    - Real-time team communication
+    - Personal schedule viewing
+    - Quick pet lookup
+    - Works on iOS, Android, tablets
+    - Installable as PWA (no app store needed)
 - **💬 Internal Communications (Slack-like)** - Team collaboration platform
-  - Public and private channels
-  - Direct messages (1-on-1 and group)
-  - Threaded replies and reactions
-  - File attachments and @mentions
-  - Read receipts and typing indicators
-  - Customizable notifications
-  - Real-time WebSocket messaging
-  - **Status**: Database schema complete ✅
+    - Public and private channels
+    - Direct messages (1-on-1 and group)
+    - Threaded replies and reactions
+    - File attachments and @mentions
+    - Read receipts and typing indicators
+    - Customizable notifications
+    - Real-time WebSocket messaging
+    - **Status**: Database schema complete ✅
 
 ---
 
@@ -178,11 +126,9 @@ cd apps/frontend && pnpm start
 
 ### Services
 
-```
-Frontend (Port 3000)           - React SPA with JWT auth
-Customer Service (Port 4004)   - Customer, pet, staff, products, announcements
-Reservation Service (Port 4003) - Reservations, resources, scheduling
-```
+- Frontend (Port 3000): React SPA with JWT auth
+- Customer Service (Port 4004): Customer, pet, staff, products, announcements
+- Reservation Service (Port 4003): Reservations, resources, scheduling
 
 ### Multi-Tenant Architecture
 
@@ -201,14 +147,16 @@ For detailed architecture, see [CURRENT-SYSTEM-ARCHITECTURE.md](docs/CURRENT-SYS
 
 ```bash
 # All tests
-pnpm test
+pnpm run test
 
 # Specific service
-cd apps/customer-service && pnpm test
-cd apps/reservation-service && pnpm test
+pnpm --filter @tailtown/customer-service test
+
+# Reservation service
+pnpm --filter @tailtown/reservation-service test
 
 # Frontend tests
-cd apps/frontend && pnpm test
+pnpm --filter @tailtown/frontend test
 
 # Integration tests
 pnpm run test:integration
@@ -216,10 +164,7 @@ pnpm run test:integration
 
 ### Test Coverage
 
-- **488+ automated tests** (18 new middleware tests added Nov 5)
-- **80%+ code coverage**
-- **Integration tests** for critical workflows
-- **Middleware tests** for tenant isolation and authentication
+... in progress
 
 ---
 

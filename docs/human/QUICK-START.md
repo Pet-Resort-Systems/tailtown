@@ -17,6 +17,15 @@ No installation needed! 🎉
 
 ## 💻 For Developers (Local Development Setup)
 
+### Prerequisites
+
+1. Node.js (versión especificada en [.nvmrc](/.nvmrc))
+2. Package manager [`pnpm`](https://pnpm.io/) (versión especificada en [package.json](/package.json): `"packageManager"` field).
+    - Check out **_why_** and how to install it [here](https://gist.github.com/daguttt/89adeb45ef3cf6483c394e135ce6e9ec).
+3. Docker
+4. PostgreSQL 14+
+5. Redis
+
 ### 🚀 Get Running
 
 ### 1. Clone and Install
@@ -30,64 +39,33 @@ pnpm install
 ### 2. Setup Environment
 
 ```bash
-# Use the environment manager to set up development
-pnpm run env:dev
-
-# Or manually copy templates:
-cp apps/customer-service/.env.example apps/customer-service/.env
-cp apps/reservation-service/.env.example apps/reservation-service/.env
-
-# Edit .env files and set:
-# - DATABASE_URL (PostgreSQL connection)
-# - JWT_SECRET (any random string)
-# - JWT_REFRESH_SECRET (different random string)
+# Sript to copy .env.example files to .env files
+pnpm run env:setup
 ```
 
-### 3. Setup Database
+- Replace `username` and `password` placeholders with your actual credentials for the `DATABASE_URL` and `TEST_DATABASE_URL`.
+
+### 3. Setup Databases
+
+1. **Verify your local PostgreSQL instance does not have objects (tables, functions, etc.) in the `template1` database**
+    <details>
+    <summary>Why?</summary>
+
+    The `template1` database is used as a template for creating new databases. If it contains objects, those objects will be copied to any new database created from it. This can cause issues with database migrations and schema management and can cause `prisma migrate dev` to fail with P3005.
+
+    </details>
+
+2. **Create PostgreSQL databases and apply migrations**
 
 ```bash
-# Customer service database
-cd apps/customer-service
-pnpm exec prisma migrate dev
-pnpm exec prisma generate
-
-# Reservation service database (uses same DB)
-cd ../reservation-service
-pnpm exec prisma generate
+pnpm run db:setup
 ```
 
-### 4. Start Development Server
-
-**Option A: Use the dev workflow (recommended)**
+### 4. Start Development Servers
 
 ```bash
-# Start all services at once
-pnpm run dev:restart
-
-# Check status
-pnpm run dev:status
-
-# View logs
-pnpm run dev:logs
-
-# Stop all services
-pnpm run dev:stop
-```
-
-**Option B: Start services manually**
-
-```bash
-# Terminal 1: Customer Service
-cd apps/customer-service
+# Start all services and frontend app
 pnpm run dev
-
-# Terminal 2: Reservation Service
-cd apps/reservation-service
-pnpm run dev
-
-# Terminal 3: Frontend
-cd apps/frontend
-pnpm start
 ```
 
 ### 5. Verify Local Development Works
@@ -106,89 +84,21 @@ pnpm start
 # All tests
 pnpm test
 
+
 # Specific service
-cd apps/customer-service && pnpm test
+pnpm --filter @tailtown/customer-service test
 
 # Security tests
-cd apps/customer-service && pnpm test -- --testPathPattern=security
-```
-
----
-
-## 🛠️ Make Your First Change
-
-### Add a New API Endpoint
-
-1. **Create route** in `apps/customer-service/src/routes/`:
-
-```typescript
-router.get("/my-endpoint", myHandler);
-```
-
-2. **Create controller** in `apps/customer-service/src/controllers/`:
-
-```typescript
-export const myHandler = async (req, res) => {
-  res.json({ message: "Hello!" });
-};
-```
-
-3. **Add test** in `apps/customer-service/src/__tests__/`:
-
-```typescript
-test("my endpoint works", async () => {
-  const response = await request(app).get("/api/my-endpoint");
-  expect(response.status).toBe(200);
-});
-```
-
-4. **Run test**:
-
-```bash
-pnpm test
+pnpm --filter @tailtown/customer-service test -- --testPathPattern=security
 ```
 
 ---
 
 ## 📚 Next Steps
 
-- **Common Tasks:** [COMMON-TASKS.md](./COMMON-TASKS.md)
+- **Best practices:** [../development/DEVELOPMENT-BEST-PRACTICES.md](../development/DEVELOPMENT-BEST-PRACTICES.md)
 - **Security:** [SECURITY.md](./SECURITY.md)
-- **Testing:** [TESTING.md](./TESTING.md)
-- **Deployment:** [DEPLOYMENT.md](./DEPLOYMENT.md)
+- **Testing:** [TESTING.md](../testing/TESTING.md)
+- **Roadmap:** [ROADMAP.md](./ROADMAP.md)
 
 ---
-
-## 🆘 Troubleshooting
-
-**Database connection fails:**
-
-```bash
-# Check PostgreSQL is running
-psql -h localhost -p 5432 -U postgres
-
-# Update DATABASE_URL in .env
-```
-
-**Port already in use:**
-
-```bash
-# Find process using port
-lsof -i :4004
-
-# Kill it
-kill -9 <PID>
-```
-
-**Tests failing:**
-
-```bash
-# Clear and rebuild
-rm -rf node_modules
-pnpm install
-pnpm test
-```
-
----
-
-**Need more details?** See [AI Context Docs](/docs/ai-context/)

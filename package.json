@@ -4,8 +4,11 @@
   "description": "Pet Resort Management System for Tailtown",
   "private": true,
   "scripts": {
-    "start": "docker-compose up",
-    "dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up",
+    "dev": "turbo dev --ui tui",
+    "env:setup": "./scripts/create-env-files-based-on-examples.sh",
+    "db:setup": "pnpm run prisma:migrate && pnpm run prisma:generate",
+    "prisma:migrate": "pnpm -r --filter \"./apps/*-service\" run --if-present prisma:migrate",
+    "prisma:generate": "pnpm -r --filter \"./apps/*-service\" run --if-present prisma:generate",
     "start:services": "./scripts/start-services.sh",
     "start:services:full": "./scripts/start-services.sh --with-payment",
     "stop:services": "./scripts/stop-services.sh",
@@ -94,6 +97,7 @@
     "lerna": "6.6.2",
     "puppeteer": "24.16.0",
     "selenium-webdriver": "4.34.0",
+    "turbo": "2.8.17",
     "typescript": "catalog:"
   },
   "dependencies": {
