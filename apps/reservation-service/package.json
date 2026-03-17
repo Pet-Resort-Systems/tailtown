@@ -1,6 +1,6 @@
 {
   "name": "@tailtown/reservation-service",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Reservation management service for Tailtown",
   "main": "dist/index.js",
   "engines": {
