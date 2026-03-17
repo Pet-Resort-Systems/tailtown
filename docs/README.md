@@ -74,37 +74,34 @@ docs/
 
 ## Service Documentation
 
-Each service has its own `/docs/` directory:
+Each app/service has its own `/docs/` directory:
 
-- **Customer Service**: `/services/customer/docs/`
-- **Reservation Service**: `/services/reservation-service/docs/`
+- **Customer Service**: `/apps/customer-service/docs/`
+- **Reservation Service**: `/apps/reservation-service/docs/`
 
 ## Documentation Guidelines
 
 1. **File Naming Conventions**
-
-   - Use UPPERCASE for main documentation files (e.g., README.md, SETUP.md)
-   - Use kebab-case for specific topic documentation (e.g., api-authentication.md)
-   - Use descriptive, consistent prefixes for related documents
+    - Use UPPERCASE for main documentation files (e.g., README.md, SETUP.md)
+    - Use kebab-case for specific topic documentation (e.g., api-authentication.md)
+    - Use descriptive, consistent prefixes for related documents
 
 2. **Documentation Location**
-
-   - Project-wide documentation belongs in `/docs/` and its subdirectories
-   - Service-specific documentation belongs in `/services/{service-name}/docs/`
-   - Implementation details should be in service-specific docs
-   - Architecture and design decisions should be in project-wide docs
+    - Project-wide documentation belongs in `/docs/` and its subdirectories
+    - Service-specific documentation belongs in `/apps/{service-name}/docs/`
+    - Implementation details should be in service-specific docs
+    - Architecture and design decisions should be in project-wide docs
 
 3. **Cross-referencing**
-
-   - Use relative links when referencing other documentation files
-   - Always use the format `[Link Text](./relative/path/to/file.md)`
-   - Include section anchors when linking to specific sections: `[Link Text](./file.md#section)`
+    - Use relative links when referencing other documentation files
+    - Always use the format `[Link Text](./relative/path/to/file.md)`
+    - Include section anchors when linking to specific sections: `[Link Text](./file.md#section)`
 
 4. **Keeping Documentation Updated**
-   - Update documentation when making significant code changes
-   - Add new documentation for new features
-   - Review and update existing documentation periodically
-   - Mark outdated documentation with a note at the top and create a task to update it
+    - Update documentation when making significant code changes
+    - Add new documentation for new features
+    - Review and update existing documentation periodically
+    - Mark outdated documentation with a note at the top and create a task to update it
 
 ## Contributing to Documentation
 
