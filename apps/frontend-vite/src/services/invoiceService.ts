@@ -37,7 +37,14 @@ export interface Payment {
   invoiceId: string;
   customerId: string;
   amount: number;
-  method: 'CREDIT_CARD' | 'DEBIT_CARD' | 'CASH' | 'CHECK' | 'BANK_TRANSFER' | 'STORE_CREDIT' | 'GIFT_CARD';
+  method:
+    | 'CREDIT_CARD'
+    | 'DEBIT_CARD'
+    | 'CASH'
+    | 'CHECK'
+    | 'BANK_TRANSFER'
+    | 'STORE_CREDIT'
+    | 'GIFT_CARD';
   status: 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED' | 'PARTIALLY_REFUNDED';
   transactionId?: string;
   paymentDate?: Date;
@@ -57,7 +64,9 @@ export const invoiceService = {
   // Get all invoices for a customer
   getCustomerInvoices: async (customerId: string): Promise<Invoice[]> => {
     try {
-      const response = await api.get(`${ENDPOINTS.INVOICES}/customer/${customerId}`);
+      const response = await api.get(
+        `${ENDPOINTS.INVOICES}/customer/${customerId}`
+      );
       return response.data.data;
     } catch (error) {
       console.error('Error fetching customer invoices:', error);
@@ -77,7 +86,9 @@ export const invoiceService = {
   },
 
   // Create a new invoice
-  createInvoice: async (invoiceData: Omit<Invoice, 'id' | 'invoiceNumber' | 'issueDate'>): Promise<Invoice> => {
+  createInvoice: async (
+    invoiceData: Omit<Invoice, 'id' | 'invoiceNumber' | 'issueDate'>
+  ): Promise<Invoice> => {
     try {
       const response = await api.post(ENDPOINTS.INVOICES, invoiceData);
       return response.data.data;
@@ -88,9 +99,15 @@ export const invoiceService = {
   },
 
   // Update an invoice
-  updateInvoice: async (id: string, invoiceData: Partial<Invoice>): Promise<Invoice> => {
+  updateInvoice: async (
+    id: string,
+    invoiceData: Partial<Invoice>
+  ): Promise<Invoice> => {
     try {
-      const response = await api.patch(`${ENDPOINTS.INVOICES}/${id}`, invoiceData);
+      const response = await api.patch(
+        `${ENDPOINTS.INVOICES}/${id}`,
+        invoiceData
+      );
       return response.data.data;
     } catch (error) {
       console.error('Error updating invoice:', error);
@@ -99,13 +116,17 @@ export const invoiceService = {
   },
 
   // Get customer account balance
-  getCustomerAccountBalance: async (customerId: string): Promise<AccountBalance> => {
+  getCustomerAccountBalance: async (
+    customerId: string
+  ): Promise<AccountBalance> => {
     try {
-      const response = await api.get(`${ENDPOINTS.INVOICES}/balance/${customerId}`);
+      const response = await api.get(
+        `${ENDPOINTS.INVOICES}/balance/${customerId}`
+      );
       return response.data.data;
     } catch (error) {
       console.error('Error fetching customer account balance:', error);
       throw error;
     }
-  }
+  },
 };

@@ -18,19 +18,19 @@
  *   node incremental-gingr-sync.js b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05
  */
 
-const { PrismaClient } = require("@prisma/client");
-const { GingrApiClient } = require("../dist/services/gingr-api.service");
+const { PrismaClient } = require('@prisma/client');
+const { GingrApiClient } = require('../dist/services/gingr-api.service');
 const {
   extractGingrLodging,
   getServiceNameForResourceType,
-} = require("../dist/services/gingr-resource-mapper.service");
+} = require('../dist/services/gingr-resource-mapper.service');
 
 const prisma = new PrismaClient();
 
 // Configuration
 const GINGR_CONFIG = {
-  subdomain: process.env.GINGR_SUBDOMAIN || "tailtownpetresort",
-  apiKey: process.env.GINGR_API_KEY || "c84c09ecfacdf23a495505d2ae1df533",
+  subdomain: process.env.GINGR_SUBDOMAIN || 'tailtownpetresort',
+  apiKey: process.env.GINGR_API_KEY || 'c84c09ecfacdf23a495505d2ae1df533',
 };
 
 // Sync window: last 7 days to next 30 days (only active/upcoming reservations)
@@ -46,7 +46,7 @@ function parseGingrDate(dateStr) {
   if (!dateStr) return null;
   // Extract the local date and time parts, ignoring timezone
   // Format: "2025-11-28T19:00:00-07:00" -> use "2025-11-28T19:00:00"
-  const localPart = dateStr.replace(/[+-]\d{2}:\d{2}$/, "");
+  const localPart = dateStr.replace(/[+-]\d{2}:\d{2}$/, '');
   return new Date(localPart);
 }
 
@@ -54,16 +54,16 @@ function parseGingrDate(dateStr) {
  * Determine resource type from lodging name
  */
 function determineResourceType(lodgingName) {
-  if (!lodgingName) return "JUNIOR_KENNEL";
+  if (!lodgingName) return 'JUNIOR_KENNEL';
   const name = lodgingName.toUpperCase();
 
-  if (name.includes("VIP") || name.startsWith("V")) return "VIP_ROOM";
-  if (name.includes("CAT") || name.includes("CONDO")) return "CAT_CONDO";
-  if (name.endsWith("K") || name.includes("KING")) return "KING_KENNEL";
-  if (name.endsWith("Q") || name.includes("QUEEN")) return "QUEEN_KENNEL";
-  if (name.endsWith("R") || name.includes("JUNIOR")) return "JUNIOR_KENNEL";
+  if (name.includes('VIP') || name.startsWith('V')) return 'VIP_ROOM';
+  if (name.includes('CAT') || name.includes('CONDO')) return 'CAT_CONDO';
+  if (name.endsWith('K') || name.includes('KING')) return 'KING_KENNEL';
+  if (name.endsWith('Q') || name.includes('QUEEN')) return 'QUEEN_KENNEL';
+  if (name.endsWith('R') || name.includes('JUNIOR')) return 'JUNIOR_KENNEL';
 
-  return "JUNIOR_KENNEL";
+  return 'JUNIOR_KENNEL';
 }
 
 /**
@@ -72,7 +72,7 @@ function determineResourceType(lodgingName) {
 async function getOrCreateService(
   tenantId,
   serviceName,
-  serviceCategory = "BOARDING"
+  serviceCategory = 'BOARDING'
 ) {
   let service = await prisma.service.findFirst({
     where: { tenantId, name: serviceName },
@@ -107,8 +107,8 @@ async function syncReservations(tenantId, gingrClient) {
 
   console.log(
     `\n📅 Fetching reservations from ${
-      startDate.toISOString().split("T")[0]
-    } to ${endDate.toISOString().split("T")[0]}...`
+      startDate.toISOString().split('T')[0]
+    } to ${endDate.toISOString().split('T')[0]}...`
   );
 
   const reservations = await gingrClient.fetchAllReservations(
@@ -139,11 +139,11 @@ async function syncReservations(tenantId, gingrClient) {
             data: {
               tenantId,
               externalId: String(owner.id),
-              firstName: owner.first_name || "",
-              lastName: owner.last_name || "",
+              firstName: owner.first_name || '',
+              lastName: owner.last_name || '',
               email: email,
               phone: owner.primary_phone || owner.secondary_phone || null,
-              notes: "Auto-synced from Gingr (incremental)",
+              notes: 'Auto-synced from Gingr (incremental)',
               isActive: true,
             },
           });
@@ -152,16 +152,16 @@ async function syncReservations(tenantId, gingrClient) {
           );
         } catch (e) {
           // Handle duplicate email
-          if (e.code === "P2002") {
+          if (e.code === 'P2002') {
             customer = await prisma.customer.create({
               data: {
                 tenantId,
                 externalId: String(owner.id),
-                firstName: owner.first_name || "",
-                lastName: owner.last_name || "",
+                firstName: owner.first_name || '',
+                lastName: owner.last_name || '',
                 email: `gingr-dup-${owner.id}@tailtown.placeholder`,
                 phone: owner.primary_phone || owner.secondary_phone || null,
-                notes: "Auto-synced from Gingr (incremental, duplicate email)",
+                notes: 'Auto-synced from Gingr (incremental, duplicate email)',
                 isActive: true,
               },
             });
@@ -175,7 +175,7 @@ async function syncReservations(tenantId, gingrClient) {
       }
 
       // Find or create pet
-      const petExtId = reservation.animal.id + "-tailtown";
+      const petExtId = reservation.animal.id + '-tailtown';
       let pet = await prisma.pet.findFirst({
         where: { tenantId, externalId: petExtId },
       });
@@ -183,18 +183,18 @@ async function syncReservations(tenantId, gingrClient) {
       if (!pet && reservation.animal && customer) {
         // Create pet on-the-fly
         const animal = reservation.animal;
-        const petType = animal.species?.toLowerCase() === "cat" ? "CAT" : "DOG";
+        const petType = animal.species?.toLowerCase() === 'cat' ? 'CAT' : 'DOG';
 
         try {
           pet = await prisma.pet.create({
             data: {
               tenantId,
               externalId: petExtId,
-              name: animal.name || "Unknown",
+              name: animal.name || 'Unknown',
               type: petType,
               breed: animal.breed || null,
               isActive: true,
-              notes: "Auto-synced from Gingr (incremental)",
+              notes: 'Auto-synced from Gingr (incremental)',
               owner: { connect: { id: customer.id } },
             },
           });
@@ -214,7 +214,7 @@ async function syncReservations(tenantId, gingrClient) {
       // Determine service based on resource type (new approach - Nov 2025)
       const gingrLodging = extractGingrLodging(reservation);
       let serviceName;
-      let serviceCategory = "BOARDING";
+      let serviceCategory = 'BOARDING';
 
       if (gingrLodging) {
         const resourceType = determineResourceType(gingrLodging);
@@ -224,20 +224,20 @@ async function syncReservations(tenantId, gingrClient) {
         );
       } else {
         // Fallback: Use Gingr reservation type
-        const gingrType = reservation.reservation_type?.type || "Boarding";
-        if (gingrType.includes("Day Camp") && !gingrType.includes("Lodging")) {
-          serviceName = gingrType.includes("Half")
-            ? "Day Camp | Half Day"
-            : "Day Camp | Full Day";
-          serviceCategory = "DAYCARE";
+        const gingrType = reservation.reservation_type?.type || 'Boarding';
+        if (gingrType.includes('Day Camp') && !gingrType.includes('Lodging')) {
+          serviceName = gingrType.includes('Half')
+            ? 'Day Camp | Half Day'
+            : 'Day Camp | Full Day';
+          serviceCategory = 'DAYCARE';
         } else if (
-          gingrType.includes("Grooming") ||
-          gingrType.includes("grooming")
+          gingrType.includes('Grooming') ||
+          gingrType.includes('grooming')
         ) {
-          serviceName = "Grooming | Appointment";
-          serviceCategory = "GROOMING";
+          serviceName = 'Grooming | Appointment';
+          serviceCategory = 'GROOMING';
         } else {
-          serviceName = "Boarding | Indoor Suite";
+          serviceName = 'Boarding | Indoor Suite';
         }
       }
 
@@ -255,14 +255,14 @@ async function syncReservations(tenantId, gingrClient) {
         startDate: parseGingrDate(reservation.start_date),
         endDate: parseGingrDate(reservation.end_date),
         status: reservation.cancelled_date
-          ? "CANCELLED"
+          ? 'CANCELLED'
           : reservation.check_out_date
-          ? "COMPLETED"
-          : reservation.check_in_date
-          ? "CHECKED_IN"
-          : reservation.confirmed_date
-          ? "CONFIRMED"
-          : "PENDING",
+            ? 'COMPLETED'
+            : reservation.check_in_date
+              ? 'CHECKED_IN'
+              : reservation.confirmed_date
+                ? 'CONFIRMED'
+                : 'PENDING',
         notes: reservation.notes?.reservation_notes,
         externalId: reservation.reservation_id,
       };
@@ -308,7 +308,7 @@ async function syncReservations(tenantId, gingrClient) {
  * Main sync function
  */
 async function incrementalSync(tenantId) {
-  console.log("🔄 Starting Incremental Gingr Sync");
+  console.log('🔄 Starting Incremental Gingr Sync');
   console.log(`   Tenant: ${tenantId}`);
   console.log(`   Time: ${new Date().toISOString()}`);
 
@@ -336,7 +336,7 @@ async function incrementalSync(tenantId) {
       ...result,
     };
   } catch (error) {
-    console.error("\n❌ Sync failed:", error.message);
+    console.error('\n❌ Sync failed:', error.message);
     console.error(error.stack);
 
     return {
@@ -352,13 +352,13 @@ async function incrementalSync(tenantId) {
  * Sync all enabled tenants
  */
 async function syncAllEnabledTenants() {
-  console.log("🔄 Syncing all enabled tenants...\n");
+  console.log('🔄 Syncing all enabled tenants...\n');
 
   const tenants = await prisma.tenant.findMany({
     where: {
       gingrSyncEnabled: true,
       isActive: true,
-      status: "ACTIVE",
+      status: 'ACTIVE',
     },
   });
 
@@ -367,9 +367,9 @@ async function syncAllEnabledTenants() {
   const results = [];
 
   for (const tenant of tenants) {
-    console.log(`\n${"=".repeat(60)}`);
+    console.log(`\n${'='.repeat(60)}`);
     console.log(`Syncing: ${tenant.businessName} (${tenant.subdomain})`);
-    console.log("=".repeat(60));
+    console.log('='.repeat(60));
 
     const result = await incrementalSync(tenant.id);
     results.push({
@@ -379,16 +379,16 @@ async function syncAllEnabledTenants() {
     });
   }
 
-  console.log("\n" + "=".repeat(60));
-  console.log("SUMMARY");
-  console.log("=".repeat(60));
+  console.log('\n' + '='.repeat(60));
+  console.log('SUMMARY');
+  console.log('='.repeat(60));
 
   results.forEach((r) => {
-    const status = r.success ? "✅" : "❌";
+    const status = r.success ? '✅' : '❌';
     console.log(
       `${status} ${r.businessName}: ${r.created || 0} created, ${
         r.updated || 0
-      } updated (${r.duration || "N/A"}s)`
+      } updated (${r.duration || 'N/A'}s)`
     );
   });
 
@@ -406,7 +406,7 @@ if (require.main === module) {
         process.exit(result.success ? 0 : 1);
       })
       .catch((error) => {
-        console.error("Fatal error:", error);
+        console.error('Fatal error:', error);
         process.exit(1);
       });
   } else {
@@ -416,7 +416,7 @@ if (require.main === module) {
         process.exit(0);
       })
       .catch((error) => {
-        console.error("Fatal error:", error);
+        console.error('Fatal error:', error);
         process.exit(1);
       });
   }

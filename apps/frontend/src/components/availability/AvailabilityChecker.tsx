@@ -1,6 +1,6 @@
 /**
  * Availability Checker Component
- * 
+ *
  * Complete availability checking flow:
  * 1. Check availability for dates
  * 2. Show available suites
@@ -22,13 +22,13 @@ import Grid from '@mui/material/GridLegacy';
 import {
   Search as SearchIcon,
   CheckCircle as AvailableIcon,
-  Cancel as UnavailableIcon
+  Cancel as UnavailableIcon,
 } from '@mui/icons-material';
 import { availabilityService } from '../../services/availabilityService';
 import {
   AvailabilityCheckRequest,
   AvailabilityCheckResult,
-  AlternativeDateSuggestion
+  AlternativeDateSuggestion,
 } from '../../types/availability';
 import SuiteAvailabilityList from './SuiteAvailabilityList';
 import AlternativeDates from './AlternativeDates';
@@ -45,7 +45,7 @@ export const AvailabilityChecker: React.FC<AvailabilityCheckerProps> = ({
   serviceId,
   customerId,
   onAvailabilityConfirmed,
-  onSuiteSelected
+  onSuiteSelected,
 }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -58,7 +58,10 @@ export const AvailabilityChecker: React.FC<AvailabilityCheckerProps> = ({
 
   const handleCheckAvailability = async () => {
     // Validate dates
-    const validation = availabilityService.validateDateRange(startDate, endDate);
+    const validation = availabilityService.validateDateRange(
+      startDate,
+      endDate
+    );
     if (!validation.isValid) {
       setError(validation.error || 'Invalid date range');
       return;
@@ -73,7 +76,7 @@ export const AvailabilityChecker: React.FC<AvailabilityCheckerProps> = ({
         startDate,
         endDate,
         serviceId,
-        numberOfPets
+        numberOfPets,
       };
 
       const checkResult = await availabilityService.checkAvailability(request);
@@ -110,9 +113,10 @@ export const AvailabilityChecker: React.FC<AvailabilityCheckerProps> = ({
     return tomorrow.toISOString().split('T')[0];
   };
 
-  const nights = startDate && endDate 
-    ? availabilityService.calculateNights(startDate, endDate)
-    : 0;
+  const nights =
+    startDate && endDate
+      ? availabilityService.calculateNights(startDate, endDate)
+      : 0;
 
   return (
     <Box>
@@ -165,7 +169,9 @@ export const AvailabilityChecker: React.FC<AvailabilityCheckerProps> = ({
               size="large"
               onClick={handleCheckAvailability}
               disabled={loading || !startDate || !endDate}
-              startIcon={loading ? <CircularProgress size={20} /> : <SearchIcon />}
+              startIcon={
+                loading ? <CircularProgress size={20} /> : <SearchIcon />
+              }
               sx={{ height: '56px' }}
             >
               {loading ? 'Checking...' : 'Check Availability'}
@@ -174,7 +180,11 @@ export const AvailabilityChecker: React.FC<AvailabilityCheckerProps> = ({
         </Grid>
 
         {nights > 0 && (
-          <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ mt: 1, display: 'block' }}
+          >
             {nights} night{nights !== 1 ? 's' : ''}
           </Typography>
         )}
@@ -222,16 +232,18 @@ export const AvailabilityChecker: React.FC<AvailabilityCheckerProps> = ({
           )}
 
           {/* Alternative Dates */}
-          {!result.isAvailable && result.alternativeDates && result.alternativeDates.length > 0 && (
-            <Box mb={3}>
-              <AlternativeDates
-                alternatives={result.alternativeDates as any}
-                requestedStartDate={startDate}
-                requestedEndDate={endDate}
-                onSelectAlternative={handleSelectAlternative}
-              />
-            </Box>
-          )}
+          {!result.isAvailable &&
+            result.alternativeDates &&
+            result.alternativeDates.length > 0 && (
+              <Box mb={3}>
+                <AlternativeDates
+                  alternatives={result.alternativeDates as any}
+                  requestedStartDate={startDate}
+                  requestedEndDate={endDate}
+                  onSelectAlternative={handleSelectAlternative}
+                />
+              </Box>
+            )}
 
           {/* Waitlist Option */}
           {!result.isAvailable && result.waitlistAvailable && customerId && (
@@ -239,14 +251,16 @@ export const AvailabilityChecker: React.FC<AvailabilityCheckerProps> = ({
               <Typography variant="body2" color="text.secondary" gutterBottom>
                 Don't see dates that work for you?
               </Typography>
-              <Button
-                variant="outlined"
-                onClick={() => setShowWaitlist(true)}
-              >
+              <Button variant="outlined" onClick={() => setShowWaitlist(true)}>
                 Join Waitlist
               </Button>
               {result.estimatedWaitTime && (
-                <Typography variant="caption" color="text.secondary" display="block" mt={1}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  display="block"
+                  mt={1}
+                >
                   Estimated wait time: {result.estimatedWaitTime} days
                 </Typography>
               )}

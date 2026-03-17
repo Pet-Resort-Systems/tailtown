@@ -3,9 +3,9 @@
  * Separate from staff AuthContext to keep customer and staff auth isolated
  */
 
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { customerService } from "../services/customerService";
-import api from "../services/api";
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { customerService } from '../services/customerService';
+import api from '../services/api';
 
 interface Customer {
   id: string;
@@ -50,12 +50,12 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const savedCustomer = localStorage.getItem("customer");
+        const savedCustomer = localStorage.getItem('customer');
         if (savedCustomer) {
           setCustomer(JSON.parse(savedCustomer));
         }
       } catch (error) {
-        console.error("Error checking session:", error);
+        console.error('Error checking session:', error);
       } finally {
         setIsLoading(false);
       }
@@ -67,32 +67,32 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const login = async (email: string, password: string) => {
     try {
       // Use the new authentication endpoint that verifies password
-      const response = await api.post("/api/customers/auth/login", {
+      const response = await api.post('/api/customers/auth/login', {
         email,
         password,
       });
 
-      if (response.data.status === "success") {
+      if (response.data.status === 'success') {
         const customerData = response.data.data;
         setCustomer(customerData);
-        localStorage.setItem("customer", JSON.stringify(customerData));
+        localStorage.setItem('customer', JSON.stringify(customerData));
       } else {
-        throw new Error(response.data.message || "Login failed");
+        throw new Error(response.data.message || 'Login failed');
       }
     } catch (error: any) {
       // Handle specific error cases
       if (error.response?.status === 404) {
-        throw new Error("Customer not found");
+        throw new Error('Customer not found');
       } else if (error.response?.status === 403) {
-        throw new Error("Portal access disabled for this account");
+        throw new Error('Portal access disabled for this account');
       } else if (error.response?.status === 401) {
         // Check if password not set
-        if (error.response?.data?.message === "PASSWORD_NOT_SET") {
-          throw new Error("PASSWORD_NOT_SET");
+        if (error.response?.data?.message === 'PASSWORD_NOT_SET') {
+          throw new Error('PASSWORD_NOT_SET');
         }
-        throw new Error("Invalid password");
+        throw new Error('Invalid password');
       } else if (error.response?.status === 429) {
-        throw new Error("Too many login attempts. Please try again later.");
+        throw new Error('Too many login attempts. Please try again later.');
       }
       throw error;
     }
@@ -116,54 +116,54 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({
       });
 
       setCustomer(newCustomer);
-      localStorage.setItem("customer", JSON.stringify(newCustomer));
+      localStorage.setItem('customer', JSON.stringify(newCustomer));
     } catch (error: any) {
       // Check if customer already exists
       if (
         error.response?.status === 400 &&
-        (error.response?.data?.message?.includes("already exists") ||
-          error.response?.data?.error?.includes("already exists"))
+        (error.response?.data?.message?.includes('already exists') ||
+          error.response?.data?.error?.includes('already exists'))
       ) {
-        throw new Error("CUSTOMER_EXISTS");
+        throw new Error('CUSTOMER_EXISTS');
       }
-      console.error("Signup error:", error);
+      console.error('Signup error:', error);
       throw error;
     }
   };
 
   const logout = () => {
     setCustomer(null);
-    localStorage.removeItem("customer");
+    localStorage.removeItem('customer');
   };
 
   const updateCustomer = (data: Partial<Customer>) => {
     if (customer) {
       const updated = { ...customer, ...data };
       setCustomer(updated);
-      localStorage.setItem("customer", JSON.stringify(updated));
+      localStorage.setItem('customer', JSON.stringify(updated));
     }
   };
 
   const requestPasswordReset = async (email: string) => {
     try {
-      await api.post("/api/customers/auth/forgot-password", { email });
+      await api.post('/api/customers/auth/forgot-password', { email });
     } catch (error: any) {
       if (error.response?.status === 429) {
-        throw new Error("Too many requests. Please try again later.");
+        throw new Error('Too many requests. Please try again later.');
       }
       // Don't reveal if email exists or not
-      console.error("Password reset request error:", error);
+      console.error('Password reset request error:', error);
     }
   };
 
   const resetPassword = async (token: string, password: string) => {
     try {
-      const response = await api.post("/api/customers/auth/reset-password", {
+      const response = await api.post('/api/customers/auth/reset-password', {
         token,
         password,
       });
-      if (response.data.status !== "success") {
-        throw new Error(response.data.message || "Failed to reset password");
+      if (response.data.status !== 'success') {
+        throw new Error(response.data.message || 'Failed to reset password');
       }
     } catch (error: any) {
       if (error.response?.data?.message) {
@@ -183,7 +183,7 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({
       return response.data.data;
     } catch (error: any) {
       if (error.response?.status === 404) {
-        throw new Error("Customer not found");
+        throw new Error('Customer not found');
       }
       throw error;
     }
@@ -212,7 +212,7 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({
 export const useCustomerAuth = () => {
   const context = useContext(CustomerAuthContext);
   if (context === undefined) {
-    throw new Error("useCustomerAuth must be used within CustomerAuthProvider");
+    throw new Error('useCustomerAuth must be used within CustomerAuthProvider');
   }
   return context;
 };

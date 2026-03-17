@@ -4,7 +4,7 @@
  * Tests for internal messaging and channels.
  */
 
-import { Response, NextFunction } from "express";
+import { Response, NextFunction } from 'express';
 
 // Mock Prisma
 const mockFindMany = jest.fn();
@@ -13,7 +13,7 @@ const mockCreate = jest.fn();
 const mockUpdate = jest.fn();
 const mockCount = jest.fn();
 
-jest.mock("@prisma/client", () => ({
+jest.mock('@prisma/client', () => ({
   PrismaClient: jest.fn().mockImplementation(() => ({
     communicationChannel: {
       findMany: mockFindMany,
@@ -34,7 +34,7 @@ jest.mock("@prisma/client", () => ({
   })),
 }));
 
-describe("Messaging Controller", () => {
+describe('Messaging Controller', () => {
   let mockReq: any;
   let mockRes: Partial<Response>;
   let mockNext: NextFunction;
@@ -49,48 +49,48 @@ describe("Messaging Controller", () => {
     jest.clearAllMocks();
   });
 
-  describe("Authentication", () => {
-    it("should require staffId", () => {
-      const user = { tenantId: "tenant-123" };
+  describe('Authentication', () => {
+    it('should require staffId', () => {
+      const user = { tenantId: 'tenant-123' };
       const isValid = !!(user as any).id;
       expect(isValid).toBe(false);
     });
 
-    it("should require tenantId", () => {
-      const user = { id: "staff-123" };
+    it('should require tenantId', () => {
+      const user = { id: 'staff-123' };
       const isValid = !!(user as any).tenantId;
       expect(isValid).toBe(false);
     });
   });
 
-  describe("Channel Filtering", () => {
-    it("should filter by tenantId", () => {
+  describe('Channel Filtering', () => {
+    it('should filter by tenantId', () => {
       const channels = [
-        { tenantId: "tenant-1", name: "General" },
-        { tenantId: "tenant-2", name: "Other" },
-        { tenantId: "tenant-1", name: "Announcements" },
+        { tenantId: 'tenant-1', name: 'General' },
+        { tenantId: 'tenant-2', name: 'Other' },
+        { tenantId: 'tenant-1', name: 'Announcements' },
       ];
 
-      const filtered = channels.filter((c) => c.tenantId === "tenant-1");
+      const filtered = channels.filter((c) => c.tenantId === 'tenant-1');
       expect(filtered.length).toBe(2);
     });
 
-    it("should exclude archived channels", () => {
+    it('should exclude archived channels', () => {
       const channels = [
-        { name: "General", isArchived: false },
-        { name: "Old Channel", isArchived: true },
-        { name: "Announcements", isArchived: false },
+        { name: 'General', isArchived: false },
+        { name: 'Old Channel', isArchived: true },
+        { name: 'Announcements', isArchived: false },
       ];
 
       const filtered = channels.filter((c) => !c.isArchived);
       expect(filtered.length).toBe(2);
     });
 
-    it("should filter by membership", () => {
-      const staffId = "staff-123";
+    it('should filter by membership', () => {
+      const staffId = 'staff-123';
       const channels = [
-        { name: "General", members: [{ staffId: "staff-123" }] },
-        { name: "Private", members: [{ staffId: "staff-456" }] },
+        { name: 'General', members: [{ staffId: 'staff-123' }] },
+        { name: 'Private', members: [{ staffId: 'staff-456' }] },
       ];
 
       const filtered = channels.filter((c) =>
@@ -100,27 +100,27 @@ describe("Messaging Controller", () => {
     });
   });
 
-  describe("Unread Count", () => {
-    it("should calculate unread messages", () => {
-      const lastReadAt = new Date("2025-12-01T10:00:00Z");
+  describe('Unread Count', () => {
+    it('should calculate unread messages', () => {
+      const lastReadAt = new Date('2025-12-01T10:00:00Z');
       const messages = [
-        { createdAt: new Date("2025-12-01T09:00:00Z"), senderId: "other" },
-        { createdAt: new Date("2025-12-01T11:00:00Z"), senderId: "other" },
-        { createdAt: new Date("2025-12-01T12:00:00Z"), senderId: "other" },
+        { createdAt: new Date('2025-12-01T09:00:00Z'), senderId: 'other' },
+        { createdAt: new Date('2025-12-01T11:00:00Z'), senderId: 'other' },
+        { createdAt: new Date('2025-12-01T12:00:00Z'), senderId: 'other' },
       ];
 
       const unread = messages.filter(
-        (m) => m.createdAt > lastReadAt && m.senderId !== "me"
+        (m) => m.createdAt > lastReadAt && m.senderId !== 'me'
       );
       expect(unread.length).toBe(2);
     });
 
-    it("should not count own messages as unread", () => {
-      const staffId = "staff-123";
-      const lastReadAt = new Date("2025-12-01T10:00:00Z");
+    it('should not count own messages as unread', () => {
+      const staffId = 'staff-123';
+      const lastReadAt = new Date('2025-12-01T10:00:00Z');
       const messages = [
-        { createdAt: new Date("2025-12-01T11:00:00Z"), senderId: staffId },
-        { createdAt: new Date("2025-12-01T12:00:00Z"), senderId: "other" },
+        { createdAt: new Date('2025-12-01T11:00:00Z'), senderId: staffId },
+        { createdAt: new Date('2025-12-01T12:00:00Z'), senderId: 'other' },
       ];
 
       const unread = messages.filter(
@@ -129,88 +129,88 @@ describe("Messaging Controller", () => {
       expect(unread.length).toBe(1);
     });
 
-    it("should count all messages if never read", () => {
+    it('should count all messages if never read', () => {
       const messages = [
-        { senderId: "other" },
-        { senderId: "other" },
-        { senderId: "me" },
+        { senderId: 'other' },
+        { senderId: 'other' },
+        { senderId: 'me' },
       ];
 
-      const staffId = "me";
+      const staffId = 'me';
       const unread = messages.filter((m) => m.senderId !== staffId);
       expect(unread.length).toBe(2);
     });
   });
 
-  describe("Channel Types", () => {
-    it("should recognize valid channel types", () => {
-      const validTypes = ["GENERAL", "ANNOUNCEMENTS", "DIRECT", "GROUP"];
-      expect(validTypes).toContain("GENERAL");
-      expect(validTypes).toContain("DIRECT");
+  describe('Channel Types', () => {
+    it('should recognize valid channel types', () => {
+      const validTypes = ['GENERAL', 'ANNOUNCEMENTS', 'DIRECT', 'GROUP'];
+      expect(validTypes).toContain('GENERAL');
+      expect(validTypes).toContain('DIRECT');
     });
 
-    it("should identify default channel", () => {
+    it('should identify default channel', () => {
       const channels = [
-        { name: "General", isDefault: true },
-        { name: "Announcements", isDefault: false },
+        { name: 'General', isDefault: true },
+        { name: 'Announcements', isDefault: false },
       ];
 
       const defaultChannel = channels.find((c) => c.isDefault);
-      expect(defaultChannel?.name).toBe("General");
+      expect(defaultChannel?.name).toBe('General');
     });
   });
 
-  describe("Message Data", () => {
-    it("should include sender info", () => {
+  describe('Message Data', () => {
+    it('should include sender info', () => {
       const message = {
-        content: "Hello team!",
-        senderId: "staff-123",
+        content: 'Hello team!',
+        senderId: 'staff-123',
         createdAt: new Date(),
       };
 
-      expect(message.content).toBe("Hello team!");
-      expect(message.senderId).toBe("staff-123");
+      expect(message.content).toBe('Hello team!');
+      expect(message.senderId).toBe('staff-123');
     });
 
-    it("should include last message in channel", () => {
+    it('should include last message in channel', () => {
       const channel = {
-        name: "General",
+        name: 'General',
         messages: [
-          { id: "msg-1", content: "Hello", createdAt: new Date("2025-12-01") },
+          { id: 'msg-1', content: 'Hello', createdAt: new Date('2025-12-01') },
         ],
       };
 
       const lastMessage = channel.messages[0];
-      expect(lastMessage.content).toBe("Hello");
+      expect(lastMessage.content).toBe('Hello');
     });
   });
 
-  describe("Member Management", () => {
-    it("should track member join date", () => {
+  describe('Member Management', () => {
+    it('should track member join date', () => {
       const member = {
-        staffId: "staff-123",
-        joinedAt: new Date("2025-12-01"),
+        staffId: 'staff-123',
+        joinedAt: new Date('2025-12-01'),
         leftAt: null,
       };
 
       expect(member.leftAt).toBeNull();
     });
 
-    it("should track member leave date", () => {
+    it('should track member leave date', () => {
       const member = {
-        staffId: "staff-123",
-        joinedAt: new Date("2025-12-01"),
-        leftAt: new Date("2025-12-15"),
+        staffId: 'staff-123',
+        joinedAt: new Date('2025-12-01'),
+        leftAt: new Date('2025-12-15'),
       };
 
       expect(member.leftAt).not.toBeNull();
     });
 
-    it("should filter active members", () => {
+    it('should filter active members', () => {
       const members = [
-        { staffId: "staff-1", leftAt: null },
-        { staffId: "staff-2", leftAt: new Date() },
-        { staffId: "staff-3", leftAt: null },
+        { staffId: 'staff-1', leftAt: null },
+        { staffId: 'staff-2', leftAt: new Date() },
+        { staffId: 'staff-3', leftAt: null },
       ];
 
       const active = members.filter((m) => m.leftAt === null);
@@ -218,19 +218,19 @@ describe("Messaging Controller", () => {
     });
   });
 
-  describe("Mute Settings", () => {
-    it("should track mute status", () => {
+  describe('Mute Settings', () => {
+    it('should track mute status', () => {
       const member = {
-        staffId: "staff-123",
+        staffId: 'staff-123',
         isMuted: true,
       };
 
       expect(member.isMuted).toBe(true);
     });
 
-    it("should default to not muted", () => {
+    it('should default to not muted', () => {
       const member = {
-        staffId: "staff-123",
+        staffId: 'staff-123',
         isMuted: false,
       };
 
@@ -238,20 +238,20 @@ describe("Messaging Controller", () => {
     });
   });
 
-  describe("Read Status", () => {
-    it("should track last read timestamp", () => {
+  describe('Read Status', () => {
+    it('should track last read timestamp', () => {
       const member = {
-        staffId: "staff-123",
-        lastReadAt: new Date("2025-12-01T10:00:00Z"),
-        lastReadMessageId: "msg-123",
+        staffId: 'staff-123',
+        lastReadAt: new Date('2025-12-01T10:00:00Z'),
+        lastReadMessageId: 'msg-123',
       };
 
       expect(member.lastReadAt).toBeInstanceOf(Date);
-      expect(member.lastReadMessageId).toBe("msg-123");
+      expect(member.lastReadMessageId).toBe('msg-123');
     });
 
-    it("should update last read on view", () => {
-      const oldLastRead = new Date("2025-12-01T10:00:00Z");
+    it('should update last read on view', () => {
+      const oldLastRead = new Date('2025-12-01T10:00:00Z');
       const newLastRead = new Date();
 
       expect(newLastRead > oldLastRead).toBe(true);

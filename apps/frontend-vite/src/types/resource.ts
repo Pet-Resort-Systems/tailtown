@@ -6,36 +6,36 @@ export enum ResourceType {
   STANDARD_SUITE = 'STANDARD_SUITE',
   STANDARD_PLUS_SUITE = 'STANDARD_PLUS_SUITE',
   VIP_SUITE = 'VIP_SUITE',
-  
+
   // Activity areas
   PLAY_AREA = 'PLAY_AREA',
   OUTDOOR_PLAY_YARD = 'OUTDOOR_PLAY_YARD',
   PRIVATE_PLAY_AREA = 'PRIVATE_PLAY_AREA',
-  
+
   // Grooming
   GROOMING_TABLE = 'GROOMING_TABLE',
   BATHING_STATION = 'BATHING_STATION',
   DRYING_STATION = 'DRYING_STATION',
-  
+
   // Training
   TRAINING_ROOM = 'TRAINING_ROOM',
   AGILITY_COURSE = 'AGILITY_COURSE',
-  
+
   // Staff
   GROOMER = 'GROOMER',
   TRAINER = 'TRAINER',
   ATTENDANT = 'ATTENDANT',
   BATHER = 'BATHER',
-  
+
   // Other
-  OTHER = 'OTHER'
+  OTHER = 'OTHER',
 }
 
 export enum AvailabilityStatus {
   AVAILABLE = 'AVAILABLE',
   RESERVED = 'RESERVED',
   MAINTENANCE = 'MAINTENANCE',
-  OUT_OF_SERVICE = 'OUT_OF_SERVICE'
+  OUT_OF_SERVICE = 'OUT_OF_SERVICE',
 }
 
 export interface ResourceAvailability {
@@ -55,7 +55,7 @@ export enum RoomSize {
   KING = 'KING',
   VIP = 'VIP',
   CAT = 'CAT',
-  OVERFLOW = 'OVERFLOW'
+  OVERFLOW = 'OVERFLOW',
 }
 
 export interface Resource {
@@ -80,42 +80,61 @@ export interface Resource {
 // Helper function to get human-readable resource type names
 export const getResourceTypeName = (type: string | ResourceType): string => {
   if (!type) return 'Unknown';
-  
+
   // Handle both string and enum types
   const typeStr = typeof type === 'string' ? type : String(type);
-  
-  return typeStr.split('_').map((word: string) => 
-    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-  ).join(' ');
+
+  return typeStr
+    .split('_')
+    .map(
+      (word: string) =>
+        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    )
+    .join(' ');
 };
 
 // Helper function to get resource type category
-export const getResourceTypeCategory = (type: string | ResourceType): string => {
+export const getResourceTypeCategory = (
+  type: string | ResourceType
+): string => {
   if (!type) return 'other';
-  
+
   // Convert to string if it's not already
   const typeStr = typeof type === 'string' ? type : String(type);
-  
+
   // Housing types
-  if (['KENNEL', 'RUN', 'SUITE', 'STANDARD_SUITE', 'STANDARD_PLUS_SUITE', 'VIP_SUITE'].includes(typeStr)) {
+  if (
+    [
+      'KENNEL',
+      'RUN',
+      'SUITE',
+      'STANDARD_SUITE',
+      'STANDARD_PLUS_SUITE',
+      'VIP_SUITE',
+    ].includes(typeStr)
+  ) {
     return 'housing';
-  } 
+  }
   // Play area types
-  else if (['PLAY_AREA', 'OUTDOOR_PLAY_YARD', 'PRIVATE_PLAY_AREA'].includes(typeStr)) {
+  else if (
+    ['PLAY_AREA', 'OUTDOOR_PLAY_YARD', 'PRIVATE_PLAY_AREA'].includes(typeStr)
+  ) {
     return 'play areas';
-  } 
+  }
   // Grooming types
-  else if (['GROOMING_TABLE', 'BATHING_STATION', 'DRYING_STATION'].includes(typeStr)) {
+  else if (
+    ['GROOMING_TABLE', 'BATHING_STATION', 'DRYING_STATION'].includes(typeStr)
+  ) {
     return 'grooming';
-  } 
+  }
   // Training types
   else if (['TRAINING_ROOM', 'AGILITY_COURSE'].includes(typeStr)) {
     return 'training';
-  } 
+  }
   // Staff types
   else if (['GROOMER', 'TRAINER', 'ATTENDANT', 'BATHER'].includes(typeStr)) {
     return 'staff';
-  } 
+  }
   // Default
   else {
     return 'other';
@@ -123,11 +142,13 @@ export const getResourceTypeCategory = (type: string | ResourceType): string => 
 };
 
 // Helper function to get room size display name
-export const getRoomSizeDisplayName = (size: string | RoomSize | undefined): string => {
+export const getRoomSizeDisplayName = (
+  size: string | RoomSize | undefined
+): string => {
   if (!size) return '';
-  
+
   const sizeStr = typeof size === 'string' ? size : String(size);
-  
+
   switch (sizeStr) {
     case 'JUNIOR':
       return 'Junior Suite';
@@ -147,11 +168,13 @@ export const getRoomSizeDisplayName = (size: string | RoomSize | undefined): str
 };
 
 // Helper function to get max pets for a room size
-export const getMaxPetsForSize = (size: string | RoomSize | undefined): number => {
+export const getMaxPetsForSize = (
+  size: string | RoomSize | undefined
+): number => {
   if (!size) return 1;
-  
+
   const sizeStr = typeof size === 'string' ? size : String(size);
-  
+
   switch (sizeStr) {
     case 'JUNIOR':
       return 1;

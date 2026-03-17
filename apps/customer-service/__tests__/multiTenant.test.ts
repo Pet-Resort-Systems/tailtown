@@ -1,6 +1,6 @@
 /**
  * Multi-Tenant Isolation Tests
- * 
+ *
  * Tests to ensure proper tenant isolation and data segregation
  */
 
@@ -67,8 +67,12 @@ describe('Multi-Tenant Isolation', () => {
         return parts.length > 2 ? parts[0] : 'default';
       };
 
-      expect(extractTenantFromSubdomain('tenant-a.canicloud.com')).toBe('tenant-a');
-      expect(extractTenantFromSubdomain('tenant-b.canicloud.com')).toBe('tenant-b');
+      expect(extractTenantFromSubdomain('tenant-a.canicloud.com')).toBe(
+        'tenant-a'
+      );
+      expect(extractTenantFromSubdomain('tenant-b.canicloud.com')).toBe(
+        'tenant-b'
+      );
       expect(extractTenantFromSubdomain('canicloud.com')).toBe('default');
     });
   });
@@ -163,12 +167,16 @@ describe('Multi-Tenant Isolation', () => {
     });
 
     it('should not affect other tenants when one hits rate limit', () => {
-      const isRateLimited = (tenantId: string, count: number, limit: number) => {
+      const isRateLimited = (
+        tenantId: string,
+        count: number,
+        limit: number
+      ) => {
         return count > limit;
       };
 
       const tenantACount = 1001; // Over limit
-      const tenantBCount = 500;  // Under limit
+      const tenantBCount = 500; // Under limit
       const limit = 1000;
 
       expect(isRateLimited('tenant-a', tenantACount, limit)).toBe(true);
@@ -180,7 +188,7 @@ describe('Multi-Tenant Isolation', () => {
     it('should share connection pool across all tenants', async () => {
       // All tenants use the same connection pool
       // But data is isolated by tenant ID in queries
-      
+
       const query1 = prisma.$queryRaw`SELECT 1`;
       const query2 = prisma.$queryRaw`SELECT 2`;
 
@@ -259,9 +267,7 @@ describe('Multi-Tenant Isolation', () => {
       });
 
       if (process.env.NODE_ENV === 'production') {
-        request(app)
-          .get('/test')
-          .expect(400, done);
+        request(app).get('/test').expect(400, done);
       } else {
         done();
       }
@@ -287,8 +293,12 @@ describe('Multi-Tenant Isolation', () => {
       };
 
       expect(sanitizeTenantId('tenant-123')).toBe('tenant-123');
-      expect(sanitizeTenantId("tenant'; DROP TABLE users--")).toBe('tenantDROPTABLEusers');
-      expect(sanitizeTenantId('tenant<script>alert(1)</script>')).toBe('tenantscriptalert1script');
+      expect(sanitizeTenantId("tenant'; DROP TABLE users--")).toBe(
+        'tenantDROPTABLEusers'
+      );
+      expect(sanitizeTenantId('tenant<script>alert(1)</script>')).toBe(
+        'tenantscriptalert1script'
+      );
     });
   });
 
@@ -311,7 +321,9 @@ describe('Multi-Tenant Isolation', () => {
       expect(responses).toHaveLength(5);
       responses.forEach((res, index) => {
         expect(res.status).toBe(200);
-        expect(res.body.tenantId).toBe(`tenant-${String.fromCharCode(97 + index)}`);
+        expect(res.body.tenantId).toBe(
+          `tenant-${String.fromCharCode(97 + index)}`
+        );
       });
     });
 
@@ -319,8 +331,9 @@ describe('Multi-Tenant Isolation', () => {
       const startTime = Date.now();
 
       // Simulate queries for 50 different tenants
-      const queries = Array.from({ length: 50 }, (_, i) =>
-        prisma.$queryRaw`SELECT ${`tenant-${i}`} as tenant_id`
+      const queries = Array.from(
+        { length: 50 },
+        (_, i) => prisma.$queryRaw`SELECT ${`tenant-${i}`} as tenant_id`
       );
 
       await Promise.all(queries);

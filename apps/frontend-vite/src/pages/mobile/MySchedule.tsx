@@ -89,7 +89,7 @@ const MySchedule: React.FC = () => {
 
   const getTotalHours = () => {
     let total = 0;
-    schedule.forEach(shift => {
+    schedule.forEach((shift) => {
       const start = parseTime(shift.startTime);
       const end = parseTime(shift.endTime);
       total += (end - start) / (1000 * 60 * 60);
@@ -108,7 +108,14 @@ const MySchedule: React.FC = () => {
     return (
       <Box>
         <MobileHeader title="My Schedule" showNotifications />
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '50vh',
+          }}
+        >
           <CircularProgress />
         </Box>
       </Box>
@@ -118,9 +125,15 @@ const MySchedule: React.FC = () => {
   return (
     <Box sx={{ pb: 8 }}>
       <MobileHeader title="My Schedule" showNotifications />
-      
+
       {/* View Tabs */}
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', backgroundColor: 'background.paper' }}>
+      <Box
+        sx={{
+          borderBottom: 1,
+          borderColor: 'divider',
+          backgroundColor: 'background.paper',
+        }}
+      >
         <Tabs
           value={view}
           onChange={(_, newValue) => setView(newValue)}
@@ -175,7 +188,13 @@ const MySchedule: React.FC = () => {
       {/* Schedule Summary */}
       <Card elevation={0} sx={{ m: 2, backgroundColor: 'primary.light' }}>
         <CardContent>
-          <Box sx={{ display: 'flex', justifyContent: 'space-around', textAlign: 'center' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-around',
+              textAlign: 'center',
+            }}
+          >
             <Box>
               <Typography variant="h5" fontWeight={600}>
                 {schedule.length}
@@ -211,7 +230,9 @@ const MySchedule: React.FC = () => {
             {schedule.map((shift, index) => (
               <Card key={shift.id} elevation={1} sx={{ mb: 2 }}>
                 <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
+                  <Box
+                    sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}
+                  >
                     <Avatar
                       sx={{
                         bgcolor: 'primary.main',
@@ -239,17 +260,24 @@ const MySchedule: React.FC = () => {
 
                   <List disablePadding>
                     <ListItem disablePadding sx={{ py: 0.5 }}>
-                      <TimeIcon sx={{ mr: 1, fontSize: 20, color: 'text.secondary' }} />
+                      <TimeIcon
+                        sx={{ mr: 1, fontSize: 20, color: 'text.secondary' }}
+                      />
                       <ListItemText
                         primary={`${shift.time}`}
                         secondary={`${shift.startTime} - ${shift.endTime}`}
-                        primaryTypographyProps={{ variant: 'body2', fontWeight: 500 }}
+                        primaryTypographyProps={{
+                          variant: 'body2',
+                          fontWeight: 500,
+                        }}
                         secondaryTypographyProps={{ variant: 'caption' }}
                       />
                     </ListItem>
                     {shift.location && (
                       <ListItem disablePadding sx={{ py: 0.5 }}>
-                        <LocationIcon sx={{ mr: 1, fontSize: 20, color: 'text.secondary' }} />
+                        <LocationIcon
+                          sx={{ mr: 1, fontSize: 20, color: 'text.secondary' }}
+                        />
                         <ListItemText
                           primary={shift.location}
                           primaryTypographyProps={{ variant: 'body2' }}
@@ -267,6 +295,6 @@ const MySchedule: React.FC = () => {
   );
 };
 
-      <BottomNav />
+<BottomNav />;
 
 export default MySchedule;

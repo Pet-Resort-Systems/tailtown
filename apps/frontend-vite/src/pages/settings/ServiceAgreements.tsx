@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Typography,
@@ -33,7 +33,7 @@ import {
   InputLabel,
   FormControl,
   Divider,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -47,8 +47,8 @@ import {
   ExpandMore as ExpandMoreIcon,
   Info as InfoIcon,
   Create as SignIcon,
-} from "@mui/icons-material";
-import { format } from "date-fns";
+} from '@mui/icons-material';
+import { format } from 'date-fns';
 import serviceAgreementService, {
   ServiceAgreementTemplate,
   ServiceAgreementVersion,
@@ -56,9 +56,9 @@ import serviceAgreementService, {
   UpdateTemplateData,
   CustomQuestion,
   QuestionType,
-} from "../../services/serviceAgreementService";
-import { tenantService } from "../../services/tenantService";
-import { ServiceAgreementSign } from "../../components/agreements";
+} from '../../services/serviceAgreementService';
+import { tenantService } from '../../services/tenantService';
+import { ServiceAgreementSign } from '../../components/agreements';
 
 // Merge field replacement utility
 const replaceMergeFields = (
@@ -68,7 +68,7 @@ const replaceMergeFields = (
   let result = content;
   Object.entries(mergeData).forEach(([field, value]) => {
     // Replace [Field Name] format
-    const regex = new RegExp(`\\[${field}\\]`, "gi");
+    const regex = new RegExp(`\\[${field}\\]`, 'gi');
     result = result.replace(regex, value);
   });
   return result;
@@ -79,7 +79,7 @@ const ServiceAgreements: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [businessName, setBusinessName] = useState<string>("");
+  const [businessName, setBusinessName] = useState<string>('');
 
   // Dialog states
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -96,25 +96,25 @@ const ServiceAgreements: React.FC = () => {
 
   // Form state
   const [formData, setFormData] = useState<CreateTemplateData>({
-    name: "",
-    content: "",
+    name: '',
+    content: '',
     isDefault: false,
     requiresInitials: true,
     requiresSignature: true,
     questions: [],
   });
-  const [changeNotes, setChangeNotes] = useState("");
+  const [changeNotes, setChangeNotes] = useState('');
   const [newQuestion, setNewQuestion] = useState({
-    question: "",
-    type: "TEXT" as
-      | "TEXT"
-      | "NUMBER"
-      | "YES_NO"
-      | "MULTIPLE_CHOICE"
-      | "CURRENCY"
-      | "LONG_TEXT",
+    question: '',
+    type: 'TEXT' as
+      | 'TEXT'
+      | 'NUMBER'
+      | 'YES_NO'
+      | 'MULTIPLE_CHOICE'
+      | 'CURRENCY'
+      | 'LONG_TEXT',
     required: true,
-    placeholder: "",
+    placeholder: '',
   });
 
   // Menu state
@@ -129,7 +129,7 @@ const ServiceAgreements: React.FC = () => {
       setTemplates(data || []);
       setError(null);
     } catch (err: any) {
-      setError(err.message || "Failed to load templates");
+      setError(err.message || 'Failed to load templates');
       setTemplates([]);
     } finally {
       setLoading(false);
@@ -149,18 +149,18 @@ const ServiceAgreements: React.FC = () => {
   const getPreviewContent = (content: string): string => {
     const today = new Date().toLocaleDateString();
     return replaceMergeFields(content, {
-      "Business Name": businessName || "DEVELOPMENT TENANT",
-      "Company Name": businessName || "DEVELOPMENT TENANT",
-      "Customer Name": "John Smith",
-      "Customer First Name": "John",
-      "Customer Last Name": "Smith",
-      "Customer Email": "john.smith@example.com",
-      "Customer Phone": "(555) 123-4567",
-      "Pet Name": "Buddy",
-      "Pet Names": "Buddy, Max",
+      'Business Name': businessName || 'DEVELOPMENT TENANT',
+      'Company Name': businessName || 'DEVELOPMENT TENANT',
+      'Customer Name': 'John Smith',
+      'Customer First Name': 'John',
+      'Customer Last Name': 'Smith',
+      'Customer Email': 'john.smith@example.com',
+      'Customer Phone': '(555) 123-4567',
+      'Pet Name': 'Buddy',
+      'Pet Names': 'Buddy, Max',
       "Today's Date": today,
-      "Reservation Date": today,
-      "Service Name": "Daycare",
+      'Reservation Date': today,
+      'Service Name': 'Daycare',
     });
   };
 
@@ -180,19 +180,19 @@ const ServiceAgreements: React.FC = () => {
   const handleCreateNew = () => {
     setSelectedTemplate(null);
     setFormData({
-      name: "",
+      name: '',
       content: getDefaultContent(),
       isDefault: false,
       requiresInitials: true,
       requiresSignature: true,
       questions: [],
     });
-    setChangeNotes("");
+    setChangeNotes('');
     setNewQuestion({
-      question: "",
-      type: "TEXT",
+      question: '',
+      type: 'TEXT',
       required: true,
-      placeholder: "",
+      placeholder: '',
     });
     setEditDialogOpen(true);
   };
@@ -209,7 +209,7 @@ const ServiceAgreements: React.FC = () => {
       effectiveDate: template.effectiveDate,
       expiresAt: template.expiresAt,
     });
-    setChangeNotes("");
+    setChangeNotes('');
     setEditDialogOpen(true);
     handleCloseMenu();
   };
@@ -232,7 +232,7 @@ const ServiceAgreements: React.FC = () => {
       );
       setVersions(data);
     } catch (err: any) {
-      setError(err.message || "Failed to load versions");
+      setError(err.message || 'Failed to load versions');
     } finally {
       setVersionsLoading(false);
     }
@@ -254,10 +254,10 @@ const ServiceAgreements: React.FC = () => {
         requiresInitials: template.requiresInitials,
         requiresSignature: template.requiresSignature,
       });
-      setSuccess("Template duplicated successfully");
+      setSuccess('Template duplicated successfully');
       loadTemplates();
     } catch (err: any) {
-      setError(err.message || "Failed to duplicate template");
+      setError(err.message || 'Failed to duplicate template');
     }
   };
 
@@ -267,10 +267,10 @@ const ServiceAgreements: React.FC = () => {
       await serviceAgreementService.updateTemplate(template.id, {
         isDefault: true,
       });
-      setSuccess("Default template updated");
+      setSuccess('Default template updated');
       loadTemplates();
     } catch (err: any) {
-      setError(err.message || "Failed to set default template");
+      setError(err.message || 'Failed to set default template');
     }
   };
 
@@ -285,15 +285,15 @@ const ServiceAgreements: React.FC = () => {
           selectedTemplate.id,
           updateData
         );
-        setSuccess("Template updated successfully");
+        setSuccess('Template updated successfully');
       } else {
         await serviceAgreementService.createTemplate(formData);
-        setSuccess("Template created successfully");
+        setSuccess('Template created successfully');
       }
       setEditDialogOpen(false);
       loadTemplates();
     } catch (err: any) {
-      setError(err.message || "Failed to save template");
+      setError(err.message || 'Failed to save template');
     }
   };
 
@@ -302,11 +302,11 @@ const ServiceAgreements: React.FC = () => {
 
     try {
       await serviceAgreementService.deleteTemplate(selectedTemplate.id);
-      setSuccess("Template deleted successfully");
+      setSuccess('Template deleted successfully');
       setDeleteDialogOpen(false);
       loadTemplates();
     } catch (err: any) {
-      setError(err.message || "Failed to delete template");
+      setError(err.message || 'Failed to delete template');
     }
   };
 
@@ -397,12 +397,12 @@ const ServiceAgreements: React.FC = () => {
             They will be automatically replaced with actual customer and
             business data.
           </Typography>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Box>
               <Typography variant="subtitle2" gutterBottom>
                 Business
               </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 <Chip label="[Business Name]" size="small" />
               </Box>
             </Box>
@@ -410,7 +410,7 @@ const ServiceAgreements: React.FC = () => {
               <Typography variant="subtitle2" gutterBottom>
                 Customer
               </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 <Chip label="[Customer Name]" size="small" />
                 <Chip label="[Customer First Name]" size="small" />
                 <Chip label="[Customer Last Name]" size="small" />
@@ -422,7 +422,7 @@ const ServiceAgreements: React.FC = () => {
               <Typography variant="subtitle2" gutterBottom>
                 Pet
               </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 <Chip label="[Pet Name]" size="small" />
                 <Chip label="[Pet Names]" size="small" />
               </Box>
@@ -431,7 +431,7 @@ const ServiceAgreements: React.FC = () => {
               <Typography variant="subtitle2" gutterBottom>
                 Dates & Services
               </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 <Chip label="[Today's Date]" size="small" />
                 <Chip label="[Reservation Date]" size="small" />
                 <Chip label="[Service Name]" size="small" />
@@ -481,8 +481,8 @@ const ServiceAgreements: React.FC = () => {
                   </TableCell>
                   <TableCell>
                     <Chip
-                      label={template.isActive ? "Active" : "Inactive"}
-                      color={template.isActive ? "success" : "default"}
+                      label={template.isActive ? 'Active' : 'Inactive'}
+                      color={template.isActive ? 'success' : 'default'}
                       size="small"
                     />
                   </TableCell>
@@ -505,7 +505,7 @@ const ServiceAgreements: React.FC = () => {
                     </Box>
                   </TableCell>
                   <TableCell>
-                    {format(new Date(template.updatedAt), "MMM d, yyyy")}
+                    {format(new Date(template.updatedAt), 'MMM d, yyyy')}
                   </TableCell>
                   <TableCell align="right">
                     <Tooltip title="Edit">
@@ -584,7 +584,7 @@ const ServiceAgreements: React.FC = () => {
           <ListItemIcon>
             <DeleteIcon fontSize="small" color="error" />
           </ListItemIcon>
-          <ListItemText sx={{ color: "error.main" }}>Delete</ListItemText>
+          <ListItemText sx={{ color: 'error.main' }}>Delete</ListItemText>
         </MenuItem>
       </Menu>
 
@@ -596,7 +596,7 @@ const ServiceAgreements: React.FC = () => {
         fullWidth
       >
         <DialogTitle>
-          {selectedTemplate ? "Edit Template" : "Create New Template"}
+          {selectedTemplate ? 'Edit Template' : 'Create New Template'}
         </DialogTitle>
         <DialogContent>
           <Box display="flex" flexDirection="column" gap={2} mt={1}>
@@ -634,7 +634,7 @@ const ServiceAgreements: React.FC = () => {
             )}
 
             {/* Merge Fields Reference */}
-            <Paper variant="outlined" sx={{ p: 2, bgcolor: "grey.50" }}>
+            <Paper variant="outlined" sx={{ p: 2, bgcolor: 'grey.50' }}>
               <Typography variant="subtitle2" gutterBottom>
                 Available Merge Fields
               </Typography>
@@ -642,7 +642,7 @@ const ServiceAgreements: React.FC = () => {
                 Use these placeholders in your content - they will be replaced
                 with actual values:
               </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 <Chip label="[Business Name]" size="small" variant="outlined" />
                 <Chip label="[Customer Name]" size="small" variant="outlined" />
                 <Chip
@@ -744,11 +744,11 @@ const ServiceAgreements: React.FC = () => {
                         <Typography variant="body1" fontWeight="medium">
                           {q.question}
                           {q.required && (
-                            <span style={{ color: "red" }}> *</span>
+                            <span style={{ color: 'red' }}> *</span>
                           )}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
-                          Type: {q.type.replace("_", " ")}
+                          Type: {q.type.replace('_', ' ')}
                           {q.placeholder &&
                             ` • Placeholder: "${q.placeholder}"`}
                         </Typography>
@@ -775,9 +775,9 @@ const ServiceAgreements: React.FC = () => {
               variant="outlined"
               sx={{
                 p: 2,
-                bgcolor: "grey.50",
-                border: "1px dashed",
-                borderColor: "grey.400",
+                bgcolor: 'grey.50',
+                border: '1px dashed',
+                borderColor: 'grey.400',
               }}
             >
               <Typography
@@ -790,7 +790,7 @@ const ServiceAgreements: React.FC = () => {
               <Typography
                 variant="caption"
                 color="text.secondary"
-                sx={{ display: "block", mb: 2 }}
+                sx={{ display: 'block', mb: 2 }}
               >
                 Fill out the fields below and click "Add Question to List" to
                 add it.
@@ -877,14 +877,14 @@ const ServiceAgreements: React.FC = () => {
                       questions: updatedQuestions,
                     });
                     setNewQuestion({
-                      question: "",
-                      type: "TEXT",
+                      question: '',
+                      type: 'TEXT',
                       required: true,
-                      placeholder: "",
+                      placeholder: '',
                     });
                   }}
                   disabled={!newQuestion.question.trim()}
-                  sx={{ alignSelf: "flex-start" }}
+                  sx={{ alignSelf: 'flex-start' }}
                 >
                   Add Question to List
                 </Button>
@@ -899,7 +899,7 @@ const ServiceAgreements: React.FC = () => {
             variant="contained"
             disabled={!formData.content}
           >
-            {selectedTemplate ? "Save Changes" : "Create Template"}
+            {selectedTemplate ? 'Save Changes' : 'Create Template'}
           </Button>
         </DialogActions>
       </Dialog>
@@ -960,11 +960,11 @@ const ServiceAgreements: React.FC = () => {
                     <TableCell>
                       <Chip label={`v${version.version}`} size="small" />
                     </TableCell>
-                    <TableCell>{version.changeNotes || "-"}</TableCell>
+                    <TableCell>{version.changeNotes || '-'}</TableCell>
                     <TableCell>
                       {format(
                         new Date(version.createdAt),
-                        "MMM d, yyyy h:mm a"
+                        'MMM d, yyyy h:mm a'
                       )}
                     </TableCell>
                   </TableRow>
@@ -989,11 +989,11 @@ const ServiceAgreements: React.FC = () => {
         <DialogContent>
           <Paper
             variant="outlined"
-            sx={{ p: 3, mt: 1, maxHeight: "60vh", overflow: "auto" }}
+            sx={{ p: 3, mt: 1, maxHeight: '60vh', overflow: 'auto' }}
           >
             <div
               dangerouslySetInnerHTML={{
-                __html: getPreviewContent(selectedTemplate?.content || ""),
+                __html: getPreviewContent(selectedTemplate?.content || ''),
               }}
             />
           </Paper>
@@ -1011,7 +1011,7 @@ const ServiceAgreements: React.FC = () => {
         fullWidth
       >
         <DialogTitle>
-          Test Signing - {selectedTemplate?.name || "Service Agreement"}
+          Test Signing - {selectedTemplate?.name || 'Service Agreement'}
         </DialogTitle>
         <DialogContent>
           {selectedTemplate && (
@@ -1020,9 +1020,9 @@ const ServiceAgreements: React.FC = () => {
               customerName="Test Customer"
               templateId={selectedTemplate.id}
               onComplete={(agreement) => {
-                console.log("Agreement signed:", agreement);
+                console.log('Agreement signed:', agreement);
                 setTestSignDialogOpen(false);
-                setSuccess("Test agreement signed successfully!");
+                setSuccess('Test agreement signed successfully!');
               }}
               onCancel={() => setTestSignDialogOpen(false)}
             />

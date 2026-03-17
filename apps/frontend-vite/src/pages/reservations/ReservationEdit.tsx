@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   Box,
   Container,
@@ -13,16 +13,16 @@ import {
   InputLabel,
   Select,
   MenuItem,
-} from "@mui/material";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import { reservationService } from "../../services/reservationService";
-import { Reservation } from "../../services/reservationService";
-import { serviceManagement } from "../../services/serviceManagement";
-import { resourceService, type Resource } from "../../services/resourceService";
-import { Service } from "../../types/service";
-import { sortByRoomAndNumber } from "../../utils/sortingUtils";
+} from '@mui/material';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { reservationService } from '../../services/reservationService';
+import { Reservation } from '../../services/reservationService';
+import { serviceManagement } from '../../services/serviceManagement';
+import { resourceService, type Resource } from '../../services/resourceService';
+import { Service } from '../../types/service';
+import { sortByRoomAndNumber } from '../../utils/sortingUtils';
 
 export default function ReservationEdit() {
   const { id } = useParams<{ id: string }>();
@@ -36,22 +36,22 @@ export default function ReservationEdit() {
     new Set()
   );
   type ReservationStatus =
-    | "PENDING"
-    | "CONFIRMED"
-    | "CHECKED_IN"
-    | "CHECKED_OUT"
-    | "CANCELLED"
-    | "COMPLETED"
-    | "NO_SHOW";
+    | 'PENDING'
+    | 'CONFIRMED'
+    | 'CHECKED_IN'
+    | 'CHECKED_OUT'
+    | 'CANCELLED'
+    | 'COMPLETED'
+    | 'NO_SHOW';
 
   const [formData, setFormData] = useState({
     startDate: new Date(),
     endDate: new Date(),
-    status: "CONFIRMED" as ReservationStatus,
-    serviceId: "",
-    resourceId: "",
-    notes: "",
-    staffNotes: "",
+    status: 'CONFIRMED' as ReservationStatus,
+    serviceId: '',
+    resourceId: '',
+    notes: '',
+    staffNotes: '',
   });
 
   const fetchData = useCallback(async () => {
@@ -75,18 +75,18 @@ export default function ReservationEdit() {
         endDate: new Date(reservationData.endDate),
         status: reservationData.status,
         serviceId:
-          reservationData.serviceId || reservationData.service?.id || "",
+          reservationData.serviceId || reservationData.service?.id || '',
         resourceId:
           (reservationData as any).resourceId ||
           reservationData.resource?.id ||
-          "",
-        notes: reservationData.notes || "",
-        staffNotes: reservationData.staffNotes || "",
+          '',
+        notes: reservationData.notes || '',
+        staffNotes: reservationData.staffNotes || '',
       });
       setError(null);
     } catch (error) {
-      console.error("Error fetching data:", error);
-      setError("Failed to load reservation details");
+      console.error('Error fetching data:', error);
+      setError('Failed to load reservation details');
     } finally {
       setLoading(false);
     }
@@ -109,8 +109,8 @@ export default function ReservationEdit() {
       // Format dates as YYYY-MM-DD
       const formatDate = (date: Date) => {
         const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
       };
 
@@ -120,7 +120,7 @@ export default function ReservationEdit() {
         formatDate(formData.endDate)
       );
 
-      if (response?.status === "success" && response?.data?.resources) {
+      if (response?.status === 'success' && response?.data?.resources) {
         const occupied = new Set<string>();
         response.data.resources.forEach((result: any) => {
           if (!result.isAvailable) {
@@ -138,7 +138,7 @@ export default function ReservationEdit() {
         setOccupiedResourceIds(occupied);
       }
     } catch (error) {
-      console.error("Error checking availability:", error);
+      console.error('Error checking availability:', error);
       setOccupiedResourceIds(new Set());
     }
   }, [formData.startDate, formData.endDate, resources, id]);
@@ -166,8 +166,8 @@ export default function ReservationEdit() {
       );
       navigate(`/reservations/${id}`);
     } catch (error) {
-      console.error("Error updating reservation:", error);
-      setError("Failed to update reservation");
+      console.error('Error updating reservation:', error);
+      setError('Failed to update reservation');
     }
   };
 
@@ -178,7 +178,7 @@ export default function ReservationEdit() {
   if (loading) {
     return (
       <Container maxWidth="lg">
-        <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
+        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
           <CircularProgress />
         </Box>
       </Container>
@@ -189,7 +189,7 @@ export default function ReservationEdit() {
     return (
       <Container maxWidth="lg">
         <Box sx={{ mt: 4 }}>
-          <Alert severity="error">{error || "Reservation not found"}</Alert>
+          <Alert severity="error">{error || 'Reservation not found'}</Alert>
         </Box>
       </Container>
     );
@@ -205,10 +205,10 @@ export default function ReservationEdit() {
           <form onSubmit={handleSubmit}>
             <Box sx={{ mb: 3 }}>
               <Typography variant="h6" gutterBottom>
-                Service: {reservation.service?.name || "N/A"}
+                Service: {reservation.service?.name || 'N/A'}
               </Typography>
               <Typography variant="body1" gutterBottom>
-                Customer: {reservation.customer?.firstName}{" "}
+                Customer: {reservation.customer?.firstName}{' '}
                 {reservation.customer?.lastName}
               </Typography>
 
@@ -296,13 +296,13 @@ export default function ReservationEdit() {
                       value={resource.id}
                       disabled={isOccupied}
                       sx={{
-                        color: isOccupied ? "#d32f2f" : "#2e7d32",
+                        color: isOccupied ? '#d32f2f' : '#2e7d32',
                         opacity: isOccupied ? 0.6 : 1,
                       }}
                     >
-                      {isOccupied ? "🔴 " : "🟢 "}
+                      {isOccupied ? '🔴 ' : '🟢 '}
                       {resource.name} ({resource.type})
-                      {isOccupied && " (Occupied)"}
+                      {isOccupied && ' (Occupied)'}
                     </MenuItem>
                   );
                 })}
@@ -333,7 +333,7 @@ export default function ReservationEdit() {
               sx={{ mb: 3 }}
             />
 
-            <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
+            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
               <Button variant="outlined" onClick={handleCancel}>
                 Cancel
               </Button>

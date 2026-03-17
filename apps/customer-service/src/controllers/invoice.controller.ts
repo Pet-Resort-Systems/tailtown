@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-import { AppError } from "../middleware/error.middleware";
-import { TenantRequest } from "../middleware/tenant.middleware";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { AppError } from '../middleware/error.middleware';
+import { TenantRequest } from '../middleware/tenant.middleware';
 
 const prisma = new PrismaClient();
 
@@ -15,7 +15,7 @@ export const getCustomerInvoices = async (
     const { customerId } = req.params;
 
     if (!customerId) {
-      return next(new AppError("Customer ID is required", 400));
+      return next(new AppError('Customer ID is required', 400));
     }
 
     const invoices = await prisma.invoice.findMany({
@@ -25,18 +25,18 @@ export const getCustomerInvoices = async (
         payments: true,
       },
       orderBy: {
-        issueDate: "desc",
+        issueDate: 'desc',
       },
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: invoices.length,
       data: invoices,
     });
   } catch (error) {
-    console.error("Error fetching customer invoices:", error);
-    return next(new AppError("Error fetching customer invoices", 500));
+    console.error('Error fetching customer invoices:', error);
+    return next(new AppError('Error fetching customer invoices', 500));
   }
 };
 
@@ -50,7 +50,7 @@ export const getInvoiceById = async (
     const { id } = req.params;
 
     if (!id) {
-      return next(new AppError("Invoice ID is required", 400));
+      return next(new AppError('Invoice ID is required', 400));
     }
 
     const invoice = await prisma.invoice.findUnique({
@@ -76,16 +76,16 @@ export const getInvoiceById = async (
     });
 
     if (!invoice) {
-      return next(new AppError("Invoice not found", 404));
+      return next(new AppError('Invoice not found', 404));
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: invoice,
     });
   } catch (error) {
-    console.error("Error fetching invoice:", error);
-    return next(new AppError("Error fetching invoice", 500));
+    console.error('Error fetching invoice:', error);
+    return next(new AppError('Error fetching invoice', 500));
   }
 };
 
@@ -110,11 +110,11 @@ export const createInvoice = async (
     } = req.body;
 
     if (!customerId) {
-      return next(new AppError("Customer ID is required", 400));
+      return next(new AppError('Customer ID is required', 400));
     }
 
     if (!lineItems || !Array.isArray(lineItems) || lineItems.length === 0) {
-      return next(new AppError("At least one line item is required", 400));
+      return next(new AppError('At least one line item is required', 400));
     }
 
     // Get tenant ID from middleware
@@ -131,7 +131,7 @@ export const createInvoice = async (
       if (!reservation) {
         return next(
           new AppError(
-            "Reservation not found or does not belong to this tenant",
+            'Reservation not found or does not belong to this tenant',
             404
           )
         );
@@ -140,7 +140,7 @@ export const createInvoice = async (
 
     // Generate invoice number (format: INV-YYYYMMDD-XXXX)
     const date = new Date();
-    const dateStr = date.toISOString().slice(0, 10).replace(/-/g, "");
+    const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
     const randomSuffix = Math.floor(1000 + Math.random() * 9000);
     const invoiceNumber = `INV-${dateStr}-${randomSuffix}`;
 
@@ -163,7 +163,7 @@ export const createInvoice = async (
           lineItems: {
             create: lineItems.map((item: any) => ({
               tenantId,
-              type: item.type || "SERVICE",
+              type: item.type || 'SERVICE',
               description: item.description,
               quantity: parseInt(item.quantity as any, 10),
               unitPrice: parseFloat(item.unitPrice as any),
@@ -183,12 +183,12 @@ export const createInvoice = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: invoice,
     });
   } catch (error: any) {
-    console.error("Error creating invoice:", error);
-    const errorMessage = error.message || "Error creating invoice";
+    console.error('Error creating invoice:', error);
+    const errorMessage = error.message || 'Error creating invoice';
     return next(new AppError(errorMessage, 500));
   }
 };
@@ -204,7 +204,7 @@ export const updateInvoice = async (
     const { status, dueDate, notes } = req.body;
 
     if (!id) {
-      return next(new AppError("Invoice ID is required", 400));
+      return next(new AppError('Invoice ID is required', 400));
     }
 
     // Check if invoice exists
@@ -213,7 +213,7 @@ export const updateInvoice = async (
     });
 
     if (!existingInvoice) {
-      return next(new AppError("Invoice not found", 404));
+      return next(new AppError('Invoice not found', 404));
     }
 
     // Update only allowed fields
@@ -231,12 +231,12 @@ export const updateInvoice = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: updatedInvoice,
     });
   } catch (error) {
-    console.error("Error updating invoice:", error);
-    return next(new AppError("Error updating invoice", 500));
+    console.error('Error updating invoice:', error);
+    return next(new AppError('Error updating invoice', 500));
   }
 };
 
@@ -250,7 +250,7 @@ export const getCustomerAccountBalance = async (
     const { customerId } = req.params;
 
     if (!customerId) {
-      return next(new AppError("Customer ID is required", 400));
+      return next(new AppError('Customer ID is required', 400));
     }
 
     // Get all invoices for the customer
@@ -258,7 +258,7 @@ export const getCustomerAccountBalance = async (
       where: {
         customerId,
         status: {
-          notIn: ["CANCELLED", "REFUNDED"],
+          notIn: ['CANCELLED', 'REFUNDED'],
         },
       },
       include: {
@@ -275,7 +275,7 @@ export const getCustomerAccountBalance = async (
     // Calculate total payments
     const totalPaid = invoices.reduce((sum, invoice) => {
       const invoicePaid = invoice.payments.reduce((paidSum, payment) => {
-        if (payment.status === "PAID") {
+        if (payment.status === 'PAID') {
           return paidSum + payment.amount;
         }
         return paidSum;
@@ -287,8 +287,8 @@ export const getCustomerAccountBalance = async (
     const storeCredit = await prisma.payment.aggregate({
       where: {
         customerId,
-        method: "STORE_CREDIT",
-        status: "PAID",
+        method: 'STORE_CREDIT',
+        status: 'PAID',
       },
       _sum: {
         amount: true,
@@ -303,7 +303,7 @@ export const getCustomerAccountBalance = async (
     // For display purposes, we simply show store credit as a positive number that can be applied
     // rather than subtracting it from the balance automatically
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         totalInvoiced,
         totalPaid,
@@ -313,9 +313,9 @@ export const getCustomerAccountBalance = async (
       },
     });
   } catch (error) {
-    console.error("Error calculating customer account balance:", error);
+    console.error('Error calculating customer account balance:', error);
     return next(
-      new AppError("Error calculating customer account balance", 500)
+      new AppError('Error calculating customer account balance', 500)
     );
   }
 };

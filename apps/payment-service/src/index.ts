@@ -21,11 +21,15 @@ const PORT = process.env.PORT || 4005;
 app.use(helmet());
 
 // CORS configuration
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'];
-app.use(cors({
-  origin: allowedOrigins,
-  credentials: true,
-}));
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
+  'http://localhost:3000',
+];
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
 
 // Rate limiting
 const limiter = rateLimit({
@@ -70,17 +74,24 @@ app.use((req, res) => {
 });
 
 // Error handling middleware
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  logger.error('Unhandled error', {
-    error: err.message,
-    stack: err.stack,
-  });
+app.use(
+  (
+    err: any,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    logger.error('Unhandled error', {
+      error: err.message,
+      stack: err.stack,
+    });
 
-  res.status(err.status || 500).json({
-    status: 'error',
-    message: err.message || 'Internal server error',
-  });
-});
+    res.status(err.status || 500).json({
+      status: 'error',
+      message: err.message || 'Internal server error',
+    });
+  }
+);
 
 // Start server
 app.listen(PORT, () => {

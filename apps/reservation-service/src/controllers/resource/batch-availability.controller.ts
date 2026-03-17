@@ -1,13 +1,13 @@
-import { Response, NextFunction } from "express";
-import { AppError } from "../../utils/appError";
-import { TenantRequest } from "../../types/request";
+import { Response, NextFunction } from 'express';
+import { AppError } from '../../utils/appError';
+import { TenantRequest } from '../../types/request';
 import {
   ExtendedReservationWhereInput,
   ExtendedReservationStatus,
-} from "../../types/prisma-extensions";
-import { prisma } from "../../config/prisma";
-import { safeExecutePrismaQuery } from "../../utils/schemaUtils";
-import { logger } from "../../utils/logger";
+} from '../../types/prisma-extensions';
+import { prisma } from '../../config/prisma';
+import { safeExecutePrismaQuery } from '../../utils/schemaUtils';
+import { logger } from '../../utils/logger';
 
 /**
  * Check availability for multiple resources at once
@@ -22,9 +22,9 @@ export const batchCheckResourceAvailability = async (
   try {
     // Get tenant ID from request - added by tenant middleware (required)
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     if (!tenantId) {
-      return next(AppError.authorizationError("Tenant ID is required"));
+      return next(AppError.authorizationError('Tenant ID is required'));
     }
 
     // Get request body - expecting an array of resource IDs and date ranges
@@ -41,8 +41,8 @@ export const batchCheckResourceAvailability = async (
       Array.isArray(resourcesBody) && resourcesBody.length > 0
         ? resourcesBody
         : Array.isArray(resourceIds) && resourceIds.length > 0
-        ? resourceIds
-        : [];
+          ? resourceIds
+          : [];
 
     if (!Array.isArray(resources) || resources.length === 0) {
       return next(
@@ -61,7 +61,7 @@ export const batchCheckResourceAvailability = async (
       // If a single date is provided, we check just that date
       const parsedDate = new Date(date);
       if (isNaN(parsedDate.getTime())) {
-        return next(new AppError("Invalid date format", 400));
+        return next(new AppError('Invalid date format', 400));
       }
 
       // Set the start and end date to be the same date (beginning and end of day)
@@ -76,12 +76,12 @@ export const batchCheckResourceAvailability = async (
       checkEndDate = new Date(endDate);
 
       if (isNaN(checkStartDate.getTime()) || isNaN(checkEndDate.getTime())) {
-        return next(new AppError("Invalid date format", 400));
+        return next(new AppError('Invalid date format', 400));
       }
     } else {
       return next(
         new AppError(
-          "Either date or both startDate and endDate are required",
+          'Either date or both startDate and endDate are required',
           400
         )
       );
@@ -130,7 +130,7 @@ export const batchCheckResourceAvailability = async (
         });
       },
       [], // Empty array fallback if there's an error
-      "Error finding overlapping reservations for batch check"
+      'Error finding overlapping reservations for batch check'
     );
 
     // Group reservations by resource ID
@@ -149,7 +149,7 @@ export const batchCheckResourceAvailability = async (
     }));
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         checkDate: date ? date : null,
         checkStartDate: startDate ? startDate : checkStartDate.toISOString(),
@@ -158,7 +158,7 @@ export const batchCheckResourceAvailability = async (
       },
     });
   } catch (error: any) {
-    logger.error("Error batch checking resource availability", {
+    logger.error('Error batch checking resource availability', {
       resourceCount:
         req.body?.resources?.length || req.body?.resourceIds?.length,
       tenantId: req.tenantId,
@@ -166,20 +166,20 @@ export const batchCheckResourceAvailability = async (
     });
     // More graceful error handling - return an empty result instead of a 500 error
     return res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         resources: (Array.isArray(req.body?.resources) &&
         req.body.resources.length > 0
           ? req.body.resources
           : Array.isArray(req.body?.resourceIds)
-          ? req.body.resourceIds
-          : []
+            ? req.body.resourceIds
+            : []
         ).map((id: string) => ({
           resourceId: id,
           isAvailable: true, // Default to available if we can't determine
           occupyingReservations: [],
         })),
-        message: "Batch availability check completed with limited data",
+        message: 'Batch availability check completed with limited data',
       },
     });
   }

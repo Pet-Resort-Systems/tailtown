@@ -11,20 +11,20 @@
  * The 4 legitimate cases can be manually re-added if needed after staff review.
  */
 
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-const TENANT_ID = "b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05";
+const TENANT_ID = 'b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05';
 
 async function cleanupDoNotBookFlags() {
-  console.log("Starting cleanup of DO_NOT_BOOK flags...\n");
+  console.log('Starting cleanup of DO_NOT_BOOK flags...\n');
 
   // Get all pets with DO_NOT_BOOK in specialRequirements
   const petsWithFlag = await prisma.pet.findMany({
     where: {
       tenantId: TENANT_ID,
       specialRequirements: {
-        has: "DO_NOT_BOOK",
+        has: 'DO_NOT_BOOK',
       },
     },
     select: {
@@ -48,7 +48,7 @@ async function cleanupDoNotBookFlags() {
     try {
       // Remove DO_NOT_BOOK from specialRequirements
       const updatedRequirements = pet.specialRequirements.filter(
-        (req) => req !== "DO_NOT_BOOK"
+        (req) => req !== 'DO_NOT_BOOK'
       );
 
       await prisma.pet.update({
@@ -77,17 +77,17 @@ async function cleanupDoNotBookFlags() {
     }
   }
 
-  console.log("\n=== Summary ===");
+  console.log('\n=== Summary ===');
   console.log(`Total pets with DO_NOT_BOOK flag: ${petsWithFlag.length}`);
   console.log(`Successfully removed: ${removedCount}`);
   console.log(`Errors: ${errorCount}`);
   console.log('\nNote: If any pets legitimately need "do not book" warnings,');
-  console.log("they should be manually reviewed and flagged appropriately.");
+  console.log('they should be manually reviewed and flagged appropriately.');
 
   await prisma.$disconnect();
 }
 
 cleanupDoNotBookFlags().catch((error) => {
-  console.error("Script failed:", error);
+  console.error('Script failed:', error);
   process.exit(1);
 });

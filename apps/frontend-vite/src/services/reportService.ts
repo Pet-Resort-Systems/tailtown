@@ -3,7 +3,7 @@
  * API calls for all reporting functionality
  */
 
-import { customerApi } from "./api";
+import { customerApi } from './api';
 
 // ============================================================================
 // Sales Reports
@@ -124,7 +124,7 @@ export const getFinancialRefundsReport = async (
 };
 
 export const getReconciliationReport = async (date?: string) => {
-  const queryParam = date ? `?date=${date}` : "";
+  const queryParam = date ? `?date=${date}` : '';
   const response = await customerApi.get(
     `/api/reports/financial/reconciliation${queryParam}`
   );
@@ -226,19 +226,19 @@ export const exportReportCSV = async (reportData: any) => {
   // Convert report data to CSV
   const headers = Object.keys(reportData.data[0] || {});
   const csvContent = [
-    headers.join(","),
+    headers.join(','),
     ...reportData.data.map((row: any) =>
-      headers.map((header) => JSON.stringify(row[header] || "")).join(",")
+      headers.map((header) => JSON.stringify(row[header] || '')).join(',')
     ),
-  ].join("\n");
+  ].join('\n');
 
   // Create download
-  const blob = new Blob([csvContent], { type: "text/csv" });
+  const blob = new Blob([csvContent], { type: 'text/csv' });
   const url = window.URL.createObjectURL(blob);
-  const link = document.createElement("a");
+  const link = document.createElement('a');
   link.href = url;
   link.download = `${reportData.reportType}_${
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split('T')[0]
   }.csv`;
   link.click();
   window.URL.revokeObjectURL(url);
@@ -246,9 +246,9 @@ export const exportReportCSV = async (reportData: any) => {
 
 export const exportReportPDF = async (reportData: any) => {
   // Simple HTML-based PDF export using print dialog
-  const printWindow = window.open("", "_blank");
+  const printWindow = window.open('', '_blank');
   if (!printWindow) {
-    alert("Please allow popups to export PDF");
+    alert('Please allow popups to export PDF');
     return;
   }
 
@@ -256,7 +256,7 @@ export const exportReportPDF = async (reportData: any) => {
     <!DOCTYPE html>
     <html>
     <head>
-      <title>${reportData.title || "Report"}</title>
+      <title>${reportData.title || 'Report'}</title>
       <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         h1 { color: #1976d2; }
@@ -271,7 +271,7 @@ export const exportReportPDF = async (reportData: any) => {
       </style>
     </head>
     <body>
-      <h1>${reportData.title || "Report"}</h1>
+      <h1>${reportData.title || 'Report'}</h1>
       <p><strong>Generated:</strong> ${new Date(
         reportData.generatedAt
       ).toLocaleString()}</p>
@@ -285,21 +285,21 @@ export const exportReportPDF = async (reportData: any) => {
             .map(
               ([key, value]) => `
             <div class="summary-item">
-              <strong>${key.replace(/([A-Z])/g, " $1").trim()}:</strong> ${
-                (typeof value === "number" &&
-                  key.toLowerCase().includes("revenue")) ||
-                key.toLowerCase().includes("total") ||
-                key.toLowerCase().includes("amount")
+              <strong>${key.replace(/([A-Z])/g, ' $1').trim()}:</strong> ${
+                (typeof value === 'number' &&
+                  key.toLowerCase().includes('revenue')) ||
+                key.toLowerCase().includes('total') ||
+                key.toLowerCase().includes('amount')
                   ? formatCurrency(value as number)
                   : value
               }
             </div>
           `
             )
-            .join("")}
+            .join('')}
         </div>
       `
-          : ""
+          : ''
       }
       
       ${
@@ -310,7 +310,7 @@ export const exportReportPDF = async (reportData: any) => {
             <tr>
               ${Object.keys(reportData.data[0])
                 .map((key) => `<th>${key}</th>`)
-                .join("")}
+                .join('')}
             </tr>
           </thead>
           <tbody>
@@ -320,15 +320,15 @@ export const exportReportPDF = async (reportData: any) => {
               <tr>
                 ${Object.values(row)
                   .map((value) => `<td>${value}</td>`)
-                  .join("")}
+                  .join('')}
               </tr>
             `
               )
-              .join("")}
+              .join('')}
           </tbody>
         </table>
       `
-          : "<p>No data available</p>"
+          : '<p>No data available</p>'
       }
       
       <button onclick="window.print()" style="margin-top: 20px; padding: 10px 20px; background: #1976d2; color: white; border: none; cursor: pointer;">
@@ -347,9 +347,9 @@ export const exportReportPDF = async (reportData: any) => {
 // ============================================================================
 
 export const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
     minimumFractionDigits: 2,
   }).format(amount);
 };
@@ -359,9 +359,9 @@ export const formatPercentage = (value: number): string => {
 };
 
 export const formatDate = (date: string): string => {
-  return new Date(date).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+  return new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   });
 };

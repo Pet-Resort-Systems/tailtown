@@ -1,5 +1,5 @@
-import { Service } from "../types/service";
-import api from "./api";
+import { Service } from '../types/service';
+import api from './api';
 
 export const serviceManagement = {
   // Get all services
@@ -8,7 +8,7 @@ export const serviceManagement = {
     limit?: number;
     page?: number;
   }) => {
-    const response = await api.get("/api/services", { params });
+    const response = await api.get('/api/services', { params });
     return response.data;
   },
 
@@ -22,15 +22,15 @@ export const serviceManagement = {
     } catch (error: any) {
       // If the service is not found or inactive, handle gracefully
       if (error.response && error.response.status === 404) {
-        throw new Error("Service not found or has been deleted");
+        throw new Error('Service not found or has been deleted');
       }
       throw error;
     }
   },
 
   // Create a new service
-  createService: async (serviceData: Omit<Service, "id">) => {
-    const response = await api.post("/api/services", serviceData);
+  createService: async (serviceData: Omit<Service, 'id'>) => {
+    const response = await api.post('/api/services', serviceData);
     return response.data;
   },
 
@@ -72,7 +72,7 @@ export const serviceManagement = {
       return response.data;
     } catch (error: any) {
       // Handle specific error cases
-      let errorMessage = "Failed to update service";
+      let errorMessage = 'Failed to update service';
 
       if (
         error.response &&
@@ -108,12 +108,12 @@ export const serviceManagement = {
         return {
           ...deactivateResponse.data,
           message:
-            "Service has been deactivated instead of deleted because it has reservations",
+            'Service has been deactivated instead of deleted because it has reservations',
         };
       }
 
       // Handle other error cases
-      let errorMessage = "Failed to delete service";
+      let errorMessage = 'Failed to delete service';
 
       if (
         error.response &&
@@ -142,7 +142,7 @@ export const serviceManagement = {
       const serviceDetails = await api.get(`/api/services/${id}`);
 
       // Extract service category
-      let serviceCategory = "";
+      let serviceCategory = '';
       if (serviceDetails.data) {
         if (serviceDetails.data.category) {
           serviceCategory = serviceDetails.data.category;
@@ -158,7 +158,7 @@ export const serviceManagement = {
       const response = await api.get(`/api/services/${id}/add-ons`);
 
       // If this is a grooming service, we should have add-ons
-      if (serviceCategory === "GROOMING") {
+      if (serviceCategory === 'GROOMING') {
       }
 
       // Handle different response formats
@@ -182,18 +182,18 @@ export const serviceManagement = {
         return response.data;
       }
 
-      console.warn("serviceManagement: No add-ons data found in response");
+      console.warn('serviceManagement: No add-ons data found in response');
       return [];
     } catch (error: any) {
-      console.error("serviceManagement: Error fetching add-ons:", error);
-      console.error("serviceManagement: Error details:", error.message);
+      console.error('serviceManagement: Error fetching add-ons:', error);
+      console.error('serviceManagement: Error details:', error.message);
       if (error.response) {
         console.error(
-          "serviceManagement: Error response status:",
+          'serviceManagement: Error response status:',
           error.response.status
         );
         console.error(
-          "serviceManagement: Error response data:",
+          'serviceManagement: Error response data:',
           error.response.data
         );
       }
@@ -226,7 +226,7 @@ export const serviceManagement = {
 
   // Get only active services
   getActiveServices: async () => {
-    const response = await api.get("/api/services/active");
+    const response = await api.get('/api/services/active');
     return response.data;
   },
 };

@@ -8,7 +8,7 @@
  * - Activate/deactivate packages
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -34,20 +34,20 @@ import {
   InputAdornment,
   Switch,
   FormControlLabel,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
   ConfirmationNumber as PassIcon,
   Savings as SavingsIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import {
   daycarePassService,
   DaycarePassPackage,
   CreatePackageRequest,
-} from "../../services/daycarePassService";
+} from '../../services/daycarePassService';
 
 export const DaycarePassManagement: React.FC = () => {
   const [packages, setPackages] = useState<DaycarePassPackage[]>([]);
@@ -64,12 +64,14 @@ export const DaycarePassManagement: React.FC = () => {
   const [success, setSuccess] = useState<string | null>(null);
   const [showInactive, setShowInactive] = useState(false);
 
-  useEffect(() => {
+  useEffect(
+    () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      loadPackages();
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    loadPackages();
-  },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  [showInactive]);
+    [showInactive]
+  );
 
   const loadPackages = async () => {
     try {
@@ -77,7 +79,7 @@ export const DaycarePassManagement: React.FC = () => {
       const data = await daycarePassService.getPackages(showInactive);
       setPackages(data);
     } catch (err) {
-      setError("Failed to load packages");
+      setError('Failed to load packages');
     } finally {
       setLoading(false);
     }
@@ -134,13 +136,13 @@ export const DaycarePassManagement: React.FC = () => {
 
     // Auto-calculate price when relevant fields change
     if (
-      ["passCount", "regularPricePerDay", "discountPercent"].includes(field)
+      ['passCount', 'regularPricePerDay', 'discountPercent'].includes(field)
     ) {
-      const passCount = field === "passCount" ? value : formData.passCount;
+      const passCount = field === 'passCount' ? value : formData.passCount;
       const regularPrice =
-        field === "regularPricePerDay" ? value : formData.regularPricePerDay;
+        field === 'regularPricePerDay' ? value : formData.regularPricePerDay;
       const discount =
-        field === "discountPercent" ? value : formData.discountPercent;
+        field === 'discountPercent' ? value : formData.discountPercent;
 
       if (passCount && regularPrice && discount !== undefined) {
         const regularTotal = passCount * regularPrice;
@@ -164,17 +166,17 @@ export const DaycarePassManagement: React.FC = () => {
         !formData.regularPricePerDay ||
         !formData.validityDays
       ) {
-        setError("Please fill in all required fields");
+        setError('Please fill in all required fields');
         return;
       }
 
       if (formData.passCount < 1) {
-        setError("Pass count must be at least 1");
+        setError('Pass count must be at least 1');
         return;
       }
 
       if (formData.validityDays < 1) {
-        setError("Validity days must be at least 1");
+        setError('Validity days must be at least 1');
         return;
       }
 
@@ -183,18 +185,18 @@ export const DaycarePassManagement: React.FC = () => {
           editingPackage.id,
           formData as CreatePackageRequest
         );
-        setSuccess("Package updated successfully");
+        setSuccess('Package updated successfully');
       } else {
         await daycarePassService.createPackage(
           formData as CreatePackageRequest
         );
-        setSuccess("Package created successfully");
+        setSuccess('Package created successfully');
       }
 
       handleCloseDialog();
       loadPackages();
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to save package");
+      setError(err.response?.data?.message || 'Failed to save package');
     }
   };
 
@@ -204,32 +206,32 @@ export const DaycarePassManagement: React.FC = () => {
         isActive: !pkg.isActive,
       });
       setSuccess(
-        `Package ${pkg.isActive ? "deactivated" : "activated"} successfully`
+        `Package ${pkg.isActive ? 'deactivated' : 'activated'} successfully`
       );
       loadPackages();
     } catch (err) {
-      setError("Failed to update package");
+      setError('Failed to update package');
     }
   };
 
   const handleDeletePackage = async (id: string) => {
-    if (!window.confirm("Are you sure you want to deactivate this package?")) {
+    if (!window.confirm('Are you sure you want to deactivate this package?')) {
       return;
     }
 
     try {
       await daycarePassService.deletePackage(id);
-      setSuccess("Package deactivated successfully");
+      setSuccess('Package deactivated successfully');
       loadPackages();
     } catch (err) {
-      setError("Failed to deactivate package");
+      setError('Failed to deactivate package');
     }
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
     }).format(amount);
   };
 
@@ -238,9 +240,9 @@ export const DaycarePassManagement: React.FC = () => {
       {/* Header */}
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           mb: 3,
         }}
       >
@@ -248,7 +250,7 @@ export const DaycarePassManagement: React.FC = () => {
           <Typography
             variant="h4"
             gutterBottom
-            sx={{ display: "flex", alignItems: "center", gap: 1 }}
+            sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
           >
             <PassIcon color="primary" />
             Daycare Pass Packages
@@ -258,7 +260,7 @@ export const DaycarePassManagement: React.FC = () => {
             discounted daycare
           </Typography>
         </Box>
-        <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
           <FormControlLabel
             control={
               <Switch
@@ -348,7 +350,7 @@ export const DaycarePassManagement: React.FC = () => {
                       <Typography
                         variant="body2"
                         color="text.secondary"
-                        sx={{ textDecoration: "line-through" }}
+                        sx={{ textDecoration: 'line-through' }}
                       >
                         {formatCurrency(pkg.regularPricePerDay * pkg.passCount)}
                       </Typography>
@@ -377,9 +379,9 @@ export const DaycarePassManagement: React.FC = () => {
                     </TableCell>
                     <TableCell align="center">
                       <Chip
-                        label={pkg.isActive ? "Active" : "Inactive"}
+                        label={pkg.isActive ? 'Active' : 'Inactive'}
                         size="small"
-                        color={pkg.isActive ? "success" : "default"}
+                        color={pkg.isActive ? 'success' : 'default'}
                       />
                     </TableCell>
                     <TableCell align="center">
@@ -391,11 +393,11 @@ export const DaycarePassManagement: React.FC = () => {
                           <EditIcon />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title={pkg.isActive ? "Deactivate" : "Activate"}>
+                      <Tooltip title={pkg.isActive ? 'Deactivate' : 'Activate'}>
                         <IconButton
                           size="small"
                           onClick={() => handleToggleActive(pkg)}
-                          color={pkg.isActive ? "default" : "success"}
+                          color={pkg.isActive ? 'default' : 'success'}
                         >
                           <DeleteIcon />
                         </IconButton>
@@ -417,7 +419,7 @@ export const DaycarePassManagement: React.FC = () => {
         fullWidth
       >
         <DialogTitle>
-          {editingPackage ? "Edit Package" : "Create New Package"}
+          {editingPackage ? 'Edit Package' : 'Create New Package'}
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
@@ -426,8 +428,8 @@ export const DaycarePassManagement: React.FC = () => {
                 label="Package Name"
                 fullWidth
                 required
-                value={formData.name || ""}
-                onChange={(e) => handleFieldChange("name", e.target.value)}
+                value={formData.name || ''}
+                onChange={(e) => handleFieldChange('name', e.target.value)}
                 placeholder="e.g., 5-Day Pass, 10-Day Pass"
               />
             </Grid>
@@ -437,9 +439,9 @@ export const DaycarePassManagement: React.FC = () => {
                 fullWidth
                 multiline
                 rows={2}
-                value={formData.description || ""}
+                value={formData.description || ''}
                 onChange={(e) =>
-                  handleFieldChange("description", e.target.value)
+                  handleFieldChange('description', e.target.value)
                 }
                 placeholder="e.g., Save 10% with our 5-day daycare pass"
               />
@@ -450,9 +452,9 @@ export const DaycarePassManagement: React.FC = () => {
                 type="number"
                 fullWidth
                 required
-                value={formData.passCount || ""}
+                value={formData.passCount || ''}
                 onChange={(e) =>
-                  handleFieldChange("passCount", parseInt(e.target.value) || 0)
+                  handleFieldChange('passCount', parseInt(e.target.value) || 0)
                 }
                 inputProps={{ min: 1 }}
               />
@@ -463,10 +465,10 @@ export const DaycarePassManagement: React.FC = () => {
                 type="number"
                 fullWidth
                 required
-                value={formData.regularPricePerDay || ""}
+                value={formData.regularPricePerDay || ''}
                 onChange={(e) =>
                   handleFieldChange(
-                    "regularPricePerDay",
+                    'regularPricePerDay',
                     parseFloat(e.target.value) || 0
                   )
                 }
@@ -486,7 +488,7 @@ export const DaycarePassManagement: React.FC = () => {
                 value={formData.discountPercent || 0}
                 onChange={(e) =>
                   handleFieldChange(
-                    "discountPercent",
+                    'discountPercent',
                     parseFloat(e.target.value) || 0
                   )
                 }
@@ -504,9 +506,9 @@ export const DaycarePassManagement: React.FC = () => {
                 type="number"
                 fullWidth
                 required
-                value={formData.price || ""}
+                value={formData.price || ''}
                 onChange={(e) =>
-                  handleFieldChange("price", parseFloat(e.target.value) || 0)
+                  handleFieldChange('price', parseFloat(e.target.value) || 0)
                 }
                 InputProps={{
                   startAdornment: (
@@ -523,10 +525,10 @@ export const DaycarePassManagement: React.FC = () => {
                 type="number"
                 fullWidth
                 required
-                value={formData.validityDays || ""}
+                value={formData.validityDays || ''}
                 onChange={(e) =>
                   handleFieldChange(
-                    "validityDays",
+                    'validityDays',
                     parseInt(e.target.value) || 0
                   )
                 }
@@ -541,7 +543,7 @@ export const DaycarePassManagement: React.FC = () => {
                 fullWidth
                 value={formData.sortOrder || 0}
                 onChange={(e) =>
-                  handleFieldChange("sortOrder", parseInt(e.target.value) || 0)
+                  handleFieldChange('sortOrder', parseInt(e.target.value) || 0)
                 }
                 inputProps={{ min: 0 }}
                 helperText="Lower numbers appear first"
@@ -556,8 +558,8 @@ export const DaycarePassManagement: React.FC = () => {
                   <Card
                     variant="outlined"
                     sx={{
-                      bgcolor: "success.light",
-                      color: "success.contrastText",
+                      bgcolor: 'success.light',
+                      color: 'success.contrastText',
                     }}
                   >
                     <CardContent>
@@ -565,18 +567,18 @@ export const DaycarePassManagement: React.FC = () => {
                         Customer Savings Preview
                       </Typography>
                       <Typography variant="body2">
-                        Regular:{" "}
+                        Regular:{' '}
                         {formatCurrency(
                           formData.regularPricePerDay * formData.passCount
-                        )}{" "}
+                        )}{' '}
                         → Package: {formatCurrency(formData.price)}
                       </Typography>
                       <Typography variant="h6">
-                        Save{" "}
+                        Save{' '}
                         {formatCurrency(
                           formData.regularPricePerDay * formData.passCount -
                             formData.price
-                        )}{" "}
+                        )}{' '}
                         ({formData.discountPercent}% off)
                       </Typography>
                     </CardContent>
@@ -588,7 +590,7 @@ export const DaycarePassManagement: React.FC = () => {
         <DialogActions>
           <Button onClick={handleCloseDialog}>Cancel</Button>
           <Button variant="contained" onClick={handleSavePackage}>
-            {editingPackage ? "Update" : "Create"}
+            {editingPackage ? 'Update' : 'Create'}
           </Button>
         </DialogActions>
       </Dialog>

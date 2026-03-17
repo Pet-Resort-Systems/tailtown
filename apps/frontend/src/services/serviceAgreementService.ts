@@ -1,13 +1,13 @@
-import { reservationApi } from "./api";
+import { reservationApi } from './api';
 
 // Types
 export type QuestionType =
-  | "TEXT"
-  | "NUMBER"
-  | "YES_NO"
-  | "MULTIPLE_CHOICE"
-  | "CURRENCY"
-  | "LONG_TEXT";
+  | 'TEXT'
+  | 'NUMBER'
+  | 'YES_NO'
+  | 'MULTIPLE_CHOICE'
+  | 'CURRENCY'
+  | 'LONG_TEXT';
 
 export interface CustomQuestion {
   id: string;
@@ -48,7 +48,7 @@ export interface ServiceAgreementVersion {
   createdAt: string;
 }
 
-export type SignatureMethod = "device" | "terminal" | "paper";
+export type SignatureMethod = 'device' | 'terminal' | 'paper';
 
 export interface QuestionResponse {
   questionId: string;
@@ -137,9 +137,9 @@ export interface CustomerAgreementStatus {
 export const getAllTemplates = async (
   activeOnly = false
 ): Promise<ServiceAgreementTemplate[]> => {
-  const params = activeOnly ? { active: "true" } : {};
+  const params = activeOnly ? { active: 'true' } : {};
   const response = await reservationApi.get(
-    "/api/service-agreement-templates",
+    '/api/service-agreement-templates',
     {
       params,
     }
@@ -166,7 +166,7 @@ export const getDefaultTemplate =
   async (): Promise<ServiceAgreementTemplate | null> => {
     try {
       const response = await reservationApi.get(
-        "/api/service-agreement-templates/default"
+        '/api/service-agreement-templates/default'
       );
       return response.data.data;
     } catch (error: any) {
@@ -184,7 +184,7 @@ export const createTemplate = async (
   data: CreateTemplateData
 ): Promise<ServiceAgreementTemplate> => {
   const response = await reservationApi.post(
-    "/api/service-agreement-templates",
+    '/api/service-agreement-templates',
     data
   );
   return response.data.data;
@@ -248,7 +248,7 @@ export const createAgreement = async (
     userAgent: navigator.userAgent,
   };
   const response = await reservationApi.post(
-    "/api/service-agreements",
+    '/api/service-agreements',
     enrichedData
   );
   return response.data.data;
@@ -306,7 +306,7 @@ export const getAllAgreements = async (options?: {
     params.search = options.search;
   }
 
-  const response = await reservationApi.get("/api/service-agreements", {
+  const response = await reservationApi.get('/api/service-agreements', {
     params,
   });
   return {

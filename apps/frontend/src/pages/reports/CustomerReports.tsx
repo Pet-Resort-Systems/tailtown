@@ -3,7 +3,7 @@
  * Displays customer analytics and reports
  */
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -25,12 +25,12 @@ import {
   CircularProgress,
   Alert,
   Chip,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   People as PeopleIcon,
   GetApp as ExportIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import {
   formatCurrency,
   formatPercentage,
@@ -40,24 +40,24 @@ import {
   getCustomerDemographicsReport,
   getCustomerInactiveReport,
   exportReportCSV,
-} from "../../services/reportService";
+} from '../../services/reportService';
 
 type ReportType =
-  | "acquisition"
-  | "retention"
-  | "lifetime-value"
-  | "demographics"
-  | "inactive";
+  | 'acquisition'
+  | 'retention'
+  | 'lifetime-value'
+  | 'demographics'
+  | 'inactive';
 
 const CustomerReports: React.FC = () => {
-  const [reportType, setReportType] = useState<ReportType>("lifetime-value");
+  const [reportType, setReportType] = useState<ReportType>('lifetime-value');
   const [startDate, setStartDate] = useState(
     new Date(new Date().setMonth(new Date().getMonth() - 1))
       .toISOString()
-      .split("T")[0]
+      .split('T')[0]
   );
   const [endDate, setEndDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split('T')[0]
   );
   const [inactiveDays, setInactiveDays] = useState(90);
   const [limit, setLimit] = useState(50);
@@ -72,19 +72,19 @@ const CustomerReports: React.FC = () => {
 
       let response;
       switch (reportType) {
-        case "acquisition":
+        case 'acquisition':
           response = await getCustomerAcquisitionReport(startDate, endDate);
           break;
-        case "retention":
+        case 'retention':
           response = await getCustomerRetentionReport(startDate, endDate);
           break;
-        case "lifetime-value":
+        case 'lifetime-value':
           response = await getCustomerLifetimeValueReport(limit);
           break;
-        case "demographics":
+        case 'demographics':
           response = await getCustomerDemographicsReport();
           break;
-        case "inactive":
+        case 'inactive':
           response = await getCustomerInactiveReport(inactiveDays);
           break;
       }
@@ -93,8 +93,8 @@ const CustomerReports: React.FC = () => {
       const data = response?.data || response;
       setReportData(data);
     } catch (err: any) {
-      console.error("Error loading report:", err);
-      setError(err.response?.data?.message || "Failed to load report");
+      console.error('Error loading report:', err);
+      setError(err.response?.data?.message || 'Failed to load report');
     } finally {
       setLoading(false);
     }
@@ -110,7 +110,7 @@ const CustomerReports: React.FC = () => {
     if (!reportData?.summary) return null;
 
     switch (reportType) {
-      case "acquisition":
+      case 'acquisition':
         return (
           <>
             <Grid item xs={12} sm={4}>
@@ -152,7 +152,7 @@ const CustomerReports: React.FC = () => {
           </>
         );
 
-      case "retention":
+      case 'retention':
         return (
           <>
             <Grid item xs={12} sm={4}>
@@ -194,7 +194,7 @@ const CustomerReports: React.FC = () => {
           </>
         );
 
-      case "lifetime-value":
+      case 'lifetime-value':
         return (
           <>
             <Grid item xs={12} sm={4}>
@@ -238,7 +238,7 @@ const CustomerReports: React.FC = () => {
           </>
         );
 
-      case "inactive":
+      case 'inactive':
         return (
           <>
             <Grid item xs={12} sm={4}>
@@ -299,13 +299,13 @@ const CustomerReports: React.FC = () => {
       <Box
         sx={{
           mb: 3,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
         }}
       >
         <Typography variant="h5">
-          <PeopleIcon sx={{ mr: 1, verticalAlign: "middle" }} />
+          <PeopleIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
           Customer Reports
         </Typography>
         <Button
@@ -338,7 +338,7 @@ const CustomerReports: React.FC = () => {
             </FormControl>
           </Grid>
 
-          {(reportType === "acquisition" || reportType === "retention") && (
+          {(reportType === 'acquisition' || reportType === 'retention') && (
             <>
               <Grid item xs={12} sm={3}>
                 <TextField
@@ -365,7 +365,7 @@ const CustomerReports: React.FC = () => {
             </>
           )}
 
-          {reportType === "lifetime-value" && (
+          {reportType === 'lifetime-value' && (
             <Grid item xs={12} sm={3}>
               <TextField
                 fullWidth
@@ -379,7 +379,7 @@ const CustomerReports: React.FC = () => {
             </Grid>
           )}
 
-          {reportType === "inactive" && (
+          {reportType === 'inactive' && (
             <Grid item xs={12} sm={3}>
               <TextField
                 fullWidth
@@ -415,7 +415,7 @@ const CustomerReports: React.FC = () => {
 
       {/* Loading */}
       {loading && (
-        <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
           <CircularProgress />
         </Box>
       )}
@@ -435,19 +435,19 @@ const CustomerReports: React.FC = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell>Customer Name</TableCell>
-                    {reportType === "lifetime-value" ? (
+                    {reportType === 'lifetime-value' ? (
                       <TableCell>Pets</TableCell>
                     ) : (
                       <TableCell>Email</TableCell>
                     )}
-                    {reportType === "lifetime-value" && (
+                    {reportType === 'lifetime-value' && (
                       <>
                         <TableCell align="right">Total Spent</TableCell>
                         <TableCell align="right">Visits</TableCell>
                         <TableCell align="right">Avg Transaction</TableCell>
                       </>
                     )}
-                    {reportType === "inactive" && (
+                    {reportType === 'inactive' && (
                       <>
                         <TableCell align="right">Last Visit</TableCell>
                         <TableCell align="right">Days Inactive</TableCell>
@@ -460,13 +460,13 @@ const CustomerReports: React.FC = () => {
                   {reportData.data && reportData.data.length > 0 ? (
                     reportData.data.map((row: any, index: number) => (
                       <TableRow key={index}>
-                        <TableCell>{row.customerName || "-"}</TableCell>
-                        {reportType === "lifetime-value" ? (
-                          <TableCell>{row.petNames || "-"}</TableCell>
+                        <TableCell>{row.customerName || '-'}</TableCell>
+                        {reportType === 'lifetime-value' ? (
+                          <TableCell>{row.petNames || '-'}</TableCell>
                         ) : (
-                          <TableCell>{row.email || "-"}</TableCell>
+                          <TableCell>{row.email || '-'}</TableCell>
                         )}
-                        {reportType === "lifetime-value" && (
+                        {reportType === 'lifetime-value' && (
                           <>
                             <TableCell align="right">
                               {formatCurrency(row.totalSpent || 0)}
@@ -479,16 +479,16 @@ const CustomerReports: React.FC = () => {
                             </TableCell>
                           </>
                         )}
-                        {reportType === "inactive" && (
+                        {reportType === 'inactive' && (
                           <>
                             <TableCell align="right">
-                              {row.lastVisit || "-"}
+                              {row.lastVisit || '-'}
                             </TableCell>
                             <TableCell align="right">
                               <Chip
                                 label={`${row.daysInactive || 0} days`}
                                 color={
-                                  row.daysInactive > 180 ? "error" : "warning"
+                                  row.daysInactive > 180 ? 'error' : 'warning'
                                 }
                                 size="small"
                               />
@@ -518,7 +518,7 @@ const CustomerReports: React.FC = () => {
 
       {/* Instructions */}
       {!loading && !reportData && !error && (
-        <Paper sx={{ p: 4, textAlign: "center" }}>
+        <Paper sx={{ p: 4, textAlign: 'center' }}>
           <Typography variant="h6" gutterBottom>
             Customer Reports
           </Typography>

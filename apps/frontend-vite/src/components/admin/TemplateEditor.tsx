@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   TextField,
@@ -16,11 +16,11 @@ import {
   FormControl,
   InputLabel,
   Grid,
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
-import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
 interface TemplateEditorProps {
   template: any;
@@ -29,12 +29,12 @@ interface TemplateEditorProps {
 }
 
 const QUESTION_TYPES = [
-  { value: "TEXT", label: "Short Text" },
-  { value: "LONG_TEXT", label: "Long Text" },
-  { value: "YES_NO", label: "Yes/No" },
-  { value: "MULTIPLE_CHOICE", label: "Multiple Choice" },
-  { value: "TIME", label: "Time" },
-  { value: "DATE", label: "Date" },
+  { value: 'TEXT', label: 'Short Text' },
+  { value: 'LONG_TEXT', label: 'Long Text' },
+  { value: 'YES_NO', label: 'Yes/No' },
+  { value: 'MULTIPLE_CHOICE', label: 'Multiple Choice' },
+  { value: 'TIME', label: 'Time' },
+  { value: 'DATE', label: 'Date' },
 ];
 
 const TemplateEditor: React.FC<TemplateEditorProps> = ({
@@ -50,8 +50,8 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
 
   const handleAddSection = () => {
     const newSection = {
-      title: "New Section",
-      description: "",
+      title: 'New Section',
+      description: '',
       order: (template.sections?.length || 0) + 1,
       questions: [],
     };
@@ -76,12 +76,12 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
 
   const handleAddQuestion = (sectionIndex: number) => {
     const newQuestion = {
-      questionText: "New Question",
-      questionType: "TEXT",
+      questionText: 'New Question',
+      questionType: 'TEXT',
       isRequired: false,
       order: (template.sections[sectionIndex].questions?.length || 0) + 1,
-      placeholder: "",
-      helpText: "",
+      placeholder: '',
+      helpText: '',
       options: null,
     };
     const updated = [...template.sections];
@@ -121,7 +121,7 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
     const updated = [...template.sections];
     const question = updated[sectionIndex].questions[questionIndex];
     const choices = question.options?.choices || [];
-    question.options = { choices: [...choices, "New Option"] };
+    question.options = { choices: [...choices, 'New Option'] };
     setTemplate({ ...template, sections: updated });
   };
 
@@ -154,7 +154,7 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
     <Box sx={{ p: 3 }}>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h5" gutterBottom>
-          {template.id ? "Edit Template" : "Create Template"}
+          {template.id ? 'Edit Template' : 'Create Template'}
         </Typography>
 
         <Grid container spacing={2} sx={{ mt: 2 }}>
@@ -163,17 +163,17 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
               fullWidth
               label="Template Name"
               value={template.name}
-              onChange={(e) => handleTemplateChange("name", e.target.value)}
+              onChange={(e) => handleTemplateChange('name', e.target.value)}
               required
             />
           </Grid>
           <Grid item xs={12} md={6}>
             <Box
               sx={{
-                display: "flex",
+                display: 'flex',
                 gap: 2,
-                alignItems: "center",
-                height: "100%",
+                alignItems: 'center',
+                height: '100%',
               }}
             >
               <FormControlLabel
@@ -181,7 +181,7 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
                   <Switch
                     checked={template.isDefault}
                     onChange={(e) =>
-                      handleTemplateChange("isDefault", e.target.checked)
+                      handleTemplateChange('isDefault', e.target.checked)
                     }
                   />
                 }
@@ -192,7 +192,7 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
                   <Switch
                     checked={template.isActive}
                     onChange={(e) =>
-                      handleTemplateChange("isActive", e.target.checked)
+                      handleTemplateChange('isActive', e.target.checked)
                     }
                   />
                 }
@@ -208,7 +208,7 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
               label="Description"
               value={template.description}
               onChange={(e) =>
-                handleTemplateChange("description", e.target.value)
+                handleTemplateChange('description', e.target.value)
               }
             />
           </Grid>
@@ -218,9 +218,9 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
       <Box sx={{ mb: 3 }}>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             mb: 2,
           }}
         >
@@ -238,9 +238,9 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
           <Accordion key={sectionIndex} defaultExpanded={sectionIndex === 0}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Box
-                sx={{ display: "flex", alignItems: "center", width: "100%" }}
+                sx={{ display: 'flex', alignItems: 'center', width: '100%' }}
               >
-                <DragIndicatorIcon sx={{ mr: 1, color: "text.secondary" }} />
+                <DragIndicatorIcon sx={{ mr: 1, color: 'text.secondary' }} />
                 <Typography sx={{ flexGrow: 1 }}>{section.title}</Typography>
                 <IconButton
                   size="small"
@@ -254,13 +254,13 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
               </Box>
             </AccordionSummary>
             <AccordionDetails>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <TextField
                   fullWidth
                   label="Section Title"
                   value={section.title}
                   onChange={(e) =>
-                    handleUpdateSection(sectionIndex, "title", e.target.value)
+                    handleUpdateSection(sectionIndex, 'title', e.target.value)
                   }
                 />
                 <TextField
@@ -270,7 +270,7 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
                   onChange={(e) =>
                     handleUpdateSection(
                       sectionIndex,
-                      "description",
+                      'description',
                       e.target.value
                     )
                   }
@@ -279,9 +279,9 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
                 <Box sx={{ mt: 2 }}>
                   <Box
                     sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
                       mb: 2,
                     }}
                   >
@@ -299,12 +299,12 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
                     (question: any, questionIndex: number) => (
                       <Paper
                         key={questionIndex}
-                        sx={{ p: 2, mb: 2, bgcolor: "grey.50" }}
+                        sx={{ p: 2, mb: 2, bgcolor: 'grey.50' }}
                       >
                         <Box
                           sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
+                            display: 'flex',
+                            justifyContent: 'space-between',
                             mb: 2,
                           }}
                         >
@@ -331,7 +331,7 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
                                 handleUpdateQuestion(
                                   sectionIndex,
                                   questionIndex,
-                                  "questionText",
+                                  'questionText',
                                   e.target.value
                                 )
                               }
@@ -347,7 +347,7 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
                                   handleUpdateQuestion(
                                     sectionIndex,
                                     questionIndex,
-                                    "questionType",
+                                    'questionType',
                                     e.target.value
                                   )
                                 }
@@ -369,7 +369,7 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
                                     handleUpdateQuestion(
                                       sectionIndex,
                                       questionIndex,
-                                      "isRequired",
+                                      'isRequired',
                                       e.target.checked
                                     )
                                   }
@@ -382,12 +382,12 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
                             <TextField
                               fullWidth
                               label="Placeholder"
-                              value={question.placeholder || ""}
+                              value={question.placeholder || ''}
                               onChange={(e) =>
                                 handleUpdateQuestion(
                                   sectionIndex,
                                   questionIndex,
-                                  "placeholder",
+                                  'placeholder',
                                   e.target.value
                                 )
                               }
@@ -397,25 +397,25 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
                             <TextField
                               fullWidth
                               label="Help Text"
-                              value={question.helpText || ""}
+                              value={question.helpText || ''}
                               onChange={(e) =>
                                 handleUpdateQuestion(
                                   sectionIndex,
                                   questionIndex,
-                                  "helpText",
+                                  'helpText',
                                   e.target.value
                                 )
                               }
                             />
                           </Grid>
 
-                          {question.questionType === "MULTIPLE_CHOICE" && (
+                          {question.questionType === 'MULTIPLE_CHOICE' && (
                             <Grid item xs={12}>
                               <Box
                                 sx={{
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  alignItems: "center",
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
                                   mb: 1,
                                 }}
                               >
@@ -435,7 +435,7 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
                                 (choice: string, choiceIndex: number) => (
                                   <Box
                                     key={choiceIndex}
-                                    sx={{ display: "flex", gap: 1, mb: 1 }}
+                                    sx={{ display: 'flex', gap: 1, mb: 1 }}
                                   >
                                     <TextField
                                       fullWidth
@@ -478,7 +478,7 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
         ))}
       </Box>
 
-      <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end", mt: 4 }}>
+      <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 4 }}>
         <Button variant="outlined" onClick={onCancel}>
           Cancel
         </Button>

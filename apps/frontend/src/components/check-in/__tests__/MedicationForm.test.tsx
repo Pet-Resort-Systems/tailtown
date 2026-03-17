@@ -13,7 +13,7 @@ describe('MedicationForm', () => {
 
   it('renders empty state correctly', () => {
     render(<MedicationForm medications={[]} onChange={mockOnChange} />);
-    
+
     expect(screen.getByText('Medications')).toBeInTheDocument();
     expect(screen.getByText(/No medications added/i)).toBeInTheDocument();
     expect(screen.getByText('Add Medication')).toBeInTheDocument();
@@ -21,7 +21,7 @@ describe('MedicationForm', () => {
 
   it('adds a new medication when button is clicked', async () => {
     render(<MedicationForm medications={[]} onChange={mockOnChange} />);
-    
+
     const addButton = screen.getByText('Add Medication');
     fireEvent.click(addButton);
 
@@ -32,8 +32,8 @@ describe('MedicationForm', () => {
           dosage: '',
           frequency: '',
           administrationMethod: 'ORAL_PILL',
-          withFood: false
-        })
+          withFood: false,
+        }),
       ]);
     });
   });
@@ -46,12 +46,14 @@ describe('MedicationForm', () => {
         frequency: 'Twice daily',
         administrationMethod: 'ORAL_PILL',
         timeOfDay: '8:00 AM, 8:00 PM',
-        withFood: true
-      }
+        withFood: true,
+      },
     ];
 
-    render(<MedicationForm medications={medications} onChange={mockOnChange} />);
-    
+    render(
+      <MedicationForm medications={medications} onChange={mockOnChange} />
+    );
+
     expect(screen.getByDisplayValue('Prednisone')).toBeInTheDocument();
     expect(screen.getByDisplayValue('10mg')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Twice daily')).toBeInTheDocument();
@@ -64,20 +66,22 @@ describe('MedicationForm', () => {
         dosage: '',
         frequency: '',
         administrationMethod: 'ORAL_PILL',
-        withFood: false
-      }
+        withFood: false,
+      },
     ];
 
-    render(<MedicationForm medications={medications} onChange={mockOnChange} />);
-    
+    render(
+      <MedicationForm medications={medications} onChange={mockOnChange} />
+    );
+
     const nameInput = screen.getByPlaceholderText(/e.g., Prednisone/i);
     await userEvent.type(nameInput, 'Rimadyl');
 
     await waitFor(() => {
       expect(mockOnChange).toHaveBeenCalledWith([
         expect.objectContaining({
-          medicationName: 'Rimadyl'
-        })
+          medicationName: 'Rimadyl',
+        }),
       ]);
     });
   });
@@ -89,12 +93,14 @@ describe('MedicationForm', () => {
         dosage: '10mg',
         frequency: 'Twice daily',
         administrationMethod: 'ORAL_PILL',
-        withFood: false
-      }
+        withFood: false,
+      },
     ];
 
-    render(<MedicationForm medications={medications} onChange={mockOnChange} />);
-    
+    render(
+      <MedicationForm medications={medications} onChange={mockOnChange} />
+    );
+
     const deleteButton = screen.getByRole('button', { name: /delete/i });
     fireEvent.click(deleteButton);
 
@@ -110,20 +116,22 @@ describe('MedicationForm', () => {
         dosage: '10mg',
         frequency: 'Once daily',
         administrationMethod: 'ORAL_PILL',
-        withFood: false
-      }
+        withFood: false,
+      },
     ];
 
-    render(<MedicationForm medications={medications} onChange={mockOnChange} />);
-    
+    render(
+      <MedicationForm medications={medications} onChange={mockOnChange} />
+    );
+
     const checkbox = screen.getByRole('checkbox', { name: /give with food/i });
     fireEvent.click(checkbox);
 
     await waitFor(() => {
       expect(mockOnChange).toHaveBeenCalledWith([
         expect.objectContaining({
-          withFood: true
-        })
+          withFood: true,
+        }),
       ]);
     });
   });
@@ -135,12 +143,14 @@ describe('MedicationForm', () => {
         dosage: '10mg',
         frequency: 'Daily',
         administrationMethod: 'ORAL_PILL',
-        withFood: false
-      }
+        withFood: false,
+      },
     ];
 
-    render(<MedicationForm medications={medications} onChange={mockOnChange} />);
-    
+    render(
+      <MedicationForm medications={medications} onChange={mockOnChange} />
+    );
+
     // Click the select to open options
     const select = screen.getByLabelText(/Administration Method/i);
     fireEvent.mouseDown(select);
@@ -162,19 +172,21 @@ describe('MedicationForm', () => {
         dosage: '10mg',
         frequency: 'Daily',
         administrationMethod: 'ORAL_PILL',
-        withFood: false
+        withFood: false,
       },
       {
         medicationName: 'Med 2',
         dosage: '5mg',
         frequency: 'Twice daily',
         administrationMethod: 'ORAL_LIQUID',
-        withFood: true
-      }
+        withFood: true,
+      },
     ];
 
-    render(<MedicationForm medications={medications} onChange={mockOnChange} />);
-    
+    render(
+      <MedicationForm medications={medications} onChange={mockOnChange} />
+    );
+
     expect(screen.getByText('Medication 1: Med 1')).toBeInTheDocument();
     expect(screen.getByText('Medication 2: Med 2')).toBeInTheDocument();
   });

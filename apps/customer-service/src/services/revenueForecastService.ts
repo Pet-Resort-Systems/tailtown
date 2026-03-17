@@ -3,7 +3,7 @@
  * Projects future revenue from confirmed reservations
  */
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -47,7 +47,7 @@ export async function getRevenueForecast(
         lte: endDate,
       },
       status: {
-        in: ["CONFIRMED", "PENDING"],
+        in: ['CONFIRMED', 'PENDING'],
       },
     },
     include: {
@@ -60,7 +60,7 @@ export async function getRevenueForecast(
       },
     },
     orderBy: {
-      startDate: "asc",
+      startDate: 'asc',
     },
   });
 
@@ -69,9 +69,9 @@ export async function getRevenueForecast(
   const categoryTotals: Record<string, number> = {};
 
   for (const res of reservations) {
-    const dateKey = new Date(res.startDate).toISOString().split("T")[0];
+    const dateKey = new Date(res.startDate).toISOString().split('T')[0];
     const price = res.service?.price || 0;
-    const category = res.service?.serviceCategory || "OTHER";
+    const category = res.service?.serviceCategory || 'OTHER';
 
     // Update daily breakdown
     if (!dailyMap.has(dateKey)) {
@@ -91,13 +91,13 @@ export async function getRevenueForecast(
     daily.reservationCount++;
 
     switch (category) {
-      case "BOARDING":
+      case 'BOARDING':
         daily.boardingRevenue += price;
         break;
-      case "DAYCARE":
+      case 'DAYCARE':
         daily.daycareRevenue += price;
         break;
-      case "GROOMING":
+      case 'GROOMING':
         daily.groomingRevenue += price;
         break;
       default:
@@ -164,7 +164,7 @@ export async function getOccupancyForecast(
   const totalKennels = await prisma.resource.count({
     where: {
       tenantId,
-      type: "KENNEL",
+      type: 'KENNEL',
       isActive: true,
     },
   });
@@ -181,7 +181,7 @@ export async function getOccupancyForecast(
   for (let i = 0; i < daysAhead; i++) {
     const checkDate = new Date(today);
     checkDate.setDate(today.getDate() + i);
-    const dateStr = checkDate.toISOString().split("T")[0];
+    const dateStr = checkDate.toISOString().split('T')[0];
 
     // Count reservations that overlap with this date
     const bookedKennels = await prisma.reservation.count({
@@ -189,9 +189,9 @@ export async function getOccupancyForecast(
         tenantId,
         startDate: { lte: checkDate },
         endDate: { gt: checkDate },
-        status: { in: ["CONFIRMED", "CHECKED_IN", "PENDING"] },
+        status: { in: ['CONFIRMED', 'CHECKED_IN', 'PENDING'] },
         service: {
-          serviceCategory: "BOARDING",
+          serviceCategory: 'BOARDING',
         },
       },
     });

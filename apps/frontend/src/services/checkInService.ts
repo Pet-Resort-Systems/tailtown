@@ -1,4 +1,4 @@
-import { reservationApi } from "./api";
+import { reservationApi } from './api';
 
 /**
  * Check-In Service
@@ -31,13 +31,13 @@ export interface CheckInQuestion {
   sectionId: string;
   questionText: string;
   questionType:
-    | "TEXT"
-    | "NUMBER"
-    | "YES_NO"
-    | "MULTIPLE_CHOICE"
-    | "TIME"
-    | "LONG_TEXT"
-    | "DATE";
+    | 'TEXT'
+    | 'NUMBER'
+    | 'YES_NO'
+    | 'MULTIPLE_CHOICE'
+    | 'TIME'
+    | 'LONG_TEXT'
+    | 'DATE';
   options?: { choices: string[] };
   isRequired: boolean;
   order: number;
@@ -56,15 +56,15 @@ export interface CheckInMedication {
   dosage: string;
   frequency: string;
   administrationMethod:
-    | "ORAL_PILL"
-    | "ORAL_LIQUID"
-    | "TOPICAL"
-    | "INJECTION"
-    | "EYE_DROPS"
-    | "EAR_DROPS"
-    | "INHALER"
-    | "TRANSDERMAL_PATCH"
-    | "OTHER";
+    | 'ORAL_PILL'
+    | 'ORAL_LIQUID'
+    | 'TOPICAL'
+    | 'INJECTION'
+    | 'EYE_DROPS'
+    | 'EAR_DROPS'
+    | 'INHALER'
+    | 'TRANSDERMAL_PATCH'
+    | 'OTHER';
   timeOfDay?: string;
   withFood: boolean;
   specialInstructions?: string;
@@ -115,7 +115,7 @@ const checkInService = {
    */
   getDefaultTemplate: async () => {
     const response = await reservationApi.get(
-      "/api/check-in-templates/default"
+      '/api/check-in-templates/default'
     );
     return response.data;
   },
@@ -124,7 +124,7 @@ const checkInService = {
    * Get all check-in templates
    */
   getAllTemplates: async (activeOnly = true) => {
-    const response = await reservationApi.get("/api/check-in-templates", {
+    const response = await reservationApi.get('/api/check-in-templates', {
       params: { active: activeOnly },
     });
     return response.data;
@@ -143,7 +143,7 @@ const checkInService = {
    */
   createTemplate: async (templateData: Partial<CheckInTemplate>) => {
     const response = await reservationApi.post(
-      "/api/check-in-templates",
+      '/api/check-in-templates',
       templateData
     );
     return response.data;
@@ -177,7 +177,7 @@ const checkInService = {
    * Create a new check-in
    */
   createCheckIn: async (checkInData: CheckIn) => {
-    const response = await reservationApi.post("/api/check-ins", checkInData);
+    const response = await reservationApi.post('/api/check-ins', checkInData);
     return response.data;
   },
 
@@ -193,7 +193,7 @@ const checkInService = {
    * Get check-ins by reservation ID
    */
   getCheckInsByReservation: async (reservationId: string) => {
-    const response = await reservationApi.get("/api/check-ins", {
+    const response = await reservationApi.get('/api/check-ins', {
       params: { reservationId },
     });
     return response.data;
@@ -208,7 +208,7 @@ const checkInService = {
     startDate?: string;
     endDate?: string;
   }) => {
-    const response = await reservationApi.get("/api/check-ins", {
+    const response = await reservationApi.get('/api/check-ins', {
       params: filters,
     });
     return response.data;
@@ -280,7 +280,7 @@ const checkInService = {
    */
   getDefaultAgreementTemplate: async () => {
     const response = await reservationApi.get(
-      "/api/service-agreement-templates/default"
+      '/api/service-agreement-templates/default'
     );
     return response.data;
   },
@@ -290,7 +290,7 @@ const checkInService = {
    */
   createServiceAgreement: async (agreement: ServiceAgreement) => {
     const response = await reservationApi.post(
-      "/api/service-agreements",
+      '/api/service-agreements',
       agreement
     );
     return response.data;
@@ -320,7 +320,7 @@ const checkInService = {
    * Batch check-in multiple pets sharing the same room
    */
   batchCheckIn: async (checkIns: CheckIn[], sharedData?: Partial<CheckIn>) => {
-    const response = await reservationApi.post("/api/check-ins/batch", {
+    const response = await reservationApi.post('/api/check-ins/batch', {
       checkIns,
       sharedData,
     });
@@ -353,7 +353,7 @@ const checkInService = {
     checkInNotes?: string;
   }) => {
     const response = await reservationApi.post(
-      "/api/check-ins/draft",
+      '/api/check-ins/draft',
       draftData
     );
     return response.data;
@@ -363,13 +363,13 @@ const checkInService = {
    * Get the last completed check-in for a pet (for reusing belongings)
    */
   getLastCheckInForPet: async (petId: string) => {
-    const response = await reservationApi.get("/api/check-ins", {
+    const response = await reservationApi.get('/api/check-ins', {
       params: {
         petId,
-        status: "COMPLETED",
+        status: 'COMPLETED',
         limit: 1,
-        sortBy: "checkInTime",
-        sortOrder: "desc",
+        sortBy: 'checkInTime',
+        sortOrder: 'desc',
       },
     });
     const checkIns = response.data?.data || [];

@@ -34,14 +34,16 @@ const CustomerSelection: React.FC<CustomerSelectionProps> = ({
   initialPets,
 }) => {
   const navigate = useNavigate();
-  
+
   // State for customer selection
   const [searchQuery, setSearchQuery] = useState('');
   const [customers, setCustomers] = useState<Customer[]>([]);
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(initialCustomer);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
+    initialCustomer
+  );
   const [loading, setLoading] = useState(false);
   const [customerError, setCustomerError] = useState<string | null>(null);
-  
+
   // State for pet selection
   const [customerPets, setCustomerPets] = useState<Pet[]>([]);
   const [selectedPets, setSelectedPets] = useState<Pet[]>(initialPets);
@@ -55,7 +57,7 @@ const CustomerSelection: React.FC<CustomerSelectionProps> = ({
         setCustomers([]);
         return;
       }
-      
+
       try {
         setLoading(true);
         setCustomerError(null);
@@ -80,20 +82,22 @@ const CustomerSelection: React.FC<CustomerSelectionProps> = ({
         setSelectedPets([]);
         return;
       }
-      
+
       try {
         setPetsLoading(true);
         setPetError(null);
-        const response = await petService.getPetsByCustomer(selectedCustomer.id);
+        const response = await petService.getPetsByCustomer(
+          selectedCustomer.id
+        );
         setCustomerPets(response.data || []);
-        
+
         // If there's only one pet, select it automatically
         if (response.data?.length === 1) {
           setSelectedPets([response.data[0]]);
         } else if (initialPets.length > 0 && response.data) {
           // Keep previously selected pets that still exist
-          const validPets = initialPets.filter(initPet => 
-            response.data.some(pet => pet.id === initPet.id)
+          const validPets = initialPets.filter((initPet) =>
+            response.data.some((pet) => pet.id === initPet.id)
           );
           setSelectedPets(validPets);
         } else {
@@ -111,14 +115,17 @@ const CustomerSelection: React.FC<CustomerSelectionProps> = ({
   }, [selectedCustomer, initialPets]);
 
   // Handle customer selection
-  const handleCustomerChange = (event: React.SyntheticEvent, value: Customer | null) => {
+  const handleCustomerChange = (
+    event: React.SyntheticEvent,
+    value: Customer | null
+  ) => {
     setSelectedCustomer(value);
   };
 
   // Handle pet selection (multi-select)
   const handlePetChange = (event: any) => {
     const selectedIds = event.target.value as string[];
-    const pets = customerPets.filter(p => selectedIds.includes(p.id));
+    const pets = customerPets.filter((p) => selectedIds.includes(p.id));
     setSelectedPets(pets);
   };
 
@@ -146,24 +153,24 @@ const CustomerSelection: React.FC<CustomerSelectionProps> = ({
       <Typography variant="h6" gutterBottom>
         Customer & Pet Information
       </Typography>
-      
+
       {customerError && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {customerError}
         </Alert>
       )}
-      
+
       {petError && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {petError}
         </Alert>
       )}
-      
+
       <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
         <Typography variant="subtitle1" gutterBottom>
           Customer
         </Typography>
-        
+
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} md={9}>
             <Autocomplete
@@ -171,11 +178,13 @@ const CustomerSelection: React.FC<CustomerSelectionProps> = ({
               options={customers}
               value={selectedCustomer}
               onChange={handleCustomerChange}
-              getOptionLabel={(option) => `${option.firstName} ${option.lastName} (${option.email})`}
+              getOptionLabel={(option) =>
+                `${option.firstName} ${option.lastName} (${option.email})`
+              }
               renderInput={(params) => (
-                <TextField 
-                  {...params} 
-                  label="Search Customers" 
+                <TextField
+                  {...params}
+                  label="Search Customers"
                   variant="outlined"
                   size="small"
                   fullWidth
@@ -216,9 +225,17 @@ const CustomerSelection: React.FC<CustomerSelectionProps> = ({
             </Button>
           </Grid>
         </Grid>
-        
+
         {selectedCustomer && (
-          <Box sx={{ mt: 2, p: 2, bgcolor: 'background.paper', borderRadius: 1, border: '1px solid #e0e0e0' }}>
+          <Box
+            sx={{
+              mt: 2,
+              p: 2,
+              bgcolor: 'background.paper',
+              borderRadius: 1,
+              border: '1px solid #e0e0e0',
+            }}
+          >
             <Typography variant="subtitle2">
               {selectedCustomer.firstName} {selectedCustomer.lastName}
             </Typography>
@@ -230,25 +247,31 @@ const CustomerSelection: React.FC<CustomerSelectionProps> = ({
             </Typography>
             {selectedCustomer.address && (
               <Typography variant="body2" color="text.secondary">
-                Address: {selectedCustomer.address}, {selectedCustomer.city || ''} {selectedCustomer.state || ''} {selectedCustomer.zipCode || ''}
+                Address: {selectedCustomer.address},{' '}
+                {selectedCustomer.city || ''} {selectedCustomer.state || ''}{' '}
+                {selectedCustomer.zipCode || ''}
               </Typography>
             )}
           </Box>
         )}
       </Paper>
-      
+
       <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
         <Typography variant="subtitle1" gutterBottom>
           Pets (Select one or more)
         </Typography>
-        
-        <FormControl fullWidth size="small" disabled={!selectedCustomer || petsLoading}>
+
+        <FormControl
+          fullWidth
+          size="small"
+          disabled={!selectedCustomer || petsLoading}
+        >
           <InputLabel id="pet-select-label">Select Pets</InputLabel>
           <Select
             labelId="pet-select-label"
             id="pet-select"
             multiple
-            value={selectedPets.map(p => p.id)}
+            value={selectedPets.map((p) => p.id)}
             label="Select Pets"
             onChange={handlePetChange}
             startAdornment={
@@ -266,8 +289,8 @@ const CustomerSelection: React.FC<CustomerSelectionProps> = ({
             renderValue={(selected) => {
               const selectedIds = selected as string[];
               const names = customerPets
-                .filter(p => selectedIds.includes(p.id))
-                .map(p => p.name);
+                .filter((p) => selectedIds.includes(p.id))
+                .map((p) => p.name);
               return names.join(', ');
             }}
           >
@@ -279,17 +302,20 @@ const CustomerSelection: React.FC<CustomerSelectionProps> = ({
             ))}
           </Select>
         </FormControl>
-        
+
         {selectedPets.length > 0 && (
           <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
             {selectedPets.map((pet) => (
-              <Box 
+              <Box
                 key={pet.id}
-                sx={{ p: 2, bgcolor: 'background.paper', borderRadius: 1, border: '1px solid #e0e0e0' }}
+                sx={{
+                  p: 2,
+                  bgcolor: 'background.paper',
+                  borderRadius: 1,
+                  border: '1px solid #e0e0e0',
+                }}
               >
-                <Typography variant="subtitle2">
-                  {pet.name}
-                </Typography>
+                <Typography variant="subtitle2">{pet.name}</Typography>
                 <Typography variant="body2" color="text.secondary">
                   Type: {pet.type}
                   {pet.breed ? `, Breed: ${pet.breed}` : ''}
@@ -310,7 +336,7 @@ const CustomerSelection: React.FC<CustomerSelectionProps> = ({
           </Box>
         )}
       </Paper>
-      
+
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
         <Button
           variant="contained"
@@ -318,7 +344,9 @@ const CustomerSelection: React.FC<CustomerSelectionProps> = ({
           onClick={handleContinue}
           disabled={!selectedCustomer || selectedPets.length === 0}
         >
-          Continue {selectedPets.length > 0 && `(${selectedPets.length} pet${selectedPets.length > 1 ? 's' : ''})`}
+          Continue{' '}
+          {selectedPets.length > 0 &&
+            `(${selectedPets.length} pet${selectedPets.length > 1 ? 's' : ''})`}
         </Button>
       </Box>
     </Box>

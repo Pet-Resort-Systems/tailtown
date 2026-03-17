@@ -4,22 +4,22 @@
  * Tests that actually call controller functions against the test database.
  */
 
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 import {
   getTestPrismaClient,
   createTestTenant,
   deleteTestData,
   disconnectTestDatabase,
-} from "../../test/setup-test-db";
-import { PointEarningType, RedemptionType } from "@prisma/client";
+} from '../../test/setup-test-db';
+import { PointEarningType, RedemptionType } from '@prisma/client';
 import {
   getMember,
   addPoints,
   redeemPoints,
   getMemberStats,
-} from "../loyalty.controller";
+} from '../loyalty.controller';
 
-describe("Loyalty Controller Integration Tests", () => {
+describe('Loyalty Controller Integration Tests', () => {
   const prisma = getTestPrismaClient();
   let testTenantId: string;
   let testCustomerId: string;
@@ -41,10 +41,10 @@ describe("Loyalty Controller Integration Tests", () => {
     const customer = await prisma.customer.create({
       data: {
         tenantId: testTenantId,
-        firstName: "Loyalty",
-        lastName: "Test",
+        firstName: 'Loyalty',
+        lastName: 'Test',
         email: `loyalty-test-${Date.now()}@example.com`,
-        phone: "555-0300",
+        phone: '555-0300',
       },
     });
     testCustomerId = customer.id;
@@ -71,15 +71,15 @@ describe("Loyalty Controller Integration Tests", () => {
     jest.clearAllMocks();
   });
 
-  describe("getMember", () => {
-    it("should return existing member", async () => {
+  describe('getMember', () => {
+    it('should return existing member', async () => {
       // Create a member first
       const member = await prisma.loyaltyMember.create({
         data: {
           customerId: testCustomerId,
           currentPoints: 500,
           lifetimePoints: 1000,
-          currentTier: "SILVER",
+          currentTier: 'SILVER',
         },
       });
       testMemberIds.push(member.id);
@@ -94,7 +94,7 @@ describe("Loyalty Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           data: expect.objectContaining({
             customerId: testCustomerId,
             currentPoints: 500,
@@ -103,15 +103,15 @@ describe("Loyalty Controller Integration Tests", () => {
       );
     });
 
-    it("should create new member if not exists", async () => {
+    it('should create new member if not exists', async () => {
       // Create a new customer without a loyalty member
       const newCustomer = await prisma.customer.create({
         data: {
           tenantId: testTenantId,
-          firstName: "New",
-          lastName: "Customer",
+          firstName: 'New',
+          lastName: 'Customer',
           email: `new-loyalty-${Date.now()}@example.com`,
-          phone: "555-0301",
+          phone: '555-0301',
         },
       });
 
@@ -125,7 +125,7 @@ describe("Loyalty Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           data: expect.objectContaining({
             customerId: newCustomer.id,
             currentPoints: 0,
@@ -139,17 +139,17 @@ describe("Loyalty Controller Integration Tests", () => {
     });
   });
 
-  describe("addPoints", () => {
+  describe('addPoints', () => {
     let addPointsCustomerId: string;
 
     beforeAll(async () => {
       const customer = await prisma.customer.create({
         data: {
           tenantId: testTenantId,
-          firstName: "AddPoints",
-          lastName: "Test",
+          firstName: 'AddPoints',
+          lastName: 'Test',
           email: `addpoints-${Date.now()}@example.com`,
-          phone: "555-0302",
+          phone: '555-0302',
         },
       });
       addPointsCustomerId = customer.id;
@@ -160,19 +160,19 @@ describe("Loyalty Controller Integration Tests", () => {
           customerId: addPointsCustomerId,
           currentPoints: 100,
           lifetimePoints: 500,
-          currentTier: "BRONZE",
+          currentTier: 'BRONZE',
         },
       });
       testMemberIds.push(member.id);
     });
 
-    it("should add points and update balance", async () => {
+    it('should add points and update balance', async () => {
       const req = {
         params: { customerId: addPointsCustomerId },
         body: {
           points: 50,
-          type: "VISIT",
-          description: "Boarding reservation",
+          type: 'VISIT',
+          description: 'Boarding reservation',
         },
       } as unknown as Request;
       const res = createMockResponse();
@@ -182,7 +182,7 @@ describe("Loyalty Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           data: expect.objectContaining({
             transaction: expect.objectContaining({
               points: 50,
@@ -192,7 +192,7 @@ describe("Loyalty Controller Integration Tests", () => {
       );
     });
 
-    it("should reject without required fields", async () => {
+    it('should reject without required fields', async () => {
       const req = {
         params: { customerId: addPointsCustomerId },
         body: { points: 50 }, // Missing type and description
@@ -203,21 +203,21 @@ describe("Loyalty Controller Integration Tests", () => {
 
       expect(mockNext).toHaveBeenCalled();
       const error = (mockNext as jest.Mock).mock.calls[0][0];
-      expect(error.message).toContain("required");
+      expect(error.message).toContain('required');
     });
   });
 
-  describe("redeemPoints", () => {
+  describe('redeemPoints', () => {
     let redeemCustomerId: string;
 
     beforeAll(async () => {
       const customer = await prisma.customer.create({
         data: {
           tenantId: testTenantId,
-          firstName: "Redeem",
-          lastName: "Test",
+          firstName: 'Redeem',
+          lastName: 'Test',
           email: `redeem-${Date.now()}@example.com`,
-          phone: "555-0303",
+          phone: '555-0303',
         },
       });
       redeemCustomerId = customer.id;
@@ -228,20 +228,20 @@ describe("Loyalty Controller Integration Tests", () => {
           customerId: redeemCustomerId,
           currentPoints: 1000,
           lifetimePoints: 2000,
-          currentTier: "SILVER",
+          currentTier: 'SILVER',
         },
       });
       testMemberIds.push(member.id);
     });
 
-    it("should redeem points successfully", async () => {
+    it('should redeem points successfully', async () => {
       const req = {
         params: { customerId: redeemCustomerId },
         body: {
           pointsToRedeem: 200,
-          redemptionType: "DISCOUNT_FIXED",
+          redemptionType: 'DISCOUNT_FIXED',
           value: 2,
-          description: "$2 off next reservation",
+          description: '$2 off next reservation',
         },
       } as unknown as Request;
       const res = createMockResponse();
@@ -251,7 +251,7 @@ describe("Loyalty Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           data: expect.objectContaining({
             redemption: expect.objectContaining({
               pointsRedeemed: 200,
@@ -261,15 +261,15 @@ describe("Loyalty Controller Integration Tests", () => {
       );
     });
 
-    it("should reject redemption with insufficient points", async () => {
+    it('should reject redemption with insufficient points', async () => {
       // Create customer with low points
       const lowPointsCustomer = await prisma.customer.create({
         data: {
           tenantId: testTenantId,
-          firstName: "LowPoints",
-          lastName: "Test",
+          firstName: 'LowPoints',
+          lastName: 'Test',
           email: `lowpoints-${Date.now()}@example.com`,
-          phone: "555-0304",
+          phone: '555-0304',
         },
       });
 
@@ -278,7 +278,7 @@ describe("Loyalty Controller Integration Tests", () => {
           customerId: lowPointsCustomer.id,
           currentPoints: 50,
           lifetimePoints: 100,
-          currentTier: "BRONZE",
+          currentTier: 'BRONZE',
         },
       });
       testMemberIds.push(member.id);
@@ -287,9 +287,9 @@ describe("Loyalty Controller Integration Tests", () => {
         params: { customerId: lowPointsCustomer.id },
         body: {
           pointsToRedeem: 500, // More than available
-          redemptionType: "DISCOUNT",
+          redemptionType: 'DISCOUNT',
           value: 5,
-          description: "$5 off",
+          description: '$5 off',
         },
       } as unknown as Request;
       const res = createMockResponse();
@@ -298,17 +298,17 @@ describe("Loyalty Controller Integration Tests", () => {
 
       expect(mockNext).toHaveBeenCalled();
       const error = (mockNext as jest.Mock).mock.calls[0][0];
-      expect(error.message).toContain("Insufficient");
+      expect(error.message).toContain('Insufficient');
     });
 
-    it("should return 404 for non-existent member", async () => {
+    it('should return 404 for non-existent member', async () => {
       const req = {
-        params: { customerId: "00000000-0000-0000-0000-000000000000" },
+        params: { customerId: '00000000-0000-0000-0000-000000000000' },
         body: {
           pointsToRedeem: 100,
-          redemptionType: "DISCOUNT",
+          redemptionType: 'DISCOUNT',
           value: 1,
-          description: "Test",
+          description: 'Test',
         },
       } as unknown as Request;
       const res = createMockResponse();
@@ -317,21 +317,21 @@ describe("Loyalty Controller Integration Tests", () => {
 
       expect(mockNext).toHaveBeenCalled();
       const error = (mockNext as jest.Mock).mock.calls[0][0];
-      expect(error.message).toBe("Member not found");
+      expect(error.message).toBe('Member not found');
     });
   });
 
-  describe("getMemberStats", () => {
+  describe('getMemberStats', () => {
     let statsCustomerId: string;
 
     beforeAll(async () => {
       const customer = await prisma.customer.create({
         data: {
           tenantId: testTenantId,
-          firstName: "Stats",
-          lastName: "Test",
+          firstName: 'Stats',
+          lastName: 'Test',
           email: `stats-${Date.now()}@example.com`,
-          phone: "555-0305",
+          phone: '555-0305',
         },
       });
       statsCustomerId = customer.id;
@@ -342,7 +342,7 @@ describe("Loyalty Controller Integration Tests", () => {
           customerId: statsCustomerId,
           currentPoints: 500,
           lifetimePoints: 1500,
-          currentTier: "SILVER",
+          currentTier: 'SILVER',
         },
       });
       testMemberIds.push(member.id);
@@ -354,19 +354,19 @@ describe("Loyalty Controller Integration Tests", () => {
             memberId: member.id,
             points: 100,
             type: PointEarningType.VISIT,
-            description: "Res 1",
+            description: 'Res 1',
           },
           {
             memberId: member.id,
             points: 200,
             type: PointEarningType.VISIT,
-            description: "Res 2",
+            description: 'Res 2',
           },
           {
             memberId: member.id,
             points: 500,
             type: PointEarningType.REFERRAL,
-            description: "Referral",
+            description: 'Referral',
           },
         ],
       });
@@ -379,20 +379,20 @@ describe("Loyalty Controller Integration Tests", () => {
             pointsRedeemed: 100,
             redemptionType: RedemptionType.DISCOUNT_FIXED,
             value: 1,
-            description: "$1 off",
+            description: '$1 off',
           },
           {
             memberId: member.id,
             pointsRedeemed: 200,
             redemptionType: RedemptionType.DISCOUNT_FIXED,
             value: 2,
-            description: "$2 off",
+            description: '$2 off',
           },
         ],
       });
     });
 
-    it("should return member statistics", async () => {
+    it('should return member statistics', async () => {
       const req = {
         params: { customerId: statsCustomerId },
       } as unknown as Request;
@@ -403,11 +403,11 @@ describe("Loyalty Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           data: expect.objectContaining({
             currentPoints: 500,
             lifetimePoints: 1500,
-            currentTier: "SILVER",
+            currentTier: 'SILVER',
             totalEarned: 800, // 100 + 200 + 500
             totalRedeemed: 300, // 100 + 200
           }),
@@ -415,9 +415,9 @@ describe("Loyalty Controller Integration Tests", () => {
       );
     });
 
-    it("should return 404 for non-existent member", async () => {
+    it('should return 404 for non-existent member', async () => {
       const req = {
-        params: { customerId: "00000000-0000-0000-0000-000000000000" },
+        params: { customerId: '00000000-0000-0000-0000-000000000000' },
       } as unknown as Request;
       const res = createMockResponse();
 

@@ -4,7 +4,7 @@
  * Multi-step onboarding wizard for new tenants.
  */
 
-import React from "react";
+import React from 'react';
 import {
   Box,
   Stepper,
@@ -16,7 +16,7 @@ import {
   LinearProgress,
   useTheme,
   useMediaQuery,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Business,
   MeetingRoom,
@@ -29,22 +29,22 @@ import {
   Palette,
   Policy,
   CheckCircle,
-} from "@mui/icons-material";
-import { useSetupWizard } from "./SetupWizardContext";
-import { WIZARD_STEPS, WizardStep } from "./types";
+} from '@mui/icons-material';
+import { useSetupWizard } from './SetupWizardContext';
+import { WIZARD_STEPS, WizardStep } from './types';
 
 // Step Components
-import BusinessInfoStep from "./steps/BusinessInfoStep";
-import RoomsKennelsStep from "./steps/RoomsKennelsStep";
-import ServicesStep from "./steps/ServicesStep";
-import PricingStep from "./steps/PricingStep";
-import OperatingHoursStep from "./steps/OperatingHoursStep";
-import StaffStep from "./steps/StaffStep";
-import PaymentStep from "./steps/PaymentStep";
-import NotificationsStep from "./steps/NotificationsStep";
-import BrandingStep from "./steps/BrandingStep";
-import PoliciesStep from "./steps/PoliciesStep";
-import ReviewStep from "./steps/ReviewStep";
+import BusinessInfoStep from './steps/BusinessInfoStep';
+import RoomsKennelsStep from './steps/RoomsKennelsStep';
+import ServicesStep from './steps/ServicesStep';
+import PricingStep from './steps/PricingStep';
+import OperatingHoursStep from './steps/OperatingHoursStep';
+import StaffStep from './steps/StaffStep';
+import PaymentStep from './steps/PaymentStep';
+import NotificationsStep from './steps/NotificationsStep';
+import BrandingStep from './steps/BrandingStep';
+import PoliciesStep from './steps/PoliciesStep';
+import ReviewStep from './steps/ReviewStep';
 
 // Icon mapping
 const STEP_ICONS: Record<string, React.ReactNode> = {
@@ -63,11 +63,11 @@ const STEP_ICONS: Record<string, React.ReactNode> = {
 
 // Step component mapping
 const STEP_COMPONENTS: Record<WizardStep, React.ComponentType> = {
-  "business-info": BusinessInfoStep,
-  "rooms-kennels": RoomsKennelsStep,
+  'business-info': BusinessInfoStep,
+  'rooms-kennels': RoomsKennelsStep,
   services: ServicesStep,
   pricing: PricingStep,
-  "operating-hours": OperatingHoursStep,
+  'operating-hours': OperatingHoursStep,
   staff: StaffStep,
   payment: PaymentStep,
   notifications: NotificationsStep,
@@ -78,7 +78,7 @@ const STEP_COMPONENTS: Record<WizardStep, React.ComponentType> = {
 
 export default function SetupWizard() {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { state, goToStep, isStepComplete, getProgress } = useSetupWizard();
 
   const currentStepIndex = WIZARD_STEPS.findIndex(
@@ -98,17 +98,17 @@ export default function SetupWizard() {
   };
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "grey.50", py: 4 }}>
-      <Box sx={{ maxWidth: 1200, mx: "auto", px: 2 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50', py: 4 }}>
+      <Box sx={{ maxWidth: 1200, mx: 'auto', px: 2 }}>
         {/* Header */}
-        <Box sx={{ textAlign: "center", mb: 4 }}>
+        <Box sx={{ textAlign: 'center', mb: 4 }}>
           <Typography variant="h4" fontWeight="bold" gutterBottom>
             Welcome to Tailtown
           </Typography>
           <Typography variant="body1" color="text.secondary">
             Let's set up your facility. This will take about 10-15 minutes.
           </Typography>
-          <Box sx={{ mt: 2, maxWidth: 400, mx: "auto" }}>
+          <Box sx={{ mt: 2, maxWidth: 400, mx: 'auto' }}>
             <LinearProgress
               variant="determinate"
               value={getProgress()}
@@ -117,7 +117,7 @@ export default function SetupWizard() {
             <Typography
               variant="caption"
               color="text.secondary"
-              sx={{ mt: 0.5, display: "block" }}
+              sx={{ mt: 0.5, display: 'block' }}
             >
               {getProgress()}% complete
             </Typography>
@@ -141,17 +141,17 @@ export default function SetupWizard() {
                           sx={{
                             width: 40,
                             height: 40,
-                            borderRadius: "50%",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
                             bgcolor: isComplete
-                              ? "success.main"
+                              ? 'success.main'
                               : isCurrent
-                              ? "primary.main"
-                              : "grey.300",
+                                ? 'primary.main'
+                                : 'grey.300',
                             color:
-                              isComplete || isCurrent ? "white" : "grey.600",
+                              isComplete || isCurrent ? 'white' : 'grey.600',
                           }}
                         >
                           {isComplete ? (
@@ -187,17 +187,17 @@ export default function SetupWizard() {
         {/* Mobile Step Indicator */}
         {isMobile && (
           <Paper sx={{ p: 2, mb: 3 }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Box
                 sx={{
                   width: 48,
                   height: 48,
-                  borderRadius: "50%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  bgcolor: "primary.main",
-                  color: "white",
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  bgcolor: 'primary.main',
+                  color: 'white',
                 }}
               >
                 {STEP_ICONS[WIZARD_STEPS[currentStepIndex].icon]}

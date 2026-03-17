@@ -77,10 +77,11 @@ const CustomerIconSelector: React.FC<CustomerIconSelectorProps> = ({
   };
 
   const getColorValue = (colorName: string) => {
-    return COLOR_OPTIONS.find(c => c.name === colorName)?.color || '#2196F3';
+    return COLOR_OPTIONS.find((c) => c.name === colorName)?.color || '#2196F3';
   };
 
-  const SelectedIconComponent = ICON_OPTIONS.find(i => i.name === selectedIcon)?.icon || Person;
+  const SelectedIconComponent =
+    ICON_OPTIONS.find((i) => i.name === selectedIcon)?.icon || Person;
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -88,7 +89,9 @@ const CustomerIconSelector: React.FC<CustomerIconSelectorProps> = ({
       <DialogContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, py: 2 }}>
           {/* Preview */}
-          <Paper sx={{ p: 3, textAlign: 'center', bgcolor: 'background.default' }}>
+          <Paper
+            sx={{ p: 3, textAlign: 'center', bgcolor: 'background.default' }}
+          >
             <Typography variant="subtitle2" gutterBottom>
               Preview
             </Typography>
@@ -121,7 +124,10 @@ const CustomerIconSelector: React.FC<CustomerIconSelectorProps> = ({
                         textAlign: 'center',
                         cursor: 'pointer',
                         border: 2,
-                        borderColor: selectedIcon === option.name ? 'primary.main' : 'transparent',
+                        borderColor:
+                          selectedIcon === option.name
+                            ? 'primary.main'
+                            : 'transparent',
                         '&:hover': {
                           borderColor: 'primary.light',
                           bgcolor: 'action.hover',
@@ -154,7 +160,10 @@ const CustomerIconSelector: React.FC<CustomerIconSelectorProps> = ({
                       textAlign: 'center',
                       cursor: 'pointer',
                       border: 2,
-                      borderColor: selectedColor === option.name ? 'primary.main' : 'transparent',
+                      borderColor:
+                        selectedColor === option.name
+                          ? 'primary.main'
+                          : 'transparent',
                       '&:hover': {
                         borderColor: 'primary.light',
                       },

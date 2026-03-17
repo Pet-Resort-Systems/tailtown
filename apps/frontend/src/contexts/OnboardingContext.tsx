@@ -4,17 +4,17 @@ import React, {
   useContext,
   useEffect,
   useCallback,
-} from "react";
-import { useAuth } from "./AuthContext";
+} from 'react';
+import { useAuth } from './AuthContext';
 
 // Onboarding steps
 export type OnboardingStep =
-  | "welcome"
-  | "dashboard"
-  | "create-reservation"
-  | "check-in"
-  | "check-out"
-  | "complete";
+  | 'welcome'
+  | 'dashboard'
+  | 'create-reservation'
+  | 'check-in'
+  | 'check-out'
+  | 'complete';
 
 interface OnboardingState {
   isActive: boolean;
@@ -34,20 +34,20 @@ interface OnboardingContextType {
   resetOnboarding: () => void;
 }
 
-const ONBOARDING_STORAGE_KEY = "tailtown_staff_onboarding";
+const ONBOARDING_STORAGE_KEY = 'tailtown_staff_onboarding';
 
 const STEP_ORDER: OnboardingStep[] = [
-  "welcome",
-  "dashboard",
-  "create-reservation",
-  "check-in",
-  "check-out",
-  "complete",
+  'welcome',
+  'dashboard',
+  'create-reservation',
+  'check-in',
+  'check-out',
+  'complete',
 ];
 
 const defaultState: OnboardingState = {
   isActive: false,
-  currentStep: "welcome",
+  currentStep: 'welcome',
   completedSteps: [],
   hasCompletedOnboarding: false,
 };
@@ -56,11 +56,11 @@ const OnboardingContext = createContext<OnboardingContextType | null>(null);
 
 const getTenantKey = () => {
   const hostname = window.location.hostname;
-  const parts = hostname.split(".");
+  const parts = hostname.split('.');
   return (
     (parts.length >= 3 ? parts[0] : undefined) ||
-    localStorage.getItem("tailtown_tenant_id") ||
-    "dev"
+    localStorage.getItem('tailtown_tenant_id') ||
+    'dev'
   );
 };
 
@@ -72,7 +72,7 @@ const getOnboardingStorageKey = (email: string) => {
 export const useOnboarding = () => {
   const context = useContext(OnboardingContext);
   if (!context) {
-    throw new Error("useOnboarding must be used within OnboardingProvider");
+    throw new Error('useOnboarding must be used within OnboardingProvider');
   }
   return context;
 };
@@ -96,7 +96,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
           const parsed = JSON.parse(stored);
           setState(parsed);
         } catch (e) {
-          console.error("Failed to parse onboarding state:", e);
+          console.error('Failed to parse onboarding state:', e);
         }
       } else {
         const legacyKey = `${ONBOARDING_STORAGE_KEY}_${userId}`;
@@ -108,7 +108,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
             localStorage.setItem(storageKey, JSON.stringify(parsed));
             setState(parsed);
           } catch (e) {
-            console.error("Failed to parse onboarding state:", e);
+            console.error('Failed to parse onboarding state:', e);
           }
         } else {
           // First time user - show onboarding prompt
@@ -137,7 +137,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
     saveState({
       ...state,
       isActive: true,
-      currentStep: "welcome",
+      currentStep: 'welcome',
       completedSteps: [],
     });
   }, [state, saveState]);

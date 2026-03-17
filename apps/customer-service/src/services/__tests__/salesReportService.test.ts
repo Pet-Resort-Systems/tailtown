@@ -8,7 +8,7 @@ import {
   getWeeklySalesReport,
   getMonthlySalesReport,
   getYTDSalesReport,
-  getTopCustomers
+  getTopCustomers,
 } from '../salesReportService';
 
 // Mock Prisma Client
@@ -16,14 +16,14 @@ jest.mock('@prisma/client', () => {
   const mockPrismaClient = {
     invoice: {
       findMany: jest.fn(),
-      count: jest.fn()
+      count: jest.fn(),
     },
     reservation: {
-      findMany: jest.fn()
-    }
+      findMany: jest.fn(),
+    },
   };
   return {
-    PrismaClient: jest.fn(() => mockPrismaClient)
+    PrismaClient: jest.fn(() => mockPrismaClient),
   };
 });
 
@@ -46,15 +46,15 @@ describe('SalesReportService', () => {
               description: 'Grooming',
               quantity: 1,
               amount: 100,
-              serviceId: 's1'
-            }
+              serviceId: 's1',
+            },
           ],
           payments: [
             {
               method: 'CREDIT_CARD',
-              amount: 100
-            }
-          ]
+              amount: 100,
+            },
+          ],
         },
         {
           id: '2',
@@ -65,16 +65,16 @@ describe('SalesReportService', () => {
               description: 'Bandana',
               quantity: 1,
               amount: 50,
-              productId: 'p1'
-            }
+              productId: 'p1',
+            },
           ],
           payments: [
             {
               method: 'CASH',
-              amount: 50
-            }
-          ]
-        }
+              amount: 50,
+            },
+          ],
+        },
       ];
 
       (prisma.invoice.findMany as jest.Mock).mockResolvedValue(mockInvoices);
@@ -111,26 +111,30 @@ describe('SalesReportService', () => {
               description: 'Service A',
               quantity: 1,
               amount: 60,
-              serviceId: 's1'
+              serviceId: 's1',
             },
             {
               type: 'SERVICE',
               description: 'Service B',
               quantity: 1,
               amount: 40,
-              serviceId: 's2'
-            }
+              serviceId: 's2',
+            },
           ],
-          payments: [{ method: 'CREDIT_CARD', amount: 100 }]
-        }
+          payments: [{ method: 'CREDIT_CARD', amount: 100 }],
+        },
       ];
 
       (prisma.invoice.findMany as jest.Mock).mockResolvedValue(mockInvoices);
 
       const result = await getDailySalesReport('dev', '2025-10-25');
 
-      const serviceA = result.serviceBreakdown.find(s => s.serviceName === 'Service A');
-      const serviceB = result.serviceBreakdown.find(s => s.serviceName === 'Service B');
+      const serviceA = result.serviceBreakdown.find(
+        (s) => s.serviceName === 'Service A'
+      );
+      const serviceB = result.serviceBreakdown.find(
+        (s) => s.serviceName === 'Service B'
+      );
 
       expect(serviceA?.percentage).toBe(60);
       expect(serviceB?.percentage).toBe(40);
@@ -145,27 +149,32 @@ describe('SalesReportService', () => {
           customerId: 'c1',
           total: 500,
           issueDate: new Date('2025-10-01'),
-          customer: { firstName: 'John', lastName: 'Doe' }
+          customer: { firstName: 'John', lastName: 'Doe' },
         },
         {
           id: '2',
           customerId: 'c2',
           total: 300,
           issueDate: new Date('2025-10-15'),
-          customer: { firstName: 'Jane', lastName: 'Smith' }
+          customer: { firstName: 'Jane', lastName: 'Smith' },
         },
         {
           id: '3',
           customerId: 'c1',
           total: 200,
           issueDate: new Date('2025-10-20'),
-          customer: { firstName: 'John', lastName: 'Doe' }
-        }
+          customer: { firstName: 'John', lastName: 'Doe' },
+        },
       ];
 
       (prisma.invoice.findMany as jest.Mock).mockResolvedValue(mockInvoices);
 
-      const result = await getTopCustomers('dev', '2025-10-01', '2025-10-31', 10);
+      const result = await getTopCustomers(
+        'dev',
+        '2025-10-01',
+        '2025-10-31',
+        10
+      );
 
       expect(result).toHaveLength(2);
       expect(result[0].customerId).toBe('c1');
@@ -182,12 +191,17 @@ describe('SalesReportService', () => {
         customerId: `c${i}`,
         total: 100,
         issueDate: new Date('2025-10-01'),
-        customer: { firstName: 'Customer', lastName: `${i}` }
+        customer: { firstName: 'Customer', lastName: `${i}` },
       }));
 
       (prisma.invoice.findMany as jest.Mock).mockResolvedValue(mockInvoices);
 
-      const result = await getTopCustomers('dev', '2025-10-01', '2025-10-31', 5);
+      const result = await getTopCustomers(
+        'dev',
+        '2025-10-01',
+        '2025-10-31',
+        5
+      );
 
       expect(result).toHaveLength(5);
     });
@@ -205,11 +219,11 @@ describe('SalesReportService', () => {
               description: 'Service',
               quantity: 1,
               amount: 100,
-              serviceId: 's1'
-            }
+              serviceId: 's1',
+            },
           ],
-          payments: [{ method: 'CREDIT_CARD', amount: 100 }]
-        }
+          payments: [{ method: 'CREDIT_CARD', amount: 100 }],
+        },
       ];
 
       (prisma.invoice.findMany as jest.Mock).mockResolvedValue(mockInvoices);
@@ -228,7 +242,7 @@ describe('SalesReportService', () => {
       const mockInvoices = [
         { id: '1', total: 100, lineItems: [], payments: [] },
         { id: '2', total: 200, lineItems: [], payments: [] },
-        { id: '3', total: 150, lineItems: [], payments: [] }
+        { id: '3', total: 150, lineItems: [], payments: [] },
       ];
 
       (prisma.invoice.findMany as jest.Mock).mockResolvedValue(mockInvoices);
@@ -263,11 +277,11 @@ describe('SalesReportService', () => {
               description: 'Service',
               quantity: 1,
               amount: 100,
-              serviceId: 's1'
-            }
+              serviceId: 's1',
+            },
           ],
-          payments: []
-        }
+          payments: [],
+        },
       ];
 
       (prisma.invoice.findMany as jest.Mock).mockResolvedValue(mockInvoices);
@@ -289,11 +303,11 @@ describe('SalesReportService', () => {
               description: 'Service',
               quantity: 1,
               amount: 100,
-              serviceId: null
-            }
+              serviceId: null,
+            },
           ],
-          payments: [{ method: 'CREDIT_CARD', amount: 100 }]
-        }
+          payments: [{ method: 'CREDIT_CARD', amount: 100 }],
+        },
       ];
 
       (prisma.invoice.findMany as jest.Mock).mockResolvedValue(mockInvoices);

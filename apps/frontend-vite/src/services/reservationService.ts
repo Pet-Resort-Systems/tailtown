@@ -1,6 +1,6 @@
-import { AxiosResponse } from "axios";
-import { reservationApi as api } from "./api";
-import { PaginatedResponse } from "../types/common";
+import { AxiosResponse } from 'axios';
+import { reservationApi as api } from './api';
+import { PaginatedResponse } from '../types/common';
 
 export interface Reservation {
   id: string;
@@ -11,13 +11,13 @@ export interface Reservation {
   startDate: string;
   endDate: string;
   status:
-    | "PENDING"
-    | "CONFIRMED"
-    | "CHECKED_IN"
-    | "CHECKED_OUT"
-    | "CANCELLED"
-    | "COMPLETED"
-    | "NO_SHOW";
+    | 'PENDING'
+    | 'CONFIRMED'
+    | 'CHECKED_IN'
+    | 'CHECKED_OUT'
+    | 'CANCELLED'
+    | 'COMPLETED'
+    | 'NO_SHOW';
   notes?: string;
   staffNotes?: string;
   createdAt?: string; // Optional when creating a new reservation, will be set by the backend
@@ -76,7 +76,7 @@ export const reservationService = {
     page = 1,
     limit = 10,
     sortBy?: string,
-    sortOrder: "asc" | "desc" = "asc",
+    sortOrder: 'asc' | 'desc' = 'asc',
     status?: string,
     date?: string,
     checkInDate?: string,
@@ -89,7 +89,7 @@ export const reservationService = {
     results: number;
   }> => {
     try {
-      const response: AxiosResponse = await api.get("/api/reservations", {
+      const response: AxiosResponse = await api.get('/api/reservations', {
         params: {
           page,
           limit,
@@ -103,7 +103,7 @@ export const reservationService = {
       });
       return response.data;
     } catch (error: any) {
-      console.error("Error in getAllReservations:", error);
+      console.error('Error in getAllReservations:', error);
       throw error;
     }
   },
@@ -118,17 +118,17 @@ export const reservationService = {
         payload) as Reservation;
       return normalized;
     } catch (error: any) {
-      console.error("Error in getReservationById:", error);
+      console.error('Error in getReservationById:', error);
       throw error;
     }
   },
 
   createReservation: async (
-    reservation: Omit<Reservation, "id">
+    reservation: Omit<Reservation, 'id'>
   ): Promise<Reservation> => {
     try {
       const response: AxiosResponse = await api.post(
-        "/api/reservations",
+        '/api/reservations',
         reservation
       );
 
@@ -160,27 +160,27 @@ export const reservationService = {
         // Got a paginated list response instead of a single reservation
         // This indicates a server-side issue (POST returned GET response)
         console.error(
-          "Received paginated list instead of created reservation:",
+          'Received paginated list instead of created reservation:',
           response.data
         );
         throw new Error(
-          "Failed to create reservation. Please try again or contact support."
+          'Failed to create reservation. Please try again or contact support.'
         );
       } else {
-        console.error("Unexpected response format:", response.data);
-        throw new Error("Failed to create reservation. Please try again.");
+        console.error('Unexpected response format:', response.data);
+        throw new Error('Failed to create reservation. Please try again.');
       }
 
       if (!reservationData || !reservationData.id) {
-        console.error("No reservation data or ID found:", reservationData);
-        throw new Error("No reservation ID returned from server");
+        console.error('No reservation data or ID found:', reservationData);
+        throw new Error('No reservation ID returned from server');
       }
 
       return reservationData;
     } catch (error: any) {
-      console.error("Error in createReservation:", error);
+      console.error('Error in createReservation:', error);
       if (error.response?.data) {
-        console.error("Server error details:", error.response.data);
+        console.error('Server error details:', error.response.data);
       }
       throw error;
     }
@@ -202,7 +202,7 @@ export const reservationService = {
         payload) as Reservation;
       return normalized;
     } catch (error: any) {
-      console.error("Error in updateReservation:", error);
+      console.error('Error in updateReservation:', error);
       throw error;
     }
   },
@@ -211,7 +211,7 @@ export const reservationService = {
     try {
       await api.delete(`/api/reservations/${id}`);
     } catch (error: any) {
-      console.error("Error in deleteReservation:", error);
+      console.error('Error in deleteReservation:', error);
       throw error;
     }
   },
@@ -230,7 +230,7 @@ export const reservationService = {
       );
       return response.data;
     } catch (error: any) {
-      console.error("Error in getReservationsByCustomer:", error);
+      console.error('Error in getReservationsByCustomer:', error);
       throw error;
     }
   },
@@ -249,7 +249,7 @@ export const reservationService = {
       );
       return response.data;
     } catch (error: any) {
-      console.error("Error in getReservationsByPet:", error);
+      console.error('Error in getReservationsByPet:', error);
       throw error;
     }
   },
@@ -257,11 +257,11 @@ export const reservationService = {
   getTodayRevenue: async (): Promise<{ revenue: number }> => {
     try {
       const response: AxiosResponse = await api.get(
-        "/api/reservations/revenue/today"
+        '/api/reservations/revenue/today'
       );
       return response.data;
     } catch (error: any) {
-      console.error("Error in getTodayRevenue:", error);
+      console.error('Error in getTodayRevenue:', error);
       throw error;
     }
   },
@@ -278,7 +278,7 @@ export const reservationService = {
       );
       return response.data;
     } catch (error: any) {
-      console.error("Error in addAddOnsToReservation:", error);
+      console.error('Error in addAddOnsToReservation:', error);
       throw error;
     }
   },

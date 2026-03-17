@@ -166,17 +166,17 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
     [petId: string]: string;
   }>({});
   const [occupiedSuiteIds, setOccupiedSuiteIds] = useState<Set<string>>(
-    new Set(),
+    new Set()
   );
   const [selectedService, setSelectedService] = useState<string>('');
   const [selectedGroomerId, setSelectedGroomerId] = useState<string>('');
   const [selectedSuiteType, setSelectedSuiteType] = useState<string>('');
   const [selectedStatus, setSelectedStatus] = useState<string>('PENDING');
   const [startDate, setStartDate] = useState<Date | null>(
-    defaultDates?.start || null,
+    defaultDates?.start || null
   );
   const [endDate, setEndDate] = useState<Date | null>(
-    defaultDates?.end || null,
+    defaultDates?.end || null
   );
   const [currentServiceDuration, setCurrentServiceDuration] = useState<
     number | null
@@ -256,7 +256,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
         let filteredServices = servicesResponse.data || [];
         if (serviceCategories && serviceCategories.length > 1) {
           filteredServices = filteredServices.filter((service: any) =>
-            serviceCategories.includes(service.serviceCategory),
+            serviceCategories.includes(service.serviceCategory)
           );
         }
 
@@ -287,7 +287,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
           if (initialData.customerId) {
             // Check if customer is in the list
             let customerExists = customersList.some(
-              (c: Customer) => c.id === initialData.customerId,
+              (c: Customer) => c.id === initialData.customerId
             );
 
             // If not in list, fetch the specific customer
@@ -303,7 +303,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
               setSelectedCustomer(initialData.customerId);
               // Also set the customer object for the Autocomplete
               const customerObj = customersList.find(
-                (c: Customer) => c.id === initialData.customerId,
+                (c: Customer) => c.id === initialData.customerId
               );
               if (customerObj) {
                 setSelectedCustomerObj(customerObj);
@@ -313,7 +313,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
               // Load pets for the selected customer
               try {
                 const petsResponse = await petService.getPetsByCustomer(
-                  initialData.customerId,
+                  initialData.customerId
                 );
                 let petsData = petsResponse.data || [];
 
@@ -339,7 +339,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                 } else if (!petExists) {
                   console.warn(
                     'Pet not found in list and no pet object in initialData:',
-                    initialData.petId,
+                    initialData.petId
                   );
                 }
               } catch (err) {
@@ -355,7 +355,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
           const servicesList = servicesResponse.data || [];
           if (initialData.serviceId) {
             let serviceExists = servicesList.some(
-              (s: Service) => s.id === initialData.serviceId,
+              (s: Service) => s.id === initialData.serviceId
             );
 
             // If not in list, add the service from initialData
@@ -370,7 +370,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
             } else {
               console.warn(
                 'Service not found in list and no service object in initialData:',
-                initialData.serviceId,
+                initialData.serviceId
               );
             }
           }
@@ -415,7 +415,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                     if (serviceName) {
                       // Find the service by name
                       const matchingService = servicesList.find(
-                        (s: Service) => s.name === serviceName,
+                        (s: Service) => s.name === serviceName
                       );
                       if (matchingService) {
                         setSelectedService(matchingService.id);
@@ -425,7 +425,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                   }
                 } else if (initialData.suiteType) {
                   setSelectedSuiteType(
-                    normalizeToSuiteSize(initialData.suiteType),
+                    normalizeToSuiteSize(initialData.suiteType)
                   );
                 }
               }
@@ -435,7 +435,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
               // Fallback to suite type if resource fetch fails
               if (initialData.suiteType) {
                 setSelectedSuiteType(
-                  normalizeToSuiteSize(initialData.suiteType),
+                  normalizeToSuiteSize(initialData.suiteType)
                 );
               }
             }
@@ -469,7 +469,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
         const serviceName = getServiceNameForResourceType(resourceType);
         if (serviceName) {
           const matchingService = services.find(
-            (s: Service) => s.name === serviceName,
+            (s: Service) => s.name === serviceName
           );
           if (matchingService) {
             setSelectedService(matchingService.id);
@@ -487,7 +487,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
    */
   const handleCustomerChange = async (
     customerId: string,
-    customerObj?: Customer | null,
+    customerObj?: Customer | null
   ) => {
     setSelectedCustomer(customerId);
     setSelectedCustomerObj(customerObj || null);
@@ -618,7 +618,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
         if (initialData?.petId) {
           // Check if the pet ID from initialData exists in the loaded pets
           const petExists = petsData.some(
-            (pet) => pet.id === initialData.petId,
+            (pet) => pet.id === initialData.petId
           );
           if (petExists) {
             setSelectedPet(initialData.petId);
@@ -685,7 +685,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
           500, // limit - get all kennels
           'name', // sortBy
           'asc', // sortOrder
-          'KENNEL', // type filter - get all kennels
+          'KENNEL' // type filter - get all kennels
         );
 
         if (response?.status === 'success' && response?.data) {
@@ -694,7 +694,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
           // Apply size filter if one is selected
           if (selectedSuiteType) {
             suites = suites.filter(
-              (suite) => (suite as any).size === selectedSuiteType,
+              (suite) => (suite as any).size === selectedSuiteType
             );
           }
         }
@@ -706,7 +706,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
 
         if (effectiveResourceId) {
           const resourceExists = suites.some(
-            (suite) => suite.id === effectiveResourceId,
+            (suite) => suite.id === effectiveResourceId
           );
 
           if (!resourceExists) {
@@ -746,7 +746,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
         if (resourceToCheck) {
           // Check if the resource ID exists in the available suites
           const suiteExists = suites.some(
-            (suite) => suite.id === resourceToCheck,
+            (suite) => suite.id === resourceToCheck
           );
 
           if (suiteExists) {
@@ -804,7 +804,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
         const response = await resourceService.batchCheckResourceAvailability(
           suiteIds,
           formatDate(startDate),
-          formatDate(endDate),
+          formatDate(endDate)
         );
 
         if (response?.status === 'success' && response?.data?.resources) {
@@ -816,7 +816,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
               const isCurrentReservation =
                 initialData?.id &&
                 result.conflictingReservations?.some(
-                  (r: any) => r.id === initialData.id,
+                  (r: any) => r.id === initialData.id
                 );
 
               // Only mark as occupied if it's NOT the current reservation
@@ -862,12 +862,12 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
 
       // Get the selected objects for detailed information
       const selectedCustomerObj = customers.find(
-        (c) => c.id === selectedCustomer,
+        (c) => c.id === selectedCustomer
       );
       const selectedPetObj = pets.find((p) => p.id === selectedPet);
       const selectedServiceObj = services.find((s) => s.id === selectedService);
       const selectedSuiteObj = availableSuites.find(
-        (s) => s.id === selectedSuiteId,
+        (s) => s.id === selectedSuiteId
       );
 
       if (!selectedCustomerObj || !selectedPetObj || !selectedServiceObj) {
@@ -989,7 +989,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
         {
           method: 'DELETE',
           headers,
-        },
+        }
       );
 
       if (!response.ok) {
@@ -1065,7 +1065,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
             })
             .join(', ');
           setError(
-            `Please assign kennels for all pets or select "Auto-assign": ${petNames}`,
+            `Please assign kennels for all pets or select "Auto-assign": ${petNames}`
           );
           setLoading(false);
           return;
@@ -1284,14 +1284,14 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                         DEFAULT_BOARDING_CHECKIN_HOUR,
                         0,
                         0,
-                        0,
+                        0
                       );
                       newEndDate.setDate(newEndDate.getDate() + 1);
                       newEndDate.setHours(
                         DEFAULT_BOARDING_CHECKOUT_HOUR,
                         0,
                         0,
-                        0,
+                        0
                       );
                       setStartDate(newStartDate);
                       setEndDate(newEndDate);
@@ -1353,7 +1353,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                         DEFAULT_DAYCAMP_DROPOFF_HOUR,
                         0,
                         0,
-                        0,
+                        0
                       );
                       newEndDate.setHours(DEFAULT_DAYCAMP_PICKUP_HOUR, 0, 0, 0);
                       setStartDate(newStartDate);
@@ -1474,7 +1474,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
               newValue: {
                 type: 'customer' | 'pet';
                 data: Customer | Pet;
-              } | null,
+              } | null
             ) => {
               if (newValue) {
                 if (newValue.type === 'customer') {
@@ -1568,7 +1568,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
 
                   // Find the index of the selected suite
                   const selectedSuiteIndex = availableSuites.findIndex(
-                    (s) => s.id === selectedSuiteId,
+                    (s) => s.id === selectedSuiteId
                   );
 
                   // Assign subsequent pets to next available suites
@@ -1669,7 +1669,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                       } else if (service.duration) {
                         // For other services (DAYCARE), add the service duration
                         newEndDate.setMinutes(
-                          newEndDate.getMinutes() + service.duration,
+                          newEndDate.getMinutes() + service.duration
                         );
                       }
 
@@ -1696,7 +1696,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
           {/* Conditionally show Groomer Selector for Grooming services */}
           {(() => {
             const selectedServiceObj = services.find(
-              (s) => s.id === selectedService,
+              (s) => s.id === selectedService
             );
             const isGroomingService =
               selectedServiceObj?.serviceCategory === 'GROOMING';
@@ -1718,7 +1718,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
           {/* Conditionally show suiteType dropdown for Daycare or Boarding */}
           {(() => {
             const selectedServiceObj = services.find(
-              (s) => s.id === selectedService,
+              (s) => s.id === selectedService
             );
             const requiresSuiteType =
               selectedServiceObj &&
@@ -1826,7 +1826,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                             alert(`All pets assigned to the same suite!`);
                           } else {
                             alert(
-                              `No suitable multi-pet suite found. Available suites: ${availableSuites.length}. Please select a STANDARD_PLUS_SUITE or VIP_SUITE from the Suite Type dropdown above.`,
+                              `No suitable multi-pet suite found. Available suites: ${availableSuites.length}. Please select a STANDARD_PLUS_SUITE or VIP_SUITE from the Suite Type dropdown above.`
                             );
                           }
                         }}
@@ -1865,7 +1865,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                           ]}
                           value={
                             availableSuites.find(
-                              (s) => s.id === petSuiteAssignments[petId],
+                              (s) => s.id === petSuiteAssignments[petId]
                             ) || { id: '', name: 'Auto-assign' }
                           }
                           isOptionEqualToValue={(option, value) =>
@@ -1897,7 +1897,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
 
                             // Count how many pets already assigned to this suite
                             const petsInSuite = Object.values(
-                              petSuiteAssignments,
+                              petSuiteAssignments
                             ).filter((id) => id === option.id).length;
 
                             // Get suite capacity (default to 1 if not specified)
@@ -1917,7 +1917,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
 
                             const isOccupied = occupiedSuiteIds.has(option.id);
                             const petsInSuite = Object.values(
-                              petSuiteAssignments,
+                              petSuiteAssignments
                             ).filter((id) => id === option.id).length;
                             const suiteCapacity = (option as any).maxPets || 1;
                             const atCapacity = petsInSuite >= suiteCapacity;
@@ -1929,7 +1929,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                                 option.id.substring(0, 8)
                               }`;
                             const roomSize = getRoomSizeDisplayName(
-                              (option as any).size,
+                              (option as any).size
                             );
                             const sizeText = roomSize ? ` - ${roomSize}` : '';
                             const capacityText =
@@ -2026,7 +2026,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                           renderValue={(selected) => {
                             if (!selected) return 'Auto-assign (recommended)';
                             const suite = availableSuites.find(
-                              (s) => s.id === selected,
+                              (s) => s.id === selected
                             );
                             if (suite) {
                               const suiteNumber = suite.attributes?.suiteNumber;
@@ -2074,7 +2074,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                           )}
                           {selectedSuiteId &&
                             !availableSuites.some(
-                              (suite) => suite.id === selectedSuiteId,
+                              (suite) => suite.id === selectedSuiteId
                             ) && (
                               <MenuItem
                                 id={`suite-option-${selectedSuiteId}`}
@@ -2118,7 +2118,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                   if (currentServiceDuration) {
                     const newEndDate = new Date(newValue.getTime());
                     const service = services.find(
-                      (s) => s.id === selectedService,
+                      (s) => s.id === selectedService
                     );
 
                     // For BOARDING services (overnight), set to 5pm next day
@@ -2131,7 +2131,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                     } else {
                       // For other services, add the service duration in minutes
                       newEndDate.setMinutes(
-                        newEndDate.getMinutes() + currentServiceDuration,
+                        newEndDate.getMinutes() + currentServiceDuration
                       );
                     }
 
@@ -2156,7 +2156,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                     : new Date();
                   updatedDate.setHours(
                     newValue.getHours(),
-                    newValue.getMinutes(),
+                    newValue.getMinutes()
                   );
 
                   setStartDate(updatedDate);
@@ -2165,7 +2165,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                   if (currentServiceDuration) {
                     const newEndDate = new Date(updatedDate.getTime());
                     const service = services.find(
-                      (s) => s.id === selectedService,
+                      (s) => s.id === selectedService
                     );
 
                     // For BOARDING services (overnight), set to 5pm next day
@@ -2178,7 +2178,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                     } else {
                       // For other services, add the service duration in minutes
                       newEndDate.setMinutes(
-                        newEndDate.getMinutes() + currentServiceDuration,
+                        newEndDate.getMinutes() + currentServiceDuration
                       );
                     }
 
@@ -2232,7 +2232,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                   const updatedDate = endDate ? new Date(endDate) : new Date();
                   updatedDate.setHours(
                     newValue.getHours(),
-                    newValue.getMinutes(),
+                    newValue.getMinutes()
                   );
 
                   setEndDate(updatedDate);

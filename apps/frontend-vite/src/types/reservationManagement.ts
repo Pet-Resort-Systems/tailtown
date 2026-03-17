@@ -1,6 +1,6 @@
 /**
  * Reservation Management Types
- * 
+ *
  * Types for customer-facing reservation management including:
  * - Viewing reservations
  * - Modifying reservations
@@ -13,7 +13,7 @@ import { Reservation } from '../services/reservationService';
 
 export type ReservationFilter = 'ALL' | 'UPCOMING' | 'PAST' | 'CANCELLED';
 
-export type ModificationType = 
+export type ModificationType =
   | 'DATE_CHANGE'
   | 'PET_ADDED'
   | 'PET_REMOVED'
@@ -31,7 +31,7 @@ export type CancellationReason =
   | 'PRICE_CONCERN'
   | 'OTHER';
 
-export type RefundStatus = 
+export type RefundStatus =
   | 'PENDING'
   | 'APPROVED'
   | 'PROCESSED'

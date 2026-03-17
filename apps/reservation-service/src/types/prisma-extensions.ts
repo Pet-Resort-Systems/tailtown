@@ -4,7 +4,7 @@
  * for multi-tenant isolation, but the Prisma client doesn't recognize them in TypeScript.
  */
 
-import { Prisma } from "@prisma/client";
+import { Prisma } from '@prisma/client';
 
 // Define tenant-specific types to use with type assertions
 export interface TenantFields {
@@ -13,16 +13,16 @@ export interface TenantFields {
 
 // Extend the ReservationStatus enum to include our custom statuses
 export enum ExtendedReservationStatus {
-  CONFIRMED = "CONFIRMED",
-  PENDING = "PENDING",
-  CANCELED = "CANCELED",
-  COMPLETED = "COMPLETED",
-  CHECKED_IN = "CHECKED_IN",
-  CHECKED_OUT = "CHECKED_OUT",
-  NO_SHOW = "NO_SHOW",
-  PENDING_PAYMENT = "PENDING_PAYMENT",
-  PARTIALLY_PAID = "PARTIALLY_PAID",
-  DRAFT = "DRAFT",
+  CONFIRMED = 'CONFIRMED',
+  PENDING = 'PENDING',
+  CANCELED = 'CANCELED',
+  COMPLETED = 'COMPLETED',
+  CHECKED_IN = 'CHECKED_IN',
+  CHECKED_OUT = 'CHECKED_OUT',
+  NO_SHOW = 'NO_SHOW',
+  PENDING_PAYMENT = 'PENDING_PAYMENT',
+  PARTIALLY_PAID = 'PARTIALLY_PAID',
+  DRAFT = 'DRAFT',
 }
 
 // Extend Prisma's WhereInput types to include tenantId
@@ -54,8 +54,10 @@ export type ExtendedReservation = Prisma.ReservationGetPayload<{}> & {
 };
 
 // Define interfaces for Prisma include and select options with additional fields
-export interface ExtendedReservationInclude
-  extends Omit<Prisma.ReservationInclude, "service"> {
+export interface ExtendedReservationInclude extends Omit<
+  Prisma.ReservationInclude,
+  'service'
+> {
   // We're keeping this simple to avoid complex Prisma type constraint issues
   addOns?: any;
   service?: any; // Using any to avoid Prisma type generation issues

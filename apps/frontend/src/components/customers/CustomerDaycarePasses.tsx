@@ -8,7 +8,7 @@
  * - Redemption history
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -35,8 +35,8 @@ import {
   Collapse,
   MenuItem,
   TextField,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   Add as AddIcon,
   ConfirmationNumber as PassIcon,
@@ -44,12 +44,12 @@ import {
   ExpandLess as ExpandLessIcon,
   Warning as WarningIcon,
   CheckCircle as CheckCircleIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import {
   daycarePassService,
   DaycarePassPackage,
   CustomerDaycarePass,
-} from "../../services/daycarePassService";
+} from '../../services/daycarePassService';
 
 interface CustomerDaycarePassesProps {
   customerId: string;
@@ -64,8 +64,8 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false);
-  const [selectedPackageId, setSelectedPackageId] = useState<string>("");
-  const [purchaseNotes, setPurchaseNotes] = useState("");
+  const [selectedPackageId, setSelectedPackageId] = useState<string>('');
+  const [purchaseNotes, setPurchaseNotes] = useState('');
   const [purchasing, setPurchasing] = useState(false);
   const [expandedPassId, setExpandedPassId] = useState<string | null>(null);
   const [summary, setSummary] = useState({
@@ -93,7 +93,7 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
       setSummary(passesResponse.summary);
       setPackages(packagesData);
     } catch (err) {
-      setError("Failed to load passes");
+      setError('Failed to load passes');
       console.error(err);
     } finally {
       setLoading(false);
@@ -102,7 +102,7 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
 
   const handlePurchase = async () => {
     if (!selectedPackageId) {
-      setError("Please select a package");
+      setError('Please select a package');
       return;
     }
 
@@ -116,40 +116,40 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
         notes: purchaseNotes,
       });
 
-      setSuccess("Pass purchased successfully!");
+      setSuccess('Pass purchased successfully!');
       setPurchaseDialogOpen(false);
-      setSelectedPackageId("");
-      setPurchaseNotes("");
+      setSelectedPackageId('');
+      setPurchaseNotes('');
       loadData();
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to purchase pass");
+      setError(err.response?.data?.message || 'Failed to purchase pass');
     } finally {
       setPurchasing(false);
     }
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
     }).format(amount);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
     });
   };
 
   const getStatusChip = (pass: CustomerDaycarePass) => {
     const statusConfig = daycarePassService.formatStatus(pass.status);
     const isExpiringSoon =
-      pass.status === "ACTIVE" && daycarePassService.isExpiringSoon(pass);
+      pass.status === 'ACTIVE' && daycarePassService.isExpiringSoon(pass);
 
     return (
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Chip
           label={statusConfig.label}
           size="small"
@@ -170,7 +170,7 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -198,7 +198,7 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} sm={4}>
           <Card>
-            <CardContent sx={{ textAlign: "center" }}>
+            <CardContent sx={{ textAlign: 'center' }}>
               <Typography variant="h3" color="primary">
                 {summary.totalPassesRemaining}
               </Typography>
@@ -210,7 +210,7 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
         </Grid>
         <Grid item xs={12} sm={4}>
           <Card>
-            <CardContent sx={{ textAlign: "center" }}>
+            <CardContent sx={{ textAlign: 'center' }}>
               <Typography variant="h3" color="success.main">
                 {summary.activePasses}
               </Typography>
@@ -222,11 +222,11 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
         </Grid>
         <Grid item xs={12} sm={4}>
           <Card>
-            <CardContent sx={{ textAlign: "center" }}>
+            <CardContent sx={{ textAlign: 'center' }}>
               <Typography
                 variant="h3"
                 color={
-                  summary.expiringSoon > 0 ? "warning.main" : "text.secondary"
+                  summary.expiringSoon > 0 ? 'warning.main' : 'text.secondary'
                 }
               >
                 {summary.expiringSoon}
@@ -240,7 +240,7 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
       </Grid>
 
       {/* Action Button */}
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
@@ -253,8 +253,8 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
 
       {/* Passes List */}
       {passes.length === 0 ? (
-        <Paper sx={{ p: 4, textAlign: "center" }}>
-          <PassIcon sx={{ fontSize: 48, color: "text.secondary", mb: 2 }} />
+        <Paper sx={{ p: 4, textAlign: 'center' }}>
+          <PassIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
           <Typography variant="h6" color="text.secondary" gutterBottom>
             No Daycare Passes
           </Typography>
@@ -289,10 +289,10 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
                 <React.Fragment key={pass.id}>
                   <TableRow
                     sx={{
-                      opacity: pass.status === "ACTIVE" ? 1 : 0.6,
-                      "& > *": {
+                      opacity: pass.status === 'ACTIVE' ? 1 : 0.6,
+                      '& > *': {
                         borderBottom:
-                          expandedPassId === pass.id ? "none" : undefined,
+                          expandedPassId === pass.id ? 'none' : undefined,
                       },
                     }}
                   >
@@ -303,7 +303,7 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
                     </TableCell>
                     <TableCell align="center">
                       <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
                       >
                         <Box sx={{ flexGrow: 1, minWidth: 60 }}>
                           <LinearProgress
@@ -313,7 +313,7 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
                               100
                             }
                             color={
-                              pass.passesRemaining > 0 ? "success" : "error"
+                              pass.passesRemaining > 0 ? 'success' : 'error'
                             }
                             sx={{ height: 8, borderRadius: 4 }}
                           />
@@ -353,7 +353,7 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
                         timeout="auto"
                         unmountOnExit
                       >
-                        <Box sx={{ py: 2, px: 2, bgcolor: "grey.50" }}>
+                        <Box sx={{ py: 2, px: 2, bgcolor: 'grey.50' }}>
                           <Typography variant="subtitle2" gutterBottom>
                             Recent Redemptions
                           </Typography>
@@ -377,7 +377,7 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
                                       {redemption.passesAfterUse} remaining
                                     </TableCell>
                                     <TableCell>
-                                      {redemption.notes || "-"}
+                                      {redemption.notes || '-'}
                                     </TableCell>
                                     <TableCell>
                                       {redemption.isReversed ? (
@@ -439,9 +439,9 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
                   <MenuItem key={pkg.id} value={pkg.id}>
                     <Box
                       sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        width: "100%",
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        width: '100%',
                       }}
                     >
                       <span>
@@ -463,7 +463,7 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
             </TextField>
 
             {selectedPackageId && (
-              <Card variant="outlined" sx={{ mb: 2, bgcolor: "primary.light" }}>
+              <Card variant="outlined" sx={{ mb: 2, bgcolor: 'primary.light' }}>
                 <CardContent>
                   {(() => {
                     const pkg = packages.find(
@@ -485,7 +485,7 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
                           <Grid item xs={6}>
                             <Typography
                               variant="body2"
-                              sx={{ textDecoration: "line-through" }}
+                              sx={{ textDecoration: 'line-through' }}
                             >
                               {formatCurrency(
                                 pkg.regularPricePerDay * pkg.passCount
@@ -551,7 +551,7 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
             onClick={handlePurchase}
             disabled={!selectedPackageId || purchasing}
           >
-            {purchasing ? <CircularProgress size={24} /> : "Purchase"}
+            {purchasing ? <CircularProgress size={24} /> : 'Purchase'}
           </Button>
         </DialogActions>
       </Dialog>

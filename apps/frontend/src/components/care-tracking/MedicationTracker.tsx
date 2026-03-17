@@ -3,7 +3,7 @@
  * Mobile-friendly interface for staff to log medication administration
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -27,7 +27,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Medication as MedIcon,
   ExpandMore as ExpandIcon,
@@ -37,11 +37,11 @@ import {
   Schedule as TimeIcon,
   Pets as PetIcon,
   Warning as WarningIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import careTrackingService, {
   CheckedInPet,
   PetMedication,
-} from "../../services/careTrackingService";
+} from '../../services/careTrackingService';
 
 interface MedicationTrackerProps {
   onComplete?: () => void;
@@ -61,7 +61,7 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({
     petId: string;
     medication: PetMedication;
   } | null>(null);
-  const [skipReason, setSkipReason] = useState("");
+  const [skipReason, setSkipReason] = useState('');
   const [notes, setNotes] = useState<Record<string, string>>({});
 
   // Load pets needing medication
@@ -73,8 +73,8 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({
         const data = await careTrackingService.getPetsNeedingMedication();
         setPets(data);
       } catch (err: any) {
-        console.error("Error loading pets:", err);
-        setError("Failed to load pets needing medication");
+        console.error('Error loading pets:', err);
+        setError('Failed to load pets needing medication');
       } finally {
         setLoading(false);
       }
@@ -111,8 +111,8 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({
       const data = await careTrackingService.getPetsNeedingMedication();
       setPets(data);
     } catch (err: any) {
-      console.error("Error logging medication:", err);
-      setError("Failed to log medication");
+      console.error('Error logging medication:', err);
+      setError('Failed to log medication');
     } finally {
       setSaving(null);
     }
@@ -140,14 +140,14 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({
       setTimeout(() => setSuccess(null), 2000);
       setSkipDialogOpen(false);
       setSelectedMed(null);
-      setSkipReason("");
+      setSkipReason('');
 
       // Reload
       const data = await careTrackingService.getPetsNeedingMedication();
       setPets(data);
     } catch (err: any) {
-      console.error("Error skipping medication:", err);
-      setError("Failed to skip medication");
+      console.error('Error skipping medication:', err);
+      setError('Failed to skip medication');
     } finally {
       setSaving(null);
     }
@@ -160,7 +160,7 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({
 
   const getMedicationStatus = (
     medication: PetMedication
-  ): "pending" | "given" | "skipped" => {
+  ): 'pending' | 'given' | 'skipped' => {
     const logs = medication.logs || [];
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -171,22 +171,22 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({
       return logDate.getTime() === today.getTime();
     });
 
-    if (!todayLog) return "pending";
-    return todayLog.wasAdministered ? "given" : "skipped";
+    if (!todayLog) return 'pending';
+    return todayLog.wasAdministered ? 'given' : 'skipped';
   };
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
         <CircularProgress />
       </Box>
     );
   }
 
   return (
-    <Box sx={{ p: 2, maxWidth: 600, mx: "auto" }}>
+    <Box sx={{ p: 2, maxWidth: 600, mx: 'auto' }}>
       {/* Header */}
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
         <MedIcon color="primary" />
         <Typography variant="h5">Medication Tracker</Typography>
       </Box>
@@ -209,18 +209,18 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({
 
       {/* Pet List */}
       {pets.length === 0 ? (
-        <Paper sx={{ p: 4, textAlign: "center" }}>
-          <MedIcon sx={{ fontSize: 48, color: "text.secondary", mb: 1 }} />
+        <Paper sx={{ p: 4, textAlign: 'center' }}>
+          <MedIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 1 }} />
           <Typography color="text.secondary">
             No pets need medication today
           </Typography>
         </Paper>
       ) : (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {pets.map((petData) => {
             const isExpanded = expandedPet === petData.pet.id;
             const pendingMeds = petData.pet.medications.filter(
-              (m) => getMedicationStatus(m) === "pending"
+              (m) => getMedicationStatus(m) === 'pending'
             );
 
             return (
@@ -229,21 +229,21 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({
                   {/* Pet Header */}
                   <Box
                     sx={{
-                      display: "flex",
-                      alignItems: "center",
+                      display: 'flex',
+                      alignItems: 'center',
                       gap: 2,
                       mb: 2,
                     }}
                   >
                     <Avatar
                       src={petData.pet.profilePhoto}
-                      sx={{ width: 56, height: 56, bgcolor: "primary.light" }}
+                      sx={{ width: 56, height: 56, bgcolor: 'primary.light' }}
                     >
                       <PetIcon />
                     </Avatar>
                     <Box sx={{ flex: 1 }}>
                       <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
                       >
                         <Typography variant="h6">{petData.pet.name}</Typography>
                         {pendingMeds.length > 0 && (
@@ -264,7 +264,7 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({
                         )}
                       </Box>
                       <Typography variant="body2" color="text.secondary">
-                        {petData.pet.breed} • {petData.customer.firstName}{" "}
+                        {petData.pet.breed} • {petData.customer.firstName}{' '}
                         {petData.customer.lastName}
                       </Typography>
                     </Box>
@@ -288,18 +288,18 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({
                           key={med.id}
                           sx={{
                             bgcolor:
-                              status === "given"
-                                ? "success.light"
-                                : status === "skipped"
-                                ? "grey.200"
-                                : "warning.light",
+                              status === 'given'
+                                ? 'success.light'
+                                : status === 'skipped'
+                                  ? 'grey.200'
+                                  : 'warning.light',
                             borderRadius: 1,
                             mb: 1,
-                            opacity: status !== "pending" ? 0.7 : 1,
+                            opacity: status !== 'pending' ? 0.7 : 1,
                           }}
                           secondaryAction={
-                            status === "pending" ? (
-                              <Box sx={{ display: "flex", gap: 1 }}>
+                            status === 'pending' ? (
+                              <Box sx={{ display: 'flex', gap: 1 }}>
                                 <Button
                                   variant="contained"
                                   color="success"
@@ -317,7 +317,7 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({
                                   {isSaving ? (
                                     <CircularProgress size={16} />
                                   ) : (
-                                    "Given"
+                                    'Given'
                                   )}
                                 </Button>
                                 <Button
@@ -335,10 +335,10 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({
                               </Box>
                             ) : (
                               <Chip
-                                label={status === "given" ? "Given" : "Skipped"}
+                                label={status === 'given' ? 'Given' : 'Skipped'}
                                 size="small"
                                 color={
-                                  status === "given" ? "success" : "default"
+                                  status === 'given' ? 'success' : 'default'
                                 }
                               />
                             )
@@ -347,7 +347,7 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({
                           <ListItemIcon>
                             <MedIcon
                               color={
-                                status === "pending" ? "warning" : "disabled"
+                                status === 'pending' ? 'warning' : 'disabled'
                               }
                             />
                           </ListItemIcon>
@@ -394,21 +394,21 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({
                         {med.timeOfDay && med.timeOfDay.length > 0 && (
                           <Box
                             sx={{
-                              display: "flex",
-                              alignItems: "center",
+                              display: 'flex',
+                              alignItems: 'center',
                               gap: 0.5,
                               mt: 1,
                             }}
                           >
                             <TimeIcon fontSize="small" color="action" />
                             <Typography variant="body2" color="text.secondary">
-                              {med.timeOfDay.join(", ")}
+                              {med.timeOfDay.join(', ')}
                             </Typography>
                           </Box>
                         )}
                         <TextField
                           label="Notes (optional)"
-                          value={notes[`${petData.pet.id}-${med.id}`] || ""}
+                          value={notes[`${petData.pet.id}-${med.id}`] || ''}
                           onChange={(e) =>
                             setNotes({
                               ...notes,
@@ -456,14 +456,14 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({
             onClick={handleSkip}
             disabled={!skipReason.trim() || saving !== null}
           >
-            {saving ? <CircularProgress size={16} /> : "Skip Medication"}
+            {saving ? <CircularProgress size={16} /> : 'Skip Medication'}
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Complete Button */}
       {onComplete && pets.length > 0 && (
-        <Box sx={{ mt: 3, textAlign: "center" }}>
+        <Box sx={{ mt: 3, textAlign: 'center' }}>
           <Button variant="contained" size="large" onClick={onComplete}>
             Done with Medications
           </Button>

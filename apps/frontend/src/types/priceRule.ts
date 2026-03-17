@@ -1,4 +1,10 @@
-export type PriceRuleType = 'DAY_OF_WEEK' | 'MULTI_DAY' | 'MULTI_PET' | 'SEASONAL' | 'PROMOTIONAL' | 'CUSTOM';
+export type PriceRuleType =
+  | 'DAY_OF_WEEK'
+  | 'MULTI_DAY'
+  | 'MULTI_PET'
+  | 'SEASONAL'
+  | 'PROMOTIONAL'
+  | 'CUSTOM';
 export type DiscountType = 'PERCENTAGE' | 'FIXED_AMOUNT';
 export type PriceAdjustmentType = 'DISCOUNT' | 'SURCHARGE';
 

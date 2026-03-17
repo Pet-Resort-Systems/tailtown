@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -25,7 +25,7 @@ import {
   CircularProgress,
   Tooltip,
   Grid,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -33,20 +33,20 @@ import {
   ContentCopy as DuplicateIcon,
   People as EnrollmentsIcon,
   PersonAdd as EnrollIcon,
-} from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { DatePicker } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import schedulingService from "../../services/schedulingService";
-import { customerService } from "../../services/customerService";
-import { petService } from "../../services/petService";
+} from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import { DatePicker } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import schedulingService from '../../services/schedulingService';
+import { customerService } from '../../services/customerService';
+import { petService } from '../../services/petService';
 import {
   TrainingClass,
   CreateTrainingClassRequest,
-} from "../../types/scheduling";
-import { Customer } from "../../types/customer";
-import { Pet } from "../../types/pet";
+} from '../../types/scheduling';
+import { Customer } from '../../types/customer';
+import { Pet } from '../../types/pet';
 
 const TrainingClasses: React.FC = () => {
   const navigate = useNavigate();
@@ -59,26 +59,26 @@ const TrainingClasses: React.FC = () => {
 
   // Form state
   const [formData, setFormData] = useState<CreateTrainingClassRequest>({
-    name: "",
-    description: "",
-    level: "BEGINNER",
-    category: "OBEDIENCE",
-    instructorId: "",
+    name: '',
+    description: '',
+    level: 'BEGINNER',
+    category: 'OBEDIENCE',
+    instructorId: '',
     maxCapacity: 8,
     startDate: new Date(),
     totalWeeks: 6,
     daysOfWeek: [1], // Monday
-    startTime: "18:00",
-    endTime: "19:00",
+    startTime: '18:00',
+    endTime: '19:00',
     pricePerSeries: 200,
-    notes: "",
+    notes: '',
   });
 
   // Filter state
   const [filters, setFilters] = useState({
-    status: "",
-    category: "",
-    level: "",
+    status: '',
+    category: '',
+    level: '',
     isActive: true,
   });
 
@@ -89,8 +89,8 @@ const TrainingClasses: React.FC = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [pets, setPets] = useState<Pet[]>([]);
   const [enrollmentData, setEnrollmentData] = useState({
-    customerId: "",
-    petId: "",
+    customerId: '',
+    petId: '',
     amountPaid: 0,
   });
 
@@ -110,7 +110,7 @@ const TrainingClasses: React.FC = () => {
       setClasses(data);
       setError(null);
     } catch (err: any) {
-      setError(err.message || "Failed to load training classes");
+      setError(err.message || 'Failed to load training classes');
       console.error(err);
     } finally {
       setLoading(false);
@@ -122,7 +122,7 @@ const TrainingClasses: React.FC = () => {
       setEditingClass(trainingClass);
       setFormData({
         name: trainingClass.name,
-        description: trainingClass.description || "",
+        description: trainingClass.description || '',
         level: trainingClass.level,
         category: trainingClass.category,
         instructorId: trainingClass.instructorId,
@@ -138,24 +138,24 @@ const TrainingClasses: React.FC = () => {
         minAge: trainingClass.minAge,
         maxAge: trainingClass.maxAge,
         prerequisites: trainingClass.prerequisites,
-        notes: trainingClass.notes || "",
+        notes: trainingClass.notes || '',
       });
     } else {
       setEditingClass(null);
       setFormData({
-        name: "",
-        description: "",
-        level: "BEGINNER",
-        category: "OBEDIENCE",
-        instructorId: "",
+        name: '',
+        description: '',
+        level: 'BEGINNER',
+        category: 'OBEDIENCE',
+        instructorId: '',
         maxCapacity: 8,
         startDate: new Date(),
         totalWeeks: 6,
         daysOfWeek: [1],
-        startTime: "18:00",
-        endTime: "19:00",
+        startTime: '18:00',
+        endTime: '19:00',
         pricePerSeries: 200,
-        notes: "",
+        notes: '',
       });
     }
     setOpenDialog(true);
@@ -181,7 +181,7 @@ const TrainingClasses: React.FC = () => {
         !formData.pricePerSeries
       ) {
         setError(
-          "Please fill in all required fields (name, instructor, capacity, dates, times, price)"
+          'Please fill in all required fields (name, instructor, capacity, dates, times, price)'
         );
         return;
       }
@@ -189,11 +189,11 @@ const TrainingClasses: React.FC = () => {
       // Format the data for the API
       // Format dates as YYYY-MM-DD to avoid timezone conversion issues
       const formatDateForAPI = (date: Date | string): string => {
-        if (typeof date === "string") return date;
+        if (typeof date === 'string') return date;
         // Format as YYYY-MM-DD in local timezone (not UTC)
         const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
       };
 
@@ -205,8 +205,8 @@ const TrainingClasses: React.FC = () => {
           : undefined,
       };
 
-      console.log("Creating training class with data:", apiData);
-      console.log("Start date formatted as:", apiData.startDate);
+      console.log('Creating training class with data:', apiData);
+      console.log('Start date formatted as:', apiData.startDate);
 
       if (editingClass) {
         await schedulingService.trainingClasses.update(
@@ -219,36 +219,36 @@ const TrainingClasses: React.FC = () => {
       await loadClasses();
       handleCloseDialog();
     } catch (err: any) {
-      console.error("Error saving training class:", err);
+      console.error('Error saving training class:', err);
       setError(
         err.response?.data?.message ||
           err.message ||
-          "Failed to save training class"
+          'Failed to save training class'
       );
     }
   };
 
   const handleDuplicate = async (id: string) => {
-    const startDate = prompt("Enter start date for new class (YYYY-MM-DD):");
+    const startDate = prompt('Enter start date for new class (YYYY-MM-DD):');
     if (startDate) {
       try {
         await schedulingService.trainingClasses.duplicate(id, startDate);
         await loadClasses();
       } catch (err: any) {
-        setError(err.message || "Failed to duplicate class");
+        setError(err.message || 'Failed to duplicate class');
       }
     }
   };
 
   const handleDelete = async (id: string) => {
     if (
-      window.confirm("Are you sure you want to delete this training class?")
+      window.confirm('Are you sure you want to delete this training class?')
     ) {
       try {
         await schedulingService.trainingClasses.delete(id);
         await loadClasses();
       } catch (err: any) {
-        setError(err.message || "Failed to delete class");
+        setError(err.message || 'Failed to delete class');
       }
     }
   };
@@ -256,8 +256,8 @@ const TrainingClasses: React.FC = () => {
   const handleOpenEnrollDialog = async (trainingClass: TrainingClass) => {
     setSelectedClassForEnrollment(trainingClass);
     setEnrollmentData({
-      customerId: "",
-      petId: "",
+      customerId: '',
+      petId: '',
       amountPaid: trainingClass.pricePerSeries || 0,
     });
 
@@ -266,7 +266,7 @@ const TrainingClasses: React.FC = () => {
       const customersResponse = await customerService.getAllCustomers(1, 100);
       setCustomers(customersResponse.data || []);
     } catch (err) {
-      console.error("Error loading customers:", err);
+      console.error('Error loading customers:', err);
     }
 
     setEnrollDialogOpen(true);
@@ -277,21 +277,21 @@ const TrainingClasses: React.FC = () => {
     setSelectedClassForEnrollment(null);
     setPets([]);
     setEnrollmentData({
-      customerId: "",
-      petId: "",
+      customerId: '',
+      petId: '',
       amountPaid: 0,
     });
   };
 
   const handleCustomerChange = async (customerId: string) => {
-    setEnrollmentData({ ...enrollmentData, customerId, petId: "" });
+    setEnrollmentData({ ...enrollmentData, customerId, petId: '' });
 
     if (customerId) {
       try {
         const petsResponse = await petService.getPetsByCustomer(customerId);
         setPets(petsResponse.data || []);
       } catch (err) {
-        console.error("Error loading pets:", err);
+        console.error('Error loading pets:', err);
         setPets([]);
       }
     } else {
@@ -305,7 +305,7 @@ const TrainingClasses: React.FC = () => {
       !enrollmentData.petId ||
       !selectedClassForEnrollment
     ) {
-      setError("Please select both customer and pet");
+      setError('Please select both customer and pet');
       return;
     }
 
@@ -324,41 +324,41 @@ const TrainingClasses: React.FC = () => {
       setError(null);
     } catch (err: any) {
       setError(
-        err.response?.data?.message || err.message || "Failed to enroll pet"
+        err.response?.data?.message || err.message || 'Failed to enroll pet'
       );
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "SCHEDULED":
-        return "primary";
-      case "IN_PROGRESS":
-        return "warning";
-      case "COMPLETED":
-        return "success";
-      case "CANCELLED":
-        return "error";
+      case 'SCHEDULED':
+        return 'primary';
+      case 'IN_PROGRESS':
+        return 'warning';
+      case 'COMPLETED':
+        return 'success';
+      case 'CANCELLED':
+        return 'error';
       default:
-        return "default";
+        return 'default';
     }
   };
 
   const getLevelColor = (level: string) => {
     switch (level) {
-      case "BEGINNER":
-        return "success";
-      case "INTERMEDIATE":
-        return "warning";
-      case "ADVANCED":
-        return "error";
+      case 'BEGINNER':
+        return 'success';
+      case 'INTERMEDIATE':
+        return 'warning';
+      case 'ADVANCED':
+        return 'error';
       default:
-        return "default";
+        return 'default';
     }
   };
 
   const getDayName = (day: number) => {
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     return days[day];
   };
 
@@ -461,14 +461,14 @@ const TrainingClasses: React.FC = () => {
               variant="outlined"
               onClick={() =>
                 setFilters({
-                  status: "",
-                  category: "",
-                  level: "",
+                  status: '',
+                  category: '',
+                  level: '',
                   isActive: true,
                 })
               }
               fullWidth
-              sx={{ height: "56px" }}
+              sx={{ height: '56px' }}
             >
               Clear Filters
             </Button>
@@ -529,7 +529,7 @@ const TrainingClasses: React.FC = () => {
                     </TableCell>
                     <TableCell>
                       <Typography variant="body2">
-                        {trainingClass.daysOfWeek.map(getDayName).join(", ")}
+                        {trainingClass.daysOfWeek.map(getDayName).join(', ')}
                       </Typography>
                       <Typography variant="caption" color="textSecondary">
                         {trainingClass.startTime} - {trainingClass.endTime}
@@ -538,11 +538,11 @@ const TrainingClasses: React.FC = () => {
                     <TableCell>
                       {trainingClass.instructor
                         ? `${trainingClass.instructor.firstName} ${trainingClass.instructor.lastName}`
-                        : "TBD"}
+                        : 'TBD'}
                     </TableCell>
                     <TableCell>
                       <Typography variant="body2">
-                        {trainingClass.currentEnrolled} /{" "}
+                        {trainingClass.currentEnrolled} /{' '}
                         {trainingClass.maxCapacity}
                       </Typography>
                       {trainingClass._count?.waitlist &&
@@ -554,7 +554,7 @@ const TrainingClasses: React.FC = () => {
                     </TableCell>
                     <TableCell>
                       <Chip
-                        label={trainingClass.status.replace("_", " ")}
+                        label={trainingClass.status.replace('_', ' ')}
                         color={getStatusColor(trainingClass.status)}
                         size="small"
                       />
@@ -626,7 +626,7 @@ const TrainingClasses: React.FC = () => {
         fullWidth
       >
         <DialogTitle>
-          {editingClass ? "Edit Training Class" : "New Training Class"}
+          {editingClass ? 'Edit Training Class' : 'New Training Class'}
         </DialogTitle>
         <DialogContent>
           {error && (
@@ -638,7 +638,7 @@ const TrainingClasses: React.FC = () => {
               {error}
             </Alert>
           )}
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
             <TextField
               label="Class Name"
               value={formData.name}
@@ -758,8 +758,8 @@ const TrainingClasses: React.FC = () => {
                   formData.startDate instanceof Date
                     ? formData.startDate
                     : formData.startDate
-                    ? new Date(formData.startDate)
-                    : null
+                      ? new Date(formData.startDate)
+                      : null
                 }
                 onChange={(date) => {
                   const newDate = date || new Date();
@@ -767,9 +767,9 @@ const TrainingClasses: React.FC = () => {
                   const dayOfWeek =
                     newDate instanceof Date ? newDate.getDay() : 0; // 0 = Sunday, 1 = Monday, etc.
                   console.log(
-                    "Start date changed to:",
+                    'Start date changed to:',
                     newDate,
-                    "Day of week:",
+                    'Day of week:',
                     dayOfWeek
                   );
                   setFormData({
@@ -837,7 +837,7 @@ const TrainingClasses: React.FC = () => {
         <DialogActions>
           <Button onClick={handleCloseDialog}>Cancel</Button>
           <Button onClick={handleSave} variant="contained" color="primary">
-            {editingClass ? "Update" : "Create"}
+            {editingClass ? 'Update' : 'Create'}
           </Button>
         </DialogActions>
       </Dialog>
@@ -862,7 +862,7 @@ const TrainingClasses: React.FC = () => {
               {error}
             </Alert>
           )}
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
             <FormControl fullWidth required>
               <InputLabel>Customer</InputLabel>
               <Select
@@ -902,7 +902,7 @@ const TrainingClasses: React.FC = () => {
                 </MenuItem>
                 {pets.map((pet) => (
                   <MenuItem key={pet.id} value={pet.id}>
-                    {pet.name} ({pet.breed || "Pet"})
+                    {pet.name} ({pet.breed || 'Pet'})
                   </MenuItem>
                 ))}
               </Select>
@@ -925,14 +925,14 @@ const TrainingClasses: React.FC = () => {
             />
 
             {selectedClassForEnrollment && (
-              <Box sx={{ p: 2, bgcolor: "info.light", borderRadius: 1 }}>
+              <Box sx={{ p: 2, bgcolor: 'info.light', borderRadius: 1 }}>
                 <Typography variant="body2" color="info.contrastText">
                   <strong>Class Details:</strong>
                   <br />
-                  {selectedClassForEnrollment.totalWeeks} weeks •{" "}
+                  {selectedClassForEnrollment.totalWeeks} weeks •{' '}
                   {selectedClassForEnrollment.daysOfWeek.length} days/week
                   <br />
-                  Capacity: {selectedClassForEnrollment.currentEnrolled} /{" "}
+                  Capacity: {selectedClassForEnrollment.currentEnrolled} /{' '}
                   {selectedClassForEnrollment.maxCapacity}
                 </Typography>
               </Box>

@@ -6,7 +6,8 @@ process.env.PORT = '4005'; // Use different port for tests to avoid conflicts
 
 // Set test database URL if not already set
 if (!process.env.DATABASE_URL) {
-  process.env.DATABASE_URL = 'postgresql://postgres:postgres@localhost:5433/customer_test';
+  process.env.DATABASE_URL =
+    'postgresql://postgres:postgres@localhost:5433/customer_test';
 }
 
 // Set test timeout for database operations

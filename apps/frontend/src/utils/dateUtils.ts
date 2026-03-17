@@ -13,8 +13,8 @@ export const formatDateToYYYYMMDD = (
   if (!date) return undefined;
 
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
-  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+  const day = String(date.getDate()).padStart(2, '0');
 
   return `${year}-${month}-${day}`;
 };
@@ -36,7 +36,7 @@ export const getCurrentDateFormatted = (): string => {
  * @returns Date object in local timezone
  */
 export const parseLocalDate = (dateString: string): Date => {
-  const [year, month, day] = dateString.split("-").map(Number);
+  const [year, month, day] = dateString.split('-').map(Number);
   // Month is 0-indexed in Date constructor
   return new Date(year, month - 1, day);
 };
@@ -48,7 +48,7 @@ export const parseLocalDate = (dateString: string): Date => {
  * @returns Day of week (0 = Sunday, 6 = Saturday)
  */
 export const getDayOfWeek = (dateString: string | Date): number => {
-  if (typeof dateString === "string") {
+  if (typeof dateString === 'string') {
     const date = parseLocalDate(dateString);
     return date.getDay();
   }
@@ -63,13 +63,13 @@ export const getDayOfWeek = (dateString: string | Date): number => {
  */
 export const getDayOfWeekName = (dateString: string | Date): string => {
   const days = [
-    "SUNDAY",
-    "MONDAY",
-    "TUESDAY",
-    "WEDNESDAY",
-    "THURSDAY",
-    "FRIDAY",
-    "SATURDAY",
+    'SUNDAY',
+    'MONDAY',
+    'TUESDAY',
+    'WEDNESDAY',
+    'THURSDAY',
+    'FRIDAY',
+    'SATURDAY',
   ];
   const dayIndex = getDayOfWeek(dateString);
   return days[dayIndex];
@@ -93,7 +93,7 @@ export const isWeekend = (dateString: string | Date): boolean => {
  * @returns Month number (1-12)
  */
 export const getMonth = (dateString: string | Date): number => {
-  if (typeof dateString === "string") {
+  if (typeof dateString === 'string') {
     const date = parseLocalDate(dateString);
     return date.getMonth() + 1; // Convert from 0-indexed to 1-indexed
   }
@@ -107,7 +107,7 @@ export const getMonth = (dateString: string | Date): number => {
  * @returns Year
  */
 export const getYear = (dateString: string | Date): number => {
-  if (typeof dateString === "string") {
+  if (typeof dateString === 'string') {
     const date = parseLocalDate(dateString);
     return date.getFullYear();
   }
@@ -125,8 +125,8 @@ export const compareDates = (
   date1: string | Date,
   date2: string | Date
 ): number => {
-  const d1 = typeof date1 === "string" ? parseLocalDate(date1) : date1;
-  const d2 = typeof date2 === "string" ? parseLocalDate(date2) : date2;
+  const d1 = typeof date1 === 'string' ? parseLocalDate(date1) : date1;
+  const d2 = typeof date2 === 'string' ? parseLocalDate(date2) : date2;
 
   const time1 = new Date(
     d1.getFullYear(),
@@ -169,8 +169,8 @@ export const daysBetween = (
   endDate: string | Date
 ): number => {
   const start =
-    typeof startDate === "string" ? parseLocalDate(startDate) : startDate;
-  const end = typeof endDate === "string" ? parseLocalDate(endDate) : endDate;
+    typeof startDate === 'string' ? parseLocalDate(startDate) : startDate;
+  const end = typeof endDate === 'string' ? parseLocalDate(endDate) : endDate;
 
   const startTime = new Date(
     start.getFullYear(),
@@ -216,9 +216,9 @@ export const parseGingrDate = (
   }
 
   // Ensure we have a string before calling replace
-  if (typeof isoString !== "string") {
+  if (typeof isoString !== 'string') {
     console.warn(
-      "parseGingrDate received non-string value:",
+      'parseGingrDate received non-string value:',
       typeof isoString,
       isoString
     );
@@ -227,7 +227,7 @@ export const parseGingrDate = (
 
   // Remove the 'Z' suffix and parse as local time
   // "2025-11-20T06:30:00.000Z" -> "2025-11-20T06:30:00.000"
-  const localString = isoString.replace("Z", "");
+  const localString = isoString.replace('Z', '');
 
   // Parse the components manually to avoid any timezone conversion
   const match = localString.match(
@@ -259,14 +259,14 @@ export const parseGingrDate = (
 export const formatGingrDate = (
   isoString: string | null | undefined,
   options: Intl.DateTimeFormatOptions = {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
   }
 ): string => {
   const date = parseGingrDate(isoString);
-  if (!date) return "";
-  return date.toLocaleDateString("en-US", options);
+  if (!date) return '';
+  return date.toLocaleDateString('en-US', options);
 };
 
 /**
@@ -279,14 +279,14 @@ export const formatGingrDate = (
 export const formatGingrTime = (
   isoString: string | null | undefined,
   options: Intl.DateTimeFormatOptions = {
-    hour: "numeric",
-    minute: "2-digit",
+    hour: 'numeric',
+    minute: '2-digit',
     hour12: true,
   }
 ): string => {
   const date = parseGingrDate(isoString);
-  if (!date) return "";
-  return date.toLocaleTimeString("en-US", options);
+  if (!date) return '';
+  return date.toLocaleTimeString('en-US', options);
 };
 
 /**
@@ -299,13 +299,13 @@ export const formatGingrDateTime = (
   isoString: string | null | undefined
 ): string => {
   const date = parseGingrDate(isoString);
-  if (!date) return "";
-  return date.toLocaleString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
+  if (!date) return '';
+  return date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
     hour12: true,
   });
 };
@@ -320,9 +320,9 @@ export const formatGingrDateTime = (
 export const getGingrDateString = (
   isoString: string | null | undefined
 ): string => {
-  if (!isoString) return "";
+  if (!isoString) return '';
   // Just extract the date portion directly - no timezone conversion needed
-  return isoString.split("T")[0];
+  return isoString.split('T')[0];
 };
 
 /**
@@ -335,9 +335,9 @@ export const getGingrDateString = (
 export const getGingrTimeString = (
   isoString: string | null | undefined
 ): string => {
-  if (!isoString) return "";
+  if (!isoString) return '';
   const match = isoString.match(/T(\d{2}):(\d{2})/);
-  if (!match) return "";
+  if (!match) return '';
   return `${match[1]}:${match[2]}`;
 };
 
@@ -378,7 +378,7 @@ export const inputsToGingrDate = (
   dateValue: string,
   timeValue: string
 ): string => {
-  if (!dateValue) return "";
-  const time = timeValue || "00:00";
+  if (!dateValue) return '';
+  const time = timeValue || '00:00';
   return `${dateValue}T${time}:00.000`;
 };

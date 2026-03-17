@@ -24,7 +24,7 @@ export interface GroomerAppointment {
   notes?: string;
   createdAt: Date | string;
   updatedAt: Date | string;
-  
+
   // Relations (when included)
   groomer?: {
     id: string;
@@ -100,7 +100,7 @@ export interface TrainingClass {
   instructorId: string;
   maxCapacity: number;
   currentEnrolled: number;
-  
+
   // Schedule
   startDate: Date | string;
   endDate: Date | string;
@@ -109,25 +109,25 @@ export interface TrainingClass {
   startTime: string;
   endTime: string;
   duration: number;
-  
+
   // Pricing
   pricePerSeries: number;
   pricePerSession?: number;
   depositRequired?: number;
-  
+
   // Status
   status: 'SCHEDULED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
   isActive: boolean;
-  
+
   // Requirements
   minAge?: number;
   maxAge?: number;
   prerequisites: string[];
-  
+
   notes?: string;
   createdAt: Date | string;
   updatedAt: Date | string;
-  
+
   // Relations (when included)
   instructor?: {
     id: string;
@@ -153,20 +153,20 @@ export interface ClassSession {
   scheduledDate: Date | string;
   scheduledTime: string;
   duration: number;
-  
+
   status: 'SCHEDULED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
   actualStartTime?: Date | string;
   actualEndTime?: Date | string;
-  
+
   topic?: string;
   objectives: string[];
   materials: string[];
   homework?: string;
-  
+
   notes?: string;
   createdAt: Date | string;
   updatedAt: Date | string;
-  
+
   // Relations
   class?: TrainingClass;
   attendance?: SessionAttendance[];
@@ -181,25 +181,25 @@ export interface ClassEnrollment {
   classId: string;
   petId: string;
   customerId: string;
-  
+
   enrollmentDate: Date | string;
   status: 'ENROLLED' | 'ACTIVE' | 'COMPLETED' | 'DROPPED' | 'WAITLIST';
-  
+
   amountPaid: number;
   amountDue: number;
   paymentStatus: 'PENDING' | 'PARTIAL' | 'PAID' | 'REFUNDED';
-  
+
   sessionsAttended: number;
   totalSessions: number;
   completionRate: number;
-  
+
   certificateIssued: boolean;
   certificateDate?: Date | string;
-  
+
   notes?: string;
   createdAt: Date | string;
   updatedAt: Date | string;
-  
+
   // Relations
   class?: TrainingClass;
   pet?: {
@@ -224,21 +224,21 @@ export interface SessionAttendance {
   sessionId: string;
   enrollmentId: string;
   petId: string;
-  
+
   status: 'PRESENT' | 'ABSENT' | 'EXCUSED' | 'LATE';
   arrivalTime?: Date | string;
   departureTime?: Date | string;
-  
+
   participationLevel?: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR';
   behaviorRating?: number; // 1-5
   progressNotes?: string;
-  
+
   homeworkCompleted: boolean;
   homeworkNotes?: string;
-  
+
   createdAt: Date | string;
   updatedAt: Date | string;
-  
+
   // Relations
   session?: ClassSession;
   enrollment?: ClassEnrollment;
@@ -259,7 +259,7 @@ export interface ClassWaitlist {
   notified: boolean;
   notifiedDate?: Date | string;
   status: 'WAITING' | 'ENROLLED' | 'EXPIRED';
-  
+
   // Relations
   class?: TrainingClass;
   pet?: {

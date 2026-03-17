@@ -1,9 +1,9 @@
 /**
  * Database Connection Test Script
- * 
+ *
  * This script tests the database connection using the DATABASE_URL from .env
  * It helps diagnose connection issues before attempting migrations or running the service
- * 
+ *
  * Usage:
  * node scripts/test-db-connection.js
  */
@@ -31,14 +31,14 @@ function parseDatabaseUrl(url) {
     // Extract protocol, credentials, host, port, and database name
     const regex = /^(postgresql):\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/(.+)$/;
     const match = url.match(regex);
-    
+
     if (!match) {
       return {
         valid: false,
-        error: 'Invalid DATABASE_URL format'
+        error: 'Invalid DATABASE_URL format',
       };
     }
-    
+
     return {
       valid: true,
       protocol: match[1],
@@ -47,12 +47,12 @@ function parseDatabaseUrl(url) {
       host: match[4],
       port: match[5],
       database: match[6],
-      url: url
+      url: url,
     };
   } catch (error) {
     return {
       valid: false,
-      error: `Failed to parse DATABASE_URL: ${error.message}`
+      error: `Failed to parse DATABASE_URL: ${error.message}`,
     };
   }
 }
@@ -60,16 +60,18 @@ function parseDatabaseUrl(url) {
 // Test the database connection
 async function testConnection() {
   console.log('🔍 Testing database connection...');
-  
+
   // Parse the DATABASE_URL
   const dbConfig = parseDatabaseUrl(databaseUrl);
-  
+
   if (!dbConfig.valid) {
     console.error(`❌ ${dbConfig.error}`);
-    console.log('Expected format: postgresql://username:password@host:port/database');
+    console.log(
+      'Expected format: postgresql://username:password@host:port/database'
+    );
     return false;
   }
-  
+
   // Print the connection details (masking password)
   console.log('Connection details:');
   console.log(`  Protocol: ${dbConfig.protocol}`);
@@ -78,19 +80,19 @@ async function testConnection() {
   console.log(`  Database: ${dbConfig.database}`);
   console.log(`  Username: ${dbConfig.username}`);
   console.log(`  Password: ${'*'.repeat(dbConfig.password.length)}`);
-  
+
   // Create a Prisma client
   const prisma = new PrismaClient();
-  
+
   try {
     // Try to connect and run a simple query
     console.log('Attempting to connect to the database...');
-    
+
     // Execute a simple query to test the connection
     const result = await prisma.$queryRaw`SELECT 1 as connection_test`;
-    
+
     console.log('✅ Successfully connected to the database!');
-    
+
     // Check if we can query the information_schema
     try {
       const tables = await prisma.$queryRaw`
@@ -99,11 +101,11 @@ async function testConnection() {
         WHERE table_schema = 'public'
         LIMIT 5
       `;
-      
+
       if (tables.length > 0) {
         console.log('✅ Successfully queried database schema');
         console.log('Sample tables in the database:');
-        tables.forEach(table => {
+        tables.forEach((table) => {
           console.log(`  - ${table.table_name}`);
         });
       } else {
@@ -112,12 +114,12 @@ async function testConnection() {
     } catch (error) {
       console.warn('⚠️ Could not query database schema:', error.message);
     }
-    
+
     return true;
   } catch (error) {
     console.error('❌ Failed to connect to the database');
     console.error(`Error: ${error.message}`);
-    
+
     // Provide helpful suggestions based on the error
     if (error.message.includes('ECONNREFUSED')) {
       console.log('\nPossible causes:');
@@ -140,7 +142,7 @@ async function testConnection() {
       console.log('- Create the database using:');
       console.log(`  CREATE DATABASE ${dbConfig.database};`);
     }
-    
+
     return false;
   } finally {
     // Disconnect from the database
@@ -150,7 +152,7 @@ async function testConnection() {
 
 // Run the test
 testConnection()
-  .then(success => {
+  .then((success) => {
     if (success) {
       console.log('\n✅ Database connection test completed successfully');
       console.log('You can now run migrations or start the service');
@@ -160,7 +162,7 @@ testConnection()
     }
     process.exit(success ? 0 : 1);
   })
-  .catch(error => {
+  .catch((error) => {
     console.error('Unexpected error:', error);
     process.exit(1);
   });

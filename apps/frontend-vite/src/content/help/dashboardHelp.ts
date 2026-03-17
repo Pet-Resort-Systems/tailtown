@@ -8,8 +8,9 @@ import { PageHelpContent } from '../../types/help';
 export const dashboardHelp: PageHelpContent = {
   pageId: 'dashboard',
   pageName: 'Dashboard',
-  overview: 'The Dashboard provides a quick overview of your daily operations, including check-ins, check-outs, and current occupancy. Use the date selector to view different days.',
-  
+  overview:
+    'The Dashboard provides a quick overview of your daily operations, including check-ins, check-outs, and current occupancy. Use the date selector to view different days.',
+
   articles: [
     {
       id: 'dashboard-overview',
@@ -24,7 +25,7 @@ Key Features:
 • Date Navigation: Use the date picker to view past or future days
 • Real-time Updates: Data refreshes automatically to show current status
 
-The dashboard is designed to give you everything you need to start your day efficiently.`
+The dashboard is designed to give you everything you need to start your day efficiently.`,
     },
     {
       id: 'dashboard-metrics',
@@ -46,7 +47,7 @@ Total Reservations:
 All active reservations for the selected date, including daycare, boarding, and grooming appointments.
 
 These metrics update in real-time as you create, modify, or complete reservations.`,
-      relatedArticles: ['dashboard-overview', 'dashboard-date-selector']
+      relatedArticles: ['dashboard-overview', 'dashboard-date-selector'],
     },
     {
       id: 'dashboard-date-selector',
@@ -70,7 +71,7 @@ This is useful for:
 • Reviewing past activity
 • Preparing for busy periods
 • Checking historical data`,
-      relatedArticles: ['dashboard-metrics']
+      relatedArticles: ['dashboard-metrics'],
     },
     {
       id: 'dashboard-quick-actions',
@@ -91,34 +92,38 @@ Using Quick Actions:
 3. Save to update your records
 
 These shortcuts save time during busy periods and keep your workflow smooth.`,
-      relatedArticles: ['dashboard-overview']
-    }
+      relatedArticles: ['dashboard-overview'],
+    },
   ],
 
   tooltips: {
     'check-ins-metric': {
       id: 'check-ins-metric',
       title: 'Check-Ins Today',
-      description: 'Number of pets scheduled to arrive today. Click to see the full list of incoming guests.',
-      learnMoreArticleId: 'dashboard-metrics'
+      description:
+        'Number of pets scheduled to arrive today. Click to see the full list of incoming guests.',
+      learnMoreArticleId: 'dashboard-metrics',
     },
     'check-outs-metric': {
       id: 'check-outs-metric',
       title: 'Check-Outs Today',
-      description: 'Number of pets scheduled to depart today. Prepare for pickups and final billing.',
-      learnMoreArticleId: 'dashboard-metrics'
+      description:
+        'Number of pets scheduled to depart today. Prepare for pickups and final billing.',
+      learnMoreArticleId: 'dashboard-metrics',
     },
     'overnight-metric': {
       id: 'overnight-metric',
       title: 'Overnight Guests',
-      description: 'Total pets staying at your facility tonight. Use this for staffing and resource planning.',
-      learnMoreArticleId: 'dashboard-metrics'
+      description:
+        'Total pets staying at your facility tonight. Use this for staffing and resource planning.',
+      learnMoreArticleId: 'dashboard-metrics',
     },
     'date-selector': {
       id: 'date-selector',
       title: 'Date Selector',
-      description: 'View dashboard data for any date. Use arrows for quick navigation or click to open the calendar.',
-      learnMoreArticleId: 'dashboard-date-selector'
-    }
-  }
+      description:
+        'View dashboard data for any date. Use arrows for quick navigation or click to open the calendar.',
+      learnMoreArticleId: 'dashboard-date-selector',
+    },
+  },
 };

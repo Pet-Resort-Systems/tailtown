@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { prisma } from "../config/prisma";
-import { logger } from "../utils/logger";
+import { Request, Response } from 'express';
+import { prisma } from '../config/prisma';
+import { logger } from '../utils/logger';
 
 /**
  * Check-In Template Controller
@@ -17,7 +17,7 @@ export const getAllTemplates = async (req: Request, res: Response) => {
     const { active } = req.query;
 
     const where: any = { tenantId };
-    if (active === "true") {
+    if (active === 'true') {
       where.isActive = true;
     }
 
@@ -27,28 +27,28 @@ export const getAllTemplates = async (req: Request, res: Response) => {
         sections: {
           include: {
             questions: {
-              orderBy: { order: "asc" },
+              orderBy: { order: 'asc' },
             },
           },
-          orderBy: { order: "asc" },
+          orderBy: { order: 'asc' },
         },
       },
-      orderBy: { name: "asc" },
+      orderBy: { name: 'asc' },
     });
 
     res.json({
-      status: "success",
+      status: 'success',
       results: templates.length,
       data: templates,
     });
   } catch (error: any) {
-    logger.error("Error fetching check-in templates", {
-      tenantId: req.headers["x-tenant-id"],
+    logger.error('Error fetching check-in templates', {
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to fetch check-in templates",
+      status: 'error',
+      message: 'Failed to fetch check-in templates',
     });
   }
 };
@@ -68,33 +68,33 @@ export const getTemplateById = async (req: Request, res: Response) => {
         sections: {
           include: {
             questions: {
-              orderBy: { order: "asc" },
+              orderBy: { order: 'asc' },
             },
           },
-          orderBy: { order: "asc" },
+          orderBy: { order: 'asc' },
         },
       },
     });
 
     if (!template) {
       return res.status(404).json({
-        status: "error",
-        message: "Template not found",
+        status: 'error',
+        message: 'Template not found',
       });
     }
 
     res.json({
-      status: "success",
+      status: 'success',
       data: template,
     });
   } catch (error: any) {
-    logger.error("Error fetching check-in template", {
+    logger.error('Error fetching check-in template', {
       templateId: req.params.id,
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to fetch check-in template",
+      status: 'error',
+      message: 'Failed to fetch check-in template',
     });
   }
 };
@@ -117,33 +117,33 @@ export const getDefaultTemplate = async (req: Request, res: Response) => {
         sections: {
           include: {
             questions: {
-              orderBy: { order: "asc" },
+              orderBy: { order: 'asc' },
             },
           },
-          orderBy: { order: "asc" },
+          orderBy: { order: 'asc' },
         },
       },
     });
 
     if (!template) {
       return res.status(404).json({
-        status: "error",
-        message: "No default template found",
+        status: 'error',
+        message: 'No default template found',
       });
     }
 
     res.json({
-      status: "success",
+      status: 'success',
       data: template,
     });
   } catch (error: any) {
-    logger.error("Error fetching default template", {
-      tenantId: req.headers["x-tenant-id"],
+    logger.error('Error fetching default template', {
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to fetch default template",
+      status: 'error',
+      message: 'Failed to fetch default template',
     });
   }
 };
@@ -197,26 +197,26 @@ export const createTemplate = async (req: Request, res: Response) => {
         sections: {
           include: {
             questions: {
-              orderBy: { order: "asc" },
+              orderBy: { order: 'asc' },
             },
           },
-          orderBy: { order: "asc" },
+          orderBy: { order: 'asc' },
         },
       },
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: template,
     });
   } catch (error: any) {
-    logger.error("Error creating check-in template", {
-      tenantId: req.headers["x-tenant-id"],
+    logger.error('Error creating check-in template', {
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to create check-in template",
+      status: 'error',
+      message: 'Failed to create check-in template',
     });
   }
 };
@@ -231,7 +231,7 @@ export const updateTemplate = async (req: Request, res: Response) => {
     const tenantId = (req as any).tenantId;
     const { name, description, isActive, isDefault, sections } = req.body;
 
-    logger.debug("Update template request", {
+    logger.debug('Update template request', {
       templateId: id,
       tenantId,
       bodyKeys: Object.keys(req.body),
@@ -246,8 +246,8 @@ export const updateTemplate = async (req: Request, res: Response) => {
 
     if (!existing) {
       return res.status(404).json({
-        status: "error",
-        message: "Template not found",
+        status: 'error',
+        message: 'Template not found',
       });
     }
 
@@ -260,7 +260,7 @@ export const updateTemplate = async (req: Request, res: Response) => {
     }
 
     // Update basic fields first
-    logger.debug("Updating template basic fields", { templateId: id });
+    logger.debug('Updating template basic fields', { templateId: id });
     await prisma.checkInTemplate.update({
       where: { id },
       data: {
@@ -271,11 +271,11 @@ export const updateTemplate = async (req: Request, res: Response) => {
         isDefault: isDefault !== undefined ? isDefault : existing.isDefault,
       },
     });
-    logger.debug("Template basic fields updated", { templateId: id });
+    logger.debug('Template basic fields updated', { templateId: id });
 
     // If sections are provided, delete existing sections and recreate
     if (sections && Array.isArray(sections)) {
-      logger.debug("Deleting existing template sections", { templateId: id });
+      logger.debug('Deleting existing template sections', { templateId: id });
 
       // First, get all sections for this template
       const existingSections = await prisma.checkInSection.findMany({
@@ -296,9 +296,9 @@ export const updateTemplate = async (req: Request, res: Response) => {
       await prisma.checkInSection.deleteMany({
         where: { templateId: id },
       });
-      logger.debug("Template sections deleted", { templateId: id });
+      logger.debug('Template sections deleted', { templateId: id });
 
-      logger.debug("Creating new template sections", {
+      logger.debug('Creating new template sections', {
         templateId: id,
         count: sections.length,
       });
@@ -309,7 +309,7 @@ export const updateTemplate = async (req: Request, res: Response) => {
         sectionIndex++
       ) {
         const section = sections[sectionIndex];
-        logger.debug("Creating template section", {
+        logger.debug('Creating template section', {
           templateId: id,
           sectionIndex: sectionIndex + 1,
           totalSections: sections.length,
@@ -338,7 +338,7 @@ export const updateTemplate = async (req: Request, res: Response) => {
           },
         });
       }
-      logger.debug("All template sections created", {
+      logger.debug('All template sections created', {
         templateId: id,
         count: sections.length,
       });
@@ -351,20 +351,20 @@ export const updateTemplate = async (req: Request, res: Response) => {
         sections: {
           include: {
             questions: {
-              orderBy: { order: "asc" },
+              orderBy: { order: 'asc' },
             },
           },
-          orderBy: { order: "asc" },
+          orderBy: { order: 'asc' },
         },
       },
     });
 
     res.json({
-      status: "success",
+      status: 'success',
       data: template,
     });
   } catch (error: any) {
-    logger.error("Error updating check-in template", {
+    logger.error('Error updating check-in template', {
       templateId: req.params.id,
       error: error.message,
       details: {
@@ -375,8 +375,8 @@ export const updateTemplate = async (req: Request, res: Response) => {
       },
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to update check-in template",
+      status: 'error',
+      message: 'Failed to update check-in template',
       error: error.message,
       details: error.meta,
     });
@@ -399,8 +399,8 @@ export const deleteTemplate = async (req: Request, res: Response) => {
 
     if (!existing) {
       return res.status(404).json({
-        status: "error",
-        message: "Template not found",
+        status: 'error',
+        message: 'Template not found',
       });
     }
 
@@ -411,7 +411,7 @@ export const deleteTemplate = async (req: Request, res: Response) => {
 
     if (checkInsUsingTemplate > 0) {
       return res.status(400).json({
-        status: "error",
+        status: 'error',
         message: `Cannot delete template. It is being used by ${checkInsUsingTemplate} check-in(s). Consider deactivating instead.`,
       });
     }
@@ -421,17 +421,17 @@ export const deleteTemplate = async (req: Request, res: Response) => {
     });
 
     res.json({
-      status: "success",
-      message: "Template deleted successfully",
+      status: 'success',
+      message: 'Template deleted successfully',
     });
   } catch (error: any) {
-    logger.error("Error deleting check-in template", {
+    logger.error('Error deleting check-in template', {
       templateId: req.params.id,
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to delete check-in template",
+      status: 'error',
+      message: 'Failed to delete check-in template',
     });
   }
 };
@@ -460,8 +460,8 @@ export const cloneTemplate = async (req: Request, res: Response) => {
 
     if (!sourceTemplate) {
       return res.status(404).json({
-        status: "error",
-        message: "Template not found",
+        status: 'error',
+        message: 'Template not found',
       });
     }
 
@@ -496,26 +496,26 @@ export const cloneTemplate = async (req: Request, res: Response) => {
         sections: {
           include: {
             questions: {
-              orderBy: { order: "asc" },
+              orderBy: { order: 'asc' },
             },
           },
-          orderBy: { order: "asc" },
+          orderBy: { order: 'asc' },
         },
       },
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: clonedTemplate,
     });
   } catch (error: any) {
-    logger.error("Error cloning check-in template", {
+    logger.error('Error cloning check-in template', {
       templateId: req.params.id,
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to clone check-in template",
+      status: 'error',
+      message: 'Failed to clone check-in template',
     });
   }
 };

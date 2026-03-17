@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -19,7 +19,7 @@ import {
   Paper,
   Alert,
   IconButton,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Assessment as ReportsIcon,
   Pets as PetIcon,
@@ -28,13 +28,13 @@ import {
   GetApp as ExportIcon,
   Restaurant as FeedingIcon,
   Medication as MedicationIcon,
-} from "@mui/icons-material";
-import SalesReports from "./SalesReports";
-import TaxReports from "./TaxReports";
-import FinancialReports from "./FinancialReports";
-import CustomerReports from "./CustomerReports";
-import OperationalReports from "./OperationalReports";
-import TipReports from "./TipReports";
+} from '@mui/icons-material';
+import SalesReports from './SalesReports';
+import TaxReports from './TaxReports';
+import FinancialReports from './FinancialReports';
+import CustomerReports from './CustomerReports';
+import OperationalReports from './OperationalReports';
+import TipReports from './TipReports';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -60,8 +60,8 @@ function TabPanel(props: TabPanelProps) {
 
 const ReportsPage: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
-  const [dateRange, setDateRange] = useState("month");
-  const [exportFormat, setExportFormat] = useState("pdf");
+  const [dateRange, setDateRange] = useState('month');
+  const [exportFormat, setExportFormat] = useState('pdf');
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -76,39 +76,39 @@ const ReportsPage: React.FC = () => {
     title,
     description,
     icon,
-    status = "planned",
+    status = 'planned',
     onGenerate,
     onExport,
   }: {
     title: string;
     description: string;
     icon: React.ReactNode;
-    status?: "available" | "planned" | "coming-soon";
+    status?: 'available' | 'planned' | 'coming-soon';
     onGenerate?: () => void;
     onExport?: () => void;
   }) => (
-    <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <CardContent sx={{ flexGrow: 1 }}>
-        <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
           {icon}
           <Typography variant="h6" sx={{ ml: 1 }}>
             {title}
           </Typography>
-          <Box sx={{ ml: "auto" }}>
+          <Box sx={{ ml: 'auto' }}>
             <Chip
               label={
-                status === "available"
-                  ? "Available"
-                  : status === "planned"
-                  ? "Planned"
-                  : "Coming Soon"
+                status === 'available'
+                  ? 'Available'
+                  : status === 'planned'
+                    ? 'Planned'
+                    : 'Coming Soon'
               }
               color={
-                status === "available"
-                  ? "success"
-                  : status === "planned"
-                  ? "warning"
-                  : "default"
+                status === 'available'
+                  ? 'success'
+                  : status === 'planned'
+                    ? 'warning'
+                    : 'default'
               }
               size="small"
             />
@@ -122,14 +122,14 @@ const ReportsPage: React.FC = () => {
         <Button
           size="small"
           onClick={onGenerate}
-          disabled={status !== "available"}
+          disabled={status !== 'available'}
         >
           Generate Report
         </Button>
         <IconButton
           size="small"
           onClick={onExport}
-          disabled={status !== "available"}
+          disabled={status !== 'available'}
           title="Export Report"
         >
           <ExportIcon />
@@ -141,8 +141,8 @@ const ReportsPage: React.FC = () => {
   return (
     <Container maxWidth="xl">
       <Box sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-          <ReportsIcon sx={{ fontSize: 40, mr: 2, color: "primary.main" }} />
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+          <ReportsIcon sx={{ fontSize: 40, mr: 2, color: 'primary.main' }} />
           <Typography variant="h4" component="h1">
             Reports & Analytics
           </Typography>
@@ -202,7 +202,7 @@ const ReportsPage: React.FC = () => {
                 label="Start Date"
                 type="date"
                 InputLabelProps={{ shrink: true }}
-                disabled={dateRange !== "custom"}
+                disabled={dateRange !== 'custom'}
               />
             </Grid>
             <Grid item xs={12} sm={3}>
@@ -212,14 +212,14 @@ const ReportsPage: React.FC = () => {
                 label="End Date"
                 type="date"
                 InputLabelProps={{ shrink: true }}
-                disabled={dateRange !== "custom"}
+                disabled={dateRange !== 'custom'}
               />
             </Grid>
           </Grid>
         </Paper>
 
         {/* Report Categories Tabs */}
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs
             value={tabValue}
             onChange={handleTabChange}
@@ -228,12 +228,12 @@ const ReportsPage: React.FC = () => {
             scrollButtons="auto"
             allowScrollButtonsMobile
             sx={{
-              "& .MuiTab-root": {
+              '& .MuiTab-root': {
                 minWidth: 100,
-                fontSize: "0.8rem",
-                padding: "6px 8px",
+                fontSize: '0.8rem',
+                padding: '6px 8px',
               },
-              "& .MuiTabs-flexContainer": {
+              '& .MuiTabs-flexContainer': {
                 gap: 0.5,
               },
             }}
@@ -279,8 +279,8 @@ const ReportsPage: React.FC = () => {
                 description="Pet population analysis by breed, age, size, and type distribution."
                 icon={<PetIcon color="primary" />}
                 status="planned"
-                onGenerate={() => handleExport("Pet Demographics")}
-                onExport={() => handleExport("Pet Demographics")}
+                onGenerate={() => handleExport('Pet Demographics')}
+                onExport={() => handleExport('Pet Demographics')}
               />
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
@@ -289,8 +289,8 @@ const ReportsPage: React.FC = () => {
                 description="Popular breeds, breed-specific service preferences, and health trends."
                 icon={<PetIcon color="primary" />}
                 status="planned"
-                onGenerate={() => handleExport("Breed Analysis")}
-                onExport={() => handleExport("Breed Analysis")}
+                onGenerate={() => handleExport('Breed Analysis')}
+                onExport={() => handleExport('Breed Analysis')}
               />
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
@@ -299,8 +299,8 @@ const ReportsPage: React.FC = () => {
                 description="Vaccination status, health records, and compliance reporting."
                 icon={<PetIcon color="primary" />}
                 status="planned"
-                onGenerate={() => handleExport("Health Tracking")}
-                onExport={() => handleExport("Health Tracking")}
+                onGenerate={() => handleExport('Health Tracking')}
+                onExport={() => handleExport('Health Tracking')}
               />
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
@@ -309,8 +309,8 @@ const ReportsPage: React.FC = () => {
                 description="Service usage patterns based on pet characteristics and preferences."
                 icon={<PetIcon color="primary" />}
                 status="planned"
-                onGenerate={() => handleExport("Service Preferences")}
-                onExport={() => handleExport("Service Preferences")}
+                onGenerate={() => handleExport('Service Preferences')}
+                onExport={() => handleExport('Service Preferences')}
               />
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
@@ -320,9 +320,9 @@ const ReportsPage: React.FC = () => {
                 icon={<FeedingIcon color="primary" />}
                 status="available"
                 onGenerate={() =>
-                  (window.location.href = "/mobile/care-tracking")
+                  (window.location.href = '/mobile/care-tracking')
                 }
-                onExport={() => handleExport("Feeding Reports")}
+                onExport={() => handleExport('Feeding Reports')}
               />
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
@@ -332,9 +332,9 @@ const ReportsPage: React.FC = () => {
                 icon={<MedicationIcon color="primary" />}
                 status="available"
                 onGenerate={() =>
-                  (window.location.href = "/mobile/care-tracking")
+                  (window.location.href = '/mobile/care-tracking')
                 }
-                onExport={() => handleExport("Medication Reports")}
+                onExport={() => handleExport('Medication Reports')}
               />
             </Grid>
           </Grid>
@@ -349,8 +349,8 @@ const ReportsPage: React.FC = () => {
                 description="Marketing campaign performance, ROI analysis, and conversion tracking."
                 icon={<MarketingIcon color="primary" />}
                 status="planned"
-                onGenerate={() => handleExport("Campaign Effectiveness")}
-                onExport={() => handleExport("Campaign Effectiveness")}
+                onGenerate={() => handleExport('Campaign Effectiveness')}
+                onExport={() => handleExport('Campaign Effectiveness')}
               />
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
@@ -359,8 +359,8 @@ const ReportsPage: React.FC = () => {
                 description="Customer referral sources, referral program performance, and attribution."
                 icon={<MarketingIcon color="primary" />}
                 status="planned"
-                onGenerate={() => handleExport("Referral Analysis")}
-                onExport={() => handleExport("Referral Analysis")}
+                onGenerate={() => handleExport('Referral Analysis')}
+                onExport={() => handleExport('Referral Analysis')}
               />
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
@@ -369,8 +369,8 @@ const ReportsPage: React.FC = () => {
                 description="Seasonal booking patterns, demand forecasting, and capacity planning."
                 icon={<MarketingIcon color="primary" />}
                 status="planned"
-                onGenerate={() => handleExport("Seasonal Trends")}
-                onExport={() => handleExport("Seasonal Trends")}
+                onGenerate={() => handleExport('Seasonal Trends')}
+                onExport={() => handleExport('Seasonal Trends')}
               />
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
@@ -379,8 +379,8 @@ const ReportsPage: React.FC = () => {
                 description="Coupon usage, discount effectiveness, and promotional campaign results."
                 icon={<MarketingIcon color="primary" />}
                 status="planned"
-                onGenerate={() => handleExport("Promotional Analysis")}
-                onExport={() => handleExport("Promotional Analysis")}
+                onGenerate={() => handleExport('Promotional Analysis')}
+                onExport={() => handleExport('Promotional Analysis')}
               />
             </Grid>
           </Grid>
@@ -400,8 +400,8 @@ const ReportsPage: React.FC = () => {
                 description="Most requested services, service popularity trends, and demand analysis."
                 icon={<ServiceIcon color="primary" />}
                 status="planned"
-                onGenerate={() => handleExport("Popular Services")}
-                onExport={() => handleExport("Popular Services")}
+                onGenerate={() => handleExport('Popular Services')}
+                onExport={() => handleExport('Popular Services')}
               />
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
@@ -410,8 +410,8 @@ const ReportsPage: React.FC = () => {
                 description="Add-on service uptake, revenue contribution, and upselling effectiveness."
                 icon={<ServiceIcon color="primary" />}
                 status="planned"
-                onGenerate={() => handleExport("Add-On Performance")}
-                onExport={() => handleExport("Add-On Performance")}
+                onGenerate={() => handleExport('Add-On Performance')}
+                onExport={() => handleExport('Add-On Performance')}
               />
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
@@ -420,8 +420,8 @@ const ReportsPage: React.FC = () => {
                 description="Service pricing optimization, price sensitivity analysis, and revenue per service."
                 icon={<ServiceIcon color="primary" />}
                 status="planned"
-                onGenerate={() => handleExport("Pricing Analysis")}
-                onExport={() => handleExport("Pricing Analysis")}
+                onGenerate={() => handleExport('Pricing Analysis')}
+                onExport={() => handleExport('Pricing Analysis')}
               />
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
@@ -430,8 +430,8 @@ const ReportsPage: React.FC = () => {
                 description="Average service durations, efficiency metrics, and time optimization opportunities."
                 icon={<ServiceIcon color="primary" />}
                 status="planned"
-                onGenerate={() => handleExport("Duration Trends")}
-                onExport={() => handleExport("Duration Trends")}
+                onGenerate={() => handleExport('Duration Trends')}
+                onExport={() => handleExport('Duration Trends')}
               />
             </Grid>
           </Grid>

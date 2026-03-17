@@ -4,7 +4,10 @@
  * @param compact - Whether to use compact notation for large numbers
  * @returns Formatted currency string
  */
-export const formatCurrency = (amount: number, compact: boolean = false): string => {
+export const formatCurrency = (
+  amount: number,
+  compact: boolean = false
+): string => {
   if (compact && Math.abs(amount) >= 1000) {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -14,7 +17,7 @@ export const formatCurrency = (amount: number, compact: boolean = false): string
       maximumFractionDigits: 1,
     }).format(amount);
   }
-  
+
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -60,17 +63,17 @@ export const formatDateTime = (dateString: string): string => {
  */
 export const formatPhoneNumber = (phone: string): string => {
   if (!phone) return '';
-  
+
   // Remove all non-numeric characters
   const cleaned = phone.replace(/\D/g, '');
-  
+
   // Check if the input is of correct length
   const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
-  
+
   if (match) {
     return '(' + match[1] + ') ' + match[2] + '-' + match[3];
   }
-  
+
   return phone;
 };
 
@@ -80,7 +83,10 @@ export const formatPhoneNumber = (phone: string): string => {
  * @param decimals - Number of decimal places
  * @returns Formatted percentage string
  */
-export const formatPercentage = (value: number, decimals: number = 1): string => {
+export const formatPercentage = (
+  value: number,
+  decimals: number = 1
+): string => {
   return `${value.toFixed(decimals)}%`;
 };
 

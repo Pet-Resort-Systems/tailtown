@@ -8,17 +8,17 @@
  * - getRefunds
  */
 
-import { Response, NextFunction } from "express";
-import { AppError } from "../../middleware/error.middleware";
-import { TenantRequest } from "../../middleware/tenant.middleware";
+import { Response, NextFunction } from 'express';
+import { AppError } from '../../middleware/error.middleware';
+import { TenantRequest } from '../../middleware/tenant.middleware';
 import {
   getRevenueReport,
   getProfitLossReport,
   getOutstandingBalances,
   getRefundsReport,
   getReconciliationReport,
-} from "../../services/financialReportService";
-import { logger } from "../../utils/logger";
+} from '../../services/financialReportService';
+import { logger } from '../../utils/logger';
 
 /**
  * GET /api/reports/financial/revenue
@@ -30,12 +30,12 @@ export const getRevenue = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
       return next(
-        new AppError("startDate and endDate parameters are required", 400)
+        new AppError('startDate and endDate parameters are required', 400)
       );
     }
 
@@ -46,9 +46,9 @@ export const getRevenue = async (
     );
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "financial_revenue",
+        reportType: 'financial_revenue',
         title: `Revenue Report - ${startDate} to ${endDate}`,
         generatedAt: new Date(),
         filters: { startDate, endDate },
@@ -59,8 +59,8 @@ export const getRevenue = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating revenue report", { error });
-    return next(new AppError("Failed to generate revenue report", 500));
+    logger.error('Error generating revenue report', { error });
+    return next(new AppError('Failed to generate revenue report', 500));
   }
 };
 
@@ -74,12 +74,12 @@ export const getProfitLoss = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
       return next(
-        new AppError("startDate and endDate parameters are required", 400)
+        new AppError('startDate and endDate parameters are required', 400)
       );
     }
 
@@ -90,9 +90,9 @@ export const getProfitLoss = async (
     );
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "financial_profit_loss",
+        reportType: 'financial_profit_loss',
         title: `Profit & Loss Report - ${startDate} to ${endDate}`,
         generatedAt: new Date(),
         filters: { startDate, endDate },
@@ -104,8 +104,8 @@ export const getProfitLoss = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating P&L report", { error });
-    return next(new AppError("Failed to generate P&L report", 500));
+    logger.error('Error generating P&L report', { error });
+    return next(new AppError('Failed to generate P&L report', 500));
   }
 };
 
@@ -119,7 +119,7 @@ export const getOutstanding = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
     const report = await getOutstandingBalances(tenantId);
 
@@ -129,10 +129,10 @@ export const getOutstanding = async (
     );
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "financial_outstanding",
-        title: "Outstanding Balances Report",
+        reportType: 'financial_outstanding',
+        title: 'Outstanding Balances Report',
         generatedAt: new Date(),
         filters: {},
         summary: {
@@ -143,9 +143,9 @@ export const getOutstanding = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating outstanding balances report", { error });
+    logger.error('Error generating outstanding balances report', { error });
     return next(
-      new AppError("Failed to generate outstanding balances report", 500)
+      new AppError('Failed to generate outstanding balances report', 500)
     );
   }
 };
@@ -160,12 +160,12 @@ export const getRefunds = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
       return next(
-        new AppError("startDate and endDate parameters are required", 400)
+        new AppError('startDate and endDate parameters are required', 400)
       );
     }
 
@@ -181,9 +181,9 @@ export const getRefunds = async (
     );
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "financial_refunds",
+        reportType: 'financial_refunds',
         title: `Refunds Report - ${startDate} to ${endDate}`,
         generatedAt: new Date(),
         filters: { startDate, endDate },
@@ -195,8 +195,8 @@ export const getRefunds = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating refunds report", { error });
-    return next(new AppError("Failed to generate refunds report", 500));
+    logger.error('Error generating refunds report', { error });
+    return next(new AppError('Failed to generate refunds report', 500));
   }
 };
 
@@ -210,20 +210,20 @@ export const getReconciliation = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { date } = req.query;
 
     // Default to today if no date provided
     const reportDate = date
       ? (date as string)
-      : new Date().toISOString().split("T")[0];
+      : new Date().toISOString().split('T')[0];
 
     const report = await getReconciliationReport(tenantId, reportDate);
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "financial_reconciliation",
+        reportType: 'financial_reconciliation',
         title: `End-of-Day Reconciliation - ${reportDate}`,
         generatedAt: new Date(),
         filters: { date: reportDate },
@@ -232,7 +232,7 @@ export const getReconciliation = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating reconciliation report", { error });
-    return next(new AppError("Failed to generate reconciliation report", 500));
+    logger.error('Error generating reconciliation report', { error });
+    return next(new AppError('Failed to generate reconciliation report', 500));
   }
 };

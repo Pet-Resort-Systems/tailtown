@@ -3,7 +3,12 @@
  */
 
 import { Request, Response } from 'express';
-import { login, logout, getCurrentUser, refreshToken } from '../auth.controller';
+import {
+  login,
+  logout,
+  getCurrentUser,
+  refreshToken,
+} from '../auth.controller';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import * as jwt from '../../../utils/super-admin-jwt';

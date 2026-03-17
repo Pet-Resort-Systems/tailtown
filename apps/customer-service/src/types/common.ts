@@ -19,6 +19,14 @@ export interface SortOptions {
 
 export interface FilterOptions {
   field: string;
-  operator: 'equals' | 'contains' | 'gt' | 'lt' | 'gte' | 'lte' | 'in' | 'notIn';
+  operator:
+    | 'equals'
+    | 'contains'
+    | 'gt'
+    | 'lt'
+    | 'gte'
+    | 'lte'
+    | 'in'
+    | 'notIn';
   value: any;
 }

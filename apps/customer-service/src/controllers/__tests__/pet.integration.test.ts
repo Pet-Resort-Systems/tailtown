@@ -4,13 +4,13 @@
  * Tests that actually call controller functions against the test database.
  */
 
-import { Response, NextFunction } from "express";
+import { Response, NextFunction } from 'express';
 import {
   getTestPrismaClient,
   createTestTenant,
   deleteTestData,
   disconnectTestDatabase,
-} from "../../test/setup-test-db";
+} from '../../test/setup-test-db';
 import {
   getAllPets,
   getPetById,
@@ -18,10 +18,10 @@ import {
   updatePet,
   deletePet,
   getPetsByCustomer,
-} from "../pet.controller";
-import { TenantRequest } from "../../middleware/tenant.middleware";
+} from '../pet.controller';
+import { TenantRequest } from '../../middleware/tenant.middleware';
 
-describe("Pet Controller Integration Tests", () => {
+describe('Pet Controller Integration Tests', () => {
   const prisma = getTestPrismaClient();
   let testTenantId: string;
   let testCustomerId: string;
@@ -43,10 +43,10 @@ describe("Pet Controller Integration Tests", () => {
     const customer = await prisma.customer.create({
       data: {
         tenantId: testTenantId,
-        firstName: "Pet",
-        lastName: "Owner",
+        firstName: 'Pet',
+        lastName: 'Owner',
         email: `pet-owner-${Date.now()}@example.com`,
-        phone: "555-1000",
+        phone: '555-1000',
       },
     });
     testCustomerId = customer.id;
@@ -56,9 +56,9 @@ describe("Pet Controller Integration Tests", () => {
       data: {
         tenantId: testTenantId,
         customerId: testCustomerId,
-        name: "Buddy",
-        type: "DOG",
-        breed: "Golden Retriever",
+        name: 'Buddy',
+        type: 'DOG',
+        breed: 'Golden Retriever',
         weight: 65,
         isActive: true,
       },
@@ -69,9 +69,9 @@ describe("Pet Controller Integration Tests", () => {
       data: {
         tenantId: testTenantId,
         customerId: testCustomerId,
-        name: "Whiskers",
-        type: "CAT",
-        breed: "Persian",
+        name: 'Whiskers',
+        type: 'CAT',
+        breed: 'Persian',
         weight: 10,
         isActive: true,
       },
@@ -82,9 +82,9 @@ describe("Pet Controller Integration Tests", () => {
       data: {
         tenantId: testTenantId,
         customerId: testCustomerId,
-        name: "Inactive Pet",
-        type: "DOG",
-        breed: "Poodle",
+        name: 'Inactive Pet',
+        type: 'DOG',
+        breed: 'Poodle',
         isActive: false,
       },
     });
@@ -104,8 +104,8 @@ describe("Pet Controller Integration Tests", () => {
     jest.clearAllMocks();
   });
 
-  describe("getAllPets", () => {
-    it("should return all pets for tenant", async () => {
+  describe('getAllPets', () => {
+    it('should return all pets for tenant', async () => {
       const req = {
         tenantId: testTenantId,
         query: {},
@@ -121,7 +121,7 @@ describe("Pet Controller Integration Tests", () => {
       expect(responseData.results).toBeGreaterThanOrEqual(2);
     });
 
-    it("should return pets of various types", async () => {
+    it('should return pets of various types', async () => {
       const req = {
         tenantId: testTenantId,
         query: {},
@@ -139,10 +139,10 @@ describe("Pet Controller Integration Tests", () => {
       expect(types.length).toBeGreaterThanOrEqual(1);
     });
 
-    it("should search by name", async () => {
+    it('should search by name', async () => {
       const req = {
         tenantId: testTenantId,
-        query: { search: "Buddy" },
+        query: { search: 'Buddy' },
         params: {},
         body: {},
       } as unknown as TenantRequest;
@@ -155,10 +155,10 @@ describe("Pet Controller Integration Tests", () => {
       expect(responseData.results).toBeGreaterThanOrEqual(1);
     });
 
-    it("should paginate results", async () => {
+    it('should paginate results', async () => {
       const req = {
         tenantId: testTenantId,
-        query: { page: "1", limit: "2" },
+        query: { page: '1', limit: '2' },
         params: {},
         body: {},
       } as unknown as TenantRequest;
@@ -172,8 +172,8 @@ describe("Pet Controller Integration Tests", () => {
     });
   });
 
-  describe("getPetById", () => {
-    it("should return pet by ID", async () => {
+  describe('getPetById', () => {
+    it('should return pet by ID', async () => {
       const req = {
         tenantId: testTenantId,
         params: { id: testPetIds[0] },
@@ -187,13 +187,13 @@ describe("Pet Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       const responseData = (res.json as jest.Mock).mock.calls[0][0];
       expect(responseData.data.id).toBe(testPetIds[0]);
-      expect(responseData.data.name).toBe("Buddy");
+      expect(responseData.data.name).toBe('Buddy');
     });
 
-    it("should return 404 for non-existent pet", async () => {
+    it('should return 404 for non-existent pet', async () => {
       const req = {
         tenantId: testTenantId,
-        params: { id: "00000000-0000-0000-0000-000000000000" },
+        params: { id: '00000000-0000-0000-0000-000000000000' },
         query: {},
         body: {},
       } as unknown as TenantRequest;
@@ -203,12 +203,12 @@ describe("Pet Controller Integration Tests", () => {
 
       expect(mockNext).toHaveBeenCalled();
       const error = (mockNext as jest.Mock).mock.calls[0][0];
-      expect(error.message).toContain("not found");
+      expect(error.message).toContain('not found');
     });
   });
 
-  describe("getPetsByCustomer", () => {
-    it("should return all pets for a customer", async () => {
+  describe('getPetsByCustomer', () => {
+    it('should return all pets for a customer', async () => {
       const req = {
         tenantId: testTenantId,
         params: { customerId: testCustomerId },
@@ -225,8 +225,8 @@ describe("Pet Controller Integration Tests", () => {
     });
   });
 
-  describe("createPet", () => {
-    it("should create a new pet", async () => {
+  describe('createPet', () => {
+    it('should create a new pet', async () => {
       const req = {
         tenantId: testTenantId,
         params: {},
@@ -234,8 +234,8 @@ describe("Pet Controller Integration Tests", () => {
         body: {
           customerId: testCustomerId,
           name: `New Pet ${Date.now()}`,
-          type: "DOG",
-          breed: "Labrador",
+          type: 'DOG',
+          breed: 'Labrador',
           weight: 70,
         },
       } as unknown as TenantRequest;
@@ -245,18 +245,18 @@ describe("Pet Controller Integration Tests", () => {
 
       expect(res.status).toHaveBeenCalledWith(201);
       const responseData = (res.json as jest.Mock).mock.calls[0][0];
-      expect(responseData.data.type).toBe("DOG");
+      expect(responseData.data.type).toBe('DOG');
       testPetIds.push(responseData.data.id);
     });
 
-    it("should reject pet without name", async () => {
+    it('should reject pet without name', async () => {
       const req = {
         tenantId: testTenantId,
         params: {},
         query: {},
         body: {
           customerId: testCustomerId,
-          type: "DOG",
+          type: 'DOG',
         },
       } as unknown as TenantRequest;
       const res = createMockResponse();
@@ -266,14 +266,14 @@ describe("Pet Controller Integration Tests", () => {
       expect(mockNext).toHaveBeenCalled();
     });
 
-    it("should reject pet without customerId", async () => {
+    it('should reject pet without customerId', async () => {
       const req = {
         tenantId: testTenantId,
         params: {},
         query: {},
         body: {
-          name: "Orphan Pet",
-          type: "DOG",
+          name: 'Orphan Pet',
+          type: 'DOG',
         },
       } as unknown as TenantRequest;
       const res = createMockResponse();
@@ -284,7 +284,7 @@ describe("Pet Controller Integration Tests", () => {
     });
   });
 
-  describe("updatePet", () => {
+  describe('updatePet', () => {
     let updatePetId: string;
 
     beforeAll(async () => {
@@ -292,9 +292,9 @@ describe("Pet Controller Integration Tests", () => {
         data: {
           tenantId: testTenantId,
           customerId: testCustomerId,
-          name: "Update Test Pet",
-          type: "DOG",
-          breed: "Beagle",
+          name: 'Update Test Pet',
+          type: 'DOG',
+          breed: 'Beagle',
           isActive: true,
         },
       });
@@ -302,13 +302,13 @@ describe("Pet Controller Integration Tests", () => {
       testPetIds.push(updatePetId);
     });
 
-    it("should update pet fields", async () => {
+    it('should update pet fields', async () => {
       const req = {
         tenantId: testTenantId,
         params: { id: updatePetId },
         query: {},
         body: {
-          name: "Updated Pet Name",
+          name: 'Updated Pet Name',
           weight: 30,
         },
       } as unknown as TenantRequest;
@@ -318,16 +318,16 @@ describe("Pet Controller Integration Tests", () => {
 
       expect(res.status).toHaveBeenCalledWith(200);
       const responseData = (res.json as jest.Mock).mock.calls[0][0];
-      expect(responseData.data.name).toBe("Updated Pet Name");
+      expect(responseData.data.name).toBe('Updated Pet Name');
       expect(responseData.data.weight).toBe(30);
     });
 
-    it("should return 404 for non-existent pet", async () => {
+    it('should return 404 for non-existent pet', async () => {
       const req = {
         tenantId: testTenantId,
-        params: { id: "00000000-0000-0000-0000-000000000000" },
+        params: { id: '00000000-0000-0000-0000-000000000000' },
         query: {},
-        body: { name: "Test" },
+        body: { name: 'Test' },
       } as unknown as TenantRequest;
       const res = createMockResponse();
 
@@ -337,7 +337,7 @@ describe("Pet Controller Integration Tests", () => {
     });
   });
 
-  describe("deletePet", () => {
+  describe('deletePet', () => {
     let deletePetId: string;
 
     beforeAll(async () => {
@@ -345,9 +345,9 @@ describe("Pet Controller Integration Tests", () => {
         data: {
           tenantId: testTenantId,
           customerId: testCustomerId,
-          name: "Delete Test Pet",
-          type: "CAT",
-          breed: "Siamese",
+          name: 'Delete Test Pet',
+          type: 'CAT',
+          breed: 'Siamese',
           isActive: true,
         },
       });
@@ -355,7 +355,7 @@ describe("Pet Controller Integration Tests", () => {
       testPetIds.push(deletePetId);
     });
 
-    it("should delete pet", async () => {
+    it('should delete pet', async () => {
       const req = {
         tenantId: testTenantId,
         params: { id: deletePetId },
@@ -369,10 +369,10 @@ describe("Pet Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(204);
     });
 
-    it("should return 404 for non-existent pet", async () => {
+    it('should return 404 for non-existent pet', async () => {
       const req = {
         tenantId: testTenantId,
-        params: { id: "00000000-0000-0000-0000-000000000000" },
+        params: { id: '00000000-0000-0000-0000-000000000000' },
         query: {},
         body: {},
       } as unknown as TenantRequest;

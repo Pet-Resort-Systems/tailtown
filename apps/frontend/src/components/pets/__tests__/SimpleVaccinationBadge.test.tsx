@@ -27,7 +27,7 @@ const mockPet: Pet = {
   customerId: 'customer-id',
   isActive: true,
   vaccinationStatus: {},
-  vaccineExpirations: {}
+  vaccineExpirations: {},
 };
 
 describe('SimpleVaccinationBadge', () => {
@@ -37,12 +37,15 @@ describe('SimpleVaccinationBadge', () => {
       vaccinationStatus: {
         rabies: { status: 'CURRENT', expiration: '2025-12-01T00:00:00.000Z' },
         dhpp: { status: 'CURRENT', expiration: '2025-12-01T00:00:00.000Z' },
-        bordetella: { status: 'CURRENT', expiration: '2025-12-01T00:00:00.000Z' }
-      }
+        bordetella: {
+          status: 'CURRENT',
+          expiration: '2025-12-01T00:00:00.000Z',
+        },
+      },
     };
 
     render(<SimpleVaccinationBadge pet={compliantPet} showDetails={false} />);
-    
+
     const badge = screen.getByText('Compliant');
     expect(badge).toBeInTheDocument();
     expect(badge.closest('.MuiChip-root')).toHaveClass('MuiChip-colorSuccess');
@@ -54,12 +57,15 @@ describe('SimpleVaccinationBadge', () => {
       vaccinationStatus: {
         rabies: { status: 'EXPIRED', expiration: '2024-01-01T00:00:00.000Z' },
         dhpp: { status: 'CURRENT', expiration: '2025-12-01T00:00:00.000Z' },
-        bordetella: { status: 'CURRENT', expiration: '2025-12-01T00:00:00.000Z' }
-      }
+        bordetella: {
+          status: 'CURRENT',
+          expiration: '2025-12-01T00:00:00.000Z',
+        },
+      },
     };
 
     render(<SimpleVaccinationBadge pet={expiredPet} showDetails={false} />);
-    
+
     const badge = screen.getByText('1 Expired');
     expect(badge).toBeInTheDocument();
     expect(badge.closest('.MuiChip-root')).toHaveClass('MuiChip-colorError');
@@ -69,13 +75,13 @@ describe('SimpleVaccinationBadge', () => {
     const missingPet: Pet = {
       ...mockPet,
       vaccinationStatus: {
-        rabies: { status: 'CURRENT', expiration: '2025-12-01T00:00:00.000Z' }
+        rabies: { status: 'CURRENT', expiration: '2025-12-01T00:00:00.000Z' },
         // Missing DHPP and Bordetella
-      }
+      },
     };
 
     render(<SimpleVaccinationBadge pet={missingPet} showDetails={false} />);
-    
+
     const badge = screen.getByText('2 Due');
     expect(badge).toBeInTheDocument();
     expect(badge.closest('.MuiChip-root')).toHaveClass('MuiChip-colorWarning');
@@ -85,13 +91,13 @@ describe('SimpleVaccinationBadge', () => {
     const mixedPet: Pet = {
       ...mockPet,
       vaccinationStatus: {
-        rabies: { status: 'EXPIRED', expiration: '2024-01-01T00:00:00.000Z' }
+        rabies: { status: 'EXPIRED', expiration: '2024-01-01T00:00:00.000Z' },
         // Missing DHPP and Bordetella
-      }
+      },
     };
 
     render(<SimpleVaccinationBadge pet={mixedPet} showDetails={false} />);
-    
+
     const badge = screen.getByText('1 Expired, 2 Due');
     expect(badge).toBeInTheDocument();
     expect(badge.closest('.MuiChip-root')).toHaveClass('MuiChip-colorError');
@@ -103,12 +109,12 @@ describe('SimpleVaccinationBadge', () => {
       type: 'CAT',
       vaccinationStatus: {
         rabies: { status: 'CURRENT', expiration: '2025-12-01T00:00:00.000Z' },
-        fvrcp: { status: 'CURRENT', expiration: '2025-12-01T00:00:00.000Z' }
-      }
+        fvrcp: { status: 'CURRENT', expiration: '2025-12-01T00:00:00.000Z' },
+      },
     };
 
     render(<SimpleVaccinationBadge pet={compliantCat} showDetails={false} />);
-    
+
     const badge = screen.getByText('Compliant');
     expect(badge).toBeInTheDocument();
     expect(badge.closest('.MuiChip-root')).toHaveClass('MuiChip-colorSuccess');
@@ -120,12 +126,12 @@ describe('SimpleVaccinationBadge', () => {
       type: 'CAT',
       vaccinationStatus: {
         rabies: { status: 'CURRENT', expiration: '2025-12-01T00:00:00.000Z' },
-        fvrcp: { status: 'EXPIRED', expiration: '2024-01-01T00:00:00.000Z' }
-      }
+        fvrcp: { status: 'EXPIRED', expiration: '2024-01-01T00:00:00.000Z' },
+      },
     };
 
     render(<SimpleVaccinationBadge pet={expiredCat} showDetails={false} />);
-    
+
     const badge = screen.getByText('1 Expired');
     expect(badge).toBeInTheDocument();
     expect(badge.closest('.MuiChip-root')).toHaveClass('MuiChip-colorError');
@@ -134,11 +140,11 @@ describe('SimpleVaccinationBadge', () => {
   it('renders no record badge for pet with no vaccination data', () => {
     const noRecordPet: Pet = {
       ...mockPet,
-      vaccinationStatus: {}
+      vaccinationStatus: {},
     };
 
     render(<SimpleVaccinationBadge pet={noRecordPet} showDetails={false} />);
-    
+
     const badge = screen.getByText('3 Due'); // All 3 required vaccines are missing
     expect(badge).toBeInTheDocument();
     expect(badge.closest('.MuiChip-root')).toHaveClass('MuiChip-colorWarning');
@@ -150,15 +156,18 @@ describe('SimpleVaccinationBadge', () => {
       vaccinationStatus: {
         rabies: { status: 'EXPIRED', expiration: '2024-01-01T00:00:00.000Z' },
         dhpp: { status: 'CURRENT', expiration: '2025-12-01T00:00:00.000Z' },
-        bordetella: { status: 'CURRENT', expiration: '2025-12-01T00:00:00.000Z' }
-      }
+        bordetella: {
+          status: 'CURRENT',
+          expiration: '2025-12-01T00:00:00.000Z',
+        },
+      },
     };
 
     render(<SimpleVaccinationBadge pet={petWithDetails} showDetails={true} />);
-    
+
     const badge = screen.getByText('1 Expired');
     expect(badge).toBeInTheDocument();
-    
+
     // Check that tooltip is present (via the Tooltip component)
     const tooltipWrapper = badge.closest('.MuiChip-root').parentElement;
     expect(tooltipWrapper).toBeInTheDocument();
@@ -169,12 +178,12 @@ describe('SimpleVaccinationBadge', () => {
       ...mockPet,
       type: 'OTHER' as any,
       vaccinationStatus: {
-        rabies: { status: 'CURRENT', expiration: '2025-12-01T00:00:00.000Z' }
-      }
+        rabies: { status: 'CURRENT', expiration: '2025-12-01T00:00:00.000Z' },
+      },
     };
 
     render(<SimpleVaccinationBadge pet={unknownPet} showDetails={false} />);
-    
+
     const badge = screen.getByText('Compliant');
     expect(badge).toBeInTheDocument();
     expect(badge.closest('.MuiChip-root')).toHaveClass('MuiChip-colorSuccess');
@@ -186,12 +195,17 @@ describe('SimpleVaccinationBadge', () => {
       vaccinationStatus: {
         rabies: { status: 'EXPIRED', expiration: '2024-01-01T00:00:00.000Z' },
         dhpp: { status: 'EXPIRED', expiration: '2024-02-01T00:00:00.000Z' },
-        bordetella: { status: 'CURRENT', expiration: '2025-12-01T00:00:00.000Z' }
-      }
+        bordetella: {
+          status: 'CURRENT',
+          expiration: '2025-12-01T00:00:00.000Z',
+        },
+      },
     };
 
-    render(<SimpleVaccinationBadge pet={multipleExpiredPet} showDetails={false} />);
-    
+    render(
+      <SimpleVaccinationBadge pet={multipleExpiredPet} showDetails={false} />
+    );
+
     const badge = screen.getByText('2 Expired');
     expect(badge).toBeInTheDocument();
     expect(badge.closest('.MuiChip-root')).toHaveClass('MuiChip-colorError');
@@ -203,12 +217,12 @@ describe('SimpleVaccinationBadge', () => {
       vaccinationStatus: {
         rabies: { status: 'PENDING' },
         dhpp: { status: 'PENDING' },
-        bordetella: { status: 'PENDING' }
-      }
+        bordetella: { status: 'PENDING' },
+      },
     };
 
     render(<SimpleVaccinationBadge pet={pendingPet} showDetails={false} />);
-    
+
     const badge = screen.getByText('3 Due');
     expect(badge).toBeInTheDocument();
     expect(badge.closest('.MuiChip-root')).toHaveClass('MuiChip-colorWarning');

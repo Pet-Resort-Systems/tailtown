@@ -10,11 +10,11 @@
  * - Corresponding services
  */
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const TENANT_ID = process.env.TENANT_ID || "dev";
+const TENANT_ID = process.env.TENANT_ID || 'dev';
 
 // Pricing configuration (adjust as needed)
 const PRICING = {
@@ -28,67 +28,67 @@ const PRICING = {
 };
 
 async function seedServices() {
-  console.log("Seeding services...");
+  console.log('Seeding services...');
 
   const services = [
     {
-      name: "Indoor Suite",
-      description: "Standard indoor boarding for dogs",
+      name: 'Indoor Suite',
+      description: 'Standard indoor boarding for dogs',
       duration: 1440, // 24 hours in minutes
       price: 50.0, // Base price (actual price comes from resource)
-      serviceCategory: "BOARDING" as const,
-      color: "#4CAF50",
+      serviceCategory: 'BOARDING' as const,
+      color: '#4CAF50',
     },
     {
-      name: "King Suite",
-      description: "Premium boarding with extra space for large dogs",
+      name: 'King Suite',
+      description: 'Premium boarding with extra space for large dogs',
       duration: 1440,
       price: 75.0,
-      serviceCategory: "BOARDING" as const,
-      color: "#2196F3",
+      serviceCategory: 'BOARDING' as const,
+      color: '#2196F3',
     },
     {
-      name: "VIP Suite",
-      description: "Luxury private room with premium amenities",
+      name: 'VIP Suite',
+      description: 'Luxury private room with premium amenities',
       duration: 1440,
       price: 95.0,
-      serviceCategory: "BOARDING" as const,
-      color: "#9C27B0",
+      serviceCategory: 'BOARDING' as const,
+      color: '#9C27B0',
     },
     {
-      name: "Cat Boarding",
-      description: "Comfortable condo for feline guests",
+      name: 'Cat Boarding',
+      description: 'Comfortable condo for feline guests',
       duration: 1440,
       price: 35.0,
-      serviceCategory: "BOARDING" as const,
-      color: "#FF9800",
+      serviceCategory: 'BOARDING' as const,
+      color: '#FF9800',
     },
     {
-      name: "Day Camp Full Day",
-      description: "Full day of supervised play and socialization",
+      name: 'Day Camp Full Day',
+      description: 'Full day of supervised play and socialization',
       duration: 480, // 8 hours
       price: 40.0,
-      serviceCategory: "DAYCARE" as const,
-      color: "#00BCD4",
+      serviceCategory: 'DAYCARE' as const,
+      color: '#00BCD4',
     },
     {
-      name: "Day Camp Half Day",
-      description: "Half day of supervised play and socialization",
+      name: 'Day Camp Half Day',
+      description: 'Half day of supervised play and socialization',
       duration: 240, // 4 hours
       price: 25.0,
-      serviceCategory: "DAYCARE" as const,
-      color: "#009688",
+      serviceCategory: 'DAYCARE' as const,
+      color: '#009688',
     },
   ];
 
   for (const service of services) {
     await prisma.service.upsert({
       where: {
-        id: `${TENANT_ID}-${service.name.toLowerCase().replace(/\s+/g, "-")}`,
+        id: `${TENANT_ID}-${service.name.toLowerCase().replace(/\s+/g, '-')}`,
       },
       update: service,
       create: {
-        id: `${TENANT_ID}-${service.name.toLowerCase().replace(/\s+/g, "-")}`,
+        id: `${TENANT_ID}-${service.name.toLowerCase().replace(/\s+/g, '-')}`,
         tenantId: TENANT_ID,
         ...service,
       },
@@ -98,7 +98,7 @@ async function seedServices() {
 }
 
 async function seedResources() {
-  console.log("Seeding resources...");
+  console.log('Seeding resources...');
 
   const resources: Array<{
     name: string;
@@ -111,7 +111,7 @@ async function seedResources() {
   for (let i = 1; i <= 6; i++) {
     resources.push({
       name: `Junior ${i}`,
-      type: "JUNIOR_KENNEL",
+      type: 'JUNIOR_KENNEL',
       price: PRICING.JUNIOR_KENNEL,
       suiteNumber: i,
     });
@@ -121,7 +121,7 @@ async function seedResources() {
   for (let i = 7; i <= 12; i++) {
     resources.push({
       name: `Queen ${i}`,
-      type: "QUEEN_KENNEL",
+      type: 'QUEEN_KENNEL',
       price: PRICING.QUEEN_KENNEL,
       suiteNumber: i,
     });
@@ -131,7 +131,7 @@ async function seedResources() {
   for (let i = 13; i <= 18; i++) {
     resources.push({
       name: `King ${i}`,
-      type: "KING_KENNEL",
+      type: 'KING_KENNEL',
       price: PRICING.KING_KENNEL,
       suiteNumber: i,
     });
@@ -141,7 +141,7 @@ async function seedResources() {
   for (let i = 1; i <= 3; i++) {
     resources.push({
       name: `VIP ${i}`,
-      type: "VIP_ROOM",
+      type: 'VIP_ROOM',
       price: PRICING.VIP_ROOM,
       suiteNumber: 100 + i, // VIP rooms start at 101
     });
@@ -151,7 +151,7 @@ async function seedResources() {
   for (let i = 1; i <= 12; i++) {
     resources.push({
       name: `Cat Condo ${i}`,
-      type: "CAT_CONDO",
+      type: 'CAT_CONDO',
       price: PRICING.CAT_CONDO,
       suiteNumber: 200 + i, // Cat condos start at 201
     });
@@ -159,20 +159,20 @@ async function seedResources() {
 
   // Day Camp resources (virtual slots for capacity tracking)
   resources.push({
-    name: "Day Camp Full Day",
-    type: "DAY_CAMP_FULL",
+    name: 'Day Camp Full Day',
+    type: 'DAY_CAMP_FULL',
     price: PRICING.DAY_CAMP_FULL,
   });
   resources.push({
-    name: "Day Camp Half Day",
-    type: "DAY_CAMP_HALF",
+    name: 'Day Camp Half Day',
+    type: 'DAY_CAMP_HALF',
     price: PRICING.DAY_CAMP_HALF,
   });
 
   for (const resource of resources) {
     const id = `${TENANT_ID}-${resource.name
       .toLowerCase()
-      .replace(/\s+/g, "-")}`;
+      .replace(/\s+/g, '-')}`;
     await prisma.resource.upsert({
       where: { id },
       update: {
@@ -186,7 +186,7 @@ async function seedResources() {
         type: resource.type as any,
         price: resource.price,
         suiteNumber: resource.suiteNumber,
-        capacity: resource.type.startsWith("DAY_CAMP") ? 20 : 1, // Day camp has higher capacity
+        capacity: resource.type.startsWith('DAY_CAMP') ? 20 : 1, // Day camp has higher capacity
         isActive: true,
       },
     });
@@ -201,11 +201,11 @@ async function main() {
 
   try {
     await seedServices();
-    console.log("");
+    console.log('');
     await seedResources();
-    console.log("\n✅ Seeding complete!\n");
+    console.log('\n✅ Seeding complete!\n');
   } catch (error) {
-    console.error("Error seeding database:", error);
+    console.error('Error seeding database:', error);
     throw error;
   } finally {
     await prisma.$disconnect();

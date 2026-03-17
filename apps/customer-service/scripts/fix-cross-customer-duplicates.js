@@ -9,14 +9,14 @@
  * Solution: Copy compatibility data to the record with the most active reservations
  */
 
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-const TENANT_ID = "b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05";
+const TENANT_ID = 'b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05';
 
 async function fixCrossCustomerDuplicates() {
-  console.log("🔍 Finding pets with split compatibility data...\n");
+  console.log('🔍 Finding pets with split compatibility data...\n');
 
   try {
     // Find all pet names that have multiple records where some have playgroup data and some don't
@@ -66,7 +66,7 @@ async function fixCrossCustomerDuplicates() {
             select: {
               reservations: {
                 where: {
-                  status: { in: ["CONFIRMED", "CHECKED_IN", "PENDING"] },
+                  status: { in: ['CONFIRMED', 'CHECKED_IN', 'PENDING'] },
                 },
               },
             },
@@ -138,12 +138,12 @@ async function fixCrossCustomerDuplicates() {
       totalFixed++;
     }
 
-    console.log("\n✅ Fix Complete!");
+    console.log('\n✅ Fix Complete!');
     console.log(`   📊 Total pets fixed: ${totalFixed}`);
     console.log(`   📋 Total reservations moved: ${totalReservationsMoved}`);
 
     // Verification
-    console.log("\n📊 Verification - Checking for remaining issues:");
+    console.log('\n📊 Verification - Checking for remaining issues:');
     const remainingIssues = await prisma.$queryRaw`
       WITH pet_groups AS (
         SELECT 
@@ -166,7 +166,7 @@ async function fixCrossCustomerDuplicates() {
 
     console.log(`   Remaining split data issues: ${remainingIssues[0].count}`);
   } catch (error) {
-    console.error("❌ Error during fix:", error);
+    console.error('❌ Error during fix:', error);
     throw error;
   } finally {
     await prisma.$disconnect();
@@ -176,10 +176,10 @@ async function fixCrossCustomerDuplicates() {
 // Run the fix
 fixCrossCustomerDuplicates()
   .then(() => {
-    console.log("\n✅ Script completed successfully");
+    console.log('\n✅ Script completed successfully');
     process.exit(0);
   })
   .catch((error) => {
-    console.error("\n❌ Script failed:", error);
+    console.error('\n❌ Script failed:', error);
     process.exit(1);
   });

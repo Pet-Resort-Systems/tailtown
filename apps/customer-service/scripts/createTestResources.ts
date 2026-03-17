@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 async function createTestResources() {
   try {
     console.log('Creating test kennel resources...');
-    
+
     // Create Standard Suites
     for (let i = 1; i <= 5; i++) {
       await prisma.resource.create({
@@ -17,11 +17,11 @@ async function createTestResources() {
           isActive: true,
           suiteNumber: i,
           location: 'Main Building',
-          maintenanceStatus: 'OPERATIONAL'
-        }
+          maintenanceStatus: 'OPERATIONAL',
+        },
       });
     }
-    
+
     // Create Standard Plus Suites
     for (let i = 1; i <= 3; i++) {
       await prisma.resource.create({
@@ -33,11 +33,11 @@ async function createTestResources() {
           isActive: true,
           suiteNumber: i + 10,
           location: 'Main Building',
-          maintenanceStatus: 'OPERATIONAL'
-        }
+          maintenanceStatus: 'OPERATIONAL',
+        },
       });
     }
-    
+
     // Create VIP Suites
     for (let i = 1; i <= 2; i++) {
       await prisma.resource.create({
@@ -49,11 +49,11 @@ async function createTestResources() {
           isActive: true,
           suiteNumber: i + 20,
           location: 'VIP Wing',
-          maintenanceStatus: 'OPERATIONAL'
-        }
+          maintenanceStatus: 'OPERATIONAL',
+        },
       });
     }
-    
+
     console.log('Test resources created successfully!');
   } catch (error) {
     console.error('Error creating test resources:', error);

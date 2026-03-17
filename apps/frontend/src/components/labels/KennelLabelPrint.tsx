@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -18,16 +18,16 @@ import {
   IconButton,
   Tooltip,
   CircularProgress,
-} from "@mui/material";
-import PrintIcon from "@mui/icons-material/Print";
-import DownloadIcon from "@mui/icons-material/Download";
-import PreviewIcon from "@mui/icons-material/Preview";
-import CloseIcon from "@mui/icons-material/Close";
+} from '@mui/material';
+import PrintIcon from '@mui/icons-material/Print';
+import DownloadIcon from '@mui/icons-material/Download';
+import PreviewIcon from '@mui/icons-material/Preview';
+import CloseIcon from '@mui/icons-material/Close';
 import {
   KennelLabelData,
   printKennelLabel,
   getZPLPreview,
-} from "../../services/labelPrintService";
+} from '../../services/labelPrintService';
 
 interface KennelLabelPrintProps {
   open: boolean;
@@ -36,9 +36,9 @@ interface KennelLabelPrintProps {
 }
 
 const GROUP_SIZES = [
-  { value: "Small", label: "Small" },
-  { value: "Medium", label: "Medium" },
-  { value: "Large", label: "Large" },
+  { value: 'Small', label: 'Small' },
+  { value: 'Medium', label: 'Medium' },
+  { value: 'Large', label: 'Large' },
 ];
 
 const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
@@ -46,14 +46,14 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
   onClose,
   initialData,
 }) => {
-  const [dogName, setDogName] = useState(initialData?.dogName || "");
+  const [dogName, setDogName] = useState(initialData?.dogName || '');
   const [customerLastName, setCustomerLastName] = useState(
-    initialData?.customerLastName || ""
+    initialData?.customerLastName || ''
   );
   const [kennelNumber, setKennelNumber] = useState(
-    initialData?.kennelNumber || ""
+    initialData?.kennelNumber || ''
   );
-  const [groupSize, setGroupSize] = useState(initialData?.groupSize || "");
+  const [groupSize, setGroupSize] = useState(initialData?.groupSize || '');
   const [showPreview, setShowPreview] = useState(false);
   const [printing, setPrinting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -67,10 +67,10 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
   };
 
   const handlePrint = async (
-    method: "local" | "browser" | "server" | "usb" | "download"
+    method: 'local' | 'browser' | 'server' | 'usb' | 'download'
   ) => {
     if (!dogName) {
-      setError("Please fill in dog name");
+      setError('Please fill in dog name');
       return;
     }
 
@@ -81,12 +81,12 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
     try {
       await printKennelLabel(labelData, method);
       setSuccess(
-        method === "download"
-          ? "ZPL file downloaded! Send it to your Zebra printer."
-          : "Label sent to printer!"
+        method === 'download'
+          ? 'ZPL file downloaded! Send it to your Zebra printer.'
+          : 'Label sent to printer!'
       );
     } catch (err: any) {
-      setError(err.message || "Failed to print label");
+      setError(err.message || 'Failed to print label');
     } finally {
       setPrinting(false);
     }
@@ -99,12 +99,12 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
       <DialogTitle>
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <PrintIcon />
             <Typography variant="h6">Print Kennel Label</Typography>
           </Box>
@@ -130,7 +130,7 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
           </Alert>
         )}
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
           <TextField
             label="Dog Name"
             value={dogName}
@@ -178,9 +178,9 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
             elevation={2}
             sx={{
               p: 2,
-              bgcolor: "grey.100",
-              border: "2px dashed",
-              borderColor: "grey.400",
+              bgcolor: 'grey.100',
+              border: '2px dashed',
+              borderColor: 'grey.400',
             }}
           >
             <Typography variant="caption" color="text.secondary" gutterBottom>
@@ -188,24 +188,24 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
             </Typography>
             <Box
               sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
                 py: 2,
                 minHeight: 120,
-                bgcolor: "white",
+                bgcolor: 'white',
                 borderRadius: 1,
                 mt: 1,
               }}
             >
               <Typography variant="h6" fontWeight="bold">
-                {dogName || "Dog Name"} ({customerLastName || "Last Name"})
-                {"   "}
+                {dogName || 'Dog Name'} ({customerLastName || 'Last Name'})
+                {'   '}
                 <Box component="span" color="primary.main">
-                  #{kennelNumber || "___"}
+                  #{kennelNumber || '___'}
                 </Box>
-                {"   "}
-                {groupSize || "___"}
+                {'   '}
+                {groupSize || '___'}
               </Typography>
               <Typography
                 variant="caption"
@@ -229,15 +229,15 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
                   sx={{
                     p: 1,
                     mt: 1,
-                    bgcolor: "grey.900",
-                    color: "grey.100",
-                    fontFamily: "monospace",
-                    fontSize: "0.75rem",
-                    overflow: "auto",
+                    bgcolor: 'grey.900',
+                    color: 'grey.100',
+                    fontFamily: 'monospace',
+                    fontSize: '0.75rem',
+                    overflow: 'auto',
                     maxHeight: 150,
                   }}
                 >
-                  <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>
+                  <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>
                     {zplPreview}
                   </pre>
                 </Paper>
@@ -247,14 +247,14 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
         </Box>
       </DialogContent>
 
-      <DialogActions sx={{ px: 3, pb: 2, justifyContent: "space-between" }}>
+      <DialogActions sx={{ px: 3, pb: 2, justifyContent: 'space-between' }}>
         <Tooltip title="Show ZPL Code">
           <IconButton onClick={() => setShowPreview(!showPreview)} size="small">
             <PreviewIcon />
           </IconButton>
         </Tooltip>
 
-        <Box sx={{ display: "flex", gap: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1 }}>
           <Button onClick={onClose} disabled={printing}>
             Cancel
           </Button>
@@ -263,7 +263,7 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
             <Button
               variant="outlined"
               startIcon={<DownloadIcon />}
-              onClick={() => handlePrint("download")}
+              onClick={() => handlePrint('download')}
               disabled={printing || !dogName || !kennelNumber}
             >
               Download
@@ -276,10 +276,10 @@ const KennelLabelPrint: React.FC<KennelLabelPrintProps> = ({
               startIcon={
                 printing ? <CircularProgress size={20} /> : <PrintIcon />
               }
-              onClick={() => handlePrint("local")}
+              onClick={() => handlePrint('local')}
               disabled={printing || !dogName || !kennelNumber}
             >
-              {printing ? "Printing..." : "Print"}
+              {printing ? 'Printing...' : 'Print'}
             </Button>
           </Tooltip>
         </Box>

@@ -20,11 +20,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`staff-scheduling-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ pt: 2 }}>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box sx={{ pt: 2 }}>{children}</Box>}
     </div>
   );
 }
@@ -41,7 +37,10 @@ interface StaffSchedulingTabsProps {
   onSave?: () => void;
 }
 
-const StaffSchedulingTabs: React.FC<StaffSchedulingTabsProps> = ({ staffId, onSave }) => {
+const StaffSchedulingTabs: React.FC<StaffSchedulingTabsProps> = ({
+  staffId,
+  onSave,
+}) => {
   const [tabValue, setTabValue] = useState(0);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -51,9 +50,9 @@ const StaffSchedulingTabs: React.FC<StaffSchedulingTabsProps> = ({ staffId, onSa
   return (
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs 
-          value={tabValue} 
-          onChange={handleTabChange} 
+        <Tabs
+          value={tabValue}
+          onChange={handleTabChange}
           aria-label="staff scheduling tabs"
           variant="fullWidth"
         >

@@ -9,7 +9,8 @@ const fs = require('fs');
 const path = require('path');
 
 // Get email and PDF file from command line
-const pdfFile = process.argv[2] || path.join(__dirname, 'Load-Test-Results-2025-11-08.pdf');
+const pdfFile =
+  process.argv[2] || path.join(__dirname, 'Load-Test-Results-2025-11-08.pdf');
 const recipientEmail = process.argv[3] || 'rob@tailtownpetresort.com';
 
 console.log('📧 Preparing to send load test report...');
@@ -39,7 +40,9 @@ if (!process.env.SENDGRID_API_KEY) {
   console.log('');
   console.log('Hi,');
   console.log('');
-  console.log('Attached are the comprehensive load test results for the Tailtown infrastructure improvements deployed today.');
+  console.log(
+    'Attached are the comprehensive load test results for the Tailtown infrastructure improvements deployed today.'
+  );
   console.log('');
   console.log('Key Highlights:');
   console.log('✅ All tests passed successfully');
@@ -48,7 +51,9 @@ if (!process.env.SENDGRID_API_KEY) {
   console.log('✅ Perfect multi-tenant isolation');
   console.log('✅ System handled 200 concurrent users smoothly');
   console.log('');
-  console.log('The system is production-ready with enterprise-grade performance.');
+  console.log(
+    'The system is production-ready with enterprise-grade performance.'
+  );
   console.log('');
   console.log('Best regards');
   console.log('---');

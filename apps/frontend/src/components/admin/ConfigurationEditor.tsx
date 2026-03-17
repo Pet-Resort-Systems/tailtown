@@ -13,7 +13,7 @@ import {
   Divider,
   Alert,
   Tabs,
-  Tab
+  Tab,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
@@ -43,7 +43,7 @@ function TabPanel(props: TabPanelProps) {
 
 const ConfigurationEditor: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
-  
+
   // Medication administration methods
   const [medicationMethods, setMedicationMethods] = useState([
     { value: 'ORAL', label: 'Oral' },
@@ -51,7 +51,7 @@ const ConfigurationEditor: React.FC = () => {
     { value: 'INJECTION', label: 'Injection' },
     { value: 'EYE_DROPS', label: 'Eye Drops' },
     { value: 'EAR_DROPS', label: 'Ear Drops' },
-    { value: 'OTHER', label: 'Other' }
+    { value: 'OTHER', label: 'Other' },
   ]);
 
   // Common belongings items
@@ -63,7 +63,7 @@ const ConfigurationEditor: React.FC = () => {
     { type: 'Food', icon: '🍖' },
     { type: 'Bowl', icon: '🥣' },
     { type: 'Medication', icon: '💊' },
-    { type: 'Treats', icon: '🦴' }
+    { type: 'Treats', icon: '🦴' },
   ]);
 
   const [editingMethod, setEditingMethod] = useState<any>(null);
@@ -82,7 +82,10 @@ const ConfigurationEditor: React.FC = () => {
     if (newMethodValue && newMethodLabel) {
       setMedicationMethods([
         ...medicationMethods,
-        { value: newMethodValue.toUpperCase().replace(/\s+/g, '_'), label: newMethodLabel }
+        {
+          value: newMethodValue.toUpperCase().replace(/\s+/g, '_'),
+          label: newMethodLabel,
+        },
       ]);
       setNewMethodValue('');
       setNewMethodLabel('');
@@ -104,7 +107,7 @@ const ConfigurationEditor: React.FC = () => {
       const updated = [...medicationMethods];
       updated[editingMethod.index] = {
         value: newMethodValue.toUpperCase().replace(/\s+/g, '_'),
-        label: newMethodLabel
+        label: newMethodLabel,
       };
       setMedicationMethods(updated);
       setEditingMethod(null);
@@ -118,7 +121,7 @@ const ConfigurationEditor: React.FC = () => {
     if (newItemType) {
       setCommonItems([
         ...commonItems,
-        { type: newItemType, icon: newItemIcon || '📦' }
+        { type: newItemType, icon: newItemIcon || '📦' },
       ]);
       setNewItemType('');
       setNewItemIcon('');
@@ -140,7 +143,7 @@ const ConfigurationEditor: React.FC = () => {
       const updated = [...commonItems];
       updated[editingItem.index] = {
         type: newItemType,
-        icon: newItemIcon || '📦'
+        icon: newItemIcon || '📦',
       };
       setCommonItems(updated);
       setEditingItem(null);
@@ -156,15 +159,25 @@ const ConfigurationEditor: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h6">Pre-populated Options Configuration</Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+        }}
+      >
+        <Typography variant="h6">
+          Pre-populated Options Configuration
+        </Typography>
         <Button variant="contained" onClick={handleSaveConfiguration}>
           Save Configuration
         </Button>
       </Box>
 
       <Alert severity="info" sx={{ mb: 3 }}>
-        Configure the pre-populated options that appear in dropdowns and quick-add buttons throughout the check-in process.
+        Configure the pre-populated options that appear in dropdowns and
+        quick-add buttons throughout the check-in process.
       </Alert>
 
       <Paper>
@@ -179,7 +192,8 @@ const ConfigurationEditor: React.FC = () => {
               Medication Administration Methods
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              These options appear in the medication administration method dropdown during check-in.
+              These options appear in the medication administration method
+              dropdown during check-in.
             </Typography>
 
             <Paper sx={{ p: 2, mb: 3, bgcolor: 'grey.50' }}>
@@ -221,7 +235,11 @@ const ConfigurationEditor: React.FC = () => {
                     </Button>
                   </>
                 ) : (
-                  <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddMethod}>
+                  <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    onClick={handleAddMethod}
+                  >
                     Add
                   </Button>
                 )}
@@ -237,10 +255,17 @@ const ConfigurationEditor: React.FC = () => {
                       secondary={`Code: ${method.value}`}
                     />
                     <ListItemSecondaryAction>
-                      <IconButton edge="end" onClick={() => handleEditMethod(method, index)} sx={{ mr: 1 }}>
+                      <IconButton
+                        edge="end"
+                        onClick={() => handleEditMethod(method, index)}
+                        sx={{ mr: 1 }}
+                      >
                         <EditIcon />
                       </IconButton>
-                      <IconButton edge="end" onClick={() => handleDeleteMethod(index)}>
+                      <IconButton
+                        edge="end"
+                        onClick={() => handleDeleteMethod(index)}
+                      >
                         <DeleteIcon />
                       </IconButton>
                     </ListItemSecondaryAction>
@@ -258,7 +283,8 @@ const ConfigurationEditor: React.FC = () => {
               Common Belongings Items
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              These items appear as quick-add buttons in the belongings inventory during check-in.
+              These items appear as quick-add buttons in the belongings
+              inventory during check-in.
             </Typography>
 
             <Paper sx={{ p: 2, mb: 3, bgcolor: 'grey.50' }}>
@@ -301,7 +327,11 @@ const ConfigurationEditor: React.FC = () => {
                     </Button>
                   </>
                 ) : (
-                  <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddItem}>
+                  <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    onClick={handleAddItem}
+                  >
                     Add
                   </Button>
                 )}
@@ -317,10 +347,17 @@ const ConfigurationEditor: React.FC = () => {
                       secondary={`Icon: ${item.icon}`}
                     />
                     <ListItemSecondaryAction>
-                      <IconButton edge="end" onClick={() => handleEditItem(item, index)} sx={{ mr: 1 }}>
+                      <IconButton
+                        edge="end"
+                        onClick={() => handleEditItem(item, index)}
+                        sx={{ mr: 1 }}
+                      >
                         <EditIcon />
                       </IconButton>
-                      <IconButton edge="end" onClick={() => handleDeleteItem(index)}>
+                      <IconButton
+                        edge="end"
+                        onClick={() => handleDeleteItem(index)}
+                      >
                         <DeleteIcon />
                       </IconButton>
                     </ListItemSecondaryAction>

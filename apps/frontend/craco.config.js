@@ -1,4 +1,4 @@
-const CompressionPlugin = require("compression-webpack-plugin");
+const CompressionPlugin = require('compression-webpack-plugin');
 
 module.exports = {
   webpack: {
@@ -12,12 +12,12 @@ module.exports = {
       });
 
       // Production optimizations
-      if (env === "production") {
+      if (env === 'production') {
         // Add compression plugin
         webpackConfig.plugins.push(
           new CompressionPlugin({
-            filename: "[path][base].gz",
-            algorithm: "gzip",
+            filename: '[path][base].gz',
+            algorithm: 'gzip',
             test: /\.(js|css|html|svg)$/,
             threshold: 10240,
             minRatio: 0.8,
@@ -28,26 +28,26 @@ module.exports = {
         webpackConfig.optimization = {
           ...webpackConfig.optimization,
           splitChunks: {
-            chunks: "all",
+            chunks: 'all',
             cacheGroups: {
               // Vendor chunk for node_modules
               vendor: {
                 test: /[\\/]node_modules[\\/]/,
-                name: "vendors",
+                name: 'vendors',
                 priority: 10,
                 reuseExistingChunk: true,
               },
               // MUI chunk
               mui: {
                 test: /[\\/]node_modules[\\/]@mui[\\/]/,
-                name: "mui",
+                name: 'mui',
                 priority: 20,
                 reuseExistingChunk: true,
               },
               // FullCalendar chunk
               fullcalendar: {
                 test: /[\\/]node_modules[\\/]@fullcalendar[\\/]/,
-                name: "fullcalendar",
+                name: 'fullcalendar',
                 priority: 20,
                 reuseExistingChunk: true,
               },
@@ -61,7 +61,7 @@ module.exports = {
             },
           },
           // Runtime chunk for better caching
-          runtimeChunk: "single",
+          runtimeChunk: 'single',
         };
       }
 

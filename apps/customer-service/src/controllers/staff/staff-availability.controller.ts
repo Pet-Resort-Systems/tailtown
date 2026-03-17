@@ -9,10 +9,10 @@
  * - getAvailableStaff
  */
 
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-import { AppError } from "../../middleware/error.middleware";
-import { logger } from "../../utils/logger";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { AppError } from '../../middleware/error.middleware';
+import { logger } from '../../utils/logger';
 
 const prisma = new PrismaClient();
 
@@ -29,11 +29,11 @@ export const getStaffAvailability = async (
 
     const availability = await prisma.staffAvailability.findMany({
       where: { staffId },
-      orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
+      orderBy: [{ dayOfWeek: 'asc' }, { startTime: 'asc' }],
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: availability.length,
       data: availability,
     });
@@ -61,7 +61,7 @@ export const createStaffAvailability = async (
       !availabilityData.endTime
     ) {
       return next(
-        new AppError("Day of week, start time, and end time are required", 400)
+        new AppError('Day of week, start time, and end time are required', 400)
       );
     }
 
@@ -90,7 +90,7 @@ export const createStaffAvailability = async (
       createData.effectiveUntil = new Date(availabilityData.effectiveUntil);
     }
 
-    logger.debug("Creating staff availability", {
+    logger.debug('Creating staff availability', {
       tenantId: (req as any).tenantId,
       staffId,
       dayOfWeek: availabilityData.dayOfWeek,
@@ -102,11 +102,11 @@ export const createStaffAvailability = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: newAvailability,
     });
   } catch (error) {
-    logger.error("Error creating staff availability", { error });
+    logger.error('Error creating staff availability', { error });
     next(error);
   }
 };
@@ -129,7 +129,7 @@ export const updateStaffAvailability = async (
     });
 
     if (!existingAvailability) {
-      return next(new AppError("Availability record not found", 404));
+      return next(new AppError('Availability record not found', 404));
     }
 
     // Prepare data for update
@@ -167,7 +167,7 @@ export const updateStaffAvailability = async (
         : null;
     }
 
-    logger.debug("Updating staff availability", {
+    logger.debug('Updating staff availability', {
       availabilityId: id,
       tenantId: (req as any).tenantId,
     });
@@ -179,11 +179,11 @@ export const updateStaffAvailability = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: updatedAvailability,
     });
   } catch (error: any) {
-    logger.error("Error updating staff availability", {
+    logger.error('Error updating staff availability', {
       availabilityId: req.params.id,
       error: error.message,
     });
@@ -208,7 +208,7 @@ export const deleteStaffAvailability = async (
     });
 
     if (!existingAvailability) {
-      return next(new AppError("Availability record not found", 404));
+      return next(new AppError('Availability record not found', 404));
     }
 
     // Delete availability
@@ -217,8 +217,8 @@ export const deleteStaffAvailability = async (
     });
 
     res.status(200).json({
-      status: "success",
-      message: "Availability record deleted successfully",
+      status: 'success',
+      message: 'Availability record deleted successfully',
     });
   } catch (error) {
     next(error);
@@ -238,7 +238,7 @@ export const getAvailableStaff = async (
 
     if (!date || !startTime || !endTime) {
       return next(
-        new AppError("Date, start time, and end time are required", 400)
+        new AppError('Date, start time, and end time are required', 400)
       );
     }
 
@@ -298,7 +298,7 @@ export const getAvailableStaff = async (
         NOT: {
           timeOff: {
             some: {
-              status: "APPROVED",
+              status: 'APPROVED',
               startDate: { lte: searchDate },
               endDate: { gte: searchDate },
             },
@@ -311,7 +311,7 @@ export const getAvailableStaff = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: availableStaff.length,
       data: availableStaff,
     });

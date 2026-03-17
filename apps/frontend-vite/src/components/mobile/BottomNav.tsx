@@ -79,10 +79,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
           },
         }}
       >
-        <BottomNavigationAction
-          label="Home"
-          icon={<HomeIcon />}
-        />
+        <BottomNavigationAction label="Home" icon={<HomeIcon />} />
         <BottomNavigationAction
           label="Tasks"
           icon={
@@ -91,10 +88,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             </Badge>
           }
         />
-        <BottomNavigationAction
-          label="Reports"
-          icon={<ReportCardIcon />}
-        />
+        <BottomNavigationAction label="Reports" icon={<ReportCardIcon />} />
         <BottomNavigationAction
           label="Chat"
           icon={
@@ -103,10 +97,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             </Badge>
           }
         />
-        <BottomNavigationAction
-          label="Schedule"
-          icon={<ScheduleIcon />}
-        />
+        <BottomNavigationAction label="Schedule" icon={<ScheduleIcon />} />
       </BottomNavigation>
     </Paper>
   );

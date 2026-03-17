@@ -1,6 +1,6 @@
 /**
  * Waitlist Page
- * 
+ *
  * Staff page for managing waitlist entries across all services
  */
 

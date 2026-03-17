@@ -5,14 +5,14 @@
  * Runs on a schedule (every 8 hours) to sync customers, pets, reservations, and invoices.
  */
 
-import { PrismaClient } from "@prisma/client";
-import { GingrApiClient } from "./gingr-api.service";
+import { PrismaClient } from '@prisma/client';
+import { GingrApiClient } from './gingr-api.service';
 import {
   extractGingrLodging,
   findOrCreateResource,
   getServiceNameForResourceType,
-} from "./gingr-resource-mapper.service";
-import { lookupBreedName } from "./gingr-transform.service";
+} from './gingr-resource-mapper.service';
+import { lookupBreedName } from './gingr-transform.service';
 
 const prisma = new PrismaClient();
 
@@ -32,14 +32,14 @@ export class GingrSyncService {
    * Sync all tenants that have Gingr sync enabled
    */
   async syncAllEnabledTenants(): Promise<SyncResult[]> {
-    console.log("🔄 Starting Gingr sync for all enabled tenants...");
+    console.log('🔄 Starting Gingr sync for all enabled tenants...');
 
     // Get all tenants with Gingr sync enabled
     const tenants = await prisma.tenant.findMany({
       where: {
         gingrSyncEnabled: true,
         isActive: true,
-        status: "ACTIVE",
+        status: 'ACTIVE',
       },
     });
 
@@ -78,7 +78,7 @@ export class GingrSyncService {
       }
     }
 
-    console.log("\n✅ Gingr sync complete for all tenants");
+    console.log('\n✅ Gingr sync complete for all tenants');
     return results;
   }
 
@@ -101,12 +101,12 @@ export class GingrSyncService {
       // Initialize Gingr API client
       // TODO: Get Gingr credentials from tenant settings or environment
       const gingrClient = new GingrApiClient({
-        subdomain: "tailtownpetresort", // TODO: Make this tenant-specific
-        apiKey: process.env.GINGR_API_KEY || "c84c09ecfacdf23a495505d2ae1df533",
+        subdomain: 'tailtownpetresort', // TODO: Make this tenant-specific
+        apiKey: process.env.GINGR_API_KEY || 'c84c09ecfacdf23a495505d2ae1df533',
       });
 
       // Sync customers
-      console.log("   1️⃣  Syncing customers...");
+      console.log('   1️⃣  Syncing customers...');
       try {
         result.customersSync = await this.syncCustomers(tenantId, gingrClient);
         console.log(`      ✓ Synced ${result.customersSync} customers`);
@@ -116,7 +116,7 @@ export class GingrSyncService {
       }
 
       // Sync pets
-      console.log("   2️⃣  Syncing pets...");
+      console.log('   2️⃣  Syncing pets...');
       try {
         result.petsSync = await this.syncPets(tenantId, gingrClient);
         console.log(`      ✓ Synced ${result.petsSync} pets`);
@@ -126,7 +126,7 @@ export class GingrSyncService {
       }
 
       // Sync reservations (last 30 days to next 90 days)
-      console.log("   3️⃣  Syncing reservations...");
+      console.log('   3️⃣  Syncing reservations...');
       try {
         result.reservationsSync = await this.syncReservations(
           tenantId,
@@ -139,7 +139,7 @@ export class GingrSyncService {
       }
 
       // Sync invoices (last 90 days)
-      console.log("   4️⃣  Syncing invoices...");
+      console.log('   4️⃣  Syncing invoices...');
       try {
         result.invoicesSync = await this.syncInvoices(tenantId, gingrClient);
         console.log(`      ✓ Synced ${result.invoicesSync} invoices`);
@@ -149,7 +149,7 @@ export class GingrSyncService {
       }
 
       // Link orphaned invoices to reservations
-      console.log("   5️⃣  Linking invoices to reservations...");
+      console.log('   5️⃣  Linking invoices to reservations...');
       try {
         const linkedCount = await this.linkInvoicesToReservations(tenantId);
         console.log(`      ✓ Linked ${linkedCount} invoices to reservations`);
@@ -161,7 +161,7 @@ export class GingrSyncService {
       result.success = true;
     } catch (error: any) {
       result.errors.push(error.message);
-      console.error("   ❌ Sync failed:", error.message);
+      console.error('   ❌ Sync failed:', error.message);
     }
 
     return result;
@@ -230,7 +230,7 @@ export class GingrSyncService {
         syncCount++;
       } catch (error: any) {
         // Only log non-duplicate errors
-        if (!error.message.includes("Unique constraint")) {
+        if (!error.message.includes('Unique constraint')) {
           console.error(
             `      Warning: Failed to sync customer ${owner.id}:`,
             error.message
@@ -272,11 +272,11 @@ export class GingrSyncService {
           vet.label ||
           vet.name ||
           vet.vet_name ||
-          `${vet.first_name || ""} ${vet.last_name || ""}`.trim();
+          `${vet.first_name || ''} ${vet.last_name || ''}`.trim();
         if (vetId && vetName) {
           vetsMap.set(vetId, {
             name: vetName,
-            phone: vet.phone || vet.phone_number || "",
+            phone: vet.phone || vet.phone_number || '',
           });
         }
       }
@@ -325,21 +325,21 @@ export class GingrSyncService {
         // Core Gingr fields - these are the source of truth from Gingr
         const gingrCoreData: any = {
           name: animal.first_name,
-          type: animal.species_id === "1" ? "DOG" : "CAT", // Assuming 1=Dog, 2=Cat
+          type: animal.species_id === '1' ? 'DOG' : 'CAT', // Assuming 1=Dog, 2=Cat
           breed: lookupBreedName(animal.breed_id),
           color: animal.color,
           gender:
-            animal.gender === "M"
-              ? "MALE"
-              : animal.gender === "F"
-              ? "FEMALE"
-              : undefined,
+            animal.gender === 'M'
+              ? 'MALE'
+              : animal.gender === 'F'
+                ? 'FEMALE'
+                : undefined,
           birthdate: animal.birthday
             ? new Date(animal.birthday * 1000)
             : undefined,
           weight: animal.weight ? parseFloat(animal.weight) : undefined,
           microchipNumber: animal.microchip,
-          isNeutered: animal.fixed === "1",
+          isNeutered: animal.fixed === '1',
           externalId: animal.id,
         };
 
@@ -410,16 +410,16 @@ export class GingrSyncService {
               const vaccineExpirations: Record<string, string> = {};
 
               for (const imm of immunizations) {
-                const name = imm.name || imm.immunization_name || "Unknown";
+                const name = imm.name || imm.immunization_name || 'Unknown';
                 const expDate = imm.expiration_date
                   ? new Date(imm.expiration_date * 1000)
                   : null;
                 vaccinationStatus[name] =
-                  expDate && expDate > new Date() ? "current" : "expired";
+                  expDate && expDate > new Date() ? 'current' : 'expired';
                 if (expDate) {
                   vaccineExpirations[name] = expDate
                     .toISOString()
-                    .split("T")[0];
+                    .split('T')[0];
                 }
                 vaccinesImported++;
               }
@@ -441,7 +441,7 @@ export class GingrSyncService {
         }
         syncCount++;
       } catch (error: any) {
-        if (!error.message.includes("Unique constraint")) {
+        if (!error.message.includes('Unique constraint')) {
           console.error(
             `      Warning: Failed to sync pet ${animal.id}:`,
             error.message
@@ -552,14 +552,14 @@ export class GingrSyncService {
           // Extract just the date portion (YYYY-MM-DD)
           const datePart = dateStr.substring(0, 10); // "2025-12-23"
           // Create a Date at midnight UTC for this date
-          return new Date(datePart + "T00:00:00.000Z");
+          return new Date(datePart + 'T00:00:00.000Z');
         };
 
         // Determine service based on resource type (new approach - Nov 2025)
         // First, try to extract lodging info and determine resource type
         const gingrLodging = extractGingrLodging(reservation);
         let serviceName: string;
-        let serviceCategory: "BOARDING" | "DAYCARE" | "GROOMING" = "BOARDING";
+        let serviceCategory: 'BOARDING' | 'DAYCARE' | 'GROOMING' = 'BOARDING';
 
         if (gingrLodging) {
           // Determine resource type from lodging name
@@ -567,45 +567,45 @@ export class GingrSyncService {
 
           // Check for daycare first
           if (
-            lodgingUpper.includes("DAYCAMP") ||
-            lodgingUpper.includes("DAY CAMP")
+            lodgingUpper.includes('DAYCAMP') ||
+            lodgingUpper.includes('DAY CAMP')
           ) {
             const gingrType =
               (reservation.reservation_type as any)?.type ||
-              "Day Camp | Full Day";
-            serviceName = gingrType.includes("Half")
-              ? "Day Camp | Half Day"
-              : "Day Camp | Full Day";
-            serviceCategory = "DAYCARE";
+              'Day Camp | Full Day';
+            serviceName = gingrType.includes('Half')
+              ? 'Day Camp | Half Day'
+              : 'Day Camp | Full Day';
+            serviceCategory = 'DAYCARE';
             console.log(
               `      Detected daycare lodging "${gingrLodging}" → "${serviceName}"`
             );
           } else {
             // Boarding resource type detection
-            let resourceType = "JUNIOR_KENNEL"; // default
+            let resourceType = 'JUNIOR_KENNEL'; // default
 
-            if (lodgingUpper.includes("VIP") || lodgingUpper.startsWith("V")) {
-              resourceType = "VIP_ROOM";
+            if (lodgingUpper.includes('VIP') || lodgingUpper.startsWith('V')) {
+              resourceType = 'VIP_ROOM';
             } else if (
-              lodgingUpper.includes("CAT") ||
-              lodgingUpper.includes("CONDO")
+              lodgingUpper.includes('CAT') ||
+              lodgingUpper.includes('CONDO')
             ) {
-              resourceType = "CAT_CONDO";
+              resourceType = 'CAT_CONDO';
             } else if (
-              lodgingUpper.endsWith("K") ||
-              lodgingUpper.includes("KING")
+              lodgingUpper.endsWith('K') ||
+              lodgingUpper.includes('KING')
             ) {
-              resourceType = "KING_KENNEL";
+              resourceType = 'KING_KENNEL';
             } else if (
-              lodgingUpper.endsWith("Q") ||
-              lodgingUpper.includes("QUEEN")
+              lodgingUpper.endsWith('Q') ||
+              lodgingUpper.includes('QUEEN')
             ) {
-              resourceType = "QUEEN_KENNEL";
+              resourceType = 'QUEEN_KENNEL';
             } else if (
-              lodgingUpper.endsWith("R") ||
-              lodgingUpper.includes("JUNIOR")
+              lodgingUpper.endsWith('R') ||
+              lodgingUpper.includes('JUNIOR')
             ) {
-              resourceType = "JUNIOR_KENNEL";
+              resourceType = 'JUNIOR_KENNEL';
             }
 
             // Get service name from resource type
@@ -617,24 +617,24 @@ export class GingrSyncService {
         } else {
           // Fallback: Use Gingr reservation type
           const gingrType =
-            (reservation.reservation_type as any)?.type || "Boarding";
+            (reservation.reservation_type as any)?.type || 'Boarding';
 
           if (
-            gingrType.includes("Day Camp") &&
-            !gingrType.includes("Lodging")
+            gingrType.includes('Day Camp') &&
+            !gingrType.includes('Lodging')
           ) {
-            serviceName = gingrType.includes("Half")
-              ? "Day Camp | Half Day"
-              : "Day Camp | Full Day";
-            serviceCategory = "DAYCARE";
+            serviceName = gingrType.includes('Half')
+              ? 'Day Camp | Half Day'
+              : 'Day Camp | Full Day';
+            serviceCategory = 'DAYCARE';
           } else if (
-            gingrType.includes("Grooming") ||
-            gingrType.includes("grooming")
+            gingrType.includes('Grooming') ||
+            gingrType.includes('grooming')
           ) {
-            serviceName = "Grooming | Appointment";
-            serviceCategory = "GROOMING";
+            serviceName = 'Grooming | Appointment';
+            serviceCategory = 'GROOMING';
           } else {
-            serviceName = "Boarding | Indoor Suite"; // Default boarding service
+            serviceName = 'Boarding | Indoor Suite'; // Default boarding service
           }
           console.log(
             `      No lodging found, using Gingr type "${gingrType}" → "${serviceName}"`
@@ -667,7 +667,7 @@ export class GingrSyncService {
         // If Gingr provides lodging, map it to an internal resource (and backfill suiteNumber)
         let mappedResourceId: string | undefined;
         const reservationServiceUrl =
-          process.env.RESERVATION_SERVICE_URL || "http://localhost:4003";
+          process.env.RESERVATION_SERVICE_URL || 'http://localhost:4003';
 
         if (gingrLodging) {
           try {
@@ -690,14 +690,14 @@ export class GingrSyncService {
           startDate: parseGingrDate(reservation.start_date),
           endDate: parseGingrDate(reservation.end_date),
           status: reservation.cancelled_date
-            ? "CANCELLED"
+            ? 'CANCELLED'
             : reservation.check_out_date
-            ? "COMPLETED"
-            : reservation.check_in_date
-            ? "CHECKED_IN"
-            : reservation.confirmed_date
-            ? "CONFIRMED"
-            : "PENDING",
+              ? 'COMPLETED'
+              : reservation.check_in_date
+                ? 'CHECKED_IN'
+                : reservation.confirmed_date
+                  ? 'CONFIRMED'
+                  : 'PENDING',
           notes: reservation.notes?.reservation_notes,
           externalId: reservation.reservation_id,
           ...(mappedResourceId ? { resourceId: mappedResourceId } : {}),
@@ -728,14 +728,14 @@ export class GingrSyncService {
             reservationPrice,
             parseGingrDate(reservation.start_date),
             reservation.reservation_id,
-            reservationData.status === "COMPLETED" ||
-              reservationData.status === "CHECKED_OUT"
+            reservationData.status === 'COMPLETED' ||
+              reservationData.status === 'CHECKED_OUT'
           );
         }
 
         syncCount++;
       } catch (error: any) {
-        if (!error.message.includes("Unique constraint")) {
+        if (!error.message.includes('Unique constraint')) {
           console.error(
             `      Warning: Failed to sync reservation ${reservation.reservation_id}:`,
             error.message
@@ -816,7 +816,7 @@ export class GingrSyncService {
           taxAmount,
           discount: 0,
           total,
-          status: "PAID", // All imported invoices are completed transactions
+          status: 'PAID', // All imported invoices are completed transactions
           externalId: invoice.id,
         };
 
@@ -836,8 +836,8 @@ export class GingrSyncService {
         syncCount++;
       } catch (error: any) {
         if (
-          !error.message.includes("Unique constraint") &&
-          !error.message.includes("toUpperCase")
+          !error.message.includes('Unique constraint') &&
+          !error.message.includes('toUpperCase')
         ) {
           console.error(
             `      Warning: Failed to sync invoice ${invoice.id}:`,
@@ -888,8 +888,8 @@ export class GingrSyncService {
         taxRate,
         taxAmount,
         total,
-        status: isPaid ? "PAID" : "PENDING",
-        notes: "Invoice synced from Gingr reservation",
+        status: isPaid ? 'PAID' : 'PENDING',
+        notes: 'Invoice synced from Gingr reservation',
       };
 
       if (existingInvoice) {
@@ -906,8 +906,8 @@ export class GingrSyncService {
             lineItems: {
               create: {
                 tenantId,
-                type: "SERVICE",
-                description: "Reservation services (from Gingr)",
+                type: 'SERVICE',
+                description: 'Reservation services (from Gingr)',
                 quantity: 1,
                 unitPrice: subtotal,
                 amount: subtotal,
@@ -925,17 +925,17 @@ export class GingrSyncService {
               invoiceId: invoice.id,
               customerId,
               amount: total,
-              method: "CASH", // Default since we don't know payment method from Gingr
+              method: 'CASH', // Default since we don't know payment method from Gingr
               paymentDate: invoiceDate,
-              status: "PAID",
-              notes: "Payment synced from Gingr",
+              status: 'PAID',
+              notes: 'Payment synced from Gingr',
             },
           });
         }
       }
     } catch (error: any) {
       // Don't fail the reservation sync if invoice creation fails
-      if (!error.message.includes("Unique constraint")) {
+      if (!error.message.includes('Unique constraint')) {
         console.error(
           `      Warning: Failed to create invoice for reservation ${reservationId}:`,
           error.message
@@ -984,10 +984,10 @@ export class GingrSyncService {
               lte: endRange,
             },
             invoice: null, // Not already linked to an invoice
-            status: { in: ["COMPLETED", "CHECKED_OUT"] },
+            status: { in: ['COMPLETED', 'CHECKED_OUT'] },
           },
           orderBy: {
-            endDate: "desc",
+            endDate: 'desc',
           },
         });
 
@@ -1002,7 +1002,7 @@ export class GingrSyncService {
           );
         }
       } catch (error: any) {
-        if (!error.message.includes("Unique constraint")) {
+        if (!error.message.includes('Unique constraint')) {
           console.error(
             `      Warning: Failed to link invoice ${invoice.id}:`,
             error.message
@@ -1025,21 +1025,21 @@ export class GingrSyncService {
   ): Promise<{ reservations: number; invoices: number; linked: number }> {
     console.log(`📅 Starting historical sync for ${tenantId}`);
     console.log(
-      `   Date range: ${fromDate.toISOString().split("T")[0]} to ${
-        toDate.toISOString().split("T")[0]
+      `   Date range: ${fromDate.toISOString().split('T')[0]} to ${
+        toDate.toISOString().split('T')[0]
       }`
     );
 
     const gingrClient = new GingrApiClient({
-      subdomain: "tailtownpetresort",
-      apiKey: process.env.GINGR_API_KEY || "c84c09ecfacdf23a495505d2ae1df533",
+      subdomain: 'tailtownpetresort',
+      apiKey: process.env.GINGR_API_KEY || 'c84c09ecfacdf23a495505d2ae1df533',
     });
 
     let reservationCount = 0;
     let invoiceCount = 0;
 
     // Sync reservations in 30-day chunks (API limitation)
-    console.log("   1️⃣  Syncing historical reservations...");
+    console.log('   1️⃣  Syncing historical reservations...');
     let currentStart = new Date(fromDate);
     while (currentStart < toDate) {
       const chunkEnd = new Date(currentStart);
@@ -1047,8 +1047,8 @@ export class GingrSyncService {
       const actualEnd = chunkEnd > toDate ? toDate : chunkEnd;
 
       console.log(
-        `      Chunk: ${currentStart.toISOString().split("T")[0]} to ${
-          actualEnd.toISOString().split("T")[0]
+        `      Chunk: ${currentStart.toISOString().split('T')[0]} to ${
+          actualEnd.toISOString().split('T')[0]
         }`
       );
 
@@ -1068,7 +1068,7 @@ export class GingrSyncService {
             );
             reservationCount++;
           } catch (error: any) {
-            if (!error.message.includes("Unique constraint")) {
+            if (!error.message.includes('Unique constraint')) {
               console.error(
                 `      Error syncing reservation: ${error.message}`
               );
@@ -1085,7 +1085,7 @@ export class GingrSyncService {
     console.log(`      ✓ Synced ${reservationCount} reservations`);
 
     // Sync invoices for the date range
-    console.log("   2️⃣  Syncing historical invoices...");
+    console.log('   2️⃣  Syncing historical invoices...');
     try {
       const invoices = await gingrClient.fetchAllInvoices(fromDate, toDate);
       console.log(`      Found ${invoices.length} invoices`);
@@ -1116,7 +1116,7 @@ export class GingrSyncService {
                 : 0,
             taxAmount: parseFloat(invoice.tax_amount),
             total: parseFloat(invoice.total),
-            status: "PAID",
+            status: 'PAID',
             externalId: invoice.id,
           };
 
@@ -1133,8 +1133,8 @@ export class GingrSyncService {
                 lineItems: {
                   create: {
                     tenantId,
-                    type: "SERVICE",
-                    description: "Services (imported from Gingr)",
+                    type: 'SERVICE',
+                    description: 'Services (imported from Gingr)',
                     quantity: 1,
                     unitPrice: parseFloat(invoice.subtotal),
                     amount: parseFloat(invoice.subtotal),
@@ -1146,7 +1146,7 @@ export class GingrSyncService {
           }
           invoiceCount++;
         } catch (error: any) {
-          if (!error.message.includes("Unique constraint")) {
+          if (!error.message.includes('Unique constraint')) {
             console.error(`      Error syncing invoice: ${error.message}`);
           }
         }
@@ -1157,7 +1157,7 @@ export class GingrSyncService {
     console.log(`      ✓ Synced ${invoiceCount} invoices`);
 
     // Link invoices to reservations
-    console.log("   3️⃣  Linking invoices to reservations...");
+    console.log('   3️⃣  Linking invoices to reservations...');
     const linkedCount = await this.linkInvoicesToReservations(tenantId);
     console.log(`      ✓ Linked ${linkedCount} invoices`);
 
@@ -1198,48 +1198,48 @@ export class GingrSyncService {
       if (!dateStr) return new Date();
       // Extract just the date portion (YYYY-MM-DD) and create at midnight UTC
       const datePart = dateStr.substring(0, 10);
-      return new Date(datePart + "T00:00:00.000Z");
+      return new Date(datePart + 'T00:00:00.000Z');
     };
 
     // Determine service
     const gingrLodging = extractGingrLodging(reservation);
-    let serviceName = "Boarding | Indoor Suite";
-    let serviceCategory: "BOARDING" | "DAYCARE" | "GROOMING" = "BOARDING";
+    let serviceName = 'Boarding | Indoor Suite';
+    let serviceCategory: 'BOARDING' | 'DAYCARE' | 'GROOMING' = 'BOARDING';
 
     if (gingrLodging) {
       const lodgingUpper = gingrLodging.toUpperCase();
 
       // Check for daycare first
       if (
-        lodgingUpper.includes("DAYCAMP") ||
-        lodgingUpper.includes("DAY CAMP")
+        lodgingUpper.includes('DAYCAMP') ||
+        lodgingUpper.includes('DAY CAMP')
       ) {
         const gingrType =
-          reservation.reservation_type?.type || "Day Camp | Full Day";
-        serviceName = gingrType.includes("Half")
-          ? "Day Camp | Half Day"
-          : "Day Camp | Full Day";
-        serviceCategory = "DAYCARE";
+          reservation.reservation_type?.type || 'Day Camp | Full Day';
+        serviceName = gingrType.includes('Half')
+          ? 'Day Camp | Half Day'
+          : 'Day Camp | Full Day';
+        serviceCategory = 'DAYCARE';
       } else {
         // Boarding resource type detection
-        let resourceType = "JUNIOR_KENNEL";
-        if (lodgingUpper.includes("VIP") || lodgingUpper.startsWith("V"))
-          resourceType = "VIP_ROOM";
-        else if (lodgingUpper.includes("CAT") || lodgingUpper.includes("CONDO"))
-          resourceType = "CAT_CONDO";
-        else if (lodgingUpper.endsWith("K") || lodgingUpper.includes("KING"))
-          resourceType = "KING_KENNEL";
-        else if (lodgingUpper.endsWith("Q") || lodgingUpper.includes("QUEEN"))
-          resourceType = "QUEEN_KENNEL";
+        let resourceType = 'JUNIOR_KENNEL';
+        if (lodgingUpper.includes('VIP') || lodgingUpper.startsWith('V'))
+          resourceType = 'VIP_ROOM';
+        else if (lodgingUpper.includes('CAT') || lodgingUpper.includes('CONDO'))
+          resourceType = 'CAT_CONDO';
+        else if (lodgingUpper.endsWith('K') || lodgingUpper.includes('KING'))
+          resourceType = 'KING_KENNEL';
+        else if (lodgingUpper.endsWith('Q') || lodgingUpper.includes('QUEEN'))
+          resourceType = 'QUEEN_KENNEL';
         serviceName = getServiceNameForResourceType(resourceType);
       }
     } else {
-      const gingrType = reservation.reservation_type?.type || "Boarding";
-      if (gingrType.includes("Day Camp") && !gingrType.includes("Lodging")) {
-        serviceName = gingrType.includes("Half")
-          ? "Day Camp | Half Day"
-          : "Day Camp | Full Day";
-        serviceCategory = "DAYCARE";
+      const gingrType = reservation.reservation_type?.type || 'Boarding';
+      if (gingrType.includes('Day Camp') && !gingrType.includes('Lodging')) {
+        serviceName = gingrType.includes('Half')
+          ? 'Day Camp | Half Day'
+          : 'Day Camp | Full Day';
+        serviceCategory = 'DAYCARE';
       }
     }
 
@@ -1266,14 +1266,14 @@ export class GingrSyncService {
       startDate: parseGingrDate(reservation.start_date),
       endDate: parseGingrDate(reservation.end_date),
       status: reservation.cancelled_date
-        ? "CANCELLED"
+        ? 'CANCELLED'
         : reservation.check_out_date
-        ? "COMPLETED"
-        : reservation.check_in_date
-        ? "CHECKED_IN"
-        : reservation.confirmed_date
-        ? "CONFIRMED"
-        : "PENDING",
+          ? 'COMPLETED'
+          : reservation.check_in_date
+            ? 'CHECKED_IN'
+            : reservation.confirmed_date
+              ? 'CONFIRMED'
+              : 'PENDING',
       notes: reservation.notes?.reservation_notes,
       externalId: reservation.reservation_id,
     };
@@ -1300,8 +1300,8 @@ export class GingrSyncService {
         reservationPrice,
         parseGingrDate(reservation.start_date),
         reservation.reservation_id,
-        reservationData.status === "COMPLETED" ||
-          reservationData.status === "CHECKED_OUT"
+        reservationData.status === 'COMPLETED' ||
+          reservationData.status === 'CHECKED_OUT'
       );
     }
   }

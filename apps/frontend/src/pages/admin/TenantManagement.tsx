@@ -5,8 +5,8 @@
  * Features: list, create, clone, update flags, suspend/delete.
  */
 
-import React, { useState, useEffect } from "react";
-import { getApiBaseUrl } from "../../services/api";
+import React, { useState, useEffect } from 'react';
+import { getApiBaseUrl } from '../../services/api';
 import {
   Container,
   Box,
@@ -35,14 +35,14 @@ import {
   Tooltip,
   Alert,
   CircularProgress,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Add as AddIcon,
   ContentCopy as CloneIcon,
   Edit as EditIcon,
   Refresh as RefreshIcon,
-} from "@mui/icons-material";
-import TenantStatusManager from "../../components/super-admin/TenantStatusManager";
+} from '@mui/icons-material';
+import TenantStatusManager from '../../components/super-admin/TenantStatusManager';
 
 interface Tenant {
   id: string;
@@ -70,14 +70,14 @@ interface Tenant {
 const TenantManagement: React.FC = () => {
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   // Filters
-  const [statusFilter, setStatusFilter] = useState("ALL");
-  const [productionFilter, setProductionFilter] = useState("ALL");
-  const [templateFilter, setTemplateFilter] = useState("ALL");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState('ALL');
+  const [productionFilter, setProductionFilter] = useState('ALL');
+  const [templateFilter, setTemplateFilter] = useState('ALL');
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Dialogs
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -87,15 +87,15 @@ const TenantManagement: React.FC = () => {
 
   // Form data
   const [formData, setFormData] = useState({
-    businessName: "",
-    subdomain: "",
-    contactName: "",
-    contactEmail: "",
-    contactPhone: "",
+    businessName: '',
+    subdomain: '',
+    contactName: '',
+    contactEmail: '',
+    contactPhone: '',
     isProduction: false,
     isTemplate: false,
     gingrSyncEnabled: false,
-    planType: "STARTER",
+    planType: 'STARTER',
   });
 
   // Use dynamic API URL based on environment
@@ -104,27 +104,27 @@ const TenantManagement: React.FC = () => {
   const loadTenants = React.useCallback(async () => {
     try {
       setLoading(true);
-      setError("");
+      setError('');
 
       const params = new URLSearchParams();
-      if (statusFilter !== "ALL") params.append("status", statusFilter);
-      if (productionFilter !== "ALL")
-        params.append("isProduction", productionFilter);
-      if (templateFilter !== "ALL") params.append("isTemplate", templateFilter);
-      if (searchTerm) params.append("search", searchTerm);
+      if (statusFilter !== 'ALL') params.append('status', statusFilter);
+      if (productionFilter !== 'ALL')
+        params.append('isProduction', productionFilter);
+      if (templateFilter !== 'ALL') params.append('isTemplate', templateFilter);
+      if (searchTerm) params.append('search', searchTerm);
 
       const response = await fetch(
         `${API_URL}/api/super-admin/tenants?${params}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
-              "superAdminAccessToken"
+              'superAdminAccessToken'
             )}`,
           },
         }
       );
 
-      if (!response.ok) throw new Error("Failed to load tenants");
+      if (!response.ok) throw new Error('Failed to load tenants');
 
       const data = await response.json();
       setTenants(data.data.tenants);
@@ -141,13 +141,13 @@ const TenantManagement: React.FC = () => {
 
   const handleCreateTenant = async () => {
     try {
-      setError("");
+      setError('');
       const response = await fetch(`${API_URL}/api/super-admin/tenants`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem(
-            "superAdminAccessToken"
+            'superAdminAccessToken'
           )}`,
         },
         body: JSON.stringify(formData),
@@ -155,10 +155,10 @@ const TenantManagement: React.FC = () => {
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || "Failed to create tenant");
+        throw new Error(data.message || 'Failed to create tenant');
       }
 
-      setSuccess("Tenant created successfully!");
+      setSuccess('Tenant created successfully!');
       setCreateDialogOpen(false);
       resetForm();
       loadTenants();
@@ -171,15 +171,15 @@ const TenantManagement: React.FC = () => {
     if (!selectedTenant) return;
 
     try {
-      setError("");
+      setError('');
       const response = await fetch(
         `${API_URL}/api/super-admin/tenants/${selectedTenant.id}/clone`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem(
-              "superAdminAccessToken"
+              'superAdminAccessToken'
             )}`,
           },
           body: JSON.stringify(formData),
@@ -188,10 +188,10 @@ const TenantManagement: React.FC = () => {
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || "Failed to clone tenant");
+        throw new Error(data.message || 'Failed to clone tenant');
       }
 
-      setSuccess("Tenant cloned successfully!");
+      setSuccess('Tenant cloned successfully!');
       setCloneDialogOpen(false);
       resetForm();
       loadTenants();
@@ -204,15 +204,15 @@ const TenantManagement: React.FC = () => {
     if (!selectedTenant) return;
 
     try {
-      setError("");
+      setError('');
       const response = await fetch(
         `${API_URL}/api/super-admin/tenants/${selectedTenant.id}`,
         {
-          method: "PATCH",
+          method: 'PATCH',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem(
-              "superAdminAccessToken"
+              'superAdminAccessToken'
             )}`,
           },
           body: JSON.stringify({
@@ -225,10 +225,10 @@ const TenantManagement: React.FC = () => {
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || "Failed to update tenant");
+        throw new Error(data.message || 'Failed to update tenant');
       }
 
-      setSuccess("Tenant updated successfully!");
+      setSuccess('Tenant updated successfully!');
       setEditDialogOpen(false);
       resetForm();
       loadTenants();
@@ -241,11 +241,11 @@ const TenantManagement: React.FC = () => {
     setSelectedTenant(tenant);
     setFormData({
       ...formData,
-      businessName: "",
-      subdomain: "",
-      contactName: "",
-      contactEmail: "",
-      contactPhone: "",
+      businessName: '',
+      subdomain: '',
+      contactName: '',
+      contactEmail: '',
+      contactPhone: '',
     });
     setCloneDialogOpen(true);
   };
@@ -263,29 +263,29 @@ const TenantManagement: React.FC = () => {
 
   const resetForm = () => {
     setFormData({
-      businessName: "",
-      subdomain: "",
-      contactName: "",
-      contactEmail: "",
-      contactPhone: "",
+      businessName: '',
+      subdomain: '',
+      contactName: '',
+      contactEmail: '',
+      contactPhone: '',
       isProduction: false,
       isTemplate: false,
       gingrSyncEnabled: false,
-      planType: "STARTER",
+      planType: 'STARTER',
     });
     setSelectedTenant(null);
   };
 
   const getStatusColor = (tenant: Tenant) => {
-    if (tenant.deletedAt) return "error";
-    if (tenant.suspendedAt) return "warning";
-    if (tenant.isActive) return "success";
-    return "default";
+    if (tenant.deletedAt) return 'error';
+    if (tenant.suspendedAt) return 'warning';
+    if (tenant.isActive) return 'success';
+    return 'default';
   };
 
   const getStatusLabel = (tenant: Tenant) => {
-    if (tenant.deletedAt) return "DELETED";
-    if (tenant.suspendedAt) return "SUSPENDED";
+    if (tenant.deletedAt) return 'DELETED';
+    if (tenant.suspendedAt) return 'SUSPENDED';
     return tenant.status;
   };
 
@@ -294,19 +294,19 @@ const TenantManagement: React.FC = () => {
       {/* Header */}
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           mb: 2,
         }}
       >
         <Box>
           <Typography variant="h5">Tenant Management</Typography>
           <Typography variant="caption" color="text.secondary">
-            {tenants.length} tenant{tenants.length !== 1 ? "s" : ""}
+            {tenants.length} tenant{tenants.length !== 1 ? 's' : ''}
           </Typography>
         </Box>
-        <Box sx={{ display: "flex", gap: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1 }}>
           <Button
             size="small"
             variant="outlined"
@@ -328,12 +328,12 @@ const TenantManagement: React.FC = () => {
 
       {/* Alerts */}
       {error && (
-        <Alert severity="error" onClose={() => setError("")} sx={{ mb: 2 }}>
+        <Alert severity="error" onClose={() => setError('')} sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
       {success && (
-        <Alert severity="success" onClose={() => setSuccess("")} sx={{ mb: 2 }}>
+        <Alert severity="success" onClose={() => setSuccess('')} sx={{ mb: 2 }}>
           {success}
         </Alert>
       )}
@@ -342,10 +342,10 @@ const TenantManagement: React.FC = () => {
       <Paper sx={{ p: 1.5, mb: 2 }}>
         <Box
           sx={{
-            display: "flex",
+            display: 'flex',
             gap: 1,
-            flexWrap: "wrap",
-            alignItems: "center",
+            flexWrap: 'wrap',
+            alignItems: 'center',
           }}
         >
           <TextField
@@ -356,17 +356,17 @@ const TenantManagement: React.FC = () => {
             placeholder="Name, subdomain, email..."
             sx={{
               minWidth: 200,
-              "& .MuiInputBase-root": { fontSize: "0.875rem" },
+              '& .MuiInputBase-root': { fontSize: '0.875rem' },
             }}
           />
 
           <FormControl size="small" sx={{ minWidth: 120 }}>
-            <InputLabel sx={{ fontSize: "0.875rem" }}>Status</InputLabel>
+            <InputLabel sx={{ fontSize: '0.875rem' }}>Status</InputLabel>
             <Select
               value={statusFilter}
               label="Status"
               onChange={(e) => setStatusFilter(e.target.value)}
-              sx={{ fontSize: "0.875rem" }}
+              sx={{ fontSize: '0.875rem' }}
             >
               <MenuItem value="ALL">All</MenuItem>
               <MenuItem value="ACTIVE">Active</MenuItem>
@@ -377,12 +377,12 @@ const TenantManagement: React.FC = () => {
           </FormControl>
 
           <FormControl size="small" sx={{ minWidth: 100 }}>
-            <InputLabel sx={{ fontSize: "0.875rem" }}>Prod</InputLabel>
+            <InputLabel sx={{ fontSize: '0.875rem' }}>Prod</InputLabel>
             <Select
               value={productionFilter}
               label="Prod"
               onChange={(e) => setProductionFilter(e.target.value)}
-              sx={{ fontSize: "0.875rem" }}
+              sx={{ fontSize: '0.875rem' }}
             >
               <MenuItem value="ALL">All</MenuItem>
               <MenuItem value="true">Yes</MenuItem>
@@ -391,12 +391,12 @@ const TenantManagement: React.FC = () => {
           </FormControl>
 
           <FormControl size="small" sx={{ minWidth: 100 }}>
-            <InputLabel sx={{ fontSize: "0.875rem" }}>Template</InputLabel>
+            <InputLabel sx={{ fontSize: '0.875rem' }}>Template</InputLabel>
             <Select
               value={templateFilter}
               label="Template"
               onChange={(e) => setTemplateFilter(e.target.value)}
-              sx={{ fontSize: "0.875rem" }}
+              sx={{ fontSize: '0.875rem' }}
             >
               <MenuItem value="ALL">All</MenuItem>
               <MenuItem value="true">Yes</MenuItem>
@@ -408,17 +408,17 @@ const TenantManagement: React.FC = () => {
 
       {/* Tenants Table */}
       {loading ? (
-        <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
           <CircularProgress />
         </Box>
       ) : (
         <TableContainer component={Paper}>
           <Table
             size="small"
-            sx={{ "& .MuiTableCell-root": { py: 0.75, fontSize: "0.8125rem" } }}
+            sx={{ '& .MuiTableCell-root': { py: 0.75, fontSize: '0.8125rem' } }}
           >
             <TableHead>
-              <TableRow sx={{ bgcolor: "grey.50" }}>
+              <TableRow sx={{ bgcolor: 'grey.50' }}>
                 <TableCell sx={{ fontWeight: 600 }}>
                   Business / Contact
                 </TableCell>
@@ -436,20 +436,20 @@ const TenantManagement: React.FC = () => {
               {tenants.map((tenant) => (
                 <TableRow
                   key={tenant.id}
-                  sx={{ "&:hover": { bgcolor: "action.hover" } }}
+                  sx={{ '&:hover': { bgcolor: 'action.hover' } }}
                 >
                   <TableCell>
                     <Typography
                       variant="body2"
                       fontWeight={500}
-                      sx={{ fontSize: "0.8125rem" }}
+                      sx={{ fontSize: '0.8125rem' }}
                     >
                       {tenant.businessName}
                     </Typography>
                     <Typography
                       variant="caption"
                       color="text.secondary"
-                      sx={{ fontSize: "0.75rem" }}
+                      sx={{ fontSize: '0.75rem' }}
                     >
                       {tenant.contactEmail}
                     </Typography>
@@ -457,7 +457,7 @@ const TenantManagement: React.FC = () => {
                   <TableCell>
                     <Typography
                       variant="body2"
-                      sx={{ fontFamily: "monospace", fontSize: "0.75rem" }}
+                      sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}
                     >
                       {tenant.subdomain}
                     </Typography>
@@ -467,17 +467,17 @@ const TenantManagement: React.FC = () => {
                       label={getStatusLabel(tenant)}
                       color={getStatusColor(tenant)}
                       size="small"
-                      sx={{ height: 20, fontSize: "0.7rem" }}
+                      sx={{ height: 20, fontSize: '0.7rem' }}
                     />
                   </TableCell>
                   <TableCell>
-                    <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap" }}>
+                    <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
                       {tenant.isProduction && (
                         <Chip
                           label="P"
                           color="error"
                           size="small"
-                          sx={{ height: 18, fontSize: "0.65rem", minWidth: 24 }}
+                          sx={{ height: 18, fontSize: '0.65rem', minWidth: 24 }}
                         />
                       )}
                       {tenant.isTemplate && (
@@ -485,7 +485,7 @@ const TenantManagement: React.FC = () => {
                           label="T"
                           color="info"
                           size="small"
-                          sx={{ height: 18, fontSize: "0.65rem", minWidth: 24 }}
+                          sx={{ height: 18, fontSize: '0.65rem', minWidth: 24 }}
                         />
                       )}
                       {tenant.gingrSyncEnabled && (
@@ -493,31 +493,31 @@ const TenantManagement: React.FC = () => {
                           label="G"
                           color="warning"
                           size="small"
-                          sx={{ height: 18, fontSize: "0.65rem", minWidth: 24 }}
+                          sx={{ height: 18, fontSize: '0.65rem', minWidth: 24 }}
                         />
                       )}
                     </Box>
                   </TableCell>
                   <TableCell>
-                    <Typography variant="caption" sx={{ fontSize: "0.75rem" }}>
+                    <Typography variant="caption" sx={{ fontSize: '0.75rem' }}>
                       {tenant.customerCount}c / {tenant.reservationCount}r
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography variant="caption" sx={{ fontSize: "0.75rem" }}>
-                      {new Date(tenant.createdAt).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "2-digit",
+                    <Typography variant="caption" sx={{ fontSize: '0.75rem' }}>
+                      {new Date(tenant.createdAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: '2-digit',
                       })}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
                     <Box
                       sx={{
-                        display: "flex",
+                        display: 'flex',
                         gap: 0.25,
-                        justifyContent: "flex-end",
+                        justifyContent: 'flex-end',
                       }}
                     >
                       <Tooltip title="Clone">
@@ -569,7 +569,7 @@ const TenantManagement: React.FC = () => {
       >
         <DialogTitle>Create New Tenant</DialogTitle>
         <DialogContent>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
             <TextField
               label="Business Name"
               value={formData.businessName}
@@ -681,7 +681,7 @@ const TenantManagement: React.FC = () => {
       >
         <DialogTitle>Clone Tenant: {selectedTenant?.businessName}</DialogTitle>
         <DialogContent>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
             <Alert severity="info">
               This will create a new tenant with the same settings as the source
               tenant.
@@ -760,7 +760,7 @@ const TenantManagement: React.FC = () => {
       >
         <DialogTitle>Edit Flags: {selectedTenant?.businessName}</DialogTitle>
         <DialogContent>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
             <FormControlLabel
               control={
                 <Switch

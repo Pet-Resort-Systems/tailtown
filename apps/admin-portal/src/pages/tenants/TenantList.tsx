@@ -66,7 +66,7 @@ const TenantList: React.FC = () => {
       setLoading(true);
       const filters: any = {};
       if (filterStatus) filters.status = filterStatus;
-      
+
       const data = await tenantService.getAllTenants(filters);
       setTenants(data);
     } catch (error) {
@@ -141,7 +141,14 @@ const TenantList: React.FC = () => {
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       {/* Header */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+        }}
+      >
         <Typography variant="h4" component="h1">
           Tenant Management
         </Typography>
@@ -160,7 +167,13 @@ const TenantList: React.FC = () => {
         <Grid item xs={12} sm={6} md={3}>
           <Card>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
                 <Box>
                   <Typography color="textSecondary" variant="body2">
                     Total Tenants
@@ -175,7 +188,13 @@ const TenantList: React.FC = () => {
         <Grid item xs={12} sm={6} md={3}>
           <Card>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
                 <Box>
                   <Typography color="textSecondary" variant="body2">
                     Active
@@ -192,7 +211,13 @@ const TenantList: React.FC = () => {
         <Grid item xs={12} sm={6} md={3}>
           <Card>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
                 <Box>
                   <Typography color="textSecondary" variant="body2">
                     Trial
@@ -209,7 +234,13 @@ const TenantList: React.FC = () => {
         <Grid item xs={12} sm={6} md={3}>
           <Card>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
                 <Box>
                   <Typography color="textSecondary" variant="body2">
                     Paused
@@ -299,10 +330,16 @@ const TenantList: React.FC = () => {
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Chip label={tenant.subdomain} size="small" variant="outlined" />
+                    <Chip
+                      label={tenant.subdomain}
+                      size="small"
+                      variant="outlined"
+                    />
                   </TableCell>
                   <TableCell>
-                    <Typography variant="body2">{tenant.contactName}</Typography>
+                    <Typography variant="body2">
+                      {tenant.contactName}
+                    </Typography>
                     <Typography variant="caption" color="textSecondary">
                       {tenant.contactEmail}
                     </Typography>
@@ -332,7 +369,9 @@ const TenantList: React.FC = () => {
                     <Tooltip title="Edit">
                       <IconButton
                         size="small"
-                        onClick={() => navigate(`/admin/tenants/${tenant.id}/edit`)}
+                        onClick={() =>
+                          navigate(`/admin/tenants/${tenant.id}/edit`)
+                        }
                       >
                         <EditIcon />
                       </IconButton>
@@ -343,7 +382,11 @@ const TenantList: React.FC = () => {
                           size="small"
                           color="success"
                           onClick={() =>
-                            setConfirmDialog({ open: true, action: 'reactivate', tenant })
+                            setConfirmDialog({
+                              open: true,
+                              action: 'reactivate',
+                              tenant,
+                            })
                           }
                         >
                           <PlayIcon />
@@ -355,7 +398,11 @@ const TenantList: React.FC = () => {
                           size="small"
                           color="warning"
                           onClick={() =>
-                            setConfirmDialog({ open: true, action: 'pause', tenant })
+                            setConfirmDialog({
+                              open: true,
+                              action: 'pause',
+                              tenant,
+                            })
                           }
                         >
                           <PauseIcon />
@@ -367,7 +414,11 @@ const TenantList: React.FC = () => {
                         size="small"
                         color="error"
                         onClick={() =>
-                          setConfirmDialog({ open: true, action: 'delete', tenant })
+                          setConfirmDialog({
+                            open: true,
+                            action: 'delete',
+                            tenant,
+                          })
                         }
                       >
                         <DeleteIcon />
@@ -384,7 +435,9 @@ const TenantList: React.FC = () => {
       {/* Confirm Dialog */}
       <Dialog
         open={confirmDialog.open}
-        onClose={() => setConfirmDialog({ open: false, action: null, tenant: null })}
+        onClose={() =>
+          setConfirmDialog({ open: false, action: null, tenant: null })
+        }
       >
         <DialogTitle>
           {confirmDialog.action === 'pause' && 'Pause Tenant'}
@@ -403,7 +456,9 @@ const TenantList: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={() => setConfirmDialog({ open: false, action: null, tenant: null })}
+            onClick={() =>
+              setConfirmDialog({ open: false, action: null, tenant: null })
+            }
           >
             Cancel
           </Button>

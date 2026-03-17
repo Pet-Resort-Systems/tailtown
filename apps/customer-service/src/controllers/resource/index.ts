@@ -15,7 +15,7 @@ export {
   updateResource,
   deleteResource,
   validateResourceType,
-} from "./resource-crud.controller";
+} from './resource-crud.controller';
 
 // Availability Operations
 export {
@@ -25,4 +25,4 @@ export {
   getAvailableResourcesByDate,
   getResourceAvailability,
   getBatchResourceAvailability,
-} from "./resource-availability.controller";
+} from './resource-availability.controller';

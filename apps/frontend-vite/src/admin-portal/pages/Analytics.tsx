@@ -36,7 +36,10 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { analyticsService, PlatformMetrics } from '../services/analyticsService';
+import {
+  analyticsService,
+  PlatformMetrics,
+} from '../services/analyticsService';
 
 const Analytics: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -54,15 +57,21 @@ const Analytics: React.FC = () => {
   const loadAnalytics = async () => {
     try {
       setLoading(true);
-      const [metricsData, growthData, statusData, planData, topCustomers, topReservations] =
-        await Promise.all([
-          analyticsService.getPlatformMetrics(),
-          analyticsService.getTenantGrowth(),
-          analyticsService.getStatusDistribution(),
-          analyticsService.getPlanDistribution(),
-          analyticsService.getTopTenantsByCustomers(5),
-          analyticsService.getTopTenantsByReservations(5),
-        ]);
+      const [
+        metricsData,
+        growthData,
+        statusData,
+        planData,
+        topCustomers,
+        topReservations,
+      ] = await Promise.all([
+        analyticsService.getPlatformMetrics(),
+        analyticsService.getTenantGrowth(),
+        analyticsService.getStatusDistribution(),
+        analyticsService.getPlanDistribution(),
+        analyticsService.getTopTenantsByCustomers(5),
+        analyticsService.getTopTenantsByReservations(5),
+      ]);
 
       setMetrics(metricsData);
       setGrowth(growthData);
@@ -79,7 +88,10 @@ const Analytics: React.FC = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="lg" sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+      <Container
+        maxWidth="lg"
+        sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}
+      >
         <CircularProgress />
       </Container>
     );
@@ -99,12 +111,20 @@ const Analytics: React.FC = () => {
         <Grid item xs={12} sm={6} md={3}>
           <Card>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
                 <Box>
                   <Typography color="textSecondary" variant="body2">
                     Total Tenants
                   </Typography>
-                  <Typography variant="h4">{metrics?.totalTenants || 0}</Typography>
+                  <Typography variant="h4">
+                    {metrics?.totalTenants || 0}
+                  </Typography>
                   <Typography variant="caption" color="success.main">
                     {metrics?.activeTenants || 0} active
                   </Typography>
@@ -118,12 +138,20 @@ const Analytics: React.FC = () => {
         <Grid item xs={12} sm={6} md={3}>
           <Card>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
                 <Box>
                   <Typography color="textSecondary" variant="body2">
                     Total Customers
                   </Typography>
-                  <Typography variant="h4">{metrics?.totalCustomers || 0}</Typography>
+                  <Typography variant="h4">
+                    {metrics?.totalCustomers || 0}
+                  </Typography>
                   <Typography variant="caption" color="text.secondary">
                     Avg: {metrics?.averageCustomersPerTenant || 0}/tenant
                   </Typography>
@@ -137,12 +165,20 @@ const Analytics: React.FC = () => {
         <Grid item xs={12} sm={6} md={3}>
           <Card>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
                 <Box>
                   <Typography color="textSecondary" variant="body2">
                     Total Reservations
                   </Typography>
-                  <Typography variant="h4">{metrics?.totalReservations || 0}</Typography>
+                  <Typography variant="h4">
+                    {metrics?.totalReservations || 0}
+                  </Typography>
                   <Typography variant="caption" color="text.secondary">
                     Avg: {metrics?.averageReservationsPerTenant || 0}/tenant
                   </Typography>
@@ -156,7 +192,13 @@ const Analytics: React.FC = () => {
         <Grid item xs={12} sm={6} md={3}>
           <Card>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
                 <Box>
                   <Typography color="textSecondary" variant="body2">
                     Trial Tenants
@@ -191,9 +233,24 @@ const Analytics: React.FC = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="total" stroke="#8884d8" name="Total" />
-                  <Line type="monotone" dataKey="active" stroke="#82ca9d" name="Active" />
-                  <Line type="monotone" dataKey="trial" stroke="#ffc658" name="Trial" />
+                  <Line
+                    type="monotone"
+                    dataKey="total"
+                    stroke="#8884d8"
+                    name="Total"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="active"
+                    stroke="#82ca9d"
+                    name="Active"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="trial"
+                    stroke="#ffc658"
+                    name="Trial"
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
@@ -278,7 +335,9 @@ const Analytics: React.FC = () => {
                       <TableRow key={index}>
                         <TableCell>{tenant.name}</TableCell>
                         <TableCell align="right">{tenant.customers}</TableCell>
-                        <TableCell align="right">{tenant.reservations}</TableCell>
+                        <TableCell align="right">
+                          {tenant.reservations}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -313,7 +372,9 @@ const Analytics: React.FC = () => {
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>{tenant.name}</TableCell>
                         <TableCell align="right">{tenant.customers}</TableCell>
-                        <TableCell align="right">{tenant.reservations}</TableCell>
+                        <TableCell align="right">
+                          {tenant.reservations}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

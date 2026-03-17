@@ -1,6 +1,6 @@
 /**
  * Tenant Management Controller
- * 
+ *
  * Super admin operations for managing tenant accounts:
  * - Suspend/activate tenants
  * - Soft delete tenants (recoverable for 1 year)
@@ -31,26 +31,26 @@ export const suspendTenant = async (
     if (!superAdminId) {
       return res.status(401).json({
         success: false,
-        message: 'Not authenticated'
+        message: 'Not authenticated',
       });
     }
 
     if (!reason) {
       return res.status(400).json({
         success: false,
-        message: 'Suspension reason is required'
+        message: 'Suspension reason is required',
       });
     }
 
     // Get tenant
     const tenant = await prisma.tenant.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!tenant) {
       return res.status(404).json({
         success: false,
-        message: 'Tenant not found'
+        message: 'Tenant not found',
       });
     }
 
@@ -63,24 +63,27 @@ export const suspendTenant = async (
         pausedAt: new Date(),
         suspendedAt: new Date(),
         suspendedReason: reason,
-        suspendedBy: superAdminId
-      }
+        suspendedBy: superAdminId,
+      },
     });
 
     // Create audit log
-    await createAuditLog({
-      superAdminId,
-      action: AuditAction.SUSPEND_TENANT,
-      entityType: 'TENANT',
-      entityId: id,
-      tenantId: tenant.subdomain,
-      details: { reason, businessName: tenant.businessName }
-    }, req);
+    await createAuditLog(
+      {
+        superAdminId,
+        action: AuditAction.SUSPEND_TENANT,
+        entityType: 'TENANT',
+        entityId: id,
+        tenantId: tenant.subdomain,
+        details: { reason, businessName: tenant.businessName },
+      },
+      req
+    );
 
     res.status(200).json({
       success: true,
       message: 'Tenant suspended successfully',
-      data: updatedTenant
+      data: updatedTenant,
     });
   } catch (error) {
     console.error('[SuperAdmin] Suspend tenant error:', error);
@@ -104,19 +107,19 @@ export const activateTenant = async (
     if (!superAdminId) {
       return res.status(401).json({
         success: false,
-        message: 'Not authenticated'
+        message: 'Not authenticated',
       });
     }
 
     // Get tenant
     const tenant = await prisma.tenant.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!tenant) {
       return res.status(404).json({
         success: false,
-        message: 'Tenant not found'
+        message: 'Tenant not found',
       });
     }
 
@@ -129,24 +132,27 @@ export const activateTenant = async (
         pausedAt: null,
         suspendedAt: null,
         suspendedReason: null,
-        suspendedBy: null
-      }
+        suspendedBy: null,
+      },
     });
 
     // Create audit log
-    await createAuditLog({
-      superAdminId,
-      action: AuditAction.ACTIVATE_TENANT,
-      entityType: 'TENANT',
-      entityId: id,
-      tenantId: tenant.subdomain,
-      details: { businessName: tenant.businessName }
-    }, req);
+    await createAuditLog(
+      {
+        superAdminId,
+        action: AuditAction.ACTIVATE_TENANT,
+        entityType: 'TENANT',
+        entityId: id,
+        tenantId: tenant.subdomain,
+        details: { businessName: tenant.businessName },
+      },
+      req
+    );
 
     res.status(200).json({
       success: true,
       message: 'Tenant activated successfully',
-      data: updatedTenant
+      data: updatedTenant,
     });
   } catch (error) {
     console.error('[SuperAdmin] Activate tenant error:', error);
@@ -171,19 +177,19 @@ export const deleteTenant = async (
     if (!superAdminId) {
       return res.status(401).json({
         success: false,
-        message: 'Not authenticated'
+        message: 'Not authenticated',
       });
     }
 
     // Get tenant
     const tenant = await prisma.tenant.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!tenant) {
       return res.status(404).json({
         success: false,
-        message: 'Tenant not found'
+        message: 'Tenant not found',
       });
     }
 
@@ -194,29 +200,32 @@ export const deleteTenant = async (
         status: 'DELETED',
         isActive: false,
         deletedAt: new Date(),
-        deletedBy: superAdminId
-      }
+        deletedBy: superAdminId,
+      },
     });
 
     // Create audit log
-    await createAuditLog({
-      superAdminId,
-      action: AuditAction.DELETE_TENANT,
-      entityType: 'TENANT',
-      entityId: id,
-      tenantId: tenant.subdomain,
-      details: { 
-        reason: reason || 'No reason provided',
-        businessName: tenant.businessName,
-        recoverable: true,
-        recoverableUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) // 1 year
-      }
-    }, req);
+    await createAuditLog(
+      {
+        superAdminId,
+        action: AuditAction.DELETE_TENANT,
+        entityType: 'TENANT',
+        entityId: id,
+        tenantId: tenant.subdomain,
+        details: {
+          reason: reason || 'No reason provided',
+          businessName: tenant.businessName,
+          recoverable: true,
+          recoverableUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
+        },
+      },
+      req
+    );
 
     res.status(200).json({
       success: true,
       message: 'Tenant deleted successfully (recoverable for 1 year)',
-      data: updatedTenant
+      data: updatedTenant,
     });
   } catch (error) {
     console.error('[SuperAdmin] Delete tenant error:', error);
@@ -240,26 +249,26 @@ export const restoreTenant = async (
     if (!superAdminId) {
       return res.status(401).json({
         success: false,
-        message: 'Not authenticated'
+        message: 'Not authenticated',
       });
     }
 
     // Get tenant
     const tenant = await prisma.tenant.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!tenant) {
       return res.status(404).json({
         success: false,
-        message: 'Tenant not found'
+        message: 'Tenant not found',
       });
     }
 
     if (tenant.status !== 'DELETED') {
       return res.status(400).json({
         success: false,
-        message: 'Tenant is not deleted'
+        message: 'Tenant is not deleted',
       });
     }
 
@@ -269,7 +278,7 @@ export const restoreTenant = async (
       if (tenant.deletedAt < oneYearAgo) {
         return res.status(400).json({
           success: false,
-          message: 'Tenant is beyond recovery period (1 year)'
+          message: 'Tenant is beyond recovery period (1 year)',
         });
       }
     }
@@ -281,24 +290,27 @@ export const restoreTenant = async (
         status: 'ACTIVE',
         isActive: true,
         deletedAt: null,
-        deletedBy: null
-      }
+        deletedBy: null,
+      },
     });
 
     // Create audit log
-    await createAuditLog({
-      superAdminId,
-      action: 'RESTORE_TENANT',
-      entityType: 'TENANT',
-      entityId: id,
-      tenantId: tenant.subdomain,
-      details: { businessName: tenant.businessName }
-    }, req);
+    await createAuditLog(
+      {
+        superAdminId,
+        action: 'RESTORE_TENANT',
+        entityType: 'TENANT',
+        entityId: id,
+        tenantId: tenant.subdomain,
+        details: { businessName: tenant.businessName },
+      },
+      req
+    );
 
     res.status(200).json({
       success: true,
       message: 'Tenant restored successfully',
-      data: updatedTenant
+      data: updatedTenant,
     });
   } catch (error) {
     console.error('[SuperAdmin] Restore tenant error:', error);
@@ -319,13 +331,13 @@ export const getTenantStats = async (
     const { id } = req.params;
 
     const tenant = await prisma.tenant.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!tenant) {
       return res.status(404).json({
         success: false,
-        message: 'Tenant not found'
+        message: 'Tenant not found',
       });
     }
 
@@ -339,12 +351,12 @@ export const getTenantStats = async (
       isActive: tenant.isActive,
       isPaused: tenant.isPaused,
       createdAt: tenant.createdAt,
-      lastActivity: tenant.updatedAt
+      lastActivity: tenant.updatedAt,
     };
 
     res.status(200).json({
       success: true,
-      data: stats
+      data: stats,
     });
   } catch (error) {
     console.error('[SuperAdmin] Get tenant stats error:', error);

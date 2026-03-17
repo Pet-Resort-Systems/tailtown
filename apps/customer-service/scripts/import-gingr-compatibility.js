@@ -1,76 +1,76 @@
 #!/usr/bin/env node
 
-const { PrismaClient } = require("@prisma/client");
-const fs = require("fs");
-const { parse } = require("csv-parse/sync");
+const { PrismaClient } = require('@prisma/client');
+const fs = require('fs');
+const { parse } = require('csv-parse/sync');
 
 const prisma = new PrismaClient();
 
 // Map Gingr flag icons to our compatibility system
 const PLAYGROUP_MAP = {
-  "#8dc7a0": "LARGE_DOG", // Large Dog Playgroup
-  "#c04de8": "MEDIUM_DOG", // Medium Dog PlayGroup
-  "#697db0": "SMALL_DOG", // Small Dog Playgroup
-  "#ff4a81": "NON_COMPATIBLE", // Non Compat
-  "#d1b41e": "SENIOR_STAFF_REQUIRED", // Senior Staff
-  "#f77c0a": "UNKNOWN", // Unknown Comp
+  '#8dc7a0': 'LARGE_DOG', // Large Dog Playgroup
+  '#c04de8': 'MEDIUM_DOG', // Medium Dog PlayGroup
+  '#697db0': 'SMALL_DOG', // Small Dog Playgroup
+  '#ff4a81': 'NON_COMPATIBLE', // Non Compat
+  '#d1b41e': 'SENIOR_STAFF_REQUIRED', // Senior Staff
+  '#f77c0a': 'UNKNOWN', // Unknown Comp
 };
 
 const SPECIAL_REQUIREMENTS_MAP = {
   // Health flags
-  "Has Meds": "HAS_MEDICATION",
-  "Animal notes": "MEDICAL_MONITORING",
-  Allergies: "ALLERGIES",
-  "Heat Sensitive": "HEAT_SENSITIVE",
-  "No Pool": "NO_POOL",
-  "No Leash on Neck": "NO_LEASH_ON_NECK",
-  Blind: "BLIND",
-  Deaf: "DEAF",
-  "Special Needs": "SPECIAL_NEEDS",
-  "Seizure Watch": "SEIZURE_WATCH",
-  "Heart Issue": "HEART_ISSUE",
-  "Controlled Substance": "CONTROLLED_SUBSTANCE",
-  "Needs Extra Bedding": "NEEDS_EXTRA_BEDDING",
+  'Has Meds': 'HAS_MEDICATION',
+  'Animal notes': 'MEDICAL_MONITORING',
+  Allergies: 'ALLERGIES',
+  'Heat Sensitive': 'HEAT_SENSITIVE',
+  'No Pool': 'NO_POOL',
+  'No Leash on Neck': 'NO_LEASH_ON_NECK',
+  Blind: 'BLIND',
+  Deaf: 'DEAF',
+  'Special Needs': 'SPECIAL_NEEDS',
+  'Seizure Watch': 'SEIZURE_WATCH',
+  'Heart Issue': 'HEART_ISSUE',
+  'Controlled Substance': 'CONTROLLED_SUBSTANCE',
+  'Needs Extra Bedding': 'NEEDS_EXTRA_BEDDING',
 
   // Behavior flags
-  "Separate to Feed": "SEPARATE_FEEDING",
-  "Poop Eater": "POOP_EATER",
-  "Strong Puller": "STRONG_PULLER",
-  Chews: "CHEWER",
-  "No Bedding": "NO_BEDDING",
-  "Excessive Mounter": "EXCESSIVE_MOUNTER",
-  "Loves Pool": "LOVES_POOL",
-  Runner: "RUNNER",
-  "No Cot": "NO_COT",
-  "Excessive Drinker": "EXCESSIVE_DRINKER",
+  'Separate to Feed': 'SEPARATE_FEEDING',
+  'Poop Eater': 'POOP_EATER',
+  'Strong Puller': 'STRONG_PULLER',
+  Chews: 'CHEWER',
+  'No Bedding': 'NO_BEDDING',
+  'Excessive Mounter': 'EXCESSIVE_MOUNTER',
+  'Loves Pool': 'LOVES_POOL',
+  Runner: 'RUNNER',
+  'No Cot': 'NO_COT',
+  'Excessive Drinker': 'EXCESSIVE_DRINKER',
 
   // Aggression flags
-  "Toy Aggressive": "TOY_AGGRESSIVE",
-  "Leash Aggressive": "LEASH_AGGRESSIVE",
-  Biter: "BITER",
-  "Use Caution": "USE_CAUTION",
-  "Fence Fighter": "FENCE_FIGHTER",
-  "Room Aggressive": "ROOM_AGGRESSIVE",
-  "Male Aggressive": "MALE_AGGRESSIVE",
-  Aggression: "GENERAL_AGGRESSION",
+  'Toy Aggressive': 'TOY_AGGRESSIVE',
+  'Leash Aggressive': 'LEASH_AGGRESSIVE',
+  Biter: 'BITER',
+  'Use Caution': 'USE_CAUTION',
+  'Fence Fighter': 'FENCE_FIGHTER',
+  'Room Aggressive': 'ROOM_AGGRESSIVE',
+  'Male Aggressive': 'MALE_AGGRESSIVE',
+  Aggression: 'GENERAL_AGGRESSION',
 
   // Grooming flags
-  "Preferred Groomer": "PREFERRED_GROOMER",
-  "Grooming Notes": "GROOMING_NOTES",
+  'Preferred Groomer': 'PREFERRED_GROOMER',
+  'Grooming Notes': 'GROOMING_NOTES',
 
   // Customer info
-  "Permanent Run Card": "PERMANENT_RUN_CARD",
-  Senior: "SENIOR_DISCOUNT",
-  "STOP! DO NOT BOOK": "DO_NOT_BOOK",
+  'Permanent Run Card': 'PERMANENT_RUN_CARD',
+  Senior: 'SENIOR_DISCOUNT',
+  'STOP! DO NOT BOOK': 'DO_NOT_BOOK',
 };
 
 async function importCompatibilityData(csvPath, tenantId) {
-  console.log("\n🐾 Gingr Compatibility Import");
-  console.log("═══════════════════════════════════════\n");
+  console.log('\n🐾 Gingr Compatibility Import');
+  console.log('═══════════════════════════════════════\n');
   console.log(`CSV File: ${csvPath}`);
   console.log(`Tenant: ${tenantId}\n`);
 
-  const csvContent = fs.readFileSync(csvPath, "utf8");
+  const csvContent = fs.readFileSync(csvPath, 'utf8');
   const records = parse(csvContent, {
     columns: true,
     skip_empty_lines: true,
@@ -95,7 +95,7 @@ async function importCompatibilityData(csvPath, tenantId) {
     const ownerName = record.o_last;
     const iconsString = record.icons_string;
 
-    if (!iconsString || iconsString.trim() === "") {
+    if (!iconsString || iconsString.trim() === '') {
       stats.noIcons++;
       continue;
     }
@@ -129,7 +129,7 @@ async function importCompatibilityData(csvPath, tenantId) {
       });
 
       stats.updated++;
-      const playgroupLabel = compatibility.playgroupCompatibility || "None";
+      const playgroupLabel = compatibility.playgroupCompatibility || 'None';
       const flagCount = compatibility.specialRequirements.length;
       console.log(`✓ ${petName} → ${playgroupLabel} (${flagCount} flags)`);
     } catch (error) {
@@ -184,13 +184,13 @@ function extractCompatibilityData(iconsString) {
     if (!iconClass) continue;
 
     // Check for playgroup flag (iconClass includes extra classes like "fa-flag fa-lg has-popover")
-    if (iconClass.includes("fa-flag") && PLAYGROUP_MAP[color]) {
+    if (iconClass.includes('fa-flag') && PLAYGROUP_MAP[color]) {
       result.playgroupCompatibility = PLAYGROUP_MAP[color];
 
-      if (title === "Senior Staff") {
+      if (title === 'Senior Staff') {
         result.staffRequirements.seniorStaffRequired = true;
         result.staffRequirements.notes =
-          content || "Requires senior staff supervision";
+          content || 'Requires senior staff supervision';
       }
     }
 
@@ -205,23 +205,23 @@ function extractCompatibilityData(iconsString) {
       icon: iconClass,
       color,
       title,
-      content: content || "",
+      content: content || '',
       category: extractCategory(iconsString, title),
     };
 
-    if (flagData.category === "Health") {
+    if (flagData.category === 'Health') {
       result.healthFlags.push(flagData);
-    } else if (flagData.category === "Behavior") {
+    } else if (flagData.category === 'Behavior') {
       result.behaviorFlags.push(flagData);
-    } else if (flagData.category === "Aggression") {
+    } else if (flagData.category === 'Aggression') {
       result.aggressionFlags.push(flagData);
-    } else if (flagData.category === "Grooming") {
-      if (title === "Preferred Groomer") {
+    } else if (flagData.category === 'Grooming') {
+      if (title === 'Preferred Groomer') {
         result.groomingPreferences.preferredGroomer = content;
-      } else if (title === "Grooming Notes") {
+      } else if (title === 'Grooming Notes') {
         result.groomingPreferences.notes = content;
       }
-      if (title.includes("SENSITIVE SKIN") || content.includes("sensitive")) {
+      if (title.includes('SENSITIVE SKIN') || content.includes('sensitive')) {
         result.groomingPreferences.sensitiveSkin = true;
       }
     }
@@ -234,26 +234,26 @@ function extractCategory(iconString, title) {
   const match = iconString.match(
     new RegExp(`data-original_title="${title}"[^>]*title="[^(]+ \\(([^)]+)\\)"`)
   );
-  return match ? match[1] : "Unknown";
+  return match ? match[1] : 'Unknown';
 }
 
 async function findPet(tenantId, petName, ownerName) {
   return await prisma.pet.findFirst({
     where: {
       tenantId,
-      name: { contains: petName, mode: "insensitive" },
+      name: { contains: petName, mode: 'insensitive' },
       owner: {
         OR: [
           {
             lastName: {
-              contains: ownerName.split(" ")[0],
-              mode: "insensitive",
+              contains: ownerName.split(' ')[0],
+              mode: 'insensitive',
             },
           },
           {
             firstName: {
-              contains: ownerName.split(" ")[0],
-              mode: "insensitive",
+              contains: ownerName.split(' ')[0],
+              mode: 'insensitive',
             },
           },
         ],
@@ -264,15 +264,15 @@ async function findPet(tenantId, petName, ownerName) {
 
 // CLI
 const csvPath = process.argv[2];
-const tenantId = process.argv[3] || "b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05";
+const tenantId = process.argv[3] || 'b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05';
 
 if (!csvPath) {
   console.error(
-    "Usage: node import-gingr-compatibility.js <csv-file> [tenant-id]"
+    'Usage: node import-gingr-compatibility.js <csv-file> [tenant-id]'
   );
-  console.error("\nExample:");
+  console.error('\nExample:');
   console.error(
-    "  node import-gingr-compatibility.js gingr-calendar-2025-12-16.csv"
+    '  node import-gingr-compatibility.js gingr-calendar-2025-12-16.csv'
   );
   process.exit(1);
 }
@@ -283,6 +283,6 @@ if (!fs.existsSync(csvPath)) {
 }
 
 importCompatibilityData(csvPath, tenantId).catch((error) => {
-  console.error("Fatal error:", error);
+  console.error('Fatal error:', error);
   process.exit(1);
 });

@@ -21,14 +21,19 @@ if (!fs.existsSync(jsPath)) {
 const files = fs.readdirSync(jsPath);
 let hasErrors = false;
 
-files.forEach(file => {
+files.forEach((file) => {
   if (file.endsWith('.js')) {
     const content = fs.readFileSync(path.join(jsPath, file), 'utf8');
-    
+
     // Check for localhost API references
-    if (content.includes('localhost:4004') || content.includes('localhost:4003')) {
+    if (
+      content.includes('localhost:4004') ||
+      content.includes('localhost:4003')
+    ) {
       console.error(`❌ ERROR: ${file} contains localhost API references!`);
-      console.error('   This indicates the build was created in development mode.');
+      console.error(
+        '   This indicates the build was created in development mode.'
+      );
       console.error('   Rebuild with: NODE_ENV=production npm run build');
       hasErrors = true;
     }

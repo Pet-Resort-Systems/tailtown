@@ -4,7 +4,7 @@
  * Generates unique order numbers for reservations in format: RES-YYYYMMDD-XXX
  */
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -16,8 +16,8 @@ export async function generateOrderNumber(): Promise<string> {
   // Get the current date in YYYYMMDD format
   const now = new Date();
   const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
   const datePrefix = `${year}${month}${day}`;
 
   // Get the count of reservations created today
@@ -34,7 +34,7 @@ export async function generateOrderNumber(): Promise<string> {
   });
 
   // Format the sequential number with leading zeros
-  const sequentialNumber = String(todayReservationsCount + 1).padStart(3, "0");
+  const sequentialNumber = String(todayReservationsCount + 1).padStart(3, '0');
 
   // Combine to create the order number
   const orderNumber = `RES-${datePrefix}-${sequentialNumber}`;

@@ -11,7 +11,7 @@
  * - PATCH route was missing, causing 404 on reservation updates
  */
 
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
 // Mock Prisma before importing controllers
 const mockCreate = jest.fn();
@@ -20,7 +20,7 @@ const mockFindMany = jest.fn();
 const mockFindUnique = jest.fn();
 const mockCount = jest.fn();
 
-jest.mock("@prisma/client", () => {
+jest.mock('@prisma/client', () => {
   return {
     PrismaClient: jest.fn().mockImplementation(() => ({
       reservation: {
@@ -32,40 +32,40 @@ jest.mock("@prisma/client", () => {
       },
       service: {
         findUnique: jest.fn().mockResolvedValue({
-          id: "grooming-service-id",
-          name: "Grooming | Appointment",
-          serviceCategory: "GROOMING",
+          id: 'grooming-service-id',
+          name: 'Grooming | Appointment',
+          serviceCategory: 'GROOMING',
           duration: 120,
         }),
       },
       pet: {
         findUnique: jest.fn().mockResolvedValue({
-          id: "pet-id",
-          name: "Buddy",
-          customerId: "customer-id",
+          id: 'pet-id',
+          name: 'Buddy',
+          customerId: 'customer-id',
         }),
       },
       resource: {
         findFirst: jest.fn().mockResolvedValue({
-          id: "grooming-station-id",
-          name: "Grooming Station 1",
-          type: "GROOMING_STATION",
+          id: 'grooming-station-id',
+          name: 'Grooming Station 1',
+          type: 'GROOMING_STATION',
         }),
       },
     })),
     ReservationStatus: {
-      PENDING: "PENDING",
-      CONFIRMED: "CONFIRMED",
-      CHECKED_IN: "CHECKED_IN",
-      COMPLETED: "COMPLETED",
-      CANCELLED: "CANCELLED",
-      NO_SHOW: "NO_SHOW",
+      PENDING: 'PENDING',
+      CONFIRMED: 'CONFIRMED',
+      CHECKED_IN: 'CHECKED_IN',
+      COMPLETED: 'COMPLETED',
+      CANCELLED: 'CANCELLED',
+      NO_SHOW: 'NO_SHOW',
     },
   };
 });
 
 // Mock logger
-jest.mock("../../utils/logger", () => ({
+jest.mock('../../utils/logger', () => ({
   logger: {
     info: jest.fn(),
     warn: jest.fn(),
@@ -74,7 +74,7 @@ jest.mock("../../utils/logger", () => ({
   },
 }));
 
-describe("Grooming Reservation Tests", () => {
+describe('Grooming Reservation Tests', () => {
   let mockReq: Partial<Request>;
   let mockRes: Partial<Response>;
   let mockNext: NextFunction;
@@ -92,15 +92,15 @@ describe("Grooming Reservation Tests", () => {
     jest.clearAllMocks();
   });
 
-  describe("Reservation Creation with TenantId", () => {
-    it("should include tenantId when creating a reservation", async () => {
-      const tenantId = "test-tenant-uuid";
+  describe('Reservation Creation with TenantId', () => {
+    it('should include tenantId when creating a reservation', async () => {
+      const tenantId = 'test-tenant-uuid';
       const reservationData = {
-        petId: "pet-id",
-        serviceId: "grooming-service-id",
-        startDate: "2025-12-03T10:00:00.000Z",
-        endDate: "2025-12-03T12:00:00.000Z",
-        status: "CONFIRMED",
+        petId: 'pet-id',
+        serviceId: 'grooming-service-id',
+        startDate: '2025-12-03T10:00:00.000Z',
+        endDate: '2025-12-03T12:00:00.000Z',
+        status: 'CONFIRMED',
       };
 
       mockReq = {
@@ -113,7 +113,7 @@ describe("Grooming Reservation Tests", () => {
         // Verify tenantId is included in the create data
         expect(args.data.tenantId).toBe(tenantId);
         return Promise.resolve({
-          id: "new-reservation-id",
+          id: 'new-reservation-id',
           ...args.data,
         });
       });
@@ -123,13 +123,13 @@ describe("Grooming Reservation Tests", () => {
       expect(mockReq.tenantId).toBe(tenantId);
     });
 
-    it("should fail gracefully if tenantId is missing", async () => {
+    it('should fail gracefully if tenantId is missing', async () => {
       mockReq = {
         body: {
-          petId: "pet-id",
-          serviceId: "grooming-service-id",
-          startDate: "2025-12-03T10:00:00.000Z",
-          endDate: "2025-12-03T12:00:00.000Z",
+          petId: 'pet-id',
+          serviceId: 'grooming-service-id',
+          startDate: '2025-12-03T10:00:00.000Z',
+          endDate: '2025-12-03T12:00:00.000Z',
         },
         // No tenantId
       } as any;
@@ -140,26 +140,26 @@ describe("Grooming Reservation Tests", () => {
     });
   });
 
-  describe("Grooming Service Category Filtering", () => {
-    it("should filter reservations by GROOMING service category", async () => {
+  describe('Grooming Service Category Filtering', () => {
+    it('should filter reservations by GROOMING service category', async () => {
       const groomingReservations = [
         {
-          id: "res-1",
-          service: { serviceCategory: "GROOMING" },
-          startDate: "2025-12-03T10:00:00.000Z",
+          id: 'res-1',
+          service: { serviceCategory: 'GROOMING' },
+          startDate: '2025-12-03T10:00:00.000Z',
         },
         {
-          id: "res-2",
-          service: { serviceCategory: "GROOMING" },
-          startDate: "2025-12-03T14:00:00.000Z",
+          id: 'res-2',
+          service: { serviceCategory: 'GROOMING' },
+          startDate: '2025-12-03T14:00:00.000Z',
         },
       ];
 
       const boardingReservations = [
         {
-          id: "res-3",
-          service: { serviceCategory: "BOARDING" },
-          startDate: "2025-12-03T10:00:00.000Z",
+          id: 'res-3',
+          service: { serviceCategory: 'BOARDING' },
+          startDate: '2025-12-03T10:00:00.000Z',
         },
       ];
 
@@ -170,119 +170,119 @@ describe("Grooming Reservation Tests", () => {
 
       // Filter by GROOMING
       const filtered = allReservations.filter(
-        (res) => res.service.serviceCategory === "GROOMING"
+        (res) => res.service.serviceCategory === 'GROOMING'
       );
 
       expect(filtered).toHaveLength(2);
       expect(
-        filtered.every((r) => r.service.serviceCategory === "GROOMING")
+        filtered.every((r) => r.service.serviceCategory === 'GROOMING')
       ).toBe(true);
     });
 
-    it("should return empty array when no GROOMING reservations exist", async () => {
+    it('should return empty array when no GROOMING reservations exist', async () => {
       const boardingOnlyReservations = [
         {
-          id: "res-1",
-          service: { serviceCategory: "BOARDING" },
-          startDate: "2025-12-03T10:00:00.000Z",
+          id: 'res-1',
+          service: { serviceCategory: 'BOARDING' },
+          startDate: '2025-12-03T10:00:00.000Z',
         },
         {
-          id: "res-2",
-          service: { serviceCategory: "DAYCARE" },
-          startDate: "2025-12-03T10:00:00.000Z",
+          id: 'res-2',
+          service: { serviceCategory: 'DAYCARE' },
+          startDate: '2025-12-03T10:00:00.000Z',
         },
       ];
 
       const filtered = boardingOnlyReservations.filter(
-        (res) => res.service.serviceCategory === "GROOMING"
+        (res) => res.service.serviceCategory === 'GROOMING'
       );
 
       expect(filtered).toHaveLength(0);
     });
   });
 
-  describe("Grooming Duration Defaults", () => {
-    it("should default grooming appointments to 2 hours", () => {
-      const startDate = new Date("2025-12-03T10:00:00.000Z");
+  describe('Grooming Duration Defaults', () => {
+    it('should default grooming appointments to 2 hours', () => {
+      const startDate = new Date('2025-12-03T10:00:00.000Z');
       const groomingDurationHours = 2;
       const expectedEndDate = new Date(
         startDate.getTime() + groomingDurationHours * 60 * 60 * 1000
       );
 
-      expect(expectedEndDate.toISOString()).toBe("2025-12-03T12:00:00.000Z");
+      expect(expectedEndDate.toISOString()).toBe('2025-12-03T12:00:00.000Z');
     });
 
-    it("should keep grooming appointments on the same day", () => {
-      const startDate = new Date("2025-12-03T10:00:00.000Z");
+    it('should keep grooming appointments on the same day', () => {
+      const startDate = new Date('2025-12-03T10:00:00.000Z');
       const groomingDurationHours = 2;
       const endDate = new Date(
         startDate.getTime() + groomingDurationHours * 60 * 60 * 1000
       );
 
       // Both dates should be on the same day
-      expect(startDate.toISOString().split("T")[0]).toBe(
-        endDate.toISOString().split("T")[0]
+      expect(startDate.toISOString().split('T')[0]).toBe(
+        endDate.toISOString().split('T')[0]
       );
     });
 
-    it("should handle late afternoon appointments correctly", () => {
+    it('should handle late afternoon appointments correctly', () => {
       // 4 PM appointment + 2 hours = 6 PM (same day)
-      const startDate = new Date("2025-12-03T16:00:00.000Z");
+      const startDate = new Date('2025-12-03T16:00:00.000Z');
       const groomingDurationHours = 2;
       const endDate = new Date(
         startDate.getTime() + groomingDurationHours * 60 * 60 * 1000
       );
 
-      expect(endDate.toISOString()).toBe("2025-12-03T18:00:00.000Z");
-      expect(startDate.toISOString().split("T")[0]).toBe(
-        endDate.toISOString().split("T")[0]
+      expect(endDate.toISOString()).toBe('2025-12-03T18:00:00.000Z');
+      expect(startDate.toISOString().split('T')[0]).toBe(
+        endDate.toISOString().split('T')[0]
       );
     });
   });
 
-  describe("PATCH Route for Reservation Updates", () => {
-    it("should update reservation status via PATCH", async () => {
-      const reservationId = "existing-reservation-id";
+  describe('PATCH Route for Reservation Updates', () => {
+    it('should update reservation status via PATCH', async () => {
+      const reservationId = 'existing-reservation-id';
       const updateData = {
-        status: "CONFIRMED",
+        status: 'CONFIRMED',
       };
 
       mockReq = {
         params: { id: reservationId },
         body: updateData,
-        tenantId: "test-tenant-id",
+        tenantId: 'test-tenant-id',
       } as any;
 
       mockUpdate.mockResolvedValue({
         id: reservationId,
-        status: "CONFIRMED",
+        status: 'CONFIRMED',
       });
 
       // Verify the update would be called with correct params
       expect(mockReq.params?.id).toBe(reservationId);
-      expect(mockReq.body.status).toBe("CONFIRMED");
+      expect(mockReq.body.status).toBe('CONFIRMED');
     });
 
-    it("should update reservation after payment processing", async () => {
-      const reservationId = "paid-reservation-id";
+    it('should update reservation after payment processing', async () => {
+      const reservationId = 'paid-reservation-id';
       const updateData = {
-        status: "CONFIRMED",
-        invoiceId: "invoice-id",
-        paymentId: "payment-id",
+        status: 'CONFIRMED',
+        invoiceId: 'invoice-id',
+        paymentId: 'payment-id',
       };
 
       mockReq = {
         params: { id: reservationId },
         body: updateData,
-        tenantId: "test-tenant-id",
+        tenantId: 'test-tenant-id',
       } as any;
 
       // This simulates the flow after checkout:
       // 1. Create invoice
       // 2. Create payment
       // 3. PATCH reservation to update status
-      expect(mockReq.body.invoiceId).toBe("invoice-id");
-      expect(mockReq.body.paymentId).toBe("payment-id");
+      expect(mockReq.body.invoiceId).toBe('invoice-id');
+      expect(mockReq.body.paymentId).toBe('payment-id');
     });
   });
 });

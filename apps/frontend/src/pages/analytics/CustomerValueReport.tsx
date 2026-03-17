@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Container,
@@ -24,12 +24,12 @@ import {
   Collapse,
   useTheme,
   Button,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
-import { SelectChangeEvent } from "@mui/material/Select";
-import SearchIcon from "@mui/icons-material/Search";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
+import { SelectChangeEvent } from '@mui/material/Select';
+import SearchIcon from '@mui/icons-material/Search';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {
   Tooltip,
   Legend,
@@ -37,12 +37,12 @@ import {
   PieChart,
   Pie,
   Cell,
-} from "recharts";
+} from 'recharts';
 import analyticsService, {
   CustomerValueData,
-} from "../../services/analyticsService";
-import { formatCurrency } from "../../utils/formatters";
-import { useNavigate } from "react-router-dom";
+} from '../../services/analyticsService';
+import { formatCurrency } from '../../utils/formatters';
+import { useNavigate } from 'react-router-dom';
 
 interface ExpandableRowProps {
   customer: CustomerValueData;
@@ -60,10 +60,10 @@ const ExpandableRow = ({ customer, theme }: ExpandableRowProps) => {
     theme.palette.warning.main,
     theme.palette.error.main,
     theme.palette.info.main,
-    "#8884d8",
-    "#82ca9d",
-    "#ffc658",
-    "#ff8042",
+    '#8884d8',
+    '#82ca9d',
+    '#ffc658',
+    '#ff8042',
   ];
 
   const viewCustomerDetails = () => {
@@ -72,7 +72,7 @@ const ExpandableRow = ({ customer, theme }: ExpandableRowProps) => {
 
   return (
     <>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -135,7 +135,7 @@ const ExpandableRow = ({ customer, theme }: ExpandableRowProps) => {
                           </TableRow>
                         ))}
                         <TableRow
-                          sx={{ backgroundColor: "rgba(0, 0, 0, 0.04)" }}
+                          sx={{ backgroundColor: 'rgba(0, 0, 0, 0.04)' }}
                         >
                           <TableCell component="th" scope="row">
                             <strong>Total</strong>
@@ -189,7 +189,7 @@ const ExpandableRow = ({ customer, theme }: ExpandableRowProps) => {
                           </TableRow>
                         ))}
                         <TableRow
-                          sx={{ backgroundColor: "rgba(0, 0, 0, 0.04)" }}
+                          sx={{ backgroundColor: 'rgba(0, 0, 0, 0.04)' }}
                         >
                           <TableCell component="th" scope="row">
                             <strong>Total</strong>
@@ -225,12 +225,12 @@ const ExpandableRow = ({ customer, theme }: ExpandableRowProps) => {
                             ...customer.serviceBreakdown.map((service) => ({
                               name: service.name,
                               value: service.revenue,
-                              type: "service",
+                              type: 'service',
                             })),
                             ...customer.addOnBreakdown.map((addon) => ({
                               name: addon.name,
                               value: addon.revenue,
-                              type: "addon",
+                              type: 'addon',
                             })),
                           ]}
                           cx="50%"
@@ -245,7 +245,7 @@ const ExpandableRow = ({ customer, theme }: ExpandableRowProps) => {
                           }) =>
                             percent && percent > 0.05
                               ? `${name}: ${(percent * 100).toFixed(0)}%`
-                              : ""
+                              : ''
                           }
                           outerRadius={80}
                           fill="#8884d8"
@@ -291,12 +291,12 @@ const ExpandableRow = ({ customer, theme }: ExpandableRowProps) => {
 const CustomerValueReport = () => {
   const theme = useTheme();
   const [loading, setLoading] = useState(true);
-  const [period, setPeriod] = useState("month");
+  const [period, setPeriod] = useState('month');
   const [customers, setCustomers] = useState<CustomerValueData[]>([]);
   const [filteredCustomers, setFilteredCustomers] = useState<
     CustomerValueData[]
   >([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [error, setError] = useState<string | null>(null);
@@ -309,8 +309,8 @@ const CustomerValueReport = () => {
       setCustomers(customerData);
       setFilteredCustomers(customerData);
     } catch (err) {
-      console.error("Error loading customer value data:", err);
-      setError("Failed to load customer data. Please try again.");
+      console.error('Error loading customer value data:', err);
+      setError('Failed to load customer data. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -362,18 +362,18 @@ const CustomerValueReport = () => {
 
   const getPeriodLabel = () => {
     switch (period) {
-      case "day":
-        return "Today";
-      case "week":
-        return "This Week";
-      case "month":
-        return "This Month";
-      case "year":
-        return "This Year";
-      case "all":
-        return "All Time";
+      case 'day':
+        return 'Today';
+      case 'week':
+        return 'This Week';
+      case 'month':
+        return 'This Month';
+      case 'year':
+        return 'This Year';
+      case 'all':
+        return 'All Time';
       default:
-        return "Custom Period";
+        return 'Custom Period';
     }
   };
 
@@ -381,10 +381,10 @@ const CustomerValueReport = () => {
     return (
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "80vh",
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '80vh',
         }}
       >
         <CircularProgress />
@@ -394,7 +394,7 @@ const CustomerValueReport = () => {
 
   if (error) {
     return (
-      <Box sx={{ p: 3, color: "error.main" }}>
+      <Box sx={{ p: 3, color: 'error.main' }}>
         <Typography variant="h6">{error}</Typography>
       </Box>
     );
@@ -408,9 +408,9 @@ const CustomerValueReport = () => {
         </Typography>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             mb: 2,
           }}
         >
@@ -447,7 +447,7 @@ const CustomerValueReport = () => {
                   </Typography>
                   <Typography
                     variant="h4"
-                    sx={{ mt: 1, color: "primary.main" }}
+                    sx={{ mt: 1, color: 'primary.main' }}
                   >
                     {formatCurrency(
                       customers.reduce(
@@ -474,7 +474,7 @@ const CustomerValueReport = () => {
                   </Typography>
                   <Typography
                     variant="h4"
-                    sx={{ mt: 1, color: "secondary.main" }}
+                    sx={{ mt: 1, color: 'secondary.main' }}
                   >
                     {customers.length}
                   </Typography>
@@ -496,7 +496,7 @@ const CustomerValueReport = () => {
                   </Typography>
                   <Typography
                     variant="h4"
-                    sx={{ mt: 1, color: "success.main" }}
+                    sx={{ mt: 1, color: 'success.main' }}
                   >
                     {formatCurrency(
                       customers.length > 0
@@ -525,7 +525,7 @@ const CustomerValueReport = () => {
                   </Typography>
                   <Typography
                     variant="h4"
-                    sx={{ mt: 1, color: "warning.main" }}
+                    sx={{ mt: 1, color: 'warning.main' }}
                   >
                     {formatCurrency(
                       customers.length > 0
@@ -554,9 +554,9 @@ const CustomerValueReport = () => {
         <Box sx={{ p: 3 }}>
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
               mb: 2,
             }}
           >

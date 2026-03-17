@@ -9,17 +9,17 @@
  * - getTopCustomersReport
  */
 
-import { Response, NextFunction } from "express";
-import { AppError } from "../../middleware/error.middleware";
-import { TenantRequest } from "../../middleware/tenant.middleware";
+import { Response, NextFunction } from 'express';
+import { AppError } from '../../middleware/error.middleware';
+import { TenantRequest } from '../../middleware/tenant.middleware';
 import {
   getDailySalesReport,
   getWeeklySalesReport,
   getMonthlySalesReport,
   getYTDSalesReport,
   getTopCustomers,
-} from "../../services/salesReportService";
-import { logger } from "../../utils/logger";
+} from '../../services/salesReportService';
+import { logger } from '../../utils/logger';
 
 /**
  * GET /api/reports/sales/daily
@@ -31,19 +31,19 @@ export const getDailySales = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { date } = req.query;
 
     if (!date) {
-      return next(new AppError("Date parameter is required", 400));
+      return next(new AppError('Date parameter is required', 400));
     }
 
     const report = await getDailySalesReport(tenantId, date as string);
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "sales_daily",
+        reportType: 'sales_daily',
         title: `Daily Sales Report - ${date}`,
         generatedAt: new Date(),
         filters: { date },
@@ -56,8 +56,8 @@ export const getDailySales = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating daily sales report", { error });
-    return next(new AppError("Failed to generate daily sales report", 500));
+    logger.error('Error generating daily sales report', { error });
+    return next(new AppError('Failed to generate daily sales report', 500));
   }
 };
 
@@ -71,12 +71,12 @@ export const getWeeklySales = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
       return next(
-        new AppError("startDate and endDate parameters are required", 400)
+        new AppError('startDate and endDate parameters are required', 400)
       );
     }
 
@@ -87,9 +87,9 @@ export const getWeeklySales = async (
     );
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "sales_weekly",
+        reportType: 'sales_weekly',
         title: `Weekly Sales Report - ${startDate} to ${endDate}`,
         generatedAt: new Date(),
         filters: { startDate, endDate },
@@ -102,8 +102,8 @@ export const getWeeklySales = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating weekly sales report", { error });
-    return next(new AppError("Failed to generate weekly sales report", 500));
+    logger.error('Error generating weekly sales report', { error });
+    return next(new AppError('Failed to generate weekly sales report', 500));
   }
 };
 
@@ -117,11 +117,11 @@ export const getMonthlySales = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { year, month } = req.query;
 
     if (!year || !month) {
-      return next(new AppError("year and month parameters are required", 400));
+      return next(new AppError('year and month parameters are required', 400));
     }
 
     const report = await getMonthlySalesReport(
@@ -131,9 +131,9 @@ export const getMonthlySales = async (
     );
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "sales_monthly",
+        reportType: 'sales_monthly',
         title: `Monthly Sales Report - ${report.monthName}`,
         generatedAt: new Date(),
         filters: { year, month },
@@ -146,8 +146,8 @@ export const getMonthlySales = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating monthly sales report", { error });
-    return next(new AppError("Failed to generate monthly sales report", 500));
+    logger.error('Error generating monthly sales report', { error });
+    return next(new AppError('Failed to generate monthly sales report', 500));
   }
 };
 
@@ -161,7 +161,7 @@ export const getYTDSales = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { year } = req.query;
 
     const targetYear = year
@@ -170,9 +170,9 @@ export const getYTDSales = async (
     const report = await getYTDSalesReport(tenantId, targetYear);
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "sales_ytd",
+        reportType: 'sales_ytd',
         title: `Year-to-Date Sales Report - ${targetYear}`,
         generatedAt: new Date(),
         filters: { year: targetYear },
@@ -185,8 +185,8 @@ export const getYTDSales = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating YTD sales report", { error });
-    return next(new AppError("Failed to generate YTD sales report", 500));
+    logger.error('Error generating YTD sales report', { error });
+    return next(new AppError('Failed to generate YTD sales report', 500));
   }
 };
 
@@ -200,12 +200,12 @@ export const getTopCustomersReport = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { startDate, endDate, limit } = req.query;
 
     if (!startDate || !endDate) {
       return next(
-        new AppError("startDate and endDate parameters are required", 400)
+        new AppError('startDate and endDate parameters are required', 400)
       );
     }
 
@@ -217,9 +217,9 @@ export const getTopCustomersReport = async (
     );
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "top_customers",
+        reportType: 'top_customers',
         title: `Top Customers Report - ${startDate} to ${endDate}`,
         generatedAt: new Date(),
         filters: { startDate, endDate, limit: limit || 10 },
@@ -227,7 +227,7 @@ export const getTopCustomersReport = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating top customers report", { error });
-    return next(new AppError("Failed to generate top customers report", 500));
+    logger.error('Error generating top customers report', { error });
+    return next(new AppError('Failed to generate top customers report', 500));
   }
 };

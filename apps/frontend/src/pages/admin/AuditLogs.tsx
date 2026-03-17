@@ -5,7 +5,7 @@
  * Shows who did what, when, and from where.
  */
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Paper,
@@ -35,8 +35,8 @@ import {
   DialogActions,
   Button,
   Collapse,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   Search as SearchIcon,
   Refresh as RefreshIcon,
@@ -45,87 +45,87 @@ import {
   Security as SecurityIcon,
   Warning as WarningIcon,
   Info as InfoIcon,
-} from "@mui/icons-material";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { format, subDays } from "date-fns";
+} from '@mui/icons-material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { format, subDays } from 'date-fns';
 import auditLogService, {
   AuditLog,
   AuditLogQueryParams,
-} from "../../services/auditLogService";
+} from '../../services/auditLogService';
 
 // Action categories for filtering
 const CATEGORIES = [
-  { value: "", label: "All Categories" },
-  { value: "CUSTOMER", label: "Customer" },
-  { value: "PET", label: "Pet" },
-  { value: "RESERVATION", label: "Reservation" },
-  { value: "PAYMENT", label: "Payment" },
-  { value: "STAFF", label: "Staff" },
-  { value: "AUTH", label: "Authentication" },
-  { value: "SETTINGS", label: "Settings" },
+  { value: '', label: 'All Categories' },
+  { value: 'CUSTOMER', label: 'Customer' },
+  { value: 'PET', label: 'Pet' },
+  { value: 'RESERVATION', label: 'Reservation' },
+  { value: 'PAYMENT', label: 'Payment' },
+  { value: 'STAFF', label: 'Staff' },
+  { value: 'AUTH', label: 'Authentication' },
+  { value: 'SETTINGS', label: 'Settings' },
 ];
 
 // Actions for filtering
 const ACTIONS = [
-  { value: "", label: "All Actions" },
-  { value: "CREATE", label: "Create" },
-  { value: "UPDATE", label: "Update" },
-  { value: "DELETE", label: "Delete" },
-  { value: "LOGIN", label: "Login" },
-  { value: "LOGOUT", label: "Logout" },
-  { value: "LOGIN_FAILED", label: "Failed Login" },
+  { value: '', label: 'All Actions' },
+  { value: 'CREATE', label: 'Create' },
+  { value: 'UPDATE', label: 'Update' },
+  { value: 'DELETE', label: 'Delete' },
+  { value: 'LOGIN', label: 'Login' },
+  { value: 'LOGOUT', label: 'Logout' },
+  { value: 'LOGIN_FAILED', label: 'Failed Login' },
 ];
 
 // Severity levels
 const SEVERITIES = [
-  { value: "", label: "All Severities" },
-  { value: "INFO", label: "Info" },
-  { value: "WARNING", label: "Warning" },
-  { value: "CRITICAL", label: "Critical" },
+  { value: '', label: 'All Severities' },
+  { value: 'INFO', label: 'Info' },
+  { value: 'WARNING', label: 'Warning' },
+  { value: 'CRITICAL', label: 'Critical' },
 ];
 
 // Severity chip colors
 const getSeverityColor = (
   severity: string
-): "default" | "info" | "warning" | "error" => {
+): 'default' | 'info' | 'warning' | 'error' => {
   switch (severity) {
-    case "CRITICAL":
-      return "error";
-    case "WARNING":
-      return "warning";
+    case 'CRITICAL':
+      return 'error';
+    case 'WARNING':
+      return 'warning';
     default:
-      return "info";
+      return 'info';
   }
 };
 
 // Action chip colors
 const getActionColor = (
   action: string
-): "default" | "primary" | "secondary" | "success" | "error" | "warning" => {
+): 'default' | 'primary' | 'secondary' | 'success' | 'error' | 'warning' => {
   switch (action) {
-    case "CREATE":
-      return "success";
-    case "UPDATE":
-      return "primary";
-    case "DELETE":
-      return "error";
-    case "LOGIN":
-      return "success";
-    case "LOGOUT":
-      return "default";
-    case "LOGIN_FAILED":
-      return "warning";
+    case 'CREATE':
+      return 'success';
+    case 'UPDATE':
+      return 'primary';
+    case 'DELETE':
+      return 'error';
+    case 'LOGIN':
+      return 'success';
+    case 'LOGOUT':
+      return 'default';
+    case 'LOGIN_FAILED':
+      return 'warning';
     default:
-      return "default";
+      return 'default';
   }
 };
 
 const AuditLogs: React.FC = () => {
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [total, setTotal] = useState(0);
 
   // Pagination
@@ -133,10 +133,10 @@ const AuditLogs: React.FC = () => {
   const [rowsPerPage, setRowsPerPage] = useState(25);
 
   // Filters
-  const [category, setCategory] = useState("");
-  const [action, setAction] = useState("");
-  const [severity, setSeverity] = useState("");
-  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState('');
+  const [action, setAction] = useState('');
+  const [severity, setSeverity] = useState('');
+  const [search, setSearch] = useState('');
   const [startDate, setStartDate] = useState<Date | null>(
     subDays(new Date(), 7)
   );
@@ -152,7 +152,7 @@ const AuditLogs: React.FC = () => {
   const fetchLogs = useCallback(async () => {
     try {
       setLoading(true);
-      setError("");
+      setError('');
 
       const params: AuditLogQueryParams = {
         limit: rowsPerPage,
@@ -172,11 +172,11 @@ const AuditLogs: React.FC = () => {
         setLogs(response.data);
         setTotal(response.pagination.total);
       } else {
-        setError("Failed to load audit logs");
+        setError('Failed to load audit logs');
       }
     } catch (err: any) {
-      console.error("Error fetching audit logs:", err);
-      setError(err.response?.data?.message || "Failed to load audit logs");
+      console.error('Error fetching audit logs:', err);
+      setError(err.response?.data?.message || 'Failed to load audit logs');
     } finally {
       setLoading(false);
     }
@@ -222,7 +222,7 @@ const AuditLogs: React.FC = () => {
   };
 
   const formatDate = (dateString: string) => {
-    return format(new Date(dateString), "MMM d, yyyy h:mm a");
+    return format(new Date(dateString), 'MMM d, yyyy h:mm a');
   };
 
   return (
@@ -230,13 +230,13 @@ const AuditLogs: React.FC = () => {
       <Box sx={{ p: 3 }}>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             mb: 3,
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <SecurityIcon color="primary" />
             <Typography variant="h5" fontWeight={600}>
               Audit Logs
@@ -317,7 +317,7 @@ const AuditLogs: React.FC = () => {
                   setStartDate(date);
                   setPage(0);
                 }}
-                slotProps={{ textField: { size: "small", fullWidth: true } }}
+                slotProps={{ textField: { size: 'small', fullWidth: true } }}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={2}>
@@ -328,7 +328,7 @@ const AuditLogs: React.FC = () => {
                   setEndDate(date);
                   setPage(0);
                 }}
-                slotProps={{ textField: { size: "small", fullWidth: true } }}
+                slotProps={{ textField: { size: 'small', fullWidth: true } }}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={2}>
@@ -351,7 +351,7 @@ const AuditLogs: React.FC = () => {
 
         {/* Error Alert */}
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError("")}>
+          <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>
             {error}
           </Alert>
         )}
@@ -393,7 +393,7 @@ const AuditLogs: React.FC = () => {
                       <TableRow
                         hover
                         onClick={() => handleViewDetails(log)}
-                        sx={{ cursor: "pointer" }}
+                        sx={{ cursor: 'pointer' }}
                       >
                         <TableCell>
                           {(log.changedFields?.length ||
@@ -421,7 +421,7 @@ const AuditLogs: React.FC = () => {
                         </TableCell>
                         <TableCell>
                           <Typography variant="body2" fontWeight={500}>
-                            {log.userName || log.userEmail || "System"}
+                            {log.userName || log.userEmail || 'System'}
                           </Typography>
                           {log.userRole && (
                             <Typography
@@ -452,7 +452,7 @@ const AuditLogs: React.FC = () => {
                             <Typography
                               variant="caption"
                               color="text.secondary"
-                              sx={{ display: "block" }}
+                              sx={{ display: 'block' }}
                             >
                               ID: {log.entityId.substring(0, 8)}...
                             </Typography>
@@ -464,7 +464,7 @@ const AuditLogs: React.FC = () => {
                             size="small"
                             color={getSeverityColor(log.severity)}
                             icon={
-                              log.severity === "CRITICAL" ? (
+                              log.severity === 'CRITICAL' ? (
                                 <WarningIcon />
                               ) : (
                                 <InfoIcon />
@@ -474,7 +474,7 @@ const AuditLogs: React.FC = () => {
                         </TableCell>
                         <TableCell>
                           <Typography variant="body2" color="text.secondary">
-                            {log.ipAddress || "-"}
+                            {log.ipAddress || '-'}
                           </Typography>
                         </TableCell>
                       </TableRow>
@@ -486,7 +486,7 @@ const AuditLogs: React.FC = () => {
                             timeout="auto"
                             unmountOnExit
                           >
-                            <Box sx={{ p: 2, bgcolor: "grey.50" }}>
+                            <Box sx={{ p: 2, bgcolor: 'grey.50' }}>
                               {log.changedFields &&
                                 log.changedFields.length > 0 && (
                                   <Box sx={{ mb: 1 }}>
@@ -498,9 +498,9 @@ const AuditLogs: React.FC = () => {
                                     </Typography>
                                     <Box
                                       sx={{
-                                        display: "flex",
+                                        display: 'flex',
                                         gap: 0.5,
-                                        flexWrap: "wrap",
+                                        flexWrap: 'wrap',
                                       }}
                                     >
                                       {log.changedFields.map((field) => (
@@ -523,8 +523,8 @@ const AuditLogs: React.FC = () => {
                                     variant="body2"
                                     component="pre"
                                     sx={{
-                                      fontSize: "0.75rem",
-                                      overflow: "auto",
+                                      fontSize: '0.75rem',
+                                      overflow: 'auto',
                                     }}
                                   >
                                     {JSON.stringify(log.metadata, null, 2)}
@@ -600,7 +600,7 @@ const AuditLogs: React.FC = () => {
                       <Typography variant="body1">
                         {selectedLog.userName ||
                           selectedLog.userEmail ||
-                          "System"}
+                          'System'}
                       </Typography>
                       {selectedLog.userRole && (
                         <Typography variant="caption" color="text.secondary">
@@ -635,7 +635,7 @@ const AuditLogs: React.FC = () => {
                         <Typography
                           variant="caption"
                           color="text.secondary"
-                          sx={{ display: "block" }}
+                          sx={{ display: 'block' }}
                         >
                           ID: {selectedLog.entityId}
                         </Typography>
@@ -650,7 +650,7 @@ const AuditLogs: React.FC = () => {
                         IP Address
                       </Typography>
                       <Typography variant="body1">
-                        {selectedLog.ipAddress || "-"}
+                        {selectedLog.ipAddress || '-'}
                       </Typography>
                     </CardContent>
                   </Card>
@@ -682,7 +682,7 @@ const AuditLogs: React.FC = () => {
                             Changed Fields
                           </Typography>
                           <Box
-                            sx={{ display: "flex", gap: 0.5, flexWrap: "wrap" }}
+                            sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}
                           >
                             {selectedLog.changedFields.map((field) => (
                               <Chip key={field} label={field} size="small" />
@@ -706,8 +706,8 @@ const AuditLogs: React.FC = () => {
                         <Box
                           component="pre"
                           sx={{
-                            fontSize: "0.75rem",
-                            overflow: "auto",
+                            fontSize: '0.75rem',
+                            overflow: 'auto',
                             maxHeight: 200,
                           }}
                         >
@@ -731,8 +731,8 @@ const AuditLogs: React.FC = () => {
                         <Box
                           component="pre"
                           sx={{
-                            fontSize: "0.75rem",
-                            overflow: "auto",
+                            fontSize: '0.75rem',
+                            overflow: 'auto',
                             maxHeight: 200,
                           }}
                         >

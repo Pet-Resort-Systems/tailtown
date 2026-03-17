@@ -1,19 +1,12 @@
 /**
  * Mobile Report Cards Page
- * 
+ *
  * Mobile-optimized interface for creating and managing pet report cards.
  * Focuses on quick photo capture and simple form entry.
  */
 
 import React, { useState } from 'react';
-import {
-  Box,
-  Paper,
-  Typography,
-  Tabs,
-  Tab,
-  Container,
-} from '@mui/material';
+import { Box, Paper, Typography, Tabs, Tab, Container } from '@mui/material';
 import {
   PhotoCamera as PhotoIcon,
   ViewList as ListIcon,
@@ -39,11 +32,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`mobile-report-card-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ py: 2 }}>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box sx={{ py: 2 }}>{children}</Box>}
     </div>
   );
 }
@@ -56,15 +45,17 @@ const MobileReportCards: React.FC = () => {
   };
 
   return (
-    <Box sx={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      minHeight: '100vh',
-      bgcolor: 'background.default',
-      pb: 8, // Space for bottom nav
-    }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+        bgcolor: 'background.default',
+        pb: 8, // Space for bottom nav
+      }}
+    >
       <MobileHeader title="Report Cards" />
-      
+
       <Container maxWidth="sm" sx={{ flex: 1, pt: 2, px: 2 }}>
         <Paper elevation={0} sx={{ borderRadius: 2 }}>
           <Tabs
@@ -77,7 +68,7 @@ const MobileReportCards: React.FC = () => {
               '& .MuiTab-root': {
                 minHeight: 56,
                 fontSize: '0.875rem',
-              }
+              },
             }}
           >
             <Tab

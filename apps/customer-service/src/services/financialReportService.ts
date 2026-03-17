@@ -3,7 +3,7 @@
  * Generates financial reports for business analysis
  */
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 import {
   RevenueData,
   ProfitLossData,
@@ -11,7 +11,7 @@ import {
   RefundData,
   ReconciliationData,
   ReconciliationTransaction,
-} from "../types/reports.types";
+} from '../types/reports.types';
 
 const prisma = new PrismaClient();
 
@@ -35,7 +35,7 @@ export const getRevenueReport = async (
         gte: start,
         lte: end,
       },
-      status: "PAID",
+      status: 'PAID',
     },
     include: {
       lineItems: true,
@@ -53,15 +53,15 @@ export const getRevenueReport = async (
     totalRevenue += invoice.total;
 
     for (const lineItem of invoice.lineItems) {
-      const type = (lineItem as any).type || "SERVICE";
+      const type = (lineItem as any).type || 'SERVICE';
       const category = lineItem.description;
 
       // Aggregate by type
-      if (type === "SERVICE") {
+      if (type === 'SERVICE') {
         serviceRevenue += lineItem.amount;
-      } else if (type === "PRODUCT") {
+      } else if (type === 'PRODUCT') {
         productRevenue += lineItem.amount;
-      } else if (type === "ADD_ON") {
+      } else if (type === 'ADD_ON') {
         addOnRevenue += lineItem.amount;
       }
 
@@ -117,7 +117,7 @@ export const getProfitLossReport = async (
         gte: start,
         lte: end,
       },
-      status: "PAID",
+      status: 'PAID',
     },
     include: {
       lineItems: true,
@@ -132,8 +132,8 @@ export const getProfitLossReport = async (
 
     // Calculate COGS for products (assuming 40% cost)
     for (const lineItem of invoice.lineItems) {
-      const type = (lineItem as any).type || "SERVICE";
-      if (type === "PRODUCT") {
+      const type = (lineItem as any).type || 'SERVICE';
+      if (type === 'PRODUCT') {
         costOfGoodsSold += lineItem.amount * 0.4; // 40% cost assumption
       }
     }
@@ -170,7 +170,7 @@ export const getOutstandingBalances = async (
     where: {
       tenantId,
       status: {
-        in: ["SENT", "OVERDUE"],
+        in: ['SENT', 'OVERDUE'],
       },
     },
     include: {
@@ -178,7 +178,7 @@ export const getOutstandingBalances = async (
       payments: true,
     },
     orderBy: {
-      dueDate: "asc",
+      dueDate: 'asc',
     },
   });
 
@@ -205,8 +205,8 @@ export const getOutstandingBalances = async (
         customerName: `${invoice.customer.firstName} ${invoice.customer.lastName}`,
         invoiceId: invoice.id,
         invoiceNumber: invoice.invoiceNumber,
-        invoiceDate: invoice.issueDate.toISOString().split("T")[0],
-        dueDate: invoice.dueDate.toISOString().split("T")[0],
+        invoiceDate: invoice.issueDate.toISOString().split('T')[0],
+        dueDate: invoice.dueDate.toISOString().split('T')[0],
         amount: invoice.total,
         amountPaid,
         amountDue,
@@ -235,7 +235,7 @@ export const getRefundsReport = async (
   const invoices = await prisma.invoice.findMany({
     where: {
       tenantId,
-      status: "REFUNDED",
+      status: 'REFUNDED',
       updatedAt: {
         gte: start,
         lte: end,
@@ -246,7 +246,7 @@ export const getRefundsReport = async (
       payments: true,
     },
     orderBy: {
-      updatedAt: "desc",
+      updatedAt: 'desc',
     },
   });
 
@@ -258,14 +258,14 @@ export const getRefundsReport = async (
 
     for (const refundPayment of refundPayments) {
       refunds.push({
-        date: refundPayment.paymentDate.toISOString().split("T")[0],
+        date: refundPayment.paymentDate.toISOString().split('T')[0],
         invoiceId: invoice.id,
         invoiceNumber: invoice.invoiceNumber,
         customerId: invoice.customerId,
         customerName: `${invoice.customer.firstName} ${invoice.customer.lastName}`,
         originalAmount: invoice.total,
         refundAmount: Math.abs(refundPayment.amount),
-        refundReason: refundPayment.notes || "No reason provided",
+        refundReason: refundPayment.notes || 'No reason provided',
         refundMethod: refundPayment.method,
       });
     }
@@ -304,7 +304,7 @@ export const getReconciliationReport = async (
       },
     },
     orderBy: {
-      paymentDate: "asc",
+      paymentDate: 'asc',
     },
   });
 
@@ -318,7 +318,7 @@ export const getReconciliationReport = async (
   const transactions: ReconciliationTransaction[] = [];
 
   for (const payment of payments) {
-    const method = payment.method || "OTHER";
+    const method = payment.method || 'OTHER';
     const amount = payment.amount;
     const tip = (payment as any).tipAmount || 0;
 
@@ -329,9 +329,9 @@ export const getReconciliationReport = async (
     }
 
     // Categorize by payment method
-    if (method === "CASH") {
+    if (method === 'CASH') {
       cashSales += amount;
-    } else if (["CARD", "CREDIT_CARD", "DEBIT_CARD"].includes(method)) {
+    } else if (['CARD', 'CREDIT_CARD', 'DEBIT_CARD'].includes(method)) {
       cardSales += amount;
     } else {
       otherSales += amount;
@@ -351,15 +351,15 @@ export const getReconciliationReport = async (
     // Build transaction record
     transactions.push({
       time: payment.paymentDate.toISOString(),
-      invoiceNumber: payment.invoice?.invoiceNumber || "N/A",
+      invoiceNumber: payment.invoice?.invoiceNumber || 'N/A',
       customerName: payment.invoice?.customer
         ? `${payment.invoice.customer.firstName} ${payment.invoice.customer.lastName}`
-        : "Walk-in",
+        : 'Walk-in',
       paymentMethod: method,
       amount: amount,
       tip: tip,
       total: amount + tip,
-      staffName: (payment as any).staffName || "N/A",
+      staffName: (payment as any).staffName || 'N/A',
     });
   }
 

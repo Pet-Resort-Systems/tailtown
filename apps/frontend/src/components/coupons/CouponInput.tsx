@@ -1,6 +1,6 @@
 /**
  * Coupon Input Component
- * 
+ *
  * Allows customers to enter and apply coupon codes during booking.
  * Features:
  * - Real-time validation
@@ -17,9 +17,12 @@ import {
   Typography,
   Alert,
   CircularProgress,
-  Paper
+  Paper,
 } from '@mui/material';
-import { LocalOffer as CouponIcon, Check as CheckIcon } from '@mui/icons-material';
+import {
+  LocalOffer as CouponIcon,
+  Check as CheckIcon,
+} from '@mui/icons-material';
 import { couponService } from '../../services/couponService';
 import { Coupon, ApplyCouponRequest } from '../../types/coupon';
 
@@ -38,7 +41,7 @@ export const CouponInput: React.FC<CouponInputProps> = ({
   serviceIds,
   onCouponApplied,
   onCouponRemoved,
-  appliedCoupon
+  appliedCoupon,
 }) => {
   const [couponCode, setCouponCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -63,7 +66,7 @@ export const CouponInput: React.FC<CouponInputProps> = ({
         code: couponCode.toUpperCase().trim(),
         customerId,
         subtotal,
-        serviceIds
+        serviceIds,
       };
 
       const result = await couponService.validateCoupon(request);
@@ -75,10 +78,15 @@ export const CouponInput: React.FC<CouponInputProps> = ({
       }
 
       // Get full coupon details
-      const coupon = await couponService.getCouponByCode(couponCode.toUpperCase().trim());
+      const coupon = await couponService.getCouponByCode(
+        couponCode.toUpperCase().trim()
+      );
 
       // Calculate discount
-      const { discountAmount } = couponService.calculateDiscount(coupon, subtotal);
+      const { discountAmount } = couponService.calculateDiscount(
+        coupon,
+        subtotal
+      );
 
       // Apply coupon
       onCouponApplied(coupon, discountAmount);
@@ -111,7 +119,10 @@ export const CouponInput: React.FC<CouponInputProps> = ({
     );
 
     return (
-      <Paper elevation={2} sx={{ p: 2, bgcolor: 'success.light', color: 'success.contrastText' }}>
+      <Paper
+        elevation={2}
+        sx={{ p: 2, bgcolor: 'success.light', color: 'success.contrastText' }}
+      >
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Box display="flex" alignItems="center" gap={1}>
             <CheckIcon />
@@ -131,7 +142,10 @@ export const CouponInput: React.FC<CouponInputProps> = ({
             variant="outlined"
             size="small"
             onClick={handleRemoveCoupon}
-            sx={{ color: 'success.contrastText', borderColor: 'success.contrastText' }}
+            sx={{
+              color: 'success.contrastText',
+              borderColor: 'success.contrastText',
+            }}
           >
             Remove
           </Button>
@@ -157,7 +171,9 @@ export const CouponInput: React.FC<CouponInputProps> = ({
           disabled={loading}
           error={!!error}
           InputProps={{
-            startAdornment: <CouponIcon sx={{ mr: 1, color: 'action.active' }} />
+            startAdornment: (
+              <CouponIcon sx={{ mr: 1, color: 'action.active' }} />
+            ),
           }}
         />
         <Button
@@ -176,7 +192,11 @@ export const CouponInput: React.FC<CouponInputProps> = ({
         </Alert>
       )}
 
-      <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+      <Typography
+        variant="caption"
+        color="text.secondary"
+        sx={{ mt: 1, display: 'block' }}
+      >
         Have a coupon? Enter it above to get a discount on your booking.
       </Typography>
     </Box>

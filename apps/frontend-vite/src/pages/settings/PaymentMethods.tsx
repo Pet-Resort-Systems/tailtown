@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Container,
   Typography,
@@ -14,14 +14,14 @@ import {
   CardContent,
   Grid,
   Chip,
-} from "@mui/material";
+} from '@mui/material';
 import {
   CreditCard as CreditCardIcon,
   Money as CashIcon,
   Receipt as CheckIcon,
   Settings as SettingsIcon,
   Save as SaveIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 
 interface PaymentMethodConfig {
   id: string;
@@ -36,40 +36,40 @@ interface PaymentMethodConfig {
 const PaymentMethods: React.FC = () => {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodConfig[]>([
     {
-      id: "CASH",
-      name: "Cash",
+      id: 'CASH',
+      name: 'Cash',
       enabled: true,
       icon: <CashIcon />,
-      description: "Accept cash payments at the front desk",
+      description: 'Accept cash payments at the front desk',
       requiresSetup: false,
       setupComplete: true,
     },
     {
-      id: "CHECK",
-      name: "Check",
+      id: 'CHECK',
+      name: 'Check',
       enabled: true,
       icon: <CheckIcon />,
-      description: "Accept check payments from customers",
+      description: 'Accept check payments from customers',
       requiresSetup: false,
       setupComplete: true,
     },
     {
-      id: "CREDIT_CARD",
-      name: "Credit Card (CardConnect)",
+      id: 'CREDIT_CARD',
+      name: 'Credit Card (CardConnect)',
       enabled: true,
       icon: <CreditCardIcon />,
       description:
-        "Process credit card payments via CardConnect merchant service",
+        'Process credit card payments via CardConnect merchant service',
       requiresSetup: true,
       setupComplete: false,
     },
   ]);
 
   const [cardConnectConfig, setCardConnectConfig] = useState({
-    merchantId: "",
-    apiUsername: "",
-    apiPassword: "",
-    siteUrl: "https://fts.cardconnect.com",
+    merchantId: '',
+    apiUsername: '',
+    apiPassword: '',
+    siteUrl: 'https://fts.cardconnect.com',
     testMode: true,
   });
 
@@ -89,8 +89,8 @@ const PaymentMethods: React.FC = () => {
 
   const handleSaveSettings = () => {
     // In production, this would save to the backend
-    console.log("Saving payment methods:", paymentMethods);
-    console.log("CardConnect config:", cardConnectConfig);
+    console.log('Saving payment methods:', paymentMethods);
+    console.log('CardConnect config:', cardConnectConfig);
 
     setSaveSuccess(true);
     setTimeout(() => setSaveSuccess(false), 3000);
@@ -103,14 +103,14 @@ const PaymentMethods: React.FC = () => {
       !cardConnectConfig.apiUsername ||
       !cardConnectConfig.apiPassword
     ) {
-      alert("Please fill in all required CardConnect fields");
+      alert('Please fill in all required CardConnect fields');
       return;
     }
 
     // Update the Credit Card method to show setup is complete
     setPaymentMethods((prev) =>
       prev.map((method) =>
-        method.id === "CREDIT_CARD"
+        method.id === 'CREDIT_CARD'
           ? { ...method, setupComplete: true }
           : method
       )
@@ -151,7 +151,7 @@ const PaymentMethods: React.FC = () => {
                   {getEnabledCount()} of {paymentMethods.length} methods enabled
                 </Typography>
               </Grid>
-              <Grid item xs={12} md={6} sx={{ textAlign: { md: "right" } }}>
+              <Grid item xs={12} md={6} sx={{ textAlign: { md: 'right' } }}>
                 <Button
                   variant="contained"
                   startIcon={<SaveIcon />}
@@ -181,17 +181,17 @@ const PaymentMethods: React.FC = () => {
             <Box key={method.id}>
               <Box
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
                   py: 2,
                 }}
               >
-                <Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
                   <Box
                     sx={{
                       mr: 2,
-                      color: method.enabled ? "primary.main" : "text.disabled",
+                      color: method.enabled ? 'primary.main' : 'text.disabled',
                     }}
                   >
                     {method.icon}
@@ -199,8 +199,8 @@ const PaymentMethods: React.FC = () => {
                   <Box sx={{ flex: 1 }}>
                     <Box
                       sx={{
-                        display: "flex",
-                        alignItems: "center",
+                        display: 'flex',
+                        alignItems: 'center',
                         gap: 1,
                         mb: 0.5,
                       }}
@@ -209,8 +209,8 @@ const PaymentMethods: React.FC = () => {
                         variant="subtitle1"
                         sx={{
                           color: method.enabled
-                            ? "text.primary"
-                            : "text.disabled",
+                            ? 'text.primary'
+                            : 'text.disabled',
                         }}
                       >
                         {method.name}
@@ -235,7 +235,7 @@ const PaymentMethods: React.FC = () => {
                   </Box>
                 </Box>
 
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   {method.requiresSetup && (
                     <Button
                       size="small"
@@ -255,22 +255,22 @@ const PaymentMethods: React.FC = () => {
                         color="primary"
                       />
                     }
-                    label={method.enabled ? "Enabled" : "Disabled"}
+                    label={method.enabled ? 'Enabled' : 'Disabled'}
                   />
                 </Box>
               </Box>
 
               {/* CardConnect Setup Panel */}
-              {method.id === "CREDIT_CARD" && showCardConnectSetup && (
+              {method.id === 'CREDIT_CARD' && showCardConnectSetup && (
                 <Box
                   sx={{
                     ml: 5,
                     mb: 2,
                     p: 3,
-                    bgcolor: "grey.50",
+                    bgcolor: 'grey.50',
                     borderRadius: 1,
-                    border: "1px solid",
-                    borderColor: "grey.300",
+                    border: '1px solid',
+                    borderColor: 'grey.300',
                   }}
                 >
                   <Typography variant="h6" gutterBottom>
@@ -362,9 +362,9 @@ const PaymentMethods: React.FC = () => {
                     <Grid item xs={12}>
                       <Box
                         sx={{
-                          display: "flex",
+                          display: 'flex',
                           gap: 1,
-                          justifyContent: "flex-end",
+                          justifyContent: 'flex-end',
                         }}
                       >
                         <Button onClick={() => setShowCardConnectSetup(false)}>
@@ -396,7 +396,7 @@ const PaymentMethods: React.FC = () => {
         </Paper>
 
         {/* Help Section */}
-        <Paper sx={{ p: 3, mt: 3, bgcolor: "info.light" }}>
+        <Paper sx={{ p: 3, mt: 3, bgcolor: 'info.light' }}>
           <Typography variant="h6" gutterBottom>
             Payment Method Guidelines
           </Typography>

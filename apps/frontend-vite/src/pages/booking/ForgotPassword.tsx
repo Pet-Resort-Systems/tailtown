@@ -2,7 +2,7 @@
  * ForgotPassword - Request password reset for customer portal
  */
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   Container,
@@ -13,25 +13,25 @@ import {
   Alert,
   Link,
   CircularProgress,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { useCustomerAuth } from "../../contexts/CustomerAuthContext";
+} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useCustomerAuth } from '../../contexts/CustomerAuthContext';
 
 const ForgotPassword: React.FC = () => {
   const navigate = useNavigate();
   const { requestPasswordReset } = useCustomerAuth();
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError('');
 
     if (!email) {
-      setError("Please enter your email address");
+      setError('Please enter your email address');
       return;
     }
 
@@ -40,7 +40,7 @@ const ForgotPassword: React.FC = () => {
       await requestPasswordReset(email);
       setSuccess(true);
     } catch (err: any) {
-      setError(err.message || "Failed to send reset email");
+      setError(err.message || 'Failed to send reset email');
     } finally {
       setLoading(false);
     }
@@ -65,15 +65,15 @@ const ForgotPassword: React.FC = () => {
               check your spam folder.
             </Typography>
 
-            <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
-              <Button variant="outlined" onClick={() => navigate("/book")}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+              <Button variant="outlined" onClick={() => navigate('/book')}>
                 Back to Login
               </Button>
               <Button
                 variant="text"
                 onClick={() => {
                   setSuccess(false);
-                  setEmail("");
+                  setEmail('');
                 }}
               >
                 Try Different Email
@@ -130,15 +130,15 @@ const ForgotPassword: React.FC = () => {
               disabled={loading}
               sx={{ mb: 2 }}
             >
-              {loading ? <CircularProgress size={24} /> : "Send Reset Link"}
+              {loading ? <CircularProgress size={24} /> : 'Send Reset Link'}
             </Button>
 
-            <Box sx={{ textAlign: "center" }}>
+            <Box sx={{ textAlign: 'center' }}>
               <Link
                 component="button"
                 type="button"
                 variant="body2"
-                onClick={() => navigate("/book")}
+                onClick={() => navigate('/book')}
               >
                 Back to Login
               </Link>

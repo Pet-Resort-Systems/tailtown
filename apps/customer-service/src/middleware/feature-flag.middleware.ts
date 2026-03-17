@@ -5,10 +5,10 @@
  * Use this to conditionally enable/disable API endpoints per tenant.
  */
 
-import { Request, Response, NextFunction } from "express";
-import { isFeatureEnabled } from "../services/feature-flag.service";
-import { AppError } from "./error.middleware";
-import { logger } from "../utils/logger";
+import { Request, Response, NextFunction } from 'express';
+import { isFeatureEnabled } from '../services/feature-flag.service';
+import { AppError } from './error.middleware';
+import { logger } from '../utils/logger';
 
 /**
  * Middleware factory to require a feature flag to be enabled
@@ -22,14 +22,14 @@ export const requireFeature = (flagKey: string) => {
       const tenantId = (req as any).tenantId;
 
       if (!tenantId) {
-        return next(new AppError("Tenant context required", 400));
+        return next(new AppError('Tenant context required', 400));
       }
 
       const userId = (req as any).user?.id;
       const enabled = await isFeatureEnabled(tenantId, flagKey, userId);
 
       if (!enabled) {
-        logger.debug("Feature not enabled for tenant", { tenantId, flagKey });
+        logger.debug('Feature not enabled for tenant', { tenantId, flagKey });
         return next(
           new AppError(`This feature is not enabled for your organization`, 403)
         );
@@ -37,7 +37,7 @@ export const requireFeature = (flagKey: string) => {
 
       next();
     } catch (error) {
-      logger.error("Error checking feature flag", { flagKey, error });
+      logger.error('Error checking feature flag', { flagKey, error });
       next(error);
     }
   };
@@ -70,15 +70,14 @@ export const attachFeatureFlags = async (
     }
 
     // Import here to avoid circular dependency
-    const { getTenantFeatureFlags } = await import(
-      "../services/feature-flag.service"
-    );
+    const { getTenantFeatureFlags } =
+      await import('../services/feature-flag.service');
     const flags = await getTenantFeatureFlags(tenantId);
 
     (req as any).featureFlags = flags;
     next();
   } catch (error) {
-    logger.error("Error attaching feature flags", { error });
+    logger.error('Error attaching feature flags', { error });
     (req as any).featureFlags = {};
     next();
   }

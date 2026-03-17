@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   TextField,
@@ -14,10 +14,10 @@ import {
   IconButton,
   Grid,
   Divider,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
-import { CheckInMedication } from "../../services/checkInService";
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import { CheckInMedication } from '../../services/checkInService';
 
 interface MedicationFormProps {
   medications: CheckInMedication[];
@@ -25,15 +25,15 @@ interface MedicationFormProps {
 }
 
 const ADMINISTRATION_METHODS = [
-  { value: "ORAL_PILL", label: "Oral Pill/Tablet" },
-  { value: "ORAL_LIQUID", label: "Oral Liquid" },
-  { value: "TOPICAL", label: "Topical (Applied to skin)" },
-  { value: "INJECTION", label: "Injection" },
-  { value: "EYE_DROPS", label: "Eye Drops" },
-  { value: "EAR_DROPS", label: "Ear Drops" },
-  { value: "INHALER", label: "Inhaler" },
-  { value: "TRANSDERMAL_PATCH", label: "Transdermal Patch" },
-  { value: "OTHER", label: "Other" },
+  { value: 'ORAL_PILL', label: 'Oral Pill/Tablet' },
+  { value: 'ORAL_LIQUID', label: 'Oral Liquid' },
+  { value: 'TOPICAL', label: 'Topical (Applied to skin)' },
+  { value: 'INJECTION', label: 'Injection' },
+  { value: 'EYE_DROPS', label: 'Eye Drops' },
+  { value: 'EAR_DROPS', label: 'Ear Drops' },
+  { value: 'INHALER', label: 'Inhaler' },
+  { value: 'TRANSDERMAL_PATCH', label: 'Transdermal Patch' },
+  { value: 'OTHER', label: 'Other' },
 ];
 
 const MedicationForm: React.FC<MedicationFormProps> = ({
@@ -50,10 +50,10 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
 
   const handleAddMedication = () => {
     const newMedication: CheckInMedication = {
-      medicationName: "",
-      dosage: "",
-      frequency: "",
-      administrationMethod: "ORAL_PILL",
+      medicationName: '',
+      dosage: '',
+      frequency: '',
+      administrationMethod: 'ORAL_PILL',
       withFood: false,
     };
     const updated = [...localMedications, newMedication];
@@ -86,9 +86,9 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
     <Box>
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           mb: 2,
         }}
       >
@@ -103,7 +103,7 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
       </Box>
 
       {localMedications.length === 0 && (
-        <Paper sx={{ p: 3, textAlign: "center", bgcolor: "grey.50" }}>
+        <Paper sx={{ p: 3, textAlign: 'center', bgcolor: 'grey.50' }}>
           <Typography color="text.secondary">
             No medications added. Click "Add Medication" to add one.
           </Typography>
@@ -114,9 +114,9 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
         <Paper key={index} sx={{ p: 3, mb: 2 }}>
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
               mb: 2,
             }}
           >
@@ -143,7 +143,7 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
                 onChange={(e) =>
                   handleUpdateMedication(
                     index,
-                    "medicationName",
+                    'medicationName',
                     e.target.value
                   )
                 }
@@ -158,7 +158,7 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
                 label="Dosage *"
                 value={medication.dosage}
                 onChange={(e) =>
-                  handleUpdateMedication(index, "dosage", e.target.value)
+                  handleUpdateMedication(index, 'dosage', e.target.value)
                 }
                 placeholder="e.g., 10mg, 1 tablet, 2 drops"
                 required
@@ -171,7 +171,7 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
                 label="Frequency *"
                 value={medication.frequency}
                 onChange={(e) =>
-                  handleUpdateMedication(index, "frequency", e.target.value)
+                  handleUpdateMedication(index, 'frequency', e.target.value)
                 }
                 placeholder="e.g., Twice daily, Every 8 hours"
                 required
@@ -190,7 +190,7 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
                   onChange={(e) =>
                     handleUpdateMedication(
                       index,
-                      "administrationMethod",
+                      'administrationMethod',
                       e.target.value
                     )
                   }
@@ -215,9 +215,9 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
               <TextField
                 fullWidth
                 label="Time(s) of Day"
-                value={medication.timeOfDay || ""}
+                value={medication.timeOfDay || ''}
                 onChange={(e) =>
-                  handleUpdateMedication(index, "timeOfDay", e.target.value)
+                  handleUpdateMedication(index, 'timeOfDay', e.target.value)
                 }
                 placeholder="e.g., 8:00 AM, 8:00 PM"
                 helperText="When should this medication be given?"
@@ -232,7 +232,7 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
                     onChange={(e) =>
                       handleUpdateMedication(
                         index,
-                        "withFood",
+                        'withFood',
                         e.target.checked
                       )
                     }
@@ -250,11 +250,11 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
               <TextField
                 fullWidth
                 label="Prescribing Veterinarian"
-                value={medication.prescribingVet || ""}
+                value={medication.prescribingVet || ''}
                 onChange={(e) =>
                   handleUpdateMedication(
                     index,
-                    "prescribingVet",
+                    'prescribingVet',
                     e.target.value
                   )
                 }
@@ -263,14 +263,14 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <Box sx={{ display: "flex", gap: 2 }}>
+              <Box sx={{ display: 'flex', gap: 2 }}>
                 <TextField
                   fullWidth
                   type="date"
                   label="Start Date"
-                  value={medication.startDate || ""}
+                  value={medication.startDate || ''}
                   onChange={(e) =>
-                    handleUpdateMedication(index, "startDate", e.target.value)
+                    handleUpdateMedication(index, 'startDate', e.target.value)
                   }
                   InputLabelProps={{ shrink: true }}
                 />
@@ -278,9 +278,9 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
                   fullWidth
                   type="date"
                   label="End Date"
-                  value={medication.endDate || ""}
+                  value={medication.endDate || ''}
                   onChange={(e) =>
-                    handleUpdateMedication(index, "endDate", e.target.value)
+                    handleUpdateMedication(index, 'endDate', e.target.value)
                   }
                   InputLabelProps={{ shrink: true }}
                 />
@@ -293,11 +293,11 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
                 multiline
                 rows={2}
                 label="Special Instructions"
-                value={medication.specialInstructions || ""}
+                value={medication.specialInstructions || ''}
                 onChange={(e) =>
                   handleUpdateMedication(
                     index,
-                    "specialInstructions",
+                    'specialInstructions',
                     e.target.value
                   )
                 }
@@ -311,9 +311,9 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
                 multiline
                 rows={2}
                 label="Additional Notes"
-                value={medication.notes || ""}
+                value={medication.notes || ''}
                 onChange={(e) =>
-                  handleUpdateMedication(index, "notes", e.target.value)
+                  handleUpdateMedication(index, 'notes', e.target.value)
                 }
                 placeholder="Any other information about this medication"
               />

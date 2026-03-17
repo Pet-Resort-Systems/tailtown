@@ -29,7 +29,9 @@ import { useAuth } from '../../contexts/AuthContext';
 const MobileDashboard: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,7 +39,7 @@ const MobileDashboard: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const data = await mobileService.getDashboardData();
       setDashboardData(data);
     } catch (err) {
@@ -59,8 +61,19 @@ const MobileDashboard: React.FC = () => {
   if (loading && !dashboardData) {
     return (
       <Box>
-        <MobileHeader title="Dashboard" showNotifications userName={user?.firstName} />
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <MobileHeader
+          title="Dashboard"
+          showNotifications
+          userName={user?.firstName}
+        />
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '50vh',
+          }}
+        >
           <CircularProgress />
         </Box>
       </Box>
@@ -70,11 +83,16 @@ const MobileDashboard: React.FC = () => {
   if (error && !dashboardData) {
     return (
       <Box>
-        <MobileHeader title="Dashboard" showNotifications userName={user?.firstName} />
+        <MobileHeader
+          title="Dashboard"
+          showNotifications
+          userName={user?.firstName}
+        />
         <Box sx={{ p: 2 }}>
-          <Alert severity="error" action={
-            <Chip label="Retry" size="small" onClick={handleRefresh} />
-          }>
+          <Alert
+            severity="error"
+            action={<Chip label="Retry" size="small" onClick={handleRefresh} />}
+          >
             {error}
           </Alert>
         </Box>
@@ -82,7 +100,11 @@ const MobileDashboard: React.FC = () => {
     );
   }
 
-  const stats = dashboardData?.stats || { petsInFacility: 0, tasksCompleted: 0, totalTasks: 0 };
+  const stats = dashboardData?.stats || {
+    petsInFacility: 0,
+    tasksCompleted: 0,
+    totalTasks: 0,
+  };
   const todaySchedule = dashboardData?.todaySchedule || [];
   const pendingTasks = dashboardData?.pendingTasks || [];
 
@@ -97,7 +119,18 @@ const MobileDashboard: React.FC = () => {
 
       <Box sx={{ p: 2, pb: 10 }}>
         {/* Pets in Facility - Compact Info */}
-        <Box sx={{ mb: 2, px: 1, py: 1, bgcolor: 'background.paper', borderRadius: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box
+          sx={{
+            mb: 2,
+            px: 1,
+            py: 1,
+            bgcolor: 'background.paper',
+            borderRadius: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <PetIcon fontSize="small" color="action" />
             <Typography variant="body2" color="text.secondary">
@@ -118,7 +151,13 @@ const MobileDashboard: React.FC = () => {
                 Tasks Progress
               </Typography>
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
               <Typography variant="h6">
                 {stats.tasksCompleted}/{stats.totalTasks}
               </Typography>
@@ -141,27 +180,45 @@ const MobileDashboard: React.FC = () => {
               </Typography>
             </Box>
             {todaySchedule.length === 0 ? (
-              <Typography variant="body2" color="text.secondary" sx={{ py: 2, textAlign: 'center' }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ py: 2, textAlign: 'center' }}
+              >
                 No scheduled shifts today
               </Typography>
             ) : (
               <List disablePadding>
                 {todaySchedule.map((item, index) => (
                   <React.Fragment key={index}>
-                    <ListItem 
-                      disablePadding 
-                      sx={{ py: 1, cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
+                    <ListItem
+                      disablePadding
+                      sx={{
+                        py: 1,
+                        cursor: 'pointer',
+                        '&:hover': { bgcolor: 'action.hover' },
+                      }}
                       onClick={() => navigate('/mobile/schedule')}
                     >
                       <ListItemAvatar>
-                        <Avatar sx={{ width: 32, height: 32, fontSize: '0.75rem', bgcolor: 'primary.main' }}>
+                        <Avatar
+                          sx={{
+                            width: 32,
+                            height: 32,
+                            fontSize: '0.75rem',
+                            bgcolor: 'primary.main',
+                          }}
+                        >
                           {item.time.split(':')[0]}
                         </Avatar>
                       </ListItemAvatar>
                       <ListItemText
                         primary={item.title}
                         secondary={item.location}
-                        primaryTypographyProps={{ variant: 'body2', fontWeight: 500 }}
+                        primaryTypographyProps={{
+                          variant: 'body2',
+                          fontWeight: 500,
+                        }}
                         secondaryTypographyProps={{ variant: 'caption' }}
                       />
                       <ChevronRightIcon fontSize="small" color="action" />
@@ -184,22 +241,33 @@ const MobileDashboard: React.FC = () => {
               </Typography>
             </Box>
             {pendingTasks.length === 0 ? (
-              <Typography variant="body2" color="text.secondary" sx={{ py: 2, textAlign: 'center' }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ py: 2, textAlign: 'center' }}
+              >
                 No pending tasks
               </Typography>
             ) : (
               <List disablePadding>
                 {pendingTasks.map((task, index) => (
                   <React.Fragment key={task.id}>
-                    <ListItem 
-                      disablePadding 
-                      sx={{ py: 1, cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
+                    <ListItem
+                      disablePadding
+                      sx={{
+                        py: 1,
+                        cursor: 'pointer',
+                        '&:hover': { bgcolor: 'action.hover' },
+                      }}
                       onClick={() => navigate('/mobile/checklists')}
                     >
                       <ListItemText
                         primary={task.title}
                         secondary={`${task.completed}/${task.total} completed`}
-                        primaryTypographyProps={{ variant: 'body2', fontWeight: 500 }}
+                        primaryTypographyProps={{
+                          variant: 'body2',
+                          fontWeight: 500,
+                        }}
                         secondaryTypographyProps={{ variant: 'caption' }}
                       />
                       <Chip
@@ -219,7 +287,7 @@ const MobileDashboard: React.FC = () => {
         </Card>
       </Box>
 
-      <BottomNav 
+      <BottomNav
         unreadMessages={dashboardData?.unreadMessages || 0}
         pendingTasks={pendingTasks.length}
       />

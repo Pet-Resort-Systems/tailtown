@@ -4,7 +4,7 @@
  * Frontend service for querying audit logs.
  */
 
-import api from "./api";
+import api from './api';
 
 export interface AuditLog {
   id: string;
@@ -71,7 +71,7 @@ export const auditLogService = {
     const queryParams = new URLSearchParams();
 
     Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== "") {
+      if (value !== undefined && value !== null && value !== '') {
         queryParams.append(key, String(value));
       }
     });
@@ -102,8 +102,8 @@ export const auditLogService = {
     endDate?: string
   ): Promise<{ success: boolean; data: AuditLog[] }> {
     const params = new URLSearchParams();
-    if (startDate) params.append("startDate", startDate);
-    if (endDate) params.append("endDate", endDate);
+    if (startDate) params.append('startDate', startDate);
+    if (endDate) params.append('endDate', endDate);
 
     const response = await api.get(
       `/audit-logs/user/${userId}?${params.toString()}`
@@ -140,7 +140,7 @@ export const auditLogService = {
   async getFailedLogins(
     since?: string
   ): Promise<{ success: boolean; data: AuditLog[] }> {
-    const params = since ? `?since=${since}` : "";
+    const params = since ? `?since=${since}` : '';
     const response = await api.get(`/audit-logs/failed-logins${params}`);
     return response.data;
   },

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Typography,
@@ -27,8 +27,8 @@ import {
   Tabs,
   Tab,
   LinearProgress,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -38,40 +38,40 @@ import {
   Schedule as ScheduleIcon,
   Percent as PercentIcon,
   Repeat as RepeatIcon,
-} from "@mui/icons-material";
-import { Link } from "react-router-dom";
-import staffService, { Staff } from "../../services/staffService";
-import { CircularProgress, Alert, Snackbar } from "@mui/material";
-import StaffSchedulingTabs from "../../components/staff/StaffSchedulingTabs";
-import CommissionSettings from "../../components/staff/CommissionSettings";
-import ScheduleTemplates from "../../components/staff/ScheduleTemplates";
+} from '@mui/icons-material';
+import { Link } from 'react-router-dom';
+import staffService, { Staff } from '../../services/staffService';
+import { CircularProgress, Alert, Snackbar } from '@mui/material';
+import StaffSchedulingTabs from '../../components/staff/StaffSchedulingTabs';
+import CommissionSettings from '../../components/staff/CommissionSettings';
+import ScheduleTemplates from '../../components/staff/ScheduleTemplates';
 import {
   validatePassword,
   getPasswordStrength,
-} from "../../utils/passwordValidator";
+} from '../../utils/passwordValidator';
 
 // Available roles, departments, and positions
-const roles = ["Administrator", "Manager", "Staff", "Instructor"];
+const roles = ['Administrator', 'Manager', 'Staff', 'Instructor'];
 const departments = [
-  "Management",
-  "Front Desk",
-  "Grooming",
-  "Training",
-  "Kennel",
-  "Veterinary",
+  'Management',
+  'Front Desk',
+  'Grooming',
+  'Training',
+  'Kennel',
+  'Veterinary',
 ];
 const positions = [
-  "General Manager",
-  "Front Desk Manager",
-  "Front Desk Associate",
-  "Lead Groomer",
-  "Groomer",
-  "Dog Trainer",
-  "Instructor",
-  "Kennel Manager",
-  "Kennel Technician",
-  "Veterinarian",
-  "Vet Technician",
+  'General Manager',
+  'Front Desk Manager',
+  'Front Desk Associate',
+  'Lead Groomer',
+  'Groomer',
+  'Dog Trainer',
+  'Instructor',
+  'Kennel Manager',
+  'Kennel Technician',
+  'Veterinarian',
+  'Vet Technician',
 ];
 
 interface FormDataType extends Staff {
@@ -86,67 +86,67 @@ const Users: React.FC = () => {
   const [editingUser, setEditingUser] = useState<Staff | null>(null);
   const [snackbar, setSnackbar] = useState({
     open: false,
-    message: "",
-    severity: "success" as "success" | "error",
+    message: '',
+    severity: 'success' as 'success' | 'error',
   });
   const [dialogTabValue, setDialogTabValue] = useState(0);
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   const [formData, setFormData] = useState<FormDataType>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    role: "",
-    department: "",
-    position: "",
-    status: "Active",
-    hireDate: "",
-    phone: "",
-    address: "",
-    city: "",
-    state: "",
-    zipCode: "",
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    role: '',
+    department: '',
+    position: '',
+    status: 'Active',
+    hireDate: '',
+    phone: '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
   });
 
   const handleOpenDialog = (user?: any) => {
     if (user) {
       setEditingUser(user);
       setFormData({
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
-        email: user.email || "",
-        password: user.password || "",
-        confirmPassword: user.password || "",
-        role: user.role || "",
-        department: user.department || "",
-        position: user.position || "",
-        status: user.status || "Active",
-        hireDate: user.hireDate || "",
-        phone: user.phone || "",
-        address: user.address || "",
-        city: user.city || "",
-        state: user.state || "",
-        zipCode: user.zipCode || "",
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        password: user.password || '',
+        confirmPassword: user.password || '',
+        role: user.role || '',
+        department: user.department || '',
+        position: user.position || '',
+        status: user.status || 'Active',
+        hireDate: user.hireDate || '',
+        phone: user.phone || '',
+        address: user.address || '',
+        city: user.city || '',
+        state: user.state || '',
+        zipCode: user.zipCode || '',
       });
     } else {
       setEditingUser(null);
       setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        role: "",
-        department: "",
-        position: "",
-        status: "Active",
-        hireDate: new Date().toISOString().split("T")[0],
-        phone: "",
-        address: "",
-        city: "",
-        state: "",
-        zipCode: "",
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        role: '',
+        department: '',
+        position: '',
+        status: 'Active',
+        hireDate: new Date().toISOString().split('T')[0],
+        phone: '',
+        address: '',
+        city: '',
+        state: '',
+        zipCode: '',
       });
     }
     setOpenDialog(true);
@@ -169,10 +169,10 @@ const Users: React.FC = () => {
     });
 
     // Validate password in real-time
-    if (name === "password" && value) {
+    if (name === 'password' && value) {
       const validation = validatePassword(value);
       setPasswordErrors(validation.errors);
-    } else if (name === "password" && !value) {
+    } else if (name === 'password' && !value) {
       setPasswordErrors([]);
     }
   };
@@ -193,8 +193,8 @@ const Users: React.FC = () => {
       setUsers(staffData);
       setError(null);
     } catch (err) {
-      console.error("Failed to load staff members:", err);
-      setError("Failed to load staff members. Please try again.");
+      console.error('Failed to load staff members:', err);
+      setError('Failed to load staff members. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -204,7 +204,7 @@ const Users: React.FC = () => {
     loadStaffMembers();
   }, [loadStaffMembers]);
 
-  const showSnackbar = (message: string, severity: "success" | "error") => {
+  const showSnackbar = (message: string, severity: 'success' | 'error') => {
     setSnackbar({ open: true, message, severity });
   };
 
@@ -218,8 +218,8 @@ const Users: React.FC = () => {
       const validation = validatePassword(formData.password);
       if (!validation.isValid) {
         showSnackbar(
-          `Password validation failed: ${validation.errors.join(", ")}`,
-          "error"
+          `Password validation failed: ${validation.errors.join(', ')}`,
+          'error'
         );
         return;
       }
@@ -227,7 +227,7 @@ const Users: React.FC = () => {
 
     // Validate passwords match for new users or when changing password
     if (!editingUser && formData.password !== formData.confirmPassword) {
-      showSnackbar("Passwords do not match", "error");
+      showSnackbar('Passwords do not match', 'error');
       return;
     }
 
@@ -244,30 +244,30 @@ const Users: React.FC = () => {
 
         // Update existing user
         await staffService.updateStaff(editingUser.id, dataToUpdate);
-        showSnackbar("Staff member updated successfully", "success");
+        showSnackbar('Staff member updated successfully', 'success');
       } else {
         // Add new user
         await staffService.createStaff(dataToSave as Staff);
-        showSnackbar("Staff member added successfully", "success");
+        showSnackbar('Staff member added successfully', 'success');
       }
 
       // Reload staff members to get the updated list
       await loadStaffMembers();
       handleCloseDialog();
     } catch (err) {
-      console.error("Error saving staff member:", err);
-      showSnackbar("Failed to save staff member. Please try again.", "error");
+      console.error('Error saving staff member:', err);
+      showSnackbar('Failed to save staff member. Please try again.', 'error');
     }
   };
 
   const handleDeleteUser = async (userId: string) => {
     try {
       await staffService.deleteStaff(userId);
-      showSnackbar("Staff member deleted successfully", "success");
+      showSnackbar('Staff member deleted successfully', 'success');
       await loadStaffMembers();
     } catch (err) {
-      console.error("Error deleting staff member:", err);
-      showSnackbar("Failed to delete staff member. Please try again.", "error");
+      console.error('Error deleting staff member:', err);
+      showSnackbar('Failed to delete staff member. Please try again.', 'error');
     }
   };
 
@@ -278,18 +278,18 @@ const Users: React.FC = () => {
           open={snackbar.open}
           autoHideDuration={6000}
           onClose={handleSnackbarClose}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >
           <Alert
             onClose={handleSnackbarClose}
             severity={snackbar.severity}
-            sx={{ width: "100%" }}
+            sx={{ width: '100%' }}
           >
             {snackbar.message}
           </Alert>
         </Snackbar>
 
-        <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
           <Button
             component={Link}
             to="/settings"
@@ -306,9 +306,9 @@ const Users: React.FC = () => {
         <Paper sx={{ p: 3, mb: 3 }}>
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
               mb: 3,
             }}
           >
@@ -323,7 +323,7 @@ const Users: React.FC = () => {
           </Box>
 
           {loading ? (
-            <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
               <CircularProgress />
             </Box>
           ) : error ? (
@@ -359,16 +359,16 @@ const Users: React.FC = () => {
                           {user.firstName} {user.lastName}
                         </TableCell>
                         <TableCell>{user.email}</TableCell>
-                        <TableCell>{user.phone || "-"}</TableCell>
+                        <TableCell>{user.phone || '-'}</TableCell>
                         <TableCell>
                           <Chip
                             label={user.role}
                             color={
-                              user.role === "Administrator"
-                                ? "primary"
-                                : user.role === "Manager"
-                                ? "secondary"
-                                : "default"
+                              user.role === 'Administrator'
+                                ? 'primary'
+                                : user.role === 'Manager'
+                                  ? 'secondary'
+                                  : 'default'
                             }
                             size="small"
                           />
@@ -379,7 +379,7 @@ const Users: React.FC = () => {
                           <Chip
                             label={user.status}
                             color={
-                              user.status === "Active" ? "success" : "error"
+                              user.status === 'Active' ? 'success' : 'error'
                             }
                             size="small"
                           />
@@ -416,17 +416,17 @@ const Users: React.FC = () => {
       <Dialog
         open={openDialog}
         onClose={handleCloseDialog}
-        maxWidth={dialogTabValue === 0 ? "xs" : "md"}
+        maxWidth={dialogTabValue === 0 ? 'xs' : 'md'}
         fullWidth
       >
         <DialogTitle sx={{ pb: 1 }}>
           {editingUser
             ? `Edit Employee: ${editingUser.firstName} ${editingUser.lastName}`
-            : "Add New Employee"}
+            : 'Add New Employee'}
         </DialogTitle>
         <DialogContent sx={{ pt: 1 }}>
           {editingUser && (
-            <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
               <Tabs
                 value={dialogTabValue}
                 onChange={handleTabChange}
@@ -582,7 +582,7 @@ const Users: React.FC = () => {
                   <Grid item xs={6}>
                     <TextField
                       name="password"
-                      label={editingUser ? "New Password" : "Password"}
+                      label={editingUser ? 'New Password' : 'Password'}
                       type="password"
                       value={formData.password}
                       onChange={handleInputChange}
@@ -592,7 +592,7 @@ const Users: React.FC = () => {
                       required={!editingUser}
                       error={passwordErrors.length > 0}
                       helperText={
-                        editingUser ? "Leave blank to keep current" : ""
+                        editingUser ? 'Leave blank to keep current' : ''
                       }
                     />
                     {formData.password && (
@@ -613,8 +613,8 @@ const Users: React.FC = () => {
                         ) : (
                           <Box
                             sx={{
-                              display: "flex",
-                              alignItems: "center",
+                              display: 'flex',
+                              alignItems: 'center',
                               gap: 1,
                             }}
                           >
@@ -625,8 +625,8 @@ const Users: React.FC = () => {
                                 flexGrow: 1,
                                 height: 4,
                                 borderRadius: 2,
-                                backgroundColor: "#e0e0e0",
-                                "& .MuiLinearProgress-bar": {
+                                backgroundColor: '#e0e0e0',
+                                '& .MuiLinearProgress-bar': {
                                   backgroundColor: getPasswordStrength(
                                     formData.password
                                   ).color,
@@ -638,7 +638,7 @@ const Users: React.FC = () => {
                               sx={{
                                 color: getPasswordStrength(formData.password)
                                   .color,
-                                fontWeight: "bold",
+                                fontWeight: 'bold',
                               }}
                             >
                               {getPasswordStrength(formData.password).label}
@@ -660,14 +660,14 @@ const Users: React.FC = () => {
                       margin="dense"
                       required={!editingUser}
                       error={
-                        formData.confirmPassword !== "" &&
+                        formData.confirmPassword !== '' &&
                         formData.password !== formData.confirmPassword
                       }
                       helperText={
-                        formData.confirmPassword !== "" &&
+                        formData.confirmPassword !== '' &&
                         formData.password !== formData.confirmPassword
-                          ? "Passwords do not match"
-                          : ""
+                          ? 'Passwords do not match'
+                          : ''
                       }
                     />
                   </Grid>
@@ -830,7 +830,7 @@ const Users: React.FC = () => {
               color="primary"
               size="small"
             >
-              {editingUser ? "Update" : "Add"}
+              {editingUser ? 'Update' : 'Add'}
             </Button>
           )}
         </DialogActions>

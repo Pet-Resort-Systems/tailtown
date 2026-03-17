@@ -1,6 +1,6 @@
 /**
  * Availability Calendar Component
- * 
+ *
  * Displays a month view calendar showing availability status for each day.
  * Features:
  * - Color-coded availability status
@@ -24,10 +24,13 @@ import Grid from '@mui/material/GridLegacy';
 import {
   ChevronLeft as PrevIcon,
   ChevronRight as NextIcon,
-  Circle as DotIcon
+  Circle as DotIcon,
 } from '@mui/icons-material';
 import { availabilityService } from '../../services/availabilityService';
-import { AvailabilityCalendar as AvailabilityCalendarType, DateAvailability } from '../../types/availability';
+import {
+  AvailabilityCalendar as AvailabilityCalendarType,
+  DateAvailability,
+} from '../../types/availability';
 
 interface AvailabilityCalendarProps {
   serviceId?: string;
@@ -42,11 +45,13 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
   onDateSelect,
   selectedDate,
   minDate,
-  maxDate
+  maxDate,
 }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-  const [calendar, setCalendar] = useState<AvailabilityCalendarType | null>(null);
+  const [calendar, setCalendar] = useState<AvailabilityCalendarType | null>(
+    null
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -94,7 +99,7 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
     if (minDate && date.date < minDate) return;
     if (maxDate && date.date > maxDate) return;
     if (date.status === 'UNAVAILABLE') return;
-    
+
     if (onDateSelect) {
       onDateSelect(date.date);
     }
@@ -104,14 +109,14 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
     if (availabilityService.isPastDate(date.date)) return '#e0e0e0';
     if (minDate && date.date < minDate) return '#e0e0e0';
     if (maxDate && date.date > maxDate) return '#e0e0e0';
-    
+
     const statusColors = {
       AVAILABLE: '#4caf50',
       PARTIALLY_AVAILABLE: '#ff9800',
       UNAVAILABLE: '#f44336',
-      WAITLIST: '#2196f3'
+      WAITLIST: '#2196f3',
     };
-    
+
     return statusColors[date.status] || '#e0e0e0';
   };
 
@@ -127,10 +132,13 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
     return false;
   };
 
-  const monthName = new Date(currentYear, currentMonth - 1).toLocaleDateString('en-US', { 
-    month: 'long', 
-    year: 'numeric' 
-  });
+  const monthName = new Date(currentYear, currentMonth - 1).toLocaleDateString(
+    'en-US',
+    {
+      month: 'long',
+      year: 'numeric',
+    }
+  );
 
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -140,17 +148,17 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
 
   // Create calendar grid
   const calendarDays: (DateAvailability | null)[] = [];
-  
+
   // Add empty cells for days before month starts
   for (let i = 0; i < firstDay; i++) {
     calendarDays.push(null);
   }
-  
+
   // Add days of month
   for (let day = 1; day <= daysInMonth; day++) {
     const dateString = `${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    const dateData = calendar?.dates.find(d => d.date === dateString);
-    
+    const dateData = calendar?.dates.find((d) => d.date === dateString);
+
     if (dateData) {
       calendarDays.push(dateData);
     } else {
@@ -160,14 +168,19 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
         status: 'AVAILABLE',
         availableCount: 0,
         totalCount: 0,
-        availableSuites: []
+        availableSuites: [],
       });
     }
   }
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -184,7 +197,12 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
   return (
     <Paper elevation={2} sx={{ p: 2 }}>
       {/* Header */}
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={2}
+      >
         <IconButton onClick={handlePreviousMonth} size="small">
           <PrevIcon />
         </IconButton>
@@ -197,8 +215,13 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
       {/* Week day headers */}
       <Grid container spacing={1} mb={1}>
         {weekDays.map((day) => (
-          <Grid item xs={12/7} key={day}>
-            <Typography variant="caption" align="center" display="block" fontWeight="bold">
+          <Grid item xs={12 / 7} key={day}>
+            <Typography
+              variant="caption"
+              align="center"
+              display="block"
+              fontWeight="bold"
+            >
               {day}
             </Typography>
           </Grid>
@@ -208,7 +231,7 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
       {/* Calendar grid */}
       <Grid container spacing={1}>
         {calendarDays.map((date, index) => (
-          <Grid item xs={12/7} key={index}>
+          <Grid item xs={12 / 7} key={index}>
             {date ? (
               <Tooltip
                 title={
@@ -217,7 +240,10 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
                       {availabilityService.getStatusLabel(date.status)}
                     </Typography>
                     <Typography variant="caption">
-                      {availabilityService.formatCapacity(date.availableCount, date.totalCount)}
+                      {availabilityService.formatCapacity(
+                        date.availableCount,
+                        date.totalCount
+                      )}
                     </Typography>
                     {date.price && (
                       <Typography variant="caption" display="block">
@@ -234,17 +260,19 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
                     textAlign: 'center',
                     borderRadius: 1,
                     cursor: isDateDisabled(date) ? 'not-allowed' : 'pointer',
-                    backgroundColor: isDateSelected(date.date) ? 'primary.main' : 'transparent',
+                    backgroundColor: isDateSelected(date.date)
+                      ? 'primary.main'
+                      : 'transparent',
                     color: isDateSelected(date.date) ? 'white' : 'inherit',
                     border: `2px solid ${getDateColor(date)}`,
                     opacity: isDateDisabled(date) ? 0.5 : 1,
                     '&:hover': {
-                      backgroundColor: isDateDisabled(date) 
-                        ? 'transparent' 
-                        : isDateSelected(date.date) 
-                          ? 'primary.dark' 
-                          : 'action.hover'
-                    }
+                      backgroundColor: isDateDisabled(date)
+                        ? 'transparent'
+                        : isDateSelected(date.date)
+                          ? 'primary.dark'
+                          : 'action.hover',
+                    },
                   }}
                 >
                   <Typography variant="body2">
@@ -261,7 +289,13 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
       </Grid>
 
       {/* Legend */}
-      <Box mt={2} display="flex" gap={2} flexWrap="wrap" justifyContent="center">
+      <Box
+        mt={2}
+        display="flex"
+        gap={2}
+        flexWrap="wrap"
+        justifyContent="center"
+      >
         <Chip
           icon={<DotIcon sx={{ fontSize: 12, color: '#4caf50' }} />}
           label="Available"

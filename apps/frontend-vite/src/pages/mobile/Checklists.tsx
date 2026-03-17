@@ -55,27 +55,29 @@ const Checklists: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  useEffect(() => {
+  useEffect(
+    () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      fetchChecklists();
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    fetchChecklists();
-  },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  []);
+    []
+  );
 
   const fetchChecklists = async () => {
     try {
       setLoading(true);
       const tasks = await mobileService.getPendingTasks();
-      
+
       // Convert pending tasks to checklists format
-      const checklistData: Checklist[] = tasks.map(task => ({
+      const checklistData: Checklist[] = tasks.map((task) => ({
         id: task.id,
         title: task.title,
         type: task.type,
         dueDate: task.dueDate,
         tasks: generateMockTasks(task.id, task.total, task.completed),
       }));
-      
+
       setChecklists(checklistData);
     } catch (error) {
       console.error('Error fetching checklists:', error);
@@ -85,7 +87,11 @@ const Checklists: React.FC = () => {
   };
 
   // Generate mock tasks for demo
-  const generateMockTasks = (checklistId: string, total: number, completed: number): ChecklistTask[] => {
+  const generateMockTasks = (
+    checklistId: string,
+    total: number,
+    completed: number
+  ): ChecklistTask[] => {
     const taskNames = [
       'Unlock doors',
       'Turn on lights',
@@ -98,7 +104,7 @@ const Checklists: React.FC = () => {
       'Safety inspection',
       'Log morning notes',
     ];
-    
+
     return Array.from({ length: total }, (_, i) => ({
       id: `${checklistId}-task-${i}`,
       title: taskNames[i] || `Task ${i + 1}`,
@@ -113,29 +119,33 @@ const Checklists: React.FC = () => {
   };
 
   const handleToggleTask = (checklistId: string, taskId: string) => {
-    setChecklists(prev => prev.map(checklist => {
-      if (checklist.id === checklistId) {
-        return {
-          ...checklist,
-          tasks: checklist.tasks.map(task => {
-            if (task.id === taskId) {
-              return {
-                ...task,
-                completed: !task.completed,
-                completedAt: !task.completed ? new Date().toISOString() : undefined,
-                completedBy: !task.completed ? user?.firstName : undefined,
-              };
-            }
-            return task;
-          }),
-        };
-      }
-      return checklist;
-    }));
+    setChecklists((prev) =>
+      prev.map((checklist) => {
+        if (checklist.id === checklistId) {
+          return {
+            ...checklist,
+            tasks: checklist.tasks.map((task) => {
+              if (task.id === taskId) {
+                return {
+                  ...task,
+                  completed: !task.completed,
+                  completedAt: !task.completed
+                    ? new Date().toISOString()
+                    : undefined,
+                  completedBy: !task.completed ? user?.firstName : undefined,
+                };
+              }
+              return task;
+            }),
+          };
+        }
+        return checklist;
+      })
+    );
   };
 
   const getProgress = (checklist: Checklist) => {
-    const completed = checklist.tasks.filter(t => t.completed).length;
+    const completed = checklist.tasks.filter((t) => t.completed).length;
     const total = checklist.tasks.length;
     return { completed, total, percentage: (completed / total) * 100 };
   };
@@ -150,7 +160,14 @@ const Checklists: React.FC = () => {
     return (
       <Box>
         <MobileHeader title="Checklists" showNotifications />
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '50vh',
+          }}
+        >
           <CircularProgress />
         </Box>
       </Box>
@@ -160,7 +177,7 @@ const Checklists: React.FC = () => {
   return (
     <Box sx={{ pb: 8 }}>
       <MobileHeader title="Checklists" showNotifications />
-      
+
       <Box sx={{ p: 2, pb: 10 }}>
         {checklists.length === 0 ? (
           <Card elevation={1}>
@@ -171,11 +188,11 @@ const Checklists: React.FC = () => {
             </CardContent>
           </Card>
         ) : (
-          checklists.map(checklist => {
+          checklists.map((checklist) => {
             const progress = getProgress(checklist);
             const isExpanded = expandedId === checklist.id;
             const statusColor = getStatusColor(progress.percentage);
-            
+
             return (
               <Card key={checklist.id} elevation={1} sx={{ mb: 2 }}>
                 <CardContent sx={{ pb: 1 }}>
@@ -186,12 +203,19 @@ const Checklists: React.FC = () => {
                     <ListItemIcon>
                       <Avatar
                         sx={{
-                          bgcolor: progress.percentage === 100 ? 'success.light' : 'primary.light',
+                          bgcolor:
+                            progress.percentage === 100
+                              ? 'success.light'
+                              : 'primary.light',
                           width: 40,
                           height: 40,
                         }}
                       >
-                        {progress.percentage === 100 ? <CompleteIcon /> : <IncompleteIcon />}
+                        {progress.percentage === 100 ? (
+                          <CompleteIcon />
+                        ) : (
+                          <IncompleteIcon />
+                        )}
                       </Avatar>
                     </ListItemIcon>
                     <ListItemText
@@ -208,21 +232,23 @@ const Checklists: React.FC = () => {
                     <IconButton
                       size="small"
                       sx={{
-                        transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transform: isExpanded
+                          ? 'rotate(180deg)'
+                          : 'rotate(0deg)',
                         transition: 'transform 0.3s',
                       }}
                     >
                       <ExpandIcon />
                     </IconButton>
                   </ListItemButton>
-                  
+
                   <LinearProgress
                     variant="determinate"
                     value={progress.percentage}
                     color={statusColor}
                     sx={{ mt: 1, mb: 2, borderRadius: 1, height: 6 }}
                   />
-                  
+
                   <Collapse in={isExpanded} timeout="auto" unmountOnExit>
                     <List disablePadding>
                       {checklist.tasks.map((task, index) => (
@@ -238,7 +264,9 @@ const Checklists: React.FC = () => {
                             }
                           >
                             <ListItemButton
-                              onClick={() => handleToggleTask(checklist.id, task.id)}
+                              onClick={() =>
+                                handleToggleTask(checklist.id, task.id)
+                              }
                               dense
                             >
                               <ListItemIcon sx={{ minWidth: 40 }}>
@@ -258,16 +286,28 @@ const Checklists: React.FC = () => {
                                 }
                                 primaryTypographyProps={{
                                   style: {
-                                    textDecoration: task.completed ? 'line-through' : 'none',
-                                    color: task.completed ? 'text.secondary' : 'text.primary',
+                                    textDecoration: task.completed
+                                      ? 'line-through'
+                                      : 'none',
+                                    color: task.completed
+                                      ? 'text.secondary'
+                                      : 'text.primary',
                                   },
                                 }}
-                                secondaryTypographyProps={{ variant: 'caption' }}
+                                secondaryTypographyProps={{
+                                  variant: 'caption',
+                                }}
                               />
                             </ListItemButton>
                           </ListItem>
                           {index < checklist.tasks.length - 1 && (
-                            <Box sx={{ borderBottom: 1, borderColor: 'divider', ml: 7 }} />
+                            <Box
+                              sx={{
+                                borderBottom: 1,
+                                borderColor: 'divider',
+                                ml: 7,
+                              }}
+                            />
                           )}
                         </React.Fragment>
                       ))}
@@ -279,7 +319,7 @@ const Checklists: React.FC = () => {
           })
         )}
       </Box>
-      
+
       {/* Floating Action Button for adding notes/photos */}
       <Fab
         color="primary"
@@ -295,6 +335,6 @@ const Checklists: React.FC = () => {
   );
 };
 
-      <BottomNav />
+<BottomNav />;
 
 export default Checklists;

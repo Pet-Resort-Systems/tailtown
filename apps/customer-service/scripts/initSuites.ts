@@ -5,7 +5,7 @@ import { PrismaClient, ResourceType } from '@prisma/client';
 enum SuiteType {
   STANDARD = 'STANDARD',
   STANDARD_PLUS = 'STANDARD_PLUS',
-  VIP = 'VIP'
+  VIP = 'VIP',
 }
 
 const prisma = new PrismaClient();
@@ -15,15 +15,19 @@ async function main() {
   const existingSuites = await prisma.resource.findMany({
     where: {
       type: {
-        in: [ResourceType.VIP_SUITE, ResourceType.STANDARD_PLUS_SUITE, ResourceType.STANDARD_SUITE],
+        in: [
+          ResourceType.VIP_SUITE,
+          ResourceType.STANDARD_PLUS_SUITE,
+          ResourceType.STANDARD_SUITE,
+        ],
       },
     },
     select: {
       name: true,
       type: true,
-    }
+    },
   });
-  
+
   console.log(`Found ${existingSuites.length} existing suites.`);
   // Default suite counts
   const count = parseInt(process.argv[2] || '168', 10);
@@ -52,7 +56,12 @@ async function main() {
         suiteNumber: i,
         lastCleaned: null,
         maintenanceStatus: 'AVAILABLE',
-        amenities: ['Premium Bedding', 'Dedicated Play Time', 'Webcam', 'Spa Treatment'],
+        amenities: [
+          'Premium Bedding',
+          'Dedicated Play Time',
+          'Webcam',
+          'Spa Treatment',
+        ],
         size: 'Extra Large',
         location: 'Premium Wing',
       },
@@ -100,29 +109,35 @@ async function main() {
   }
 
   // Filter out suites that already exist
-  const existingSuiteNames = new Set(existingSuites.map(suite => suite.name));
-  const suitesToCreate = suites.filter(suite => !existingSuiteNames.has(suite.name));
-  
+  const existingSuiteNames = new Set(existingSuites.map((suite) => suite.name));
+  const suitesToCreate = suites.filter(
+    (suite) => !existingSuiteNames.has(suite.name)
+  );
+
   if (suitesToCreate.length === 0) {
     console.log('All suites already exist. No new suites to create.');
     return;
   }
-  
+
   console.log(`Initializing ${suitesToCreate.length} new suites...`);
-  
+
   // Create suites in batches to avoid transaction size limits
   const batchSize = 50;
   for (let i = 0; i < suitesToCreate.length; i += batchSize) {
     const batch = suitesToCreate.slice(i, i + batchSize);
-    console.log(`Creating batch ${Math.floor(i / batchSize) + 1} of ${Math.ceil(suitesToCreate.length / batchSize)}...`);
-    
+    console.log(
+      `Creating batch ${Math.floor(i / batchSize) + 1} of ${Math.ceil(suitesToCreate.length / batchSize)}...`
+    );
+
     await prisma.$transaction(
       batch.map((suite) => prisma.resource.create({ data: suite }))
     );
   }
-  
+
   console.log('Suites initialized successfully.');
-  console.log(`Total suites now: ${existingSuites.length + suitesToCreate.length}`);
+  console.log(
+    `Total suites now: ${existingSuites.length + suitesToCreate.length}`
+  );
 }
 
 main()

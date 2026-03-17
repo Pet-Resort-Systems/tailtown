@@ -11,10 +11,10 @@
  * - testSchedulesEndpoint
  */
 
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-import { AppError } from "../../middleware/error.middleware";
-import { logger } from "../../utils/logger";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { AppError } from '../../middleware/error.middleware';
+import { logger } from '../../utils/logger';
 
 // Extend the Express Request type for authenticated requests
 interface AuthenticatedRequest extends Request {
@@ -100,16 +100,16 @@ export const getStaffSchedules = async (
 
     const schedules = await prisma.staffSchedule.findMany({
       where: whereClause,
-      orderBy: { date: "asc" },
+      orderBy: { date: 'asc' },
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: schedules.length,
       data: schedules,
     });
   } catch (error) {
-    logger.error("Error fetching staff schedules", { error });
+    logger.error('Error fetching staff schedules', { error });
     next(error);
   }
 };
@@ -123,8 +123,8 @@ export const testSchedulesEndpoint = async (
   next: NextFunction
 ) => {
   res.status(200).json({
-    status: "success",
-    message: "Test endpoint working",
+    status: 'success',
+    message: 'Test endpoint working',
     query: req.query,
     params: req.params,
   });
@@ -139,7 +139,7 @@ export const getAllSchedules = async (
   next: NextFunction
 ) => {
   try {
-    logger.debug("getAllSchedules called", {
+    logger.debug('getAllSchedules called', {
       tenantId: (req as any).tenantId,
       startDate: req.query.startDate,
       endDate: req.query.endDate,
@@ -175,16 +175,16 @@ export const getAllSchedules = async (
           },
         },
       },
-      orderBy: { date: "asc" },
+      orderBy: { date: 'asc' },
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: schedules.length,
       data: schedules,
     });
   } catch (error) {
-    logger.error("Error fetching all schedules", { error });
+    logger.error('Error fetching all schedules', { error });
     next(error);
   }
 };
@@ -205,14 +205,14 @@ export const createStaffSchedule = async (
     // Validate required fields
     if (!date || !startTime || !endTime) {
       return next(
-        new AppError("Date, start time, and end time are required", 400)
+        new AppError('Date, start time, and end time are required', 400)
       );
     }
 
     // Check if staff exists
     const staff = await prisma.staff.findUnique({ where: { id: staffId } });
     if (!staff) {
-      return next(new AppError("Staff not found", 404));
+      return next(new AppError('Staff not found', 404));
     }
 
     const scheduleDate = new Date(date);
@@ -229,7 +229,7 @@ export const createStaffSchedule = async (
     if (conflict) {
       return next(
         new AppError(
-          "This staff member already has a shift during this time",
+          'This staff member already has a shift during this time',
           400
         )
       );
@@ -242,7 +242,7 @@ export const createStaffSchedule = async (
         date: scheduleDate,
         startTime,
         endTime,
-        status: status || "SCHEDULED",
+        status: status || 'SCHEDULED',
         notes,
         location,
         role,
@@ -251,11 +251,11 @@ export const createStaffSchedule = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: newSchedule,
     });
   } catch (error: any) {
-    logger.error("Error creating staff schedule", {
+    logger.error('Error creating staff schedule', {
       staffId: req.params.staffId,
       error: error.message,
     });
@@ -281,7 +281,7 @@ export const updateStaffSchedule = async (
       where: { id: scheduleId },
     });
     if (!schedule) {
-      return next(new AppError("Schedule not found", 404));
+      return next(new AppError('Schedule not found', 404));
     }
 
     const newDate = date ? new Date(date) : schedule.date;
@@ -301,7 +301,7 @@ export const updateStaffSchedule = async (
     if (conflict) {
       return next(
         new AppError(
-          "This staff member already has a shift during this time",
+          'This staff member already has a shift during this time',
           400
         )
       );
@@ -323,11 +323,11 @@ export const updateStaffSchedule = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: updatedSchedule,
     });
   } catch (error: any) {
-    logger.error("Error updating staff schedule", {
+    logger.error('Error updating staff schedule', {
       scheduleId: req.params.scheduleId,
       error: error.message,
     });
@@ -351,18 +351,18 @@ export const deleteStaffSchedule = async (
       where: { id: scheduleId },
     });
     if (!schedule) {
-      return next(new AppError("Schedule not found", 404));
+      return next(new AppError('Schedule not found', 404));
     }
 
     // Delete the schedule
     await prisma.staffSchedule.delete({ where: { id: scheduleId } });
 
     res.status(200).json({
-      status: "success",
-      message: "Schedule deleted successfully",
+      status: 'success',
+      message: 'Schedule deleted successfully',
     });
   } catch (error: any) {
-    logger.error("Error deleting staff schedule", {
+    logger.error('Error deleting staff schedule', {
       scheduleId: req.params.scheduleId,
       error: error.message,
     });
@@ -382,7 +382,7 @@ export const bulkCreateSchedules = async (
     const { schedules } = req.body;
 
     if (!schedules || !Array.isArray(schedules) || schedules.length === 0) {
-      return next(new AppError("Valid schedules array is required", 400));
+      return next(new AppError('Valid schedules array is required', 400));
     }
 
     // Process each schedule in a transaction
@@ -403,7 +403,7 @@ export const bulkCreateSchedules = async (
 
         if (!staffId || !date || !startTime || !endTime) {
           throw new AppError(
-            "Each schedule must include staffId, date, startTime, and endTime",
+            'Each schedule must include staffId, date, startTime, and endTime',
             400
           );
         }
@@ -432,7 +432,7 @@ export const bulkCreateSchedules = async (
             date: scheduleDate,
             startTime,
             endTime,
-            status: status || "SCHEDULED",
+            status: status || 'SCHEDULED',
             notes,
             location,
             role,
@@ -447,12 +447,12 @@ export const bulkCreateSchedules = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       results: createdSchedules.length,
       data: createdSchedules,
     });
   } catch (error: any) {
-    logger.error("Error creating bulk schedules", {
+    logger.error('Error creating bulk schedules', {
       count: req.body.schedules?.length,
       error: error.message,
     });

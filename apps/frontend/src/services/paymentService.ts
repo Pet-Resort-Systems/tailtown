@@ -4,7 +4,8 @@ import { Payment } from './invoiceService';
 import axios from 'axios';
 
 // Payment service base URL (port 4005)
-const PAYMENT_SERVICE_URL = process.env.REACT_APP_PAYMENT_SERVICE_URL || 'http://localhost:4005';
+const PAYMENT_SERVICE_URL =
+  process.env.REACT_APP_PAYMENT_SERVICE_URL || 'http://localhost:4005';
 
 // Additional types
 export interface StoreCredit {
@@ -58,7 +59,9 @@ export const paymentService = {
   // Get all payments for a customer
   getCustomerPayments: async (customerId: string): Promise<Payment[]> => {
     try {
-      const response = await api.get(`${ENDPOINTS.PAYMENTS}/customer/${customerId}`);
+      const response = await api.get(
+        `${ENDPOINTS.PAYMENTS}/customer/${customerId}`
+      );
       return response.data.data;
     } catch (error) {
       console.error('Error fetching customer payments:', error);
@@ -78,7 +81,9 @@ export const paymentService = {
   },
 
   // Create a new payment
-  createPayment: async (paymentData: Omit<Payment, 'id' | 'paymentDate'>): Promise<Payment> => {
+  createPayment: async (
+    paymentData: Omit<Payment, 'id' | 'paymentDate'>
+  ): Promise<Payment> => {
     try {
       const response = await api.post(ENDPOINTS.PAYMENTS, paymentData);
       return response.data.data;
@@ -91,7 +96,10 @@ export const paymentService = {
   // Record store credit
   recordStoreCredit: async (storeCreditData: StoreCredit): Promise<Payment> => {
     try {
-      const response = await api.post(`${ENDPOINTS.PAYMENTS}/store-credit`, storeCreditData);
+      const response = await api.post(
+        `${ENDPOINTS.PAYMENTS}/store-credit`,
+        storeCreditData
+      );
       return response.data.data;
     } catch (error) {
       console.error('Error recording store credit:', error);
@@ -100,9 +108,14 @@ export const paymentService = {
   },
 
   // Apply store credit to an invoice
-  applyStoreCredit: async (creditApplicationData: CreditApplication): Promise<any> => {
+  applyStoreCredit: async (
+    creditApplicationData: CreditApplication
+  ): Promise<any> => {
     try {
-      const response = await api.post(`${ENDPOINTS.PAYMENTS}/apply-credit`, creditApplicationData);
+      const response = await api.post(
+        `${ENDPOINTS.PAYMENTS}/apply-credit`,
+        creditApplicationData
+      );
       return response.data.data;
     } catch (error) {
       console.error('Error applying store credit:', error);
@@ -111,34 +124,43 @@ export const paymentService = {
   },
 
   // CardConnect payment processing
-  processCardPayment: async (paymentData: CardPaymentRequest): Promise<PaymentResponse> => {
+  processCardPayment: async (
+    paymentData: CardPaymentRequest
+  ): Promise<PaymentResponse> => {
     try {
-      const response = await axios.post(`${PAYMENT_SERVICE_URL}/api/payments/authorize`, paymentData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await axios.post(
+        `${PAYMENT_SERVICE_URL}/api/payments/authorize`,
+        paymentData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
       return response.data;
     } catch (error: any) {
       console.error('Error processing card payment:', error);
-      
+
       // Return a properly formatted error response
       if (error.response?.data) {
         // If backend returned structured error, use it
         return {
           status: 'error',
-          message: error.response.data.message || error.response.data.error || 'Payment failed',
+          message:
+            error.response.data.message ||
+            error.response.data.error ||
+            'Payment failed',
           error: error.response.data.error || error.message,
-          data: error.response.data.data || { approved: false }
+          data: error.response.data.data || { approved: false },
         };
       }
-      
+
       // Generic error response
       return {
         status: 'error',
         message: error.message || 'Payment processing failed',
         error: error.message,
-        data: { approved: false }
+        data: { approved: false },
       };
     }
   },
@@ -146,7 +168,9 @@ export const paymentService = {
   // Get test card numbers (development only)
   getTestCards: async (): Promise<any> => {
     try {
-      const response = await axios.get(`${PAYMENT_SERVICE_URL}/api/payments/test-cards`);
+      const response = await axios.get(
+        `${PAYMENT_SERVICE_URL}/api/payments/test-cards`
+      );
       return response.data.data;
     } catch (error) {
       console.error('Error fetching test cards:', error);

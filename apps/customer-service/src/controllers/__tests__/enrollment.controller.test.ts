@@ -1,6 +1,6 @@
 /**
  * Enrollment Controller Tests
- * 
+ *
  * Tests enrollment business logic including capacity checking,
  * duplicate prevention, payment calculation, and waitlist integration
  */
@@ -38,7 +38,7 @@ jest.mock('@prisma/client', () => ({
       findMany: jest.fn(),
     },
     $executeRaw: jest.fn(),
-  }))
+  })),
 }));
 
 describe('Enrollment Controller', () => {
@@ -49,13 +49,13 @@ describe('Enrollment Controller', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     mockRequest = {
       headers: {
-        'x-tenant-id': 'test-tenant'
+        'x-tenant-id': 'test-tenant',
       },
       params: {},
-      body: {}
+      body: {},
     };
 
     mockResponse = {
@@ -77,7 +77,7 @@ describe('Enrollment Controller', () => {
       mockRequest.body = {
         petId: 'pet-1',
         customerId: 'customer-1',
-        amountPaid: 200
+        amountPaid: 200,
       };
 
       // Mock class at full capacity
@@ -86,7 +86,7 @@ describe('Enrollment Controller', () => {
         maxCapacity: 10,
         currentEnrolled: 10,
         pricePerSeries: 200,
-        _count: { enrollments: 10, sessions: 6 }
+        _count: { enrollments: 10, sessions: 6 },
       });
 
       await enrollInClass(
@@ -98,7 +98,7 @@ describe('Enrollment Controller', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           message: 'Class is full. Pet can be added to waitlist.',
-          statusCode: 409
+          statusCode: 409,
         })
       );
       expect(mockPrisma.classEnrollment.create).not.toHaveBeenCalled();
@@ -109,7 +109,7 @@ describe('Enrollment Controller', () => {
       mockRequest.body = {
         petId: 'pet-1',
         customerId: 'customer-1',
-        amountPaid: 200
+        amountPaid: 200,
       };
 
       mockPrisma.trainingClass.findFirst.mockResolvedValue({
@@ -117,7 +117,7 @@ describe('Enrollment Controller', () => {
         maxCapacity: 10,
         currentEnrolled: 8,
         pricePerSeries: 200,
-        _count: { enrollments: 8, sessions: 6 }
+        _count: { enrollments: 8, sessions: 6 },
       });
 
       mockPrisma.classEnrollment.findFirst.mockResolvedValue(null);
@@ -127,7 +127,7 @@ describe('Enrollment Controller', () => {
         petId: 'pet-1',
         customerId: 'customer-1',
         amountPaid: 200,
-        paymentStatus: 'PAID'
+        paymentStatus: 'PAID',
       });
 
       await enrollInClass(
@@ -145,7 +145,7 @@ describe('Enrollment Controller', () => {
       mockRequest.body = {
         petId: 'pet-1',
         customerId: 'customer-1',
-        amountPaid: 200
+        amountPaid: 200,
       };
 
       mockPrisma.trainingClass.findFirst.mockResolvedValue({
@@ -153,7 +153,7 @@ describe('Enrollment Controller', () => {
         maxCapacity: 10,
         currentEnrolled: 10,
         pricePerSeries: 200,
-        _count: { enrollments: 10, sessions: 6 }
+        _count: { enrollments: 10, sessions: 6 },
       });
 
       await enrollInClass(
@@ -164,7 +164,7 @@ describe('Enrollment Controller', () => {
 
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
-          statusCode: 409
+          statusCode: 409,
         })
       );
     });
@@ -176,7 +176,7 @@ describe('Enrollment Controller', () => {
       mockRequest.body = {
         petId: 'pet-1',
         customerId: 'customer-1',
-        amountPaid: 200
+        amountPaid: 200,
       };
 
       mockPrisma.trainingClass.findFirst.mockResolvedValue({
@@ -184,14 +184,14 @@ describe('Enrollment Controller', () => {
         maxCapacity: 10,
         currentEnrolled: 5,
         pricePerSeries: 200,
-        _count: { enrollments: 5, sessions: 6 }
+        _count: { enrollments: 5, sessions: 6 },
       });
 
       // Mock existing enrollment
       mockPrisma.classEnrollment.findFirst.mockResolvedValue({
         id: 'existing-enrollment',
         classId: 'class-1',
-        petId: 'pet-1'
+        petId: 'pet-1',
       });
 
       await enrollInClass(
@@ -203,7 +203,7 @@ describe('Enrollment Controller', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           message: 'Pet is already enrolled in this class',
-          statusCode: 409
+          statusCode: 409,
         })
       );
     });
@@ -213,7 +213,7 @@ describe('Enrollment Controller', () => {
       mockRequest.body = {
         petId: 'pet-1',
         customerId: 'customer-1',
-        amountPaid: 200
+        amountPaid: 200,
       };
 
       mockPrisma.trainingClass.findFirst.mockResolvedValue({
@@ -221,7 +221,7 @@ describe('Enrollment Controller', () => {
         maxCapacity: 10,
         currentEnrolled: 5,
         pricePerSeries: 200,
-        _count: { enrollments: 5, sessions: 6 }
+        _count: { enrollments: 5, sessions: 6 },
       });
 
       // No existing enrollment in this class
@@ -229,7 +229,7 @@ describe('Enrollment Controller', () => {
       mockPrisma.classEnrollment.create.mockResolvedValue({
         id: 'enrollment-2',
         classId: 'class-2',
-        petId: 'pet-1'
+        petId: 'pet-1',
       });
 
       await enrollInClass(
@@ -249,7 +249,7 @@ describe('Enrollment Controller', () => {
       mockRequest.body = {
         petId: 'pet-1',
         customerId: 'customer-1',
-        amountPaid: 200
+        amountPaid: 200,
       };
 
       mockPrisma.trainingClass.findFirst.mockResolvedValue({
@@ -257,7 +257,7 @@ describe('Enrollment Controller', () => {
         maxCapacity: 10,
         currentEnrolled: 5,
         pricePerSeries: 200,
-        _count: { enrollments: 5, sessions: 6 }
+        _count: { enrollments: 5, sessions: 6 },
       });
 
       mockPrisma.classEnrollment.findFirst.mockResolvedValue(null);
@@ -273,8 +273,8 @@ describe('Enrollment Controller', () => {
           data: expect.objectContaining({
             amountPaid: 200,
             amountDue: 200,
-            paymentStatus: 'PAID'
-          })
+            paymentStatus: 'PAID',
+          }),
         })
       );
     });
@@ -284,7 +284,7 @@ describe('Enrollment Controller', () => {
       mockRequest.body = {
         petId: 'pet-1',
         customerId: 'customer-1',
-        amountPaid: 50
+        amountPaid: 50,
       };
 
       mockPrisma.trainingClass.findFirst.mockResolvedValue({
@@ -292,7 +292,7 @@ describe('Enrollment Controller', () => {
         maxCapacity: 10,
         currentEnrolled: 5,
         pricePerSeries: 200,
-        _count: { enrollments: 5, sessions: 6 }
+        _count: { enrollments: 5, sessions: 6 },
       });
 
       mockPrisma.classEnrollment.findFirst.mockResolvedValue(null);
@@ -308,8 +308,8 @@ describe('Enrollment Controller', () => {
           data: expect.objectContaining({
             amountPaid: 50,
             amountDue: 200,
-            paymentStatus: 'PENDING'
-          })
+            paymentStatus: 'PENDING',
+          }),
         })
       );
     });
@@ -319,7 +319,7 @@ describe('Enrollment Controller', () => {
       mockRequest.body = {
         petId: 'pet-1',
         customerId: 'customer-1',
-        amountPaid: 250
+        amountPaid: 250,
       };
 
       mockPrisma.trainingClass.findFirst.mockResolvedValue({
@@ -327,7 +327,7 @@ describe('Enrollment Controller', () => {
         maxCapacity: 10,
         currentEnrolled: 5,
         pricePerSeries: 200,
-        _count: { enrollments: 5, sessions: 6 }
+        _count: { enrollments: 5, sessions: 6 },
       });
 
       mockPrisma.classEnrollment.findFirst.mockResolvedValue(null);
@@ -342,8 +342,8 @@ describe('Enrollment Controller', () => {
         expect.objectContaining({
           data: expect.objectContaining({
             amountPaid: 250,
-            paymentStatus: 'PAID'
-          })
+            paymentStatus: 'PAID',
+          }),
         })
       );
     });
@@ -353,7 +353,7 @@ describe('Enrollment Controller', () => {
       mockRequest.body = {
         petId: 'pet-1',
         customerId: 'customer-1',
-        amountPaid: 0
+        amountPaid: 0,
       };
 
       mockPrisma.trainingClass.findFirst.mockResolvedValue({
@@ -361,7 +361,7 @@ describe('Enrollment Controller', () => {
         maxCapacity: 10,
         currentEnrolled: 5,
         pricePerSeries: 200,
-        _count: { enrollments: 5, sessions: 6 }
+        _count: { enrollments: 5, sessions: 6 },
       });
 
       mockPrisma.classEnrollment.findFirst.mockResolvedValue(null);
@@ -376,8 +376,8 @@ describe('Enrollment Controller', () => {
         expect.objectContaining({
           data: expect.objectContaining({
             amountPaid: 0,
-            paymentStatus: 'PENDING'
-          })
+            paymentStatus: 'PENDING',
+          }),
         })
       );
     });
@@ -389,7 +389,7 @@ describe('Enrollment Controller', () => {
       mockRequest.body = {
         petId: 'pet-1',
         customerId: 'customer-1',
-        amountPaid: 200
+        amountPaid: 200,
       };
 
       mockPrisma.trainingClass.findFirst.mockResolvedValue({
@@ -397,14 +397,14 @@ describe('Enrollment Controller', () => {
         maxCapacity: 10,
         currentEnrolled: 5,
         pricePerSeries: 200,
-        _count: { enrollments: 5, sessions: 6 }
+        _count: { enrollments: 5, sessions: 6 },
       });
 
       mockPrisma.classEnrollment.findFirst.mockResolvedValue(null);
       mockPrisma.classEnrollment.create.mockResolvedValue({
         id: 'enrollment-1',
         classId: 'class-1',
-        petId: 'pet-1'
+        petId: 'pet-1',
       });
 
       await enrollInClass(
@@ -417,8 +417,8 @@ describe('Enrollment Controller', () => {
         where: {
           classId: 'class-1',
           petId: 'pet-1',
-          tenantId: 'test-tenant'
-        }
+          tenantId: 'test-tenant',
+        },
       });
     });
   });
@@ -429,7 +429,7 @@ describe('Enrollment Controller', () => {
       mockRequest.body = {
         petId: 'pet-1',
         customerId: 'customer-1',
-        amountPaid: 200
+        amountPaid: 200,
       };
 
       mockPrisma.trainingClass.findFirst.mockResolvedValue({
@@ -437,12 +437,12 @@ describe('Enrollment Controller', () => {
         maxCapacity: 10,
         currentEnrolled: 5,
         pricePerSeries: 200,
-        _count: { enrollments: 5, sessions: 6 }
+        _count: { enrollments: 5, sessions: 6 },
       });
 
       mockPrisma.classEnrollment.findFirst.mockResolvedValue(null);
       mockPrisma.classEnrollment.create.mockResolvedValue({
-        id: 'enrollment-1'
+        id: 'enrollment-1',
       });
 
       await enrollInClass(
@@ -454,8 +454,8 @@ describe('Enrollment Controller', () => {
       expect(mockPrisma.trainingClass.update).toHaveBeenCalledWith({
         where: { id: 'class-1' },
         data: {
-          currentEnrolled: { increment: 1 }
-        }
+          currentEnrolled: { increment: 1 },
+        },
       });
     });
   });
@@ -469,7 +469,7 @@ describe('Enrollment Controller', () => {
         id: 'enrollment-1',
         classId: 'class-1',
         petId: 'pet-1',
-        notes: 'Previous notes'
+        notes: 'Previous notes',
       });
 
       mockPrisma.classEnrollment.update.mockResolvedValue({});
@@ -484,8 +484,8 @@ describe('Enrollment Controller', () => {
       expect(mockPrisma.trainingClass.update).toHaveBeenCalledWith({
         where: { id: 'class-1' },
         data: {
-          currentEnrolled: { decrement: 1 }
-        }
+          currentEnrolled: { decrement: 1 },
+        },
       });
     });
 
@@ -496,17 +496,17 @@ describe('Enrollment Controller', () => {
       mockPrisma.classEnrollment.findFirst.mockResolvedValue({
         id: 'enrollment-1',
         classId: 'class-1',
-        petId: 'pet-1'
+        petId: 'pet-1',
       });
 
       mockPrisma.classEnrollment.update.mockResolvedValue({});
-      
+
       // Mock waitlist entry
       mockPrisma.classWaitlist.findFirst.mockResolvedValue({
         id: 'waitlist-1',
         classId: 'class-1',
         position: 1,
-        status: 'WAITING'
+        status: 'WAITING',
       });
 
       await dropFromClass(
@@ -519,8 +519,8 @@ describe('Enrollment Controller', () => {
         where: { id: 'waitlist-1' },
         data: {
           notified: true,
-          notifiedDate: expect.any(Date)
-        }
+          notifiedDate: expect.any(Date),
+        },
       });
     });
 
@@ -532,7 +532,7 @@ describe('Enrollment Controller', () => {
         id: 'enrollment-1',
         classId: 'class-1',
         petId: 'pet-1',
-        notes: ''
+        notes: '',
       });
 
       mockPrisma.classWaitlist.findFirst.mockResolvedValue(null);
@@ -547,8 +547,8 @@ describe('Enrollment Controller', () => {
         where: { id: 'enrollment-1' },
         data: {
           status: 'DROPPED',
-          notes: expect.stringContaining('Dropped: Moving away')
-        }
+          notes: expect.stringContaining('Dropped: Moving away'),
+        },
       });
     });
   });
@@ -558,7 +558,7 @@ describe('Enrollment Controller', () => {
       mockRequest.params = { classId: 'class-1' };
       mockRequest.body = {
         customerId: 'customer-1',
-        amountPaid: 200
+        amountPaid: 200,
       };
 
       await enrollInClass(
@@ -570,7 +570,7 @@ describe('Enrollment Controller', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           message: 'Pet ID and Customer ID are required',
-          statusCode: 400
+          statusCode: 400,
         })
       );
     });
@@ -579,7 +579,7 @@ describe('Enrollment Controller', () => {
       mockRequest.params = { classId: 'class-1' };
       mockRequest.body = {
         petId: 'pet-1',
-        amountPaid: 200
+        amountPaid: 200,
       };
 
       await enrollInClass(
@@ -591,7 +591,7 @@ describe('Enrollment Controller', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           message: 'Pet ID and Customer ID are required',
-          statusCode: 400
+          statusCode: 400,
         })
       );
     });
@@ -601,7 +601,7 @@ describe('Enrollment Controller', () => {
       mockRequest.body = {
         petId: 'pet-1',
         customerId: 'customer-1',
-        amountPaid: 200
+        amountPaid: 200,
       };
 
       mockPrisma.trainingClass.findFirst.mockResolvedValue(null);
@@ -615,7 +615,7 @@ describe('Enrollment Controller', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           message: 'Training class not found',
-          statusCode: 404
+          statusCode: 404,
         })
       );
     });
@@ -626,13 +626,13 @@ describe('Enrollment Controller', () => {
       mockRequest.params = { classId: 'class-1' };
       mockRequest.body = {
         petId: 'pet-1',
-        customerId: 'customer-1'
+        customerId: 'customer-1',
       };
 
       mockPrisma.classWaitlist.findFirst.mockResolvedValue({
         id: 'existing-waitlist',
         classId: 'class-1',
-        petId: 'pet-1'
+        petId: 'pet-1',
       });
 
       await addToWaitlist(
@@ -644,7 +644,7 @@ describe('Enrollment Controller', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           message: 'Pet is already on waitlist',
-          statusCode: 409
+          statusCode: 409,
         })
       );
     });
@@ -653,7 +653,7 @@ describe('Enrollment Controller', () => {
       mockRequest.params = { classId: 'class-1' };
       mockRequest.body = {
         petId: 'pet-1',
-        customerId: 'customer-1'
+        customerId: 'customer-1',
       };
 
       mockPrisma.classWaitlist.findFirst
@@ -669,8 +669,8 @@ describe('Enrollment Controller', () => {
       expect(mockPrisma.classWaitlist.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
-            position: 6
-          })
+            position: 6,
+          }),
         })
       );
     });
@@ -682,7 +682,7 @@ describe('Enrollment Controller', () => {
         id: 'waitlist-1',
         classId: 'class-1',
         position: 3,
-        tenantId: 'test-tenant'
+        tenantId: 'test-tenant',
       });
 
       await removeFromWaitlist(

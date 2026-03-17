@@ -11,11 +11,15 @@ export interface Pet {
   petIcons?: string[];
   // Custom notes for generic flag icons
   iconNotes?: { [iconId: string]: string };
-  vaccinationStatus?: Record<string, string | { 
-    status: 'CURRENT' | 'EXPIRED' | 'PENDING';
-    lastGiven?: string;
-    notes?: string;
-  }>;
+  vaccinationStatus?: Record<
+    string,
+    | string
+    | {
+        status: 'CURRENT' | 'EXPIRED' | 'PENDING';
+        lastGiven?: string;
+        notes?: string;
+      }
+  >;
   vaccineExpirations?: Record<string, string> | null;
   notes?: string | null;
   createdAt?: string;

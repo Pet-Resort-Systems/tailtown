@@ -1,6 +1,6 @@
 /**
  * Seed Rainy Tenant with Test Data
- * 
+ *
  * Creates:
  * - 10 test customers
  * - 10 test pets (1 per customer)
@@ -16,16 +16,66 @@ const RAINY_TENANT_ID = '06d09e08-fe1f-4feb-89f8-c3b619026ba9';
 
 // Test customers data
 const testCustomers = [
-  { firstName: 'Alice', lastName: 'Anderson', email: 'alice.anderson@rainytest.com', phone: '555-0101' },
-  { firstName: 'Bob', lastName: 'Baker', email: 'bob.baker@rainytest.com', phone: '555-0102' },
-  { firstName: 'Carol', lastName: 'Chen', email: 'carol.chen@rainytest.com', phone: '555-0103' },
-  { firstName: 'David', lastName: 'Davis', email: 'david.davis@rainytest.com', phone: '555-0104' },
-  { firstName: 'Emma', lastName: 'Evans', email: 'emma.evans@rainytest.com', phone: '555-0105' },
-  { firstName: 'Frank', lastName: 'Foster', email: 'frank.foster@rainytest.com', phone: '555-0106' },
-  { firstName: 'Grace', lastName: 'Garcia', email: 'grace.garcia@rainytest.com', phone: '555-0107' },
-  { firstName: 'Henry', lastName: 'Harris', email: 'henry.harris@rainytest.com', phone: '555-0108' },
-  { firstName: 'Iris', lastName: 'Iverson', email: 'iris.iverson@rainytest.com', phone: '555-0109' },
-  { firstName: 'Jack', lastName: 'Johnson', email: 'jack.johnson@rainytest.com', phone: '555-0110' },
+  {
+    firstName: 'Alice',
+    lastName: 'Anderson',
+    email: 'alice.anderson@rainytest.com',
+    phone: '555-0101',
+  },
+  {
+    firstName: 'Bob',
+    lastName: 'Baker',
+    email: 'bob.baker@rainytest.com',
+    phone: '555-0102',
+  },
+  {
+    firstName: 'Carol',
+    lastName: 'Chen',
+    email: 'carol.chen@rainytest.com',
+    phone: '555-0103',
+  },
+  {
+    firstName: 'David',
+    lastName: 'Davis',
+    email: 'david.davis@rainytest.com',
+    phone: '555-0104',
+  },
+  {
+    firstName: 'Emma',
+    lastName: 'Evans',
+    email: 'emma.evans@rainytest.com',
+    phone: '555-0105',
+  },
+  {
+    firstName: 'Frank',
+    lastName: 'Foster',
+    email: 'frank.foster@rainytest.com',
+    phone: '555-0106',
+  },
+  {
+    firstName: 'Grace',
+    lastName: 'Garcia',
+    email: 'grace.garcia@rainytest.com',
+    phone: '555-0107',
+  },
+  {
+    firstName: 'Henry',
+    lastName: 'Harris',
+    email: 'henry.harris@rainytest.com',
+    phone: '555-0108',
+  },
+  {
+    firstName: 'Iris',
+    lastName: 'Iverson',
+    email: 'iris.iverson@rainytest.com',
+    phone: '555-0109',
+  },
+  {
+    firstName: 'Jack',
+    lastName: 'Johnson',
+    email: 'jack.johnson@rainytest.com',
+    phone: '555-0110',
+  },
 ];
 
 // Test pets data (matching customers)
@@ -37,16 +87,76 @@ const getYearsAgo = (years) => {
 };
 
 const testPets = [
-  { name: 'Max', type: 'DOG', breed: 'Golden Retriever', birthdate: getYearsAgo(3), weight: 65 },
-  { name: 'Luna', type: 'CAT', breed: 'Siamese', birthdate: getYearsAgo(2), weight: 10 },
-  { name: 'Charlie', type: 'DOG', breed: 'Labrador', birthdate: getYearsAgo(5), weight: 70 },
-  { name: 'Bella', type: 'DOG', breed: 'Beagle', birthdate: getYearsAgo(4), weight: 25 },
-  { name: 'Oliver', type: 'CAT', breed: 'Maine Coon', birthdate: getYearsAgo(3), weight: 15 },
-  { name: 'Daisy', type: 'DOG', breed: 'Poodle', birthdate: getYearsAgo(2), weight: 45 },
-  { name: 'Milo', type: 'CAT', breed: 'Persian', birthdate: getYearsAgo(4), weight: 12 },
-  { name: 'Lucy', type: 'DOG', breed: 'German Shepherd', birthdate: getYearsAgo(6), weight: 75 },
-  { name: 'Leo', type: 'CAT', breed: 'British Shorthair', birthdate: getYearsAgo(1), weight: 11 },
-  { name: 'Rocky', type: 'DOG', breed: 'Boxer', birthdate: getYearsAgo(3), weight: 60 },
+  {
+    name: 'Max',
+    type: 'DOG',
+    breed: 'Golden Retriever',
+    birthdate: getYearsAgo(3),
+    weight: 65,
+  },
+  {
+    name: 'Luna',
+    type: 'CAT',
+    breed: 'Siamese',
+    birthdate: getYearsAgo(2),
+    weight: 10,
+  },
+  {
+    name: 'Charlie',
+    type: 'DOG',
+    breed: 'Labrador',
+    birthdate: getYearsAgo(5),
+    weight: 70,
+  },
+  {
+    name: 'Bella',
+    type: 'DOG',
+    breed: 'Beagle',
+    birthdate: getYearsAgo(4),
+    weight: 25,
+  },
+  {
+    name: 'Oliver',
+    type: 'CAT',
+    breed: 'Maine Coon',
+    birthdate: getYearsAgo(3),
+    weight: 15,
+  },
+  {
+    name: 'Daisy',
+    type: 'DOG',
+    breed: 'Poodle',
+    birthdate: getYearsAgo(2),
+    weight: 45,
+  },
+  {
+    name: 'Milo',
+    type: 'CAT',
+    breed: 'Persian',
+    birthdate: getYearsAgo(4),
+    weight: 12,
+  },
+  {
+    name: 'Lucy',
+    type: 'DOG',
+    breed: 'German Shepherd',
+    birthdate: getYearsAgo(6),
+    weight: 75,
+  },
+  {
+    name: 'Leo',
+    type: 'CAT',
+    breed: 'British Shorthair',
+    birthdate: getYearsAgo(1),
+    weight: 11,
+  },
+  {
+    name: 'Rocky',
+    type: 'DOG',
+    breed: 'Boxer',
+    birthdate: getYearsAgo(3),
+    weight: 60,
+  },
 ];
 
 // Test staff data
@@ -75,7 +185,7 @@ const testStaff = [
 
 async function seedRainyTestData() {
   try {
-    console.log('🌧️  Seeding Rainy Day\'s Inn with test data...\n');
+    console.log("🌧️  Seeding Rainy Day's Inn with test data...\n");
     console.log(`✅ Using tenant ID: ${RAINY_TENANT_ID}\n`);
 
     // 1. Create test customers and their pets
@@ -95,7 +205,9 @@ async function seedRainyTestData() {
       });
 
       if (existingCustomer) {
-        console.log(`   ⏭️  ${customerData.firstName} ${customerData.lastName} already exists, skipping...`);
+        console.log(
+          `   ⏭️  ${customerData.firstName} ${customerData.lastName} already exists, skipping...`
+        );
         continue;
       }
 
@@ -136,7 +248,9 @@ async function seedRainyTestData() {
       });
 
       createdCustomers.push({ customer, pet });
-      console.log(`   ✓ ${customer.firstName} ${customer.lastName} with pet ${pet.name}`);
+      console.log(
+        `   ✓ ${customer.firstName} ${customer.lastName} with pet ${pet.name}`
+      );
     }
 
     console.log(`\n✅ Created ${createdCustomers.length} customers and pets\n`);
@@ -155,7 +269,9 @@ async function seedRainyTestData() {
       });
 
       if (existingStaff) {
-        console.log(`   ⏭️  ${staffData.firstName} ${staffData.lastName} already exists, skipping...`);
+        console.log(
+          `   ⏭️  ${staffData.firstName} ${staffData.lastName} already exists, skipping...`
+        );
         continue;
       }
 
@@ -191,7 +307,6 @@ async function seedRainyTestData() {
     console.log('\n📝 Test Staff Login Credentials:');
     console.log('   Email: sarah.mitchell@rainytest.com | Password: Test123!');
     console.log('   Email: tom.rodriguez@rainytest.com | Password: Test123!');
-
   } catch (error) {
     console.error('❌ Error seeding test data:', error);
     throw error;
@@ -201,8 +316,7 @@ async function seedRainyTestData() {
 }
 
 // Run the seed
-seedRainyTestData()
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+seedRainyTestData().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

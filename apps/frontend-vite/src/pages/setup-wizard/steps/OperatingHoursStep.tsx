@@ -4,7 +4,7 @@
  * Configure business hours, check-in/out windows, and holidays.
  */
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -20,28 +20,28 @@ import {
   DialogContent,
   DialogActions,
   Chip,
-} from "@mui/material";
-import { ArrowForward, ArrowBack, Add } from "@mui/icons-material";
-import { useSetupWizard } from "../SetupWizardContext";
-import { DayHours, HolidayConfig } from "../types";
+} from '@mui/material';
+import { ArrowForward, ArrowBack, Add } from '@mui/icons-material';
+import { useSetupWizard } from '../SetupWizardContext';
+import { DayHours, HolidayConfig } from '../types';
 
 const DAYS = [
-  "monday",
-  "tuesday",
-  "wednesday",
-  "thursday",
-  "friday",
-  "saturday",
-  "sunday",
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+  'sunday',
 ] as const;
 const DAY_LABELS: Record<(typeof DAYS)[number], string> = {
-  monday: "Monday",
-  tuesday: "Tuesday",
-  wednesday: "Wednesday",
-  thursday: "Thursday",
-  friday: "Friday",
-  saturday: "Saturday",
-  sunday: "Sunday",
+  monday: 'Monday',
+  tuesday: 'Tuesday',
+  wednesday: 'Wednesday',
+  thursday: 'Thursday',
+  friday: 'Friday',
+  saturday: 'Saturday',
+  sunday: 'Sunday',
 };
 
 export default function OperatingHoursStep() {
@@ -51,8 +51,8 @@ export default function OperatingHoursStep() {
 
   const [holidayDialogOpen, setHolidayDialogOpen] = useState(false);
   const [newHoliday, setNewHoliday] = useState<Partial<HolidayConfig>>({
-    name: "",
-    date: "",
+    name: '',
+    date: '',
     closed: false,
     surchargeApplies: true,
   });
@@ -77,8 +77,8 @@ export default function OperatingHoursStep() {
       });
       setHolidayDialogOpen(false);
       setNewHoliday({
-        name: "",
-        date: "",
+        name: '',
+        date: '',
         closed: false,
         surchargeApplies: true,
       });
@@ -92,7 +92,7 @@ export default function OperatingHoursStep() {
   };
 
   const handleNext = () => {
-    completeStep("operating-hours");
+    completeStep('operating-hours');
     nextStep();
   };
 
@@ -116,9 +116,9 @@ export default function OperatingHoursStep() {
               <CardContent sx={{ py: 1.5 }}>
                 <Box
                   sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
                     mb: 1,
                   }}
                 >
@@ -129,23 +129,23 @@ export default function OperatingHoursStep() {
                         size="small"
                         checked={!operatingHours.hours[day].closed}
                         onChange={(e) =>
-                          updateDayHours(day, "closed", !e.target.checked)
+                          updateDayHours(day, 'closed', !e.target.checked)
                         }
                       />
                     }
-                    label={operatingHours.hours[day].closed ? "Closed" : "Open"}
+                    label={operatingHours.hours[day].closed ? 'Closed' : 'Open'}
                     labelPlacement="start"
                   />
                 </Box>
                 {!operatingHours.hours[day].closed && (
-                  <Box sx={{ display: "flex", gap: 1 }}>
+                  <Box sx={{ display: 'flex', gap: 1 }}>
                     <TextField
                       size="small"
                       type="time"
                       label="Open"
                       value={operatingHours.hours[day].open}
                       onChange={(e) =>
-                        updateDayHours(day, "open", e.target.value)
+                        updateDayHours(day, 'open', e.target.value)
                       }
                       InputLabelProps={{ shrink: true }}
                       sx={{ flex: 1 }}
@@ -156,7 +156,7 @@ export default function OperatingHoursStep() {
                       label="Close"
                       value={operatingHours.hours[day].close}
                       onChange={(e) =>
-                        updateDayHours(day, "close", e.target.value)
+                        updateDayHours(day, 'close', e.target.value)
                       }
                       InputLabelProps={{ shrink: true }}
                       sx={{ flex: 1 }}
@@ -180,7 +180,7 @@ export default function OperatingHoursStep() {
               <Typography variant="subtitle2" gutterBottom>
                 Check-in Window
               </Typography>
-              <Box sx={{ display: "flex", gap: 2 }}>
+              <Box sx={{ display: 'flex', gap: 2 }}>
                 <TextField
                   size="small"
                   type="time"
@@ -223,7 +223,7 @@ export default function OperatingHoursStep() {
               <Typography variant="subtitle2" gutterBottom>
                 Check-out Window
               </Typography>
-              <Box sx={{ display: "flex", gap: 2 }}>
+              <Box sx={{ display: 'flex', gap: 2 }}>
                 <TextField
                   size="small"
                   type="time"
@@ -265,9 +265,9 @@ export default function OperatingHoursStep() {
       {/* Holidays */}
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           mb: 2,
         }}
       >
@@ -276,17 +276,17 @@ export default function OperatingHoursStep() {
           Add Holiday
         </Button>
       </Box>
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 4 }}>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 4 }}>
         {operatingHours.holidays.map((holiday, index) => (
           <Chip
             key={index}
             label={`${holiday.name} (${holiday.date})`}
             color={
               holiday.closed
-                ? "error"
+                ? 'error'
                 : holiday.surchargeApplies
-                ? "warning"
-                : "default"
+                  ? 'warning'
+                  : 'default'
             }
             onDelete={() => removeHoliday(index)}
             variant="outlined"
@@ -375,7 +375,7 @@ export default function OperatingHoursStep() {
       </Dialog>
 
       {/* Navigation */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button startIcon={<ArrowBack />} onClick={prevStep}>
           Back
         </Button>

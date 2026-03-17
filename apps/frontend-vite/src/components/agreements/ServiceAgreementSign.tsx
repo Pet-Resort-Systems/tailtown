@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Typography,
@@ -14,15 +14,15 @@ import {
   Step,
   StepLabel,
   StepContent,
-} from "@mui/material";
-import { Check as CheckIcon } from "@mui/icons-material";
-import SignatureCapture from "./SignatureCapture";
+} from '@mui/material';
+import { Check as CheckIcon } from '@mui/icons-material';
+import SignatureCapture from './SignatureCapture';
 import serviceAgreementService, {
   ServiceAgreementTemplate,
   CreateAgreementData,
   CustomQuestion,
   QuestionResponse,
-} from "../../services/serviceAgreementService";
+} from '../../services/serviceAgreementService';
 
 interface ServiceAgreementSignProps {
   customerId: string;
@@ -72,15 +72,15 @@ const ServiceAgreementSign: React.FC<ServiceAgreementSignProps> = ({
   // Parse HTML content into sections
   const parseContentIntoSections = useCallback((content: string): Section[] => {
     const parser = new DOMParser();
-    const doc = parser.parseFromString(content, "text/html");
-    const headings = doc.querySelectorAll("h2, h3");
+    const doc = parser.parseFromString(content, 'text/html');
+    const headings = doc.querySelectorAll('h2, h3');
     const parsedSections: Section[] = [];
 
     headings.forEach((heading, index) => {
-      let sectionContent = "";
+      let sectionContent = '';
       let sibling = heading.nextElementSibling;
 
-      while (sibling && !["H2", "H3"].includes(sibling.tagName)) {
+      while (sibling && !['H2', 'H3'].includes(sibling.tagName)) {
         sectionContent += sibling.outerHTML;
         sibling = sibling.nextElementSibling;
       }
@@ -91,7 +91,7 @@ const ServiceAgreementSign: React.FC<ServiceAgreementSignProps> = ({
           title: heading.textContent || `Section ${index + 1}`,
           content: sectionContent,
           initialed: false,
-          initials: "",
+          initials: '',
         });
       }
     });
@@ -99,11 +99,11 @@ const ServiceAgreementSign: React.FC<ServiceAgreementSignProps> = ({
     // If no sections found, treat entire content as one section
     if (parsedSections.length === 0) {
       parsedSections.push({
-        id: "section-0",
-        title: "Agreement Terms",
+        id: 'section-0',
+        title: 'Agreement Terms',
         content: content,
         initialed: false,
-        initials: "",
+        initials: '',
       });
     }
 
@@ -118,18 +118,16 @@ const ServiceAgreementSign: React.FC<ServiceAgreementSignProps> = ({
         let loadedTemplate: ServiceAgreementTemplate | null = null;
 
         if (templateId) {
-          loadedTemplate = await serviceAgreementService.getTemplateById(
-            templateId
-          );
+          loadedTemplate =
+            await serviceAgreementService.getTemplateById(templateId);
         } else {
           // Try to get default template first
           loadedTemplate = await serviceAgreementService.getDefaultTemplate();
 
           // If no default, get all active templates
           if (!loadedTemplate) {
-            const allTemplates = await serviceAgreementService.getAllTemplates(
-              true
-            );
+            const allTemplates =
+              await serviceAgreementService.getAllTemplates(true);
             if (allTemplates.length > 0) {
               // If only one template, use it automatically
               if (allTemplates.length === 1) {
@@ -146,7 +144,7 @@ const ServiceAgreementSign: React.FC<ServiceAgreementSignProps> = ({
 
         if (!loadedTemplate) {
           setError(
-            "No service agreement template found. Please create one in Settings > Service Agreements."
+            'No service agreement template found. Please create one in Settings > Service Agreements.'
           );
           return;
         }
@@ -157,7 +155,7 @@ const ServiceAgreementSign: React.FC<ServiceAgreementSignProps> = ({
           setSections(parseContentIntoSections(loadedTemplate.content));
         }
       } catch (err: any) {
-        setError(err.message || "Failed to load agreement");
+        setError(err.message || 'Failed to load agreement');
       } finally {
         setLoading(false);
       }
@@ -223,7 +221,7 @@ const ServiceAgreementSign: React.FC<ServiceAgreementSignProps> = ({
         ? template.questions.map((q: CustomQuestion) => ({
             questionId: q.id,
             question: q.question,
-            response: questionResponses[q.id] ?? "",
+            response: questionResponses[q.id] ?? '',
             answeredAt: new Date().toISOString(),
           }))
         : [];
@@ -235,18 +233,17 @@ const ServiceAgreementSign: React.FC<ServiceAgreementSignProps> = ({
         templateId: template.id,
         agreementText: template.content,
         initials: initialsData,
-        signature: signature || "",
+        signature: signature || '',
         signedBy: signerName,
         questionResponses: questionResponsesArray,
-        signatureMethod: "device",
+        signatureMethod: 'device',
       };
 
-      const agreement = await serviceAgreementService.createAgreement(
-        agreementData
-      );
+      const agreement =
+        await serviceAgreementService.createAgreement(agreementData);
       onComplete(agreement.id);
     } catch (err: any) {
-      setError(err.message || "Failed to save agreement");
+      setError(err.message || 'Failed to save agreement');
     } finally {
       setSubmitting(false);
     }
@@ -289,7 +286,7 @@ const ServiceAgreementSign: React.FC<ServiceAgreementSignProps> = ({
 
         <Paper
           variant="outlined"
-          sx={{ p: 3, mb: 3, maxHeight: "400px", overflow: "auto" }}
+          sx={{ p: 3, mb: 3, maxHeight: '400px', overflow: 'auto' }}
         >
           <div dangerouslySetInnerHTML={{ __html: template.content }} />
         </Paper>
@@ -304,15 +301,15 @@ const ServiceAgreementSign: React.FC<ServiceAgreementSignProps> = ({
               <Box key={q.id} sx={{ mb: 2 }}>
                 <Typography variant="body2" gutterBottom>
                   {q.question}
-                  {q.required && <span style={{ color: "red" }}> *</span>}
+                  {q.required && <span style={{ color: 'red' }}> *</span>}
                 </Typography>
-                {q.type === "YES_NO" ? (
+                {q.type === 'YES_NO' ? (
                   <Box display="flex" gap={2}>
                     <Button
                       variant={
                         questionResponses[q.id] === true
-                          ? "contained"
-                          : "outlined"
+                          ? 'contained'
+                          : 'outlined'
                       }
                       size="small"
                       onClick={() =>
@@ -327,8 +324,8 @@ const ServiceAgreementSign: React.FC<ServiceAgreementSignProps> = ({
                     <Button
                       variant={
                         questionResponses[q.id] === false
-                          ? "contained"
-                          : "outlined"
+                          ? 'contained'
+                          : 'outlined'
                       }
                       size="small"
                       onClick={() =>
@@ -341,13 +338,13 @@ const ServiceAgreementSign: React.FC<ServiceAgreementSignProps> = ({
                       No
                     </Button>
                   </Box>
-                ) : q.type === "LONG_TEXT" ? (
+                ) : q.type === 'LONG_TEXT' ? (
                   <TextField
                     fullWidth
                     multiline
                     rows={3}
                     placeholder={q.placeholder}
-                    value={questionResponses[q.id] || ""}
+                    value={questionResponses[q.id] || ''}
                     onChange={(e) =>
                       setQuestionResponses((prev) => ({
                         ...prev,
@@ -356,11 +353,11 @@ const ServiceAgreementSign: React.FC<ServiceAgreementSignProps> = ({
                     }
                     size="small"
                   />
-                ) : q.type === "NUMBER" ? (
+                ) : q.type === 'NUMBER' ? (
                   <TextField
                     type="number"
                     placeholder={q.placeholder}
-                    value={questionResponses[q.id] || ""}
+                    value={questionResponses[q.id] || ''}
                     onChange={(e) =>
                       setQuestionResponses((prev) => ({
                         ...prev,
@@ -370,11 +367,11 @@ const ServiceAgreementSign: React.FC<ServiceAgreementSignProps> = ({
                     size="small"
                     sx={{ width: 200 }}
                   />
-                ) : q.type === "CURRENCY" ? (
+                ) : q.type === 'CURRENCY' ? (
                   <TextField
                     type="number"
-                    placeholder={q.placeholder || "$0.00"}
-                    value={questionResponses[q.id] || ""}
+                    placeholder={q.placeholder || '$0.00'}
+                    value={questionResponses[q.id] || ''}
                     onChange={(e) =>
                       setQuestionResponses((prev) => ({
                         ...prev,
@@ -391,7 +388,7 @@ const ServiceAgreementSign: React.FC<ServiceAgreementSignProps> = ({
                   <TextField
                     fullWidth
                     placeholder={q.placeholder}
-                    value={questionResponses[q.id] || ""}
+                    value={questionResponses[q.id] || ''}
                     onChange={(e) =>
                       setQuestionResponses((prev) => ({
                         ...prev,
@@ -444,7 +441,7 @@ const ServiceAgreementSign: React.FC<ServiceAgreementSignProps> = ({
               submitting ? <CircularProgress size={20} /> : <CheckIcon />
             }
           >
-            {submitting ? "Submitting..." : "Sign Agreement"}
+            {submitting ? 'Submitting...' : 'Sign Agreement'}
           </Button>
         </Box>
       </Box>
@@ -481,7 +478,7 @@ const ServiceAgreementSign: React.FC<ServiceAgreementSignProps> = ({
             <StepContent>
               <Paper
                 variant="outlined"
-                sx={{ p: 2, mb: 2, maxHeight: "200px", overflow: "auto" }}
+                sx={{ p: 2, mb: 2, maxHeight: '200px', overflow: 'auto' }}
               >
                 <div dangerouslySetInnerHTML={{ __html: section.content }} />
               </Paper>
@@ -500,7 +497,7 @@ const ServiceAgreementSign: React.FC<ServiceAgreementSignProps> = ({
                   sx={{ width: 100 }}
                   inputProps={{
                     maxLength: 4,
-                    style: { textTransform: "uppercase" },
+                    style: { textTransform: 'uppercase' },
                   }}
                 />
                 <Typography variant="body2" color="textSecondary">
@@ -518,8 +515,8 @@ const ServiceAgreementSign: React.FC<ServiceAgreementSignProps> = ({
                   disabled={!section.initialed}
                 >
                   {index === sections.length - 1
-                    ? "Continue to Signature"
-                    : "Next"}
+                    ? 'Continue to Signature'
+                    : 'Next'}
                 </Button>
               </Box>
             </StepContent>
@@ -597,7 +594,7 @@ const ServiceAgreementSign: React.FC<ServiceAgreementSignProps> = ({
                   submitting ? <CircularProgress size={20} /> : <CheckIcon />
                 }
               >
-                {submitting ? "Submitting..." : "Sign Agreement"}
+                {submitting ? 'Submitting...' : 'Sign Agreement'}
               </Button>
             </Box>
           </StepContent>

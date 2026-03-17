@@ -3,7 +3,7 @@
  * Shows available kennel sizes with pricing
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -14,15 +14,15 @@ import {
   Alert,
   Chip,
   Avatar,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   ArrowBack as ArrowBackIcon,
   ArrowForward as ArrowForwardIcon,
   Hotel as KennelIcon,
   CheckCircle as CheckCircleIcon,
-} from "@mui/icons-material";
-import { resourceService } from "../../../services/resourceService";
+} from '@mui/icons-material';
+import { resourceService } from '../../../services/resourceService';
 
 interface KennelOption {
   type: string;
@@ -42,30 +42,30 @@ interface KennelSelectionProps {
 // Kennel size options with display info
 const KENNEL_OPTIONS: KennelOption[] = [
   {
-    type: "JUNIOR_KENNEL",
-    name: "Junior Suite",
-    description: "Perfect for small dogs under 25 lbs",
+    type: 'JUNIOR_KENNEL',
+    name: 'Junior Suite',
+    description: 'Perfect for small dogs under 25 lbs',
     price: 45,
     available: 0,
   },
   {
-    type: "QUEEN_KENNEL",
-    name: "Queen Suite",
-    description: "Ideal for medium dogs 25-50 lbs",
+    type: 'QUEEN_KENNEL',
+    name: 'Queen Suite',
+    description: 'Ideal for medium dogs 25-50 lbs',
     price: 55,
     available: 0,
   },
   {
-    type: "KING_KENNEL",
-    name: "King Suite",
-    description: "Spacious room for large dogs 50+ lbs",
+    type: 'KING_KENNEL',
+    name: 'King Suite',
+    description: 'Spacious room for large dogs 50+ lbs',
     price: 65,
     available: 0,
   },
   {
-    type: "VIP_ROOM",
-    name: "VIP Suite",
-    description: "Luxury suite with extra amenities",
+    type: 'VIP_ROOM',
+    name: 'VIP Suite',
+    description: 'Luxury suite with extra amenities',
     price: 85,
     available: 0,
   },
@@ -78,11 +78,11 @@ const KennelSelection: React.FC<KennelSelectionProps> = ({
   onUpdate,
 }) => {
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [kennelOptions, setKennelOptions] =
     useState<KennelOption[]>(KENNEL_OPTIONS);
   const [selectedKennel, setSelectedKennel] = useState<string>(
-    bookingData.resourceType || ""
+    bookingData.resourceType || ''
   );
 
   useEffect(() => {
@@ -113,10 +113,10 @@ const KennelSelection: React.FC<KennelSelectionProps> = ({
       }));
 
       setKennelOptions(updatedOptions);
-      setError("");
+      setError('');
     } catch (err: any) {
-      console.error("Error loading kennel availability:", err);
-      setError("Unable to load kennel availability. Please try again.");
+      console.error('Error loading kennel availability:', err);
+      setError('Unable to load kennel availability. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -133,7 +133,7 @@ const KennelSelection: React.FC<KennelSelectionProps> = ({
 
   const handleContinue = () => {
     if (!selectedKennel) {
-      setError("Please select a kennel size");
+      setError('Please select a kennel size');
       return;
     }
     onNext();
@@ -141,7 +141,7 @@ const KennelSelection: React.FC<KennelSelectionProps> = ({
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
         <CircularProgress />
       </Box>
     );
@@ -154,7 +154,7 @@ const KennelSelection: React.FC<KennelSelectionProps> = ({
         component="h2"
         gutterBottom
         sx={{
-          fontSize: { xs: "1.25rem", sm: "1.5rem" },
+          fontSize: { xs: '1.25rem', sm: '1.5rem' },
           fontWeight: 600,
           mb: 1,
         }}
@@ -167,7 +167,7 @@ const KennelSelection: React.FC<KennelSelectionProps> = ({
       </Typography>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError("")}>
+        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>
           {error}
         </Alert>
       )}
@@ -178,18 +178,18 @@ const KennelSelection: React.FC<KennelSelectionProps> = ({
             <Card
               elevation={selectedKennel === kennel.type ? 8 : 2}
               sx={{
-                height: "100%",
-                cursor: kennel.available > 0 ? "pointer" : "not-allowed",
+                height: '100%',
+                cursor: kennel.available > 0 ? 'pointer' : 'not-allowed',
                 opacity: kennel.available > 0 ? 1 : 0.5,
                 border:
-                  selectedKennel === kennel.type ? "3px solid" : "1px solid",
+                  selectedKennel === kennel.type ? '3px solid' : '1px solid',
                 borderColor:
-                  selectedKennel === kennel.type ? "primary.main" : "divider",
-                transition: "all 0.2s ease-in-out",
-                "&:hover":
+                  selectedKennel === kennel.type ? 'primary.main' : 'divider',
+                transition: 'all 0.2s ease-in-out',
+                '&:hover':
                   kennel.available > 0
                     ? {
-                        transform: "translateY(-2px)",
+                        transform: 'translateY(-2px)',
                         boxShadow: 4,
                       }
                     : {},
@@ -199,15 +199,15 @@ const KennelSelection: React.FC<KennelSelectionProps> = ({
               }
             >
               <CardContent sx={{ p: { xs: 2, sm: 2.5 } }}>
-                <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
                   <Avatar
                     sx={{
                       width: { xs: 48, sm: 56 },
                       height: { xs: 48, sm: 56 },
                       bgcolor:
                         selectedKennel === kennel.type
-                          ? "primary.main"
-                          : "grey.300",
+                          ? 'primary.main'
+                          : 'grey.300',
                     }}
                   >
                     <KennelIcon sx={{ fontSize: { xs: 24, sm: 28 } }} />
@@ -216,15 +216,15 @@ const KennelSelection: React.FC<KennelSelectionProps> = ({
                   <Box sx={{ flex: 1 }}>
                     <Box
                       sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
                       }}
                     >
                       <Typography
                         variant="h6"
                         sx={{
-                          fontSize: { xs: "1rem", sm: "1.1rem" },
+                          fontSize: { xs: '1rem', sm: '1.1rem' },
                           fontWeight: 600,
                         }}
                       >
@@ -240,7 +240,7 @@ const KennelSelection: React.FC<KennelSelectionProps> = ({
                       color="text.secondary"
                       sx={{
                         mt: 0.5,
-                        fontSize: { xs: "0.8rem", sm: "0.875rem" },
+                        fontSize: { xs: '0.8rem', sm: '0.875rem' },
                       }}
                     >
                       {kennel.description}
@@ -248,9 +248,9 @@ const KennelSelection: React.FC<KennelSelectionProps> = ({
 
                     <Box
                       sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
                         mt: 1.5,
                       }}
                     >
@@ -258,7 +258,7 @@ const KennelSelection: React.FC<KennelSelectionProps> = ({
                         variant="h6"
                         color="primary"
                         fontWeight={700}
-                        sx={{ fontSize: { xs: "1.1rem", sm: "1.25rem" } }}
+                        sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
                       >
                         ${kennel.price}/night
                       </Typography>
@@ -266,12 +266,12 @@ const KennelSelection: React.FC<KennelSelectionProps> = ({
                         label={
                           kennel.available > 0
                             ? `${kennel.available} available`
-                            : "Sold out"
+                            : 'Sold out'
                         }
                         size="small"
-                        color={kennel.available > 0 ? "success" : "error"}
+                        color={kennel.available > 0 ? 'success' : 'error'}
                         variant="outlined"
-                        sx={{ fontSize: { xs: "0.7rem", sm: "0.75rem" } }}
+                        sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
                       />
                     </Box>
                   </Box>
@@ -282,7 +282,7 @@ const KennelSelection: React.FC<KennelSelectionProps> = ({
         ))}
       </Grid>
 
-      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button
           variant="outlined"
           onClick={onBack}

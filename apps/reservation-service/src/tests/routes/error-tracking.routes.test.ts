@@ -5,67 +5,67 @@
  * Tests the error tracking API routes.
  */
 
-import express from "express";
-import request from "supertest";
+import express from 'express';
+import request from 'supertest';
 
 // Mock all controller functions
-jest.mock("../../controllers/error-tracking", () => ({
+jest.mock('../../controllers/error-tracking', () => ({
   getAllErrors: jest.fn((req, res) =>
-    res.json({ status: "success", data: [] })
+    res.json({ status: 'success', data: [] })
   ),
   getErrorAnalytics: jest.fn((req, res) =>
-    res.json({ status: "success", data: {} })
+    res.json({ status: 'success', data: {} })
   ),
   getErrorById: jest.fn((req, res) =>
-    res.json({ status: "success", data: {} })
+    res.json({ status: 'success', data: {} })
   ),
   resolveError: jest.fn((req, res) =>
-    res.json({ status: "success", data: {} })
+    res.json({ status: 'success', data: {} })
   ),
 }));
 
-import errorTrackingRoutes from "../../routes/error-tracking.routes";
+import errorTrackingRoutes from '../../routes/error-tracking.routes';
 import {
   getAllErrors,
   getErrorAnalytics,
   getErrorById,
   resolveError,
-} from "../../controllers/error-tracking";
+} from '../../controllers/error-tracking';
 
-describe("Error Tracking Routes", () => {
+describe('Error Tracking Routes', () => {
   let app: express.Application;
 
   beforeEach(() => {
     jest.clearAllMocks();
     app = express();
     app.use(express.json());
-    app.use("/api/errors", errorTrackingRoutes);
+    app.use('/api/errors', errorTrackingRoutes);
   });
 
-  describe("GET /api/errors", () => {
-    it("should call getAllErrors controller", async () => {
-      await request(app).get("/api/errors");
+  describe('GET /api/errors', () => {
+    it('should call getAllErrors controller', async () => {
+      await request(app).get('/api/errors');
 
       expect(getAllErrors).toHaveBeenCalled();
     });
 
-    it("should return success response", async () => {
-      const response = await request(app).get("/api/errors");
+    it('should return success response', async () => {
+      const response = await request(app).get('/api/errors');
 
       expect(response.status).toBe(200);
-      expect(response.body.status).toBe("success");
+      expect(response.body.status).toBe('success');
     });
 
-    it("should pass query parameters", async () => {
+    it('should pass query parameters', async () => {
       await request(app).get(
-        "/api/errors?category=VALIDATION_ERROR&resolved=false"
+        '/api/errors?category=VALIDATION_ERROR&resolved=false'
       );
 
       expect(getAllErrors).toHaveBeenCalledWith(
         expect.objectContaining({
           query: expect.objectContaining({
-            category: "VALIDATION_ERROR",
-            resolved: "false",
+            category: 'VALIDATION_ERROR',
+            resolved: 'false',
           }),
         }),
         expect.any(Object),
@@ -74,34 +74,34 @@ describe("Error Tracking Routes", () => {
     });
   });
 
-  describe("GET /api/errors/analytics", () => {
-    it("should call getErrorAnalytics controller", async () => {
-      await request(app).get("/api/errors/analytics");
+  describe('GET /api/errors/analytics', () => {
+    it('should call getErrorAnalytics controller', async () => {
+      await request(app).get('/api/errors/analytics');
 
       expect(getErrorAnalytics).toHaveBeenCalled();
     });
 
-    it("should return success response", async () => {
-      const response = await request(app).get("/api/errors/analytics");
+    it('should return success response', async () => {
+      const response = await request(app).get('/api/errors/analytics');
 
       expect(response.status).toBe(200);
-      expect(response.body.status).toBe("success");
+      expect(response.body.status).toBe('success');
     });
   });
 
-  describe("GET /api/errors/:id", () => {
-    it("should call getErrorById controller", async () => {
-      await request(app).get("/api/errors/err-123");
+  describe('GET /api/errors/:id', () => {
+    it('should call getErrorById controller', async () => {
+      await request(app).get('/api/errors/err-123');
 
       expect(getErrorById).toHaveBeenCalled();
     });
 
-    it("should pass error ID in params", async () => {
-      await request(app).get("/api/errors/err-456");
+    it('should pass error ID in params', async () => {
+      await request(app).get('/api/errors/err-456');
 
       expect(getErrorById).toHaveBeenCalledWith(
         expect.objectContaining({
-          params: expect.objectContaining({ id: "err-456" }),
+          params: expect.objectContaining({ id: 'err-456' }),
         }),
         expect.any(Object),
         expect.any(Function)
@@ -109,38 +109,38 @@ describe("Error Tracking Routes", () => {
     });
   });
 
-  describe("PATCH /api/errors/:id/resolve", () => {
-    it("should call resolveError controller", async () => {
+  describe('PATCH /api/errors/:id/resolve', () => {
+    it('should call resolveError controller', async () => {
       await request(app)
-        .patch("/api/errors/err-123/resolve")
-        .send({ resolution: "Fixed the issue" });
+        .patch('/api/errors/err-123/resolve')
+        .send({ resolution: 'Fixed the issue' });
 
       expect(resolveError).toHaveBeenCalled();
     });
 
-    it("should pass error ID in params", async () => {
+    it('should pass error ID in params', async () => {
       await request(app)
-        .patch("/api/errors/err-789/resolve")
-        .send({ resolution: "Resolved" });
+        .patch('/api/errors/err-789/resolve')
+        .send({ resolution: 'Resolved' });
 
       expect(resolveError).toHaveBeenCalledWith(
         expect.objectContaining({
-          params: expect.objectContaining({ id: "err-789" }),
+          params: expect.objectContaining({ id: 'err-789' }),
         }),
         expect.any(Object),
         expect.any(Function)
       );
     });
 
-    it("should pass resolution in body", async () => {
+    it('should pass resolution in body', async () => {
       await request(app)
-        .patch("/api/errors/err-123/resolve")
-        .send({ resolution: "Bug fixed in commit abc123" });
+        .patch('/api/errors/err-123/resolve')
+        .send({ resolution: 'Bug fixed in commit abc123' });
 
       expect(resolveError).toHaveBeenCalledWith(
         expect.objectContaining({
           body: expect.objectContaining({
-            resolution: "Bug fixed in commit abc123",
+            resolution: 'Bug fixed in commit abc123',
           }),
         }),
         expect.any(Object),
@@ -149,9 +149,9 @@ describe("Error Tracking Routes", () => {
     });
   });
 
-  describe("Route ordering", () => {
-    it("should route /analytics before /:id", async () => {
-      await request(app).get("/api/errors/analytics");
+  describe('Route ordering', () => {
+    it('should route /analytics before /:id', async () => {
+      await request(app).get('/api/errors/analytics');
 
       expect(getErrorAnalytics).toHaveBeenCalled();
       expect(getErrorById).not.toHaveBeenCalled();

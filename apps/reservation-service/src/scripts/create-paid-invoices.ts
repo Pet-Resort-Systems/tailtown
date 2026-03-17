@@ -9,14 +9,14 @@
  * database if needed, or update to use customerServiceClient.
  */
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 async function createPaidInvoices() {
-  console.log("Starting invoice and payment creation...");
+  console.log('Starting invoice and payment creation...');
 
-  const tenantId = "dev";
+  const tenantId = 'dev';
 
   try {
     // Get all October reservations
@@ -32,7 +32,7 @@ async function createPaidInvoices() {
         customer: true,
         pet: true,
       },
-      orderBy: { createdAt: "asc" },
+      orderBy: { createdAt: 'asc' },
     });
 
     console.log(`Found ${reservations.length} reservations`);
@@ -66,7 +66,7 @@ async function createPaidInvoices() {
       // Generate invoice number
       const invoiceNumber = `INV-${Date.now()}-${invoicesCreated
         .toString()
-        .padStart(3, "0")}`;
+        .padStart(3, '0')}`;
 
       try {
         // Create invoice
@@ -81,7 +81,7 @@ async function createPaidInvoices() {
             subtotal,
             taxAmount,
             total,
-            status: "PAID",
+            status: 'PAID',
             notes: `${nights} night(s) boarding for ${reservation.pet?.name}`,
           },
         });
@@ -93,9 +93,9 @@ async function createPaidInvoices() {
             invoiceId: invoice.id,
             customerId: reservation.customerId,
             amount: total,
-            paymentMethod: "CASH",
+            paymentMethod: 'CASH',
             paymentDate: new Date(),
-            status: "COMPLETED" as any,
+            status: 'COMPLETED' as any,
             notes: `Cash payment for ${invoiceNumber}`,
             transactionId: `CASH-${Date.now()}-${paymentsCreated}`,
           } as any,
@@ -125,7 +125,7 @@ async function createPaidInvoices() {
     const totalRevenue = await prisma.invoice.aggregate({
       where: {
         tenantId,
-        status: "PAID",
+        status: 'PAID',
       },
       _sum: {
         total: true,
@@ -133,12 +133,12 @@ async function createPaidInvoices() {
     });
 
     console.log(
-      `\nTotal revenue: $${totalRevenue._sum?.total?.toFixed(2) || "0.00"}`
+      `\nTotal revenue: $${totalRevenue._sum?.total?.toFixed(2) || '0.00'}`
     );
 
     // Show invoice status breakdown
     const invoiceStats = await prisma.invoice.groupBy({
-      by: ["status"],
+      by: ['status'],
       where: { tenantId },
       _count: true,
       _sum: {
@@ -146,11 +146,11 @@ async function createPaidInvoices() {
       },
     });
 
-    console.log("\nInvoice summary:");
+    console.log('\nInvoice summary:');
     invoiceStats.forEach((stat) => {
       console.log(
         `  ${stat.status}: ${stat._count} invoices ($${
-          stat._sum.total?.toFixed(2) || "0.00"
+          stat._sum.total?.toFixed(2) || '0.00'
         })`
       );
     });
@@ -163,7 +163,7 @@ async function createPaidInvoices() {
     console.log(`\nTotal payments: ${paymentCount} (all CASH)`);
 
     // Show sample invoices
-    console.log("\nSample invoices:");
+    console.log('\nSample invoices:');
     const samples = await prisma.invoice.findMany({
       where: { tenantId },
       include: {
@@ -175,7 +175,7 @@ async function createPaidInvoices() {
         },
       },
       take: 5,
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
 
     samples.forEach((inv) => {
@@ -189,7 +189,7 @@ async function createPaidInvoices() {
       );
     });
   } catch (error) {
-    console.error("Error creating invoices:", error);
+    console.error('Error creating invoices:', error);
     throw error;
   } finally {
     await prisma.$disconnect();
@@ -198,8 +198,8 @@ async function createPaidInvoices() {
 
 // Run the script
 createPaidInvoices()
-  .then(() => console.log("\n🎉 Invoice creation complete!"))
+  .then(() => console.log('\n🎉 Invoice creation complete!'))
   .catch((e) => {
-    console.error("Error during invoice creation:", e);
+    console.error('Error during invoice creation:', e);
     process.exit(1);
   });

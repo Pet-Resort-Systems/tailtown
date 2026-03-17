@@ -1,6 +1,6 @@
 /**
  * Vaccine Name Validation Tests
- * 
+ *
  * These tests ensure consistent lowercase naming for vaccine keys across the system.
  * This prevents bugs where vaccine data is not found due to casing mismatches.
  */
@@ -14,7 +14,7 @@ const STANDARD_VACCINE_NAMES = [
   'bordetella',
   'fvrcp',
   'influenza',
-  'lepto'
+  'lepto',
 ];
 
 // Common vaccine description patterns from medical records
@@ -25,26 +25,26 @@ const VACCINE_DESCRIPTIONS = [
   'FVRCP vaccination',
   'Canine Influenza vaccination',
   'Lepto vaccination',
-  'Leptospirosis vaccination'
+  'Leptospirosis vaccination',
 ];
 
 describe('Vaccine Name Validation', () => {
   describe('Standard Vaccine Names', () => {
     it('should all be lowercase', () => {
-      STANDARD_VACCINE_NAMES.forEach(name => {
+      STANDARD_VACCINE_NAMES.forEach((name) => {
         expect(name).toBe(name.toLowerCase());
         expect(name).not.toMatch(/[A-Z]/);
       });
     });
 
     it('should not contain spaces', () => {
-      STANDARD_VACCINE_NAMES.forEach(name => {
+      STANDARD_VACCINE_NAMES.forEach((name) => {
         expect(name).not.toContain(' ');
       });
     });
 
     it('should not be empty', () => {
-      STANDARD_VACCINE_NAMES.forEach(name => {
+      STANDARD_VACCINE_NAMES.forEach((name) => {
         expect(name.trim()).toBeTruthy();
         expect(name.length).toBeGreaterThan(0);
       });
@@ -64,7 +64,7 @@ describe('Vaccine Name Validation', () => {
     };
 
     it('should normalize all standard vaccine descriptions to lowercase', () => {
-      VACCINE_DESCRIPTIONS.forEach(description => {
+      VACCINE_DESCRIPTIONS.forEach((description) => {
         const normalized = normalizeVaccineName(description);
         expect(normalized).toBeTruthy();
         expect(normalized).toBe(normalized?.toLowerCase());
@@ -78,7 +78,7 @@ describe('Vaccine Name Validation', () => {
         { input: 'rabies vaccination', expected: 'rabies' },
         { input: 'DHPP VACCINATION', expected: 'dhpp' },
         { input: 'Bordetella Vaccination', expected: 'bordetella' },
-        { input: 'BORDETELLA VACCINATION', expected: 'bordetella' }
+        { input: 'BORDETELLA VACCINATION', expected: 'bordetella' },
       ];
 
       testCases.forEach(({ input, expected }) => {
@@ -91,11 +91,11 @@ describe('Vaccine Name Validation', () => {
       // Test that typos are caught
       const typos = [
         'Bodatella vaccination', // Missing 'r'
-        'Rabis vaccination',     // Missing 'e'
-        'DHPPP vaccination'      // Extra 'P'
+        'Rabis vaccination', // Missing 'e'
+        'DHPPP vaccination', // Extra 'P'
       ];
 
-      typos.forEach(typo => {
+      typos.forEach((typo) => {
         const normalized = normalizeVaccineName(typo);
         // These should either normalize correctly or return null
         // This test documents the behavior
@@ -111,22 +111,24 @@ describe('Vaccine Name Validation', () => {
       const validStatus = {
         rabies: { status: 'CURRENT' },
         dhpp: { status: 'CURRENT' },
-        bordetella: { status: 'CURRENT' }
+        bordetella: { status: 'CURRENT' },
       };
 
-      Object.keys(validStatus).forEach(key => {
+      Object.keys(validStatus).forEach((key) => {
         expect(key).toBe(key.toLowerCase());
       });
     });
 
     it('should reject mixed-case vaccine keys', () => {
       const invalidStatus = {
-        Rabies: { status: 'CURRENT' },  // Invalid: capitalized
-        DHPP: { status: 'CURRENT' },    // Invalid: all caps
-        bordetella: { status: 'CURRENT' } // Valid: lowercase
+        Rabies: { status: 'CURRENT' }, // Invalid: capitalized
+        DHPP: { status: 'CURRENT' }, // Invalid: all caps
+        bordetella: { status: 'CURRENT' }, // Valid: lowercase
       };
 
-      const hasInvalidKeys = Object.keys(invalidStatus).some(key => key !== key.toLowerCase());
+      const hasInvalidKeys = Object.keys(invalidStatus).some(
+        (key) => key !== key.toLowerCase()
+      );
       expect(hasInvalidKeys).toBe(true);
     });
 
@@ -134,10 +136,10 @@ describe('Vaccine Name Validation', () => {
       const validExpirations = {
         rabies: '2027-09-17',
         dhpp: '2026-10-09',
-        bordetella: '2026-10-09'
+        bordetella: '2026-10-09',
       };
 
-      Object.keys(validExpirations).forEach(key => {
+      Object.keys(validExpirations).forEach((key) => {
         expect(key).toBe(key.toLowerCase());
       });
     });
@@ -151,24 +153,24 @@ describe('Vaccine Name Validation', () => {
         vaccinationStatus: {
           rabies: { status: 'CURRENT' },
           dhpp: { status: 'CURRENT' },
-          bordetella: { status: 'CURRENT' }
+          bordetella: { status: 'CURRENT' },
         },
         vaccineExpirations: {
           rabies: '2027-09-17',
           dhpp: '2026-10-09',
-          bordetella: '2026-10-09'
-        }
+          bordetella: '2026-10-09',
+        },
       };
 
       // Validate all keys are lowercase
       const statusKeys = Object.keys(mockPetData.vaccinationStatus);
       const expirationKeys = Object.keys(mockPetData.vaccineExpirations);
 
-      statusKeys.forEach(key => {
+      statusKeys.forEach((key) => {
         expect(key).toBe(key.toLowerCase());
       });
 
-      expirationKeys.forEach(key => {
+      expirationKeys.forEach((key) => {
         expect(key).toBe(key.toLowerCase());
       });
 
@@ -189,33 +191,37 @@ export function validateVaccineData(
   const errors: string[] = [];
 
   // Check all keys are lowercase
-  Object.keys(vaccinationStatus).forEach(key => {
+  Object.keys(vaccinationStatus).forEach((key) => {
     if (key !== key.toLowerCase()) {
       errors.push(`vaccinationStatus key "${key}" is not lowercase`);
     }
   });
 
-  Object.keys(vaccineExpirations).forEach(key => {
+  Object.keys(vaccineExpirations).forEach((key) => {
     if (key !== key.toLowerCase()) {
       errors.push(`vaccineExpirations key "${key}" is not lowercase`);
     }
   });
 
   // Check keys match standard vaccine names
-  Object.keys(vaccinationStatus).forEach(key => {
+  Object.keys(vaccinationStatus).forEach((key) => {
     if (!STANDARD_VACCINE_NAMES.includes(key)) {
-      errors.push(`vaccinationStatus key "${key}" is not a standard vaccine name`);
+      errors.push(
+        `vaccinationStatus key "${key}" is not a standard vaccine name`
+      );
     }
   });
 
-  Object.keys(vaccineExpirations).forEach(key => {
+  Object.keys(vaccineExpirations).forEach((key) => {
     if (!STANDARD_VACCINE_NAMES.includes(key)) {
-      errors.push(`vaccineExpirations key "${key}" is not a standard vaccine name`);
+      errors.push(
+        `vaccineExpirations key "${key}" is not a standard vaccine name`
+      );
     }
   });
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }

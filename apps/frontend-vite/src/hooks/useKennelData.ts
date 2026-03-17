@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
-import { resourceService, type Resource } from "../services/resourceService";
-import { Reservation as BaseReservation } from "../services/reservationService";
-import { formatDateToYYYYMMDD } from "../utils/dateUtils";
-import { reservationApi } from "../services/api";
-import { sortByRoomAndNumber, sortBySuiteNumber } from "../utils/sortingUtils";
+import { useState, useEffect, useCallback } from 'react';
+import { resourceService, type Resource } from '../services/resourceService';
+import { Reservation as BaseReservation } from '../services/reservationService';
+import { formatDateToYYYYMMDD } from '../utils/dateUtils';
+import { reservationApi } from '../services/api';
+import { sortByRoomAndNumber, sortBySuiteNumber } from '../utils/sortingUtils';
 
 // Extended Resource interface for specific properties used in KennelCalendar
 export interface ExtendedResource extends Resource {
@@ -29,13 +29,13 @@ export interface Reservation extends BaseReservation {
 }
 
 // Define the kennel types
-export type RoomSize = "JUNIOR" | "QUEEN" | "KING" | "VIP" | "CAT" | "OVERFLOW";
+export type RoomSize = 'JUNIOR' | 'QUEEN' | 'KING' | 'VIP' | 'CAT' | 'OVERFLOW';
 export type KennelType = RoomSize; // Alias for backward compatibility
 
 interface UseKennelDataProps {
   currentDate: Date;
   getDaysToDisplay: () => Date[];
-  kennelTypeFilter: KennelType | "ALL";
+  kennelTypeFilter: KennelType | 'ALL';
   refreshTrigger?: number;
 }
 
@@ -79,8 +79,8 @@ export const useKennelData = ({
         const suitesResponse = await resourceService.getAllResources(
           1, // page
           1000, // large limit to get all resources
-          "name", // sortBy
-          "asc" // sortOrder
+          'name', // sortBy
+          'asc' // sortOrder
           // No type filter - fetch all resources
         );
 
@@ -88,13 +88,13 @@ export const useKennelData = ({
         let kennelResources: ExtendedResource[] = [];
 
         if (
-          suitesResponse?.status === "success" &&
+          suitesResponse?.status === 'success' &&
           Array.isArray(suitesResponse?.data)
         ) {
           kennelResources = suitesResponse.data;
         } else {
-          console.error("Could not find suite resources in response");
-          setError("Failed to load kennels: Could not find suite resources");
+          console.error('Could not find suite resources in response');
+          setError('Failed to load kennels: Could not find suite resources');
           setLoading(false);
           return;
         }
@@ -155,7 +155,7 @@ export const useKennelData = ({
           });
         } else {
           console.warn(
-            "Could not process availability data, assuming all available"
+            'Could not process availability data, assuming all available'
           );
         }
 
@@ -175,16 +175,16 @@ export const useKennelData = ({
         setLoading(false);
         return;
       } catch (apiError: any) {
-        console.error("Error fetching resources:", apiError);
+        console.error('Error fetching resources:', apiError);
 
         // Fallback to the original availability endpoint
 
         try {
           const response = await reservationApi.get(
-            "/api/resources/availability",
+            '/api/resources/availability',
             {
               params: {
-                resourceType: "suite",
+                resourceType: 'suite',
                 date: formatDateToYYYYMMDD(currentDate),
               },
             }
@@ -194,7 +194,7 @@ export const useKennelData = ({
           let kennelData: any[] = [];
 
           // Handle the actual response structure from the API
-          if (response?.data?.status === "success") {
+          if (response?.data?.status === 'success') {
             // For the single resource availability endpoint, we need to create a synthetic kennels array
             if (response?.data?.data) {
               // Store the availability data for later use
@@ -206,8 +206,8 @@ export const useKennelData = ({
                   const allSuites = await resourceService.getAllResources(
                     1,
                     1000,
-                    "name",
-                    "asc"
+                    'name',
+                    'asc'
                   );
                   if (allSuites && Array.isArray(allSuites)) {
                     kennelData = allSuites.map((suite: any) => ({
@@ -218,7 +218,7 @@ export const useKennelData = ({
                   }
                 } catch (error) {
                   console.warn(
-                    "Could not fetch suite details, using placeholder data",
+                    'Could not fetch suite details, using placeholder data',
                     error
                   );
                 }
@@ -227,7 +227,7 @@ export const useKennelData = ({
           }
           // Handle batch response format with resources array
           else if (
-            response?.data?.status === "success" &&
+            response?.data?.status === 'success' &&
             response?.data?.data?.resources &&
             Array.isArray(response?.data?.data?.resources)
           ) {
@@ -246,7 +246,7 @@ export const useKennelData = ({
           // Check for nested data structure with data property
           else if (
             response?.data?.data &&
-            typeof response.data.data === "object"
+            typeof response.data.data === 'object'
           ) {
             // Look for any array property in the nested data object
             for (const key in response.data.data) {
@@ -258,9 +258,9 @@ export const useKennelData = ({
           }
 
           if (kennelData.length === 0) {
-            console.warn("No kennel data found in any expected format");
+            console.warn('No kennel data found in any expected format');
             setError(
-              "No kennels found. Please check your resource configuration."
+              'No kennels found. Please check your resource configuration.'
             );
           } else {
             // Sort the kennels by suite number
@@ -270,18 +270,18 @@ export const useKennelData = ({
 
           setLoading(false);
         } catch (fallbackError: any) {
-          console.error("Fallback API call also failed:", fallbackError);
+          console.error('Fallback API call also failed:', fallbackError);
           setError(
             `Failed to load kennels: ${
-              fallbackError.message || "Unknown error"
+              fallbackError.message || 'Unknown error'
             }`
           );
           setLoading(false);
         }
       }
     } catch (error: any) {
-      console.error("Error in loadKennelsAndAvailability:", error);
-      setError(`Failed to load kennels: ${error.message || "Unknown error"}`);
+      console.error('Error in loadKennelsAndAvailability:', error);
+      setError(`Failed to load kennels: ${error.message || 'Unknown error'}`);
       setLoading(false);
     }
   }, [currentDate, getDaysToDisplay]);
@@ -294,7 +294,7 @@ export const useKennelData = ({
       const endDate = formatDateToYYYYMMDD(days[days.length - 1]);
 
       // Use the reservation API directly to get reservations for the date range
-      const response = await reservationApi.get("/api/reservations", {
+      const response = await reservationApi.get('/api/reservations', {
         params: {
           startDate,
           endDate,
@@ -316,14 +316,14 @@ export const useKennelData = ({
           // Exclude PENDING, DRAFT, CANCELLED, NO_SHOW statuses
           return (
             status &&
-            !["PENDING", "DRAFT", "CANCELLED", "NO_SHOW"].includes(status)
+            !['PENDING', 'DRAFT', 'CANCELLED', 'NO_SHOW'].includes(status)
           );
         }
       );
 
       setReservations(confirmedReservations);
     } catch (error) {
-      console.error("Error loading reservations:", error);
+      console.error('Error loading reservations:', error);
       setReservations([]);
     }
   }, [getDaysToDisplay]);
@@ -336,18 +336,18 @@ export const useKennelData = ({
 
   // Derive room size from type (e.g., JUNIOR_KENNEL -> JUNIOR, QUEEN_KENNEL -> QUEEN)
   const getRoomSizeFromType = (type: string | undefined): string => {
-    if (!type) return "JUNIOR";
-    if (type.includes("JUNIOR")) return "JUNIOR";
-    if (type.includes("QUEEN")) return "QUEEN";
-    if (type.includes("KING")) return "KING";
-    if (type.includes("VIP")) return "VIP";
-    if (type.includes("CAT")) return "CAT";
-    return "JUNIOR";
+    if (!type) return 'JUNIOR';
+    if (type.includes('JUNIOR')) return 'JUNIOR';
+    if (type.includes('QUEEN')) return 'QUEEN';
+    if (type.includes('KING')) return 'KING';
+    if (type.includes('VIP')) return 'VIP';
+    if (type.includes('CAT')) return 'CAT';
+    return 'JUNIOR';
   };
 
   // Filter kennels based on room size filter
   const filteredKennels = kennels.filter((kennel) => {
-    if (kennelTypeFilter === "ALL") return true;
+    if (kennelTypeFilter === 'ALL') return true;
     const roomSize = kennel.size || getRoomSizeFromType(kennel.type);
     return roomSize === kennelTypeFilter;
   });

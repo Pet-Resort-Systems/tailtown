@@ -5,8 +5,8 @@
  * Compatible with Prometheus + Grafana monitoring stack.
  */
 
-import { Request, Response, NextFunction } from "express";
-import os from "os";
+import { Request, Response, NextFunction } from 'express';
+import os from 'os';
 
 // Service start time for uptime calculation
 const SERVICE_START_TIME = Date.now();
@@ -50,7 +50,7 @@ class PrometheusMetrics {
   private activeTenants: Gauge = { value: 0 };
 
   // Labels
-  private serviceName = "customer_service";
+  private serviceName = 'customer_service';
 
   /**
    * Express middleware to track HTTP metrics
@@ -60,11 +60,11 @@ class PrometheusMetrics {
       const startTime = process.hrtime.bigint();
       const method = req.method;
       const route = this.normalizeRoute(req.route?.path || req.path);
-      const tenantId = (req as any).tenantId || "unknown";
+      const tenantId = (req as any).tenantId || 'unknown';
 
       this.activeConnections.value++;
 
-      res.on("finish", () => {
+      res.on('finish', () => {
         this.activeConnections.value--;
 
         const duration = Number(process.hrtime.bigint() - startTime) / 1e9; // Convert to seconds
@@ -142,7 +142,7 @@ class PrometheusMetrics {
    */
   recordDbQuery(duration: number, operation: string, success: boolean) {
     this.dbQueriesTotal.value++;
-    const key = `${operation}|${success ? "success" : "error"}`;
+    const key = `${operation}|${success ? 'success' : 'error'}`;
     this.dbQueriesTotal.labels.set(
       key,
       (this.dbQueriesTotal.labels.get(key) || 0) + 1
@@ -169,10 +169,10 @@ class PrometheusMetrics {
       path
         .replace(
           /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi,
-          ":id"
+          ':id'
         )
-        .replace(/\/\d+/g, "/:id")
-        .replace(/\/$/, "") || "/"
+        .replace(/\/\d+/g, '/:id')
+        .replace(/\/$/, '') || '/'
     );
   }
 
@@ -184,16 +184,16 @@ class PrometheusMetrics {
     const timestamp = Date.now();
 
     // System metrics
-    lines.push("# HELP process_uptime_seconds Process uptime in seconds");
-    lines.push("# TYPE process_uptime_seconds gauge");
+    lines.push('# HELP process_uptime_seconds Process uptime in seconds');
+    lines.push('# TYPE process_uptime_seconds gauge');
     lines.push(
       `process_uptime_seconds{service="${this.serviceName}"} ${
         (Date.now() - SERVICE_START_TIME) / 1000
       }`
     );
 
-    lines.push("# HELP process_memory_bytes Process memory usage");
-    lines.push("# TYPE process_memory_bytes gauge");
+    lines.push('# HELP process_memory_bytes Process memory usage');
+    lines.push('# TYPE process_memory_bytes gauge');
     const memUsage = process.memoryUsage();
     lines.push(
       `process_memory_bytes{type="rss",service="${this.serviceName}"} ${memUsage.rss}`
@@ -208,15 +208,15 @@ class PrometheusMetrics {
       `process_memory_bytes{type="external",service="${this.serviceName}"} ${memUsage.external}`
     );
 
-    lines.push("# HELP nodejs_version_info Node.js version");
-    lines.push("# TYPE nodejs_version_info gauge");
+    lines.push('# HELP nodejs_version_info Node.js version');
+    lines.push('# TYPE nodejs_version_info gauge');
     lines.push(
       `nodejs_version_info{version="${process.version}",service="${this.serviceName}"} 1`
     );
 
     // CPU metrics
-    lines.push("# HELP system_cpu_usage_percent System CPU usage percentage");
-    lines.push("# TYPE system_cpu_usage_percent gauge");
+    lines.push('# HELP system_cpu_usage_percent System CPU usage percentage');
+    lines.push('# TYPE system_cpu_usage_percent gauge');
     const cpus = os.cpus();
     const cpuUsage =
       cpus.reduce((acc, cpu) => {
@@ -231,8 +231,8 @@ class PrometheusMetrics {
     );
 
     // Memory metrics
-    lines.push("# HELP system_memory_bytes System memory");
-    lines.push("# TYPE system_memory_bytes gauge");
+    lines.push('# HELP system_memory_bytes System memory');
+    lines.push('# TYPE system_memory_bytes gauge');
     lines.push(
       `system_memory_bytes{type="total",service="${
         this.serviceName
@@ -250,19 +250,19 @@ class PrometheusMetrics {
     );
 
     // HTTP metrics
-    lines.push("# HELP http_requests_total Total HTTP requests");
-    lines.push("# TYPE http_requests_total counter");
+    lines.push('# HELP http_requests_total Total HTTP requests');
+    lines.push('# TYPE http_requests_total counter');
     for (const [labels, count] of this.httpRequestsTotal.labels) {
-      const [method, route, status, tenant] = labels.split("|");
+      const [method, route, status, tenant] = labels.split('|');
       lines.push(
         `http_requests_total{method="${method}",route="${route}",status="${status}",tenant="${tenant}",service="${this.serviceName}"} ${count}`
       );
     }
 
-    lines.push("# HELP http_request_duration_seconds HTTP request duration");
-    lines.push("# TYPE http_request_duration_seconds histogram");
+    lines.push('# HELP http_request_duration_seconds HTTP request duration');
+    lines.push('# TYPE http_request_duration_seconds histogram');
     for (const [key, histogram] of this.httpRequestDuration) {
-      const [method, route, status] = key.split("|");
+      const [method, route, status] = key.split('|');
       for (const [bucket, count] of histogram.buckets) {
         lines.push(
           `http_request_duration_seconds_bucket{method="${method}",route="${route}",status="${status}",le="${bucket}",service="${this.serviceName}"} ${count}`
@@ -279,24 +279,24 @@ class PrometheusMetrics {
       );
     }
 
-    lines.push("# HELP http_request_errors_total Total HTTP errors");
-    lines.push("# TYPE http_request_errors_total counter");
+    lines.push('# HELP http_request_errors_total Total HTTP errors');
+    lines.push('# TYPE http_request_errors_total counter');
     for (const [labels, count] of this.httpRequestErrors.labels) {
-      const [method, route, status] = labels.split("|");
+      const [method, route, status] = labels.split('|');
       lines.push(
         `http_request_errors_total{method="${method}",route="${route}",status="${status}",service="${this.serviceName}"} ${count}`
       );
     }
 
-    lines.push("# HELP http_active_connections Current active connections");
-    lines.push("# TYPE http_active_connections gauge");
+    lines.push('# HELP http_active_connections Current active connections');
+    lines.push('# TYPE http_active_connections gauge');
     lines.push(
       `http_active_connections{service="${this.serviceName}"} ${this.activeConnections.value}`
     );
 
     // Rate limiting metrics
-    lines.push("# HELP rate_limit_hits_total Total rate limit hits");
-    lines.push("# TYPE rate_limit_hits_total counter");
+    lines.push('# HELP rate_limit_hits_total Total rate limit hits');
+    lines.push('# TYPE rate_limit_hits_total counter');
     lines.push(
       `rate_limit_hits_total{service="${this.serviceName}"} ${this.rateLimitHits.value}`
     );
@@ -307,32 +307,32 @@ class PrometheusMetrics {
     }
 
     // Database metrics
-    lines.push("# HELP db_queries_total Total database queries");
-    lines.push("# TYPE db_queries_total counter");
+    lines.push('# HELP db_queries_total Total database queries');
+    lines.push('# TYPE db_queries_total counter');
     lines.push(
       `db_queries_total{service="${this.serviceName}"} ${this.dbQueriesTotal.value}`
     );
     for (const [labels, count] of this.dbQueriesTotal.labels) {
-      const [operation, status] = labels.split("|");
+      const [operation, status] = labels.split('|');
       lines.push(
         `db_queries_total{operation="${operation}",status="${status}",service="${this.serviceName}"} ${count}`
       );
     }
 
-    lines.push("# HELP db_query_errors_total Total database query errors");
-    lines.push("# TYPE db_query_errors_total counter");
+    lines.push('# HELP db_query_errors_total Total database query errors');
+    lines.push('# TYPE db_query_errors_total counter');
     lines.push(
       `db_query_errors_total{service="${this.serviceName}"} ${this.dbQueryErrors.value}`
     );
 
     // Business metrics
-    lines.push("# HELP active_tenants_total Number of active tenants");
-    lines.push("# TYPE active_tenants_total gauge");
+    lines.push('# HELP active_tenants_total Number of active tenants');
+    lines.push('# TYPE active_tenants_total gauge');
     lines.push(
       `active_tenants_total{service="${this.serviceName}"} ${this.activeTenants.value}`
     );
 
-    return lines.join("\n") + "\n";
+    return lines.join('\n') + '\n';
   }
 
   /**

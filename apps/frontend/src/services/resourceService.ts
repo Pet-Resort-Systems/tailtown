@@ -1,14 +1,14 @@
-import { AxiosResponse } from "axios";
-import { reservationApi as api } from "./api";
-import { formatDateToYYYYMMDD } from "../utils/dateUtils";
-import { ServiceCategory } from "../types/service";
-import { serviceManagement } from "./serviceManagement";
+import { AxiosResponse } from 'axios';
+import { reservationApi as api } from './api';
+import { formatDateToYYYYMMDD } from '../utils/dateUtils';
+import { ServiceCategory } from '../types/service';
+import { serviceManagement } from './serviceManagement';
 import {
   Resource,
   ResourceType,
   AvailabilityStatus,
   ResourceAvailability,
-} from "../types/resource";
+} from '../types/resource';
 
 // Re-export the Resource types
 export type {
@@ -48,7 +48,7 @@ export const resourceService = {
     page?: number,
     limit?: number,
     sortBy?: string,
-    sortOrder: "asc" | "desc" = "asc",
+    sortOrder: 'asc' | 'desc' = 'asc',
     type?: string
   ): Promise<{
     status: string;
@@ -65,7 +65,7 @@ export const resourceService = {
         let totalPages = 1;
 
         // Fetch first page with limit of 100
-        const firstResponse: AxiosResponse = await api.get("/api/resources", {
+        const firstResponse: AxiosResponse = await api.get('/api/resources', {
           params: {
             page: currentPage,
             limit: 100,
@@ -75,7 +75,7 @@ export const resourceService = {
           },
         });
 
-        if (firstResponse.data.status === "success") {
+        if (firstResponse.data.status === 'success') {
           allResources = firstResponse.data.data || [];
           // If we have data but no totalPages, we got all data in one response
           if (
@@ -93,7 +93,7 @@ export const resourceService = {
           while (currentPage < totalPages) {
             currentPage++;
             const pageResponse: AxiosResponse = await api.get(
-              "/api/resources",
+              '/api/resources',
               {
                 params: {
                   page: currentPage,
@@ -106,7 +106,7 @@ export const resourceService = {
             );
 
             if (
-              pageResponse.data.status === "success" &&
+              pageResponse.data.status === 'success' &&
               pageResponse.data.data
             ) {
               allResources = [...allResources, ...pageResponse.data.data];
@@ -115,7 +115,7 @@ export const resourceService = {
         }
 
         return {
-          status: "success",
+          status: 'success',
           data: allResources,
           totalPages: totalPages,
           currentPage: totalPages,
@@ -124,7 +124,7 @@ export const resourceService = {
       }
 
       // Normal single-page request
-      const response: AxiosResponse = await api.get("/api/resources", {
+      const response: AxiosResponse = await api.get('/api/resources', {
         params: {
           page,
           limit,
@@ -135,7 +135,7 @@ export const resourceService = {
       });
       return response.data;
     } catch (error: any) {
-      console.error("Error in getAllResources:", error);
+      console.error('Error in getAllResources:', error);
       throw error;
     }
   },
@@ -170,14 +170,14 @@ export const resourceService = {
           params: {
             resourceId: id,
             date: formattedDate,
-            status: "PENDING,CONFIRMED,CHECKED_IN", // Include pending reservations too
+            status: 'PENDING,CONFIRMED,CHECKED_IN', // Include pending reservations too
           },
         }
       );
 
       // If we have reservations, add them to the resource
       if (
-        reservationsResponse.data?.status === "success" &&
+        reservationsResponse.data?.status === 'success' &&
         Array.isArray(reservationsResponse.data?.data) &&
         reservationsResponse.data.data.length > 0
       ) {
@@ -191,22 +191,22 @@ export const resourceService = {
 
       return resourceResponse.data;
     } catch (error: any) {
-      console.error("Error in getResource:", error);
+      console.error('Error in getResource:', error);
       throw error;
     }
   },
 
   createResource: async (
-    resource: Omit<Resource, "id" | "createdAt" | "updatedAt">
+    resource: Omit<Resource, 'id' | 'createdAt' | 'updatedAt'>
   ): Promise<{ status: string; data: Resource }> => {
     try {
       const response: AxiosResponse = await api.post(
-        "/api/resources",
+        '/api/resources',
         resource
       );
       return response.data;
     } catch (error: any) {
-      console.error("Error in createResource:", error);
+      console.error('Error in createResource:', error);
       throw error;
     }
   },
@@ -222,7 +222,7 @@ export const resourceService = {
       );
       return response.data;
     } catch (error: any) {
-      console.error("Error in updateResource:", error);
+      console.error('Error in updateResource:', error);
       throw error;
     }
   },
@@ -231,7 +231,7 @@ export const resourceService = {
     try {
       await api.delete(`/api/resources/${id}`);
     } catch (error: any) {
-      console.error("Error in deleteResource:", error);
+      console.error('Error in deleteResource:', error);
       throw error;
     }
   },
@@ -261,7 +261,7 @@ export const resourceService = {
       // Fetch all resources without type filter, then filter client-side
       // This ensures we get all kennel types
       do {
-        const response: AxiosResponse = await api.get("/api/resources", {
+        const response: AxiosResponse = await api.get('/api/resources', {
           params: {
             page: currentPage,
             limit: pageSize,
@@ -270,7 +270,7 @@ export const resourceService = {
         });
 
         if (
-          response?.data?.status === "success" &&
+          response?.data?.status === 'success' &&
           Array.isArray(response?.data?.data)
         ) {
           allResources = allResources.concat(response.data.data);
@@ -287,10 +287,10 @@ export const resourceService = {
 
       // Get all reservations that overlap with the specified date
       // A reservation overlaps if: reservation.startDate <= date AND reservation.endDate >= date
-      const reservationsResponse = await api.get("/api/reservations", {
+      const reservationsResponse = await api.get('/api/reservations', {
         params: {
           date: formattedDate, // Use single date param to find overlapping reservations
-          status: "PENDING,CONFIRMED,CHECKED_IN",
+          status: 'PENDING,CONFIRMED,CHECKED_IN',
           page: 1,
           limit: 500, // Backend max is 500
         },
@@ -316,12 +316,12 @@ export const resourceService = {
 
       // Return the same structure as the API but with all resources combined and enriched
       return {
-        status: "success",
+        status: 'success',
         data: resourcesWithReservations,
         results: resourcesWithReservations.length,
       };
     } catch (error: any) {
-      console.error("Error in getSuites:", error);
+      console.error('Error in getSuites:', error);
       throw error;
     }
   },
@@ -350,10 +350,10 @@ export const resourceService = {
       );
 
       if (
-        suitesResponse.status !== "success" ||
+        suitesResponse.status !== 'success' ||
         !Array.isArray(suitesResponse.data)
       ) {
-        throw new Error("Failed to fetch suites data for stats calculation");
+        throw new Error('Failed to fetch suites data for stats calculation');
       }
 
       // Calculate stats
@@ -381,12 +381,12 @@ export const resourceService = {
           (suite as any).lastCleanedAt || suite.attributes?.lastCleaned;
 
         if (
-          maintenanceStatus === "MAINTENANCE" ||
-          maintenanceStatus === "OUT_OF_ORDER"
+          maintenanceStatus === 'MAINTENANCE' ||
+          maintenanceStatus === 'OUT_OF_ORDER'
         ) {
           maintenance++;
         } else if (
-          maintenanceStatus === "NEEDS_CLEANING" ||
+          maintenanceStatus === 'NEEDS_CLEANING' ||
           (lastCleaned &&
             new Date(lastCleaned) < new Date(Date.now() - 24 * 60 * 60 * 1000))
         ) {
@@ -395,11 +395,11 @@ export const resourceService = {
           // Check reservation status to determine if occupied or reserved
           const reservation = suite.reservations[0];
           if (
-            reservation.status === "CONFIRMED" ||
-            reservation.status === "CHECKED_IN"
+            reservation.status === 'CONFIRMED' ||
+            reservation.status === 'CHECKED_IN'
           ) {
             occupied++;
-          } else if (reservation.status === "PENDING") {
+          } else if (reservation.status === 'PENDING') {
             reserved++;
           } else {
             available++;
@@ -414,7 +414,7 @@ export const resourceService = {
         total > 0 ? Math.round(((occupied + reserved) / total) * 100) : 0;
 
       return {
-        status: "success",
+        status: 'success',
         data: {
           total,
           occupied,
@@ -426,7 +426,7 @@ export const resourceService = {
         },
       };
     } catch (error: any) {
-      console.error("Error in getSuiteStats:", error);
+      console.error('Error in getSuiteStats:', error);
       throw error;
     }
   },
@@ -443,7 +443,7 @@ export const resourceService = {
       });
       return response.data;
     } catch (error: any) {
-      console.error("Error in updateSuiteCleaning:", error);
+      console.error('Error in updateSuiteCleaning:', error);
       throw error;
     }
   },
@@ -459,16 +459,16 @@ export const resourceService = {
       // Since this is a specialized operation, we don't have a direct equivalent in the resource API
       // In a production environment, you would implement this endpoint on the backend
       console.warn(
-        "Suite initialization endpoint not available in this version"
+        'Suite initialization endpoint not available in this version'
       );
       return {
-        status: "error",
+        status: 'error',
         message:
-          "Suite initialization is not available in this version of the API",
+          'Suite initialization is not available in this version of the API',
         data: null,
       };
     } catch (error: any) {
-      console.error("Error in initializeSuites:", error);
+      console.error('Error in initializeSuites:', error);
       throw error;
     }
   },
@@ -497,27 +497,27 @@ export const resourceService = {
           ): string | undefined => {
             switch (cat) {
               case ServiceCategory.BOARDING:
-              case "BOARDING":
-                return "SUITE";
+              case 'BOARDING':
+                return 'SUITE';
               case ServiceCategory.DAYCARE:
-              case "DAYCARE":
+              case 'DAYCARE':
                 // Using SUITE for daycare to align with current suite-based selection flow
-                return "SUITE";
+                return 'SUITE';
               case ServiceCategory.GROOMING:
-              case "GROOMING":
-                return "GROOMING_TABLE";
+              case 'GROOMING':
+                return 'GROOMING_TABLE';
               case ServiceCategory.TRAINING:
-              case "TRAINING":
-                return "TRAINING_ROOM";
+              case 'TRAINING':
+                return 'TRAINING_ROOM';
               default:
-                return "OTHER";
+                return 'OTHER';
             }
           };
 
           resourceType = mapServiceCategoryToResourceType(category);
         } catch (e) {
           console.warn(
-            "Unable to resolve service by ID to map resourceType; proceeding without service filter",
+            'Unable to resolve service by ID to map resourceType; proceeding without service filter',
             e
           );
         }
@@ -531,7 +531,7 @@ export const resourceService = {
       if (resourceType) params.resourceType = resourceType;
 
       const response: AxiosResponse = await api.get(
-        "/api/resources/availability",
+        '/api/resources/availability',
         { params }
       );
 
@@ -540,8 +540,8 @@ export const resourceService = {
       const resources = Array.isArray(response?.data?.data?.resources)
         ? response.data.data.resources
         : Array.isArray(response?.data)
-        ? response.data
-        : [];
+          ? response.data
+          : [];
 
       const normalized: Resource[] = (resources as any[])
         .filter(
@@ -551,19 +551,19 @@ export const resourceService = {
           (r: any) =>
             ({
               id: r.id || r.resourceId,
-              name: r.name || r.resourceName || "Resource",
-              type: r.type || r.resourceType || "OTHER",
-              capacity: "capacity" in r ? r.capacity : 1,
-              attributes: "attributes" in r ? r.attributes : undefined,
+              name: r.name || r.resourceName || 'Resource',
+              type: r.type || r.resourceType || 'OTHER',
+              capacity: 'capacity' in r ? r.capacity : 1,
+              attributes: 'attributes' in r ? r.attributes : undefined,
               isActive: true,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
-            } as Resource)
+            }) as Resource
         );
 
-      return { status: "success", data: normalized };
+      return { status: 'success', data: normalized };
     } catch (error: any) {
-      console.error("Error in getAvailableResourcesByDate:", error);
+      console.error('Error in getAvailableResourcesByDate:', error);
       throw error;
     }
   },
@@ -590,14 +590,14 @@ export const resourceService = {
   }> => {
     try {
       const response: AxiosResponse = await api.get(
-        "/api/resources/availability",
+        '/api/resources/availability',
         {
           params: { resourceId, date },
         }
       );
       return response.data;
     } catch (error: any) {
-      console.error("Error in checkResourceAvailability:", error);
+      console.error('Error in checkResourceAvailability:', error);
       throw error;
     }
   },
@@ -631,7 +631,7 @@ export const resourceService = {
     // Guard: Don't call API with empty resourceIds array
     if (!resourceIds || resourceIds.length === 0) {
       return {
-        status: "success",
+        status: 'success',
         data: {
           checkDate: null,
           checkStartDate: startDate,
@@ -643,7 +643,7 @@ export const resourceService = {
 
     try {
       const response: AxiosResponse = await api.post(
-        "/api/resources/availability/batch",
+        '/api/resources/availability/batch',
         {
           resourceIds, // Backend expects 'resourceIds' not 'resources'
           startDate,
@@ -652,7 +652,7 @@ export const resourceService = {
       );
       return response.data;
     } catch (error: any) {
-      console.error("Error in batchCheckResourceAvailability:", error);
+      console.error('Error in batchCheckResourceAvailability:', error);
       throw error;
     }
   },

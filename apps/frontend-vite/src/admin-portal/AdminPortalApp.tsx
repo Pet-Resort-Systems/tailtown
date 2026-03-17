@@ -1,26 +1,31 @@
-import React, { Suspense, lazy } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import { ThemeProvider, CssBaseline, CircularProgress, Box } from "@mui/material";
-import theme from "./theme";
-import { AdminPortalAuthProvider } from "./contexts/AuthContext";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Layout from "./components/Layout";
+import React, { Suspense, lazy } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import {
+  ThemeProvider,
+  CssBaseline,
+  CircularProgress,
+  Box,
+} from '@mui/material';
+import theme from './theme';
+import { AdminPortalAuthProvider } from './contexts/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import Layout from './components/Layout';
 
-const Login = lazy(() => import("./pages/Login"));
-const TenantList = lazy(() => import("./pages/tenants/TenantList"));
-const CreateTenant = lazy(() => import("./pages/tenants/CreateTenant"));
-const TenantDetail = lazy(() => import("./pages/tenants/TenantDetail"));
-const TenantEdit = lazy(() => import("./pages/tenants/TenantEdit"));
-const Dashboard = lazy(() => import("./pages/Dashboard"));
-const Analytics = lazy(() => import("./pages/Analytics"));
+const Login = lazy(() => import('./pages/Login'));
+const TenantList = lazy(() => import('./pages/tenants/TenantList'));
+const CreateTenant = lazy(() => import('./pages/tenants/CreateTenant'));
+const TenantDetail = lazy(() => import('./pages/tenants/TenantDetail'));
+const TenantEdit = lazy(() => import('./pages/tenants/TenantEdit'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Analytics = lazy(() => import('./pages/Analytics'));
 
 const PageLoader = () => (
   <Box
     sx={{
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      minHeight: "100vh",
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '100vh',
     }}
   >
     <CircularProgress />

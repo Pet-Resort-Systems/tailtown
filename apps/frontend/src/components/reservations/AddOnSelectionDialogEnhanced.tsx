@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { getApiBaseUrl } from "../../services/api";
+import React, { useState, useEffect, useCallback } from 'react';
+import { getApiBaseUrl } from '../../services/api';
 import {
   Dialog,
   DialogTitle,
@@ -22,7 +22,7 @@ import {
   Tabs,
   Tab,
   Chip,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Add as AddIcon,
   Remove as RemoveIcon,
@@ -30,11 +30,11 @@ import {
   ShoppingCart as ProductIcon,
   Build as ServiceIcon,
   Inventory as StockIcon,
-} from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { useShoppingCart } from "../../contexts/ShoppingCartContext";
-import { reservationService } from "../../services/reservationService";
-import addonService, { AddOnService } from "../../services/addonService";
+} from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import { useShoppingCart } from '../../contexts/ShoppingCartContext';
+import { reservationService } from '../../services/reservationService';
+import addonService, { AddOnService } from '../../services/addonService';
 
 interface AddOnSelectionDialogEnhancedProps {
   open: boolean;
@@ -62,7 +62,7 @@ interface SelectedItem {
   description?: string;
   quantity: number;
   price: number;
-  type: "service" | "product";
+  type: 'service' | 'product';
   productId?: string;
   addOnId?: string;
   serviceId?: string;
@@ -115,8 +115,8 @@ const AddOnSelectionDialogEnhanced: React.FC<
         setAvailableAddOns(addOns);
       }
     } catch (err: any) {
-      console.error("Error loading add-ons:", err);
-      setError("Failed to load add-on services.");
+      console.error('Error loading add-ons:', err);
+      setError('Failed to load add-on services.');
     } finally {
       setLoading(false);
     }
@@ -133,20 +133,20 @@ const AddOnSelectionDialogEnhanced: React.FC<
         `${apiUrl}/api/products?isActive=true&isService=false`,
         {
           headers: {
-            "x-tenant-id":
-              localStorage.getItem("tailtown_tenant_id") ||
-              localStorage.getItem("tenantId") ||
-              "dev",
+            'x-tenant-id':
+              localStorage.getItem('tailtown_tenant_id') ||
+              localStorage.getItem('tenantId') ||
+              'dev',
           },
         }
       );
 
-      if (!response.ok) throw new Error("Failed to load products");
+      if (!response.ok) throw new Error('Failed to load products');
 
       const data = await response.json();
       setAvailableProducts(data.data || []);
     } catch (err: any) {
-      console.error("Error loading products:", err);
+      console.error('Error loading products:', err);
       // Don't show error for products, just log it
     } finally {
       setLoadingProducts(false);
@@ -169,7 +169,7 @@ const AddOnSelectionDialogEnhanced: React.FC<
   // Handle adding a service add-on
   const handleAddService = (addon: AddOnService) => {
     const existingIndex = selectedItems.findIndex(
-      (item) => item.type === "service" && item.addOnId === addon.id
+      (item) => item.type === 'service' && item.addOnId === addon.id
     );
 
     if (existingIndex >= 0) {
@@ -185,7 +185,7 @@ const AddOnSelectionDialogEnhanced: React.FC<
           description: addon.description,
           price: addon.price,
           quantity: 1,
-          type: "service",
+          type: 'service',
           addOnId: addon.id,
           serviceId: addon.serviceId,
         },
@@ -196,7 +196,7 @@ const AddOnSelectionDialogEnhanced: React.FC<
   // Handle adding a product
   const handleAddProduct = (product: Product) => {
     const existingIndex = selectedItems.findIndex(
-      (item) => item.type === "product" && item.productId === product.id
+      (item) => item.type === 'product' && item.productId === product.id
     );
     const currentQty =
       existingIndex >= 0 ? selectedItems[existingIndex].quantity : 0;
@@ -221,7 +221,7 @@ const AddOnSelectionDialogEnhanced: React.FC<
           description: product.description,
           price: Number(product.price),
           quantity: 1,
-          type: "product",
+          type: 'product',
           productId: product.id,
         },
       ]);
@@ -235,7 +235,7 @@ const AddOnSelectionDialogEnhanced: React.FC<
     const item = selectedItems[index];
 
     // Check stock for products
-    if (item.type === "product") {
+    if (item.type === 'product') {
       const product = availableProducts.find((p) => p.id === item.productId);
       if (product && newQuantity > product.currentStock) {
         setError(`Only ${product.currentStock} units available in stock`);
@@ -261,8 +261,8 @@ const AddOnSelectionDialogEnhanced: React.FC<
       setError(null);
 
       // Separate services and products
-      const services = selectedItems.filter((item) => item.type === "service");
-      const products = selectedItems.filter((item) => item.type === "product");
+      const services = selectedItems.filter((item) => item.type === 'service');
+      const products = selectedItems.filter((item) => item.type === 'product');
 
       // Save service add-ons to reservation if any
       if (services.length > 0) {
@@ -275,32 +275,31 @@ const AddOnSelectionDialogEnhanced: React.FC<
           reservationId,
           addOnData
         );
-        setSuccess("Services added successfully!");
+        setSuccess('Services added successfully!');
       }
 
       // Get reservation details
-      const reservation = await reservationService.getReservationById(
-        reservationId
-      );
+      const reservation =
+        await reservationService.getReservationById(reservationId);
 
       // Create cart item with both services and products
       const cartItem = {
         id: `reservation-${reservationId}`,
         price: reservation.service?.price || 0,
         quantity: 1,
-        serviceName: reservation.service?.name || "Unknown Service",
+        serviceName: reservation.service?.name || 'Unknown Service',
         serviceId: reservation.serviceId,
         customerId: reservation.customerId,
-        customerName: `${reservation.customer?.firstName || ""} ${
-          reservation.customer?.lastName || ""
+        customerName: `${reservation.customer?.firstName || ''} ${
+          reservation.customer?.lastName || ''
         }`.trim(),
         petId: reservation.petId,
-        petName: reservation.pet?.name || "Unknown Pet",
+        petName: reservation.pet?.name || 'Unknown Pet',
         startDate: new Date(reservation.startDate),
         endDate: new Date(reservation.endDate),
-        suiteType: "STANDARD_SUITE",
+        suiteType: 'STANDARD_SUITE',
         resourceId: reservation.resource?.id || undefined,
-        notes: reservation.notes || "",
+        notes: reservation.notes || '',
         addOns: services.map((service) => ({
           id: service.addOnId!,
           name: service.name,
@@ -318,12 +317,12 @@ const AddOnSelectionDialogEnhanced: React.FC<
       // Add to cart and navigate to checkout
       addItem(cartItem);
       onAddOnsAdded(true);
-      navigate("/checkout");
+      navigate('/checkout');
       onClose();
     } catch (err: any) {
-      console.error("Error saving items:", err);
+      console.error('Error saving items:', err);
       setError(
-        err.response?.data?.message || "Failed to add items. Please try again."
+        err.response?.data?.message || 'Failed to add items. Please try again.'
       );
       onAddOnsAdded(false);
     } finally {
@@ -334,44 +333,43 @@ const AddOnSelectionDialogEnhanced: React.FC<
   // Handle continue without items
   const handleContinueWithout = async () => {
     try {
-      const reservation = await reservationService.getReservationById(
-        reservationId
-      );
+      const reservation =
+        await reservationService.getReservationById(reservationId);
 
       const cartItem = {
         id: `reservation-${reservationId}`,
         price: reservation.service?.price || 0,
         quantity: 1,
-        serviceName: reservation.service?.name || "Unknown Service",
+        serviceName: reservation.service?.name || 'Unknown Service',
         serviceId: reservation.serviceId,
         customerId: reservation.customerId,
-        customerName: `${reservation.customer?.firstName || ""} ${
-          reservation.customer?.lastName || ""
+        customerName: `${reservation.customer?.firstName || ''} ${
+          reservation.customer?.lastName || ''
         }`.trim(),
         petId: reservation.petId,
-        petName: reservation.pet?.name || "Unknown Pet",
+        petName: reservation.pet?.name || 'Unknown Pet',
         startDate: new Date(reservation.startDate),
         endDate: new Date(reservation.endDate),
-        suiteType: "STANDARD_SUITE",
+        suiteType: 'STANDARD_SUITE',
         resourceId: reservation.resource?.id || undefined,
-        notes: reservation.notes || "",
+        notes: reservation.notes || '',
         addOns: [],
         products: [],
       };
 
       addItem(cartItem);
-      navigate("/checkout");
+      navigate('/checkout');
       onClose();
     } catch (error) {
-      console.error("Error preparing checkout:", error);
+      console.error('Error preparing checkout:', error);
       onClose();
     }
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
       minimumFractionDigits: 2,
     }).format(amount);
   };
@@ -422,7 +420,7 @@ const AddOnSelectionDialogEnhanced: React.FC<
             </Typography>
 
             {loading ? (
-              <Box sx={{ display: "flex", justifyContent: "center", my: 3 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
                 <CircularProgress />
               </Box>
             ) : availableAddOns.length === 0 ? (
@@ -474,7 +472,7 @@ const AddOnSelectionDialogEnhanced: React.FC<
             </Typography>
 
             {loadingProducts ? (
-              <Box sx={{ display: "flex", justifyContent: "center", my: 3 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
                 <CircularProgress />
               </Box>
             ) : availableProducts.length === 0 ? (
@@ -509,7 +507,7 @@ const AddOnSelectionDialogEnhanced: React.FC<
                             )}
                           </Box>
                         </TableCell>
-                        <TableCell>{product.category?.name || "-"}</TableCell>
+                        <TableCell>{product.category?.name || '-'}</TableCell>
                         <TableCell align="right">
                           {formatCurrency(Number(product.price))}
                         </TableCell>
@@ -520,10 +518,10 @@ const AddOnSelectionDialogEnhanced: React.FC<
                             size="small"
                             color={
                               product.currentStock > 10
-                                ? "success"
+                                ? 'success'
                                 : product.currentStock > 0
-                                ? "warning"
-                                : "error"
+                                  ? 'warning'
+                                  : 'error'
                             }
                           />
                         </TableCell>
@@ -576,11 +574,11 @@ const AddOnSelectionDialogEnhanced: React.FC<
                       <TableCell>
                         <Chip
                           label={
-                            item.type === "service" ? "Service" : "Product"
+                            item.type === 'service' ? 'Service' : 'Product'
                           }
                           size="small"
                           color={
-                            item.type === "service" ? "primary" : "secondary"
+                            item.type === 'service' ? 'primary' : 'secondary'
                           }
                         />
                       </TableCell>
@@ -590,9 +588,9 @@ const AddOnSelectionDialogEnhanced: React.FC<
                       <TableCell align="center">
                         <Box
                           sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
                           }}
                         >
                           <IconButton
@@ -667,7 +665,7 @@ const AddOnSelectionDialogEnhanced: React.FC<
             onClick={handleSaveAndCheckout}
             disabled={saving}
           >
-            {saving ? <CircularProgress size={24} /> : "Add Items & Checkout"}
+            {saving ? <CircularProgress size={24} /> : 'Add Items & Checkout'}
           </Button>
         )}
       </DialogActions>

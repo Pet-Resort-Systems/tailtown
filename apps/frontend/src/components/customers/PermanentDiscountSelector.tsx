@@ -4,7 +4,7 @@
  * (e.g., military, senior, first responder discounts)
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -17,19 +17,19 @@ import {
   Alert,
   CircularProgress,
   Paper,
-} from "@mui/material";
+} from '@mui/material';
 import {
   LocalOffer as CouponIcon,
   Delete as DeleteIcon,
-} from "@mui/icons-material";
-import { customerService } from "../../services/customerService";
-import { couponService } from "../../services/couponService";
+} from '@mui/icons-material';
+import { customerService } from '../../services/customerService';
+import { couponService } from '../../services/couponService';
 
 interface Coupon {
   id: string;
   code: string;
   description: string;
-  type: "PERCENTAGE" | "FIXED_AMOUNT";
+  type: 'PERCENTAGE' | 'FIXED_AMOUNT';
   discountValue: number;
 }
 
@@ -48,7 +48,7 @@ const PermanentDiscountSelector: React.FC<PermanentDiscountSelectorProps> = ({
   const [success, setSuccess] = useState<string | null>(null);
   const [currentCoupon, setCurrentCoupon] = useState<Coupon | null>(null);
   const [availableCoupons, setAvailableCoupons] = useState<Coupon[]>([]);
-  const [selectedCouponId, setSelectedCouponId] = useState<string>("");
+  const [selectedCouponId, setSelectedCouponId] = useState<string>('');
 
   // Load current permanent coupon and available coupons
   useEffect(() => {
@@ -60,16 +60,16 @@ const PermanentDiscountSelector: React.FC<PermanentDiscountSelectorProps> = ({
         // Load current permanent coupon
         const current = await customerService.getPermanentCoupon(customerId);
         setCurrentCoupon(current);
-        setSelectedCouponId(current?.id || "");
+        setSelectedCouponId(current?.id || '');
 
         // Load all active coupons
         const couponsResponse = await couponService.getAllCoupons({
-          status: "ACTIVE",
+          status: 'ACTIVE',
         });
         setAvailableCoupons(couponsResponse?.data || []);
       } catch (err: any) {
-        console.error("Error loading permanent discount data:", err);
-        setError("Failed to load discount information");
+        console.error('Error loading permanent discount data:', err);
+        setError('Failed to load discount information');
       } finally {
         setLoading(false);
       }
@@ -99,11 +99,11 @@ const PermanentDiscountSelector: React.FC<PermanentDiscountSelectorProps> = ({
         setCurrentCoupon(null);
       }
 
-      setSuccess("Permanent discount updated successfully");
+      setSuccess('Permanent discount updated successfully');
       onUpdate?.();
     } catch (err: any) {
-      console.error("Error saving permanent discount:", err);
-      setError("Failed to save permanent discount");
+      console.error('Error saving permanent discount:', err);
+      setError('Failed to save permanent discount');
     } finally {
       setSaving(false);
     }
@@ -117,19 +117,19 @@ const PermanentDiscountSelector: React.FC<PermanentDiscountSelectorProps> = ({
 
       await customerService.removePermanentCoupon(customerId);
       setCurrentCoupon(null);
-      setSelectedCouponId("");
-      setSuccess("Permanent discount removed");
+      setSelectedCouponId('');
+      setSuccess('Permanent discount removed');
       onUpdate?.();
     } catch (err: any) {
-      console.error("Error removing permanent discount:", err);
-      setError("Failed to remove permanent discount");
+      console.error('Error removing permanent discount:', err);
+      setError('Failed to remove permanent discount');
     } finally {
       setSaving(false);
     }
   };
 
   const formatDiscount = (coupon: Coupon) => {
-    if (coupon.type === "PERCENTAGE") {
+    if (coupon.type === 'PERCENTAGE') {
       return `${coupon.discountValue}% off`;
     }
     return `$${coupon.discountValue.toFixed(2)} off`;
@@ -137,7 +137,7 @@ const PermanentDiscountSelector: React.FC<PermanentDiscountSelectorProps> = ({
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
         <CircularProgress size={24} />
       </Box>
     );
@@ -145,8 +145,8 @@ const PermanentDiscountSelector: React.FC<PermanentDiscountSelectorProps> = ({
 
   return (
     <Paper elevation={2} sx={{ p: 2, mt: 2 }}>
-      <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-        <CouponIcon sx={{ mr: 1, color: "primary.main" }} />
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+        <CouponIcon sx={{ mr: 1, color: 'primary.main' }} />
         <Typography variant="h6">Permanent Discount</Typography>
       </Box>
 
@@ -216,10 +216,10 @@ const PermanentDiscountSelector: React.FC<PermanentDiscountSelectorProps> = ({
       <Button
         variant="contained"
         onClick={handleSave}
-        disabled={saving || selectedCouponId === (currentCoupon?.id || "")}
+        disabled={saving || selectedCouponId === (currentCoupon?.id || '')}
         startIcon={saving ? <CircularProgress size={16} /> : <CouponIcon />}
       >
-        {saving ? "Saving..." : "Save Discount"}
+        {saving ? 'Saving...' : 'Save Discount'}
       </Button>
     </Paper>
   );

@@ -6,32 +6,41 @@ import {
   isPetCompliant,
   getComplianceStatus,
   formatVaccinationStatus,
-  getVaccinationStatusColor
+  getVaccinationStatusColor,
 } from '../vaccinationService';
 
 describe('Vaccination Service', () => {
   describe('getVaccinationTypesByPetType', () => {
     it('returns dog-specific vaccines for DOG type', () => {
       const dogVaccines = getVaccinationTypesByPetType('DOG');
-      
+
       expect(dogVaccines).toHaveLength(4);
-      expect(dogVaccines.map(v => v.id)).toEqual(['rabies', 'dhpp', 'bordetella', 'canine_influenza']);
-      expect(dogVaccines.filter(v => v.required)).toHaveLength(3); // rabies, dhpp, bordetella are required
+      expect(dogVaccines.map((v) => v.id)).toEqual([
+        'rabies',
+        'dhpp',
+        'bordetella',
+        'canine_influenza',
+      ]);
+      expect(dogVaccines.filter((v) => v.required)).toHaveLength(3); // rabies, dhpp, bordetella are required
     });
 
     it('returns cat-specific vaccines for CAT type', () => {
       const catVaccines = getVaccinationTypesByPetType('CAT');
-      
+
       expect(catVaccines).toHaveLength(3);
-      expect(catVaccines.map(v => v.id)).toEqual(['rabies', 'fvrcp', 'feline_leukemia']);
-      expect(catVaccines.filter(v => v.required)).toHaveLength(2); // rabies, fvrcp are required
+      expect(catVaccines.map((v) => v.id)).toEqual([
+        'rabies',
+        'fvrcp',
+        'feline_leukemia',
+      ]);
+      expect(catVaccines.filter((v) => v.required)).toHaveLength(2); // rabies, fvrcp are required
     });
 
     it('returns required vaccines for OTHER type', () => {
       const otherVaccines = getVaccinationTypesByPetType('OTHER');
-      
+
       expect(otherVaccines).toHaveLength(4); // All required vaccines
-      expect(otherVaccines.every(v => v.required)).toBe(true);
+      expect(otherVaccines.every((v) => v.required)).toBe(true);
     });
   });
 
@@ -39,7 +48,7 @@ describe('Vaccination Service', () => {
     it('returns CURRENT for future expiration date', () => {
       const futureDate = new Date();
       futureDate.setDate(futureDate.getDate() + 30);
-      
+
       const status = calculateVaccinationStatus(futureDate.toISOString());
       expect(status).toBe('CURRENT');
     });
@@ -47,7 +56,7 @@ describe('Vaccination Service', () => {
     it('returns EXPIRED for past expiration date', () => {
       const pastDate = new Date();
       pastDate.setDate(pastDate.getDate() - 30);
-      
+
       const status = calculateVaccinationStatus(pastDate.toISOString());
       expect(status).toBe('EXPIRED');
     });
@@ -62,14 +71,16 @@ describe('Vaccination Service', () => {
     it('calculates next due date correctly', () => {
       const lastGiven = '2024-01-01T00:00:00.000Z';
       const frequencyMonths = 12;
-      
+
       const nextDue = getNextDueDate(lastGiven, frequencyMonths);
       expect(nextDue).toBe('2025-01-01T00:00:00.000Z');
     });
 
     it('returns undefined for missing parameters', () => {
       expect(getNextDueDate(undefined, 12)).toBeUndefined();
-      expect(getNextDueDate('2024-01-01T00:00:00.000Z', undefined)).toBeUndefined();
+      expect(
+        getNextDueDate('2024-01-01T00:00:00.000Z', undefined)
+      ).toBeUndefined();
     });
   });
 
@@ -78,9 +89,9 @@ describe('Vaccination Service', () => {
       const vaccinationStatus = {
         rabies: { status: 'CURRENT' },
         dhpp: { status: 'CURRENT' },
-        bordetella: { status: 'CURRENT' }
+        bordetella: { status: 'CURRENT' },
       };
-      
+
       const isCompliant = isPetCompliant(vaccinationStatus, 'DOG');
       expect(isCompliant).toBe(true);
     });
@@ -89,9 +100,9 @@ describe('Vaccination Service', () => {
       const vaccinationStatus = {
         rabies: { status: 'EXPIRED' },
         dhpp: { status: 'CURRENT' },
-        bordetella: { status: 'CURRENT' }
+        bordetella: { status: 'CURRENT' },
       };
-      
+
       const isCompliant = isPetCompliant(vaccinationStatus, 'DOG');
       expect(isCompliant).toBe(false);
     });
@@ -99,10 +110,10 @@ describe('Vaccination Service', () => {
     it('returns false for dog missing required vaccine', () => {
       const vaccinationStatus = {
         rabies: { status: 'CURRENT' },
-        dhpp: { status: 'CURRENT' }
+        dhpp: { status: 'CURRENT' },
         // Missing bordetella
       };
-      
+
       const isCompliant = isPetCompliant(vaccinationStatus, 'DOG');
       expect(isCompliant).toBe(false);
     });
@@ -110,9 +121,9 @@ describe('Vaccination Service', () => {
     it('returns true for compliant cat', () => {
       const vaccinationStatus = {
         rabies: { status: 'CURRENT' },
-        fvrcp: { status: 'CURRENT' }
+        fvrcp: { status: 'CURRENT' },
       };
-      
+
       const isCompliant = isPetCompliant(vaccinationStatus, 'CAT');
       expect(isCompliant).toBe(true);
     });
@@ -123,16 +134,16 @@ describe('Vaccination Service', () => {
       const vaccinationStatus = {
         rabies: { status: 'CURRENT' },
         dhpp: { status: 'CURRENT' },
-        bordetella: { status: 'CURRENT' }
+        bordetella: { status: 'CURRENT' },
       };
-      
+
       const status = getComplianceStatus(vaccinationStatus, 'DOG');
-      
+
       expect(status).toEqual({
         compliant: true,
         expiredCount: 0,
         missingCount: 0,
-        totalCount: 3
+        totalCount: 3,
       });
     });
 
@@ -140,48 +151,48 @@ describe('Vaccination Service', () => {
       const vaccinationStatus = {
         rabies: { status: 'EXPIRED' },
         dhpp: { status: 'CURRENT' },
-        bordetella: { status: 'EXPIRED' }
+        bordetella: { status: 'EXPIRED' },
       };
-      
+
       const status = getComplianceStatus(vaccinationStatus, 'DOG');
-      
+
       expect(status).toEqual({
         compliant: false,
         expiredCount: 2,
         missingCount: 0,
-        totalCount: 3
+        totalCount: 3,
       });
     });
 
     it('counts missing vaccines correctly', () => {
       const vaccinationStatus = {
-        rabies: { status: 'CURRENT' }
+        rabies: { status: 'CURRENT' },
         // Missing dhpp and bordetella
       };
-      
+
       const status = getComplianceStatus(vaccinationStatus, 'DOG');
-      
+
       expect(status).toEqual({
         compliant: false,
         expiredCount: 0,
         missingCount: 2,
-        totalCount: 3
+        totalCount: 3,
       });
     });
 
     it('handles mixed expired and missing vaccines', () => {
       const vaccinationStatus = {
-        rabies: { status: 'EXPIRED' }
+        rabies: { status: 'EXPIRED' },
         // Missing dhpp and bordetella
       };
-      
+
       const status = getComplianceStatus(vaccinationStatus, 'DOG');
-      
+
       expect(status).toEqual({
         compliant: false,
         expiredCount: 1,
         missingCount: 2,
-        totalCount: 3
+        totalCount: 3,
       });
     });
   });
@@ -209,8 +220,8 @@ describe('Vaccination Service', () => {
   describe('VACCINATION_TYPES constant', () => {
     it('contains expected vaccine types', () => {
       expect(VACCINATION_TYPES).toHaveLength(6);
-      
-      const vaccineIds = VACCINATION_TYPES.map(v => v.id);
+
+      const vaccineIds = VACCINATION_TYPES.map((v) => v.id);
       expect(vaccineIds).toContain('rabies');
       expect(vaccineIds).toContain('dhpp');
       expect(vaccineIds).toContain('bordetella');
@@ -220,10 +231,10 @@ describe('Vaccination Service', () => {
     });
 
     it('has required vaccines marked correctly', () => {
-      const requiredVaccines = VACCINATION_TYPES.filter(v => v.required);
+      const requiredVaccines = VACCINATION_TYPES.filter((v) => v.required);
       expect(requiredVaccines).toHaveLength(4); // All except canine_influenza and feline_leukemia
-      
-      const requiredIds = requiredVaccines.map(v => v.id);
+
+      const requiredIds = requiredVaccines.map((v) => v.id);
       expect(requiredIds).toContain('rabies');
       expect(requiredIds).toContain('dhpp');
       expect(requiredIds).toContain('bordetella');
@@ -231,13 +242,13 @@ describe('Vaccination Service', () => {
     });
 
     it('has appropriate validity periods', () => {
-      const rabies = VACCINATION_TYPES.find(v => v.id === 'rabies');
+      const rabies = VACCINATION_TYPES.find((v) => v.id === 'rabies');
       expect(rabies?.typicalDuration).toBe(36); // 3 years
-      
-      const dhpp = VACCINATION_TYPES.find(v => v.id === 'dhpp');
+
+      const dhpp = VACCINATION_TYPES.find((v) => v.id === 'dhpp');
       expect(dhpp?.typicalDuration).toBe(12); // 1 year
-      
-      const bordetella = VACCINATION_TYPES.find(v => v.id === 'bordetella');
+
+      const bordetella = VACCINATION_TYPES.find((v) => v.id === 'bordetella');
       expect(bordetella?.typicalDuration).toBe(6); // 6 months
     });
   });

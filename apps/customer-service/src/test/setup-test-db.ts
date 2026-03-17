@@ -5,13 +5,13 @@
  * a test database for integration tests.
  */
 
-import { PrismaClient } from "@prisma/client";
-import { execSync } from "child_process";
+import { PrismaClient } from '@prisma/client';
+import { execSync } from 'child_process';
 
 // Use test database URL
 const TEST_DATABASE_URL =
   process.env.DATABASE_URL ||
-  "postgresql://postgres:postgres@localhost:5433/customer_test";
+  'postgresql://postgres:postgres@localhost:5433/customer_test';
 
 let prisma: PrismaClient | null = null;
 
@@ -26,7 +26,7 @@ export function getTestPrismaClient(): PrismaClient {
           url: TEST_DATABASE_URL,
         },
       },
-      log: process.env.DEBUG_PRISMA ? ["query", "error", "warn"] : ["error"],
+      log: process.env.DEBUG_PRISMA ? ['query', 'error', 'warn'] : ['error'],
     });
   }
   return prisma;
@@ -87,16 +87,16 @@ export async function disconnectTestDatabase(): Promise<void> {
 export async function setupTestDatabase(): Promise<void> {
   try {
     // Push schema to test database (creates tables if they don't exist)
-    execSync("npx prisma db push --skip-generate --accept-data-loss", {
+    execSync('npx prisma db push --skip-generate --accept-data-loss', {
       env: {
         ...process.env,
         DATABASE_URL: TEST_DATABASE_URL,
       },
-      stdio: "pipe",
+      stdio: 'pipe',
     });
-    console.log("✅ Test database schema pushed successfully");
+    console.log('✅ Test database schema pushed successfully');
   } catch (error) {
-    console.error("❌ Failed to setup test database:", error);
+    console.error('❌ Failed to setup test database:', error);
     throw error;
   }
 }
@@ -105,7 +105,7 @@ export async function setupTestDatabase(): Promise<void> {
  * Create a test tenant for integration tests
  */
 export async function createTestTenant(
-  tenantId: string = "test-tenant"
+  tenantId: string = 'test-tenant'
 ): Promise<string> {
   const client = getTestPrismaClient();
 
@@ -114,12 +114,12 @@ export async function createTestTenant(
     update: {},
     create: {
       id: tenantId,
-      businessName: "Test Business",
+      businessName: 'Test Business',
       subdomain: `test-${Date.now()}`,
-      contactName: "Test Contact",
-      contactEmail: "test@example.com",
-      contactPhone: "555-0000",
-      status: "ACTIVE",
+      contactName: 'Test Contact',
+      contactEmail: 'test@example.com',
+      contactPhone: '555-0000',
+      status: 'ACTIVE',
       isActive: true,
     },
   });
@@ -137,10 +137,10 @@ export async function createTestData(tenantId: string) {
   const customer = await client.customer.create({
     data: {
       tenantId,
-      firstName: "Test",
-      lastName: "Customer",
+      firstName: 'Test',
+      lastName: 'Customer',
       email: `test-${Date.now()}@example.com`,
-      phone: "555-0100",
+      phone: '555-0100',
     },
   });
 
@@ -149,9 +149,9 @@ export async function createTestData(tenantId: string) {
     data: {
       tenantId,
       customerId: customer.id,
-      name: "TestPet",
-      type: "DOG",
-      breed: "Test Breed",
+      name: 'TestPet',
+      type: 'DOG',
+      breed: 'Test Breed',
     },
   });
 
@@ -159,8 +159,8 @@ export async function createTestData(tenantId: string) {
   const service = await client.service.create({
     data: {
       tenantId,
-      name: "Test Service",
-      serviceCategory: "BOARDING",
+      name: 'Test Service',
+      serviceCategory: 'BOARDING',
       price: 50,
       duration: 1440,
       isActive: true,
@@ -171,8 +171,8 @@ export async function createTestData(tenantId: string) {
   const resource = await client.resource.create({
     data: {
       tenantId,
-      name: "Test Suite",
-      type: "STANDARD_SUITE",
+      name: 'Test Suite',
+      type: 'STANDARD_SUITE',
       isActive: true,
     },
   });

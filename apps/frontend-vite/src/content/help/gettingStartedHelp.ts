@@ -8,8 +8,9 @@ import { PageHelpContent } from '../../types/help';
 export const gettingStartedHelp: PageHelpContent = {
   pageId: 'getting-started',
   pageName: 'Getting Started',
-  overview: 'Welcome to Tailtown! This guide will help you get started with managing your pet resort efficiently. Learn the basics of navigating the system, managing customers and pets, creating reservations, and more.',
-  
+  overview:
+    'Welcome to Tailtown! This guide will help you get started with managing your pet resort efficiently. Learn the basics of navigating the system, managing customers and pets, creating reservations, and more.',
+
   articles: [
     {
       id: 'welcome-to-tailtown',
@@ -39,7 +40,7 @@ You can also:
 • Click the Help button in the top right corner
 • Contact support at support@tailtown.com
 
-Let's get started!`
+Let's get started!`,
     },
     {
       id: 'logging-in',
@@ -85,7 +86,7 @@ If you're having trouble logging in:
 • Never share your password with anyone
 • Use a unique password for Tailtown
 • Log out when you're done, especially on shared computers
-• Change your password regularly`
+• Change your password regularly`,
     },
     {
       id: 'dashboard-overview',
@@ -136,7 +137,7 @@ Check the announcements section for:
 You can customize your dashboard:
 • Use the date selector to view different days
 • Filter by service type
-• Sort by check-in time or customer name`
+• Sort by check-in time or customer name`,
     },
     {
       id: 'adding-customers',
@@ -197,7 +198,7 @@ Each customer profile includes:
 • All pets associated with the customer
 • Reservation history
 • Payment history
-• Notes and special instructions`
+• Notes and special instructions`,
     },
     {
       id: 'adding-pets',
@@ -278,7 +279,7 @@ Once added, you can:
 • Update medical records
 • Add vaccination certificates
 • Track the pet's stay history
-• Add notes about each visit`
+• Add notes about each visit`,
     },
     {
       id: 'creating-reservations',
@@ -375,7 +376,7 @@ Reservations can have different statuses:
 • **Verify vaccinations** - Before check-in date
 • **Communicate** - Send confirmation emails
 • **Add notes** - Document special requests
-• **Check availability** - Before promising dates to customers`
+• **Check availability** - Before promising dates to customers`,
     },
     {
       id: 'check-in-process',
@@ -480,7 +481,7 @@ Use this checklist for every check-in:
 **Payment Issues**
 • Have clear payment policies
 • Require deposit or full payment at check-in
-• Don't release pet at checkout without payment`
+• Don't release pet at checkout without payment`,
     },
     {
       id: 'check-out-process',
@@ -609,7 +610,7 @@ Use this checklist for every check-out:
 • **Communicate clearly** - Explain charges and stay details
 • **Be positive** - Share good news about the pet's stay
 • **Book next visit** - Ask about future reservations
-• **Request feedback** - Ask how their experience was`
+• **Request feedback** - Ask how their experience was`,
     },
     {
       id: 'keyboard-shortcuts',
@@ -725,16 +726,17 @@ As you use Tailtown more, you'll:
 • Find features that save time
 • Become more efficient
 
-Practice these tips and shortcuts to become a Tailtown power user!`
-    }
+Practice these tips and shortcuts to become a Tailtown power user!`,
+    },
   ],
-  
+
   tooltips: {
     'help-button': {
       id: 'help-button',
       title: 'Help Center',
-      description: 'Click to open the help center and search for articles, or press Ctrl+K for quick search.',
-      learnMoreArticleId: 'welcome-to-tailtown'
-    }
-  }
+      description:
+        'Click to open the help center and search for articles, or press Ctrl+K for quick search.',
+      learnMoreArticleId: 'welcome-to-tailtown',
+    },
+  },
 };

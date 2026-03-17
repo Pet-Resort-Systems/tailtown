@@ -25,7 +25,9 @@ const ReturnBelongings: React.FC<ReturnBelongingsProps> = ({
   onContinue,
   onBack,
 }) => {
-  const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
+  const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>(
+    {}
+  );
 
   const handleToggle = (itemId: string) => {
     setCheckedItems({
@@ -34,11 +36,12 @@ const ReturnBelongings: React.FC<ReturnBelongingsProps> = ({
     });
   };
 
-  const allItemsReturned = belongings.length === 0 || 
-    belongings.every(item => checkedItems[item.id]);
+  const allItemsReturned =
+    belongings.length === 0 ||
+    belongings.every((item) => checkedItems[item.id]);
 
   const handleContinue = () => {
-    const updatedBelongings = belongings.map(item => ({
+    const updatedBelongings = belongings.map((item) => ({
       ...item,
       returned: checkedItems[item.id] || false,
     }));
@@ -56,7 +59,8 @@ const ReturnBelongings: React.FC<ReturnBelongingsProps> = ({
 
       {belongings.length === 0 ? (
         <Alert severity="info" sx={{ mt: 3 }}>
-          No belongings were recorded during check-in. You can proceed to the next step.
+          No belongings were recorded during check-in. You can proceed to the
+          next step.
         </Alert>
       ) : (
         <Paper elevation={0} sx={{ mt: 3, bgcolor: 'grey.50' }}>
@@ -68,7 +72,8 @@ const ReturnBelongings: React.FC<ReturnBelongingsProps> = ({
                 button
                 onClick={() => handleToggle(item.id || index.toString())}
                 sx={{
-                  borderBottom: index < belongings.length - 1 ? '1px solid' : 'none',
+                  borderBottom:
+                    index < belongings.length - 1 ? '1px solid' : 'none',
                   borderColor: 'divider',
                   '&:hover': {
                     bgcolor: 'action.hover',
@@ -118,9 +123,7 @@ const ReturnBelongings: React.FC<ReturnBelongingsProps> = ({
       )}
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
-        <Button onClick={onBack}>
-          Back
-        </Button>
+        <Button onClick={onBack}>Back</Button>
         <Button
           variant="contained"
           onClick={handleContinue}

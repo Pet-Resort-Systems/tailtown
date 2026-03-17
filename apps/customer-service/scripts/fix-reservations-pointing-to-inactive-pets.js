@@ -5,21 +5,21 @@
  * to point to the correct active pet record (matching name + customer).
  */
 
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-const TENANT_ID = "b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05";
+const TENANT_ID = 'b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05';
 
 async function fixReservationsWithInactivePets() {
-  console.log("🔍 Finding reservations pointing to inactive pets...\n");
+  console.log('🔍 Finding reservations pointing to inactive pets...\n');
 
   try {
     // Find all active/pending reservations pointing to inactive pets
     const problematicReservations = await prisma.reservation.findMany({
       where: {
         tenantId: TENANT_ID,
-        status: { in: ["CONFIRMED", "CHECKED_IN", "PENDING"] },
+        status: { in: ['CONFIRMED', 'CHECKED_IN', 'PENDING'] },
         pet: {
           isActive: false,
         },
@@ -67,7 +67,7 @@ async function fixReservationsWithInactivePets() {
         console.log(`   From inactive pet: ${inactivePet.id}`);
         console.log(`   To active pet: ${activePet.id}`);
         console.log(
-          `   Playgroup: ${activePet.playgroupCompatibility || "none"}`
+          `   Playgroup: ${activePet.playgroupCompatibility || 'none'}`
         );
 
         // Update the reservation to point to the active pet
@@ -87,16 +87,16 @@ async function fixReservationsWithInactivePets() {
       }
     }
 
-    console.log("\n✅ Fix Complete!");
+    console.log('\n✅ Fix Complete!');
     console.log(`   📊 Total reservations fixed: ${totalFixed}`);
     console.log(`   ⚠️ Reservations without active pet: ${totalNotFound}`);
 
     // Verification
-    console.log("\n📊 Verification:");
+    console.log('\n📊 Verification:');
     const remainingIssues = await prisma.reservation.count({
       where: {
         tenantId: TENANT_ID,
-        status: { in: ["CONFIRMED", "CHECKED_IN", "PENDING"] },
+        status: { in: ['CONFIRMED', 'CHECKED_IN', 'PENDING'] },
         pet: {
           isActive: false,
         },
@@ -107,7 +107,7 @@ async function fixReservationsWithInactivePets() {
       `   Remaining reservations with inactive pets: ${remainingIssues}`
     );
   } catch (error) {
-    console.error("❌ Error during fix:", error);
+    console.error('❌ Error during fix:', error);
     throw error;
   } finally {
     await prisma.$disconnect();
@@ -117,10 +117,10 @@ async function fixReservationsWithInactivePets() {
 // Run the fix
 fixReservationsWithInactivePets()
   .then(() => {
-    console.log("\n✅ Script completed successfully");
+    console.log('\n✅ Script completed successfully');
     process.exit(0);
   })
   .catch((error) => {
-    console.error("\n❌ Script failed:", error);
+    console.error('\n❌ Script failed:', error);
     process.exit(1);
   });

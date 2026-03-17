@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Paper,
@@ -12,22 +12,22 @@ import {
   Select,
   MenuItem,
   Alert,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
-import { DatePicker, TimePicker } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { parse } from "date-fns";
-import { format, addDays } from "date-fns";
-import { useNavigate } from "react-router-dom";
-import { SelectChangeEvent } from "@mui/material";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
+import { DatePicker, TimePicker } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { parse } from 'date-fns';
+import { format, addDays } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
+import { SelectChangeEvent } from '@mui/material';
 
-import StaffScheduleCalendar from "../../components/staff/StaffScheduleCalendar";
+import StaffScheduleCalendar from '../../components/staff/StaffScheduleCalendar';
 import staffService, {
   Staff,
   StaffSchedule,
   ScheduleStatus,
-} from "../../services/staffService";
+} from '../../services/staffService';
 
 // Create a simple PageHeader component since it doesn't exist yet
 interface PageHeaderProps {
@@ -40,9 +40,9 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, button }) => {
   return (
     <Box
       sx={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         mb: 3,
         p: 2,
       }}
@@ -66,15 +66,15 @@ const Scheduling: React.FC = () => {
   const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(0);
   const [staff, setStaff] = useState<Staff[]>([]);
-  const [selectedStaffId, setSelectedStaffId] = useState<string>("");
+  const [selectedStaffId, setSelectedStaffId] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [bulkScheduleData, setBulkScheduleData] = useState({
     startDate: new Date(),
     endDate: addDays(new Date(), 7),
-    startTime: "09:00",
-    endTime: "17:00",
+    startTime: '09:00',
+    endTime: '17:00',
     selectedStaff: [] as string[],
   });
 
@@ -84,11 +84,11 @@ const Scheduling: React.FC = () => {
       const staffData = await staffService.getAllStaff();
       setStaff(staffData);
       if (staffData.length > 0) {
-        setSelectedStaffId(staffData[0].id || "");
+        setSelectedStaffId(staffData[0].id || '');
       }
     } catch (err) {
-      setError("Failed to load staff data. Please try again.");
-      console.error("Error fetching staff:", err);
+      setError('Failed to load staff data. Please try again.');
+      console.error('Error fetching staff:', err);
     } finally {
       setLoading(false);
     }
@@ -124,9 +124,9 @@ const Scheduling: React.FC = () => {
    */
   const parseTimeString = (timeString: string): Date => {
     try {
-      return parse(timeString, "HH:mm", new Date());
+      return parse(timeString, 'HH:mm', new Date());
     } catch (error) {
-      console.error("Error parsing time string:", error);
+      console.error('Error parsing time string:', error);
       return new Date(); // Return current time as fallback
     }
   };
@@ -140,10 +140,10 @@ const Scheduling: React.FC = () => {
     if (time) {
       try {
         // Format time to 24-hour format for storage
-        const formattedTime = format(time, "HH:mm");
+        const formattedTime = format(time, 'HH:mm');
         setBulkScheduleData((prev) => ({ ...prev, [field]: formattedTime }));
       } catch (error) {
-        console.error("Error formatting time:", error);
+        console.error('Error formatting time:', error);
       }
     }
   };
@@ -164,7 +164,7 @@ const Scheduling: React.FC = () => {
         selectedStaff.length === 0
       ) {
         setError(
-          "Please fill in all required fields and select at least one staff member."
+          'Please fill in all required fields and select at least one staff member.'
         );
         return;
       }
@@ -177,7 +177,7 @@ const Scheduling: React.FC = () => {
         for (const staffId of selectedStaff) {
           schedules.push({
             staffId,
-            date: format(currentDate, "yyyy-MM-dd"),
+            date: format(currentDate, 'yyyy-MM-dd'),
             startTime,
             endTime,
             status: ScheduleStatus.SCHEDULED,
@@ -193,13 +193,13 @@ const Scheduling: React.FC = () => {
       setBulkScheduleData({
         startDate: new Date(),
         endDate: addDays(new Date(), 7),
-        startTime: "09:00",
-        endTime: "17:00",
+        startTime: '09:00',
+        endTime: '17:00',
         selectedStaff: [],
       });
     } catch (err) {
-      setError("Failed to create schedules. Please try again.");
-      console.error("Error creating bulk schedules:", err);
+      setError('Failed to create schedules. Please try again.');
+      console.error('Error creating bulk schedules:', err);
     } finally {
       setLoading(false);
     }
@@ -214,7 +214,7 @@ const Scheduling: React.FC = () => {
           <Button
             variant="outlined"
             color="primary"
-            onClick={() => navigate("/settings/users")}
+            onClick={() => navigate('/settings/users')}
           >
             Manage Staff
           </Button>
@@ -298,9 +298,9 @@ const Scheduling: React.FC = () => {
                               );
                               return staffMember
                                 ? `${staffMember.firstName} ${staffMember.lastName}`
-                                : "";
+                                : '';
                             })
-                            .join(", ");
+                            .join(', ');
                           return selectedStaffNames;
                         }}
                       >
@@ -318,7 +318,7 @@ const Scheduling: React.FC = () => {
                       label="Start Date"
                       value={bulkScheduleData.startDate}
                       onChange={(date) =>
-                        handleBulkScheduleChange("startDate", date)
+                        handleBulkScheduleChange('startDate', date)
                       }
                       slotProps={{ textField: { fullWidth: true } }}
                     />
@@ -329,7 +329,7 @@ const Scheduling: React.FC = () => {
                       label="End Date"
                       value={bulkScheduleData.endDate}
                       onChange={(date) =>
-                        handleBulkScheduleChange("endDate", date)
+                        handleBulkScheduleChange('endDate', date)
                       }
                       slotProps={{ textField: { fullWidth: true } }}
                     />
@@ -339,11 +339,11 @@ const Scheduling: React.FC = () => {
                     <TimePicker
                       label="Start Time"
                       value={parseTimeString(bulkScheduleData.startTime)}
-                      onChange={(time) => handleTimeChange("startTime", time)}
+                      onChange={(time) => handleTimeChange('startTime', time)}
                       slotProps={{
                         textField: {
                           fullWidth: true,
-                          placeholder: "9:00 AM",
+                          placeholder: '9:00 AM',
                         },
                       }}
                     />
@@ -353,11 +353,11 @@ const Scheduling: React.FC = () => {
                     <TimePicker
                       label="End Time"
                       value={parseTimeString(bulkScheduleData.endTime)}
-                      onChange={(time) => handleTimeChange("endTime", time)}
+                      onChange={(time) => handleTimeChange('endTime', time)}
                       slotProps={{
                         textField: {
                           fullWidth: true,
-                          placeholder: "5:00 PM",
+                          placeholder: '5:00 PM',
                         },
                       }}
                     />

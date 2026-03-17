@@ -1,6 +1,6 @@
-import { PrismaClient, PetType, Gender } from '@prisma/client'
+import { PrismaClient, PetType, Gender } from '@prisma/client';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 async function main() {
   // Create some test customers
@@ -25,7 +25,7 @@ async function main() {
             weight: 65.5,
             isNeutered: true,
             vetName: 'Dr. Smith',
-            vetPhone: '555-9876'
+            vetPhone: '555-9876',
           },
           {
             name: 'Luna',
@@ -36,12 +36,12 @@ async function main() {
             weight: 8.2,
             isNeutered: true,
             vetName: 'Dr. Smith',
-            vetPhone: '555-9876'
-          }
-        ]
-      }
-    }
-  })
+            vetPhone: '555-9876',
+          },
+        ],
+      },
+    },
+  });
 
   const customer2 = await prisma.customer.create({
     data: {
@@ -64,21 +64,21 @@ async function main() {
             weight: 75.0,
             isNeutered: false,
             vetName: 'Dr. Johnson',
-            vetPhone: '555-5432'
-          }
-        ]
-      }
-    }
-  })
+            vetPhone: '555-5432',
+          },
+        ],
+      },
+    },
+  });
 
-  console.log('Seed data created successfully')
+  console.log('Seed data created successfully');
 }
 
 main()
   .catch((e) => {
-    console.error(e)
-    process.exit(1)
+    console.error(e);
+    process.exit(1);
   })
   .finally(async () => {
-    await prisma.$disconnect()
-  })
+    await prisma.$disconnect();
+  });

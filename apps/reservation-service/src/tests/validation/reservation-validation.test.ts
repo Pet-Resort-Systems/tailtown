@@ -6,45 +6,45 @@
  * including date validation, required fields, and business rules.
  */
 
-import { ExtendedReservationStatus } from "../../types/prisma-extensions";
+import { ExtendedReservationStatus } from '../../types/prisma-extensions';
 
-describe("Reservation Validation", () => {
-  describe("Date validation", () => {
-    it("should reject end date before start date", () => {
-      const startDate = new Date("2024-06-15");
-      const endDate = new Date("2024-06-10");
+describe('Reservation Validation', () => {
+  describe('Date validation', () => {
+    it('should reject end date before start date', () => {
+      const startDate = new Date('2024-06-15');
+      const endDate = new Date('2024-06-10');
 
       const isValid = endDate > startDate;
       expect(isValid).toBe(false);
     });
 
-    it("should accept end date after start date", () => {
-      const startDate = new Date("2024-06-10");
-      const endDate = new Date("2024-06-15");
+    it('should accept end date after start date', () => {
+      const startDate = new Date('2024-06-10');
+      const endDate = new Date('2024-06-15');
 
       const isValid = endDate > startDate;
       expect(isValid).toBe(true);
     });
 
-    it("should reject same day for boarding reservations", () => {
-      const startDate = new Date("2024-06-15");
-      const endDate = new Date("2024-06-15");
-      const serviceType = "BOARDING";
+    it('should reject same day for boarding reservations', () => {
+      const startDate = new Date('2024-06-15');
+      const endDate = new Date('2024-06-15');
+      const serviceType = 'BOARDING';
 
-      const isValid = serviceType !== "BOARDING" || endDate > startDate;
+      const isValid = serviceType !== 'BOARDING' || endDate > startDate;
       expect(isValid).toBe(false);
     });
 
-    it("should allow same day for daycare reservations", () => {
-      const startDate = new Date("2024-06-15");
-      const endDate = new Date("2024-06-15");
-      const serviceType = "DAYCARE";
+    it('should allow same day for daycare reservations', () => {
+      const startDate = new Date('2024-06-15');
+      const endDate = new Date('2024-06-15');
+      const serviceType = 'DAYCARE';
 
-      const isValid = serviceType === "DAYCARE" || endDate > startDate;
+      const isValid = serviceType === 'DAYCARE' || endDate > startDate;
       expect(isValid).toBe(true);
     });
 
-    it("should reject dates in the past for new reservations", () => {
+    it('should reject dates in the past for new reservations', () => {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       const today = new Date();
@@ -54,7 +54,7 @@ describe("Reservation Validation", () => {
       expect(isValid).toBe(false);
     });
 
-    it("should accept dates in the future", () => {
+    it('should accept dates in the future', () => {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       const today = new Date();
@@ -65,60 +65,60 @@ describe("Reservation Validation", () => {
     });
   });
 
-  describe("Required fields validation", () => {
+  describe('Required fields validation', () => {
     const validateReservation = (data: any) => {
       const errors: string[] = [];
 
-      if (!data.tenantId) errors.push("tenantId is required");
-      if (!data.customerId) errors.push("customerId is required");
-      if (!data.petId) errors.push("petId is required");
-      if (!data.startDate) errors.push("startDate is required");
-      if (!data.endDate) errors.push("endDate is required");
+      if (!data.tenantId) errors.push('tenantId is required');
+      if (!data.customerId) errors.push('customerId is required');
+      if (!data.petId) errors.push('petId is required');
+      if (!data.startDate) errors.push('startDate is required');
+      if (!data.endDate) errors.push('endDate is required');
 
       return { isValid: errors.length === 0, errors };
     };
 
-    it("should reject reservation without tenantId", () => {
+    it('should reject reservation without tenantId', () => {
       const result = validateReservation({
-        customerId: "cust-1",
-        petId: "pet-1",
+        customerId: 'cust-1',
+        petId: 'pet-1',
         startDate: new Date(),
         endDate: new Date(),
       });
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain("tenantId is required");
+      expect(result.errors).toContain('tenantId is required');
     });
 
-    it("should reject reservation without customerId", () => {
+    it('should reject reservation without customerId', () => {
       const result = validateReservation({
-        tenantId: "tenant-1",
-        petId: "pet-1",
+        tenantId: 'tenant-1',
+        petId: 'pet-1',
         startDate: new Date(),
         endDate: new Date(),
       });
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain("customerId is required");
+      expect(result.errors).toContain('customerId is required');
     });
 
-    it("should reject reservation without petId", () => {
+    it('should reject reservation without petId', () => {
       const result = validateReservation({
-        tenantId: "tenant-1",
-        customerId: "cust-1",
+        tenantId: 'tenant-1',
+        customerId: 'cust-1',
         startDate: new Date(),
         endDate: new Date(),
       });
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain("petId is required");
+      expect(result.errors).toContain('petId is required');
     });
 
-    it("should accept reservation with all required fields", () => {
+    it('should accept reservation with all required fields', () => {
       const result = validateReservation({
-        tenantId: "tenant-1",
-        customerId: "cust-1",
-        petId: "pet-1",
+        tenantId: 'tenant-1',
+        customerId: 'cust-1',
+        petId: 'pet-1',
         startDate: new Date(),
         endDate: new Date(),
       });
@@ -128,7 +128,7 @@ describe("Reservation Validation", () => {
     });
   });
 
-  describe("Status transition validation", () => {
+  describe('Status transition validation', () => {
     const validTransitions: Record<string, string[]> = {
       [ExtendedReservationStatus.DRAFT]: [
         ExtendedReservationStatus.PENDING,
@@ -169,7 +169,7 @@ describe("Reservation Validation", () => {
       return validTransitions[from]?.includes(to) ?? false;
     };
 
-    it("should allow PENDING to CONFIRMED transition", () => {
+    it('should allow PENDING to CONFIRMED transition', () => {
       expect(
         isValidTransition(
           ExtendedReservationStatus.PENDING,
@@ -178,7 +178,7 @@ describe("Reservation Validation", () => {
       ).toBe(true);
     });
 
-    it("should allow CONFIRMED to CHECKED_IN transition", () => {
+    it('should allow CONFIRMED to CHECKED_IN transition', () => {
       expect(
         isValidTransition(
           ExtendedReservationStatus.CONFIRMED,
@@ -187,7 +187,7 @@ describe("Reservation Validation", () => {
       ).toBe(true);
     });
 
-    it("should allow CHECKED_IN to CHECKED_OUT transition", () => {
+    it('should allow CHECKED_IN to CHECKED_OUT transition', () => {
       expect(
         isValidTransition(
           ExtendedReservationStatus.CHECKED_IN,
@@ -196,7 +196,7 @@ describe("Reservation Validation", () => {
       ).toBe(true);
     });
 
-    it("should reject COMPLETED to any other status", () => {
+    it('should reject COMPLETED to any other status', () => {
       expect(
         isValidTransition(
           ExtendedReservationStatus.COMPLETED,
@@ -211,7 +211,7 @@ describe("Reservation Validation", () => {
       ).toBe(false);
     });
 
-    it("should reject CANCELED to any other status", () => {
+    it('should reject CANCELED to any other status', () => {
       expect(
         isValidTransition(
           ExtendedReservationStatus.CANCELED,
@@ -220,7 +220,7 @@ describe("Reservation Validation", () => {
       ).toBe(false);
     });
 
-    it("should reject skipping CHECKED_IN status", () => {
+    it('should reject skipping CHECKED_IN status', () => {
       expect(
         isValidTransition(
           ExtendedReservationStatus.CONFIRMED,
@@ -229,7 +229,7 @@ describe("Reservation Validation", () => {
       ).toBe(false);
     });
 
-    it("should allow cancellation from most statuses", () => {
+    it('should allow cancellation from most statuses', () => {
       expect(
         isValidTransition(
           ExtendedReservationStatus.PENDING,
@@ -244,7 +244,7 @@ describe("Reservation Validation", () => {
       ).toBe(true);
     });
 
-    it("should not allow cancellation after check-in", () => {
+    it('should not allow cancellation after check-in', () => {
       expect(
         isValidTransition(
           ExtendedReservationStatus.CHECKED_IN,
@@ -254,94 +254,94 @@ describe("Reservation Validation", () => {
     });
   });
 
-  describe("Price validation", () => {
+  describe('Price validation', () => {
     const validatePrice = (price: any) => {
-      if (typeof price !== "number")
-        return { isValid: false, error: "Price must be a number" };
+      if (typeof price !== 'number')
+        return { isValid: false, error: 'Price must be a number' };
       if (price < 0)
-        return { isValid: false, error: "Price cannot be negative" };
+        return { isValid: false, error: 'Price cannot be negative' };
       if (!Number.isFinite(price))
-        return { isValid: false, error: "Price must be finite" };
+        return { isValid: false, error: 'Price must be finite' };
       return { isValid: true };
     };
 
-    it("should accept valid positive price", () => {
+    it('should accept valid positive price', () => {
       expect(validatePrice(100).isValid).toBe(true);
       expect(validatePrice(0).isValid).toBe(true);
       expect(validatePrice(99.99).isValid).toBe(true);
     });
 
-    it("should reject negative price", () => {
+    it('should reject negative price', () => {
       const result = validatePrice(-50);
       expect(result.isValid).toBe(false);
-      expect(result.error).toBe("Price cannot be negative");
+      expect(result.error).toBe('Price cannot be negative');
     });
 
-    it("should reject non-numeric price", () => {
-      expect(validatePrice("100").isValid).toBe(false);
+    it('should reject non-numeric price', () => {
+      expect(validatePrice('100').isValid).toBe(false);
       expect(validatePrice(null).isValid).toBe(false);
       expect(validatePrice(undefined).isValid).toBe(false);
     });
 
-    it("should reject Infinity", () => {
+    it('should reject Infinity', () => {
       expect(validatePrice(Infinity).isValid).toBe(false);
       expect(validatePrice(-Infinity).isValid).toBe(false);
     });
 
-    it("should reject NaN", () => {
+    it('should reject NaN', () => {
       expect(validatePrice(NaN).isValid).toBe(false);
     });
   });
 
-  describe("UUID validation", () => {
+  describe('UUID validation', () => {
     const isValidUUID = (value: string): boolean => {
       const uuidRegex =
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       return uuidRegex.test(value);
     };
 
-    it("should accept valid UUIDs", () => {
-      expect(isValidUUID("123e4567-e89b-12d3-a456-426614174000")).toBe(true);
-      expect(isValidUUID("00000000-0000-0000-0000-000000000000")).toBe(true);
-      expect(isValidUUID("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF")).toBe(true);
+    it('should accept valid UUIDs', () => {
+      expect(isValidUUID('123e4567-e89b-12d3-a456-426614174000')).toBe(true);
+      expect(isValidUUID('00000000-0000-0000-0000-000000000000')).toBe(true);
+      expect(isValidUUID('FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF')).toBe(true);
     });
 
-    it("should reject invalid UUIDs", () => {
-      expect(isValidUUID("not-a-uuid")).toBe(false);
-      expect(isValidUUID("123e4567-e89b-12d3-a456")).toBe(false);
-      expect(isValidUUID("123e4567e89b12d3a456426614174000")).toBe(false);
-      expect(isValidUUID("")).toBe(false);
+    it('should reject invalid UUIDs', () => {
+      expect(isValidUUID('not-a-uuid')).toBe(false);
+      expect(isValidUUID('123e4567-e89b-12d3-a456')).toBe(false);
+      expect(isValidUUID('123e4567e89b12d3a456426614174000')).toBe(false);
+      expect(isValidUUID('')).toBe(false);
     });
   });
 
-  describe("Duration validation", () => {
+  describe('Duration validation', () => {
     const calculateDuration = (startDate: Date, endDate: Date): number => {
       const diffTime = endDate.getTime() - startDate.getTime();
       return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     };
 
-    it("should calculate correct duration in days", () => {
-      const start = new Date("2024-06-10");
-      const end = new Date("2024-06-15");
+    it('should calculate correct duration in days', () => {
+      const start = new Date('2024-06-10');
+      const end = new Date('2024-06-15');
 
       expect(calculateDuration(start, end)).toBe(5);
     });
 
-    it("should return 0 for same day", () => {
-      const date = new Date("2024-06-10");
+    it('should return 0 for same day', () => {
+      const date = new Date('2024-06-10');
       expect(calculateDuration(date, date)).toBe(0);
     });
 
-    it("should handle month boundaries", () => {
-      const start = new Date("2024-06-28");
-      const end = new Date("2024-07-03");
+    it('should handle month boundaries', () => {
+      const start = new Date('2024-06-28');
+      const end = new Date('2024-07-03');
 
       expect(calculateDuration(start, end)).toBe(5);
     });
 
-    it("should handle year boundaries", () => {
-      const start = new Date("2024-12-30");
-      const end = new Date("2025-01-02");
+    it('should handle year boundaries', () => {
+      const start = new Date('2024-12-30');
+      const end = new Date('2025-01-02');
 
       expect(calculateDuration(start, end)).toBe(3);
     });

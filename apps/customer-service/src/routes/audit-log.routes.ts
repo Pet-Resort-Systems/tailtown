@@ -5,7 +5,7 @@
  * Restricted to admin users only.
  */
 
-import { Router } from "express";
+import { Router } from 'express';
 import {
   getAuditLogs,
   getEntityAuditTrail,
@@ -13,11 +13,11 @@ import {
   getActivitySummary,
   getCriticalEvents,
   getFailedLogins,
-} from "../controllers/audit-log.controller";
+} from '../controllers/audit-log.controller';
 import {
   authenticate,
   requireTenantAdmin,
-} from "../middleware/auth.middleware";
+} from '../middleware/auth.middleware';
 
 const router = Router();
 
@@ -30,40 +30,40 @@ router.use(requireTenantAdmin);
  * Query audit logs with filters
  * Query params: action, category, entityType, entityId, userId, severity, startDate, endDate, search, limit, offset
  */
-router.get("/", getAuditLogs);
+router.get('/', getAuditLogs);
 
 /**
  * GET /api/audit-logs/entity/:entityType/:entityId
  * Get audit trail for a specific entity
  */
-router.get("/entity/:entityType/:entityId", getEntityAuditTrail);
+router.get('/entity/:entityType/:entityId', getEntityAuditTrail);
 
 /**
  * GET /api/audit-logs/user/:userId
  * Get activity for a specific user
  * Query params: startDate, endDate
  */
-router.get("/user/:userId", getUserActivity);
+router.get('/user/:userId', getUserActivity);
 
 /**
  * GET /api/audit-logs/summary
  * Get activity summary for the tenant
  * Query params: startDate, endDate (required)
  */
-router.get("/summary", getActivitySummary);
+router.get('/summary', getActivitySummary);
 
 /**
  * GET /api/audit-logs/critical
  * Get critical events for security monitoring
  * Query params: limit
  */
-router.get("/critical", getCriticalEvents);
+router.get('/critical', getCriticalEvents);
 
 /**
  * GET /api/audit-logs/failed-logins
  * Get failed login attempts
  * Query params: since (ISO date string)
  */
-router.get("/failed-logins", getFailedLogins);
+router.get('/failed-logins', getFailedLogins);
 
 export default router;

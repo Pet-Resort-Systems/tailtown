@@ -55,8 +55,12 @@ describe('SuperAdminContext', () => {
         }
       );
 
-      expect(localStorage.getItem('superAdminAccessToken')).toBe('access-token');
-      expect(localStorage.getItem('superAdminRefreshToken')).toBe('refresh-token');
+      expect(localStorage.getItem('superAdminAccessToken')).toBe(
+        'access-token'
+      );
+      expect(localStorage.getItem('superAdminRefreshToken')).toBe(
+        'refresh-token'
+      );
       expect(result.current.superAdmin).toEqual({
         id: '123',
         email: 'test@example.com',
@@ -157,8 +161,12 @@ describe('SuperAdminContext', () => {
         }
       );
 
-      expect(localStorage.getItem('superAdminAccessToken')).toBe('new-access-token');
-      expect(localStorage.getItem('superAdminRefreshToken')).toBe('new-refresh-token');
+      expect(localStorage.getItem('superAdminAccessToken')).toBe(
+        'new-access-token'
+      );
+      expect(localStorage.getItem('superAdminRefreshToken')).toBe(
+        'new-refresh-token'
+      );
     });
 
     it('should logout on refresh failure', async () => {

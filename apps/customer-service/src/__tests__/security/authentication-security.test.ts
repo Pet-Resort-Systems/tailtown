@@ -1,6 +1,6 @@
 /**
  * Authentication Security Tests
- * 
+ *
  * Tests to ensure authentication security:
  * - Password strength requirements
  * - Account lockout after failed attempts
@@ -25,13 +25,13 @@ describe('Authentication Security Tests', () => {
   beforeAll(async () => {
     // Clean up any existing test data
     await prisma.staff.deleteMany({
-      where: { tenantId: testTenantId }
+      where: { tenantId: testTenantId },
     });
   });
 
   afterAll(async () => {
     await prisma.staff.deleteMany({
-      where: { tenantId: testTenantId }
+      where: { tenantId: testTenantId },
     });
     await prisma.$disconnect();
   });
@@ -39,13 +39,13 @@ describe('Authentication Security Tests', () => {
   describe('Password Strength Requirements', () => {
     it('should reject weak passwords', async () => {
       const weakPasswords = [
-        'password',           // Too common
-        '12345678',          // Only numbers
-        'abcdefgh',          // Only lowercase
-        'ABCDEFGH',          // Only uppercase
-        'Pass1',             // Too short
-        'password123',       // No special chars
-        'Password',          // No numbers or special chars
+        'password', // Too common
+        '12345678', // Only numbers
+        'abcdefgh', // Only lowercase
+        'ABCDEFGH', // Only uppercase
+        'Pass1', // Too short
+        'password123', // No special chars
+        'Password', // No numbers or special chars
       ];
 
       for (const weakPassword of weakPasswords) {
@@ -57,7 +57,7 @@ describe('Authentication Security Tests', () => {
             lastName: 'User',
             password: weakPassword,
             role: 'STAFF',
-            tenantId: testTenantId
+            tenantId: testTenantId,
           });
 
         // Should reject weak passwords
@@ -67,7 +67,7 @@ describe('Authentication Security Tests', () => {
 
     it('should accept strong passwords', async () => {
       const strongPassword = 'SecureP@ssw0rd123!';
-      
+
       const response = await request(app)
         .post('/api/staff')
         .send({
@@ -76,7 +76,7 @@ describe('Authentication Security Tests', () => {
           lastName: 'User',
           password: strongPassword,
           role: 'STAFF',
-          tenantId: testTenantId
+          tenantId: testTenantId,
         });
 
       // Should accept strong passwords
@@ -89,7 +89,7 @@ describe('Authentication Security Tests', () => {
 
       // Verify it's a bcrypt hash
       expect(hashedPassword).toMatch(/^\$2[aby]\$\d{2}\$/);
-      
+
       // Verify it uses at least 12 rounds
       const rounds = parseInt(hashedPassword.split('$')[2]);
       expect(rounds).toBeGreaterThanOrEqual(12);
@@ -106,7 +106,7 @@ describe('Authentication Security Tests', () => {
     beforeEach(async () => {
       lockoutTestEmail = `lockout-test-${Date.now()}@example.com`;
       const hashedPassword = await bcrypt.hash('CorrectPassword123!', 12);
-      
+
       await prisma.staff.create({
         data: {
           email: lockoutTestEmail,
@@ -115,58 +115,48 @@ describe('Authentication Security Tests', () => {
           password: hashedPassword,
           role: 'STAFF',
           tenantId: testTenantId,
-          isActive: true
-        }
+          isActive: true,
+        },
       });
     });
 
     it('should track failed login attempts', async () => {
       // Attempt 1
-      const response1 = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: lockoutTestEmail,
-          password: 'WrongPassword'
-        });
+      const response1 = await request(app).post('/api/auth/login').send({
+        email: lockoutTestEmail,
+        password: 'WrongPassword',
+      });
       expect(response1.status).toBe(401);
 
       // Attempt 2
-      const response2 = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: lockoutTestEmail,
-          password: 'WrongPassword'
-        });
+      const response2 = await request(app).post('/api/auth/login').send({
+        email: lockoutTestEmail,
+        password: 'WrongPassword',
+      });
       expect(response2.status).toBe(401);
 
       // Attempt 3
-      const response3 = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: lockoutTestEmail,
-          password: 'WrongPassword'
-        });
+      const response3 = await request(app).post('/api/auth/login').send({
+        email: lockoutTestEmail,
+        password: 'WrongPassword',
+      });
       expect(response3.status).toBe(401);
     });
 
     it('should lock account after 5 failed attempts', async () => {
       // Make 5 failed attempts
       for (let i = 0; i < 5; i++) {
-        await request(app)
-          .post('/api/auth/login')
-          .send({
-            email: lockoutTestEmail,
-            password: 'WrongPassword'
-          });
+        await request(app).post('/api/auth/login').send({
+          email: lockoutTestEmail,
+          password: 'WrongPassword',
+        });
       }
 
       // 6th attempt should be locked
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: lockoutTestEmail,
-          password: 'CorrectPassword123!'
-        });
+      const response = await request(app).post('/api/auth/login').send({
+        email: lockoutTestEmail,
+        password: 'CorrectPassword123!',
+      });
 
       expect(response.status).toBe(423); // 423 Locked
       expect(response.body.message).toContain('locked');
@@ -174,38 +164,30 @@ describe('Authentication Security Tests', () => {
 
     it('should reset failed attempts after successful login', async () => {
       // Make 2 failed attempts
-      await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: lockoutTestEmail,
-          password: 'WrongPassword'
-        });
+      await request(app).post('/api/auth/login').send({
+        email: lockoutTestEmail,
+        password: 'WrongPassword',
+      });
 
-      await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: lockoutTestEmail,
-          password: 'WrongPassword'
-        });
+      await request(app).post('/api/auth/login').send({
+        email: lockoutTestEmail,
+        password: 'WrongPassword',
+      });
 
       // Successful login
-      const successResponse = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: lockoutTestEmail,
-          password: 'CorrectPassword123!'
-        });
+      const successResponse = await request(app).post('/api/auth/login').send({
+        email: lockoutTestEmail,
+        password: 'CorrectPassword123!',
+      });
 
       expect(successResponse.status).toBe(200);
 
       // Failed attempts should be reset, so 5 more failures needed for lockout
       for (let i = 0; i < 4; i++) {
-        const response = await request(app)
-          .post('/api/auth/login')
-          .send({
-            email: lockoutTestEmail,
-            password: 'WrongPassword'
-          });
+        const response = await request(app).post('/api/auth/login').send({
+          email: lockoutTestEmail,
+          password: 'WrongPassword',
+        });
         expect(response.status).toBe(401);
       }
     });
@@ -218,7 +200,7 @@ describe('Authentication Security Tests', () => {
     beforeEach(async () => {
       testEmail = `jwt-test-${Date.now()}@example.com`;
       const hashedPassword = await bcrypt.hash('TestPassword123!', 12);
-      
+
       await prisma.staff.create({
         data: {
           email: testEmail,
@@ -227,16 +209,14 @@ describe('Authentication Security Tests', () => {
           password: hashedPassword,
           role: 'ADMIN',
           tenantId: testTenantId,
-          isActive: true
-        }
+          isActive: true,
+        },
       });
 
-      const loginResponse = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: testEmail,
-          password: 'TestPassword123!'
-        });
+      const loginResponse = await request(app).post('/api/auth/login').send({
+        email: testEmail,
+        password: 'TestPassword123!',
+      });
 
       validToken = loginResponse.body.token;
     });
@@ -268,7 +248,7 @@ describe('Authentication Security Tests', () => {
           userId: 'test-user',
           email: testEmail,
           role: 'ADMIN',
-          tenantId: testTenantId
+          tenantId: testTenantId,
         },
         process.env.JWT_SECRET || 'test-secret',
         { expiresIn: '-1h' } // Expired 1 hour ago
@@ -288,7 +268,7 @@ describe('Authentication Security Tests', () => {
           userId: 'test-user',
           email: testEmail,
           role: 'ADMIN',
-          tenantId: testTenantId
+          tenantId: testTenantId,
         },
         'wrong-secret',
         { expiresIn: '8h' }
@@ -308,7 +288,7 @@ describe('Authentication Security Tests', () => {
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid',
         '',
         'null',
-        'undefined'
+        'undefined',
       ];
 
       for (const malformedToken of malformedTokens) {
@@ -336,7 +316,7 @@ describe('Authentication Security Tests', () => {
     beforeEach(async () => {
       testEmail = `refresh-test-${Date.now()}@example.com`;
       const hashedPassword = await bcrypt.hash('TestPassword123!', 12);
-      
+
       await prisma.staff.create({
         data: {
           email: testEmail,
@@ -345,16 +325,14 @@ describe('Authentication Security Tests', () => {
           password: hashedPassword,
           role: 'ADMIN',
           tenantId: testTenantId,
-          isActive: true
-        }
+          isActive: true,
+        },
       });
 
-      const loginResponse = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: testEmail,
-          password: 'TestPassword123!'
-        });
+      const loginResponse = await request(app).post('/api/auth/login').send({
+        email: testEmail,
+        password: 'TestPassword123!',
+      });
 
       refreshToken = loginResponse.body.refreshToken;
     });
@@ -378,9 +356,7 @@ describe('Authentication Security Tests', () => {
 
     it('should invalidate old refresh token after rotation', async () => {
       // Use refresh token once
-      await request(app)
-        .post('/api/auth/refresh')
-        .send({ refreshToken });
+      await request(app).post('/api/auth/refresh').send({ refreshToken });
 
       // Try to use old refresh token again
       const response = await request(app)
@@ -406,7 +382,7 @@ describe('Authentication Security Tests', () => {
     beforeEach(async () => {
       resetTestEmail = `reset-test-${Date.now()}@example.com`;
       const hashedPassword = await bcrypt.hash('OldPassword123!', 12);
-      
+
       await prisma.staff.create({
         data: {
           email: resetTestEmail,
@@ -415,8 +391,8 @@ describe('Authentication Security Tests', () => {
           password: hashedPassword,
           role: 'STAFF',
           tenantId: testTenantId,
-          isActive: true
-        }
+          isActive: true,
+        },
       });
     });
 
@@ -463,19 +439,17 @@ describe('Authentication Security Tests', () => {
 
       if (resetToken) {
         // Use reset token
-        await request(app)
-          .post('/api/auth/reset-password')
-          .send({
-            token: resetToken,
-            newPassword: 'NewPassword123!'
-          });
+        await request(app).post('/api/auth/reset-password').send({
+          token: resetToken,
+          newPassword: 'NewPassword123!',
+        });
 
         // Try to use same token again
         const response = await request(app)
           .post('/api/auth/reset-password')
           .send({
             token: resetToken,
-            newPassword: 'AnotherPassword123!'
+            newPassword: 'AnotherPassword123!',
           });
 
         expect(response.status).toBe(401);
@@ -485,12 +459,10 @@ describe('Authentication Security Tests', () => {
 
   describe('Session Security', () => {
     it('should set secure cookie attributes', async () => {
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'test@example.com',
-          password: 'TestPassword123!'
-        });
+      const response = await request(app).post('/api/auth/login').send({
+        email: 'test@example.com',
+        password: 'TestPassword123!',
+      });
 
       const cookies = response.headers['set-cookie'];
       if (cookies) {
@@ -503,19 +475,15 @@ describe('Authentication Security Tests', () => {
 
     it('should prevent session fixation', async () => {
       // Login should generate new session ID
-      const response1 = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'test@example.com',
-          password: 'TestPassword123!'
-        });
+      const response1 = await request(app).post('/api/auth/login').send({
+        email: 'test@example.com',
+        password: 'TestPassword123!',
+      });
 
-      const response2 = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'test@example.com',
-          password: 'TestPassword123!'
-        });
+      const response2 = await request(app).post('/api/auth/login').send({
+        email: 'test@example.com',
+        password: 'TestPassword123!',
+      });
 
       // Session IDs should be different
       expect(response1.body.token).not.toBe(response2.body.token);

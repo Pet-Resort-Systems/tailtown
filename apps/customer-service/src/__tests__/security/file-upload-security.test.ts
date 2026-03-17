@@ -1,6 +1,6 @@
 /**
  * File Upload Security Tests
- * 
+ *
  * Tests to ensure file upload security:
  * - File size limits
  * - File type validation (whitelist)
@@ -40,17 +40,15 @@ describe('File Upload Security Tests', () => {
         password: hashedPassword,
         role: 'ADMIN',
         tenantId: testTenantId,
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     // Get auth token
-    const loginResponse = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'file-upload-test@example.com',
-        password: 'TestPassword123!'
-      });
+    const loginResponse = await request(app).post('/api/auth/login').send({
+      email: 'file-upload-test@example.com',
+      password: 'TestPassword123!',
+    });
 
     authToken = loginResponse.body.token;
 
@@ -65,7 +63,7 @@ describe('File Upload Security Tests', () => {
     }
 
     await prisma.staff.deleteMany({
-      where: { tenantId: testTenantId }
+      where: { tenantId: testTenantId },
     });
     await prisma.$disconnect();
   });
@@ -160,7 +158,10 @@ describe('File Upload Security Tests', () => {
         { name: 'script.sh', content: '#!/bin/bash\nrm -rf /' },
         { name: 'script.bat', content: '@echo off\ndel /f /s /q *' },
         { name: 'script.ps1', content: 'Remove-Item -Recurse -Force *' },
-        { name: 'script.js', content: 'require("child_process").exec("rm -rf /")' }
+        {
+          name: 'script.js',
+          content: 'require("child_process").exec("rm -rf /")',
+        },
       ];
 
       for (const script of scriptTypes) {
@@ -182,7 +183,7 @@ describe('File Upload Security Tests', () => {
       const allowedTypes = [
         { name: 'image.jpg', content: 'fake-jpg' },
         { name: 'image.png', content: 'fake-png' },
-        { name: 'document.pdf', content: 'fake-pdf' }
+        { name: 'document.pdf', content: 'fake-pdf' },
       ];
 
       for (const file of allowedTypes) {
@@ -250,7 +251,7 @@ describe('File Upload Security Tests', () => {
       const traversalNames = [
         '../../../etc/passwd',
         '..\\..\\..\\windows\\system32\\config\\sam',
-        '....//....//etc/passwd'
+        '....//....//etc/passwd',
       ];
 
       for (const filename of traversalNames) {
@@ -281,7 +282,7 @@ describe('File Upload Security Tests', () => {
         'file&name.jpg',
         'file$name.jpg',
         'file`name.jpg',
-        'file<name>.jpg'
+        'file<name>.jpg',
       ];
 
       for (const filename of specialChars) {
@@ -484,7 +485,7 @@ describe('File Upload Security Tests', () => {
     it('should enforce upload quotas per user', async () => {
       // Upload multiple files to test quota
       const uploads = [];
-      
+
       for (let i = 0; i < 100; i++) {
         const filePath = path.join(testFilesDir, `test-${i}.jpg`);
         fs.writeFileSync(filePath, 'content');
@@ -503,7 +504,9 @@ describe('File Upload Security Tests', () => {
       }
 
       // Should eventually hit quota
-      expect(uploads.some(r => r.status === 429 || r.status === 413)).toBe(true);
+      expect(uploads.some((r) => r.status === 429 || r.status === 413)).toBe(
+        true
+      );
     });
 
     it('should enforce upload quotas per tenant', async () => {
@@ -514,8 +517,7 @@ describe('File Upload Security Tests', () => {
 
   describe('File Download Security', () => {
     it('should require authentication for downloads', async () => {
-      const response = await request(app)
-        .get('/api/files/some-file-id');
+      const response = await request(app).get('/api/files/some-file-id');
 
       expect(response.status).toBe(401);
     });
@@ -546,7 +548,9 @@ describe('File Upload Security Tests', () => {
           .set('Authorization', `Bearer ${authToken}`);
 
         if (downloadResponse.status === 200) {
-          expect(downloadResponse.headers['content-disposition']).toContain('attachment');
+          expect(downloadResponse.headers['content-disposition']).toContain(
+            'attachment'
+          );
         }
       }
 
@@ -571,7 +575,9 @@ describe('File Upload Security Tests', () => {
 
         if (downloadResponse.status === 200) {
           expect(downloadResponse.headers['content-type']).toBeDefined();
-          expect(downloadResponse.headers['x-content-type-options']).toBe('nosniff');
+          expect(downloadResponse.headers['x-content-type-options']).toBe(
+            'nosniff'
+          );
         }
       }
 

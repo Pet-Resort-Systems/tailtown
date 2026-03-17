@@ -10,7 +10,7 @@ import {
   Box,
   Typography,
   Link,
-  ClickAwayListener
+  ClickAwayListener,
 } from '@mui/material';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { HelpTooltipContent } from '../../types/help';
@@ -26,7 +26,7 @@ const HelpTooltip: React.FC<HelpTooltipProps> = ({
   content,
   onLearnMore,
   size = 'small',
-  placement = 'top'
+  placement = 'top',
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -51,7 +51,10 @@ const HelpTooltip: React.FC<HelpTooltipProps> = ({
       <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
         {content.title}
       </Typography>
-      <Typography variant="body2" sx={{ mb: content.learnMoreArticleId ? 1 : 0 }}>
+      <Typography
+        variant="body2"
+        sx={{ mb: content.learnMoreArticleId ? 1 : 0 }}
+      >
         {content.description}
       </Typography>
       {content.learnMoreArticleId && (
@@ -59,12 +62,12 @@ const HelpTooltip: React.FC<HelpTooltipProps> = ({
           component="button"
           variant="body2"
           onClick={handleLearnMore}
-          sx={{ 
+          sx={{
             textDecoration: 'underline',
             cursor: 'pointer',
             '&:hover': {
-              textDecoration: 'none'
-            }
+              textDecoration: 'none',
+            },
           }}
         >
           Learn more →
@@ -88,12 +91,12 @@ const HelpTooltip: React.FC<HelpTooltipProps> = ({
         <IconButton
           size={size}
           onClick={handleTooltipOpen}
-          sx={{ 
+          sx={{
             ml: 0.5,
             color: 'text.secondary',
             '&:hover': {
-              color: 'primary.main'
-            }
+              color: 'primary.main',
+            },
           }}
         >
           <HelpOutlineIcon fontSize={size} />

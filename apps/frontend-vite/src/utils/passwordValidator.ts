@@ -43,11 +43,17 @@ export function validatePassword(password: string): PasswordValidationResult {
 
   // Check for special character
   if (!/[^a-zA-Z0-9]/.test(password)) {
-    errors.push('Must contain at least one special character (!@#$%^&*(),.?":{}|<>)');
+    errors.push(
+      'Must contain at least one special character (!@#$%^&*(),.?":{}|<>)'
+    );
   }
 
   // Check for sequential characters
-  if (/(?:abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz|012|123|234|345|456|567|678|789)/i.test(password)) {
+  if (
+    /(?:abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz|012|123|234|345|456|567|678|789)/i.test(
+      password
+    )
+  ) {
     errors.push('Should not contain sequential characters (abc, 123, etc.)');
   }
 
@@ -58,7 +64,7 @@ export function validatePassword(password: string): PasswordValidationResult {
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -77,21 +83,21 @@ export function getPasswordStrength(password: string): {
   }
 
   let score = 0;
-  
+
   // Length bonus
   if (password.length >= 12) score += 2;
   else if (password.length >= 10) score += 1;
-  
+
   // Complexity bonus
   if (/[A-Z]/.test(password)) score += 1;
   if (/[a-z]/.test(password)) score += 1;
   if (/[0-9]/.test(password)) score += 1;
   if (/[^a-zA-Z0-9]/.test(password)) score += 1;
-  
+
   // Multiple special characters
   const specialCharCount = (password.match(/[^a-zA-Z0-9]/g) || []).length;
   if (specialCharCount >= 2) score += 1;
-  
+
   // Determine strength
   if (score >= 7) {
     return { strength: 'strong', color: '#2e7d32', label: 'Strong' };

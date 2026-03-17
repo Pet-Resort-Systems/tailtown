@@ -73,9 +73,15 @@ describe('UpcomingClasses Component', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(mockClasses);
-    (customerService.getAllCustomers as jest.Mock).mockResolvedValue({ data: mockCustomers });
-    (petService.getPetsByCustomer as jest.Mock).mockResolvedValue({ data: mockPets });
+    (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(
+      mockClasses
+    );
+    (customerService.getAllCustomers as jest.Mock).mockResolvedValue({
+      data: mockCustomers,
+    });
+    (petService.getPetsByCustomer as jest.Mock).mockResolvedValue({
+      data: mockPets,
+    });
   });
 
   const renderComponent = () => {
@@ -89,20 +95,20 @@ describe('UpcomingClasses Component', () => {
   describe('Initial Rendering', () => {
     it('should render the component with title', async () => {
       renderComponent();
-      
+
       expect(screen.getByText('Upcoming Training Classes')).toBeInTheDocument();
       expect(screen.getByText('Active classes')).toBeInTheDocument();
     });
 
     it('should show loading state initially', () => {
       renderComponent();
-      
+
       expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
 
     it('should load and display classes', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
         expect(screen.getByText('Basic Obedience')).toBeInTheDocument();
         expect(screen.getByText('Advanced Training')).toBeInTheDocument();
@@ -111,7 +117,7 @@ describe('UpcomingClasses Component', () => {
 
     it('should display "View All" button', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
         expect(screen.getByText('View All')).toBeInTheDocument();
       });
@@ -121,7 +127,7 @@ describe('UpcomingClasses Component', () => {
   describe('Class Information Display', () => {
     it('should display class details correctly', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
         expect(screen.getByText('Basic Obedience')).toBeInTheDocument();
         expect(screen.getByText('BEGINNER')).toBeInTheDocument();
@@ -132,7 +138,7 @@ describe('UpcomingClasses Component', () => {
 
     it('should display time in 12-hour format', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
         expect(screen.getByText(/6:00 PM - 7:00 PM/)).toBeInTheDocument();
         expect(screen.getByText(/2:00 PM - 3:00 PM/)).toBeInTheDocument();
@@ -141,7 +147,7 @@ describe('UpcomingClasses Component', () => {
 
     it('should display enrollment progress', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
         expect(screen.getByText('8 / 12')).toBeInTheDocument();
         expect(screen.getByText('10 / 10')).toBeInTheDocument();
@@ -150,7 +156,7 @@ describe('UpcomingClasses Component', () => {
 
     it('should display waitlist count when present', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
         expect(screen.getByText('+2 on waitlist')).toBeInTheDocument();
       });
@@ -160,7 +166,7 @@ describe('UpcomingClasses Component', () => {
   describe('Enroll Button Behavior', () => {
     it('should show "Enroll Pet" button for available classes', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
         const enrollButtons = screen.getAllByText('Enroll Pet');
         expect(enrollButtons).toHaveLength(1);
@@ -169,7 +175,7 @@ describe('UpcomingClasses Component', () => {
 
     it('should show "Class Full" button for full classes', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
         expect(screen.getByText('Class Full')).toBeInTheDocument();
       });
@@ -177,7 +183,7 @@ describe('UpcomingClasses Component', () => {
 
     it('should disable button for full classes', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
         const fullButton = screen.getByText('Class Full').closest('button');
         expect(fullButton).toBeDisabled();
@@ -186,7 +192,7 @@ describe('UpcomingClasses Component', () => {
 
     it('should enable button for available classes', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
         const enrollButton = screen.getByText('Enroll Pet').closest('button');
         expect(enrollButton).not.toBeDisabled();
@@ -197,20 +203,22 @@ describe('UpcomingClasses Component', () => {
   describe('Enrollment Dialog', () => {
     it('should open enrollment dialog when clicking Enroll Pet', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
         const enrollButton = screen.getByText('Enroll Pet');
         fireEvent.click(enrollButton);
       });
 
       await waitFor(() => {
-        expect(screen.getByText(/Enroll Pet in Basic Obedience/)).toBeInTheDocument();
+        expect(
+          screen.getByText(/Enroll Pet in Basic Obedience/)
+        ).toBeInTheDocument();
       });
     });
 
     it('should load customers when dialog opens', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
         const enrollButton = screen.getByText('Enroll Pet');
         fireEvent.click(enrollButton);
@@ -223,7 +231,7 @@ describe('UpcomingClasses Component', () => {
 
     it('should display customer dropdown in dialog', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
         const enrollButton = screen.getByText('Enroll Pet');
         fireEvent.click(enrollButton);
@@ -236,7 +244,7 @@ describe('UpcomingClasses Component', () => {
 
     it('should display pet dropdown in dialog', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
         const enrollButton = screen.getByText('Enroll Pet');
         fireEvent.click(enrollButton);
@@ -249,21 +257,23 @@ describe('UpcomingClasses Component', () => {
 
     it('should pre-fill amount with class price', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
         const enrollButton = screen.getByText('Enroll Pet');
         fireEvent.click(enrollButton);
       });
 
       await waitFor(() => {
-        const amountField = screen.getByLabelText('Amount Paid') as HTMLInputElement;
+        const amountField = screen.getByLabelText(
+          'Amount Paid'
+        ) as HTMLInputElement;
         expect(amountField.value).toBe('200');
       });
     });
 
     it('should display class details in dialog', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
         const enrollButton = screen.getByText('Enroll Pet');
         fireEvent.click(enrollButton);
@@ -277,7 +287,7 @@ describe('UpcomingClasses Component', () => {
 
     it('should close dialog when clicking Cancel', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
         const enrollButton = screen.getByText('Enroll Pet');
         fireEvent.click(enrollButton);
@@ -289,7 +299,9 @@ describe('UpcomingClasses Component', () => {
       });
 
       await waitFor(() => {
-        expect(screen.queryByText(/Enroll Pet in Basic Obedience/)).not.toBeInTheDocument();
+        expect(
+          screen.queryByText(/Enroll Pet in Basic Obedience/)
+        ).not.toBeInTheDocument();
       });
     });
   });
@@ -297,7 +309,7 @@ describe('UpcomingClasses Component', () => {
   describe('Pet Loading', () => {
     it('should load pets when customer is selected', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
         const enrollButton = screen.getByText('Enroll Pet');
         fireEvent.click(enrollButton);
@@ -322,23 +334,25 @@ describe('UpcomingClasses Component', () => {
   describe('Enrollment Submission', () => {
     it('should disable Enroll button when customer not selected', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
         const enrollButton = screen.getByText('Enroll Pet');
         fireEvent.click(enrollButton);
       });
 
       await waitFor(() => {
-        const submitButton = screen.getAllByText('Enroll Pet')[1].closest('button');
+        const submitButton = screen
+          .getAllByText('Enroll Pet')[1]
+          .closest('button');
         expect(submitButton).toBeDisabled();
       });
     });
 
     it('should call enrollment API when form is submitted', async () => {
       (schedulingService.enrollments.enroll as jest.Mock).mockResolvedValue({});
-      
+
       renderComponent();
-      
+
       // Open dialog
       await waitFor(() => {
         const enrollButton = screen.getByText('Enroll Pet');
@@ -374,19 +388,22 @@ describe('UpcomingClasses Component', () => {
       });
 
       await waitFor(() => {
-        expect(schedulingService.enrollments.enroll).toHaveBeenCalledWith('class-1', {
-          customerId: 'customer-1',
-          petId: 'pet-1',
-          amountPaid: 200,
-        });
+        expect(schedulingService.enrollments.enroll).toHaveBeenCalledWith(
+          'class-1',
+          {
+            customerId: 'customer-1',
+            petId: 'pet-1',
+            amountPaid: 200,
+          }
+        );
       });
     });
 
     it('should refresh class list after successful enrollment', async () => {
       (schedulingService.enrollments.enroll as jest.Mock).mockResolvedValue({});
-      
+
       renderComponent();
-      
+
       // Perform enrollment (simplified)
       await waitFor(() => {
         const enrollButton = screen.getByText('Enroll Pet');
@@ -406,19 +423,21 @@ describe('UpcomingClasses Component', () => {
       (schedulingService.trainingClasses.getAll as jest.Mock).mockRejectedValue(
         new Error(errorMessage)
       );
-      
+
       renderComponent();
-      
+
       await waitFor(() => {
         expect(screen.getByText(errorMessage)).toBeInTheDocument();
       });
     });
 
     it('should show empty state when no classes available', async () => {
-      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue([]);
-      
+      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(
+        []
+      );
+
       renderComponent();
-      
+
       await waitFor(() => {
         expect(screen.getByText('No upcoming classes')).toBeInTheDocument();
       });
@@ -428,7 +447,7 @@ describe('UpcomingClasses Component', () => {
   describe('Navigation', () => {
     it('should navigate to training classes page when clicking View All', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
         const viewAllButton = screen.getByText('View All');
         fireEvent.click(viewAllButton);
@@ -441,9 +460,11 @@ describe('UpcomingClasses Component', () => {
   describe('Responsive Layout', () => {
     it('should render classes in grid layout', async () => {
       renderComponent();
-      
+
       await waitFor(() => {
-        const grid = screen.getByText('Basic Obedience').closest('[class*="MuiGrid-item"]');
+        const grid = screen
+          .getByText('Basic Obedience')
+          .closest('[class*="MuiGrid-item"]');
         expect(grid).toBeInTheDocument();
       });
     });

@@ -8,22 +8,22 @@
  * - refreshAccessToken
  */
 
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-import { AppError } from "../../middleware/error.middleware";
-import bcrypt from "bcrypt";
-import { validatePasswordOrThrow } from "../../utils/passwordValidator";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { AppError } from '../../middleware/error.middleware';
+import bcrypt from 'bcrypt';
+import { validatePasswordOrThrow } from '../../utils/passwordValidator';
 import {
   generateToken,
   generateRefreshToken,
   verifyRefreshToken,
-} from "../../utils/jwt";
-import { logger } from "../../utils/logger";
-import { TenantRequest } from "../../middleware/tenant.middleware";
+} from '../../utils/jwt';
+import { logger } from '../../utils/logger';
+import { TenantRequest } from '../../middleware/tenant.middleware';
 import {
   tenantAuditLog,
   AuditAction,
-} from "../../services/tenant-audit-log.service";
+} from '../../services/tenant-audit-log.service';
 
 const prisma = new PrismaClient();
 
@@ -40,7 +40,7 @@ export const loginStaff = async (
     const tenantId = req.tenantId;
 
     if (!email || !password) {
-      return next(new AppError("Please provide email and password", 400));
+      return next(new AppError('Please provide email and password', 400));
     }
 
     // Find staff by email
@@ -56,11 +56,11 @@ export const loginStaff = async (
         undefined,
         email,
         {
-          metadata: { reason: !staff ? "user_not_found" : "inactive_account" },
+          metadata: { reason: !staff ? 'user_not_found' : 'inactive_account' },
           success: false,
         }
       );
-      return next(new AppError("Invalid credentials or inactive account", 401));
+      return next(new AppError('Invalid credentials or inactive account', 401));
     }
 
     // Check if account is locked
@@ -69,16 +69,16 @@ export const loginStaff = async (
       new Date((staff as any).lockedUntil) > new Date()
     ) {
       return res.status(423).json({
-        status: "error",
+        status: 'error',
         message:
-          "Account is locked due to too many failed login attempts. Please try again later.",
-        code: "ACCOUNT_LOCKED",
+          'Account is locked due to too many failed login attempts. Please try again later.',
+        code: 'ACCOUNT_LOCKED',
         lockedUntil: (staff as any).lockedUntil,
       });
     }
 
     // DEVELOPMENT MODE: Bypass password verification for testing
-    const isDev = process.env.NODE_ENV !== "production";
+    const isDev = process.env.NODE_ENV !== 'production';
     const isPasswordCorrect = isDev
       ? true
       : await bcrypt.compare(password, (staff as any).password);
@@ -108,12 +108,12 @@ export const loginStaff = async (
         staff.id,
         email,
         {
-          metadata: { reason: "invalid_password", failedAttempts },
+          metadata: { reason: 'invalid_password', failedAttempts },
           success: false,
         }
       );
 
-      return next(new AppError("Invalid credentials", 401));
+      return next(new AppError('Invalid credentials', 401));
     }
 
     // Update last login time and reset failed attempts
@@ -171,7 +171,7 @@ export const loginStaff = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: staffData,
       token: accessToken,
       refreshToken: refreshToken,
@@ -193,7 +193,7 @@ export const requestPasswordReset = async (
     const { email } = req.body;
 
     if (!email) {
-      return next(new AppError("Please provide email", 400));
+      return next(new AppError('Please provide email', 400));
     }
 
     // Find staff by email
@@ -204,9 +204,9 @@ export const requestPasswordReset = async (
     if (!staff || !staff.isActive) {
       // For security, don't reveal if the email exists
       return res.status(200).json({
-        status: "success",
+        status: 'success',
         message:
-          "If your email is registered, you will receive a password reset link",
+          'If your email is registered, you will receive a password reset link',
       });
     }
 
@@ -228,17 +228,17 @@ export const requestPasswordReset = async (
     });
 
     // TODO: Send email with reset link
-    if (process.env.NODE_ENV === "development") {
-      logger.debug("Password reset token generated", {
+    if (process.env.NODE_ENV === 'development') {
+      logger.debug('Password reset token generated', {
         email: staff.email,
         resetLink: `http://localhost:3000/reset-password?token=${resetToken}`,
       });
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       message:
-        "If your email is registered, you will receive a password reset link",
+        'If your email is registered, you will receive a password reset link',
     });
   } catch (error) {
     next(error);
@@ -257,7 +257,7 @@ export const resetPassword = async (
     const { token, password } = req.body;
 
     if (!token || !password) {
-      return next(new AppError("Please provide token and new password", 400));
+      return next(new AppError('Please provide token and new password', 400));
     }
 
     // Find staff by reset token
@@ -271,7 +271,7 @@ export const resetPassword = async (
     });
 
     if (!staff) {
-      return next(new AppError("Invalid or expired token", 400));
+      return next(new AppError('Invalid or expired token', 400));
     }
 
     // Validate password strength
@@ -295,8 +295,8 @@ export const resetPassword = async (
     });
 
     res.status(200).json({
-      status: "success",
-      message: "Password has been reset successfully",
+      status: 'success',
+      message: 'Password has been reset successfully',
     });
   } catch (error) {
     next(error);
@@ -315,7 +315,7 @@ export const refreshAccessToken = async (
     const { refreshToken } = req.body;
 
     if (!refreshToken) {
-      return next(new AppError("Refresh token is required", 400));
+      return next(new AppError('Refresh token is required', 400));
     }
 
     // Verify refresh token
@@ -323,7 +323,7 @@ export const refreshAccessToken = async (
     try {
       decoded = verifyRefreshToken(refreshToken);
     } catch (error) {
-      return next(new AppError("Invalid or expired refresh token", 401));
+      return next(new AppError('Invalid or expired refresh token', 401));
     }
 
     // Check if refresh token exists in database
@@ -337,12 +337,12 @@ export const refreshAccessToken = async (
       storedToken.isRevoked ||
       storedToken.expiresAt < new Date()
     ) {
-      return next(new AppError("Invalid or expired refresh token", 401));
+      return next(new AppError('Invalid or expired refresh token', 401));
     }
 
     // Check if staff is still active
     if (!storedToken.staff.isActive) {
-      return next(new AppError("Account is inactive", 401));
+      return next(new AppError('Account is inactive', 401));
     }
 
     // Revoke old refresh token (token rotation)
@@ -372,7 +372,7 @@ export const refreshAccessToken = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       token: newAccessToken,
       refreshToken: newRefreshToken,
     });

@@ -15,7 +15,7 @@ describe('Service Controller Validation Tests', () => {
     mockReq = {};
     mockRes = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      json: jest.fn(),
     };
     mockNext = jest.fn();
   });
@@ -48,7 +48,7 @@ describe('Service Controller Validation Tests', () => {
         description: 'Description',
         duration: 60,
         price: -50.0, // Negative price
-        serviceCategory: ServiceCategory.DAYCARE
+        serviceCategory: ServiceCategory.DAYCARE,
       };
 
       await serviceController.createService(
@@ -66,7 +66,7 @@ describe('Service Controller Validation Tests', () => {
         description: 'Description',
         duration: 60,
         price: 50.0,
-        serviceCategory: 'INVALID_CATEGORY' // Invalid enum value
+        serviceCategory: 'INVALID_CATEGORY', // Invalid enum value
       };
 
       await serviceController.createService(
@@ -83,17 +83,20 @@ describe('Service Controller Validation Tests', () => {
     it('should validate service exists before update', async () => {
       mockReq.params = { id: 'non-existent-id' };
       mockReq.body = {
-        name: 'Updated Service'
+        name: 'Updated Service',
       };
 
       // Mock PrismaClient to return null, indicating service doesn't exist
-      jest.spyOn(PrismaClient.prototype, 'service').mockImplementation(() => ({
-        findUnique: jest.fn().mockResolvedValue(null),
-        update: jest.fn(),
-        delete: jest.fn(),
-        create: jest.fn(),
-        findMany: jest.fn()
-      } as any));
+      jest.spyOn(PrismaClient.prototype, 'service').mockImplementation(
+        () =>
+          ({
+            findUnique: jest.fn().mockResolvedValue(null),
+            update: jest.fn(),
+            delete: jest.fn(),
+            create: jest.fn(),
+            findMany: jest.fn(),
+          }) as any
+      );
 
       await serviceController.updateService(
         mockReq as Request,
@@ -104,7 +107,7 @@ describe('Service Controller Validation Tests', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           statusCode: 404,
-          message: expect.stringContaining('not found')
+          message: expect.stringContaining('not found'),
         })
       );
     });
@@ -115,15 +118,23 @@ describe('Service Controller Validation Tests', () => {
       mockReq.params = { id: 'service-with-reservations' };
 
       // Mock service exists
-      jest.spyOn(PrismaClient.prototype, 'service').mockImplementation(() => ({
-        findUnique: jest.fn().mockResolvedValue({ id: 'service-with-reservations' }),
-        delete: jest.fn()
-      } as any));
+      jest.spyOn(PrismaClient.prototype, 'service').mockImplementation(
+        () =>
+          ({
+            findUnique: jest
+              .fn()
+              .mockResolvedValue({ id: 'service-with-reservations' }),
+            delete: jest.fn(),
+          }) as any
+      );
 
       // Mock reservation count to be > 0
-      jest.spyOn(PrismaClient.prototype, 'reservation').mockImplementation(() => ({
-        count: jest.fn().mockResolvedValue(5) // 5 active reservations
-      } as any));
+      jest.spyOn(PrismaClient.prototype, 'reservation').mockImplementation(
+        () =>
+          ({
+            count: jest.fn().mockResolvedValue(5), // 5 active reservations
+          }) as any
+      );
 
       await serviceController.deleteService(
         mockReq as Request,
@@ -134,7 +145,7 @@ describe('Service Controller Validation Tests', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           statusCode: 400,
-          message: expect.stringContaining('active reservations')
+          message: expect.stringContaining('active reservations'),
         })
       );
     });
@@ -145,9 +156,12 @@ describe('Service Controller Validation Tests', () => {
       mockReq.params = { id: 'non-existent-id' };
 
       // Mock service doesn't exist
-      jest.spyOn(PrismaClient.prototype, 'service').mockImplementation(() => ({
-        findUnique: jest.fn().mockResolvedValue(null)
-      } as any));
+      jest.spyOn(PrismaClient.prototype, 'service').mockImplementation(
+        () =>
+          ({
+            findUnique: jest.fn().mockResolvedValue(null),
+          }) as any
+      );
 
       await serviceController.getServiceAddOns(
         mockReq as Request,
@@ -158,7 +172,7 @@ describe('Service Controller Validation Tests', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           statusCode: 404,
-          message: expect.stringContaining('not found')
+          message: expect.stringContaining('not found'),
         })
       );
     });

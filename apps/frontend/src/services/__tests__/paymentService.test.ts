@@ -16,19 +16,19 @@ jest.mock('../api', () => ({
   customerApi: {
     interceptors: {
       request: { use: jest.fn() },
-      response: { use: jest.fn() }
-    }
-  }
+      response: { use: jest.fn() },
+    },
+  },
 }));
 
 const validPaymentRequest: CardPaymentRequest = {
-  amount: 100.00,
+  amount: 100.0,
   cardNumber: '4788250000028291',
   expiry: '1225',
   cvv: '123',
   name: 'John Doe',
   email: 'john@example.com',
-  capture: true
+  capture: true,
 };
 
 describe('PaymentService', () => {
@@ -37,7 +37,6 @@ describe('PaymentService', () => {
   });
 
   describe('processCardPayment', () => {
-
     it('should successfully process a payment', async () => {
       const mockResponse = {
         data: {
@@ -46,18 +45,19 @@ describe('PaymentService', () => {
           data: {
             transactionId: 'TXN123456',
             authCode: 'AUTH789',
-            amount: 100.00,
+            amount: 100.0,
             approved: true,
             responseCode: '00',
             responseText: 'Approved',
-            maskedCard: '****8291'
-          }
-        }
+            maskedCard: '****8291',
+          },
+        },
       };
 
       mockedAxios.post.mockResolvedValue(mockResponse);
 
-      const result = await paymentService.processCardPayment(validPaymentRequest);
+      const result =
+        await paymentService.processCardPayment(validPaymentRequest);
 
       expect(result.status).toBe('success');
       expect(result.data?.approved).toBe(true);
@@ -67,8 +67,8 @@ describe('PaymentService', () => {
         validPaymentRequest,
         expect.objectContaining({
           headers: {
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         })
       );
     });
@@ -81,14 +81,15 @@ describe('PaymentService', () => {
           data: {
             approved: false,
             responseCode: '05',
-            responseText: 'Do not honor'
-          }
-        }
+            responseText: 'Do not honor',
+          },
+        },
       };
 
       mockedAxios.post.mockResolvedValue(mockResponse);
 
-      const result = await paymentService.processCardPayment(validPaymentRequest);
+      const result =
+        await paymentService.processCardPayment(validPaymentRequest);
 
       expect(result.status).toBe('declined');
       expect(result.data?.approved).toBe(false);
@@ -99,8 +100,9 @@ describe('PaymentService', () => {
       const networkError = new Error('Network error');
       mockedAxios.post.mockRejectedValue(networkError);
 
-      await expect(paymentService.processCardPayment(validPaymentRequest))
-        .rejects.toThrow('Network error');
+      await expect(
+        paymentService.processCardPayment(validPaymentRequest)
+      ).rejects.toThrow('Network error');
     });
 
     it('should handle API errors with response data', async () => {
@@ -110,15 +112,16 @@ describe('PaymentService', () => {
             status: 'error',
             message: 'Invalid card number',
             data: {
-              approved: false
-            }
-          }
-        }
+              approved: false,
+            },
+          },
+        },
       };
 
       mockedAxios.post.mockRejectedValue(apiError);
 
-      const result = await paymentService.processCardPayment(validPaymentRequest);
+      const result =
+        await paymentService.processCardPayment(validPaymentRequest);
 
       expect(result.status).toBe('error');
       expect(result.message).toBe('Invalid card number');
@@ -128,8 +131,8 @@ describe('PaymentService', () => {
       const mockResponse = {
         data: {
           status: 'success',
-          data: { approved: true, transactionId: 'TXN123' }
-        }
+          data: { approved: true, transactionId: 'TXN123' },
+        },
       };
 
       mockedAxios.post.mockResolvedValue(mockResponse);
@@ -139,13 +142,13 @@ describe('PaymentService', () => {
       expect(mockedAxios.post).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          amount: 100.00,
+          amount: 100.0,
           cardNumber: '4788250000028291',
           expiry: '1225',
           cvv: '123',
           name: 'John Doe',
           email: 'john@example.com',
-          capture: true
+          capture: true,
         }),
         expect.any(Object)
       );
@@ -157,14 +160,14 @@ describe('PaymentService', () => {
         address: '123 Main St',
         city: 'Anytown',
         state: 'CA',
-        zip: '12345'
+        zip: '12345',
       };
 
       const mockResponse = {
         data: {
           status: 'success',
-          data: { approved: true, transactionId: 'TXN123' }
-        }
+          data: { approved: true, transactionId: 'TXN123' },
+        },
       };
 
       mockedAxios.post.mockResolvedValue(mockResponse);
@@ -177,7 +180,7 @@ describe('PaymentService', () => {
           address: '123 Main St',
           city: 'Anytown',
           state: 'CA',
-          zip: '12345'
+          zip: '12345',
         }),
         expect.any(Object)
       );
@@ -194,16 +197,16 @@ describe('PaymentService', () => {
               approved: '4788250000028291',
               declined: '4387751111111053',
               expiry: '1225',
-              cvv: '123'
+              cvv: '123',
             },
             mastercard: {
               approved: '5454545454545454',
               declined: '5112345112345114',
               expiry: '1225',
-              cvv: '123'
-            }
-          }
-        }
+              cvv: '123',
+            },
+          },
+        },
       };
 
       mockedAxios.get.mockResolvedValue(mockResponse);
@@ -218,24 +221,26 @@ describe('PaymentService', () => {
     it('should handle errors when fetching test cards', async () => {
       mockedAxios.get.mockRejectedValue(new Error('Service unavailable'));
 
-      await expect(paymentService.getTestCards()).rejects.toThrow('Service unavailable');
+      await expect(paymentService.getTestCards()).rejects.toThrow(
+        'Service unavailable'
+      );
     });
   });
 
   describe('Payment Validation', () => {
     it('should process payment with minimum required fields', async () => {
       const minimalRequest: CardPaymentRequest = {
-        amount: 50.00,
+        amount: 50.0,
         cardNumber: '4788250000028291',
         expiry: '1225',
-        cvv: '123'
+        cvv: '123',
       };
 
       const mockResponse = {
         data: {
           status: 'success',
-          data: { approved: true, transactionId: 'TXN456' }
-        }
+          data: { approved: true, transactionId: 'TXN456' },
+        },
       };
 
       mockedAxios.post.mockResolvedValue(mockResponse);
@@ -248,16 +253,16 @@ describe('PaymentService', () => {
 
     it('should handle different amount formats', async () => {
       const requests = [
-        { ...validPaymentRequest, amount: 10.50 },
+        { ...validPaymentRequest, amount: 10.5 },
         { ...validPaymentRequest, amount: 100 },
-        { ...validPaymentRequest, amount: 0.99 }
+        { ...validPaymentRequest, amount: 0.99 },
       ];
 
       const mockResponse = {
         data: {
           status: 'success',
-          data: { approved: true, transactionId: 'TXN789' }
-        }
+          data: { approved: true, transactionId: 'TXN789' },
+        },
       };
 
       mockedAxios.post.mockResolvedValue(mockResponse);
@@ -272,12 +277,12 @@ describe('PaymentService', () => {
   describe('Security', () => {
     it('should not log sensitive card data', async () => {
       const consoleSpy = jest.spyOn(console, 'log');
-      
+
       const mockResponse = {
         data: {
           status: 'success',
-          data: { approved: true, transactionId: 'TXN999' }
-        }
+          data: { approved: true, transactionId: 'TXN999' },
+        },
       };
 
       mockedAxios.post.mockResolvedValue(mockResponse);
@@ -299,14 +304,15 @@ describe('PaymentService', () => {
           data: {
             approved: true,
             transactionId: 'TXN111',
-            maskedCard: '****8291'
-          }
-        }
+            maskedCard: '****8291',
+          },
+        },
       };
 
       mockedAxios.post.mockResolvedValue(mockResponse);
 
-      const result = await paymentService.processCardPayment(validPaymentRequest);
+      const result =
+        await paymentService.processCardPayment(validPaymentRequest);
 
       expect(result.data?.maskedCard).toBe('****8291');
       expect(result.data?.maskedCard).not.toContain('4788250000028291');

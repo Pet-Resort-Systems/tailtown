@@ -1,6 +1,6 @@
 /**
  * Rate Limiter Tests
- * 
+ *
  * Tests for per-tenant rate limiting functionality
  */
 
@@ -23,7 +23,8 @@ describe('Rate Limiter', () => {
       const limiter = rateLimit({
         windowMs: 60 * 1000, // 1 minute
         max: 5, // 5 requests per minute
-        keyGenerator: (req: any) => req.headers['x-tenant-id'] as string || 'default',
+        keyGenerator: (req: any) =>
+          (req.headers['x-tenant-id'] as string) || 'default',
         standardHeaders: true,
         legacyHeaders: false,
       });
@@ -36,7 +37,7 @@ describe('Rate Limiter', () => {
         const response = await request(app)
           .get('/test')
           .set('x-tenant-id', 'tenant-a');
-        
+
         expect(response.status).toBe(200);
         expect(response.body.success).toBe(true);
       }
@@ -46,7 +47,8 @@ describe('Rate Limiter', () => {
       const limiter = rateLimit({
         windowMs: 60 * 1000,
         max: 3,
-        keyGenerator: (req: any) => req.headers['x-tenant-id'] as string || 'default',
+        keyGenerator: (req: any) =>
+          (req.headers['x-tenant-id'] as string) || 'default',
         standardHeaders: true,
         legacyHeaders: false,
       });
@@ -66,7 +68,7 @@ describe('Rate Limiter', () => {
       const blockedResponse = await request(app)
         .get('/test')
         .set('x-tenant-id', 'tenant-a');
-      
+
       expect(blockedResponse.status).toBe(429);
     });
 
@@ -74,7 +76,8 @@ describe('Rate Limiter', () => {
       const limiter = rateLimit({
         windowMs: 60 * 1000,
         max: 2,
-        keyGenerator: (req: any) => req.headers['x-tenant-id'] as string || 'default',
+        keyGenerator: (req: any) =>
+          (req.headers['x-tenant-id'] as string) || 'default',
         standardHeaders: true,
         legacyHeaders: false,
       });
@@ -103,7 +106,8 @@ describe('Rate Limiter', () => {
       const limiter = rateLimit({
         windowMs: 60 * 1000,
         max: 10,
-        keyGenerator: (req: any) => req.headers['x-tenant-id'] as string || 'default',
+        keyGenerator: (req: any) =>
+          (req.headers['x-tenant-id'] as string) || 'default',
         standardHeaders: true,
         legacyHeaders: false,
       });
@@ -124,7 +128,8 @@ describe('Rate Limiter', () => {
       const limiter = rateLimit({
         windowMs: 60 * 1000,
         max: 5,
-        keyGenerator: (req: any) => req.headers['x-tenant-id'] as string || 'default',
+        keyGenerator: (req: any) =>
+          (req.headers['x-tenant-id'] as string) || 'default',
         standardHeaders: true,
         legacyHeaders: false,
       });
@@ -141,7 +146,8 @@ describe('Rate Limiter', () => {
       const limiter = rateLimit({
         windowMs: 60 * 1000,
         max: 1,
-        keyGenerator: (req: any) => req.headers['x-tenant-id'] as string || 'default',
+        keyGenerator: (req: any) =>
+          (req.headers['x-tenant-id'] as string) || 'default',
         standardHeaders: true,
         legacyHeaders: false,
       });
@@ -159,27 +165,29 @@ describe('Rate Limiter', () => {
 
       expect(blockedResponse.status).toBe(429);
       expect(blockedResponse.headers['retry-after']).toBeDefined();
-      expect(parseInt(blockedResponse.headers['retry-after'])).toBeGreaterThan(0);
+      expect(parseInt(blockedResponse.headers['retry-after'])).toBeGreaterThan(
+        0
+      );
     });
   });
 
   describe('Rate Limit Key Generation', () => {
     it('should use tenantId as the primary key', () => {
       const keyGenerator = (req: any) => req.tenantId;
-      
+
       const mockReq = { tenantId: 'tenant-123' };
       const key = keyGenerator(mockReq);
-      
+
       expect(key).toBe('tenant-123');
     });
 
     it('should not fallback to IP address', () => {
       // This test ensures we removed the || req.ip fallback
       const keyGenerator = (req: any) => req.tenantId;
-      
+
       const mockReq = { ip: '192.168.1.1' }; // No tenantId
       const key = keyGenerator(mockReq);
-      
+
       expect(key).toBeUndefined();
       expect(key).not.toBe('192.168.1.1');
     });
@@ -187,12 +195,12 @@ describe('Rate Limiter', () => {
     it('should handle IPv6 addresses correctly', () => {
       // Even if we had IP-based limiting, it should handle IPv6
       const keyGenerator = (req: any) => req.tenantId;
-      
+
       const mockReq = {
         tenantId: 'tenant-456',
-        ip: '2001:0db8:85a3:0000:0000:8a2e:0370:7334' // IPv6
+        ip: '2001:0db8:85a3:0000:0000:8a2e:0370:7334', // IPv6
       };
-      
+
       const key = keyGenerator(mockReq);
       expect(key).toBe('tenant-456'); // Uses tenantId, not IP
     });
@@ -223,10 +231,11 @@ describe('Rate Limiter', () => {
       const limiter = rateLimit({
         windowMs: 60 * 1000,
         max: 1,
-        keyGenerator: (req: any) => req.headers['x-tenant-id'] as string || 'default',
+        keyGenerator: (req: any) =>
+          (req.headers['x-tenant-id'] as string) || 'default',
         message: {
           status: 'error',
-          message: 'Rate limit exceeded for your organization'
+          message: 'Rate limit exceeded for your organization',
         },
         standardHeaders: true,
         legacyHeaders: false,

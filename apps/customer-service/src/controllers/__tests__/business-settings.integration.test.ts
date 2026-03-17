@@ -2,16 +2,16 @@
  * Business Settings Controller Integration Tests
  */
 
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 import {
   getTestPrismaClient,
   createTestTenant,
   deleteTestData,
   disconnectTestDatabase,
-} from "../../test/setup-test-db";
-import { getBusinessSettings } from "../business-settings.controller";
+} from '../../test/setup-test-db';
+import { getBusinessSettings } from '../business-settings.controller';
 
-describe("Business Settings Controller Integration Tests", () => {
+describe('Business Settings Controller Integration Tests', () => {
   const prisma = getTestPrismaClient();
   let testTenantId: string;
 
@@ -31,8 +31,8 @@ describe("Business Settings Controller Integration Tests", () => {
     await prisma.tenant.update({
       where: { id: testTenantId },
       data: {
-        businessName: "Test Business",
-        logoUrl: "https://example.com/logo.png",
+        businessName: 'Test Business',
+        logoUrl: 'https://example.com/logo.png',
       },
     });
   });
@@ -46,8 +46,8 @@ describe("Business Settings Controller Integration Tests", () => {
     jest.clearAllMocks();
   });
 
-  describe("getBusinessSettings", () => {
-    it("should return business settings for tenant", async () => {
+  describe('getBusinessSettings', () => {
+    it('should return business settings for tenant', async () => {
       const req = {
         tenantId: testTenantId,
         query: {},
@@ -60,12 +60,12 @@ describe("Business Settings Controller Integration Tests", () => {
 
       expect(res.status).toHaveBeenCalledWith(200);
       const responseData = (res.json as jest.Mock).mock.calls[0][0];
-      expect(responseData.logoUrl).toBe("https://example.com/logo.png");
+      expect(responseData.logoUrl).toBe('https://example.com/logo.png');
     });
 
-    it("should return 404 for tenant without settings", async () => {
+    it('should return 404 for tenant without settings', async () => {
       const req = {
-        tenantId: "nonexistent-tenant",
+        tenantId: 'nonexistent-tenant',
         query: {},
         params: {},
         body: {},

@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { Formik, Form, Field, FormikHelpers, FormikErrors, FormikTouched } from 'formik';
+import {
+  Formik,
+  Form,
+  Field,
+  FormikHelpers,
+  FormikErrors,
+  FormikTouched,
+} from 'formik';
 import * as Yup from 'yup';
 import {
   Box,
@@ -31,7 +38,10 @@ const ResetPasswordSchema = Yup.object().shape({
     .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
     .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
     .matches(/[0-9]/, 'Password must contain at least one number')
-    .matches(/[^a-zA-Z0-9]/, 'Password must contain at least one special character')
+    .matches(
+      /[^a-zA-Z0-9]/,
+      'Password must contain at least one special character'
+    )
     .required('Password is required'),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref('password')], 'Passwords must match')
@@ -42,7 +52,7 @@ const ResetPassword = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
-  
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -63,7 +73,8 @@ const ResetPassword = () => {
       >
         <Paper elevation={3} sx={{ width: '100%', maxWidth: 450, p: 4 }}>
           <Alert severity="error" sx={{ mb: 3 }}>
-            Invalid or missing reset token. Please request a new password reset link.
+            Invalid or missing reset token. Please request a new password reset
+            link.
           </Alert>
           <Button
             component={Link}
@@ -93,13 +104,15 @@ const ResetPassword = () => {
       });
 
       setSuccessMessage('Your password has been reset successfully!');
-      
+
       // Redirect to login after 3 seconds
       setTimeout(() => {
         navigate('/login');
       }, 3000);
     } catch (error: any) {
-      const message = error.response?.data?.message || 'Failed to reset password. The link may have expired.';
+      const message =
+        error.response?.data?.message ||
+        'Failed to reset password. The link may have expired.';
       setErrorMessage(message);
     } finally {
       setSubmitting(false);
@@ -136,9 +149,13 @@ const ResetPassword = () => {
         {/* Header */}
         <Box sx={{ textAlign: 'center', mb: 3 }}>
           {successMessage ? (
-            <CheckCircleIcon sx={{ fontSize: 48, color: 'success.main', mb: 2 }} />
+            <CheckCircleIcon
+              sx={{ fontSize: 48, color: 'success.main', mb: 2 }}
+            />
           ) : (
-            <LockResetIcon sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
+            <LockResetIcon
+              sx={{ fontSize: 48, color: 'primary.main', mb: 2 }}
+            />
           )}
           <Typography variant="h5" component="h1" gutterBottom>
             {successMessage ? 'Password Reset!' : 'Reset Your Password'}
@@ -218,7 +235,9 @@ const ResetPassword = () => {
                   fullWidth
                   margin="normal"
                   variant="outlined"
-                  error={touched.confirmPassword && Boolean(errors.confirmPassword)}
+                  error={
+                    touched.confirmPassword && Boolean(errors.confirmPassword)
+                  }
                   helperText={touched.confirmPassword && errors.confirmPassword}
                   disabled={isSubmitting}
                   InputProps={{
@@ -228,7 +247,11 @@ const ResetPassword = () => {
                           onClick={handleToggleConfirmPasswordVisibility}
                           edge="end"
                         >
-                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                          {showConfirmPassword ? (
+                            <VisibilityOff />
+                          ) : (
+                            <Visibility />
+                          )}
                         </IconButton>
                       </InputAdornment>
                     ),
@@ -237,22 +260,46 @@ const ResetPassword = () => {
 
                 {/* Password Requirements */}
                 <Box sx={{ mt: 2, mb: 2 }}>
-                  <Typography variant="caption" color="text.secondary" component="div">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    component="div"
+                  >
                     Password must contain:
                   </Typography>
-                  <Typography variant="caption" color="text.secondary" component="div">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    component="div"
+                  >
                     • At least 8 characters
                   </Typography>
-                  <Typography variant="caption" color="text.secondary" component="div">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    component="div"
+                  >
                     • One uppercase letter
                   </Typography>
-                  <Typography variant="caption" color="text.secondary" component="div">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    component="div"
+                  >
                     • One lowercase letter
                   </Typography>
-                  <Typography variant="caption" color="text.secondary" component="div">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    component="div"
+                  >
                     • One number
                   </Typography>
-                  <Typography variant="caption" color="text.secondary" component="div">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    component="div"
+                  >
                     • One special character
                   </Typography>
                 </Box>

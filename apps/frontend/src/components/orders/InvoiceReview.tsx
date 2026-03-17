@@ -27,13 +27,13 @@ const InvoiceReview: React.FC<InvoiceReviewProps> = ({
   // State for editable invoice fields
   const [notes, setNotes] = useState(orderData.invoice.notes);
   const [discount, setDiscount] = useState(orderData.invoice.discount);
-  
+
   // Calculate totals
   const subtotal = orderData.invoice.subtotal;
   const taxRate = orderData.invoice.taxRate;
   const taxAmount = subtotal * taxRate;
   const total = subtotal + taxAmount - discount;
-  
+
   // Format dates
   const formatDate = (date: Date | null) => {
     if (!date) return 'N/A';
@@ -45,7 +45,7 @@ const InvoiceReview: React.FC<InvoiceReviewProps> = ({
       minute: '2-digit',
     }).format(date);
   };
-  
+
   // Format currency
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -53,13 +53,13 @@ const InvoiceReview: React.FC<InvoiceReviewProps> = ({
       currency: 'USD',
     }).format(amount);
   };
-  
+
   // Handle discount change
   const handleDiscountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value) || 0;
     setDiscount(value);
   };
-  
+
   // Handle continue to next step
   const handleContinue = () => {
     const invoiceData = {
@@ -69,7 +69,7 @@ const InvoiceReview: React.FC<InvoiceReviewProps> = ({
       taxAmount,
       total,
     };
-    
+
     onContinue(invoiceData);
   };
 
@@ -78,7 +78,7 @@ const InvoiceReview: React.FC<InvoiceReviewProps> = ({
       <Typography variant="h6" gutterBottom>
         Review Invoice
       </Typography>
-      
+
       <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
@@ -86,14 +86,12 @@ const InvoiceReview: React.FC<InvoiceReviewProps> = ({
             <Typography variant="body2">
               {orderData.customer?.firstName} {orderData.customer?.lastName}
             </Typography>
-            <Typography variant="body2">
-              {orderData.customer?.email}
-            </Typography>
+            <Typography variant="body2">{orderData.customer?.email}</Typography>
             <Typography variant="body2">
               {orderData.customer?.phone || 'No phone provided'}
             </Typography>
           </Grid>
-          
+
           <Grid item xs={12} md={6}>
             <Typography variant="subtitle2">Pet Information:</Typography>
             <Typography variant="body2">
@@ -105,11 +103,11 @@ const InvoiceReview: React.FC<InvoiceReviewProps> = ({
               </Typography>
             )}
           </Grid>
-          
+
           <Grid item xs={12}>
             <Divider sx={{ my: 2 }} />
           </Grid>
-          
+
           <Grid item xs={12} md={6}>
             <Typography variant="subtitle2">Reservation Details:</Typography>
             <Typography variant="body2">
@@ -119,7 +117,7 @@ const InvoiceReview: React.FC<InvoiceReviewProps> = ({
               End: {formatDate(orderData.reservation.endDate)}
             </Typography>
           </Grid>
-          
+
           <Grid item xs={12} md={6}>
             <Typography variant="subtitle2">Invoice Information:</Typography>
             <Typography variant="body2">
@@ -129,16 +127,16 @@ const InvoiceReview: React.FC<InvoiceReviewProps> = ({
               Date: {formatDate(new Date())}
             </Typography>
           </Grid>
-          
+
           <Grid item xs={12}>
             <Divider sx={{ my: 2 }} />
           </Grid>
-          
+
           <Grid item xs={12}>
             <Typography variant="subtitle2" gutterBottom>
               Service Details:
             </Typography>
-            
+
             <TableContainer>
               <Table size="small">
                 <TableHead>
@@ -155,98 +153,203 @@ const InvoiceReview: React.FC<InvoiceReviewProps> = ({
                     <TableCell>Reservation Service</TableCell>
                     <TableCell align="right">1</TableCell>
                     <TableCell align="right">
-                      {formatCurrency(subtotal - orderData.addOns.reduce((sum: number, addon: any) => sum + (addon.price * addon.quantity), 0))}
+                      {formatCurrency(
+                        subtotal -
+                          orderData.addOns.reduce(
+                            (sum: number, addon: any) =>
+                              sum + addon.price * addon.quantity,
+                            0
+                          )
+                      )}
                     </TableCell>
                     <TableCell align="right">
-                      {formatCurrency(subtotal - orderData.addOns.reduce((sum: number, addon: any) => sum + (addon.price * addon.quantity), 0))}
+                      {formatCurrency(
+                        subtotal -
+                          orderData.addOns.reduce(
+                            (sum: number, addon: any) =>
+                              sum + addon.price * addon.quantity,
+                            0
+                          )
+                      )}
                     </TableCell>
                   </TableRow>
-                  
+
                   {/* Add-on services */}
                   {orderData.addOns.map((addon: any, index: number) => (
                     <TableRow key={index}>
                       <TableCell>{addon.name}</TableCell>
                       <TableCell align="right">{addon.quantity}</TableCell>
-                      <TableCell align="right">{formatCurrency(addon.price)}</TableCell>
-                      <TableCell align="right">{formatCurrency(addon.price * addon.quantity)}</TableCell>
+                      <TableCell align="right">
+                        {formatCurrency(addon.price)}
+                      </TableCell>
+                      <TableCell align="right">
+                        {formatCurrency(addon.price * addon.quantity)}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </TableContainer>
           </Grid>
-          
+
           <Grid item xs={12}>
             <Divider sx={{ my: 2 }} />
           </Grid>
-          
+
           <Grid item xs={12}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%', maxWidth: 300 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-end',
+                gap: 1,
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 2,
+                  width: '100%',
+                  maxWidth: 300,
+                }}
+              >
                 <Typography variant="subtitle2">Subtotal:</Typography>
                 <Typography variant="body1" sx={{ ml: 'auto' }}>
                   {formatCurrency(subtotal)}
                 </Typography>
               </Box>
-              
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%', maxWidth: 300 }}>
-                <Typography variant="subtitle2">Tax ({(taxRate * 100).toFixed(1)}%):</Typography>
+
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 2,
+                  width: '100%',
+                  maxWidth: 300,
+                }}
+              >
+                <Typography variant="subtitle2">
+                  Tax ({(taxRate * 100).toFixed(1)}%):
+                </Typography>
                 <Typography variant="body1" sx={{ ml: 'auto' }}>
                   {formatCurrency(taxAmount)}
                 </Typography>
               </Box>
-              
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%', maxWidth: 300, mb: 1 }}>
-                <Typography variant="subtitle2" color={discount > 0 ? "error" : "text.primary"} fontWeight={discount > 0 ? "bold" : "normal"}>
+
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 2,
+                  width: '100%',
+                  maxWidth: 300,
+                  mb: 1,
+                }}
+              >
+                <Typography
+                  variant="subtitle2"
+                  color={discount > 0 ? 'error' : 'text.primary'}
+                  fontWeight={discount > 0 ? 'bold' : 'normal'}
+                >
                   Discount:
                 </Typography>
                 <TextField
                   size="small"
                   type="number"
-                  InputProps={{ 
+                  InputProps={{
                     startAdornment: '$',
-                    sx: { color: discount > 0 ? "error.main" : "inherit" }
+                    sx: { color: discount > 0 ? 'error.main' : 'inherit' },
                   }}
                   value={discount}
                   onChange={handleDiscountChange}
-                  sx={{ 
-                    width: 100, 
+                  sx={{
+                    width: 100,
                     ml: 'auto',
                     '& .MuiOutlinedInput-root': {
-                      borderColor: discount > 0 ? "error.main" : "inherit",
-                    }
+                      borderColor: discount > 0 ? 'error.main' : 'inherit',
+                    },
                   }}
                 />
               </Box>
-              
+
               {discount > 0 && (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%', maxWidth: 300, mb: 1 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 2,
+                    width: '100%',
+                    maxWidth: 300,
+                    mb: 1,
+                  }}
+                >
                   <Typography variant="caption" color="text.secondary">
                     Discounted subtotal: {formatCurrency(subtotal - discount)}
                   </Typography>
                 </Box>
               )}
-              
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%', maxWidth: 300, mt: 1 }}>
+
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 2,
+                  width: '100%',
+                  maxWidth: 300,
+                  mt: 1,
+                }}
+              >
                 <Typography variant="h6">Total:</Typography>
                 <Typography variant="h6" sx={{ ml: 'auto' }}>
                   {formatCurrency(total)}
                 </Typography>
               </Box>
-              
+
               {/* Deposit Information */}
               {orderData.invoice.depositRequired && (
                 <>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%', maxWidth: 300, mt: 2, pt: 2, borderTop: '2px dashed #ccc' }}>
-                    <Typography variant="subtitle2" color="primary">Deposit Required:</Typography>
-                    <Typography variant="subtitle2" color="primary" sx={{ ml: 'auto' }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 2,
+                      width: '100%',
+                      maxWidth: 300,
+                      mt: 2,
+                      pt: 2,
+                      borderTop: '2px dashed #ccc',
+                    }}
+                  >
+                    <Typography variant="subtitle2" color="primary">
+                      Deposit Required:
+                    </Typography>
+                    <Typography
+                      variant="subtitle2"
+                      color="primary"
+                      sx={{ ml: 'auto' }}
+                    >
                       {formatCurrency(orderData.invoice.depositAmount)}
                     </Typography>
                   </Box>
-                  
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%', maxWidth: 300 }}>
-                    <Typography variant="body2" color="text.secondary">Balance Due at Checkout:</Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ ml: 'auto' }}>
+
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 2,
+                      width: '100%',
+                      maxWidth: 300,
+                    }}
+                  >
+                    <Typography variant="body2" color="text.secondary">
+                      Balance Due at Checkout:
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ ml: 'auto' }}
+                    >
                       {formatCurrency(orderData.invoice.balanceDue)}
                     </Typography>
                   </Box>
@@ -254,7 +357,7 @@ const InvoiceReview: React.FC<InvoiceReviewProps> = ({
               )}
             </Box>
           </Grid>
-          
+
           <Grid item xs={12}>
             <TextField
               fullWidth
@@ -269,13 +372,9 @@ const InvoiceReview: React.FC<InvoiceReviewProps> = ({
           </Grid>
         </Grid>
       </Paper>
-      
+
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleContinue}
-        >
+        <Button variant="contained" color="primary" onClick={handleContinue}>
           Continue to Payment
         </Button>
       </Box>

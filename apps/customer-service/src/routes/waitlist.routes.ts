@@ -1,6 +1,6 @@
 /**
  * Waitlist Routes
- * 
+ *
  * API routes for waitlist management
  */
 

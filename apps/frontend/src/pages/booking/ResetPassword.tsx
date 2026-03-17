@@ -2,7 +2,7 @@
  * ResetPassword - Set new password using reset token
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -13,32 +13,32 @@ import {
   Alert,
   Link,
   CircularProgress,
-} from "@mui/material";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useCustomerAuth } from "../../contexts/CustomerAuthContext";
-import api from "../../services/api";
+} from '@mui/material';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useCustomerAuth } from '../../contexts/CustomerAuthContext';
+import api from '../../services/api';
 
 const ResetPassword: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { resetPassword } = useCustomerAuth();
 
-  const token = searchParams.get("token");
+  const token = searchParams.get('token');
 
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [verifying, setVerifying] = useState(true);
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [tokenValid, setTokenValid] = useState(false);
-  const [customerEmail, setCustomerEmail] = useState("");
+  const [customerEmail, setCustomerEmail] = useState('');
 
   // Verify token on mount
   useEffect(() => {
     const verifyToken = async () => {
       if (!token) {
-        setError("No reset token provided");
+        setError('No reset token provided');
         setVerifying(false);
         return;
       }
@@ -47,13 +47,13 @@ const ResetPassword: React.FC = () => {
         const response = await api.get(
           `/api/customers/auth/verify-token?token=${token}`
         );
-        if (response.data.status === "success") {
+        if (response.data.status === 'success') {
           setTokenValid(true);
           setCustomerEmail(response.data.data.email);
         }
       } catch (err: any) {
         setError(
-          err.response?.data?.message || "Invalid or expired reset link"
+          err.response?.data?.message || 'Invalid or expired reset link'
         );
       } finally {
         setVerifying(false);
@@ -65,15 +65,15 @@ const ResetPassword: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError('');
 
     if (!password || password.length < 6) {
-      setError("Password must be at least 6 characters");
+      setError('Password must be at least 6 characters');
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError('Passwords do not match');
       return;
     }
 
@@ -82,7 +82,7 @@ const ResetPassword: React.FC = () => {
       await resetPassword(token!, password);
       setSuccess(true);
     } catch (err: any) {
-      setError(err.message || "Failed to reset password");
+      setError(err.message || 'Failed to reset password');
     } finally {
       setLoading(false);
     }
@@ -91,7 +91,7 @@ const ResetPassword: React.FC = () => {
   if (verifying) {
     return (
       <Container maxWidth="sm">
-        <Box sx={{ mt: 8, mb: 4, textAlign: "center" }}>
+        <Box sx={{ mt: 8, mb: 4, textAlign: 'center' }}>
           <CircularProgress />
           <Typography sx={{ mt: 2 }}>Verifying reset link...</Typography>
         </Box>
@@ -115,7 +115,7 @@ const ResetPassword: React.FC = () => {
             </Typography>
 
             <Alert severity="error" sx={{ mb: 3 }}>
-              {error || "This password reset link is invalid or has expired."}
+              {error || 'This password reset link is invalid or has expired.'}
             </Alert>
 
             <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
@@ -123,14 +123,14 @@ const ResetPassword: React.FC = () => {
               one.
             </Typography>
 
-            <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
               <Button
                 variant="contained"
-                onClick={() => navigate("/book/forgot-password")}
+                onClick={() => navigate('/book/forgot-password')}
               >
                 Request New Link
               </Button>
-              <Button variant="outlined" onClick={() => navigate("/book")}>
+              <Button variant="outlined" onClick={() => navigate('/book')}>
                 Back to Login
               </Button>
             </Box>
@@ -154,11 +154,11 @@ const ResetPassword: React.FC = () => {
               password.
             </Alert>
 
-            <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
               <Button
                 variant="contained"
                 size="large"
-                onClick={() => navigate("/book")}
+                onClick={() => navigate('/book')}
               >
                 Go to Login
               </Button>
@@ -227,15 +227,15 @@ const ResetPassword: React.FC = () => {
               disabled={loading}
               sx={{ mb: 2 }}
             >
-              {loading ? <CircularProgress size={24} /> : "Set Password"}
+              {loading ? <CircularProgress size={24} /> : 'Set Password'}
             </Button>
 
-            <Box sx={{ textAlign: "center" }}>
+            <Box sx={{ textAlign: 'center' }}>
               <Link
                 component="button"
                 type="button"
                 variant="body2"
-                onClick={() => navigate("/book")}
+                onClick={() => navigate('/book')}
               >
                 Back to Login
               </Link>

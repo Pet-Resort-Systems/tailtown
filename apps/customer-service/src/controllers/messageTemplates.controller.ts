@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -19,20 +19,20 @@ export const getAllTemplates = async (
 
     if (type) where.type = type as string;
     if (category) where.category = category as string;
-    if (isActive !== undefined) where.isActive = isActive === "true";
+    if (isActive !== undefined) where.isActive = isActive === 'true';
 
     const templates = await prisma.messageTemplate.findMany({
       where,
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
 
     res.json({
-      status: "success",
+      status: 'success',
       results: templates.length,
       data: templates,
     });
   } catch (error) {
-    console.error("Error fetching message templates:", error);
+    console.error('Error fetching message templates:', error);
     next(error);
   }
 };
@@ -55,17 +55,17 @@ export const getTemplateById = async (
 
     if (!template) {
       return res.status(404).json({
-        status: "error",
-        message: "Template not found",
+        status: 'error',
+        message: 'Template not found',
       });
     }
 
     res.json({
-      status: "success",
+      status: 'success',
       data: template,
     });
   } catch (error) {
-    console.error("Error fetching template:", error);
+    console.error('Error fetching template:', error);
     next(error);
   }
 };
@@ -85,31 +85,31 @@ export const createTemplate = async (
     // Validate required fields
     if (!name || !type || !category || !body) {
       return res.status(400).json({
-        status: "error",
-        message: "Missing required fields: name, type, category, body",
+        status: 'error',
+        message: 'Missing required fields: name, type, category, body',
       });
     }
 
     // Validate type
-    if (!["SMS", "EMAIL"].includes(type)) {
+    if (!['SMS', 'EMAIL'].includes(type)) {
       return res.status(400).json({
-        status: "error",
-        message: "Type must be SMS or EMAIL",
+        status: 'error',
+        message: 'Type must be SMS or EMAIL',
       });
     }
 
     // Validate category
     const validCategories = [
-      "APPOINTMENT_REMINDER",
-      "MARKETING",
-      "CONFIRMATION",
-      "FOLLOW_UP",
-      "PROMOTIONAL",
+      'APPOINTMENT_REMINDER',
+      'MARKETING',
+      'CONFIRMATION',
+      'FOLLOW_UP',
+      'PROMOTIONAL',
     ];
     if (!validCategories.includes(category)) {
       return res.status(400).json({
-        status: "error",
-        message: `Category must be one of: ${validCategories.join(", ")}`,
+        status: 'error',
+        message: `Category must be one of: ${validCategories.join(', ')}`,
       });
     }
 
@@ -136,7 +136,7 @@ export const createTemplate = async (
         name,
         type,
         category,
-        subject: type === "EMAIL" ? subject : null,
+        subject: type === 'EMAIL' ? subject : null,
         body,
         variables: variables || uniqueVariables,
         isActive: true,
@@ -144,11 +144,11 @@ export const createTemplate = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: template,
     });
   } catch (error) {
-    console.error("Error creating template:", error);
+    console.error('Error creating template:', error);
     next(error);
   }
 };
@@ -174,8 +174,8 @@ export const updateTemplate = async (
 
     if (!existing) {
       return res.status(404).json({
-        status: "error",
-        message: "Template not found",
+        status: 'error',
+        message: 'Template not found',
       });
     }
 
@@ -213,11 +213,11 @@ export const updateTemplate = async (
     });
 
     res.json({
-      status: "success",
+      status: 'success',
       data: template,
     });
   } catch (error) {
-    console.error("Error updating template:", error);
+    console.error('Error updating template:', error);
     next(error);
   }
 };
@@ -241,8 +241,8 @@ export const deleteTemplate = async (
 
     if (!existing) {
       return res.status(404).json({
-        status: "error",
-        message: "Template not found",
+        status: 'error',
+        message: 'Template not found',
       });
     }
 
@@ -251,11 +251,11 @@ export const deleteTemplate = async (
     });
 
     res.json({
-      status: "success",
-      message: "Template deleted successfully",
+      status: 'success',
+      message: 'Template deleted successfully',
     });
   } catch (error) {
-    console.error("Error deleting template:", error);
+    console.error('Error deleting template:', error);
     next(error);
   }
 };
@@ -279,8 +279,8 @@ export const duplicateTemplate = async (
 
     if (!original) {
       return res.status(404).json({
-        status: "error",
-        message: "Template not found",
+        status: 'error',
+        message: 'Template not found',
       });
     }
 
@@ -299,11 +299,11 @@ export const duplicateTemplate = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: duplicate,
     });
   } catch (error) {
-    console.error("Error duplicating template:", error);
+    console.error('Error duplicating template:', error);
     next(error);
   }
 };
@@ -321,10 +321,10 @@ export const seedDefaultTemplates = async (
 
     const defaultTemplates = [
       {
-        name: "Welcome New Customer",
-        type: "EMAIL",
-        category: "MARKETING",
-        subject: "Welcome to {{businessName}}! 🐾",
+        name: 'Welcome New Customer',
+        type: 'EMAIL',
+        category: 'MARKETING',
+        subject: 'Welcome to {{businessName}}! 🐾',
         body: `<h2>Welcome to the Family, {{customerName}}!</h2>
 <p>Thank you for choosing {{businessName}} for your pet care needs. We're thrilled to have you and {{petName}} as part of our family!</p>
 <h3>What's Next?</h3>
@@ -335,13 +335,13 @@ export const seedDefaultTemplates = async (
 </ul>
 <p>If you have any questions, don't hesitate to reach out!</p>
 <p>Best regards,<br>The {{businessName}} Team</p>`,
-        variables: ["businessName", "customerName", "petName"],
+        variables: ['businessName', 'customerName', 'petName'],
       },
       {
-        name: "Reservation Confirmation",
-        type: "EMAIL",
-        category: "CONFIRMATION",
-        subject: "Reservation Confirmed for {{petName}} - {{serviceName}}",
+        name: 'Reservation Confirmation',
+        type: 'EMAIL',
+        category: 'CONFIRMATION',
+        subject: 'Reservation Confirmed for {{petName}} - {{serviceName}}',
         body: `<h2>Your Reservation is Confirmed! ✅</h2>
 <p>Hi {{customerName}},</p>
 <p>We're excited to confirm your upcoming reservation:</p>
@@ -361,18 +361,18 @@ export const seedDefaultTemplates = async (
 <p>See you soon!</p>
 <p>{{businessName}}</p>`,
         variables: [
-          "customerName",
-          "petName",
-          "serviceName",
-          "startDate",
-          "endDate",
-          "businessName",
+          'customerName',
+          'petName',
+          'serviceName',
+          'startDate',
+          'endDate',
+          'businessName',
         ],
       },
       {
-        name: "Appointment Reminder",
-        type: "EMAIL",
-        category: "APPOINTMENT_REMINDER",
+        name: 'Appointment Reminder',
+        type: 'EMAIL',
+        category: 'APPOINTMENT_REMINDER',
         subject: "Reminder: {{petName}}'s appointment tomorrow!",
         body: `<h2>Appointment Reminder 📅</h2>
 <p>Hi {{customerName}},</p>
@@ -387,20 +387,20 @@ export const seedDefaultTemplates = async (
 <p>See you tomorrow!</p>
 <p>{{businessName}}</p>`,
         variables: [
-          "customerName",
-          "petName",
-          "appointmentDate",
-          "appointmentTime",
-          "serviceName",
-          "businessPhone",
-          "businessName",
+          'customerName',
+          'petName',
+          'appointmentDate',
+          'appointmentTime',
+          'serviceName',
+          'businessPhone',
+          'businessName',
         ],
       },
       {
-        name: "Thank You - Post Visit",
-        type: "EMAIL",
-        category: "FOLLOW_UP",
-        subject: "Thank you for visiting {{businessName}}!",
+        name: 'Thank You - Post Visit',
+        type: 'EMAIL',
+        category: 'FOLLOW_UP',
+        subject: 'Thank you for visiting {{businessName}}!',
         body: `<h2>Thank You for Your Visit! 🙏</h2>
 <p>Hi {{customerName}},</p>
 <p>Thank you for trusting us with {{petName}}'s care! We hope you both had a great experience.</p>
@@ -409,13 +409,13 @@ export const seedDefaultTemplates = async (
 <p>Ready to schedule {{petName}}'s next appointment? We're here when you need us!</p>
 <p>Thank you for being a valued member of our family.</p>
 <p>Warm regards,<br>{{businessName}}</p>`,
-        variables: ["customerName", "petName", "businessName"],
+        variables: ['customerName', 'petName', 'businessName'],
       },
       {
-        name: "Monthly Newsletter",
-        type: "EMAIL",
-        category: "MARKETING",
-        subject: "{{businessName}} Newsletter - {{monthYear}}",
+        name: 'Monthly Newsletter',
+        type: 'EMAIL',
+        category: 'MARKETING',
+        subject: '{{businessName}} Newsletter - {{monthYear}}',
         body: `<h2>{{businessName}} Monthly Update 📰</h2>
 <p>Hi {{customerName}},</p>
 <p>Here's what's happening at {{businessName}} this month!</p>
@@ -429,13 +429,13 @@ export const seedDefaultTemplates = async (
 <p>[Feature a pet of the month or fun photos]</p>
 <p>Thank you for being part of our community!</p>
 <p>{{businessName}}</p>`,
-        variables: ["businessName", "customerName", "monthYear"],
+        variables: ['businessName', 'customerName', 'monthYear'],
       },
       {
-        name: "Holiday Schedule Notice",
-        type: "EMAIL",
-        category: "MARKETING",
-        subject: "{{businessName}} Holiday Hours & Booking Reminder",
+        name: 'Holiday Schedule Notice',
+        type: 'EMAIL',
+        category: 'MARKETING',
+        subject: '{{businessName}} Holiday Hours & Booking Reminder',
         body: `<h2>Holiday Schedule Update 🎄</h2>
 <p>Hi {{customerName}},</p>
 <p>The holidays are approaching! Here's important information about our schedule:</p>
@@ -447,13 +447,13 @@ export const seedDefaultTemplates = async (
 <p>Holiday boarding fills up fast. If you're planning to travel, we recommend booking {{petName}}'s stay as soon as possible to secure your spot.</p>
 <p>Questions? Give us a call at {{businessPhone}}.</p>
 <p>Happy Holidays from the {{businessName}} family!</p>`,
-        variables: ["customerName", "petName", "businessPhone", "businessName"],
+        variables: ['customerName', 'petName', 'businessPhone', 'businessName'],
       },
       {
-        name: "Vaccination Reminder",
-        type: "EMAIL",
-        category: "APPOINTMENT_REMINDER",
-        subject: "Vaccination Update Needed for {{petName}}",
+        name: 'Vaccination Reminder',
+        type: 'EMAIL',
+        category: 'APPOINTMENT_REMINDER',
+        subject: 'Vaccination Update Needed for {{petName}}',
         body: `<h2>Vaccination Reminder 💉</h2>
 <p>Hi {{customerName}},</p>
 <p>Our records show that {{petName}}'s vaccinations may need to be updated soon.</p>
@@ -466,13 +466,13 @@ export const seedDefaultTemplates = async (
 <p>Please send us updated vaccination records or schedule an appointment with your vet.</p>
 <p>Questions? Contact us at {{businessPhone}}.</p>
 <p>Thank you,<br>{{businessName}}</p>`,
-        variables: ["customerName", "petName", "businessPhone", "businessName"],
+        variables: ['customerName', 'petName', 'businessPhone', 'businessName'],
       },
       {
-        name: "Special Promotion",
-        type: "EMAIL",
-        category: "PROMOTIONAL",
-        subject: "🎁 Special Offer for {{customerName}}!",
+        name: 'Special Promotion',
+        type: 'EMAIL',
+        category: 'PROMOTIONAL',
+        subject: '🎁 Special Offer for {{customerName}}!',
         body: `<h2>Exclusive Offer Just for You! 🎁</h2>
 <p>Hi {{customerName}},</p>
 <p>As a valued customer, we wanted to share a special offer with you:</p>
@@ -484,80 +484,80 @@ export const seedDefaultTemplates = async (
 <p>Book now to take advantage of this offer!</p>
 <p>{{businessName}}</p>`,
         variables: [
-          "customerName",
-          "promotionTitle",
-          "promotionDetails",
-          "expirationDate",
-          "businessName",
+          'customerName',
+          'promotionTitle',
+          'promotionDetails',
+          'expirationDate',
+          'businessName',
         ],
       },
       // SMS Templates
       {
-        name: "SMS - Welcome",
-        type: "SMS",
-        category: "MARKETING",
+        name: 'SMS - Welcome',
+        type: 'SMS',
+        category: 'MARKETING',
         body: `Welcome to {{businessName}}! 🐾 We're excited to have you & {{petName}} join our family. Questions? Reply to this text or call {{businessPhone}}.`,
-        variables: ["businessName", "petName", "businessPhone"],
+        variables: ['businessName', 'petName', 'businessPhone'],
       },
       {
-        name: "SMS - Reservation Confirmed",
-        type: "SMS",
-        category: "CONFIRMATION",
+        name: 'SMS - Reservation Confirmed',
+        type: 'SMS',
+        category: 'CONFIRMATION',
         body: `✅ Confirmed! {{petName}}'s {{serviceName}} is booked for {{startDate}}. Check-in time: {{checkInTime}}. See you soon! - {{businessName}}`,
         variables: [
-          "petName",
-          "serviceName",
-          "startDate",
-          "checkInTime",
-          "businessName",
+          'petName',
+          'serviceName',
+          'startDate',
+          'checkInTime',
+          'businessName',
         ],
       },
       {
-        name: "SMS - Appointment Reminder",
-        type: "SMS",
-        category: "APPOINTMENT_REMINDER",
+        name: 'SMS - Appointment Reminder',
+        type: 'SMS',
+        category: 'APPOINTMENT_REMINDER',
         body: `📅 Reminder: {{petName}} has an appointment tomorrow at {{appointmentTime}} for {{serviceName}}. Please arrive 10 min early. Reply C to confirm or R to reschedule.`,
-        variables: ["petName", "appointmentTime", "serviceName"],
+        variables: ['petName', 'appointmentTime', 'serviceName'],
       },
       {
-        name: "SMS - Ready for Pickup",
-        type: "SMS",
-        category: "CONFIRMATION",
+        name: 'SMS - Ready for Pickup',
+        type: 'SMS',
+        category: 'CONFIRMATION',
         body: `🐕 {{petName}} is ready for pickup! We're open until {{closeTime}}. Can't wait to tell you about their stay! - {{businessName}}`,
-        variables: ["petName", "closeTime", "businessName"],
+        variables: ['petName', 'closeTime', 'businessName'],
       },
       {
-        name: "SMS - Thank You",
-        type: "SMS",
-        category: "FOLLOW_UP",
+        name: 'SMS - Thank You',
+        type: 'SMS',
+        category: 'FOLLOW_UP',
         body: `Thanks for visiting {{businessName}}! 🙏 We loved having {{petName}}. Book your next visit at {{bookingUrl}} or reply for assistance.`,
-        variables: ["businessName", "petName", "bookingUrl"],
+        variables: ['businessName', 'petName', 'bookingUrl'],
       },
       {
-        name: "SMS - Vaccination Reminder",
-        type: "SMS",
-        category: "APPOINTMENT_REMINDER",
+        name: 'SMS - Vaccination Reminder',
+        type: 'SMS',
+        category: 'APPOINTMENT_REMINDER',
         body: `⚠️ Hi {{customerName}}, {{petName}}'s vaccinations need updating before their next visit. Please send updated records or call {{businessPhone}}.`,
-        variables: ["customerName", "petName", "businessPhone"],
+        variables: ['customerName', 'petName', 'businessPhone'],
       },
       {
-        name: "SMS - Holiday Booking",
-        type: "SMS",
-        category: "MARKETING",
+        name: 'SMS - Holiday Booking',
+        type: 'SMS',
+        category: 'MARKETING',
         body: `🎄 Holiday boarding fills fast! Book {{petName}}'s stay now to secure your spot. Call {{businessPhone}} or book online. - {{businessName}}`,
-        variables: ["petName", "businessPhone", "businessName"],
+        variables: ['petName', 'businessPhone', 'businessName'],
       },
       {
-        name: "SMS - Special Offer",
-        type: "SMS",
-        category: "PROMOTIONAL",
+        name: 'SMS - Special Offer',
+        type: 'SMS',
+        category: 'PROMOTIONAL',
         body: `🎁 {{customerName}}, enjoy {{promotionDetails}}! Valid thru {{expirationDate}}. Book now: {{businessPhone}}. - {{businessName}}`,
         variables: [
-          "customerName",
-          "promotionDetails",
-          "expirationDate",
-          "businessPhone",
-          "businessName",
+          'customerName',
+          'promotionDetails',
+          'expirationDate',
+          'businessPhone',
+          'businessName',
         ],
       },
     ];
@@ -583,12 +583,12 @@ export const seedDefaultTemplates = async (
     }
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       message: `Created ${createdTemplates.length} new templates`,
       data: createdTemplates,
     });
   } catch (error) {
-    console.error("Error seeding templates:", error);
+    console.error('Error seeding templates:', error);
     next(error);
   }
 };

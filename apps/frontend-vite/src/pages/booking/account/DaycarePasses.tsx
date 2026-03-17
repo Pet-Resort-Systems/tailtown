@@ -2,7 +2,7 @@
  * DaycarePasses - View and purchase daycare passes
  */
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Card,
@@ -18,26 +18,26 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-} from "@mui/material";
+} from '@mui/material';
 import {
   CardGiftcard as PassIcon,
   ShoppingCart as CartIcon,
   CheckCircle as CheckIcon,
   Warning as WarningIcon,
-} from "@mui/icons-material";
-import { format, parseISO, isPast } from "date-fns";
-import { useCustomerAuth } from "../../../contexts/CustomerAuthContext";
+} from '@mui/icons-material';
+import { format, parseISO, isPast } from 'date-fns';
+import { useCustomerAuth } from '../../../contexts/CustomerAuthContext';
 import customerAccountService, {
   DaycarePass,
   DaycarePassType,
-} from "../../../services/customerAccountService";
+} from '../../../services/customerAccountService';
 
 const DaycarePasses: React.FC = () => {
   const { customer } = useCustomerAuth();
   const [passes, setPasses] = useState<DaycarePass[]>([]);
   const [passTypes, setPassTypes] = useState<DaycarePassType[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false);
   const [selectedPassType, setSelectedPassType] =
     useState<DaycarePassType | null>(null);
@@ -48,7 +48,7 @@ const DaycarePasses: React.FC = () => {
 
     try {
       setLoading(true);
-      setError("");
+      setError('');
       const [passesData, typesData] = await Promise.all([
         customerAccountService.getDaycarePasses(customer.id),
         customerAccountService.getAvailablePassTypes(),
@@ -56,8 +56,8 @@ const DaycarePasses: React.FC = () => {
       setPasses(passesData);
       setPassTypes(typesData);
     } catch (err: any) {
-      console.error("Error loading daycare passes:", err);
-      setError("Unable to load daycare passes. Please try again.");
+      console.error('Error loading daycare passes:', err);
+      setError('Unable to load daycare passes. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -85,7 +85,7 @@ const DaycarePasses: React.FC = () => {
       setSelectedPassType(null);
       loadData(); // Refresh
     } catch (err: any) {
-      setError("Unable to purchase pass. Please try again or contact us.");
+      setError('Unable to purchase pass. Please try again or contact us.');
     } finally {
       setPurchasing(false);
     }
@@ -93,38 +93,38 @@ const DaycarePasses: React.FC = () => {
 
   const getPassStatus = (
     pass: DaycarePass
-  ): { label: string; color: "success" | "warning" | "error" } => {
+  ): { label: string; color: 'success' | 'warning' | 'error' } => {
     if (pass.remainingDays === 0) {
-      return { label: "Used", color: "error" };
+      return { label: 'Used', color: 'error' };
     }
     if (pass.expiresAt && isPast(parseISO(pass.expiresAt))) {
-      return { label: "Expired", color: "error" };
+      return { label: 'Expired', color: 'error' };
     }
     if (pass.remainingDays <= 2) {
-      return { label: "Low Balance", color: "warning" };
+      return { label: 'Low Balance', color: 'warning' };
     }
-    return { label: "Active", color: "success" };
+    return { label: 'Active', color: 'success' };
   };
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
         <CircularProgress />
       </Box>
     );
   }
 
   const activePasses = passes.filter(
-    (p) => p.status === "ACTIVE" && p.remainingDays > 0
+    (p) => p.status === 'ACTIVE' && p.remainingDays > 0
   );
   const expiredPasses = passes.filter(
-    (p) => p.status !== "ACTIVE" || p.remainingDays === 0
+    (p) => p.status !== 'ACTIVE' || p.remainingDays === 0
   );
 
   return (
     <Box>
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError("")}>
+        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>
           {error}
         </Alert>
       )}
@@ -135,8 +135,8 @@ const DaycarePasses: React.FC = () => {
       </Typography>
 
       {activePasses.length === 0 ? (
-        <Card variant="outlined" sx={{ mb: 4, textAlign: "center", py: 4 }}>
-          <PassIcon sx={{ fontSize: 48, color: "text.disabled", mb: 2 }} />
+        <Card variant="outlined" sx={{ mb: 4, textAlign: 'center', py: 4 }}>
+          <PassIcon sx={{ fontSize: 48, color: 'text.disabled', mb: 2 }} />
           <Typography variant="body1" color="text.secondary" gutterBottom>
             No active daycare passes
           </Typography>
@@ -157,9 +157,9 @@ const DaycarePasses: React.FC = () => {
                   <CardContent>
                     <Box
                       sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "flex-start",
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
                         mb: 2,
                       }}
                     >
@@ -168,8 +168,8 @@ const DaycarePasses: React.FC = () => {
                           {pass.name}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
-                          Purchased{" "}
-                          {format(parseISO(pass.purchasedAt), "MMM d, yyyy")}
+                          Purchased{' '}
+                          {format(parseISO(pass.purchasedAt), 'MMM d, yyyy')}
                         </Typography>
                       </Box>
                       <Chip
@@ -177,7 +177,7 @@ const DaycarePasses: React.FC = () => {
                         color={status.color}
                         size="small"
                         icon={
-                          status.color === "success" ? (
+                          status.color === 'success' ? (
                             <CheckIcon />
                           ) : (
                             <WarningIcon />
@@ -189,8 +189,8 @@ const DaycarePasses: React.FC = () => {
                     <Box sx={{ mb: 2 }}>
                       <Box
                         sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
+                          display: 'flex',
+                          justifyContent: 'space-between',
                           mb: 0.5,
                         }}
                       >
@@ -207,15 +207,15 @@ const DaycarePasses: React.FC = () => {
                         sx={{
                           height: 8,
                           borderRadius: 4,
-                          bgcolor: "grey.200",
-                          "& .MuiLinearProgress-bar": {
+                          bgcolor: 'grey.200',
+                          '& .MuiLinearProgress-bar': {
                             borderRadius: 4,
                             bgcolor:
-                              status.color === "success"
-                                ? "success.main"
-                                : status.color === "warning"
-                                ? "warning.main"
-                                : "error.main",
+                              status.color === 'success'
+                                ? 'success.main'
+                                : status.color === 'warning'
+                                  ? 'warning.main'
+                                  : 'error.main',
                           },
                         }}
                       />
@@ -223,8 +223,8 @@ const DaycarePasses: React.FC = () => {
 
                     {pass.expiresAt && (
                       <Typography variant="caption" color="text.secondary">
-                        Expires:{" "}
-                        {format(parseISO(pass.expiresAt), "MMM d, yyyy")}
+                        Expires:{' '}
+                        {format(parseISO(pass.expiresAt), 'MMM d, yyyy')}
                       </Typography>
                     )}
                   </CardContent>
@@ -255,9 +255,9 @@ const DaycarePasses: React.FC = () => {
               <Card
                 variant="outlined"
                 sx={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
                 }}
               >
                 <CardContent sx={{ flexGrow: 1 }}>
@@ -301,7 +301,7 @@ const DaycarePasses: React.FC = () => {
                       (passType.price / passType.days) *
                       0.15 *
                       passType.days
-                    ).toFixed(2)}{" "}
+                    ).toFixed(2)}{' '}
                     vs. daily rate
                   </Typography>
                 </CardContent>
@@ -335,9 +335,9 @@ const DaycarePasses: React.FC = () => {
                   <CardContent>
                     <Box
                       sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
                       }}
                     >
                       <Box>
@@ -368,8 +368,8 @@ const DaycarePasses: React.FC = () => {
         <DialogTitle>Confirm Purchase</DialogTitle>
         <DialogContent>
           {selectedPassType && (
-            <Box sx={{ textAlign: "center", py: 2 }}>
-              <PassIcon sx={{ fontSize: 48, color: "primary.main", mb: 2 }} />
+            <Box sx={{ textAlign: 'center', py: 2 }}>
+              <PassIcon sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
               <Typography variant="h6" gutterBottom>
                 {selectedPassType.name}
               </Typography>
@@ -394,7 +394,7 @@ const DaycarePasses: React.FC = () => {
             variant="contained"
             disabled={purchasing}
           >
-            {purchasing ? "Processing..." : "Confirm Purchase"}
+            {purchasing ? 'Processing...' : 'Confirm Purchase'}
           </Button>
         </DialogActions>
       </Dialog>

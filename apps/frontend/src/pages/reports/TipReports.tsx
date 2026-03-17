@@ -3,7 +3,7 @@
  * Displays tip analytics for groomers and general tip pool
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -24,19 +24,19 @@ import {
   Avatar,
   Tabs,
   Tab,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   Favorite as TipIcon,
   GetApp as ExportIcon,
   ContentCut as GroomerIcon,
   Groups as TeamIcon,
   TrendingUp as TrendingUpIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import tipService, {
   GeneralTipPoolSummary,
   AllGroomersSummary,
-} from "../../services/tipService";
+} from '../../services/tipService';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -58,10 +58,10 @@ const TipReports: React.FC = () => {
   const [startDate, setStartDate] = useState(
     new Date(new Date().setMonth(new Date().getMonth() - 1))
       .toISOString()
-      .split("T")[0]
+      .split('T')[0]
   );
   const [endDate, setEndDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split('T')[0]
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -73,9 +73,9 @@ const TipReports: React.FC = () => {
     useState<GeneralTipPoolSummary | null>(null);
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
     }).format(amount);
   };
 
@@ -92,8 +92,8 @@ const TipReports: React.FC = () => {
       setAllGroomersSummary(groomersData);
       setGeneralPoolSummary(poolData);
     } catch (err: any) {
-      console.error("Error loading tip reports:", err);
-      setError(err.response?.data?.message || "Failed to load tip reports");
+      console.error('Error loading tip reports:', err);
+      setError(err.response?.data?.message || 'Failed to load tip reports');
     } finally {
       setLoading(false);
     }
@@ -108,24 +108,24 @@ const TipReports: React.FC = () => {
     if (!allGroomersSummary) return;
 
     const rows = [
-      ["Groomer", "Total Tips", "Tip Count"],
+      ['Groomer', 'Total Tips', 'Tip Count'],
       ...allGroomersSummary.groomers.map((g) => [
         `${g.groomer.firstName} ${g.groomer.lastName}`,
         g.totalTips.toFixed(2),
         g.tipCount.toString(),
       ]),
-      ["", "", ""],
+      ['', '', ''],
       [
-        "Grand Total",
+        'Grand Total',
         allGroomersSummary.totals.grandTotal.toFixed(2),
         allGroomersSummary.totals.totalTipCount.toString(),
       ],
     ];
 
-    const csvContent = rows.map((row) => row.join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv" });
+    const csvContent = rows.map((row) => row.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
     a.download = `tip-report-${startDate}-to-${endDate}.csv`;
     a.click();
@@ -142,16 +142,16 @@ const TipReports: React.FC = () => {
       <Box
         sx={{
           mb: 3,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
           gap: 2,
         }}
       >
         <Typography variant="h5">
           <TipIcon
-            sx={{ mr: 1, verticalAlign: "middle", color: "success.main" }}
+            sx={{ mr: 1, verticalAlign: 'middle', color: 'success.main' }}
           />
           Tip Reports
         </Typography>
@@ -196,7 +196,7 @@ const TipReports: React.FC = () => {
               fullWidth
               sx={{ height: 56 }}
             >
-              {loading ? <CircularProgress size={24} /> : "Generate Report"}
+              {loading ? <CircularProgress size={24} /> : 'Generate Report'}
             </Button>
           </Grid>
         </Grid>
@@ -213,14 +213,14 @@ const TipReports: React.FC = () => {
         <Grid item xs={12} md={4}>
           <Card
             sx={{
-              bgcolor: "primary.50",
-              border: "1px solid",
-              borderColor: "primary.200",
+              bgcolor: 'primary.50',
+              border: '1px solid',
+              borderColor: 'primary.200',
             }}
           >
             <CardContent>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                <Avatar sx={{ bgcolor: "primary.main", mr: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <Avatar sx={{ bgcolor: 'primary.main', mr: 2 }}>
                   <GroomerIcon />
                 </Avatar>
                 <Typography variant="subtitle2" color="text.secondary">
@@ -240,14 +240,14 @@ const TipReports: React.FC = () => {
         <Grid item xs={12} md={4}>
           <Card
             sx={{
-              bgcolor: "secondary.50",
-              border: "1px solid",
-              borderColor: "secondary.200",
+              bgcolor: 'secondary.50',
+              border: '1px solid',
+              borderColor: 'secondary.200',
             }}
           >
             <CardContent>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                <Avatar sx={{ bgcolor: "secondary.main", mr: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <Avatar sx={{ bgcolor: 'secondary.main', mr: 2 }}>
                   <TeamIcon />
                 </Avatar>
                 <Typography variant="subtitle2" color="text.secondary">
@@ -267,14 +267,14 @@ const TipReports: React.FC = () => {
         <Grid item xs={12} md={4}>
           <Card
             sx={{
-              bgcolor: "success.50",
-              border: "1px solid",
-              borderColor: "success.200",
+              bgcolor: 'success.50',
+              border: '1px solid',
+              borderColor: 'success.200',
             }}
           >
             <CardContent>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                <Avatar sx={{ bgcolor: "success.main", mr: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <Avatar sx={{ bgcolor: 'success.main', mr: 2 }}>
                   <TrendingUpIcon />
                 </Avatar>
                 <Typography variant="subtitle2" color="text.secondary">
@@ -306,7 +306,7 @@ const TipReports: React.FC = () => {
         <TabPanel value={tabValue} index={0}>
           {/* Groomer Tips Table */}
           {loading ? (
-            <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
               <CircularProgress />
             </Box>
           ) : allGroomersSummary && allGroomersSummary.groomers.length > 0 ? (
@@ -324,11 +324,11 @@ const TipReports: React.FC = () => {
                   {allGroomersSummary.groomers.map((groomer) => (
                     <TableRow key={groomer.groomer.id} hover>
                       <TableCell>
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
                           <Avatar
                             sx={{
                               mr: 2,
-                              bgcolor: "primary.main",
+                              bgcolor: 'primary.main',
                               width: 32,
                               height: 32,
                             }}
@@ -347,11 +347,11 @@ const TipReports: React.FC = () => {
                       <TableCell align="right">
                         {groomer.tipCount > 0
                           ? formatCurrency(groomer.totalTips / groomer.tipCount)
-                          : "-"}
+                          : '-'}
                       </TableCell>
                     </TableRow>
                   ))}
-                  <TableRow sx={{ bgcolor: "grey.100" }}>
+                  <TableRow sx={{ bgcolor: 'grey.100' }}>
                     <TableCell>
                       <Typography fontWeight={700}>Total</Typography>
                     </TableCell>
@@ -372,7 +372,7 @@ const TipReports: React.FC = () => {
                               allGroomersSummary.totals.grandTotal /
                                 allGroomersSummary.totals.totalTipCount
                             )
-                          : "-"}
+                          : '-'}
                       </Typography>
                     </TableCell>
                   </TableRow>
@@ -389,7 +389,7 @@ const TipReports: React.FC = () => {
         <TabPanel value={tabValue} index={1}>
           {/* General Pool Summary */}
           {loading ? (
-            <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
               <CircularProgress />
             </Box>
           ) : generalPoolSummary ? (
@@ -448,11 +448,11 @@ const TipReports: React.FC = () => {
                           label={method}
                           size="small"
                           color={
-                            method === "ONLINE"
-                              ? "primary"
-                              : method === "TERMINAL"
-                              ? "secondary"
-                              : "default"
+                            method === 'ONLINE'
+                              ? 'primary'
+                              : method === 'TERMINAL'
+                                ? 'secondary'
+                                : 'default'
                           }
                           sx={{ mb: 1 }}
                         />
@@ -493,7 +493,7 @@ const TipReports: React.FC = () => {
                             <TableCell>
                               {tip.customer
                                 ? `${tip.customer.firstName} ${tip.customer.lastName}`
-                                : "-"}
+                                : '-'}
                             </TableCell>
                             <TableCell>
                               <Chip

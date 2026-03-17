@@ -1,6 +1,6 @@
 /**
  * Audit Log Service
- * 
+ *
  * Handles logging of all super admin actions for security and compliance.
  * Automatically captures IP address, user agent, and action details.
  */
@@ -39,14 +39,14 @@ export async function createAuditLog(
         tenantId: data.tenantId || null,
         details: data.details || null,
         ipAddress,
-        userAgent
-      }
+        userAgent,
+      },
     });
 
     console.log(`[Audit] ${data.action} by ${data.superAdminId}`, {
       entityType: data.entityType,
       entityId: data.entityId,
-      tenantId: data.tenantId
+      tenantId: data.tenantId,
     });
   } catch (error) {
     // Don't fail the request if audit logging fails, but log the error
@@ -63,12 +63,12 @@ function getClientIp(req: Request): string {
   if (forwarded) {
     return forwarded.split(',')[0].trim();
   }
-  
+
   const realIp = req.get('x-real-ip');
   if (realIp) {
     return realIp;
   }
-  
+
   return req.ip || req.socket.remoteAddress || 'unknown';
 }
 
@@ -80,7 +80,7 @@ export const AuditAction = {
   LOGIN: 'LOGIN',
   LOGOUT: 'LOGOUT',
   LOGIN_FAILED: 'LOGIN_FAILED',
-  
+
   // Tenant Management
   CREATE_TENANT: 'CREATE_TENANT',
   UPDATE_TENANT: 'UPDATE_TENANT',
@@ -88,23 +88,23 @@ export const AuditAction = {
   SUSPEND_TENANT: 'SUSPEND_TENANT',
   ACTIVATE_TENANT: 'ACTIVATE_TENANT',
   CLONE_TENANT: 'CLONE_TENANT',
-  
+
   // Impersonation
   START_IMPERSONATION: 'START_IMPERSONATION',
   END_IMPERSONATION: 'END_IMPERSONATION',
-  
+
   // Super Admin Management
   CREATE_SUPER_ADMIN: 'CREATE_SUPER_ADMIN',
   UPDATE_SUPER_ADMIN: 'UPDATE_SUPER_ADMIN',
   DELETE_SUPER_ADMIN: 'DELETE_SUPER_ADMIN',
-  
+
   // Data Operations
   EXPORT_DATA: 'EXPORT_DATA',
   IMPORT_DATA: 'IMPORT_DATA',
-  
+
   // System
   CHANGE_SETTINGS: 'CHANGE_SETTINGS',
-  VIEW_AUDIT_LOGS: 'VIEW_AUDIT_LOGS'
+  VIEW_AUDIT_LOGS: 'VIEW_AUDIT_LOGS',
 } as const;
 
-export type AuditActionType = typeof AuditAction[keyof typeof AuditAction];
+export type AuditActionType = (typeof AuditAction)[keyof typeof AuditAction];

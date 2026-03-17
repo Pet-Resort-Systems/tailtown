@@ -5,10 +5,10 @@
  * Creates tenant, resources (rooms/kennels), services, staff, and settings.
  */
 
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient, ResourceType, ServiceCategory } from "@prisma/client";
-import bcrypt from "bcrypt";
-import AppError from "../utils/appError";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient, ResourceType, ServiceCategory } from '@prisma/client';
+import bcrypt from 'bcrypt';
+import AppError from '../utils/appError';
 // uuid not needed - Prisma generates IDs
 
 const prisma = new PrismaClient();
@@ -33,7 +33,7 @@ interface BusinessInfo {
 interface KennelConfig {
   id: string;
   name: string;
-  size: "SMALL" | "MEDIUM" | "LARGE" | "XLARGE" | "SUITE";
+  size: 'SMALL' | 'MEDIUM' | 'LARGE' | 'XLARGE' | 'SUITE';
   capacity: number;
 }
 
@@ -175,8 +175,8 @@ interface OnboardingData {
 function generateSubdomain(businessName: string): string {
   return businessName
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
     .substring(0, 30);
 }
 
@@ -206,13 +206,13 @@ function mapServiceCategory(category: string): ServiceCategory {
 
 function mapStaffRole(role: string): string {
   const mapping: Record<string, string> = {
-    ADMIN: "ADMIN",
-    MANAGER: "MANAGER",
-    STAFF: "STAFF",
-    GROOMER: "GROOMER",
-    TRAINER: "TRAINER",
+    ADMIN: 'ADMIN',
+    MANAGER: 'MANAGER',
+    STAFF: 'STAFF',
+    GROOMER: 'GROOMER',
+    TRAINER: 'TRAINER',
   };
-  return mapping[role] || "STAFF";
+  return mapping[role] || 'STAFF';
 }
 
 // ============================================================================
@@ -231,7 +231,7 @@ export const completeTenantOnboarding = async (
   const data: OnboardingData = req.body;
 
   if (!data.businessInfo?.name || !data.businessInfo?.email) {
-    return next(new AppError("Business name and email are required", 400));
+    return next(new AppError('Business name and email are required', 400));
   }
 
   try {
@@ -258,8 +258,8 @@ export const completeTenantOnboarding = async (
           city: data.businessInfo.city,
           state: data.businessInfo.state,
           zipCode: data.businessInfo.zipCode,
-          timezone: data.businessInfo.timezone || "America/Denver",
-          status: "TRIAL",
+          timezone: data.businessInfo.timezone || 'America/Denver',
+          status: 'TRIAL',
           isActive: true,
         },
       });
@@ -295,14 +295,14 @@ export const completeTenantOnboarding = async (
 
         // Find pricing for this service category
         const pricingTier = data.pricing.tiers.find(
-          (t) => t.kennelSize === "MEDIUM" // Default to medium pricing
+          (t) => t.kennelSize === 'MEDIUM' // Default to medium pricing
         );
 
         const svc = await tx.service.create({
           data: {
             tenantId,
             name: service.name,
-            description: service.description || "",
+            description: service.description || '',
             duration: service.duration || 1440, // Default 24 hours for boarding
             price: pricingTier?.dailyRate || 40,
             serviceCategory: mapServiceCategory(service.category),
@@ -347,8 +347,8 @@ export const completeTenantOnboarding = async (
     });
 
     res.status(201).json({
-      status: "success",
-      message: "Tenant onboarding completed successfully",
+      status: 'success',
+      message: 'Tenant onboarding completed successfully',
       data: {
         tenantId: result.tenant.id,
         subdomain: result.tenant.subdomain,
@@ -359,12 +359,12 @@ export const completeTenantOnboarding = async (
       },
     });
   } catch (error: any) {
-    console.error("Onboarding error:", error);
+    console.error('Onboarding error:', error);
 
-    if (error.code === "P2002") {
+    if (error.code === 'P2002') {
       return next(
         new AppError(
-          "A tenant with this email or subdomain already exists",
+          'A tenant with this email or subdomain already exists',
           409
         )
       );
@@ -386,31 +386,31 @@ export const validateOnboardingData = async (
   const errors: string[] = [];
 
   // Business Info validation
-  if (!data.businessInfo?.name) errors.push("Business name is required");
-  if (!data.businessInfo?.email) errors.push("Business email is required");
-  if (!data.businessInfo?.phone) errors.push("Business phone is required");
-  if (!data.businessInfo?.address) errors.push("Business address is required");
+  if (!data.businessInfo?.name) errors.push('Business name is required');
+  if (!data.businessInfo?.email) errors.push('Business email is required');
+  if (!data.businessInfo?.phone) errors.push('Business phone is required');
+  if (!data.businessInfo?.address) errors.push('Business address is required');
 
   // Rooms/Kennels validation
   if (!data.roomsKennels?.rooms?.length) {
-    errors.push("At least one room with kennels is required");
+    errors.push('At least one room with kennels is required');
   }
 
   // Services validation
   const enabledServices =
     data.services?.services?.filter((s) => s.enabled) || [];
   if (enabledServices.length === 0) {
-    errors.push("At least one service must be enabled");
+    errors.push('At least one service must be enabled');
   }
 
   // Staff validation
   if (!data.staff?.members?.length) {
-    errors.push("At least one staff member is required");
+    errors.push('At least one staff member is required');
   }
 
   // Payment validation
   if (!data.payment?.cardConnect?.merchantId) {
-    errors.push("CardConnect Merchant ID is required");
+    errors.push('CardConnect Merchant ID is required');
   }
 
   // Check for duplicate email
@@ -419,19 +419,19 @@ export const validateOnboardingData = async (
       where: { contactEmail: data.businessInfo.email },
     });
     if (existingTenant) {
-      errors.push("A tenant with this email already exists");
+      errors.push('A tenant with this email already exists');
     }
   }
 
   if (errors.length > 0) {
     return res.status(400).json({
-      status: "fail",
+      status: 'fail',
       errors,
     });
   }
 
   res.status(200).json({
-    status: "success",
-    message: "Validation passed",
+    status: 'success',
+    message: 'Validation passed',
   });
 };

@@ -1,6 +1,6 @@
 /**
  * Tests for ReservationList component - Color coding functionality
- * 
+ *
  * Tests the service category color coding:
  * - DAYCARE services should have orange tint
  * - BOARDING services should have blue tint
@@ -16,7 +16,7 @@ import ReservationList from '../ReservationList';
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockNavigate
+  useNavigate: () => mockNavigate,
 }));
 
 describe('ReservationList - Color Coding', () => {
@@ -24,50 +24,50 @@ describe('ReservationList - Color Coding', () => {
     id: '1',
     customer: {
       firstName: 'John',
-      lastName: 'Doe'
+      lastName: 'Doe',
     },
     pet: {
       id: 'pet1',
       name: 'Buddy',
       type: 'DOG',
-      breed: 'Golden Retriever'
+      breed: 'Golden Retriever',
     },
     startDate: '2025-11-02T10:00:00Z',
     endDate: '2025-11-02T18:00:00Z',
     status: 'CONFIRMED',
     service: {
       name: 'Day Camp | Full Day',
-      serviceCategory: 'DAYCARE'
+      serviceCategory: 'DAYCARE',
     },
     resource: {
       name: 'A01',
-      type: 'STANDARD_SUITE'
-    }
+      type: 'STANDARD_SUITE',
+    },
   };
 
   const mockBoardingReservation = {
     id: '2',
     customer: {
       firstName: 'Jane',
-      lastName: 'Smith'
+      lastName: 'Smith',
     },
     pet: {
       id: 'pet2',
       name: 'Max',
       type: 'DOG',
-      breed: 'Labrador'
+      breed: 'Labrador',
     },
     startDate: '2025-11-02T10:00:00Z',
     endDate: '2025-11-03T10:00:00Z',
     status: 'CONFIRMED',
     service: {
       name: 'Boarding | Indoor Suite',
-      serviceCategory: 'BOARDING'
+      serviceCategory: 'BOARDING',
     },
     resource: {
       name: 'B05',
-      type: 'STANDARD_SUITE'
-    }
+      type: 'STANDARD_SUITE',
+    },
   };
 
   const defaultProps = {
@@ -75,15 +75,11 @@ describe('ReservationList - Color Coding', () => {
     loading: false,
     error: null,
     filter: 'in' as const,
-    onFilterChange: jest.fn()
+    onFilterChange: jest.fn(),
   };
 
   const renderWithRouter = (component: React.ReactElement) => {
-    return render(
-      <BrowserRouter>
-        {component}
-      </BrowserRouter>
-    );
+    return render(<BrowserRouter>{component}</BrowserRouter>);
   };
 
   describe('Service Category Colors', () => {
@@ -141,9 +137,9 @@ describe('ReservationList - Color Coding', () => {
       const reservationWithoutCategory = {
         ...mockDaycareReservation,
         service: {
-          name: 'Unknown Service'
+          name: 'Unknown Service',
           // No serviceCategory
-        }
+        },
       };
 
       renderWithRouter(
@@ -161,9 +157,7 @@ describe('ReservationList - Color Coding', () => {
 
   describe('Filter Buttons', () => {
     it('should display all three filter buttons', () => {
-      renderWithRouter(
-        <ReservationList {...defaultProps} />
-      );
+      renderWithRouter(<ReservationList {...defaultProps} />);
 
       expect(screen.getByText('All')).toBeInTheDocument();
       expect(screen.getByText('Check-Ins')).toBeInTheDocument();
@@ -171,22 +165,19 @@ describe('ReservationList - Color Coding', () => {
     });
 
     it('should highlight active filter', () => {
-      renderWithRouter(
-        <ReservationList {...defaultProps} filter="in" />
-      );
+      renderWithRouter(<ReservationList {...defaultProps} filter="in" />);
 
       const checkInsButton = screen.getByText('Check-Ins');
-      expect(checkInsButton.closest('button')).toHaveClass('MuiButton-contained');
+      expect(checkInsButton.closest('button')).toHaveClass(
+        'MuiButton-contained'
+      );
     });
 
     it('should call onFilterChange when filter button clicked', () => {
       const onFilterChange = jest.fn();
-      
+
       renderWithRouter(
-        <ReservationList
-          {...defaultProps}
-          onFilterChange={onFilterChange}
-        />
+        <ReservationList {...defaultProps} onFilterChange={onFilterChange} />
       );
 
       const allButton = screen.getByText('All');
@@ -198,9 +189,7 @@ describe('ReservationList - Color Coding', () => {
 
   describe('Search Functionality', () => {
     it('should display search bar', () => {
-      renderWithRouter(
-        <ReservationList {...defaultProps} />
-      );
+      renderWithRouter(<ReservationList {...defaultProps} />);
 
       const searchInput = screen.getByPlaceholderText(/search by pet name/i);
       expect(searchInput).toBeInTheDocument();
@@ -255,12 +244,7 @@ describe('ReservationList - Color Coding', () => {
 
   describe('Empty States', () => {
     it('should show loading state', () => {
-      renderWithRouter(
-        <ReservationList
-          {...defaultProps}
-          loading={true}
-        />
-      );
+      renderWithRouter(<ReservationList {...defaultProps} loading={true} />);
 
       expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
@@ -273,16 +257,13 @@ describe('ReservationList - Color Coding', () => {
         />
       );
 
-      expect(screen.getByText('Failed to load reservations')).toBeInTheDocument();
+      expect(
+        screen.getByText('Failed to load reservations')
+      ).toBeInTheDocument();
     });
 
     it('should show no appointments message when empty', () => {
-      renderWithRouter(
-        <ReservationList
-          {...defaultProps}
-          reservations={[]}
-        />
-      );
+      renderWithRouter(<ReservationList {...defaultProps} reservations={[]} />);
 
       expect(screen.getByText(/no check-ins scheduled/i)).toBeInTheDocument();
     });

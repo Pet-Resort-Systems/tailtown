@@ -9,8 +9,8 @@
  * - Real-time availability
  */
 
-import React, { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Box,
   Container,
@@ -21,41 +21,41 @@ import {
   Alert,
   LinearProgress,
   Typography,
-} from "@mui/material";
-import { Helmet } from "react-helmet-async";
+} from '@mui/material';
+import { Helmet } from 'react-helmet-async';
 import {
   CustomerAuthProvider,
   useCustomerAuth,
-} from "../../contexts/CustomerAuthContext";
-import CustomerAuth from "./CustomerAuth";
-import ServiceSelection from "./steps/ServiceSelection";
-import KennelSelection from "./steps/KennelSelection";
-import DateTimeSelection from "./steps/DateTimeSelection";
-import PetSelection from "./steps/PetSelection";
-import AddOnsSelection from "./steps/AddOnsSelection";
-import CustomerInfo from "./steps/CustomerInfo";
-import ReviewBooking from "./steps/ReviewBooking";
-import BookingConfirmation from "./steps/BookingConfirmation";
+} from '../../contexts/CustomerAuthContext';
+import CustomerAuth from './CustomerAuth';
+import ServiceSelection from './steps/ServiceSelection';
+import KennelSelection from './steps/KennelSelection';
+import DateTimeSelection from './steps/DateTimeSelection';
+import PetSelection from './steps/PetSelection';
+import AddOnsSelection from './steps/AddOnsSelection';
+import CustomerInfo from './steps/CustomerInfo';
+import ReviewBooking from './steps/ReviewBooking';
+import BookingConfirmation from './steps/BookingConfirmation';
 
 // Base booking steps (kennel selection added dynamically for boarding)
 const BASE_STEPS = [
-  "Select Service",
-  "Choose Date & Time",
-  "Select Pets",
-  "Add-Ons",
-  "Your Information",
-  "Review & Pay",
+  'Select Service',
+  'Choose Date & Time',
+  'Select Pets',
+  'Add-Ons',
+  'Your Information',
+  'Review & Pay',
 ];
 
 // Steps with kennel selection for boarding services
 const BOARDING_STEPS = [
-  "Select Service",
-  "Select Room",
-  "Choose Date & Time",
-  "Select Pets",
-  "Add-Ons",
-  "Your Information",
-  "Review & Pay",
+  'Select Service',
+  'Select Room',
+  'Choose Date & Time',
+  'Select Pets',
+  'Add-Ons',
+  'Your Information',
+  'Review & Pay',
 ];
 
 interface BookingData {
@@ -83,7 +83,7 @@ const BookingPortalContent: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const {
     customer,
     isAuthenticated,
@@ -92,18 +92,18 @@ const BookingPortalContent: React.FC = () => {
 
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [bookingData, setBookingData] = useState<BookingData>({});
   const [isEmbedded, setIsEmbedded] = useState(false);
   const [showAuth, setShowAuth] = useState(!isAuthenticated);
 
   useEffect(() => {
     // Check if running in embedded mode
-    const embedded = searchParams.get("embedded") === "true";
+    const embedded = searchParams.get('embedded') === 'true';
     setIsEmbedded(embedded);
 
     // Pre-fill service if provided in URL
-    const serviceId = searchParams.get("serviceId");
+    const serviceId = searchParams.get('serviceId');
     if (serviceId) {
       setBookingData((prev) => ({ ...prev, serviceId }));
     }
@@ -133,14 +133,14 @@ const BookingPortalContent: React.FC = () => {
     setActiveStep((prevStep) => prevStep + 1);
     // Scroll to top on mobile
     if (isMobile) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const handleBack = () => {
     setActiveStep((prevStep) => prevStep - 1);
     if (isMobile) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -149,7 +149,7 @@ const BookingPortalContent: React.FC = () => {
   };
 
   // Determine if boarding service is selected (requires kennel selection)
-  const isBoardingService = bookingData.serviceCategory === "BOARDING";
+  const isBoardingService = bookingData.serviceCategory === 'BOARDING';
 
   // Get the appropriate steps based on service type
   const steps = isBoardingService ? BOARDING_STEPS : BASE_STEPS;
@@ -294,10 +294,10 @@ const BookingPortalContent: React.FC = () => {
     return (
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
         }}
       >
         <CircularProgress />
@@ -353,8 +353,8 @@ const BookingPortalContent: React.FC = () => {
 
       <Box
         sx={{
-          minHeight: isEmbedded ? "auto" : "100vh",
-          bgcolor: isEmbedded ? "transparent" : "background.default",
+          minHeight: isEmbedded ? 'auto' : '100vh',
+          bgcolor: isEmbedded ? 'transparent' : 'background.default',
           py: isEmbedded ? 2 : { xs: 2, sm: 4 },
         }}
       >
@@ -366,13 +366,13 @@ const BookingPortalContent: React.FC = () => {
         >
           {/* Header - Hide in embedded mode */}
           {!isEmbedded && (
-            <Box sx={{ mb: 4, textAlign: "center" }}>
+            <Box sx={{ mb: 4, textAlign: 'center' }}>
               <Box
                 component="h1"
                 sx={{
-                  fontSize: { xs: "1.75rem", sm: "2.5rem" },
+                  fontSize: { xs: '1.75rem', sm: '2.5rem' },
                   fontWeight: 700,
-                  color: "primary.main",
+                  color: 'primary.main',
                   mb: 1,
                 }}
               >
@@ -381,10 +381,10 @@ const BookingPortalContent: React.FC = () => {
               <Box
                 component="p"
                 sx={{
-                  fontSize: { xs: "0.875rem", sm: "1rem" },
-                  color: "text.secondary",
+                  fontSize: { xs: '0.875rem', sm: '1rem' },
+                  color: 'text.secondary',
                   maxWidth: 600,
-                  mx: "auto",
+                  mx: 'auto',
                 }}
               >
                 Reserve boarding, daycare, grooming, or training services in
@@ -398,23 +398,23 @@ const BookingPortalContent: React.FC = () => {
             <Box sx={{ mb: 3 }}>
               <Box
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
                   mb: 1,
                 }}
               >
                 <Typography
                   variant="body2"
                   color="text.secondary"
-                  sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                  sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
                 >
                   Step {activeStep + 1} of {steps.length}
                 </Typography>
                 <Typography
                   variant="body2"
                   fontWeight={600}
-                  sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                  sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
                 >
                   {steps[activeStep]}
                 </Typography>
@@ -425,8 +425,8 @@ const BookingPortalContent: React.FC = () => {
                 sx={{
                   height: 6,
                   borderRadius: 3,
-                  backgroundColor: "grey.200",
-                  "& .MuiLinearProgress-bar": {
+                  backgroundColor: 'grey.200',
+                  '& .MuiLinearProgress-bar': {
                     borderRadius: 3,
                   },
                 }}
@@ -436,7 +436,7 @@ const BookingPortalContent: React.FC = () => {
 
           {/* Error Display */}
           {error && (
-            <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError("")}>
+            <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>
               {error}
             </Alert>
           )}
@@ -446,12 +446,12 @@ const BookingPortalContent: React.FC = () => {
             elevation={isEmbedded ? 0 : 3}
             sx={{
               p: { xs: 2, sm: 4 },
-              bgcolor: isEmbedded ? "transparent" : "background.paper",
+              bgcolor: isEmbedded ? 'transparent' : 'background.paper',
               borderRadius: 2,
             }}
           >
             {loading ? (
-              <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
                 <CircularProgress />
               </Box>
             ) : (
@@ -464,9 +464,9 @@ const BookingPortalContent: React.FC = () => {
             <Box
               sx={{
                 mt: 4,
-                textAlign: "center",
-                fontSize: "0.875rem",
-                color: "text.secondary",
+                textAlign: 'center',
+                fontSize: '0.875rem',
+                color: 'text.secondary',
               }}
             >
               Need help? Call us at (555) 123-4567 or email info@tailtown.com

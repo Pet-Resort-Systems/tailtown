@@ -10,13 +10,17 @@ import GingrApiClient from '../services/gingr-api.service';
  * Test Gingr API connection and fetch sample data
  * POST /api/gingr/test
  */
-export const testGingrConnection = async (req: Request, res: Response, next: NextFunction) => {
+export const testGingrConnection = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { subdomain, apiKey, startDate, endDate } = req.body;
 
   if (!subdomain || !apiKey) {
     return res.status(400).json({
       success: false,
-      error: 'Subdomain and API key are required'
+      error: 'Subdomain and API key are required',
     });
   }
 
@@ -57,30 +61,29 @@ export const testGingrConnection = async (req: Request, res: Response, next: Nex
         owners: owners.slice(0, 10),
         animals: animals.slice(0, 10),
         reservationTypes: reservationTypes.slice(0, 10),
-        reservations: reservations.slice(0, 10)
+        reservations: reservations.slice(0, 10),
       },
       counts: {
         locations: locations.length,
         owners: owners.length,
         animals: animals.length,
         reservationTypes: reservationTypes.length,
-        reservations: reservations.length
+        reservations: reservations.length,
       },
       stats: {
         apiRequests: stats.totalRequests,
-        baseUrl: stats.baseUrl
-      }
+        baseUrl: stats.baseUrl,
+      },
     });
-
   } catch (error: any) {
     console.error('[Gingr Test] Error:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 };
 
 export default {
-  testGingrConnection
+  testGingrConnection,
 };

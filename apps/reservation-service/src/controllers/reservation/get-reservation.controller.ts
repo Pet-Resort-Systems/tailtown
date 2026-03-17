@@ -5,13 +5,13 @@
  * It implements schema alignment strategy with defensive programming.
  */
 
-import { Request, Response } from "express";
-import { AppError } from "../../utils/service";
-import { catchAsync } from "../../middleware/catchAsync";
-import { logger } from "../../utils/logger";
-import { ExtendedReservationWhereInput } from "../../types/prisma-extensions";
-import { safeExecutePrismaQuery, prisma } from "./utils/prisma-helpers";
-import { getReservationActivityLogs } from "../../services/reservation-activity.service";
+import { Request, Response } from 'express';
+import { AppError } from '../../utils/service';
+import { catchAsync } from '../../middleware/catchAsync';
+import { logger } from '../../utils/logger';
+import { ExtendedReservationWhereInput } from '../../types/prisma-extensions';
+import { safeExecutePrismaQuery, prisma } from './utils/prisma-helpers';
+import { getReservationActivityLogs } from '../../services/reservation-activity.service';
 
 /**
  * Get all reservations with pagination and filtering
@@ -46,7 +46,7 @@ export const getAllReservations = catchAsync(
     const tenantId = (req as any).tenantId;
     if (!tenantId) {
       logger.warn(`Missing tenant ID in request`, { requestId });
-      throw AppError.authorizationError("Tenant ID is required");
+      throw AppError.authorizationError('Tenant ID is required');
     }
 
     // Parse pagination parameters with validation
@@ -97,11 +97,11 @@ export const getAllReservations = catchAsync(
     // Add optional filters if provided
     if (req.query.status) {
       // Handle comma-separated status values
-      const statusValues = (req.query.status as string).split(",");
+      const statusValues = (req.query.status as string).split(',');
       if (statusValues.length > 1) {
         filter.status = { in: statusValues };
         logger.info(
-          `Filtering by multiple statuses: ${statusValues.join(", ")}`,
+          `Filtering by multiple statuses: ${statusValues.join(', ')}`,
           { requestId }
         );
       } else {
@@ -133,24 +133,24 @@ export const getAllReservations = catchAsync(
 
         // Get tenant timezone from query parameter (passed from frontend)
         // Default to America/New_York if not provided
-        const timezone = (req.query.timezone as string) || "America/New_York";
+        const timezone = (req.query.timezone as string) || 'America/New_York';
 
         // Parse the date string and convert to UTC based on tenant's timezone
         // The date string is in YYYY-MM-DD format and represents a date in the tenant's local timezone
         const [year, month, day] = dateStr
-          .split("-")
+          .split('-')
           .map((num) => parseInt(num, 10));
 
         // Calculate timezone offset in hours
         // This is a simplified approach - for production, use a library like date-fns-tz or luxon
         const timezoneOffsets: { [key: string]: number } = {
-          "America/New_York": -5, // EST (UTC-5)
-          "America/Chicago": -6, // CST (UTC-6)
-          "America/Denver": -7, // MST (UTC-7)
-          "America/Los_Angeles": -8, // PST (UTC-8)
-          "America/Phoenix": -7, // MST (no DST)
-          "America/Anchorage": -9, // AKST (UTC-9)
-          "Pacific/Honolulu": -10, // HST (UTC-10)
+          'America/New_York': -5, // EST (UTC-5)
+          'America/Chicago': -6, // CST (UTC-6)
+          'America/Denver': -7, // MST (UTC-7)
+          'America/Los_Angeles': -8, // PST (UTC-8)
+          'America/Phoenix': -7, // MST (no DST)
+          'America/Anchorage': -9, // AKST (UTC-9)
+          'Pacific/Honolulu': -10, // HST (UTC-10)
           UTC: 0,
         };
 
@@ -201,8 +201,8 @@ export const getAllReservations = catchAsync(
       try {
         const startStr = req.query.startDate as string;
         const endStr = req.query.endDate as string;
-        const [sy, sm, sd] = startStr.split("-").map((n) => parseInt(n, 10));
-        const [ey, em, ed] = endStr.split("-").map((n) => parseInt(n, 10));
+        const [sy, sm, sd] = startStr.split('-').map((n) => parseInt(n, 10));
+        const [ey, em, ed] = endStr.split('-').map((n) => parseInt(n, 10));
 
         const startOfRange = new Date(sy, (sm || 1) - 1, sd || 1, 0, 0, 0, 0);
         const endOfRange = new Date(
@@ -260,17 +260,17 @@ export const getAllReservations = catchAsync(
         try {
           const dateStr = dateParam as string;
           const [year, month, day] = dateStr
-            .split("-")
+            .split('-')
             .map((num) => parseInt(num, 10));
 
           // Get timezone from query parameter, default to America/Denver (MST/UTC-7)
-          const timezone = (req.query.timezone as string) || "America/Denver";
+          const timezone = (req.query.timezone as string) || 'America/Denver';
           const timezoneOffsets: { [key: string]: number } = {
-            "America/New_York": -5,
-            "America/Chicago": -6,
-            "America/Denver": -7,
-            "America/Los_Angeles": -8,
-            "America/Phoenix": -7,
+            'America/New_York': -5,
+            'America/Chicago': -6,
+            'America/Denver': -7,
+            'America/Los_Angeles': -8,
+            'America/Phoenix': -7,
             UTC: 0,
           };
           const offsetHours = timezoneOffsets[timezone] || -7;
@@ -341,21 +341,21 @@ export const getAllReservations = catchAsync(
 
     // Determine ordering
     const allowedSortFields = [
-      "startDate",
-      "endDate",
-      "createdAt",
-      "updatedAt",
+      'startDate',
+      'endDate',
+      'createdAt',
+      'updatedAt',
     ];
-    const sortByParam = (req.query.sortBy as string) || "startDate";
+    const sortByParam = (req.query.sortBy as string) || 'startDate';
     const sortField = allowedSortFields.includes(sortByParam)
       ? sortByParam
-      : "startDate";
+      : 'startDate';
     const sortOrderParam =
-      (req.query.sortOrder as string) === "asc"
-        ? "asc"
-        : (req.query.sortOrder as string) === "desc"
-        ? "desc"
-        : "desc";
+      (req.query.sortOrder as string) === 'asc'
+        ? 'asc'
+        : (req.query.sortOrder as string) === 'desc'
+          ? 'desc'
+          : 'desc';
     const orderByClause: any = { [sortField]: sortOrderParam };
 
     // Get total count for pagination
@@ -434,7 +434,7 @@ export const getAllReservations = catchAsync(
 
     // Prepare response
     const responseData: any = {
-      status: "success",
+      status: 'success',
       results: reservations ? reservations.length : 0,
       pagination: {
         totalCount,
@@ -486,13 +486,13 @@ export const getReservationById = catchAsync(
     const tenantId = (req as any).tenantId;
     if (!tenantId) {
       logger.warn(`Missing tenant ID in request`, { requestId });
-      throw AppError.authorizationError("Tenant ID is required");
+      throw AppError.authorizationError('Tenant ID is required');
     }
 
     const { id } = req.params;
     if (!id) {
       logger.warn(`Missing reservation ID in request`, { requestId });
-      throw AppError.validationError("Reservation ID is required");
+      throw AppError.validationError('Reservation ID is required');
     }
 
     // Get reservation by ID
@@ -583,7 +583,7 @@ export const getReservationById = catchAsync(
         `Reservation not found or does not belong to tenant: ${tenantId}`,
         { requestId }
       );
-      throw AppError.notFoundError("Reservation not found");
+      throw AppError.notFoundError('Reservation not found');
     }
 
     // Fetch activity logs for this reservation
@@ -599,7 +599,7 @@ export const getReservationById = catchAsync(
     logger.info(`Found reservation: ${id}`, { requestId });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         reservation,
         activityLogs,

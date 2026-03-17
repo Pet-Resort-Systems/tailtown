@@ -37,7 +37,7 @@ function readCoverageSummary(summaryPath) {
 // Generate badges for a component
 function generateBadges(componentName, summaryPath) {
   const coverage = readCoverageSummary(summaryPath);
-  
+
   if (!coverage || !coverage.total) {
     console.log(`No coverage data found for ${componentName}`);
     return;
@@ -52,7 +52,11 @@ function generateBadges(componentName, summaryPath) {
     label: `${componentName} Statements`,
     value: `${stmtPct}%`,
     color: getBadgeColor(stmtPct),
-    url: generateBadgeUrl(`${componentName} Statements`, `${stmtPct}%`, getBadgeColor(stmtPct))
+    url: generateBadgeUrl(
+      `${componentName} Statements`,
+      `${stmtPct}%`,
+      getBadgeColor(stmtPct)
+    ),
   });
 
   // Branches badge
@@ -61,7 +65,11 @@ function generateBadges(componentName, summaryPath) {
     label: `${componentName} Branches`,
     value: `${branchPct}%`,
     color: getBadgeColor(branchPct),
-    url: generateBadgeUrl(`${componentName} Branches`, `${branchPct}%`, getBadgeColor(branchPct))
+    url: generateBadgeUrl(
+      `${componentName} Branches`,
+      `${branchPct}%`,
+      getBadgeColor(branchPct)
+    ),
   });
 
   // Functions badge
@@ -70,7 +78,11 @@ function generateBadges(componentName, summaryPath) {
     label: `${componentName} Functions`,
     value: `${funcPct}%`,
     color: getBadgeColor(funcPct),
-    url: generateBadgeUrl(`${componentName} Functions`, `${funcPct}%`, getBadgeColor(funcPct))
+    url: generateBadgeUrl(
+      `${componentName} Functions`,
+      `${funcPct}%`,
+      getBadgeColor(funcPct)
+    ),
   });
 
   // Lines badge
@@ -79,7 +91,11 @@ function generateBadges(componentName, summaryPath) {
     label: `${componentName} Lines`,
     value: `${linePct}%`,
     color: getBadgeColor(linePct),
-    url: generateBadgeUrl(`${componentName} Lines`, `${linePct}%`, getBadgeColor(linePct))
+    url: generateBadgeUrl(
+      `${componentName} Lines`,
+      `${linePct}%`,
+      getBadgeColor(linePct)
+    ),
   });
 
   return badges;
@@ -88,11 +104,11 @@ function generateBadges(componentName, summaryPath) {
 // Generate markdown for badges
 function generateMarkdown(badges) {
   let markdown = '## Test Coverage Badges\n\n';
-  
-  badges.forEach(badge => {
+
+  badges.forEach((badge) => {
     markdown += `![${badge.label}](${badge.url})\n`;
   });
-  
+
   return markdown;
 }
 
@@ -103,7 +119,10 @@ function main() {
   const badges = [];
 
   // Frontend badges
-  const frontendSummary = path.join(__dirname, '../apps/frontend/coverage/coverage-summary.json');
+  const frontendSummary = path.join(
+    __dirname,
+    '../apps/frontend/coverage/coverage-summary.json'
+  );
   if (fs.existsSync(frontendSummary)) {
     const frontendBadges = generateBadges('Frontend', frontendSummary);
     if (frontendBadges) {
@@ -115,7 +134,10 @@ function main() {
   }
 
   // Backend badges
-  const backendSummary = path.join(__dirname, '../apps/reservation-service/coverage/coverage-summary.json');
+  const backendSummary = path.join(
+    __dirname,
+    '../apps/reservation-service/coverage/coverage-summary.json'
+  );
   if (fs.existsSync(backendSummary)) {
     const backendBadges = generateBadges('Backend', backendSummary);
     if (backendBadges) {

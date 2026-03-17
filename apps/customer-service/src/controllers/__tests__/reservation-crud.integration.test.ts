@@ -4,21 +4,21 @@
  * Tests that actually call controller functions against the test database.
  */
 
-import { Response, NextFunction } from "express";
+import { Response, NextFunction } from 'express';
 import {
   getTestPrismaClient,
   createTestTenant,
   deleteTestData,
   disconnectTestDatabase,
-} from "../../test/setup-test-db";
+} from '../../test/setup-test-db';
 import {
   createReservation,
   updateReservation,
   deleteReservation,
-} from "../reservation/reservation-crud.controller";
-import { TenantRequest } from "../../middleware/tenant.middleware";
+} from '../reservation/reservation-crud.controller';
+import { TenantRequest } from '../../middleware/tenant.middleware';
 
-describe("Reservation CRUD Controller Integration Tests", () => {
+describe('Reservation CRUD Controller Integration Tests', () => {
   const prisma = getTestPrismaClient();
   let testTenantId: string;
   let testCustomerId: string;
@@ -45,10 +45,10 @@ describe("Reservation CRUD Controller Integration Tests", () => {
     const customer = await prisma.customer.create({
       data: {
         tenantId: testTenantId,
-        firstName: "Reservation",
-        lastName: "Test",
+        firstName: 'Reservation',
+        lastName: 'Test',
         email: `reservation-crud-${Date.now()}@example.com`,
-        phone: "555-0700",
+        phone: '555-0700',
       },
     });
     testCustomerId = customer.id;
@@ -58,9 +58,9 @@ describe("Reservation CRUD Controller Integration Tests", () => {
       data: {
         tenantId: testTenantId,
         customerId: testCustomerId,
-        name: "ReservationPet",
-        type: "DOG",
-        breed: "Test Breed",
+        name: 'ReservationPet',
+        type: 'DOG',
+        breed: 'Test Breed',
       },
     });
     testPetId = pet.id;
@@ -69,8 +69,8 @@ describe("Reservation CRUD Controller Integration Tests", () => {
     const service = await prisma.service.create({
       data: {
         tenantId: testTenantId,
-        name: "Reservation Test Service",
-        serviceCategory: "BOARDING",
+        name: 'Reservation Test Service',
+        serviceCategory: 'BOARDING',
         price: 50,
         duration: 1440,
         isActive: true,
@@ -82,8 +82,8 @@ describe("Reservation CRUD Controller Integration Tests", () => {
     const resource = await prisma.resource.create({
       data: {
         tenantId: testTenantId,
-        name: "Reservation Test Kennel",
-        type: "JUNIOR_KENNEL",
+        name: 'Reservation Test Kennel',
+        type: 'JUNIOR_KENNEL',
         isActive: true,
       },
     });
@@ -103,10 +103,10 @@ describe("Reservation CRUD Controller Integration Tests", () => {
     jest.clearAllMocks();
   });
 
-  describe("createReservation", () => {
-    it("should create a new reservation", async () => {
-      const startDate = new Date("2025-12-15");
-      const endDate = new Date("2025-12-18");
+  describe('createReservation', () => {
+    it('should create a new reservation', async () => {
+      const startDate = new Date('2025-12-15');
+      const endDate = new Date('2025-12-18');
 
       const req = {
         tenantId: testTenantId,
@@ -119,7 +119,7 @@ describe("Reservation CRUD Controller Integration Tests", () => {
           resourceId: testResourceId,
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
-          status: "PENDING",
+          status: 'PENDING',
         },
       } as unknown as TenantRequest;
       const res = createMockResponse();
@@ -130,11 +130,11 @@ describe("Reservation CRUD Controller Integration Tests", () => {
       const responseData = (res.json as jest.Mock).mock.calls[0][0];
       expect(responseData.data.customerId).toBe(testCustomerId);
       expect(responseData.data.petId).toBe(testPetId);
-      expect(responseData.data.status).toBe("PENDING");
+      expect(responseData.data.status).toBe('PENDING');
       testReservationIds.push(responseData.data.id);
     });
 
-    it("should reject reservation without serviceId", async () => {
+    it('should reject reservation without serviceId', async () => {
       const req = {
         tenantId: testTenantId,
         params: {},
@@ -152,16 +152,16 @@ describe("Reservation CRUD Controller Integration Tests", () => {
 
       expect(mockNext).toHaveBeenCalled();
       const error = (mockNext as jest.Mock).mock.calls[0][0];
-      expect(error.message).toContain("Service ID is required");
+      expect(error.message).toContain('Service ID is required');
     });
 
-    it("should reject reservation with non-existent customer", async () => {
+    it('should reject reservation with non-existent customer', async () => {
       const req = {
         tenantId: testTenantId,
         params: {},
         query: {},
         body: {
-          customerId: "00000000-0000-0000-0000-000000000000",
+          customerId: '00000000-0000-0000-0000-000000000000',
           petId: testPetId,
           serviceId: testServiceId,
           startDate: new Date().toISOString(),
@@ -174,17 +174,17 @@ describe("Reservation CRUD Controller Integration Tests", () => {
 
       expect(mockNext).toHaveBeenCalled();
       const error = (mockNext as jest.Mock).mock.calls[0][0];
-      expect(error.message).toContain("Customer not found");
+      expect(error.message).toContain('Customer not found');
     });
 
-    it("should reject reservation with non-existent pet", async () => {
+    it('should reject reservation with non-existent pet', async () => {
       const req = {
         tenantId: testTenantId,
         params: {},
         query: {},
         body: {
           customerId: testCustomerId,
-          petId: "00000000-0000-0000-0000-000000000000",
+          petId: '00000000-0000-0000-0000-000000000000',
           serviceId: testServiceId,
           startDate: new Date().toISOString(),
           endDate: new Date().toISOString(),
@@ -196,11 +196,11 @@ describe("Reservation CRUD Controller Integration Tests", () => {
 
       expect(mockNext).toHaveBeenCalled();
       const error = (mockNext as jest.Mock).mock.calls[0][0];
-      expect(error.message).toContain("Pet not found");
+      expect(error.message).toContain('Pet not found');
     });
   });
 
-  describe("updateReservation", () => {
+  describe('updateReservation', () => {
     let updateReservationId: string;
 
     beforeAll(async () => {
@@ -211,22 +211,22 @@ describe("Reservation CRUD Controller Integration Tests", () => {
           petId: testPetId,
           serviceId: testServiceId,
           resourceId: testResourceId,
-          startDate: new Date("2025-12-20"),
-          endDate: new Date("2025-12-22"),
-          status: "PENDING",
+          startDate: new Date('2025-12-20'),
+          endDate: new Date('2025-12-22'),
+          status: 'PENDING',
         },
       });
       updateReservationId = reservation.id;
       testReservationIds.push(updateReservationId);
     });
 
-    it("should update reservation status", async () => {
+    it('should update reservation status', async () => {
       const req = {
         tenantId: testTenantId,
         params: { id: updateReservationId },
         query: {},
         body: {
-          status: "CONFIRMED",
+          status: 'CONFIRMED',
         },
       } as unknown as TenantRequest;
       const res = createMockResponse();
@@ -235,12 +235,12 @@ describe("Reservation CRUD Controller Integration Tests", () => {
 
       expect(res.status).toHaveBeenCalledWith(200);
       const responseData = (res.json as jest.Mock).mock.calls[0][0];
-      expect(responseData.data.status).toBe("CONFIRMED");
+      expect(responseData.data.status).toBe('CONFIRMED');
     });
 
-    it("should update reservation dates", async () => {
-      const newStartDate = new Date("2025-12-21");
-      const newEndDate = new Date("2025-12-24");
+    it('should update reservation dates', async () => {
+      const newStartDate = new Date('2025-12-21');
+      const newEndDate = new Date('2025-12-24');
 
       const req = {
         tenantId: testTenantId,
@@ -258,12 +258,12 @@ describe("Reservation CRUD Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
-    it("should handle non-existent reservation gracefully", async () => {
+    it('should handle non-existent reservation gracefully', async () => {
       const req = {
         tenantId: testTenantId,
-        params: { id: "00000000-0000-0000-0000-000000000000" },
+        params: { id: '00000000-0000-0000-0000-000000000000' },
         query: {},
-        body: { status: "CONFIRMED" },
+        body: { status: 'CONFIRMED' },
       } as unknown as TenantRequest;
       const res = createMockResponse();
 
@@ -274,7 +274,7 @@ describe("Reservation CRUD Controller Integration Tests", () => {
     });
   });
 
-  describe("deleteReservation", () => {
+  describe('deleteReservation', () => {
     let deleteReservationId: string;
 
     beforeAll(async () => {
@@ -285,16 +285,16 @@ describe("Reservation CRUD Controller Integration Tests", () => {
           petId: testPetId,
           serviceId: testServiceId,
           resourceId: testResourceId,
-          startDate: new Date("2025-12-25"),
-          endDate: new Date("2025-12-27"),
-          status: "PENDING",
+          startDate: new Date('2025-12-25'),
+          endDate: new Date('2025-12-27'),
+          status: 'PENDING',
         },
       });
       deleteReservationId = reservation.id;
       testReservationIds.push(deleteReservationId);
     });
 
-    it("should delete reservation (hard delete)", async () => {
+    it('should delete reservation (hard delete)', async () => {
       const req = {
         tenantId: testTenantId,
         params: { id: deleteReservationId },
@@ -314,10 +314,10 @@ describe("Reservation CRUD Controller Integration Tests", () => {
       expect(reservation).toBeNull();
     });
 
-    it("should handle non-existent reservation on delete", async () => {
+    it('should handle non-existent reservation on delete', async () => {
       const req = {
         tenantId: testTenantId,
-        params: { id: "00000000-0000-0000-0000-000000000000" },
+        params: { id: '00000000-0000-0000-0000-000000000000' },
         query: {},
         body: {},
       } as unknown as TenantRequest;

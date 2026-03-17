@@ -4,14 +4,14 @@
  * Imports additional fields from Gingr SQL backup using direct SQL queries
  */
 
-const { PrismaClient } = require("@prisma/client");
-const { execSync } = require("child_process");
+const { PrismaClient } = require('@prisma/client');
+const { execSync } = require('child_process');
 const prisma = new PrismaClient();
 
-const TENANT_ID = "b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05";
+const TENANT_ID = 'b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05';
 
 async function importExtendedData() {
-  console.log("📥 Starting extended Gingr data import...\n");
+  console.log('📥 Starting extended Gingr data import...\n');
 
   // Get all active pets
   const allPets = await prisma.pet.findMany({
@@ -33,7 +33,7 @@ async function importExtendedData() {
   console.log(`Found ${allPets.length} active pets in database\n`);
 
   // Extract Gingr data using SQL
-  console.log("🔍 Extracting data from Gingr SQL backup...");
+  console.log('🔍 Extracting data from Gingr SQL backup...');
 
   const cmd = `zcat /opt/tailtown/db-backup-tailtownpetresort-2025-12-16T12_54_19-07_00.sql.gz | \\
     grep 'INSERT INTO \`animals\`' | \\
@@ -68,20 +68,20 @@ async function importExtendedData() {
 
   try {
     const output = execSync(cmd, {
-      encoding: "utf8",
+      encoding: 'utf8',
       maxBuffer: 50 * 1024 * 1024,
     });
-    const lines = output.trim().split("\n");
+    const lines = output.trim().split('\n');
 
     console.log(`Sample of extracted data (first 10):`);
     lines.slice(0, 10).forEach((line) => console.log(`  ${line}`));
-    console.log("");
+    console.log('');
   } catch (error) {
-    console.error("Error extracting Gingr data:", error.message);
+    console.error('Error extracting Gingr data:', error.message);
   }
 
   // For now, let's just update VIP status from the simple fields we can extract
-  console.log("💾 Updating VIP status for pets...\n");
+  console.log('💾 Updating VIP status for pets...\n');
 
   let vipCount = 0;
 
@@ -113,20 +113,20 @@ async function importExtendedData() {
     );
   }
 
-  console.log("\n📈 Summary:");
+  console.log('\n📈 Summary:');
   console.log(`   Total pets processed: ${allPets.length}`);
   console.log(`   Pets updated: ${updates.length}`);
   console.log(`   VIP pets: ${vipCount}`);
 
   await prisma.$disconnect();
-  console.log("\n✅ Import completed successfully");
+  console.log('\n✅ Import completed successfully');
   console.log(
-    "\nNote: This is a simplified version. Full data extraction will be implemented"
+    '\nNote: This is a simplified version. Full data extraction will be implemented'
   );
-  console.log("after verifying the SQL parsing logic works correctly.");
+  console.log('after verifying the SQL parsing logic works correctly.');
 }
 
 importExtendedData().catch((error) => {
-  console.error("❌ Import failed:", error);
+  console.error('❌ Import failed:', error);
   process.exit(1);
 });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   Typography,
@@ -15,7 +15,7 @@ import {
   ListItemText,
   ListItemIcon,
   Chip,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Email as EmailIcon,
   Sms as SmsIcon,
@@ -23,8 +23,8 @@ import {
   TrendingUp as TrendingIcon,
   Description as TemplateIcon,
   CheckCircle as ActiveIcon,
-} from "@mui/icons-material";
-import { getApiBaseUrl } from "../../../services/api";
+} from '@mui/icons-material';
+import { getApiBaseUrl } from '../../../services/api';
 
 interface AnalyticsData {
   templates: {
@@ -64,8 +64,8 @@ const MarketingAnalytics: React.FC = () => {
       setLoading(true);
       setError(null);
       const apiUrl = getApiBaseUrl();
-      const tenantId = localStorage.getItem("tailtown_tenant_id") || "dev";
-      const headers = { "x-tenant-id": tenantId };
+      const tenantId = localStorage.getItem('tailtown_tenant_id') || 'dev';
+      const headers = { 'x-tenant-id': tenantId };
 
       // Fetch templates
       const templatesRes = await fetch(`${apiUrl}/api/message-templates`, {
@@ -83,8 +83,8 @@ const MarketingAnalytics: React.FC = () => {
       const templates = templatesData.data || [];
       const templateStats = {
         total: templates.length,
-        email: templates.filter((t: any) => t.type === "EMAIL").length,
-        sms: templates.filter((t: any) => t.type === "SMS").length,
+        email: templates.filter((t: any) => t.type === 'EMAIL').length,
+        sms: templates.filter((t: any) => t.type === 'SMS').length,
         active: templates.filter((t: any) => t.isActive).length,
         byCategory: templates.reduce((acc: Record<string, number>, t: any) => {
           acc[t.category] = (acc[t.category] || 0) + 1;
@@ -125,8 +125,8 @@ const MarketingAnalytics: React.FC = () => {
         engagement: { emailReachRate, smsReachRate },
       });
     } catch (err: any) {
-      console.error("Error fetching marketing analytics:", err);
-      setError(err.message || "Failed to load analytics");
+      console.error('Error fetching marketing analytics:', err);
+      setError(err.message || 'Failed to load analytics');
     } finally {
       setLoading(false);
     }
@@ -136,7 +136,7 @@ const MarketingAnalytics: React.FC = () => {
     title,
     value,
     icon,
-    color = "primary.main",
+    color = 'primary.main',
     subtitle,
   }: {
     title: string;
@@ -145,15 +145,15 @@ const MarketingAnalytics: React.FC = () => {
     color?: string;
     subtitle?: string;
   }) => (
-    <Card sx={{ height: "100%" }}>
+    <Card sx={{ height: '100%' }}>
       <CardContent>
-        <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
           <Box sx={{ color, mr: 1 }}>{icon}</Box>
           <Typography variant="subtitle2" color="text.secondary">
             {title}
           </Typography>
         </Box>
-        <Typography variant="h4" sx={{ color, fontWeight: "bold" }}>
+        <Typography variant="h4" sx={{ color, fontWeight: 'bold' }}>
           {value}
         </Typography>
         {subtitle && (
@@ -170,9 +170,9 @@ const MarketingAnalytics: React.FC = () => {
       <Container maxWidth="xl">
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
             minHeight: 400,
           }}
         >
@@ -247,9 +247,9 @@ const MarketingAnalytics: React.FC = () => {
 
           <Grid container spacing={3}>
             <Grid item xs={12} md={4}>
-              <Box sx={{ textAlign: "center", p: 2 }}>
+              <Box sx={{ textAlign: 'center', p: 2 }}>
                 <TemplateIcon
-                  sx={{ fontSize: 48, color: "text.secondary", mb: 1 }}
+                  sx={{ fontSize: 48, color: 'text.secondary', mb: 1 }}
                 />
                 <Typography variant="h3" fontWeight="bold">
                   {analytics.templates.total}
@@ -301,12 +301,12 @@ const MarketingAnalytics: React.FC = () => {
               >
                 By Category
               </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 {Object.entries(analytics.templates.byCategory).map(
                   ([category, count]) => (
                     <Chip
                       key={category}
-                      label={`${category.replace(/_/g, " ")}: ${count}`}
+                      label={`${category.replace(/_/g, ' ')}: ${count}`}
                       size="small"
                       variant="outlined"
                     />
@@ -329,7 +329,7 @@ const MarketingAnalytics: React.FC = () => {
               <Box
                 sx={{
                   p: 2,
-                  bgcolor: "success.light",
+                  bgcolor: 'success.light',
                   borderRadius: 2,
                   opacity: 0.9,
                 }}
@@ -354,7 +354,7 @@ const MarketingAnalytics: React.FC = () => {
               <Box
                 sx={{
                   p: 2,
-                  bgcolor: "info.light",
+                  bgcolor: 'info.light',
                   borderRadius: 2,
                   opacity: 0.9,
                 }}

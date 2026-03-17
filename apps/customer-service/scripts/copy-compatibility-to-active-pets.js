@@ -8,14 +8,14 @@
  * This copies the compatibility data to the record that's actually being used.
  */
 
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-const TENANT_ID = "b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05";
+const TENANT_ID = 'b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05';
 
 async function copyCompatibilityToActivePets() {
-  console.log("🔍 Finding pets with mismatched compatibility data...\n");
+  console.log('🔍 Finding pets with mismatched compatibility data...\n');
 
   try {
     // Get all unique pet names
@@ -47,7 +47,7 @@ async function copyCompatibilityToActivePets() {
           },
           reservations: {
             where: {
-              status: { in: ["CONFIRMED", "CHECKED_IN", "PENDING"] },
+              status: { in: ['CONFIRMED', 'CHECKED_IN', 'PENDING'] },
             },
             select: { id: true },
           },
@@ -125,12 +125,12 @@ async function copyCompatibilityToActivePets() {
       }
     }
 
-    console.log("\n✅ Copy Complete!");
+    console.log('\n✅ Copy Complete!');
     console.log(`   📊 Total pets updated: ${totalCopied}`);
     console.log(`   🗑️ Total duplicates deactivated: ${totalDeactivated}`);
 
     // Show some statistics
-    console.log("\n📊 Final Statistics:");
+    console.log('\n📊 Final Statistics:');
     const stats = await prisma.$queryRaw`
       SELECT 
         COUNT(*) as total_active_pets,
@@ -160,7 +160,7 @@ async function copyCompatibilityToActivePets() {
     `;
 
     if (missingData.length > 0) {
-      console.log("\n⚠️ Pets with active reservations but no playgroup data:");
+      console.log('\n⚠️ Pets with active reservations but no playgroup data:');
       missingData.forEach((pet) => {
         console.log(
           `   ${pet.name} (${pet.firstName} ${pet.lastName}): ${pet.active_reservations} reservations`
@@ -168,7 +168,7 @@ async function copyCompatibilityToActivePets() {
       });
     }
   } catch (error) {
-    console.error("❌ Error during copy:", error);
+    console.error('❌ Error during copy:', error);
     throw error;
   } finally {
     await prisma.$disconnect();
@@ -178,10 +178,10 @@ async function copyCompatibilityToActivePets() {
 // Run the script
 copyCompatibilityToActivePets()
   .then(() => {
-    console.log("\n✅ Script completed successfully");
+    console.log('\n✅ Script completed successfully');
     process.exit(0);
   })
   .catch((error) => {
-    console.error("\n❌ Script failed:", error);
+    console.error('\n❌ Script failed:', error);
     process.exit(1);
   });

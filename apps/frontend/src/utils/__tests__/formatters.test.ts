@@ -9,7 +9,7 @@ import {
   formatDate,
   formatDateTime,
   formatPercentage,
-  truncateText
+  truncateText,
 } from '../formatters';
 
 describe('formatters', () => {
@@ -82,7 +82,6 @@ describe('formatters', () => {
       expect(result).toContain('2025');
     });
   });
-
 
   describe('formatDateTime', () => {
     it('should format date and time string', () => {

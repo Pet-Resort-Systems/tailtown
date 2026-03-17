@@ -9,7 +9,8 @@ export const loginRateLimiter = rateLimit({
   max: 5, // Limit each IP to 5 requests per windowMs
   message: {
     status: 'error',
-    message: 'Too many login attempts from this IP, please try again after 15 minutes'
+    message:
+      'Too many login attempts from this IP, please try again after 15 minutes',
   },
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
@@ -26,7 +27,8 @@ export const passwordResetRateLimiter = rateLimit({
   max: 3, // Limit each IP to 3 requests per hour
   message: {
     status: 'error',
-    message: 'Too many password reset requests from this IP, please try again after an hour'
+    message:
+      'Too many password reset requests from this IP, please try again after an hour',
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -41,7 +43,7 @@ export const apiRateLimiter = rateLimit({
   max: 100, // Limit each IP to 100 requests per windowMs
   message: {
     status: 'error',
-    message: 'Too many requests from this IP, please try again later'
+    message: 'Too many requests from this IP, please try again later',
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -57,7 +59,8 @@ export const perTenantRateLimiter = rateLimit({
   max: 1000, // Limit each tenant to 1000 requests per windowMs
   message: {
     status: 'error',
-    message: 'Your organization has exceeded the rate limit. Please try again later or contact support for a higher limit.'
+    message:
+      'Your organization has exceeded the rate limit. Please try again later or contact support for a higher limit.',
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -72,7 +75,7 @@ export const perTenantRateLimiter = rateLimit({
       status: 'error',
       message: 'Rate limit exceeded for your organization',
       tenantId: req.tenantId,
-      retryAfter: res.getHeader('Retry-After')
+      retryAfter: res.getHeader('Retry-After'),
     });
   },
 });

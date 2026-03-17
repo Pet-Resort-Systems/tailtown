@@ -1,11 +1,11 @@
-import axios from "axios";
-import { getApiBaseUrl } from "./api";
+import axios from 'axios';
+import { getApiBaseUrl } from './api';
 
 const API_URL = getApiBaseUrl();
 
 // Helper to get auth headers
 const getAuthHeaders = () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem('token');
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
@@ -21,7 +21,7 @@ export interface Tenant {
   state?: string;
   zipCode?: string;
   country: string;
-  status: "TRIAL" | "ACTIVE" | "PAUSED" | "CANCELLED" | "DELETED" | "PENDING";
+  status: 'TRIAL' | 'ACTIVE' | 'PAUSED' | 'CANCELLED' | 'DELETED' | 'PENDING';
   isActive: boolean;
   isPaused: boolean;
   planType: string;
@@ -51,7 +51,7 @@ export interface TenantUser {
   email: string;
   firstName: string;
   lastName: string;
-  role: "SUPER_ADMIN" | "TENANT_ADMIN" | "MANAGER" | "STAFF";
+  role: 'SUPER_ADMIN' | 'TENANT_ADMIN' | 'MANAGER' | 'STAFF';
   isActive: boolean;
   lastLoginAt?: string;
   createdAt: string;
@@ -112,11 +112,11 @@ class TenantService {
     isPaused?: boolean;
   }): Promise<Tenant[]> {
     const params = new URLSearchParams();
-    if (filters?.status) params.append("status", filters.status);
+    if (filters?.status) params.append('status', filters.status);
     if (filters?.isActive !== undefined)
-      params.append("isActive", filters.isActive.toString());
+      params.append('isActive', filters.isActive.toString());
     if (filters?.isPaused !== undefined)
-      params.append("isPaused", filters.isPaused.toString());
+      params.append('isPaused', filters.isPaused.toString());
 
     const response = await axios.get(
       `${API_URL}/api/tenants?${params.toString()}`,
@@ -152,9 +152,9 @@ class TenantService {
     // Store timezone in localStorage for easy access
     if (tenant && tenant.timezone) {
       try {
-        localStorage.setItem("tenant_timezone", tenant.timezone);
+        localStorage.setItem('tenant_timezone', tenant.timezone);
       } catch (error) {
-        console.warn("Could not store tenant timezone in localStorage:", error);
+        console.warn('Could not store tenant timezone in localStorage:', error);
       }
     }
 
@@ -167,18 +167,18 @@ class TenantService {
   async getCurrentTenantTimezone(): Promise<string> {
     try {
       // Try to get from localStorage first
-      const cachedTimezone = localStorage.getItem("tenant_timezone");
+      const cachedTimezone = localStorage.getItem('tenant_timezone');
       if (cachedTimezone) {
         return cachedTimezone;
       }
 
       // If not in cache, fetch from API
-      const subdomain = window.location.hostname.split(".")[0];
+      const subdomain = window.location.hostname.split('.')[0];
       const tenant = await this.getTenantBySubdomain(subdomain);
-      return tenant.timezone || "America/Denver";
+      return tenant.timezone || 'America/Denver';
     } catch (error) {
-      console.warn("Could not fetch tenant timezone, using default:", error);
-      return "America/Denver";
+      console.warn('Could not fetch tenant timezone, using default:', error);
+      return 'America/Denver';
     }
   }
 
@@ -187,10 +187,10 @@ class TenantService {
    */
   async getCurrentTenant(): Promise<Tenant | null> {
     // Check for cached data first to avoid unnecessary API calls
-    const cachedName = localStorage.getItem("tenant_businessName");
+    const cachedName = localStorage.getItem('tenant_businessName');
 
     // Only make API call if we have a token (authenticated)
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (!token) {
       // Not authenticated - return cached data if available
       if (cachedName) {
@@ -207,7 +207,7 @@ class TenantService {
 
       // Cache business name for merge fields
       if (tenant?.businessName) {
-        localStorage.setItem("tenant_businessName", tenant.businessName);
+        localStorage.setItem('tenant_businessName', tenant.businessName);
       }
 
       return tenant;
@@ -224,7 +224,7 @@ class TenantService {
    * Get cached business name (for merge fields without API call)
    */
   getCachedBusinessName(): string {
-    return localStorage.getItem("tenant_businessName") || "";
+    return localStorage.getItem('tenant_businessName') || '';
   }
 
   /**

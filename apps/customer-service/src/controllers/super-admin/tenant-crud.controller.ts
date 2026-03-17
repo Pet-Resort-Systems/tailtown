@@ -1,6 +1,6 @@
 /**
  * Tenant CRUD Controller
- * 
+ *
  * Super admin operations for creating, listing, and cloning tenants.
  * Complements tenant-management.controller.ts (suspend/delete operations).
  */
@@ -23,13 +23,13 @@ export const listTenants = async (
   next: NextFunction
 ) => {
   try {
-    const { 
-      page = '1', 
+    const {
+      page = '1',
       limit = '50',
       status,
       isProduction,
       isTemplate,
-      search
+      search,
     } = req.query;
 
     const pageNum = parseInt(page as string);
@@ -38,24 +38,24 @@ export const listTenants = async (
 
     // Build filter
     const where: any = {};
-    
+
     if (status) {
       where.status = status;
     }
-    
+
     if (isProduction !== undefined) {
       where.isProduction = isProduction === 'true';
     }
-    
+
     if (isTemplate !== undefined) {
       where.isTemplate = isTemplate === 'true';
     }
-    
+
     if (search) {
       where.OR = [
         { businessName: { contains: search as string, mode: 'insensitive' } },
         { subdomain: { contains: search as string, mode: 'insensitive' } },
-        { contactEmail: { contains: search as string, mode: 'insensitive' } }
+        { contactEmail: { contains: search as string, mode: 'insensitive' } },
       ];
     }
 
@@ -68,7 +68,7 @@ export const listTenants = async (
         orderBy: [
           { isProduction: 'desc' },
           { isTemplate: 'desc' },
-          { createdAt: 'desc' }
+          { createdAt: 'desc' },
         ],
         select: {
           id: true,
@@ -91,10 +91,10 @@ export const listTenants = async (
           createdAt: true,
           updatedAt: true,
           suspendedAt: true,
-          deletedAt: true
-        }
+          deletedAt: true,
+        },
       }),
-      prisma.tenant.count({ where })
+      prisma.tenant.count({ where }),
     ]);
 
     res.status(200).json({
@@ -105,9 +105,9 @@ export const listTenants = async (
           page: pageNum,
           limit: limitNum,
           total,
-          pages: Math.ceil(total / limitNum)
-        }
-      }
+          pages: Math.ceil(total / limitNum),
+        },
+      },
     });
   } catch (error) {
     console.error('[SuperAdmin] List tenants error:', error);
@@ -139,26 +139,27 @@ export const createTenant = async (
       isProduction = false,
       isTemplate = false,
       gingrSyncEnabled = false,
-      planType = 'STARTER'
+      planType = 'STARTER',
     } = req.body;
 
     // Validate required fields
     if (!businessName || !subdomain || !contactName || !contactEmail) {
       return res.status(400).json({
         success: false,
-        message: 'Missing required fields: businessName, subdomain, contactName, contactEmail'
+        message:
+          'Missing required fields: businessName, subdomain, contactName, contactEmail',
       });
     }
 
     // Check if subdomain already exists
     const existing = await prisma.tenant.findUnique({
-      where: { subdomain }
+      where: { subdomain },
     });
 
     if (existing) {
       return res.status(409).json({
         success: false,
-        message: 'Subdomain already exists'
+        message: 'Subdomain already exists',
       });
     }
 
@@ -178,24 +179,27 @@ export const createTenant = async (
         isTemplate,
         gingrSyncEnabled,
         planType,
-        status: 'ACTIVE'
-      }
+        status: 'ACTIVE',
+      },
     });
 
     // Create audit log
-    await createAuditLog({
-      superAdminId: superAdminId!,
-      action: AuditAction.CREATE_TENANT,
-      entityType: 'TENANT',
-      entityId: tenant.id,
-      tenantId: tenant.subdomain,
-      details: { businessName, subdomain, isProduction, isTemplate }
-    }, req);
+    await createAuditLog(
+      {
+        superAdminId: superAdminId!,
+        action: AuditAction.CREATE_TENANT,
+        entityType: 'TENANT',
+        entityId: tenant.id,
+        tenantId: tenant.subdomain,
+        details: { businessName, subdomain, isProduction, isTemplate },
+      },
+      req
+    );
 
     res.status(201).json({
       success: true,
       message: 'Tenant created successfully',
-      data: tenant
+      data: tenant,
     });
   } catch (error) {
     console.error('[SuperAdmin] Create tenant error:', error);
@@ -215,43 +219,39 @@ export const cloneTenant = async (
   try {
     const superAdminId = (req as SuperAdminRequest).superAdmin?.id;
     const { id } = req.params;
-    const {
-      businessName,
-      subdomain,
-      contactName,
-      contactEmail,
-      contactPhone
-    } = req.body;
+    const { businessName, subdomain, contactName, contactEmail, contactPhone } =
+      req.body;
 
     // Validate required fields
     if (!businessName || !subdomain || !contactName || !contactEmail) {
       return res.status(400).json({
         success: false,
-        message: 'Missing required fields: businessName, subdomain, contactName, contactEmail'
+        message:
+          'Missing required fields: businessName, subdomain, contactName, contactEmail',
       });
     }
 
     // Get source tenant
     const sourceTenant = await prisma.tenant.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!sourceTenant) {
       return res.status(404).json({
         success: false,
-        message: 'Source tenant not found'
+        message: 'Source tenant not found',
       });
     }
 
     // Check if subdomain already exists
     const existing = await prisma.tenant.findUnique({
-      where: { subdomain }
+      where: { subdomain },
     });
 
     if (existing) {
       return res.status(409).json({
         success: false,
-        message: 'Subdomain already exists'
+        message: 'Subdomain already exists',
       });
     }
 
@@ -279,29 +279,32 @@ export const cloneTenant = async (
         status: 'ACTIVE',
         isProduction: false,
         isTemplate: false,
-        gingrSyncEnabled: false
-      }
+        gingrSyncEnabled: false,
+      },
     });
 
     // Create audit log
-    await createAuditLog({
-      superAdminId: superAdminId!,
-      action: AuditAction.CLONE_TENANT,
-      entityType: 'TENANT',
-      entityId: newTenant.id,
-      tenantId: newTenant.subdomain,
-      details: { 
-        sourceId: sourceTenant.id,
-        sourceName: sourceTenant.businessName,
-        newName: businessName,
-        newSubdomain: subdomain
-      }
-    }, req);
+    await createAuditLog(
+      {
+        superAdminId: superAdminId!,
+        action: AuditAction.CLONE_TENANT,
+        entityType: 'TENANT',
+        entityId: newTenant.id,
+        tenantId: newTenant.subdomain,
+        details: {
+          sourceId: sourceTenant.id,
+          sourceName: sourceTenant.businessName,
+          newName: businessName,
+          newSubdomain: subdomain,
+        },
+      },
+      req
+    );
 
     res.status(201).json({
       success: true,
       message: 'Tenant cloned successfully',
-      data: newTenant
+      data: newTenant,
     });
   } catch (error) {
     console.error('[SuperAdmin] Clone tenant error:', error);
@@ -329,27 +332,28 @@ export const updateTenant = async (
       contactName,
       contactEmail,
       contactPhone,
-      planType
+      planType,
     } = req.body;
 
     // Get existing tenant
     const tenant = await prisma.tenant.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!tenant) {
       return res.status(404).json({
         success: false,
-        message: 'Tenant not found'
+        message: 'Tenant not found',
       });
     }
 
     // Build update data
     const updateData: any = {};
-    
+
     if (isProduction !== undefined) updateData.isProduction = isProduction;
     if (isTemplate !== undefined) updateData.isTemplate = isTemplate;
-    if (gingrSyncEnabled !== undefined) updateData.gingrSyncEnabled = gingrSyncEnabled;
+    if (gingrSyncEnabled !== undefined)
+      updateData.gingrSyncEnabled = gingrSyncEnabled;
     if (businessName) updateData.businessName = businessName;
     if (contactName) updateData.contactName = contactName;
     if (contactEmail) updateData.contactEmail = contactEmail;
@@ -359,23 +363,26 @@ export const updateTenant = async (
     // Update tenant
     const updatedTenant = await prisma.tenant.update({
       where: { id },
-      data: updateData
+      data: updateData,
     });
 
     // Create audit log
-    await createAuditLog({
-      superAdminId: superAdminId!,
-      action: AuditAction.UPDATE_TENANT,
-      entityType: 'TENANT',
-      entityId: id,
-      tenantId: tenant.subdomain,
-      details: { changes: updateData }
-    }, req);
+    await createAuditLog(
+      {
+        superAdminId: superAdminId!,
+        action: AuditAction.UPDATE_TENANT,
+        entityType: 'TENANT',
+        entityId: id,
+        tenantId: tenant.subdomain,
+        details: { changes: updateData },
+      },
+      req
+    );
 
     res.status(200).json({
       success: true,
       message: 'Tenant updated successfully',
-      data: updatedTenant
+      data: updatedTenant,
     });
   } catch (error) {
     console.error('[SuperAdmin] Update tenant error:', error);
@@ -406,22 +413,22 @@ export const getTenant = async (
             lastName: true,
             role: true,
             isActive: true,
-            createdAt: true
-          }
-        }
-      }
+            createdAt: true,
+          },
+        },
+      },
     });
 
     if (!tenant) {
       return res.status(404).json({
         success: false,
-        message: 'Tenant not found'
+        message: 'Tenant not found',
       });
     }
 
     res.status(200).json({
       success: true,
-      data: tenant
+      data: tenant,
     });
   } catch (error) {
     console.error('[SuperAdmin] Get tenant error:', error);

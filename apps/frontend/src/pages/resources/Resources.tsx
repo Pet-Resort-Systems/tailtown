@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import debounce from "lodash/debounce";
-import {
-  useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import debounce from 'lodash/debounce';
+import { useNavigate } from 'react-router-dom';
 import {
   Container,
   Box,
@@ -20,18 +19,18 @@ import {
   Alert,
   TextField,
   MenuItem,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
-import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import * as resourceManagement from "../../services/resourceManagement";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import * as resourceManagement from '../../services/resourceManagement';
 import {
   Resource,
   getResourceTypeName,
   getResourceTypeCategory,
-} from "../../types/resource";
-import { sortByRoomAndNumber } from "../../utils/sortingUtils";
+} from '../../types/resource';
+import { sortByRoomAndNumber } from '../../utils/sortingUtils';
 
 const Resources: React.FC = () => {
   const navigate = useNavigate();
@@ -39,11 +38,11 @@ const Resources: React.FC = () => {
   const [, setLoading] = useState(true);
   const [snackbar, setSnackbar] = useState({
     open: false,
-    message: "",
-    severity: "success" as "success" | "error",
+    message: '',
+    severity: 'success' as 'success' | 'error',
   });
-  const [filterType, setFilterType] = useState<string>("all");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const debouncedFilter = useMemo(
     () =>
@@ -65,16 +64,16 @@ const Resources: React.FC = () => {
                 `Error getting category for resource type ${resource.type}:`,
                 err
               );
-              category = "other"; // Default to other if we can't determine the category
+              category = 'other'; // Default to other if we can't determine the category
             }
 
-            const matchesType = type === "all" || category === type;
+            const matchesType = type === 'all' || category === type;
             const matchesSearch =
               resource.name?.toLowerCase().includes(term.toLowerCase()) ||
-              (resource.description?.toLowerCase() || "").includes(
+              (resource.description?.toLowerCase() || '').includes(
                 term.toLowerCase()
               ) ||
-              (resource.location?.toLowerCase() || "").includes(
+              (resource.location?.toLowerCase() || '').includes(
                 term.toLowerCase()
               );
 
@@ -83,7 +82,7 @@ const Resources: React.FC = () => {
 
           setFilteredResources(filtered);
         } catch (error) {
-          console.error("Error filtering resources:", error);
+          console.error('Error filtering resources:', error);
           setFilteredResources([]);
         }
       }, 300),
@@ -106,32 +105,32 @@ const Resources: React.FC = () => {
         // Debug: Log first resource to see what fields are available
         if (response.length > 0) {
           console.log(
-            "[Resources] First resource data:",
+            '[Resources] First resource data:',
             JSON.stringify(response[0], null, 2)
           );
           console.log(
-            "[Resources] maxPets:",
+            '[Resources] maxPets:',
             response[0].maxPets,
-            "location:",
+            'location:',
             response[0].location
           );
         }
         // Sort resources by room letter then number (A1, A2, B1, B2, etc.)
         setResources(sortByRoomAndNumber(response));
       } else {
-        console.error("Invalid resources response format:", response);
+        console.error('Invalid resources response format:', response);
         setResources([]);
       }
       setLoading(false);
     } catch (err: any) {
-      console.error("Error loading resources:", err);
+      console.error('Error loading resources:', err);
       if (err.response) {
-        console.error("Response error:", err.response.data);
+        console.error('Response error:', err.response.data);
       }
       setSnackbar({
         open: true,
-        message: "Failed to load resources",
-        severity: "error",
+        message: 'Failed to load resources',
+        severity: 'error',
       });
       setResources([]);
       setLoading(false);
@@ -144,20 +143,20 @@ const Resources: React.FC = () => {
 
   const handleDelete = useCallback(
     async (id: string) => {
-      if (window.confirm("Are you sure you want to delete this resource?")) {
+      if (window.confirm('Are you sure you want to delete this resource?')) {
         try {
           await resourceManagement.deleteResource(id);
           setSnackbar({
             open: true,
-            message: "Resource deleted successfully",
-            severity: "success",
+            message: 'Resource deleted successfully',
+            severity: 'success',
           });
           loadResources();
         } catch (err) {
           setSnackbar({
             open: true,
-            message: "Failed to delete resource",
-            severity: "error",
+            message: 'Failed to delete resource',
+            severity: 'error',
           });
         }
       }
@@ -176,13 +175,13 @@ const Resources: React.FC = () => {
   }, [resources]);
 
   const resourceCategories = [
-    "all",
-    "housing",
-    "play areas",
-    "grooming",
-    "training",
-    "staff",
-    "other",
+    'all',
+    'housing',
+    'play areas',
+    'grooming',
+    'training',
+    'staff',
+    'other',
   ];
 
   return (
@@ -190,9 +189,9 @@ const Resources: React.FC = () => {
       <Box sx={{ mt: 4, mb: 4 }}>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             mb: 3,
           }}
         >
@@ -201,7 +200,7 @@ const Resources: React.FC = () => {
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => {
-              navigate("/resources/new");
+              navigate('/resources/new');
             }}
           >
             Add Resource
@@ -229,8 +228,8 @@ const Resources: React.FC = () => {
             >
               {resourceCategories.map((category) => (
                 <MenuItem key={category} value={category}>
-                  {category === "all"
-                    ? "All Types"
+                  {category === 'all'
+                    ? 'All Types'
                     : category.charAt(0).toUpperCase() + category.slice(1)}
                 </MenuItem>
               ))}
@@ -264,24 +263,24 @@ const Resources: React.FC = () => {
                             `Error getting type name for ${resource.type}:`,
                             err
                           );
-                          return String(resource.type).replace(/_/g, " ");
+                          return String(resource.type).replace(/_/g, ' ');
                         }
                       })()}
-                      color={resource.isActive ? "primary" : "default"}
+                      color={resource.isActive ? 'primary' : 'default'}
                       variant="outlined"
                       size="small"
                     />
                   </TableCell>
-                  <TableCell>{resource.location || "-"}</TableCell>
+                  <TableCell>{resource.location || '-'}</TableCell>
                   <TableCell>
                     {resource.maxPets != null
                       ? resource.maxPets
-                      : resource.capacity || "-"}
+                      : resource.capacity || '-'}
                   </TableCell>
                   <TableCell>
                     <Chip
-                      label={resource.isActive ? "Active" : "Inactive"}
-                      color={resource.isActive ? "success" : "error"}
+                      label={resource.isActive ? 'Active' : 'Inactive'}
+                      color={resource.isActive ? 'success' : 'error'}
                       size="small"
                     />
                   </TableCell>
@@ -314,7 +313,7 @@ const Resources: React.FC = () => {
         <Alert
           onClose={handleSnackbarClose}
           severity={snackbar.severity}
-          sx={{ width: "100%" }}
+          sx={{ width: '100%' }}
         >
           {snackbar.message}
         </Alert>

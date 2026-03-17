@@ -24,8 +24,9 @@ export const useDevice = (): DeviceInfo => {
   const isDesktop = useMediaQuery('(min-width: 1025px)');
 
   // Detect if running as PWA
-  const isPWA = window.matchMedia('(display-mode: standalone)').matches ||
-                (window.navigator as any).standalone === true;
+  const isPWA =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (window.navigator as any).standalone === true;
 
   // Detect iOS
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -34,7 +35,8 @@ export const useDevice = (): DeviceInfo => {
   const isAndroid = /Android/.test(navigator.userAgent);
 
   // Detect touch device
-  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  const isTouchDevice =
+    'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
   // Track screen dimensions
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
@@ -86,7 +88,8 @@ export const isMobileDevice = (): boolean => {
  * Check if device supports specific features
  */
 export const supportsFeature = {
-  camera: () => 'mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices,
+  camera: () =>
+    'mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices,
   geolocation: () => 'geolocation' in navigator,
   notifications: () => 'Notification' in window,
   serviceWorker: () => 'serviceWorker' in navigator,

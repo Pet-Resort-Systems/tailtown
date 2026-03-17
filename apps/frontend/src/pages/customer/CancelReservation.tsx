@@ -1,6 +1,6 @@
 /**
  * Cancel Reservation Page
- * 
+ *
  * Allows customers to cancel a reservation with:
  * - Cancellation policy display
  * - Refund calculation
@@ -29,12 +29,12 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
 } from '@mui/material';
 import {
   ArrowBack as BackIcon,
   Warning as WarningIcon,
-  CheckCircle as SuccessIcon
+  CheckCircle as SuccessIcon,
 } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { reservationManagementService } from '../../services/reservationManagementService';
@@ -42,7 +42,7 @@ import { useCustomerAuth } from '../../contexts/CustomerAuthContext';
 import {
   CancellationReason,
   CancellationResult,
-  ReservationDetails
+  ReservationDetails,
 } from '../../types/reservationManagement';
 import { formatDate, formatCurrency } from '../../utils/formatters';
 
@@ -50,15 +50,18 @@ export const CancelReservation: React.FC = () => {
   const navigate = useNavigate();
   const { reservationId } = useParams<{ reservationId: string }>();
   const { customer } = useCustomerAuth();
-  
+
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [reservation, setReservation] = useState<ReservationDetails | null>(null);
+  const [reservation, setReservation] = useState<ReservationDetails | null>(
+    null
+  );
   const [reason, setReason] = useState<CancellationReason>('OTHER');
   const [reasonDetails, setReasonDetails] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [cancellationResult, setCancellationResult] = useState<CancellationResult | null>(null);
+  const [cancellationResult, setCancellationResult] =
+    useState<CancellationResult | null>(null);
 
   useEffect(() => {
     if (reservationId) {
@@ -72,15 +75,18 @@ export const CancelReservation: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await reservationManagementService.getReservationDetails(reservationId);
-      
+      const data =
+        await reservationManagementService.getReservationDetails(reservationId);
+
       if (!data.canCancel) {
         setError('This reservation cannot be cancelled.');
       }
-      
+
       setReservation(data);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load reservation details');
+      setError(
+        err.response?.data?.message || 'Failed to load reservation details'
+      );
     } finally {
       setLoading(false);
     }
@@ -98,7 +104,7 @@ export const CancelReservation: React.FC = () => {
         reason,
         reasonDetails: reasonDetails.trim() || undefined,
         requestedBy: customer.id,
-        requestedAt: new Date().toISOString()
+        requestedAt: new Date().toISOString(),
       });
 
       setCancellationResult(result);
@@ -113,7 +119,12 @@ export const CancelReservation: React.FC = () => {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -156,7 +167,9 @@ export const CancelReservation: React.FC = () => {
         <Card>
           <CardContent>
             <Box textAlign="center" py={4}>
-              <SuccessIcon sx={{ fontSize: 64, color: 'success.main', mb: 2 }} />
+              <SuccessIcon
+                sx={{ fontSize: 64, color: 'success.main', mb: 2 }}
+              />
               <Typography variant="h5" gutterBottom>
                 Reservation Cancelled
               </Typography>
@@ -164,7 +177,10 @@ export const CancelReservation: React.FC = () => {
                 {cancellationResult.message}
               </Typography>
 
-              <Paper variant="outlined" sx={{ p: 3, maxWidth: 400, mx: 'auto', my: 3 }}>
+              <Paper
+                variant="outlined"
+                sx={{ p: 3, maxWidth: 400, mx: 'auto', my: 3 }}
+              >
                 <Typography variant="h6" gutterBottom>
                   Refund Information
                 </Typography>
@@ -192,8 +208,8 @@ export const CancelReservation: React.FC = () => {
               </Paper>
 
               <Alert severity="info" sx={{ maxWidth: 600, mx: 'auto', mb: 3 }}>
-                Your refund will be processed within 5-7 business days and will appear
-                on your original payment method.
+                Your refund will be processed within 5-7 business days and will
+                appear on your original payment method.
               </Alert>
 
               <Button
@@ -242,7 +258,8 @@ export const CancelReservation: React.FC = () => {
           Are you sure you want to cancel this reservation?
         </Typography>
         <Typography variant="body2">
-          This action cannot be undone. Please review the cancellation policy below.
+          This action cannot be undone. Please review the cancellation policy
+          below.
         </Typography>
       </Alert>
 
@@ -256,11 +273,15 @@ export const CancelReservation: React.FC = () => {
           <Stack spacing={1}>
             <Box display="flex" justifyContent="space-between">
               <Typography variant="body2">Check-in:</Typography>
-              <Typography variant="body2">{formatDate(reservation.startDate)}</Typography>
+              <Typography variant="body2">
+                {formatDate(reservation.startDate)}
+              </Typography>
             </Box>
             <Box display="flex" justifyContent="space-between">
               <Typography variant="body2">Check-out:</Typography>
-              <Typography variant="body2">{formatDate(reservation.endDate)}</Typography>
+              <Typography variant="body2">
+                {formatDate(reservation.endDate)}
+              </Typography>
             </Box>
             <Box display="flex" justifyContent="space-between">
               <Typography variant="body2">Pet:</Typography>
@@ -268,18 +289,23 @@ export const CancelReservation: React.FC = () => {
             </Box>
             <Box display="flex" justifyContent="space-between">
               <Typography variant="body2">Service:</Typography>
-              <Typography variant="body2">{reservation.service?.name}</Typography>
+              <Typography variant="body2">
+                {reservation.service?.name}
+              </Typography>
             </Box>
             <Divider />
             <Box display="flex" justifyContent="space-between">
-              <Typography variant="body1" fontWeight="bold">Total Paid:</Typography>
+              <Typography variant="body1" fontWeight="bold">
+                Total Paid:
+              </Typography>
               <Typography variant="body1" fontWeight="bold">
                 {formatCurrency(
                   (reservation.service?.price || 0) +
-                  (reservation.addOnServices?.reduce((sum, addon) => 
-                    sum + (addon.price * (addon.quantity || 1)), 0
-                  ) || 0) -
-                  (reservation.discount || 0)
+                    (reservation.addOnServices?.reduce(
+                      (sum, addon) => sum + addon.price * (addon.quantity || 1),
+                      0
+                    ) || 0) -
+                    (reservation.discount || 0)
                 )}
               </Typography>
             </Box>
@@ -299,7 +325,14 @@ export const CancelReservation: React.FC = () => {
               <Typography variant="body2" paragraph>
                 {reservation.cancellationPolicy.description}
               </Typography>
-              <Paper variant="outlined" sx={{ p: 2, bgcolor: 'primary.light', color: 'primary.contrastText' }}>
+              <Paper
+                variant="outlined"
+                sx={{
+                  p: 2,
+                  bgcolor: 'primary.light',
+                  color: 'primary.contrastText',
+                }}
+              >
                 <Typography variant="h6" gutterBottom>
                   Your Refund
                 </Typography>
@@ -307,7 +340,8 @@ export const CancelReservation: React.FC = () => {
                   {formatCurrency(reservation.refundAmount)}
                 </Typography>
                 <Typography variant="body2">
-                  {reservation.refundPercentage}% of total ({reservation.daysUntilCheckIn} days until check-in)
+                  {reservation.refundPercentage}% of total (
+                  {reservation.daysUntilCheckIn} days until check-in)
                 </Typography>
               </Paper>
             </>
@@ -403,8 +437,9 @@ export const CancelReservation: React.FC = () => {
             Are you sure you want to cancel this reservation?
           </Typography>
           <Alert severity="warning" sx={{ mb: 2 }}>
-            You will receive a refund of {formatCurrency(reservation.refundAmount)} 
-            ({reservation.refundPercentage}% of total).
+            You will receive a refund of{' '}
+            {formatCurrency(reservation.refundAmount)}(
+            {reservation.refundPercentage}% of total).
           </Alert>
           <Typography variant="body2" color="text.secondary">
             This action cannot be undone.

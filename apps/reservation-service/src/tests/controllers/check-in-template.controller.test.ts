@@ -6,10 +6,10 @@
  * customizable check-in questionnaire templates.
  */
 
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 
 // Mock dependencies
-jest.mock("../../config/prisma", () => ({
+jest.mock('../../config/prisma', () => ({
   prisma: {
     checkInTemplate: {
       findMany: jest.fn(),
@@ -34,7 +34,7 @@ jest.mock("../../config/prisma", () => ({
   },
 }));
 
-jest.mock("../../utils/logger", () => ({
+jest.mock('../../utils/logger', () => ({
   logger: {
     error: jest.fn(),
     info: jest.fn(),
@@ -43,13 +43,13 @@ jest.mock("../../utils/logger", () => ({
   },
 }));
 
-import { prisma } from "../../config/prisma";
-import { logger } from "../../utils/logger";
+import { prisma } from '../../config/prisma';
+import { logger } from '../../utils/logger';
 import {
   getAllTemplates,
   getTemplateById,
   getDefaultTemplate,
-} from "../../controllers/check-in-template.controller";
+} from '../../controllers/check-in-template.controller';
 
 // Helper to create mock request
 const createMockRequest = (overrides: Partial<Request> = {}): Request => {
@@ -58,9 +58,9 @@ const createMockRequest = (overrides: Partial<Request> = {}): Request => {
     query: {},
     body: {},
     headers: {
-      "x-tenant-id": "test-tenant",
+      'x-tenant-id': 'test-tenant',
     },
-    tenantId: "test-tenant",
+    tenantId: 'test-tenant',
     ...overrides,
   } as unknown as Request;
 };
@@ -74,26 +74,26 @@ const createMockResponse = (): Response => {
   return res as Response;
 };
 
-describe("Check-In Template Controller", () => {
+describe('Check-In Template Controller', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe("getAllTemplates", () => {
-    it("should return all templates for a tenant", async () => {
+  describe('getAllTemplates', () => {
+    it('should return all templates for a tenant', async () => {
       const mockTemplates = [
         {
-          id: "template-1",
-          name: "Standard Check-In",
-          tenantId: "test-tenant",
+          id: 'template-1',
+          name: 'Standard Check-In',
+          tenantId: 'test-tenant',
           isActive: true,
           isDefault: true,
           sections: [],
         },
         {
-          id: "template-2",
-          name: "VIP Check-In",
-          tenantId: "test-tenant",
+          id: 'template-2',
+          name: 'VIP Check-In',
+          tenantId: 'test-tenant',
           isActive: true,
           isDefault: false,
           sections: [],
@@ -111,21 +111,21 @@ describe("Check-In Template Controller", () => {
 
       expect(prisma.checkInTemplate.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { tenantId: "test-tenant" },
+          where: { tenantId: 'test-tenant' },
         })
       );
       expect(res.json).toHaveBeenCalledWith({
-        status: "success",
+        status: 'success',
         results: 2,
         data: mockTemplates,
       });
     });
 
-    it("should filter by active status when query param provided", async () => {
+    it('should filter by active status when query param provided', async () => {
       (prisma.checkInTemplate.findMany as jest.Mock).mockResolvedValue([]);
 
       const req = createMockRequest({
-        query: { active: "true" },
+        query: { active: 'true' },
       });
       const res = createMockResponse();
 
@@ -134,22 +134,22 @@ describe("Check-In Template Controller", () => {
       expect(prisma.checkInTemplate.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {
-            tenantId: "test-tenant",
+            tenantId: 'test-tenant',
             isActive: true,
           },
         })
       );
     });
 
-    it("should include sections and questions in response", async () => {
+    it('should include sections and questions in response', async () => {
       const mockTemplate = {
-        id: "template-1",
-        name: "Standard Check-In",
+        id: 'template-1',
+        name: 'Standard Check-In',
         sections: [
           {
-            id: "section-1",
-            name: "Pet Information",
-            questions: [{ id: "q-1", questionText: "Any allergies?" }],
+            id: 'section-1',
+            name: 'Pet Information',
+            questions: [{ id: 'q-1', questionText: 'Any allergies?' }],
           },
         ],
       };
@@ -176,9 +176,9 @@ describe("Check-In Template Controller", () => {
       );
     });
 
-    it("should handle database errors gracefully", async () => {
+    it('should handle database errors gracefully', async () => {
       (prisma.checkInTemplate.findMany as jest.Mock).mockRejectedValue(
-        new Error("Database error")
+        new Error('Database error')
       );
 
       const req = createMockRequest();
@@ -189,18 +189,18 @@ describe("Check-In Template Controller", () => {
       expect(logger.error).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        status: "error",
-        message: "Failed to fetch check-in templates",
+        status: 'error',
+        message: 'Failed to fetch check-in templates',
       });
     });
   });
 
-  describe("getTemplateById", () => {
-    it("should return a template by ID", async () => {
+  describe('getTemplateById', () => {
+    it('should return a template by ID', async () => {
       const mockTemplate = {
-        id: "template-1",
-        name: "Standard Check-In",
-        tenantId: "test-tenant",
+        id: 'template-1',
+        name: 'Standard Check-In',
+        tenantId: 'test-tenant',
         sections: [],
       };
 
@@ -209,7 +209,7 @@ describe("Check-In Template Controller", () => {
       );
 
       const req = createMockRequest({
-        params: { id: "template-1" },
+        params: { id: 'template-1' },
       });
       const res = createMockResponse();
 
@@ -217,20 +217,20 @@ describe("Check-In Template Controller", () => {
 
       expect(prisma.checkInTemplate.findFirst).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { id: "template-1", tenantId: "test-tenant" },
+          where: { id: 'template-1', tenantId: 'test-tenant' },
         })
       );
       expect(res.json).toHaveBeenCalledWith({
-        status: "success",
+        status: 'success',
         data: mockTemplate,
       });
     });
 
-    it("should return 404 when template not found", async () => {
+    it('should return 404 when template not found', async () => {
       (prisma.checkInTemplate.findFirst as jest.Mock).mockResolvedValue(null);
 
       const req = createMockRequest({
-        params: { id: "nonexistent-id" },
+        params: { id: 'nonexistent-id' },
       });
       const res = createMockResponse();
 
@@ -238,18 +238,18 @@ describe("Check-In Template Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
-        status: "error",
-        message: "Template not found",
+        status: 'error',
+        message: 'Template not found',
       });
     });
 
-    it("should handle database errors gracefully", async () => {
+    it('should handle database errors gracefully', async () => {
       (prisma.checkInTemplate.findFirst as jest.Mock).mockRejectedValue(
-        new Error("Query failed")
+        new Error('Query failed')
       );
 
       const req = createMockRequest({
-        params: { id: "template-1" },
+        params: { id: 'template-1' },
       });
       const res = createMockResponse();
 
@@ -260,11 +260,11 @@ describe("Check-In Template Controller", () => {
     });
   });
 
-  describe("getDefaultTemplate", () => {
-    it("should return the default active template", async () => {
+  describe('getDefaultTemplate', () => {
+    it('should return the default active template', async () => {
       const mockTemplate = {
-        id: "template-1",
-        name: "Default Check-In",
+        id: 'template-1',
+        name: 'Default Check-In',
         isDefault: true,
         isActive: true,
         sections: [],
@@ -282,19 +282,19 @@ describe("Check-In Template Controller", () => {
       expect(prisma.checkInTemplate.findFirst).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {
-            tenantId: "test-tenant",
+            tenantId: 'test-tenant',
             isDefault: true,
             isActive: true,
           },
         })
       );
       expect(res.json).toHaveBeenCalledWith({
-        status: "success",
+        status: 'success',
         data: mockTemplate,
       });
     });
 
-    it("should return 404 when no default template exists", async () => {
+    it('should return 404 when no default template exists', async () => {
       (prisma.checkInTemplate.findFirst as jest.Mock).mockResolvedValue(null);
 
       const req = createMockRequest();
@@ -304,14 +304,14 @@ describe("Check-In Template Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
-        status: "error",
-        message: "No default template found",
+        status: 'error',
+        message: 'No default template found',
       });
     });
 
-    it("should handle database errors gracefully", async () => {
+    it('should handle database errors gracefully', async () => {
       (prisma.checkInTemplate.findFirst as jest.Mock).mockRejectedValue(
-        new Error("Database error")
+        new Error('Database error')
       );
 
       const req = createMockRequest();
@@ -322,8 +322,8 @@ describe("Check-In Template Controller", () => {
       expect(logger.error).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        status: "error",
-        message: "Failed to fetch default template",
+        status: 'error',
+        message: 'Failed to fetch default template',
       });
     });
   });

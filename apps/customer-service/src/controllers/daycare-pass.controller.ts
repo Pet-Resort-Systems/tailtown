@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient, DaycarePassStatus } from "@prisma/client";
-import { AppError } from "../middleware/error.middleware";
-import { logger } from "../utils/logger";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient, DaycarePassStatus } from '@prisma/client';
+import { AppError } from '../middleware/error.middleware';
+import { logger } from '../utils/logger';
 
 const prisma = new PrismaClient();
 
@@ -31,26 +31,26 @@ export const getPassPackages = async (
   try {
     const tenantId = req.tenantId;
     if (!tenantId) {
-      return next(new AppError("Tenant ID is required", 400));
+      return next(new AppError('Tenant ID is required', 400));
     }
 
-    const includeInactive = req.query.includeInactive === "true";
+    const includeInactive = req.query.includeInactive === 'true';
 
     const packages = await prisma.daycarePassPackage.findMany({
       where: {
         tenantId,
         ...(includeInactive ? {} : { isActive: true }),
       },
-      orderBy: { sortOrder: "asc" },
+      orderBy: { sortOrder: 'asc' },
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: packages.length,
       data: packages,
     });
   } catch (error) {
-    logger.error("Error fetching pass packages", {
+    logger.error('Error fetching pass packages', {
       tenantId: req.tenantId,
       error,
     });
@@ -70,7 +70,7 @@ export const createPassPackage = async (
   try {
     const tenantId = req.tenantId;
     if (!tenantId) {
-      return next(new AppError("Tenant ID is required", 400));
+      return next(new AppError('Tenant ID is required', 400));
     }
 
     const {
@@ -88,18 +88,18 @@ export const createPassPackage = async (
     if (!name || !passCount || !price || !regularPricePerDay || !validityDays) {
       return next(
         new AppError(
-          "Missing required fields: name, passCount, price, regularPricePerDay, validityDays",
+          'Missing required fields: name, passCount, price, regularPricePerDay, validityDays',
           400
         )
       );
     }
 
     if (passCount < 1) {
-      return next(new AppError("Pass count must be at least 1", 400));
+      return next(new AppError('Pass count must be at least 1', 400));
     }
 
     if (validityDays < 1) {
-      return next(new AppError("Validity days must be at least 1", 400));
+      return next(new AppError('Validity days must be at least 1', 400));
     }
 
     const passPackage = await prisma.daycarePassPackage.create({
@@ -116,21 +116,21 @@ export const createPassPackage = async (
       },
     });
 
-    logger.info("Pass package created", {
+    logger.info('Pass package created', {
       tenantId,
       packageId: passPackage.id,
       name,
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: passPackage,
     });
   } catch (error: any) {
-    if (error.code === "P2002") {
-      return next(new AppError("A package with this name already exists", 409));
+    if (error.code === 'P2002') {
+      return next(new AppError('A package with this name already exists', 409));
     }
-    logger.error("Error creating pass package", {
+    logger.error('Error creating pass package', {
       tenantId: req.tenantId,
       error,
     });
@@ -152,7 +152,7 @@ export const updatePassPackage = async (
     const { id } = req.params;
 
     if (!tenantId) {
-      return next(new AppError("Tenant ID is required", 400));
+      return next(new AppError('Tenant ID is required', 400));
     }
 
     // Verify package exists and belongs to tenant
@@ -161,7 +161,7 @@ export const updatePassPackage = async (
     });
 
     if (!existing) {
-      return next(new AppError("Pass package not found", 404));
+      return next(new AppError('Pass package not found', 404));
     }
 
     const {
@@ -191,17 +191,17 @@ export const updatePassPackage = async (
       },
     });
 
-    logger.info("Pass package updated", { tenantId, packageId: id });
+    logger.info('Pass package updated', { tenantId, packageId: id });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: passPackage,
     });
   } catch (error: any) {
-    if (error.code === "P2002") {
-      return next(new AppError("A package with this name already exists", 409));
+    if (error.code === 'P2002') {
+      return next(new AppError('A package with this name already exists', 409));
     }
-    logger.error("Error updating pass package", {
+    logger.error('Error updating pass package', {
       tenantId: req.tenantId,
       packageId: req.params.id,
       error,
@@ -224,7 +224,7 @@ export const deletePassPackage = async (
     const { id } = req.params;
 
     if (!tenantId) {
-      return next(new AppError("Tenant ID is required", 400));
+      return next(new AppError('Tenant ID is required', 400));
     }
 
     // Verify package exists and belongs to tenant
@@ -233,7 +233,7 @@ export const deletePassPackage = async (
     });
 
     if (!existing) {
-      return next(new AppError("Pass package not found", 404));
+      return next(new AppError('Pass package not found', 404));
     }
 
     // Soft delete by deactivating
@@ -242,14 +242,14 @@ export const deletePassPackage = async (
       data: { isActive: false },
     });
 
-    logger.info("Pass package deactivated", { tenantId, packageId: id });
+    logger.info('Pass package deactivated', { tenantId, packageId: id });
 
     res.status(200).json({
-      status: "success",
-      message: "Pass package deactivated",
+      status: 'success',
+      message: 'Pass package deactivated',
     });
   } catch (error) {
-    logger.error("Error deleting pass package", {
+    logger.error('Error deleting pass package', {
       tenantId: req.tenantId,
       packageId: req.params.id,
       error,
@@ -274,36 +274,36 @@ export const getCustomerPasses = async (
   try {
     const tenantId = req.tenantId;
     const { customerId } = req.params;
-    const activeOnly = req.query.activeOnly !== "false";
+    const activeOnly = req.query.activeOnly !== 'false';
 
     if (!tenantId) {
-      return next(new AppError("Tenant ID is required", 400));
+      return next(new AppError('Tenant ID is required', 400));
     }
 
     const passes = await prisma.customerDaycarePass.findMany({
       where: {
         tenantId,
         customerId,
-        ...(activeOnly ? { status: "ACTIVE" } : {}),
+        ...(activeOnly ? { status: 'ACTIVE' } : {}),
       },
       include: {
         package: true,
         redemptions: {
-          orderBy: { redeemedAt: "desc" },
+          orderBy: { redeemedAt: 'desc' },
           take: 10, // Last 10 redemptions
         },
       },
-      orderBy: { purchasedAt: "desc" },
+      orderBy: { purchasedAt: 'desc' },
     });
 
     // Calculate summary
     const summary = {
       totalPassesRemaining: passes
-        .filter((p) => p.status === "ACTIVE")
+        .filter((p) => p.status === 'ACTIVE')
         .reduce((sum, p) => sum + p.passesRemaining, 0),
-      activePasses: passes.filter((p) => p.status === "ACTIVE").length,
+      activePasses: passes.filter((p) => p.status === 'ACTIVE').length,
       expiringSoon: passes.filter((p) => {
-        if (p.status !== "ACTIVE") return false;
+        if (p.status !== 'ACTIVE') return false;
         const daysUntilExpiry = Math.ceil(
           (p.expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
         );
@@ -312,12 +312,12 @@ export const getCustomerPasses = async (
     };
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       summary,
       data: passes,
     });
   } catch (error) {
-    logger.error("Error fetching customer passes", {
+    logger.error('Error fetching customer passes', {
       tenantId: req.tenantId,
       customerId: req.params.customerId,
       error,
@@ -338,14 +338,14 @@ export const purchasePass = async (
   try {
     const tenantId = req.tenantId;
     if (!tenantId) {
-      return next(new AppError("Tenant ID is required", 400));
+      return next(new AppError('Tenant ID is required', 400));
     }
 
     const { customerId, packageId, invoiceId, paymentId, notes } = req.body;
     const createdBy = req.user?.id;
 
     if (!customerId || !packageId) {
-      return next(new AppError("Customer ID and Package ID are required", 400));
+      return next(new AppError('Customer ID and Package ID are required', 400));
     }
 
     // Get the package
@@ -354,7 +354,7 @@ export const purchasePass = async (
     });
 
     if (!passPackage) {
-      return next(new AppError("Pass package not found or inactive", 404));
+      return next(new AppError('Pass package not found or inactive', 404));
     }
 
     // Calculate expiration date
@@ -383,7 +383,7 @@ export const purchasePass = async (
       },
     });
 
-    logger.info("Pass purchased", {
+    logger.info('Pass purchased', {
       tenantId,
       customerId,
       passId: customerPass.id,
@@ -392,11 +392,11 @@ export const purchasePass = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: customerPass,
     });
   } catch (error) {
-    logger.error("Error purchasing pass", { tenantId: req.tenantId, error });
+    logger.error('Error purchasing pass', { tenantId: req.tenantId, error });
     next(error);
   }
 };
@@ -417,11 +417,11 @@ export const redeemPass = async (
     const redeemedBy = req.user?.id;
 
     if (!tenantId) {
-      return next(new AppError("Tenant ID is required", 400));
+      return next(new AppError('Tenant ID is required', 400));
     }
 
     if (!petId) {
-      return next(new AppError("Pet ID is required", 400));
+      return next(new AppError('Pet ID is required', 400));
     }
 
     // Get the pass with transaction lock
@@ -431,24 +431,24 @@ export const redeemPass = async (
       });
 
       if (!customerPass) {
-        throw new AppError("Pass not found", 404);
+        throw new AppError('Pass not found', 404);
       }
 
-      if (customerPass.status !== "ACTIVE") {
+      if (customerPass.status !== 'ACTIVE') {
         throw new AppError(`Pass is ${customerPass.status.toLowerCase()}`, 400);
       }
 
       if (customerPass.passesRemaining < 1) {
-        throw new AppError("No passes remaining", 400);
+        throw new AppError('No passes remaining', 400);
       }
 
       if (customerPass.expiresAt < new Date()) {
         // Auto-expire the pass
         await tx.customerDaycarePass.update({
           where: { id: passId },
-          data: { status: "EXPIRED" },
+          data: { status: 'EXPIRED' },
         });
-        throw new AppError("Pass has expired", 400);
+        throw new AppError('Pass has expired', 400);
       }
 
       const passesBeforeUse = customerPass.passesRemaining;
@@ -475,7 +475,7 @@ export const redeemPass = async (
         data: {
           passesRemaining: passesAfterUse,
           passesUsed: customerPass.passesUsed + 1,
-          status: passesAfterUse === 0 ? "EXHAUSTED" : "ACTIVE",
+          status: passesAfterUse === 0 ? 'EXHAUSTED' : 'ACTIVE',
         },
         include: {
           package: true,
@@ -485,7 +485,7 @@ export const redeemPass = async (
       return { pass: updatedPass, redemption };
     });
 
-    logger.info("Pass redeemed", {
+    logger.info('Pass redeemed', {
       tenantId,
       passId,
       petId,
@@ -493,7 +493,7 @@ export const redeemPass = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       message: `Pass redeemed. ${result.pass.passesRemaining} passes remaining.`,
       data: {
         pass: result.pass,
@@ -504,7 +504,7 @@ export const redeemPass = async (
     if (error instanceof AppError) {
       return next(error);
     }
-    logger.error("Error redeeming pass", {
+    logger.error('Error redeeming pass', {
       tenantId: req.tenantId,
       passId: req.params.passId,
       error,
@@ -529,11 +529,11 @@ export const reverseRedemption = async (
     const reversedBy = req.user?.id;
 
     if (!tenantId) {
-      return next(new AppError("Tenant ID is required", 400));
+      return next(new AppError('Tenant ID is required', 400));
     }
 
     if (!reason) {
-      return next(new AppError("Reversal reason is required", 400));
+      return next(new AppError('Reversal reason is required', 400));
     }
 
     const result = await prisma.$transaction(async (tx) => {
@@ -543,11 +543,11 @@ export const reverseRedemption = async (
       });
 
       if (!redemption) {
-        throw new AppError("Redemption not found", 404);
+        throw new AppError('Redemption not found', 404);
       }
 
       if (redemption.isReversed) {
-        throw new AppError("Redemption already reversed", 400);
+        throw new AppError('Redemption already reversed', 400);
       }
 
       // Mark redemption as reversed
@@ -567,7 +567,7 @@ export const reverseRedemption = async (
         data: {
           passesRemaining: redemption.customerPass.passesRemaining + 1,
           passesUsed: Math.max(0, redemption.customerPass.passesUsed - 1),
-          status: "ACTIVE", // Reactivate if it was exhausted
+          status: 'ACTIVE', // Reactivate if it was exhausted
         },
         include: { package: true },
       });
@@ -575,7 +575,7 @@ export const reverseRedemption = async (
       return { pass: updatedPass, redemption: updatedRedemption };
     });
 
-    logger.info("Redemption reversed", {
+    logger.info('Redemption reversed', {
       tenantId,
       redemptionId,
       passId: result.pass.id,
@@ -583,15 +583,15 @@ export const reverseRedemption = async (
     });
 
     res.status(200).json({
-      status: "success",
-      message: "Redemption reversed. Pass restored.",
+      status: 'success',
+      message: 'Redemption reversed. Pass restored.',
       data: result,
     });
   } catch (error) {
     if (error instanceof AppError) {
       return next(error);
     }
-    logger.error("Error reversing redemption", {
+    logger.error('Error reversing redemption', {
       tenantId: req.tenantId,
       redemptionId: req.params.redemptionId,
       error,
@@ -616,11 +616,11 @@ export const autoRedeemPass = async (
     const redeemedBy = req.user?.id;
 
     if (!tenantId) {
-      return next(new AppError("Tenant ID is required", 400));
+      return next(new AppError('Tenant ID is required', 400));
     }
 
     if (!customerId || !petId) {
-      return next(new AppError("Customer ID and Pet ID are required", 400));
+      return next(new AppError('Customer ID and Pet ID are required', 400));
     }
 
     // Find the best pass (expiring soonest with remaining balance)
@@ -628,18 +628,18 @@ export const autoRedeemPass = async (
       where: {
         tenantId,
         customerId,
-        status: "ACTIVE",
+        status: 'ACTIVE',
         passesRemaining: { gt: 0 },
         expiresAt: { gt: new Date() },
       },
-      orderBy: { expiresAt: "asc" },
+      orderBy: { expiresAt: 'asc' },
     });
 
     if (!bestPass) {
       return res.status(200).json({
-        status: "success",
+        status: 'success',
         redeemed: false,
-        message: "No available passes for this customer",
+        message: 'No available passes for this customer',
         data: null,
       });
     }
@@ -670,7 +670,7 @@ export const autoRedeemPass = async (
         data: {
           passesRemaining: passesAfterUse,
           passesUsed: bestPass.passesUsed + 1,
-          status: passesAfterUse === 0 ? "EXHAUSTED" : "ACTIVE",
+          status: passesAfterUse === 0 ? 'EXHAUSTED' : 'ACTIVE',
         },
         include: {
           package: true,
@@ -680,7 +680,7 @@ export const autoRedeemPass = async (
       return { pass: updatedPass, redemption };
     });
 
-    logger.info("Pass auto-redeemed", {
+    logger.info('Pass auto-redeemed', {
       tenantId,
       customerId,
       passId: bestPass.id,
@@ -689,7 +689,7 @@ export const autoRedeemPass = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       redeemed: true,
       message: `Pass redeemed. ${result.pass.passesRemaining} passes remaining.`,
       data: {
@@ -698,7 +698,7 @@ export const autoRedeemPass = async (
       },
     });
   } catch (error) {
-    logger.error("Error auto-redeeming pass", {
+    logger.error('Error auto-redeeming pass', {
       tenantId: req.tenantId,
       customerId: req.body.customerId,
       error,
@@ -721,14 +721,14 @@ export const checkAvailablePasses = async (
     const { customerId } = req.params;
 
     if (!tenantId) {
-      return next(new AppError("Tenant ID is required", 400));
+      return next(new AppError('Tenant ID is required', 400));
     }
 
     const activePasses = await prisma.customerDaycarePass.findMany({
       where: {
         tenantId,
         customerId,
-        status: "ACTIVE",
+        status: 'ACTIVE',
         passesRemaining: { gt: 0 },
         expiresAt: { gt: new Date() },
       },
@@ -737,7 +737,7 @@ export const checkAvailablePasses = async (
           select: { name: true },
         },
       },
-      orderBy: { expiresAt: "asc" }, // Use passes expiring soonest first
+      orderBy: { expiresAt: 'asc' }, // Use passes expiring soonest first
     });
 
     const totalRemaining = activePasses.reduce(
@@ -746,7 +746,7 @@ export const checkAvailablePasses = async (
     );
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       hasAvailablePasses: totalRemaining > 0,
       totalPassesRemaining: totalRemaining,
       passes: activePasses.map((p) => ({
@@ -757,7 +757,7 @@ export const checkAvailablePasses = async (
       })),
     });
   } catch (error) {
-    logger.error("Error checking available passes", {
+    logger.error('Error checking available passes', {
       tenantId: req.tenantId,
       customerId: req.params.customerId,
       error,

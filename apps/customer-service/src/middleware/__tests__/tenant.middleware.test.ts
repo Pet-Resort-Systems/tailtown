@@ -1,5 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { extractTenantContext, requireTenant, TenantRequest } from '../tenant.middleware';
+import {
+  extractTenantContext,
+  requireTenant,
+  TenantRequest,
+} from '../tenant.middleware';
 import { PrismaClient } from '@prisma/client';
 
 // Mock Prisma
@@ -25,7 +29,9 @@ describe('Tenant Middleware', () => {
     mockRequest = {
       headers: {},
       query: {},
-      get hostname() { return 'localhost'; },
+      get hostname() {
+        return 'localhost';
+      },
     } as any;
     mockResponse = {
       status: jest.fn().mockReturnThis(),
@@ -43,8 +49,11 @@ describe('Tenant Middleware', () => {
 
   describe('extractTenantContext', () => {
     it('should extract tenant from subdomain', async () => {
-      Object.defineProperty(mockRequest, 'hostname', { value: 'brangro.canicloud.com', writable: true });
-      
+      Object.defineProperty(mockRequest, 'hostname', {
+        value: 'brangro.canicloud.com',
+        writable: true,
+      });
+
       prisma.tenant.findUnique.mockResolvedValue({
         id: 'brangro',
         subdomain: 'brangro',
@@ -65,7 +74,7 @@ describe('Tenant Middleware', () => {
 
     it('should extract tenant from X-Tenant-Subdomain header', async () => {
       mockRequest.headers = { 'x-tenant-subdomain': 'testclient' };
-      
+
       prisma.tenant.findUnique.mockResolvedValue({
         id: 'testclient',
         subdomain: 'testclient',
@@ -85,7 +94,7 @@ describe('Tenant Middleware', () => {
 
     it('should extract tenant from query parameter', async () => {
       mockRequest.query = { tenant: 'queryclient' };
-      
+
       prisma.tenant.findUnique.mockResolvedValue({
         id: 'queryclient',
         subdomain: 'queryclient',
@@ -104,8 +113,11 @@ describe('Tenant Middleware', () => {
     });
 
     it('should default to "dev" when no tenant specified', async () => {
-      Object.defineProperty(mockRequest, 'hostname', { value: 'localhost', writable: true });
-      
+      Object.defineProperty(mockRequest, 'hostname', {
+        value: 'localhost',
+        writable: true,
+      });
+
       prisma.tenant.findUnique.mockResolvedValue({
         id: 'dev',
         subdomain: 'dev',
@@ -124,8 +136,11 @@ describe('Tenant Middleware', () => {
     });
 
     it('should handle inactive tenant', async () => {
-      Object.defineProperty(mockRequest, 'hostname', { value: 'inactive.canicloud.com', writable: true });
-      
+      Object.defineProperty(mockRequest, 'hostname', {
+        value: 'inactive.canicloud.com',
+        writable: true,
+      });
+
       prisma.tenant.findUnique.mockResolvedValue({
         id: 'inactive',
         subdomain: 'inactive',
@@ -149,8 +164,11 @@ describe('Tenant Middleware', () => {
     });
 
     it('should handle non-existent tenant', async () => {
-      Object.defineProperty(mockRequest, 'hostname', { value: 'nonexistent.canicloud.com', writable: true });
-      
+      Object.defineProperty(mockRequest, 'hostname', {
+        value: 'nonexistent.canicloud.com',
+        writable: true,
+      });
+
       prisma.tenant.findUnique.mockResolvedValue(null);
 
       await extractTenantContext(

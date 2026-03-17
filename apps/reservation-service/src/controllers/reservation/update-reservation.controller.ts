@@ -5,35 +5,35 @@
  * It implements schema alignment strategy with defensive programming.
  */
 
-import { Request, Response } from "express";
-import { AppError } from "../../utils/service";
-import { catchAsync } from "../../middleware/catchAsync";
-import { logger } from "../../utils/logger";
-import { detectReservationConflicts } from "../../utils/reservation-conflicts";
+import { Request, Response } from 'express';
+import { AppError } from '../../utils/service';
+import { catchAsync } from '../../middleware/catchAsync';
+import { logger } from '../../utils/logger';
+import { detectReservationConflicts } from '../../utils/reservation-conflicts';
 import {
   ExtendedReservationWhereInput,
   ExtendedResourceWhereInput,
   ExtendedReservationInclude,
   ExtendedServiceWhereInput,
-} from "../../types/prisma-extensions";
-import { safeExecutePrismaQuery, prisma } from "./utils/prisma-helpers";
-import { customerServiceClient } from "../../clients/customer-service.client";
-import { notificationClient } from "../../clients/notification.client";
+} from '../../types/prisma-extensions';
+import { safeExecutePrismaQuery, prisma } from './utils/prisma-helpers';
+import { customerServiceClient } from '../../clients/customer-service.client';
+import { notificationClient } from '../../clients/notification.client';
 import {
   logStatusChange,
   logReservationUpdated,
-} from "../../services/reservation-activity.service";
+} from '../../services/reservation-activity.service';
 
 /**
  * Helper function to determine suite type based on service type
  */
 function determineSuiteType(serviceType: string): string | null {
   const serviceToSuiteMap: Record<string, string> = {
-    BOARDING: "KENNEL",
-    DAYCARE: "PLAY_AREA",
-    GROOMING: "GROOMING_STATION",
-    TRAINING: "TRAINING_AREA",
-    VET: "EXAM_ROOM",
+    BOARDING: 'KENNEL',
+    DAYCARE: 'PLAY_AREA',
+    GROOMING: 'GROOMING_STATION',
+    TRAINING: 'TRAINING_AREA',
+    VET: 'EXAM_ROOM',
   };
 
   return serviceToSuiteMap[serviceType.toUpperCase()] || null;
@@ -61,17 +61,17 @@ export const updateReservation = catchAsync(
 
     // Get tenant ID from request - added by tenant middleware
     // In development mode, use a default tenant ID if not provided
-    const isDev = process.env.NODE_ENV === "development";
-    const tenantId = req.tenantId || (isDev ? "dev-tenant-001" : undefined);
+    const isDev = process.env.NODE_ENV === 'development';
+    const tenantId = req.tenantId || (isDev ? 'dev-tenant-001' : undefined);
     if (!tenantId) {
       logger.warn(`Missing tenant ID in request`, { requestId });
-      throw AppError.authorizationError("Tenant ID is required");
+      throw AppError.authorizationError('Tenant ID is required');
     }
 
     const { id } = req.params;
     if (!id) {
       logger.warn(`Missing reservation ID in request`, { requestId });
-      throw AppError.validationError("Reservation ID is required");
+      throw AppError.validationError('Reservation ID is required');
     }
 
     // First, check if the reservation exists and belongs to this tenant
@@ -116,7 +116,7 @@ export const updateReservation = catchAsync(
         `Reservation not found or does not belong to tenant: ${tenantId}`,
         { requestId }
       );
-      throw AppError.notFoundError("Reservation not found");
+      throw AppError.notFoundError('Reservation not found');
     }
 
     logger.info(`Found existing reservation: ${id}`, { requestId });
@@ -148,7 +148,7 @@ export const updateReservation = catchAsync(
     if (customerId !== undefined) {
       if (!customerId) {
         logger.warn(`Invalid customer ID provided`, { requestId });
-        throw AppError.validationError("Valid customer ID is required");
+        throw AppError.validationError('Valid customer ID is required');
       }
 
       // Verify customer exists and belongs to tenant via Customer Service API
@@ -171,7 +171,7 @@ export const updateReservation = catchAsync(
     if (petId !== undefined) {
       if (!petId) {
         logger.warn(`Invalid pet ID provided`, { requestId });
-        throw AppError.validationError("Valid pet ID is required");
+        throw AppError.validationError('Valid pet ID is required');
       }
 
       // Verify pet exists and belongs to tenant via Customer Service API
@@ -189,7 +189,7 @@ export const updateReservation = catchAsync(
     if (serviceId !== undefined) {
       if (!serviceId) {
         logger.warn(`Invalid service ID provided`, { requestId });
-        throw AppError.validationError("Valid service ID is required");
+        throw AppError.validationError('Valid service ID is required');
       }
 
       // Verify service exists
@@ -220,7 +220,7 @@ export const updateReservation = catchAsync(
         if (isNaN(parsedStartDate.getTime())) {
           logger.warn(`Invalid start date format: ${startDate}`, { requestId });
           throw AppError.validationError(
-            "Invalid start date format. Use YYYY-MM-DD"
+            'Invalid start date format. Use YYYY-MM-DD'
           );
         }
         updateData.startDate = parsedStartDate;
@@ -230,7 +230,7 @@ export const updateReservation = catchAsync(
           error,
         });
         throw AppError.validationError(
-          "Invalid start date format. Use YYYY-MM-DD"
+          'Invalid start date format. Use YYYY-MM-DD'
         );
       }
     } else if (existingReservation.startDate) {
@@ -243,14 +243,14 @@ export const updateReservation = catchAsync(
         if (isNaN(parsedEndDate.getTime())) {
           logger.warn(`Invalid end date format: ${endDate}`, { requestId });
           throw AppError.validationError(
-            "Invalid end date format. Use YYYY-MM-DD"
+            'Invalid end date format. Use YYYY-MM-DD'
           );
         }
         updateData.endDate = parsedEndDate;
       } catch (error) {
         logger.warn(`Error parsing end date: ${endDate}`, { requestId, error });
         throw AppError.validationError(
-          "Invalid end date format. Use YYYY-MM-DD"
+          'Invalid end date format. Use YYYY-MM-DD'
         );
       }
     } else if (existingReservation.endDate) {
@@ -265,7 +265,7 @@ export const updateReservation = catchAsync(
           `Start date must be before end date: ${startDate} - ${endDate}`,
           { requestId }
         );
-        throw AppError.validationError("Start date must be before end date");
+        throw AppError.validationError('Start date must be before end date');
       }
 
       // Check if start date is in the past
@@ -275,7 +275,7 @@ export const updateReservation = catchAsync(
       if (parsedStartDate < currentDate) {
         logger.warn(`Start date is in the past: ${startDate}`, { requestId });
         warnings.push(
-          "Start date is in the past. This is allowed but may indicate an error."
+          'Start date is in the past. This is allowed but may indicate an error.'
         );
       }
     }
@@ -337,7 +337,7 @@ export const updateReservation = catchAsync(
     }
 
     const requiresKennel =
-      serviceCategory === "BOARDING" || serviceCategory === "DAYCARE";
+      serviceCategory === 'BOARDING' || serviceCategory === 'DAYCARE';
 
     // Check if trying to remove resourceId from a boarding/daycare reservation
     if (
@@ -470,7 +470,7 @@ export const updateReservation = catchAsync(
           if (
             petConflictResult.hasConflicts &&
             petConflictResult.warnings.some((w) =>
-              w.includes("Pet already has")
+              w.includes('Pet already has')
             )
           ) {
             logger.warn(
@@ -479,8 +479,8 @@ export const updateReservation = catchAsync(
             );
             warnings.push(
               petConflictResult.warnings.find((w) =>
-                w.includes("Pet already has")
-              ) || "Pet already has another reservation during this time"
+                w.includes('Pet already has')
+              ) || 'Pet already has another reservation during this time'
             );
           }
 
@@ -495,7 +495,7 @@ export const updateReservation = catchAsync(
       } catch (error) {
         logger.warn(`Error auto-assigning resource:`, { requestId, error });
         warnings.push(
-          "Failed to auto-assign a resource. The reservation will be updated without a resource assignment."
+          'Failed to auto-assign a resource. The reservation will be updated without a resource assignment.'
         );
       }
     }
@@ -610,7 +610,7 @@ export const updateReservation = catchAsync(
                     reservationId: id,
                     serviceId: addOn.serviceId,
                     quantity: addOn.quantity || 1,
-                    notes: addOn.notes || "",
+                    notes: addOn.notes || '',
                     // organizationId removed as it's not in the schema
                   } as any,
                 });
@@ -623,7 +623,7 @@ export const updateReservation = catchAsync(
       } catch (error) {
         logger.warn(`Error processing add-on services:`, { requestId, error });
         warnings.push(
-          "There was an issue processing add-on services, but the reservation was updated successfully."
+          'There was an issue processing add-on services, but the reservation was updated successfully.'
         );
       }
     }
@@ -633,7 +633,7 @@ export const updateReservation = catchAsync(
     // Log the activity
     if (tenantId) {
       // Determine actor type - assume employee for dashboard updates
-      const actorType = "EMPLOYEE";
+      const actorType = 'EMPLOYEE';
       const actorId = req.body.updatedBy || undefined;
 
       // Log status change if status was updated
@@ -641,40 +641,40 @@ export const updateReservation = catchAsync(
         logStatusChange(
           tenantId as string,
           id,
-          existingReservation.status || "PENDING",
+          existingReservation.status || 'PENDING',
           status,
           actorType,
           actorId,
           undefined,
           req.ip,
-          req.get("user-agent")
+          req.get('user-agent')
         ).catch((err) =>
-          logger.warn("Failed to log status change activity", { err })
+          logger.warn('Failed to log status change activity', { err })
         );
       } else {
         // Log general update
         const changes: { field: string; from: any; to: any }[] = [];
         if (startDate)
           changes.push({
-            field: "startDate",
+            field: 'startDate',
             from: existingReservation.startDate,
             to: startDate,
           });
         if (endDate)
           changes.push({
-            field: "endDate",
+            field: 'endDate',
             from: existingReservation.endDate,
             to: endDate,
           });
         if (notes !== undefined)
           changes.push({
-            field: "notes",
+            field: 'notes',
             from: existingReservation.notes,
             to: notes,
           });
         if (resourceId)
           changes.push({
-            field: "resourceId",
+            field: 'resourceId',
             from: existingReservation.resourceId,
             to: resourceId,
           });
@@ -688,9 +688,9 @@ export const updateReservation = catchAsync(
             actorId,
             undefined,
             req.ip,
-            req.get("user-agent")
+            req.get('user-agent')
           ).catch((err) =>
-            logger.warn("Failed to log reservation update activity", { err })
+            logger.warn('Failed to log reservation update activity', { err })
           );
         }
       }
@@ -698,9 +698,9 @@ export const updateReservation = catchAsync(
 
     // Send notifications for status changes (async, don't block response)
     if (status && existingReservation.status !== status && tenantId) {
-      const oldStatus = existingReservation.status || "PENDING";
+      const oldStatus = existingReservation.status || 'PENDING';
 
-      if (status === "CHECKED_IN") {
+      if (status === 'CHECKED_IN') {
         notificationClient
           .sendCheckInNotification({
             reservationId: id,
@@ -712,7 +712,7 @@ export const updateReservation = catchAsync(
               { requestId }
             );
           });
-      } else if (status === "CHECKED_OUT") {
+      } else if (status === 'CHECKED_OUT') {
         notificationClient
           .sendCheckOutNotification({
             reservationId: id,
@@ -724,7 +724,7 @@ export const updateReservation = catchAsync(
               { requestId }
             );
           });
-      } else if (status === "CONFIRMED") {
+      } else if (status === 'CONFIRMED') {
         notificationClient
           .sendReservationConfirmation({
             reservationId: id,
@@ -754,13 +754,13 @@ export const updateReservation = catchAsync(
     }
 
     // Prepare response message
-    let message = "Reservation updated successfully";
+    let message = 'Reservation updated successfully';
     if (warnings.length > 0) {
-      message += ` with warnings: ${warnings.join(" ")}`;
+      message += ` with warnings: ${warnings.join(' ')}`;
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       message,
       data: {
         reservation: updatedReservation,

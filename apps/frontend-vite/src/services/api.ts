@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosResponse, AxiosError } from "axios";
+import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 
 /**
  * API service layer for Tailtown microservices
@@ -7,7 +7,7 @@ import axios, { AxiosInstance, AxiosResponse, AxiosError } from "axios";
 
 // Default headers for all API instances
 const defaultHeaders = {
-  "Content-Type": "application/json",
+  'Content-Type': 'application/json',
 };
 
 // Default validation for all API instances
@@ -24,8 +24,8 @@ const API_TIMEOUT: number = (() => {
 const getTenantId = (): string | undefined => {
   try {
     const fromStorage =
-      localStorage.getItem("tailtown_tenant_id") ||
-      localStorage.getItem("tenantId");
+      localStorage.getItem('tailtown_tenant_id') ||
+      localStorage.getItem('tenantId');
     if (fromStorage && fromStorage.trim()) return fromStorage.trim();
   } catch (_) {
     // Access to localStorage might fail in non-browser environments
@@ -35,7 +35,7 @@ const getTenantId = (): string | undefined => {
 };
 
 // Only log API requests/responses in development
-const isDev = process.env.NODE_ENV === "development";
+const isDev = process.env.NODE_ENV === 'development';
 
 // Add request interceptor for logging and auth token
 const addRequestInterceptor = (instance: AxiosInstance) => {
@@ -56,19 +56,19 @@ const addRequestInterceptor = (instance: AxiosInstance) => {
 
       // Add JWT token to requests if available
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem('token');
         if (token && config.headers) {
           config.headers.Authorization = `Bearer ${token}`;
         }
       } catch (error) {
         // localStorage might not be available
-        console.warn("Could not access token from localStorage:", error);
+        console.warn('Could not access token from localStorage:', error);
       }
 
       return config;
     },
     (error) => {
-      console.error("API Request Error:", error);
+      console.error('API Request Error:', error);
       return Promise.reject(error);
     }
   );
@@ -92,17 +92,17 @@ const addResponseInterceptor = (instance: AxiosInstance) => {
       // If auth fails, clear session so UI can prompt for login again
       if (error.response?.status === 401) {
         try {
-          localStorage.removeItem("token");
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("tokenTimestamp");
-          localStorage.removeItem("user");
-          localStorage.removeItem("impersonationToken");
+          localStorage.removeItem('token');
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('tokenTimestamp');
+          localStorage.removeItem('user');
+          localStorage.removeItem('impersonationToken');
         } catch (_) {
           // ignore
         }
       }
 
-      console.error("API Response Error:", {
+      console.error('API Response Error:', {
         message: error.message,
         status: error.response?.status,
         data: error.response?.data,
@@ -124,10 +124,10 @@ const getApiBaseUrl = (): string => {
     return envUrl;
   }
   // In production (no env var set), use current origin for multi-tenant support
-  if (typeof window !== "undefined") {
+  if (typeof window !== 'undefined') {
     return window.location.origin;
   }
-  return "";
+  return '';
 };
 
 /**
@@ -146,25 +146,25 @@ customerApi.interceptors.request.use(
   (config) => {
     const tenantId = getTenantId();
     // Check for impersonation token first, then fall back to regular access token or token
-    const impersonationToken = localStorage.getItem("impersonationToken");
+    const impersonationToken = localStorage.getItem('impersonationToken');
     const accessToken =
       impersonationToken ||
-      localStorage.getItem("accessToken") ||
-      localStorage.getItem("token");
+      localStorage.getItem('accessToken') ||
+      localStorage.getItem('token');
 
     if (tenantId) {
       config.headers = {
         ...(config.headers || {}),
-        "x-tenant-id": tenantId,
+        'x-tenant-id': tenantId,
       } as any;
     } else {
       // Skip warning for system/super-admin endpoints that don't require tenant ID
       const isSystemEndpoint =
-        config.url?.includes("/system/") ||
-        config.url?.includes("/super-admin/");
+        config.url?.includes('/system/') ||
+        config.url?.includes('/super-admin/');
       if (!isSystemEndpoint) {
         console.warn(
-          "Tenant ID not set; requests may be rejected by the server"
+          'Tenant ID not set; requests may be rejected by the server'
         );
       }
     }
@@ -216,25 +216,25 @@ reservationApi.interceptors.request.use(
   (config) => {
     const tenantId = getTenantId();
     // Check for impersonation token first, then fall back to regular access token or token
-    const impersonationToken = localStorage.getItem("impersonationToken");
+    const impersonationToken = localStorage.getItem('impersonationToken');
     const accessToken =
       impersonationToken ||
-      localStorage.getItem("accessToken") ||
-      localStorage.getItem("token");
+      localStorage.getItem('accessToken') ||
+      localStorage.getItem('token');
 
     if (tenantId) {
       config.headers = {
         ...(config.headers || {}),
-        "x-tenant-id": tenantId,
+        'x-tenant-id': tenantId,
       } as any;
     } else {
       // Skip warning for system/super-admin endpoints that don't require tenant ID
       const isSystemEndpoint =
-        config.url?.includes("/system/") ||
-        config.url?.includes("/super-admin/");
+        config.url?.includes('/system/') ||
+        config.url?.includes('/super-admin/');
       if (!isSystemEndpoint) {
         console.warn(
-          "Tenant ID not set; requests may be rejected by the server"
+          'Tenant ID not set; requests may be rejected by the server'
         );
       }
     }
@@ -269,8 +269,8 @@ export const safeApiCall = async <T>(
     const response = await apiCall;
     return response.data;
   } catch (error: any) {
-    console.error("API call failed:", error.message);
-    console.error("Error details:", {
+    console.error('API call failed:', error.message);
+    console.error('Error details:', {
       status: error.response?.status,
       data: error.response?.data,
     });

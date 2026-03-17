@@ -1,6 +1,6 @@
 /**
  * API Error Handling Tests
- * 
+ *
  * Tests for API interaction patterns and error handling.
  * These define what "working" means for API communication.
  */
@@ -19,7 +19,7 @@ describe('API Error Handling Patterns', () => {
 
   /**
    * ERROR HANDLING: Network Errors
-   * 
+   *
    * Defines "working" as:
    * - Network errors are caught
    * - User-friendly error messages are provided
@@ -29,7 +29,7 @@ describe('API Error Handling Patterns', () => {
     it('should handle network timeout errors', async () => {
       const error = new Error('Network timeout');
       error.name = 'ECONNABORTED';
-      
+
       mockedAxios.get.mockRejectedValue(error);
 
       try {
@@ -43,7 +43,7 @@ describe('API Error Handling Patterns', () => {
     it('should handle connection refused errors', async () => {
       const error = new Error('Connection refused');
       error.name = 'ECONNREFUSED';
-      
+
       mockedAxios.get.mockRejectedValue(error);
 
       try {
@@ -56,7 +56,7 @@ describe('API Error Handling Patterns', () => {
 
     it('should handle DNS resolution errors', async () => {
       const error = new Error('getaddrinfo ENOTFOUND');
-      
+
       mockedAxios.get.mockRejectedValue(error);
 
       try {
@@ -70,7 +70,7 @@ describe('API Error Handling Patterns', () => {
 
   /**
    * ERROR HANDLING: HTTP Status Codes
-   * 
+   *
    * Defines "working" as:
    * - 4xx errors show user-actionable messages
    * - 5xx errors show system error messages
@@ -85,12 +85,12 @@ describe('API Error Handling Patterns', () => {
             message: 'Validation failed',
             errors: {
               email: 'Invalid email format',
-              phone: 'Phone number required'
-            }
-          }
-        }
+              phone: 'Phone number required',
+            },
+          },
+        },
       };
-      
+
       mockedAxios.post.mockRejectedValue(error);
 
       try {
@@ -106,10 +106,10 @@ describe('API Error Handling Patterns', () => {
       const error = {
         response: {
           status: 401,
-          data: { message: 'Authentication required' }
-        }
+          data: { message: 'Authentication required' },
+        },
       };
-      
+
       mockedAxios.get.mockRejectedValue(error);
 
       try {
@@ -125,10 +125,10 @@ describe('API Error Handling Patterns', () => {
       const error = {
         response: {
           status: 403,
-          data: { message: 'Access denied' }
-        }
+          data: { message: 'Access denied' },
+        },
       };
-      
+
       mockedAxios.get.mockRejectedValue(error);
 
       try {
@@ -143,10 +143,10 @@ describe('API Error Handling Patterns', () => {
       const error = {
         response: {
           status: 404,
-          data: { message: 'Customer not found' }
-        }
+          data: { message: 'Customer not found' },
+        },
       };
-      
+
       mockedAxios.get.mockRejectedValue(error);
 
       try {
@@ -162,14 +162,16 @@ describe('API Error Handling Patterns', () => {
       const error = {
         response: {
           status: 409,
-          data: { message: 'Customer with this email already exists' }
-        }
+          data: { message: 'Customer with this email already exists' },
+        },
       };
-      
+
       mockedAxios.post.mockRejectedValue(error);
 
       try {
-        await customerApi.post('/api/customers', { email: 'existing@example.com' });
+        await customerApi.post('/api/customers', {
+          email: 'existing@example.com',
+        });
         fail('Should have thrown error');
       } catch (e: any) {
         expect(e.response.status).toBe(409);
@@ -183,11 +185,11 @@ describe('API Error Handling Patterns', () => {
           status: 422,
           data: {
             message: 'Invalid data',
-            errors: ['Check-in date must be before check-out date']
-          }
-        }
+            errors: ['Check-in date must be before check-out date'],
+          },
+        },
       };
-      
+
       mockedAxios.post.mockRejectedValue(error);
 
       try {
@@ -203,10 +205,10 @@ describe('API Error Handling Patterns', () => {
       const error = {
         response: {
           status: 500,
-          data: { message: 'Internal server error' }
-        }
+          data: { message: 'Internal server error' },
+        },
       };
-      
+
       mockedAxios.get.mockRejectedValue(error);
 
       try {
@@ -222,10 +224,10 @@ describe('API Error Handling Patterns', () => {
       const error = {
         response: {
           status: 503,
-          data: { message: 'Service temporarily unavailable' }
-        }
+          data: { message: 'Service temporarily unavailable' },
+        },
       };
-      
+
       mockedAxios.get.mockRejectedValue(error);
 
       try {
@@ -240,7 +242,7 @@ describe('API Error Handling Patterns', () => {
 
   /**
    * ERROR HANDLING: Request/Response Transformation
-   * 
+   *
    * Defines "working" as:
    * - Requests are properly formatted
    * - Responses are properly parsed
@@ -251,7 +253,7 @@ describe('API Error Handling Patterns', () => {
     it('should transform dates to ISO strings in requests', () => {
       const requestData = {
         checkIn: new Date('2025-10-24'),
-        checkOut: new Date('2025-10-26')
+        checkOut: new Date('2025-10-26'),
       };
 
       // Verify dates are serialized correctly
@@ -263,7 +265,7 @@ describe('API Error Handling Patterns', () => {
     it('should parse ISO date strings in responses', () => {
       const responseData = {
         checkIn: '2025-10-24T00:00:00Z',
-        checkOut: '2025-10-26T00:00:00Z'
+        checkOut: '2025-10-26T00:00:00Z',
       };
 
       const checkIn = new Date(responseData.checkIn);
@@ -281,8 +283,8 @@ describe('API Error Handling Patterns', () => {
           firstName: 'John',
           lastName: 'Doe',
           middleName: null,
-          notes: null
-        }
+          notes: null,
+        },
       };
 
       expect(responseData.customer.middleName).toBeNull();
@@ -293,7 +295,7 @@ describe('API Error Handling Patterns', () => {
       const responseData = {
         data: [],
         totalPages: 0,
-        currentPage: 1
+        currentPage: 1,
       };
 
       expect(responseData.data).toEqual([]);
@@ -305,7 +307,7 @@ describe('API Error Handling Patterns', () => {
         data: [{ id: '1' }, { id: '2' }],
         totalPages: 5,
         currentPage: 2,
-        totalResults: 50
+        totalResults: 50,
       };
 
       expect(responseData.data).toHaveLength(2);
@@ -317,7 +319,7 @@ describe('API Error Handling Patterns', () => {
 
   /**
    * ERROR HANDLING: Retry Logic
-   * 
+   *
    * Defines "working" as:
    * - Transient errors trigger retries
    * - Permanent errors don't retry
@@ -328,7 +330,7 @@ describe('API Error Handling Patterns', () => {
     it('should retry on network timeout', async () => {
       const error = new Error('Network timeout');
       error.name = 'ECONNABORTED';
-      
+
       mockedAxios.get
         .mockRejectedValueOnce(error)
         .mockRejectedValueOnce(error)
@@ -342,10 +344,10 @@ describe('API Error Handling Patterns', () => {
       const error = {
         response: {
           status: 400,
-          data: { message: 'Invalid request' }
-        }
+          data: { message: 'Invalid request' },
+        },
       };
-      
+
       mockedAxios.post.mockRejectedValue(error);
 
       // Should fail immediately without retry
@@ -364,10 +366,10 @@ describe('API Error Handling Patterns', () => {
       const error = {
         response: {
           status: 404,
-          data: { message: 'Not found' }
-        }
+          data: { message: 'Not found' },
+        },
       };
-      
+
       mockedAxios.get.mockRejectedValue(error);
 
       try {
@@ -383,7 +385,7 @@ describe('API Error Handling Patterns', () => {
 
   /**
    * ERROR HANDLING: Concurrent Requests
-   * 
+   *
    * Defines "working" as:
    * - Multiple requests can run in parallel
    * - Failed requests don't affect others
@@ -396,7 +398,7 @@ describe('API Error Handling Patterns', () => {
       const requests = [
         customerApi.get('/api/customers/1'),
         customerApi.get('/api/customers/2'),
-        customerApi.get('/api/customers/3')
+        customerApi.get('/api/customers/3'),
       ];
 
       const results = await Promise.all(requests);
@@ -413,8 +415,10 @@ describe('API Error Handling Patterns', () => {
 
       const requests = [
         customerApi.get('/api/customers/1'),
-        customerApi.get('/api/customers/2').catch(e => ({ error: e.message })),
-        customerApi.get('/api/customers/3')
+        customerApi
+          .get('/api/customers/2')
+          .catch((e) => ({ error: e.message })),
+        customerApi.get('/api/customers/3'),
       ];
 
       const results = await Promise.all(requests);

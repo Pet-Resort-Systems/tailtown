@@ -33,7 +33,7 @@ jest.mock('@prisma/client', () => {
     },
     $transaction: jest.fn((callback) => callback()),
   };
-  
+
   return {
     PrismaClient: jest.fn(() => mockPrismaClient),
   };
@@ -65,14 +65,14 @@ jest.mock('../../utils/service', () => {
   // Create a mock AppError class
   class MockAppError extends Error {
     statusCode: number;
-    
+
     constructor(message: string, statusCode: number) {
       super(message);
       this.statusCode = statusCode;
       this.name = 'AppError';
     }
   }
-  
+
   return {
     AppError: jest.fn().mockImplementation((message, statusCode) => {
       return new MockAppError(message, statusCode);
@@ -99,11 +99,11 @@ describe('Reservation Controller', () => {
   let mockResponse: any;
   let mockNext: jest.Mock;
   let prisma: any;
-  
+
   beforeEach(() => {
     // Reset mocks
     jest.clearAllMocks();
-    
+
     // Set up mock request, response, and next function
     mockRequest = {
       params: { id: 'reservation-1', customerId: 'customer-1' },
@@ -118,18 +118,18 @@ describe('Reservation Controller', () => {
       },
       tenantId: 'tenant-1',
     };
-    
+
     mockResponse = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
     };
-    
+
     mockNext = jest.fn();
-    
+
     // Get the mocked Prisma client
     prisma = new PrismaClient();
   });
-  
+
   describe('getReservationById', () => {
     it('should get a reservation by ID successfully', async () => {
       // Mock successful reservation lookup
@@ -146,13 +146,13 @@ describe('Reservation Controller', () => {
         pet: { id: 'pet-1', name: 'Test Pet' },
         resource: { id: 'resource-1', name: 'Test Resource' },
       });
-      
+
       await getReservationById(
         mockRequest as Request,
         mockResponse as Response,
         mockNext
       );
-      
+
       // Verify response was sent
       expect(mockResponse.status).toHaveBeenCalledWith(200);
       expect(mockResponse.json).toHaveBeenCalledWith(
@@ -160,24 +160,24 @@ describe('Reservation Controller', () => {
           status: 'success',
         })
       );
-      
+
       // Verify next was not called (no error)
       expect(mockNext).not.toHaveBeenCalled();
     });
-    
+
     it('should return error when reservation does not exist', async () => {
       // Mock reservation not found
       (prisma.reservation.findFirst as jest.Mock).mockResolvedValue(null);
-      
+
       await getReservationById(
         mockRequest as Request,
         mockResponse as Response,
         mockNext
       );
-      
+
       // Verify next was called with an error
       expect(mockNext).toHaveBeenCalled();
-      
+
       // Verify AppError was created with correct message and status
       expect(serviceUtils.AppError).toHaveBeenCalledWith(
         'Reservation not found',
@@ -185,7 +185,7 @@ describe('Reservation Controller', () => {
       );
     });
   });
-  
+
   describe('deleteReservation', () => {
     it('should delete a reservation successfully', async () => {
       // Mock successful reservation lookup
@@ -199,42 +199,44 @@ describe('Reservation Controller', () => {
         status: 'CONFIRMED',
         tenantId: 'tenant-1',
       });
-      
+
       // Mock successful add-on deletion
-      (prisma.reservationAddOn.deleteMany as jest.Mock).mockResolvedValue({ count: 2 });
-      
+      (prisma.reservationAddOn.deleteMany as jest.Mock).mockResolvedValue({
+        count: 2,
+      });
+
       // Mock successful reservation deletion
       (prisma.reservation.delete as jest.Mock).mockResolvedValue({
         id: 'reservation-1',
       });
-      
+
       await deleteReservation(
         mockRequest as Request,
         mockResponse as Response,
         mockNext
       );
-      
+
       // Verify response was sent
       expect(mockResponse.status).toHaveBeenCalledWith(200);
       expect(mockResponse.json).toHaveBeenCalledWith(
         expect.objectContaining({
           status: 'success',
-          message: expect.stringContaining('Reservation deleted successfully')
+          message: expect.stringContaining('Reservation deleted successfully'),
         })
       );
-      
+
       // Verify reservation was deleted
       expect(prisma.reservation.delete).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { id: 'reservation-1' },
         })
       );
-      
+
       // Verify next was not called (no error)
       expect(mockNext).not.toHaveBeenCalled();
     });
   });
-  
+
   describe('getAllReservations', () => {
     it('should return all reservations', async () => {
       // Mock reservations
@@ -264,18 +266,18 @@ describe('Reservation Controller', () => {
           customer: { id: 'customer-2', name: 'Test Customer 2' },
           pet: { id: 'pet-2', name: 'Test Pet 2' },
           resource: { id: 'resource-2', name: 'Test Resource 2' },
-        }
+        },
       ]);
-      
+
       // Add count method for pagination
       (prisma.reservation.count as jest.Mock).mockResolvedValue(2);
-      
+
       await getAllReservations(
         mockRequest as Request,
         mockResponse as Response,
         mockNext
       );
-      
+
       // Verify response was sent
       expect(mockResponse.status).toHaveBeenCalledWith(200);
       expect(mockResponse.json).toHaveBeenCalledWith(
@@ -283,7 +285,7 @@ describe('Reservation Controller', () => {
           status: 'success',
         })
       );
-      
+
       // Verify next was not called (no error)
       expect(mockNext).not.toHaveBeenCalled();
     });
@@ -292,22 +294,26 @@ describe('Reservation Controller', () => {
   describe('createReservation', () => {
     it('should create a reservation successfully', async () => {
       // Mock customer and pet verification via Customer Service API
-      (customerServiceClient.verifyCustomer as jest.Mock).mockResolvedValue(true);
+      (customerServiceClient.verifyCustomer as jest.Mock).mockResolvedValue(
+        true
+      );
       (customerServiceClient.verifyPet as jest.Mock).mockResolvedValue(true);
-      
+
       (prisma.resource.findFirst as jest.Mock).mockResolvedValue({
         id: 'resource-1',
         name: 'Test Resource',
         tenantId: 'tenant-1',
       });
-      
+
       // Mock no conflicts
-      (reservationConflicts.detectReservationConflicts as jest.Mock).mockResolvedValue({
+      (
+        reservationConflicts.detectReservationConflicts as jest.Mock
+      ).mockResolvedValue({
         hasConflicts: false,
         conflicts: [],
         warnings: [],
       });
-      
+
       // Mock successful reservation creation
       (prisma.reservation.create as jest.Mock).mockResolvedValue({
         id: 'new-reservation',
@@ -320,13 +326,13 @@ describe('Reservation Controller', () => {
         tenantId: 'tenant-1',
         orderNumber: 'ORD-12345',
       });
-      
+
       await createReservation(
         mockRequest as Request,
         mockResponse as Response,
         mockNext
       );
-      
+
       // Verify response was sent
       expect(mockResponse.status).toHaveBeenCalledWith(201);
       expect(mockResponse.json).toHaveBeenCalledWith(
@@ -334,39 +340,47 @@ describe('Reservation Controller', () => {
           status: 'success',
         })
       );
-      
+
       // Verify next was not called (no error)
       expect(mockNext).not.toHaveBeenCalled();
     });
 
     it('should handle conflicts properly', async () => {
       // Mock customer and pet verification via Customer Service API
-      (customerServiceClient.verifyCustomer as jest.Mock).mockResolvedValue(true);
+      (customerServiceClient.verifyCustomer as jest.Mock).mockResolvedValue(
+        true
+      );
       (customerServiceClient.verifyPet as jest.Mock).mockResolvedValue(true);
-      
+
       (prisma.resource.findFirst as jest.Mock).mockResolvedValue({
         id: 'resource-1',
         name: 'Test Resource',
         tenantId: 'tenant-1',
       });
-      
+
       // Mock conflicts
-      (reservationConflicts.detectReservationConflicts as jest.Mock).mockResolvedValue({
+      (
+        reservationConflicts.detectReservationConflicts as jest.Mock
+      ).mockResolvedValue({
         hasConflicts: true,
-        conflicts: [{
-          id: 'existing-reservation',
-          startDate: new Date('2025-06-12'),
-          endDate: new Date('2025-06-14'),
-        }],
-        warnings: ['Resource resource-1 conflicts with existing reservation from 2025-06-12 to 2025-06-14']
+        conflicts: [
+          {
+            id: 'existing-reservation',
+            startDate: new Date('2025-06-12'),
+            endDate: new Date('2025-06-14'),
+          },
+        ],
+        warnings: [
+          'Resource resource-1 conflicts with existing reservation from 2025-06-12 to 2025-06-14',
+        ],
       });
-      
+
       await createReservation(
         mockRequest as Request,
         mockResponse as Response,
         mockNext
       );
-      
+
       // Verify next was called with an error
       expect(mockNext).toHaveBeenCalled();
       expect(serviceUtils.AppError).toHaveBeenCalledWith(
@@ -389,34 +403,36 @@ describe('Reservation Controller', () => {
         status: 'CONFIRMED',
         tenantId: 'tenant-1',
       });
-      
+
       // Mock customer, pet, and resource existence
       (prisma.customer.findFirst as jest.Mock).mockResolvedValue({
         id: 'customer-1',
         name: 'Test Customer',
         tenantId: 'tenant-1',
       });
-      
+
       (prisma.pet.findFirst as jest.Mock).mockResolvedValue({
         id: 'pet-1',
         name: 'Test Pet',
         customerId: 'customer-1',
         tenantId: 'tenant-1',
       });
-      
+
       (prisma.resource.findFirst as jest.Mock).mockResolvedValue({
         id: 'resource-1',
         name: 'Test Resource',
         tenantId: 'tenant-1',
       });
-      
+
       // Mock no conflicts
-      (reservationConflicts.detectReservationConflicts as jest.Mock).mockResolvedValue({
+      (
+        reservationConflicts.detectReservationConflicts as jest.Mock
+      ).mockResolvedValue({
         hasConflicts: false,
         conflicts: [],
         warnings: [],
       });
-      
+
       // Mock successful reservation update
       (prisma.reservation.update as jest.Mock).mockResolvedValue({
         id: 'reservation-1',
@@ -424,21 +440,21 @@ describe('Reservation Controller', () => {
         petId: 'pet-1',
         resourceId: 'resource-1',
         startDate: new Date('2025-06-11'), // Updated date
-        endDate: new Date('2025-06-16'),   // Updated date
+        endDate: new Date('2025-06-16'), // Updated date
         status: 'CONFIRMED',
         tenantId: 'tenant-1',
       });
-      
+
       // Update the request body with new dates
       mockRequest.body.startDate = '2025-06-11';
       mockRequest.body.endDate = '2025-06-16';
-      
+
       await updateReservation(
         mockRequest as Request,
         mockResponse as Response,
         mockNext
       );
-      
+
       // Verify response was sent
       expect(mockResponse.status).toHaveBeenCalledWith(200);
       expect(mockResponse.json).toHaveBeenCalledWith(
@@ -446,7 +462,7 @@ describe('Reservation Controller', () => {
           status: 'success',
         })
       );
-      
+
       // Verify next was not called (no error)
       expect(mockNext).not.toHaveBeenCalled();
     });
@@ -468,18 +484,20 @@ describe('Reservation Controller', () => {
           customer: { id: 'customer-1', name: 'Test Customer' },
           pet: { id: 'pet-1', name: 'Test Pet' },
           resource: { id: 'resource-1', name: 'Test Resource' },
-        }
+        },
       ]);
-      
+
       // Mock customer verification via Customer Service API
-      (customerServiceClient.verifyCustomer as jest.Mock).mockResolvedValue(true);
-      
+      (customerServiceClient.verifyCustomer as jest.Mock).mockResolvedValue(
+        true
+      );
+
       await getCustomerReservations(
         mockRequest as Request,
         mockResponse as Response,
         mockNext
       );
-      
+
       // Verify response was sent
       expect(mockResponse.status).toHaveBeenCalledWith(200);
       expect(mockResponse.json).toHaveBeenCalledWith(
@@ -487,7 +505,7 @@ describe('Reservation Controller', () => {
           status: 'success',
         })
       );
-      
+
       // Verify next was not called (no error)
       expect(mockNext).not.toHaveBeenCalled();
     });
@@ -496,20 +514,22 @@ describe('Reservation Controller', () => {
       // Mock customer verification failure via Customer Service API
       const notFoundError = new Error('Customer with ID customer-1 not found');
       (notFoundError as any).statusCode = 404;
-      (customerServiceClient.verifyCustomer as jest.Mock).mockRejectedValue(notFoundError);
-      
+      (customerServiceClient.verifyCustomer as jest.Mock).mockRejectedValue(
+        notFoundError
+      );
+
       await getCustomerReservations(
         mockRequest as Request,
         mockResponse as Response,
         mockNext
       );
-      
+
       // Verify response was sent with error status
       expect(mockResponse.status).toHaveBeenCalledWith(404);
       expect(mockResponse.json).toHaveBeenCalledWith(
         expect.objectContaining({
           status: 'fail',
-          message: 'Customer not found'
+          message: 'Customer not found',
         })
       );
     });

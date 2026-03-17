@@ -2,7 +2,7 @@
  * PastReservations - View reservation history
  */
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Card,
@@ -14,33 +14,33 @@ import {
   Grid,
   Divider,
   Button,
-} from "@mui/material";
+} from '@mui/material';
 import {
   History as HistoryIcon,
   CalendarMonth as CalendarIcon,
   Pets as PetsIcon,
   Hotel as HotelIcon,
-} from "@mui/icons-material";
-import { format, parseISO } from "date-fns";
-import { useCustomerAuth } from "../../../contexts/CustomerAuthContext";
+} from '@mui/icons-material';
+import { format, parseISO } from 'date-fns';
+import { useCustomerAuth } from '../../../contexts/CustomerAuthContext';
 import customerAccountService, {
   CustomerReservation,
-} from "../../../services/customerAccountService";
+} from '../../../services/customerAccountService';
 
 const getStatusColor = (
   status: string
-): "default" | "primary" | "success" | "warning" | "error" => {
+): 'default' | 'primary' | 'success' | 'warning' | 'error' => {
   switch (status?.toUpperCase()) {
-    case "COMPLETED":
-      return "success";
-    case "CHECKED_OUT":
-      return "success";
-    case "CANCELLED":
-      return "error";
-    case "NO_SHOW":
-      return "warning";
+    case 'COMPLETED':
+      return 'success';
+    case 'CHECKED_OUT':
+      return 'success';
+    case 'CANCELLED':
+      return 'error';
+    case 'NO_SHOW':
+      return 'warning';
     default:
-      return "default";
+      return 'default';
   }
 };
 
@@ -48,7 +48,7 @@ const PastReservations: React.FC = () => {
   const { customer } = useCustomerAuth();
   const [reservations, setReservations] = useState<CustomerReservation[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [limit, setLimit] = useState(10);
 
   const loadReservations = useCallback(async () => {
@@ -56,15 +56,15 @@ const PastReservations: React.FC = () => {
 
     try {
       setLoading(true);
-      setError("");
+      setError('');
       const data = await customerAccountService.getPastReservations(
         customer.id,
         limit
       );
       setReservations(data);
     } catch (err: any) {
-      console.error("Error loading past reservations:", err);
-      setError("Unable to load reservation history. Please try again.");
+      console.error('Error loading past reservations:', err);
+      setError('Unable to load reservation history. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -80,7 +80,7 @@ const PastReservations: React.FC = () => {
 
   if (loading && reservations.length === 0) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -96,8 +96,8 @@ const PastReservations: React.FC = () => {
 
   if (reservations.length === 0) {
     return (
-      <Box sx={{ textAlign: "center", py: 6 }}>
-        <HistoryIcon sx={{ fontSize: 64, color: "text.disabled", mb: 2 }} />
+      <Box sx={{ textAlign: 'center', py: 6 }}>
+        <HistoryIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
         <Typography variant="h6" color="text.secondary" gutterBottom>
           No Past Reservations
         </Typography>
@@ -122,20 +122,20 @@ const PastReservations: React.FC = () => {
           <Grid item xs={12} key={reservation.id}>
             <Card
               variant="outlined"
-              sx={{ opacity: reservation.status === "CANCELLED" ? 0.7 : 1 }}
+              sx={{ opacity: reservation.status === 'CANCELLED' ? 0.7 : 1 }}
             >
               <CardContent>
                 <Box
                   sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
                     mb: 2,
                   }}
                 >
                   <Box>
                     <Typography variant="h6" fontWeight={600}>
-                      {reservation.service?.name || "Reservation"}
+                      {reservation.service?.name || 'Reservation'}
                     </Typography>
                     {reservation.orderNumber && (
                       <Typography variant="caption" color="text.secondary">
@@ -154,23 +154,23 @@ const PastReservations: React.FC = () => {
 
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
-                    <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <CalendarIcon
-                        sx={{ mr: 1, color: "text.secondary", fontSize: 20 }}
+                        sx={{ mr: 1, color: 'text.secondary', fontSize: 20 }}
                       />
                       <Typography variant="body2">
                         {format(
                           parseISO(reservation.startDate),
-                          "EEE, MMM d, yyyy"
+                          'EEE, MMM d, yyyy'
                         )}
                         {reservation.endDate &&
                           reservation.endDate !== reservation.startDate && (
                             <>
-                              {" "}
-                              -{" "}
+                              {' '}
+                              -{' '}
                               {format(
                                 parseISO(reservation.endDate),
-                                "EEE, MMM d, yyyy"
+                                'EEE, MMM d, yyyy'
                               )}
                             </>
                           )}
@@ -179,10 +179,10 @@ const PastReservations: React.FC = () => {
 
                     {reservation.pet && (
                       <Box
-                        sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                        sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
                       >
                         <PetsIcon
-                          sx={{ mr: 1, color: "text.secondary", fontSize: 20 }}
+                          sx={{ mr: 1, color: 'text.secondary', fontSize: 20 }}
                         />
                         <Typography variant="body2">
                           {reservation.pet.name}
@@ -196,10 +196,10 @@ const PastReservations: React.FC = () => {
                   <Grid item xs={12} sm={6}>
                     {reservation.resource && (
                       <Box
-                        sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                        sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
                       >
                         <HotelIcon
-                          sx={{ mr: 1, color: "text.secondary", fontSize: 20 }}
+                          sx={{ mr: 1, color: 'text.secondary', fontSize: 20 }}
                         />
                         <Typography variant="body2">
                           {reservation.resource.name}
@@ -207,9 +207,9 @@ const PastReservations: React.FC = () => {
                       </Box>
                     )}
 
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <Typography variant="body2" fontWeight={600}>
-                        ${reservation.totalPrice?.toFixed(2) || "0.00"}
+                        ${reservation.totalPrice?.toFixed(2) || '0.00'}
                       </Typography>
                     </Box>
                   </Grid>
@@ -221,13 +221,13 @@ const PastReservations: React.FC = () => {
       </Grid>
 
       {reservations.length >= limit && (
-        <Box sx={{ mt: 3, textAlign: "center" }}>
+        <Box sx={{ mt: 3, textAlign: 'center' }}>
           <Button
             variant="outlined"
             onClick={handleLoadMore}
             disabled={loading}
           >
-            {loading ? "Loading..." : "Load More"}
+            {loading ? 'Loading...' : 'Load More'}
           </Button>
         </Box>
       )}

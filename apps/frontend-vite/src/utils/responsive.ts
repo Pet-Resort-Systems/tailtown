@@ -1,6 +1,6 @@
 /**
  * Responsive Design Utilities
- * 
+ *
  * Centralized utilities for handling responsive design across the application.
  * Uses Material-UI breakpoints: xs (0px), sm (600px), md (900px), lg (1200px), xl (1536px)
  */
@@ -14,14 +14,14 @@ import type { Breakpoint } from '@mui/material';
  */
 export const useResponsive = () => {
   const theme = useTheme();
-  
+
   return {
     isMobile: useMediaQuery(theme.breakpoints.down('sm')), // < 600px
     isTablet: useMediaQuery(theme.breakpoints.between('sm', 'md')), // 600px - 900px
     isDesktop: useMediaQuery(theme.breakpoints.up('md')), // >= 900px
     isLargeDesktop: useMediaQuery(theme.breakpoints.up('lg')), // >= 1200px
     isXLarge: useMediaQuery(theme.breakpoints.up('xl')), // >= 1536px
-    
+
     // Specific breakpoint checks
     isXs: useMediaQuery(theme.breakpoints.only('xs')),
     isSm: useMediaQuery(theme.breakpoints.only('sm')),
@@ -36,7 +36,7 @@ export const useResponsive = () => {
  * @param values Object with values for each breakpoint
  * @returns Value for current breakpoint
  */
-export const useResponsiveValue = <T,>(values: {
+export const useResponsiveValue = <T>(values: {
   xs?: T;
   sm?: T;
   md?: T;
@@ -45,19 +45,19 @@ export const useResponsiveValue = <T,>(values: {
   default: T;
 }): T => {
   const theme = useTheme();
-  
+
   const isXl = useMediaQuery(theme.breakpoints.only('xl'));
   const isLg = useMediaQuery(theme.breakpoints.only('lg'));
   const isMd = useMediaQuery(theme.breakpoints.only('md'));
   const isSm = useMediaQuery(theme.breakpoints.only('sm'));
   const isXs = useMediaQuery(theme.breakpoints.only('xs'));
-  
+
   if (isXl && values.xl !== undefined) return values.xl;
   if (isLg && values.lg !== undefined) return values.lg;
   if (isMd && values.md !== undefined) return values.md;
   if (isSm && values.sm !== undefined) return values.sm;
   if (isXs && values.xs !== undefined) return values.xs;
-  
+
   return values.default;
 };
 
@@ -188,10 +188,13 @@ export const hideOn = (breakpoint: Breakpoint | Breakpoint[]) => {
   const breakpoints = Array.isArray(breakpoint) ? breakpoint : [breakpoint];
   return {
     display: {
-      ...breakpoints.reduce((acc, bp) => ({
-        ...acc,
-        [bp]: 'none',
-      }), {}),
+      ...breakpoints.reduce(
+        (acc, bp) => ({
+          ...acc,
+          [bp]: 'none',
+        }),
+        {}
+      ),
     },
   };
 };
@@ -202,13 +205,16 @@ export const hideOn = (breakpoint: Breakpoint | Breakpoint[]) => {
 export const showOnlyOn = (breakpoint: Breakpoint | Breakpoint[]) => {
   const breakpoints = Array.isArray(breakpoint) ? breakpoint : [breakpoint];
   const allBreakpoints: Breakpoint[] = ['xs', 'sm', 'md', 'lg', 'xl'];
-  
+
   return {
     display: {
-      ...allBreakpoints.reduce((acc, bp) => ({
-        ...acc,
-        [bp]: breakpoints.includes(bp) ? 'block' : 'none',
-      }), {}),
+      ...allBreakpoints.reduce(
+        (acc, bp) => ({
+          ...acc,
+          [bp]: breakpoints.includes(bp) ? 'block' : 'none',
+        }),
+        {}
+      ),
     },
   };
 };
@@ -228,9 +234,7 @@ export const getResponsiveMaxWidth = (
 /**
  * Responsive drawer width helper
  */
-export const getResponsiveDrawerWidth = (
-  isMobile: boolean
-): number => {
+export const getResponsiveDrawerWidth = (isMobile: boolean): number => {
   return isMobile ? 280 : 240;
 };
 

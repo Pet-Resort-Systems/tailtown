@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {
-  getApiBaseUrl } from "../../../services/api";
+import React, { useState, useEffect } from 'react';
+import { getApiBaseUrl } from '../../../services/api';
 import {
   Container,
   Typography,
@@ -22,8 +21,8 @@ import {
   IconButton,
   Tabs,
   Tab,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   Email as EmailIcon,
   Send as SendIcon,
@@ -32,7 +31,7 @@ import {
   Preview as PreviewIcon,
   Code as CodeIcon,
   Visibility as VisualIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -73,10 +72,10 @@ interface ContactList {
 }
 
 const EmailMarketing: React.FC = () => {
-  const [subject, setSubject] = useState("");
-  const [emailContent, setEmailContent] = useState("");
-  const [selectedTemplate, setSelectedTemplate] = useState("");
-  const [selectedContacts, setSelectedContacts] = useState("");
+  const [subject, setSubject] = useState('');
+  const [emailContent, setEmailContent] = useState('');
+  const [selectedTemplate, setSelectedTemplate] = useState('');
+  const [selectedContacts, setSelectedContacts] = useState('');
   const [isConfigured, setIsConfigured] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [templates, setTemplates] = useState<Template[]>([]);
@@ -92,8 +91,8 @@ const EmailMarketing: React.FC = () => {
     try {
       setLoading(true);
       const apiUrl = getApiBaseUrl();
-      const tenantId = localStorage.getItem("tailtown_tenant_id") || "dev";
-      const headers = { "x-tenant-id": tenantId };
+      const tenantId = localStorage.getItem('tailtown_tenant_id') || 'dev';
+      const headers = { 'x-tenant-id': tenantId };
 
       // Fetch email templates
       const templatesRes = await fetch(
@@ -101,7 +100,7 @@ const EmailMarketing: React.FC = () => {
         { headers }
       );
       const templatesData = await templatesRes.json();
-      if (templatesData.status === "success") {
+      if (templatesData.status === 'success') {
         setTemplates(templatesData.data || []);
       }
 
@@ -124,9 +123,9 @@ const EmailMarketing: React.FC = () => {
       }).length;
 
       setContactLists([
-        { id: "all", name: "All Customers", count: customerList.length },
-        { id: "email", name: "Customers with Email", count: withEmail },
-        { id: "recent", name: "Active (Last 30 Days)", count: recentCustomers },
+        { id: 'all', name: 'All Customers', count: customerList.length },
+        { id: 'email', name: 'Customers with Email', count: withEmail },
+        { id: 'recent', name: 'Active (Last 30 Days)', count: recentCustomers },
       ]);
 
       // Check SendGrid config
@@ -134,7 +133,7 @@ const EmailMarketing: React.FC = () => {
       const configData = await configRes.json();
       setIsConfigured(configData.data?.isConfigured || false);
     } catch (error) {
-      console.error("Error fetching email marketing data:", error);
+      console.error('Error fetching email marketing data:', error);
     } finally {
       setLoading(false);
     }
@@ -146,19 +145,19 @@ const EmailMarketing: React.FC = () => {
 
   const handleSendCampaign = () => {
     // TODO: Implement SendGrid email sending
-    alert("Email campaign would be sent via SendGrid integration");
+    alert('Email campaign would be sent via SendGrid integration');
   };
 
   const handleConfigureSendGrid = () => {
     // TODO: Navigate to SendGrid configuration
-    alert("Navigate to SendGrid API configuration");
+    alert('Navigate to SendGrid API configuration');
   };
 
   return (
     <Container maxWidth="xl">
       <Box sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-          <EmailIcon sx={{ fontSize: 40, mr: 2, color: "success.main" }} />
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+          <EmailIcon sx={{ fontSize: 40, mr: 2, color: 'success.main' }} />
           <Typography variant="h4" component="h1">
             Email Marketing
           </Typography>
@@ -205,9 +204,9 @@ const EmailMarketing: React.FC = () => {
                       </MenuItem>
                       {templates.map((template) => (
                         <MenuItem key={template.id} value={template.id}>
-                          {template.name}{" "}
+                          {template.name}{' '}
                           {template.category &&
-                            `(${template.category.replace(/_/g, " ")})`}
+                            `(${template.category.replace(/_/g, ' ')})`}
                         </MenuItem>
                       ))}
                     </Select>
@@ -243,7 +242,7 @@ const EmailMarketing: React.FC = () => {
                 </Grid>
 
                 <Grid item xs={12}>
-                  <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                  <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs value={tabValue} onChange={handleTabChange}>
                       <Tab icon={<VisualIcon />} label="Visual Editor" />
                       <Tab icon={<CodeIcon />} label="HTML Editor" />
@@ -273,13 +272,13 @@ const EmailMarketing: React.FC = () => {
                       onChange={(e) => setEmailContent(e.target.value)}
                       placeholder="<html>...</html>"
                       helperText="Enter raw HTML for advanced customization"
-                      sx={{ fontFamily: "monospace" }}
+                      sx={{ fontFamily: 'monospace' }}
                     />
                   </TabPanel>
                 </Grid>
 
                 <Grid item xs={12}>
-                  <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
+                  <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
                     <Button
                       variant="contained"
                       startIcon={<SendIcon />}
@@ -310,7 +309,7 @@ const EmailMarketing: React.FC = () => {
               <Typography variant="h6" gutterBottom>
                 Email Statistics
               </Typography>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <Box>
                   <Typography variant="h4" color="primary.main">
                     0
@@ -347,7 +346,7 @@ const EmailMarketing: React.FC = () => {
             </Paper>
 
             <Paper sx={{ p: 3 }}>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Typography variant="h6" sx={{ flexGrow: 1 }}>
                   Configuration
                 </Typography>
@@ -355,31 +354,31 @@ const EmailMarketing: React.FC = () => {
                   <SettingsIcon />
                 </IconButton>
               </Box>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <Typography variant="body2" sx={{ flexGrow: 1 }}>
                     SendGrid Account
                   </Typography>
                   <Chip
-                    label={isConfigured ? "Connected" : "Not Configured"}
-                    color={isConfigured ? "success" : "error"}
+                    label={isConfigured ? 'Connected' : 'Not Configured'}
+                    color={isConfigured ? 'success' : 'error'}
                     size="small"
                   />
                 </Box>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <Typography variant="body2" sx={{ flexGrow: 1 }}>
                     From Email
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {isConfigured ? "noreply@tailtown.com" : "Not Set"}
+                    {isConfigured ? 'noreply@tailtown.com' : 'Not Set'}
                   </Typography>
                 </Box>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <Typography variant="body2" sx={{ flexGrow: 1 }}>
                     Monthly Limit
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {isConfigured ? "10,000 emails" : "Not Set"}
+                    {isConfigured ? '10,000 emails' : 'Not Set'}
                   </Typography>
                 </Box>
               </Box>
@@ -389,7 +388,7 @@ const EmailMarketing: React.FC = () => {
           {/* Available Templates */}
           <Grid item xs={12}>
             <Paper sx={{ p: 3 }}>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Typography variant="h6" sx={{ flexGrow: 1 }}>
                   Available Email Templates ({templates.length})
                 </Typography>
@@ -398,7 +397,7 @@ const EmailMarketing: React.FC = () => {
                   variant="outlined"
                   size="small"
                   onClick={() =>
-                    (window.location.href = "/admin/marketing/templates")
+                    (window.location.href = '/admin/marketing/templates')
                   }
                 >
                   Manage Templates
@@ -406,7 +405,7 @@ const EmailMarketing: React.FC = () => {
               </Box>
               <Divider sx={{ mb: 2 }} />
               {templates.length === 0 ? (
-                <Box sx={{ textAlign: "center", py: 4 }}>
+                <Box sx={{ textAlign: 'center', py: 4 }}>
                   <Typography color="text.secondary">
                     No email templates yet. Create templates to get started.
                   </Typography>
@@ -414,7 +413,7 @@ const EmailMarketing: React.FC = () => {
                     variant="contained"
                     sx={{ mt: 2 }}
                     onClick={() =>
-                      (window.location.href = "/admin/marketing/templates")
+                      (window.location.href = '/admin/marketing/templates')
                     }
                   >
                     Create First Template
@@ -426,12 +425,12 @@ const EmailMarketing: React.FC = () => {
                     <ListItem key={template.id} divider>
                       <ListItemText
                         primary={template.name}
-                        secondary={template.subject || "No subject set"}
+                        secondary={template.subject || 'No subject set'}
                       />
                       <ListItemSecondaryAction>
                         <Chip
                           label={
-                            template.category?.replace(/_/g, " ") || "General"
+                            template.category?.replace(/_/g, ' ') || 'General'
                           }
                           color="primary"
                           size="small"
@@ -439,8 +438,8 @@ const EmailMarketing: React.FC = () => {
                           sx={{ mr: 1 }}
                         />
                         <Chip
-                          label={template.isActive ? "Active" : "Inactive"}
-                          color={template.isActive ? "success" : "default"}
+                          label={template.isActive ? 'Active' : 'Inactive'}
+                          color={template.isActive ? 'success' : 'default'}
                           size="small"
                         />
                       </ListItemSecondaryAction>

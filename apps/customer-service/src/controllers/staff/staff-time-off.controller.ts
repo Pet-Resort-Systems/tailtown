@@ -8,10 +8,10 @@
  * - deleteStaffTimeOff
  */
 
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-import { AppError } from "../../middleware/error.middleware";
-import { logger } from "../../utils/logger";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { AppError } from '../../middleware/error.middleware';
+import { logger } from '../../utils/logger';
 
 const prisma = new PrismaClient();
 
@@ -35,11 +35,11 @@ export const getStaffTimeOff = async (
 
     const timeOff = await prisma.staffTimeOff.findMany({
       where,
-      orderBy: { startDate: "asc" },
+      orderBy: { startDate: 'asc' },
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: timeOff.length,
       data: timeOff,
     });
@@ -63,7 +63,7 @@ export const createStaffTimeOff = async (
     // Validate required fields
     if (!timeOffData.startDate || !timeOffData.endDate || !timeOffData.type) {
       return next(
-        new AppError("Start date, end date, and type are required", 400)
+        new AppError('Start date, end date, and type are required', 400)
       );
     }
 
@@ -73,7 +73,7 @@ export const createStaffTimeOff = async (
       startDate: new Date(timeOffData.startDate),
       endDate: new Date(timeOffData.endDate),
       type: timeOffData.type,
-      status: timeOffData.status || "PENDING",
+      status: timeOffData.status || 'PENDING',
       reason: timeOffData.reason || null,
     };
 
@@ -90,7 +90,7 @@ export const createStaffTimeOff = async (
       createData.approvedDate = new Date(timeOffData.approvedDate);
     }
 
-    logger.debug("Creating staff time off", {
+    logger.debug('Creating staff time off', {
       tenantId: (req as any).tenantId,
       staffId,
       type: timeOffData.type,
@@ -102,11 +102,11 @@ export const createStaffTimeOff = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: newTimeOff,
     });
   } catch (error: any) {
-    logger.error("Error creating staff time off", {
+    logger.error('Error creating staff time off', {
       staffId: req.params.staffId,
       error: error.message,
     });
@@ -132,7 +132,7 @@ export const updateStaffTimeOff = async (
     });
 
     if (!existingTimeOff) {
-      return next(new AppError("Time off record not found", 404));
+      return next(new AppError('Time off record not found', 404));
     }
 
     // Prepare data for update
@@ -172,7 +172,7 @@ export const updateStaffTimeOff = async (
         : null;
     }
 
-    logger.debug("Updating staff time off", {
+    logger.debug('Updating staff time off', {
       timeOffId: id,
       tenantId: (req as any).tenantId,
     });
@@ -184,11 +184,11 @@ export const updateStaffTimeOff = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: updatedTimeOff,
     });
   } catch (error: any) {
-    logger.error("Error updating staff time off", {
+    logger.error('Error updating staff time off', {
       timeOffId: req.params.id,
       error: error.message,
     });
@@ -213,7 +213,7 @@ export const deleteStaffTimeOff = async (
     });
 
     if (!existingTimeOff) {
-      return next(new AppError("Time off record not found", 404));
+      return next(new AppError('Time off record not found', 404));
     }
 
     // Delete time off
@@ -222,8 +222,8 @@ export const deleteStaffTimeOff = async (
     });
 
     res.status(200).json({
-      status: "success",
-      message: "Time off record deleted successfully",
+      status: 'success',
+      message: 'Time off record deleted successfully',
     });
   } catch (error) {
     next(error);

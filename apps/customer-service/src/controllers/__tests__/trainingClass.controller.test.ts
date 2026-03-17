@@ -1,6 +1,6 @@
 /**
  * Training Class Controller Tests
- * 
+ *
  * Tests backend validation and business logic for training classes
  */
 
@@ -14,12 +14,12 @@ jest.mock('@prisma/client', () => ({
     trainingClass: {
       create: jest.fn(),
       findMany: jest.fn(),
-      findFirst: jest.fn()
+      findFirst: jest.fn(),
     },
     classSession: {
-      createMany: jest.fn()
-    }
-  }))
+      createMany: jest.fn(),
+    },
+  })),
 }));
 
 describe('TrainingClass Controller - createTrainingClass', () => {
@@ -30,14 +30,14 @@ describe('TrainingClass Controller - createTrainingClass', () => {
   beforeEach(() => {
     mockRequest = {
       headers: {
-        'x-tenant-id': 'test-tenant'
+        'x-tenant-id': 'test-tenant',
       },
-      body: {}
+      body: {},
     };
 
     mockResponse = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      json: jest.fn(),
     };
 
     mockNext = jest.fn();
@@ -55,7 +55,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
         daysOfWeek: [1],
         startTime: '18:00',
         endTime: '19:00',
-        pricePerSeries: 200
+        pricePerSeries: 200,
         // name is missing
       };
 
@@ -68,7 +68,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           message: 'Missing required fields',
-          statusCode: 400
+          statusCode: 400,
         })
       );
     });
@@ -84,7 +84,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
         daysOfWeek: [1],
         startTime: '18:00',
         endTime: '19:00',
-        pricePerSeries: 200
+        pricePerSeries: 200,
         // level is missing
       };
 
@@ -97,7 +97,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           message: 'Missing required fields',
-          statusCode: 400
+          statusCode: 400,
         })
       );
     });
@@ -113,7 +113,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
         daysOfWeek: [1],
         startTime: '18:00',
         endTime: '19:00',
-        pricePerSeries: 200
+        pricePerSeries: 200,
         // category is missing
       };
 
@@ -126,7 +126,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           message: 'Missing required fields',
-          statusCode: 400
+          statusCode: 400,
         })
       );
     });
@@ -142,7 +142,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
         daysOfWeek: [1],
         startTime: '18:00',
         endTime: '19:00',
-        pricePerSeries: 200
+        pricePerSeries: 200,
         // instructorId is missing
       };
 
@@ -155,7 +155,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           message: 'Missing required fields',
-          statusCode: 400
+          statusCode: 400,
         })
       );
     });
@@ -171,7 +171,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
         daysOfWeek: [1],
         startTime: '18:00',
         endTime: '19:00',
-        pricePerSeries: 200
+        pricePerSeries: 200,
         // maxCapacity is missing
       };
 
@@ -184,7 +184,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           message: 'Missing required fields',
-          statusCode: 400
+          statusCode: 400,
         })
       );
     });
@@ -200,7 +200,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
         daysOfWeek: [1],
         startTime: '18:00',
         endTime: '19:00',
-        pricePerSeries: 200
+        pricePerSeries: 200,
         // startDate is missing
       };
 
@@ -213,7 +213,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           message: 'Missing required fields',
-          statusCode: 400
+          statusCode: 400,
         })
       );
     });
@@ -229,7 +229,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
         daysOfWeek: [1],
         startTime: '18:00',
         endTime: '19:00',
-        pricePerSeries: 200
+        pricePerSeries: 200,
         // totalWeeks is missing
       };
 
@@ -242,7 +242,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           message: 'Missing required fields',
-          statusCode: 400
+          statusCode: 400,
         })
       );
     });
@@ -258,7 +258,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
         totalWeeks: 6,
         startTime: '18:00',
         endTime: '19:00',
-        pricePerSeries: 200
+        pricePerSeries: 200,
         // daysOfWeek is missing
       };
 
@@ -271,7 +271,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           message: 'Missing required fields',
-          statusCode: 400
+          statusCode: 400,
         })
       );
     });
@@ -287,7 +287,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
         totalWeeks: 6,
         daysOfWeek: [1],
         endTime: '19:00',
-        pricePerSeries: 200
+        pricePerSeries: 200,
         // startTime is missing
       };
 
@@ -300,7 +300,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           message: 'Missing required fields',
-          statusCode: 400
+          statusCode: 400,
         })
       );
     });
@@ -316,7 +316,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
         totalWeeks: 6,
         daysOfWeek: [1],
         startTime: '18:00',
-        pricePerSeries: 200
+        pricePerSeries: 200,
         // endTime is missing
       };
 
@@ -329,7 +329,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           message: 'Missing required fields',
-          statusCode: 400
+          statusCode: 400,
         })
       );
     });
@@ -345,7 +345,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
         totalWeeks: 6,
         daysOfWeek: [1],
         startTime: '18:00',
-        endTime: '19:00'
+        endTime: '19:00',
         // pricePerSeries is missing
       };
 
@@ -358,7 +358,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           message: 'Missing required fields',
-          statusCode: 400
+          statusCode: 400,
         })
       );
     });
@@ -377,7 +377,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
         daysOfWeek: [1],
         startTime: '18:00',
         endTime: '19:00',
-        pricePerSeries: 200
+        pricePerSeries: 200,
       };
 
       await createTrainingClass(
@@ -416,7 +416,7 @@ describe('TrainingClass Controller - createTrainingClass', () => {
         minAge: 8,
         maxAge: 16,
         prerequisites: ['Basic commands'],
-        notes: 'Bring treats'
+        notes: 'Bring treats',
       };
 
       await createTrainingClass(

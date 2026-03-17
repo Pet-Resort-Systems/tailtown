@@ -1,14 +1,7 @@
-import React from "react";
-import {
-  Box,
-  Typography,
-  Chip,
-  Paper,
-  Tooltip,
-  Divider,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
-import { ALL_PET_ICONS, getIconsByCategory } from "../../constants/petIcons";
+import React from 'react';
+import { Box, Typography, Chip, Paper, Tooltip, Divider } from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
+import { ALL_PET_ICONS, getIconsByCategory } from '../../constants/petIcons';
 
 interface EmojiPetIconSelectorProps {
   selectedIcons: string[];
@@ -32,22 +25,22 @@ const EmojiPetIconSelector: React.FC<EmojiPetIconSelectorProps> = ({
   };
 
   // Get icons by category
-  const groupIcons = getIconsByCategory("group");
-  const sizeIcons = getIconsByCategory("size");
-  const behaviorIcons = getIconsByCategory("behavior");
-  const medicalIcons = getIconsByCategory("medical");
-  const handlingIcons = getIconsByCategory("handling");
-  const kennelIcons = getIconsByCategory("kennel");
-  const notesIcons = getIconsByCategory("notes");
-  const accountIcons = getIconsByCategory("account");
-  const flagIcons = getIconsByCategory("flag");
+  const groupIcons = getIconsByCategory('group');
+  const sizeIcons = getIconsByCategory('size');
+  const behaviorIcons = getIconsByCategory('behavior');
+  const medicalIcons = getIconsByCategory('medical');
+  const handlingIcons = getIconsByCategory('handling');
+  const kennelIcons = getIconsByCategory('kennel');
+  const notesIcons = getIconsByCategory('notes');
+  const accountIcons = getIconsByCategory('account');
+  const flagIcons = getIconsByCategory('flag');
 
   const renderIconCategory = (title: string, icons: typeof groupIcons) => {
     if (icons.length === 0) return null;
 
     return (
       <Box sx={{ mb: 3 }}>
-        <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 1 }}>
+        <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>
           {title}
         </Typography>
         <Grid container spacing={1}>
@@ -59,16 +52,16 @@ const EmojiPetIconSelector: React.FC<EmojiPetIconSelectorProps> = ({
                   <Chip
                     label={icon.icon}
                     onClick={() => handleIconToggle(icon.id)}
-                    color={isSelected ? "primary" : "default"}
-                    variant={isSelected ? "filled" : "outlined"}
+                    color={isSelected ? 'primary' : 'default'}
+                    variant={isSelected ? 'filled' : 'outlined'}
                     sx={{
-                      fontSize: "1.5rem",
-                      minWidth: "48px",
-                      height: "48px",
-                      cursor: "pointer",
-                      "&:hover": {
-                        transform: "scale(1.1)",
-                        transition: "transform 0.2s",
+                      fontSize: '1.5rem',
+                      minWidth: '48px',
+                      height: '48px',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        transform: 'scale(1.1)',
+                        transition: 'transform 0.2s',
                       },
                     }}
                   />
@@ -97,7 +90,7 @@ const EmojiPetIconSelector: React.FC<EmojiPetIconSelectorProps> = ({
           <Typography variant="subtitle2" gutterBottom>
             Selected ({selectedIcons.length}):
           </Typography>
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
             {selectedIcons.map((iconId) => {
               const icon = ALL_PET_ICONS.find((i) => i.id === iconId);
               if (!icon) return null;
@@ -107,7 +100,7 @@ const EmojiPetIconSelector: React.FC<EmojiPetIconSelectorProps> = ({
                     label={icon.icon}
                     onDelete={() => handleIconToggle(iconId)}
                     color="primary"
-                    sx={{ fontSize: "1.2rem" }}
+                    sx={{ fontSize: '1.2rem' }}
                   />
                 </Tooltip>
               );
@@ -119,15 +112,15 @@ const EmojiPetIconSelector: React.FC<EmojiPetIconSelectorProps> = ({
       <Divider sx={{ my: 2 }} />
 
       {/* Available Icons by Category */}
-      {renderIconCategory("Group Compatibility", groupIcons)}
-      {renderIconCategory("Size", sizeIcons)}
-      {renderIconCategory("Behavioral Alerts", behaviorIcons)}
-      {renderIconCategory("Medical", medicalIcons)}
-      {renderIconCategory("Handling", handlingIcons)}
-      {renderIconCategory("Kennel/Room", kennelIcons)}
-      {renderIconCategory("Notes & Communication", notesIcons)}
-      {renderIconCategory("Account", accountIcons)}
-      {renderIconCategory("Custom Flags", flagIcons)}
+      {renderIconCategory('Group Compatibility', groupIcons)}
+      {renderIconCategory('Size', sizeIcons)}
+      {renderIconCategory('Behavioral Alerts', behaviorIcons)}
+      {renderIconCategory('Medical', medicalIcons)}
+      {renderIconCategory('Handling', handlingIcons)}
+      {renderIconCategory('Kennel/Room', kennelIcons)}
+      {renderIconCategory('Notes & Communication', notesIcons)}
+      {renderIconCategory('Account', accountIcons)}
+      {renderIconCategory('Custom Flags', flagIcons)}
     </Paper>
   );
 };

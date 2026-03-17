@@ -1,15 +1,15 @@
-import React, { useState, useEffect, useCallback } from "react";
-import "./Calendar.css";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import interactionPlugin from "@fullcalendar/interaction";
+import React, { useState, useEffect, useCallback } from 'react';
+import './Calendar.css';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
 import {
   EventInput,
   DateSelectArg,
   EventClickArg,
   EventDropArg,
-} from "@fullcalendar/core";
+} from '@fullcalendar/core';
 
 import {
   Box,
@@ -18,12 +18,12 @@ import {
   DialogTitle,
   DialogContent,
   Typography,
-} from "@mui/material";
-import { reservationService } from "../../services/reservationService";
-import schedulingService from "../../services/schedulingService";
-import ReservationForm from "../reservations/ReservationForm";
-import { Reservation } from "../../services/reservationService";
-import { ServiceCategory } from "../../types/service";
+} from '@mui/material';
+import { reservationService } from '../../services/reservationService';
+import schedulingService from '../../services/schedulingService';
+import ReservationForm from '../reservations/ReservationForm';
+import { Reservation } from '../../services/reservationService';
+import { ServiceCategory } from '../../types/service';
 
 /**
  * Props for the SpecializedCalendar component
@@ -84,9 +84,9 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
       const response = await reservationService.getAllReservations(
         1, // page
         500, // limit - increased to show more reservations (was 100)
-        "startDate", // sortBy
-        "asc", // sortOrder - ascending to get earliest first
-        "PENDING,CONFIRMED,CHECKED_IN", // status - include pending reservations too
+        'startDate', // sortBy
+        'asc', // sortOrder - ascending to get earliest first
+        'PENDING,CONFIRMED,CHECKED_IN', // status - include pending reservations too
         undefined, // date - don't filter by single date
         undefined, // checkInDate
         undefined // timezone
@@ -100,14 +100,14 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
         ? responseData
         : responseData?.reservations;
 
-      console.log("SpecializedCalendar loadReservations response:", {
+      console.log('SpecializedCalendar loadReservations response:', {
         status: response?.status,
         dataIsArray: Array.isArray(responseData),
         reservationsCount: reservationsArray?.length,
       });
 
       if (
-        response?.status === "success" &&
+        response?.status === 'success' &&
         reservationsArray &&
         Array.isArray(reservationsArray)
       ) {
@@ -116,9 +116,9 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
 
         // Filter by service category
         if (serviceCategories && serviceCategories.length > 0) {
-          console.log("Filtering by serviceCategories:", serviceCategories);
+          console.log('Filtering by serviceCategories:', serviceCategories);
           console.log(
-            "Sample reservations before filter:",
+            'Sample reservations before filter:',
             reservationsArray.slice(0, 3).map((r: any) => ({
               id: r.id,
               serviceCategory: r.service?.serviceCategory,
@@ -131,7 +131,7 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
               // Check if the reservation's service category matches any of the specified categories
               if (
                 !reservation.service ||
-                typeof reservation.service !== "object"
+                typeof reservation.service !== 'object'
               ) {
                 return false;
               }
@@ -148,7 +148,7 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
           );
 
           console.log(
-            "After service category filter:",
+            'After service category filter:',
             filteredReservations.length
           );
         }
@@ -157,9 +157,9 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
         // Note: Also shows unassigned appointments (staffAssignedId is null/undefined)
         // so groomers can see and claim them
         if (staffId) {
-          console.log("Filtering by staffId:", staffId);
+          console.log('Filtering by staffId:', staffId);
           console.log(
-            "All reservations:",
+            'All reservations:',
             filteredReservations.map((r: any) => ({
               id: r.id,
               pet: r.pet?.name,
@@ -175,32 +175,32 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
           );
 
           console.log(
-            "After filtering:",
+            'After filtering:',
             filteredReservations.length,
-            "reservations"
+            'reservations'
           );
         }
 
         const calendarEvents = filteredReservations.map((reservation: any) => {
           // Add "(Unassigned)" label for grooming appointments without a groomer
           const isGrooming =
-            reservation.service?.serviceCategory === "GROOMING";
+            reservation.service?.serviceCategory === 'GROOMING';
           const isUnassigned = isGrooming && !reservation.staffAssignedId;
-          const unassignedLabel = isUnassigned ? " (Unassigned)" : "";
+          const unassignedLabel = isUnassigned ? ' (Unassigned)' : '';
 
           return {
             id: reservation.id,
-            title: `${reservation.pet?.name || "Pet"} - ${
-              reservation.service?.name || "Service"
+            title: `${reservation.pet?.name || 'Pet'} - ${
+              reservation.service?.name || 'Service'
             }${unassignedLabel}`,
             start: reservation.startDate,
             end: reservation.endDate,
             backgroundColor: getStatusColor(reservation.status),
             borderColor: getStatusColor(reservation.status),
-            textColor: "#ffffff",
+            textColor: '#ffffff',
             extendedProps: {
               reservation,
-              type: "reservation",
+              type: 'reservation',
             },
           };
         });
@@ -208,7 +208,7 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
         allEvents.push(...calendarEvents);
       } else {
         console.warn(
-          "SpecializedCalendar: Invalid response format or no reservations found"
+          'SpecializedCalendar: Invalid response format or no reservations found'
         );
       }
 
@@ -217,14 +217,14 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
         serviceCategories &&
         serviceCategories.includes(ServiceCategory.TRAINING)
       ) {
-        console.log("Loading training classes for calendar...");
+        console.log('Loading training classes for calendar...');
         try {
           const classesResponse =
             await schedulingService.trainingClasses.getAll({
               isActive: true,
             });
 
-          console.log("Training classes response:", classesResponse);
+          console.log('Training classes response:', classesResponse);
 
           if (classesResponse && Array.isArray(classesResponse)) {
             console.log(`Found ${classesResponse.length} training classes`);
@@ -254,12 +254,12 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
                     // We need to extract just the date part and treat it as a local date
 
                     // Extract YYYY-MM-DD from the ISO string
-                    const dateStr = session.scheduledDate.split("T")[0];
-                    const [year, month, day] = dateStr.split("-").map(Number);
+                    const dateStr = session.scheduledDate.split('T')[0];
+                    const [year, month, day] = dateStr.split('-').map(Number);
 
                     // Parse the time (HH:MM format)
                     const [hours, minutes] = session.scheduledTime
-                      .split(":")
+                      .split(':')
                       .map(Number);
 
                     // Create a Date object in the LOCAL timezone (not UTC)
@@ -291,18 +291,18 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
                       title: `${trainingClass.name} - Session ${session.sessionNumber}`,
                       start: sessionDate,
                       end: endDate,
-                      backgroundColor: "#9c27b0", // Purple for training classes
-                      borderColor: "#7b1fa2",
-                      textColor: "#ffffff",
+                      backgroundColor: '#9c27b0', // Purple for training classes
+                      borderColor: '#7b1fa2',
+                      textColor: '#ffffff',
                       extendedProps: {
-                        type: "trainingClass",
+                        type: 'trainingClass',
                         trainingClass,
                         session,
                       },
                     };
                   });
 
-                  console.log("Session events created:", sessionEvents);
+                  console.log('Session events created:', sessionEvents);
                   allEvents.push(...sessionEvents);
                 }
               } catch (sessionError) {
@@ -314,15 +314,15 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
             }
           }
         } catch (classError) {
-          console.error("Error loading training classes:", classError);
+          console.error('Error loading training classes:', classError);
         }
       }
 
-      console.log("Total events to display:", allEvents.length, allEvents);
+      console.log('Total events to display:', allEvents.length, allEvents);
       setEvents(allEvents);
       return allEvents;
     } catch (error) {
-      console.error("SpecializedCalendar: Error loading reservations:", error);
+      console.error('SpecializedCalendar: Error loading reservations:', error);
       setEvents([]);
       return [];
     }
@@ -350,12 +350,12 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
     };
 
     // Add the event listener for the custom event
-    document.addEventListener("reservationComplete", handleReservationComplete);
+    document.addEventListener('reservationComplete', handleReservationComplete);
 
     // Clean up the event listener when the component unmounts to prevent memory leaks
     return () => {
       document.removeEventListener(
-        "reservationComplete",
+        'reservationComplete',
         handleReservationComplete
       );
     };
@@ -364,18 +364,18 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
   // Get the color for a reservation status
   const getStatusColor = (status: string): string => {
     switch (status) {
-      case "CONFIRMED":
-        return "#4caf50"; // Green
-      case "PENDING":
-        return "#ff9800"; // Orange
-      case "CHECKED_IN":
-        return "#2196f3"; // Blue
-      case "CHECKED_OUT":
-        return "#9e9e9e"; // Gray
-      case "CANCELLED":
-        return "#f44336"; // Red
+      case 'CONFIRMED':
+        return '#4caf50'; // Green
+      case 'PENDING':
+        return '#ff9800'; // Orange
+      case 'CHECKED_IN':
+        return '#2196f3'; // Blue
+      case 'CHECKED_OUT':
+        return '#9e9e9e'; // Gray
+      case 'CANCELLED':
+        return '#f44336'; // Red
       default:
-        return "#9e9e9e"; // Gray
+        return '#9e9e9e'; // Gray
     }
   };
 
@@ -422,7 +422,7 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
       const reservation = dropInfo.event.extendedProps
         .reservation as Reservation;
       if (!reservation) {
-        console.error("No reservation data found in event");
+        console.error('No reservation data found in event');
         dropInfo.revert();
         return;
       }
@@ -432,7 +432,7 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
       const newEnd = dropInfo.event.end;
 
       if (!newStart || !newEnd) {
-        console.error("Invalid dates after drop");
+        console.error('Invalid dates after drop');
         dropInfo.revert();
         return;
       }
@@ -446,9 +446,9 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
       // Reload reservations to ensure we have the latest data
       await loadReservations();
 
-      console.log("Reservation updated successfully after drag");
+      console.log('Reservation updated successfully after drag');
     } catch (error) {
-      console.error("Error updating reservation after drag:", error);
+      console.error('Error updating reservation after drag:', error);
       // Revert the event to its original position if the update failed
       dropInfo.revert();
     }
@@ -460,7 +460,7 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
       const reservation = resizeInfo.event.extendedProps
         .reservation as Reservation;
       if (!reservation) {
-        console.error("No reservation data found in event");
+        console.error('No reservation data found in event');
         resizeInfo.revert();
         return;
       }
@@ -470,7 +470,7 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
       const newEnd = resizeInfo.event.end;
 
       if (!newStart || !newEnd) {
-        console.error("Invalid dates after resize");
+        console.error('Invalid dates after resize');
         resizeInfo.revert();
         return;
       }
@@ -484,9 +484,9 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
       // Reload reservations to ensure we have the latest data
       await loadReservations();
 
-      console.log("Reservation updated successfully after resize");
+      console.log('Reservation updated successfully after resize');
     } catch (error) {
-      console.error("Error updating reservation after resize:", error);
+      console.error('Error updating reservation after resize:', error);
       // Revert the event to its original size if the update failed
       resizeInfo.revert();
     }
@@ -510,12 +510,12 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
 
         // Check if we need to navigate the response object to get to the actual reservation data
         // This is done to handle different API response formats
-        if (typeof response === "object" && response !== null) {
+        if (typeof response === 'object' && response !== null) {
           // If the response has a data property and a success status, use the data property
           if (
-            "data" in response &&
-            "status" in response &&
-            (response.status as string) === "success"
+            'data' in response &&
+            'status' in response &&
+            (response.status as string) === 'success'
           ) {
             updatedReservation = response.data as any; // Use 'any' to avoid TypeScript errors
           }
@@ -531,7 +531,7 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
 
         if (
           onEventUpdate &&
-          typeof updatedReservation === "object" &&
+          typeof updatedReservation === 'object' &&
           updatedReservation !== null
         ) {
           // Cast to Reservation type before passing to onEventUpdate
@@ -539,14 +539,14 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
         }
 
         // Extract the reservation ID (handling different response formats)
-        let reservationId = "";
+        let reservationId = '';
         if (
-          typeof updatedReservation === "object" &&
+          typeof updatedReservation === 'object' &&
           updatedReservation !== null
         ) {
-          if ("id" in updatedReservation) {
+          if ('id' in updatedReservation) {
             reservationId = updatedReservation.id as string;
-          } else if ("_id" in updatedReservation) {
+          } else if ('_id' in updatedReservation) {
             reservationId = updatedReservation._id as string;
           }
         }
@@ -566,39 +566,39 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
         return { reservationId };
       } else {
         console.warn(
-          "SpecializedCalendar: No reservation returned from server"
+          'SpecializedCalendar: No reservation returned from server'
         );
         // Do NOT close the dialog if reservation failed
       }
     } catch (error) {
-      console.error("SpecializedCalendar: Error saving reservation:", error);
+      console.error('SpecializedCalendar: Error saving reservation:', error);
       // Do NOT close the dialog on error; let the form show the error
       throw error; // Re-throw the error so the ReservationForm can handle it
     }
   };
 
   return (
-    <Box sx={{ height: "calc(100vh - 200px)", p: 2 }}>
+    <Box sx={{ height: 'calc(100vh - 200px)', p: 2 }}>
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           mb: 2,
         }}
       >
         <Typography variant="h5" component="h2">
-          {calendarTitle || "Specialized Calendar"} ({events.length}{" "}
+          {calendarTitle || 'Specialized Calendar'} ({events.length}{' '}
           reservations)
         </Typography>
       </Box>
-      <Paper elevation={3} sx={{ height: "calc(100% - 60px)", p: 2 }}>
+      <Paper elevation={3} sx={{ height: 'calc(100% - 60px)', p: 2 }}>
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           headerToolbar={{
-            left: "prev,next today",
-            center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay",
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay',
           }}
           initialView="timeGridWeek"
           editable={true}
@@ -620,20 +620,20 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
           locale="en-US"
           // Fixed time format settings using object notation instead of strings
           eventTimeFormat={{
-            hour: "2-digit",
-            minute: "2-digit",
+            hour: '2-digit',
+            minute: '2-digit',
             hour12: true,
           }}
           slotLabelFormat={{
-            hour: "2-digit",
-            minute: "2-digit",
+            hour: '2-digit',
+            minute: '2-digit',
             hour12: true,
           }}
           buttonText={{
-            today: "Today",
-            month: "Month",
-            week: "Week",
-            day: "Day",
+            today: 'Today',
+            month: 'Month',
+            week: 'Week',
+            day: 'Day',
           }}
           initialDate={new Date()}
           firstDay={new Date().getDay()} // Start week from current day
@@ -645,9 +645,9 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
             timeGridWeek: {},
           }}
           dayHeaderFormat={{
-            weekday: "short",
-            month: "numeric",
-            day: "numeric",
+            weekday: 'short',
+            month: 'numeric',
+            day: 'numeric',
             omitCommas: true,
           }}
         />
@@ -663,11 +663,11 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
         maxWidth="sm"
         fullWidth
         PaperProps={{
-          sx: { maxHeight: "80vh" },
+          sx: { maxHeight: '80vh' },
         }}
       >
-        <DialogTitle sx={{ py: 1, px: 2, fontSize: "1rem" }}>
-          {selectedEvent ? "Edit Reservation" : "Create New Reservation"}
+        <DialogTitle sx={{ py: 1, px: 2, fontSize: '1rem' }}>
+          {selectedEvent ? 'Edit Reservation' : 'Create New Reservation'}
         </DialogTitle>
         <DialogContent sx={{ py: 1, px: 2 }}>
           {selectedEvent || selectedDate ? (

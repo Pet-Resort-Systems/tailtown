@@ -4,7 +4,7 @@
  * Allows selection of a groomer for grooming appointments with availability checking
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   FormControl,
   InputLabel,
@@ -15,9 +15,9 @@ import {
   Box,
   Typography,
   Alert,
-} from "@mui/material";
-import { format, isWithinInterval, parseISO } from "date-fns";
-import staffService, { Staff } from "../../services/staffService";
+} from '@mui/material';
+import { format, isWithinInterval, parseISO } from 'date-fns';
+import staffService, { Staff } from '../../services/staffService';
 
 interface GroomerSelectorProps {
   selectedGroomerId: string;
@@ -32,7 +32,7 @@ interface GroomerSelectorProps {
 interface GroomerAvailabilityStatus {
   available: boolean;
   reason?: string;
-  status: "available" | "busy" | "off" | "unknown";
+  status: 'available' | 'busy' | 'off' | 'unknown';
 }
 
 const GroomerSelector: React.FC<GroomerSelectorProps> = ({
@@ -46,7 +46,7 @@ const GroomerSelector: React.FC<GroomerSelectorProps> = ({
 }) => {
   const [groomers, setGroomers] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<string>('');
   const [groomerAvailability, setGroomerAvailability] = useState<
     Record<string, GroomerAvailabilityStatus>
   >({});
@@ -57,7 +57,7 @@ const GroomerSelector: React.FC<GroomerSelectorProps> = ({
     const loadGroomers = async () => {
       try {
         setLoading(true);
-        setError("");
+        setError('');
 
         const allStaff = await staffService.getAllStaff();
 
@@ -66,7 +66,7 @@ const GroomerSelector: React.FC<GroomerSelectorProps> = ({
           (staff) =>
             staff.isActive &&
             staff.specialties &&
-            staff.specialties.includes("GROOMING")
+            staff.specialties.includes('GROOMING')
         );
 
         // Sort by last name, then first name
@@ -78,8 +78,8 @@ const GroomerSelector: React.FC<GroomerSelectorProps> = ({
 
         setGroomers(groomingStaff);
       } catch (err) {
-        console.error("Error loading groomers:", err);
-        setError("Failed to load groomers");
+        console.error('Error loading groomers:', err);
+        setError('Failed to load groomers');
       } finally {
         setLoading(false);
       }
@@ -126,12 +126,12 @@ const GroomerSelector: React.FC<GroomerSelectorProps> = ({
     endTime?: Date | null
   ): Promise<GroomerAvailabilityStatus> => {
     try {
-      const dateStr = format(date, "yyyy-MM-dd");
+      const dateStr = format(date, 'yyyy-MM-dd');
 
       // 1. Check time off first
       const timeOffRequests = await staffService.getStaffTimeOff(groomerId);
       const approvedTimeOff = timeOffRequests.filter(
-        (to) => to.status === "APPROVED"
+        (to) => to.status === 'APPROVED'
       );
 
       for (const timeOff of approvedTimeOff) {
@@ -142,7 +142,7 @@ const GroomerSelector: React.FC<GroomerSelectorProps> = ({
           return {
             available: false,
             reason: `Off (${timeOff.type})`,
-            status: "off",
+            status: 'off',
           };
         }
       }
@@ -157,25 +157,25 @@ const GroomerSelector: React.FC<GroomerSelectorProps> = ({
 
       // Find a schedule for this date that is SCHEDULED or CONFIRMED
       const activeSchedule = schedules.find((schedule) => {
-        const scheduleDate = schedule.date.split("T")[0]; // Handle ISO date format
+        const scheduleDate = schedule.date.split('T')[0]; // Handle ISO date format
         return (
           scheduleDate === dateStr &&
-          (schedule.status === "SCHEDULED" || schedule.status === "CONFIRMED")
+          (schedule.status === 'SCHEDULED' || schedule.status === 'CONFIRMED')
         );
       });
 
       if (!activeSchedule) {
         return {
           available: false,
-          reason: "Not scheduled",
-          status: "off",
+          reason: 'Not scheduled',
+          status: 'off',
         };
       }
 
       // 3. Check if appointment time is within the scheduled shift
       if (startTime && endTime) {
-        const appointmentStart = format(startTime, "HH:mm");
-        const appointmentEnd = format(endTime, "HH:mm");
+        const appointmentStart = format(startTime, 'HH:mm');
+        const appointmentEnd = format(endTime, 'HH:mm');
 
         if (
           appointmentStart < activeSchedule.startTime ||
@@ -184,7 +184,7 @@ const GroomerSelector: React.FC<GroomerSelectorProps> = ({
           return {
             available: false,
             reason: `Works ${activeSchedule.startTime}-${activeSchedule.endTime}`,
-            status: "off",
+            status: 'off',
           };
         }
       }
@@ -193,7 +193,7 @@ const GroomerSelector: React.FC<GroomerSelectorProps> = ({
       return {
         available: true,
         reason: `Available ${activeSchedule.startTime}-${activeSchedule.endTime}`,
-        status: "available",
+        status: 'available',
       };
     } catch (err) {
       console.error(
@@ -202,8 +202,8 @@ const GroomerSelector: React.FC<GroomerSelectorProps> = ({
       );
       return {
         available: false,
-        reason: "Unable to check",
-        status: "unknown",
+        reason: 'Unable to check',
+        status: 'unknown',
       };
     }
   };
@@ -213,23 +213,23 @@ const GroomerSelector: React.FC<GroomerSelectorProps> = ({
    */
   const getStatusColor = (
     status: GroomerAvailabilityStatus
-  ): "success" | "error" | "warning" | "default" => {
+  ): 'success' | 'error' | 'warning' | 'default' => {
     switch (status.status) {
-      case "available":
-        return "success";
-      case "busy":
-      case "off":
-        return "error";
-      case "unknown":
-        return "warning";
+      case 'available':
+        return 'success';
+      case 'busy':
+      case 'off':
+        return 'error';
+      case 'unknown':
+        return 'warning';
       default:
-        return "default";
+        return 'default';
     }
   };
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <CircularProgress size={20} />
         <Typography variant="body2">Loading groomers...</Typography>
       </Box>
@@ -265,16 +265,16 @@ const GroomerSelector: React.FC<GroomerSelectorProps> = ({
         MenuProps={{
           PaperProps: {
             style: {
-              maxWidth: "400px",
+              maxWidth: '400px',
             },
           },
           anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "left",
+            vertical: 'bottom',
+            horizontal: 'left',
           },
           transformOrigin: {
-            vertical: "top",
-            horizontal: "left",
+            vertical: 'top',
+            horizontal: 'left',
           },
         }}
         renderValue={(selected) => {
@@ -286,7 +286,7 @@ const GroomerSelector: React.FC<GroomerSelectorProps> = ({
 
           const availability = groomerAvailability[selected];
           return (
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <span>
                 {groomer.firstName} {groomer.lastName}
               </span>
@@ -295,7 +295,7 @@ const GroomerSelector: React.FC<GroomerSelectorProps> = ({
                   size="small"
                   label={availability.reason || availability.status}
                   color={getStatusColor(availability)}
-                  sx={{ height: 20, fontSize: "0.7rem" }}
+                  sx={{ height: 20, fontSize: '0.7rem' }}
                 />
               )}
             </Box>
@@ -318,10 +318,10 @@ const GroomerSelector: React.FC<GroomerSelectorProps> = ({
             >
               <Box
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  width: "100%",
-                  alignItems: "center",
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  alignItems: 'center',
                 }}
               >
                 <span>
@@ -330,12 +330,12 @@ const GroomerSelector: React.FC<GroomerSelectorProps> = ({
                     <Typography
                       component="span"
                       variant="caption"
-                      sx={{ ml: 1, color: "text.secondary" }}
+                      sx={{ ml: 1, color: 'text.secondary' }}
                     >
                       (
                       {groomer.specialties
-                        .filter((s) => s !== "GROOMING")
-                        .join(", ")}
+                        .filter((s) => s !== 'GROOMING')
+                        .join(', ')}
                       )
                     </Typography>
                   )}

@@ -26,7 +26,11 @@ import {
   ListItem,
   ListItemText,
 } from '@mui/material';
-import { School as TrainingIcon, ArrowForward as ViewAllIcon, PersonAdd as EnrollIcon } from '@mui/icons-material';
+import {
+  School as TrainingIcon,
+  ArrowForward as ViewAllIcon,
+  PersonAdd as EnrollIcon,
+} from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import schedulingService from '../../services/schedulingService';
@@ -41,13 +45,16 @@ const UpcomingClasses: React.FC = () => {
   const [classes, setClasses] = useState<TrainingClass[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Enrollment dialog state
   const [enrollDialogOpen, setEnrollDialogOpen] = useState(false);
-  const [selectedClassForEnrollment, setSelectedClassForEnrollment] = useState<TrainingClass | null>(null);
+  const [selectedClassForEnrollment, setSelectedClassForEnrollment] =
+    useState<TrainingClass | null>(null);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [pets, setPets] = useState<Pet[]>([]);
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
+    null
+  );
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [customerSearchQuery, setCustomerSearchQuery] = useState('');
   const [enrollmentData, setEnrollmentData] = useState({
@@ -56,7 +63,7 @@ const UpcomingClasses: React.FC = () => {
     amountPaid: 0,
     paymentMethod: 'CASH' as 'CASH' | 'CREDIT_CARD' | 'CHECK',
   });
-  
+
   // Credit card payment dialog state
   const [creditCardDialogOpen, setCreditCardDialogOpen] = useState(false);
   const [processingPayment, setProcessingPayment] = useState(false);
@@ -72,12 +79,15 @@ const UpcomingClasses: React.FC = () => {
         status: 'SCHEDULED',
         isActive: true,
       });
-      
+
       // Sort by start date and take first 6 for two-column layout
       const sorted = data
-        .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+        .sort(
+          (a, b) =>
+            new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+        )
         .slice(0, 6);
-      
+
       setClasses(sorted);
       setError(null);
     } catch (err: any) {
@@ -117,7 +127,7 @@ const UpcomingClasses: React.FC = () => {
       amountPaid: trainingClass.pricePerSeries || 0,
       paymentMethod: 'CASH',
     });
-    
+
     // Load all customers for search
     try {
       const customersData = await customerService.getAllCustomers(1, 1000);
@@ -125,7 +135,7 @@ const UpcomingClasses: React.FC = () => {
     } catch (err) {
       console.error('Failed to load customers:', err);
     }
-    
+
     setEnrollDialogOpen(true);
   };
 
@@ -147,10 +157,14 @@ const UpcomingClasses: React.FC = () => {
   const handleCustomerSelect = async (customer: Customer | null) => {
     setSelectedCustomer(customer);
     setSelectedPet(null);
-    
+
     if (customer) {
-      setEnrollmentData({ ...enrollmentData, customerId: customer.id, petId: '' });
-      
+      setEnrollmentData({
+        ...enrollmentData,
+        customerId: customer.id,
+        petId: '',
+      });
+
       try {
         const petsData = await petService.getPetsByCustomer(customer.id);
         setPets(petsData.data || []);
@@ -174,7 +188,11 @@ const UpcomingClasses: React.FC = () => {
   };
 
   const handleEnroll = async () => {
-    if (!enrollmentData.customerId || !enrollmentData.petId || !selectedClassForEnrollment) {
+    if (
+      !enrollmentData.customerId ||
+      !enrollmentData.petId ||
+      !selectedClassForEnrollment
+    ) {
       setError('Please select both customer and pet');
       return;
     }
@@ -197,26 +215,31 @@ const UpcomingClasses: React.FC = () => {
   const processEnrollment = async () => {
     try {
       setProcessingPayment(true);
-      
+
       // Enroll the pet in the class
-      await schedulingService.enrollments.enroll(selectedClassForEnrollment!.id, {
-        customerId: enrollmentData.customerId,
-        petId: enrollmentData.petId,
-        amountPaid: enrollmentData.amountPaid,
-      });
-      
+      await schedulingService.enrollments.enroll(
+        selectedClassForEnrollment!.id,
+        {
+          customerId: enrollmentData.customerId,
+          petId: enrollmentData.petId,
+          amountPaid: enrollmentData.amountPaid,
+        }
+      );
+
       // Refresh the class list to show updated enrollment
       await loadClasses();
-      
+
       // Close dialogs and show success
       handleCloseEnrollDialog();
       setCreditCardDialogOpen(false);
       setError(null);
-      
+
       // Optional: Show success message
       console.log('Enrollment successful!');
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Failed to enroll pet');
+      setError(
+        err.response?.data?.message || err.message || 'Failed to enroll pet'
+      );
     } finally {
       setProcessingPayment(false);
     }
@@ -225,12 +248,12 @@ const UpcomingClasses: React.FC = () => {
   const handleCreditCardPayment = async () => {
     // Simulate credit card processing
     setProcessingPayment(true);
-    
+
     try {
       // In a real implementation, this would call a payment gateway (Stripe, Square, etc.)
       // For now, we'll simulate a 2-second processing time
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       // Process the enrollment after successful payment
       await processEnrollment();
     } catch (err: any) {
@@ -297,7 +320,7 @@ const UpcomingClasses: React.FC = () => {
                 trainingClass.currentEnrolled,
                 trainingClass.maxCapacity
               );
-              
+
               return (
                 <Grid item xs={12} md={6} key={trainingClass.id}>
                   <Box
@@ -311,26 +334,62 @@ const UpcomingClasses: React.FC = () => {
                     }}
                   >
                     <Box display="flex" alignItems="center" gap={1} mb={0.5}>
-                      <Typography variant="body2" fontWeight="medium" sx={{ flex: 1 }}>
+                      <Typography
+                        variant="body2"
+                        fontWeight="medium"
+                        sx={{ flex: 1 }}
+                      >
                         {trainingClass.name}
                       </Typography>
-                      <Chip label={trainingClass.level} size="small" color="primary" variant="outlined" />
+                      <Chip
+                        label={trainingClass.level}
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                      />
                     </Box>
-                    <Typography variant="caption" display="block" color="textSecondary" mb={0.5}>
-                      Starts: {format(new Date(trainingClass.startDate), 'MMM dd, yyyy')}
+                    <Typography
+                      variant="caption"
+                      display="block"
+                      color="textSecondary"
+                      mb={0.5}
+                    >
+                      Starts:{' '}
+                      {format(
+                        new Date(trainingClass.startDate),
+                        'MMM dd, yyyy'
+                      )}
                     </Typography>
-                    <Typography variant="caption" display="block" color="textSecondary" mb={0.5}>
-                      {trainingClass.totalWeeks} weeks • {trainingClass.category}
+                    <Typography
+                      variant="caption"
+                      display="block"
+                      color="textSecondary"
+                      mb={0.5}
+                    >
+                      {trainingClass.totalWeeks} weeks •{' '}
+                      {trainingClass.category}
                     </Typography>
-                    <Typography variant="caption" display="block" color="textSecondary" mb={1}>
-                      {formatTime12Hour(trainingClass.startTime)} - {formatTime12Hour(trainingClass.endTime)}
+                    <Typography
+                      variant="caption"
+                      display="block"
+                      color="textSecondary"
+                      mb={1}
+                    >
+                      {formatTime12Hour(trainingClass.startTime)} -{' '}
+                      {formatTime12Hour(trainingClass.endTime)}
                     </Typography>
-                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={0.5}>
+                    <Box
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="center"
+                      mb={0.5}
+                    >
                       <Typography variant="caption" color="textSecondary">
                         Enrollment
                       </Typography>
                       <Typography variant="caption" fontWeight="medium">
-                        {trainingClass.currentEnrolled} / {trainingClass.maxCapacity}
+                        {trainingClass.currentEnrolled} /{' '}
+                        {trainingClass.maxCapacity}
                       </Typography>
                     </Box>
                     <LinearProgress
@@ -339,11 +398,16 @@ const UpcomingClasses: React.FC = () => {
                       color={getEnrollmentColor(enrollmentPercentage)}
                       sx={{ height: 4, borderRadius: 2 }}
                     />
-                    {trainingClass._count?.waitlist && trainingClass._count.waitlist > 0 && (
-                      <Typography variant="caption" color="warning.main" sx={{ mt: 0.5, display: 'block' }}>
-                        +{trainingClass._count.waitlist} on waitlist
-                      </Typography>
-                    )}
+                    {trainingClass._count?.waitlist &&
+                      trainingClass._count.waitlist > 0 && (
+                        <Typography
+                          variant="caption"
+                          color="warning.main"
+                          sx={{ mt: 0.5, display: 'block' }}
+                        >
+                          +{trainingClass._count.waitlist} on waitlist
+                        </Typography>
+                      )}
                     <Button
                       variant="outlined"
                       size="small"
@@ -353,7 +417,9 @@ const UpcomingClasses: React.FC = () => {
                       sx={{ mt: 1.5 }}
                       disabled={enrollmentPercentage >= 100}
                     >
-                      {enrollmentPercentage >= 100 ? 'Class Full' : 'Enroll Pet'}
+                      {enrollmentPercentage >= 100
+                        ? 'Class Full'
+                        : 'Enroll Pet'}
                     </Button>
                   </Box>
                 </Grid>
@@ -364,13 +430,22 @@ const UpcomingClasses: React.FC = () => {
       </CardContent>
 
       {/* Enrollment Dialog */}
-      <Dialog open={enrollDialogOpen} onClose={handleCloseEnrollDialog} maxWidth="sm" fullWidth>
+      <Dialog
+        open={enrollDialogOpen}
+        onClose={handleCloseEnrollDialog}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>
           Enroll Pet in {selectedClassForEnrollment?.name}
         </DialogTitle>
         <DialogContent>
           {error && (
-            <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 2 }}>
+            <Alert
+              severity="error"
+              onClose={() => setError(null)}
+              sx={{ mb: 2 }}
+            >
               {error}
             </Alert>
           )}
@@ -381,8 +456,12 @@ const UpcomingClasses: React.FC = () => {
               value={selectedCustomer}
               onChange={(_, newValue) => handleCustomerSelect(newValue)}
               inputValue={customerSearchQuery}
-              onInputChange={(_, newInputValue) => setCustomerSearchQuery(newInputValue)}
-              getOptionLabel={(option) => `${option.firstName} ${option.lastName} - ${option.email}`}
+              onInputChange={(_, newInputValue) =>
+                setCustomerSearchQuery(newInputValue)
+              }
+              getOptionLabel={(option) =>
+                `${option.firstName} ${option.lastName} - ${option.email}`
+              }
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -412,7 +491,9 @@ const UpcomingClasses: React.FC = () => {
               options={pets}
               value={selectedPet}
               onChange={(_, newValue) => handlePetSelect(newValue)}
-              getOptionLabel={(option) => `${option.name} (${option.breed || 'Pet'})`}
+              getOptionLabel={(option) =>
+                `${option.name} (${option.breed || 'Pet'})`
+              }
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -432,7 +513,11 @@ const UpcomingClasses: React.FC = () => {
                 </li>
               )}
               disabled={!selectedCustomer}
-              noOptionsText={selectedCustomer ? "No pets found for this customer" : "Select a customer first"}
+              noOptionsText={
+                selectedCustomer
+                  ? 'No pets found for this customer'
+                  : 'Select a customer first'
+              }
               fullWidth
             />
 
@@ -447,7 +532,12 @@ const UpcomingClasses: React.FC = () => {
               <InputLabel>Payment Method</InputLabel>
               <Select
                 value={enrollmentData.paymentMethod}
-                onChange={(e) => setEnrollmentData({ ...enrollmentData, paymentMethod: e.target.value as any })}
+                onChange={(e) =>
+                  setEnrollmentData({
+                    ...enrollmentData,
+                    paymentMethod: e.target.value as any,
+                  })
+                }
                 label="Payment Method"
               >
                 <MenuItem value="CASH">Cash</MenuItem>
@@ -460,7 +550,12 @@ const UpcomingClasses: React.FC = () => {
               label="Amount Paid"
               type="number"
               value={enrollmentData.amountPaid}
-              onChange={(e) => setEnrollmentData({ ...enrollmentData, amountPaid: parseFloat(e.target.value) || 0 })}
+              onChange={(e) =>
+                setEnrollmentData({
+                  ...enrollmentData,
+                  amountPaid: parseFloat(e.target.value) || 0,
+                })
+              }
               fullWidth
               required
               InputProps={{
@@ -477,7 +572,9 @@ const UpcomingClasses: React.FC = () => {
               <List dense disablePadding>
                 <ListItem disablePadding>
                   <ListItemText primary="Class" />
-                  <Typography variant="body2">{selectedClassForEnrollment?.name}</Typography>
+                  <Typography variant="body2">
+                    {selectedClassForEnrollment?.name}
+                  </Typography>
                 </ListItem>
                 <ListItem disablePadding>
                   <ListItemText primary="Duration" />
@@ -493,8 +590,12 @@ const UpcomingClasses: React.FC = () => {
                 </ListItem>
                 <Divider sx={{ my: 1 }} />
                 <ListItem disablePadding>
-                  <ListItemText 
-                    primary={<Typography variant="subtitle2" fontWeight="bold">Total</Typography>} 
+                  <ListItemText
+                    primary={
+                      <Typography variant="subtitle2" fontWeight="bold">
+                        Total
+                      </Typography>
+                    }
                   />
                   <Typography variant="subtitle2" fontWeight="bold">
                     ${calculateTotal().toFixed(2)}
@@ -507,10 +608,17 @@ const UpcomingClasses: React.FC = () => {
             {selectedClassForEnrollment && (
               <Box sx={{ p: 2, bgcolor: 'info.light', borderRadius: 1 }}>
                 <Typography variant="body2" color="info.contrastText">
-                  <strong>Class Details:</strong><br />
-                  {selectedClassForEnrollment.totalWeeks} weeks • {selectedClassForEnrollment.daysOfWeek?.length || 1} days/week<br />
-                  {formatTime12Hour(selectedClassForEnrollment.startTime)} - {formatTime12Hour(selectedClassForEnrollment.endTime)}<br />
-                  Capacity: {selectedClassForEnrollment.currentEnrolled} / {selectedClassForEnrollment.maxCapacity}
+                  <strong>Class Details:</strong>
+                  <br />
+                  {selectedClassForEnrollment.totalWeeks} weeks •{' '}
+                  {selectedClassForEnrollment.daysOfWeek?.length || 1} days/week
+                  <br />
+                  {formatTime12Hour(
+                    selectedClassForEnrollment.startTime
+                  )} - {formatTime12Hour(selectedClassForEnrollment.endTime)}
+                  <br />
+                  Capacity: {selectedClassForEnrollment.currentEnrolled} /{' '}
+                  {selectedClassForEnrollment.maxCapacity}
                 </Typography>
               </Box>
             )}
@@ -518,11 +626,15 @@ const UpcomingClasses: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEnrollDialog}>Cancel</Button>
-          <Button 
-            onClick={handleEnroll} 
-            variant="contained" 
+          <Button
+            onClick={handleEnroll}
+            variant="contained"
             color="success"
-            disabled={!enrollmentData.customerId || !enrollmentData.petId || enrollmentData.amountPaid <= 0}
+            disabled={
+              !enrollmentData.customerId ||
+              !enrollmentData.petId ||
+              enrollmentData.amountPaid <= 0
+            }
           >
             Complete Enrollment & Payment
           </Button>
@@ -530,16 +642,14 @@ const UpcomingClasses: React.FC = () => {
       </Dialog>
 
       {/* Credit Card Payment Dialog */}
-      <Dialog 
-        open={creditCardDialogOpen} 
+      <Dialog
+        open={creditCardDialogOpen}
         onClose={handleCloseCreditCardDialog}
-        maxWidth="sm" 
+        maxWidth="sm"
         fullWidth
         disableEscapeKeyDown={processingPayment}
       >
-        <DialogTitle>
-          Credit Card Payment
-        </DialogTitle>
+        <DialogTitle>Credit Card Payment</DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
             {/* Payment Summary */}
@@ -560,14 +670,24 @@ const UpcomingClasses: React.FC = () => {
                 </ListItem>
                 <ListItem disablePadding>
                   <ListItemText primary="Class" />
-                  <Typography variant="body2">{selectedClassForEnrollment?.name}</Typography>
+                  <Typography variant="body2">
+                    {selectedClassForEnrollment?.name}
+                  </Typography>
                 </ListItem>
                 <Divider sx={{ my: 1 }} />
                 <ListItem disablePadding>
-                  <ListItemText 
-                    primary={<Typography variant="subtitle1" fontWeight="bold">Amount to Charge</Typography>} 
+                  <ListItemText
+                    primary={
+                      <Typography variant="subtitle1" fontWeight="bold">
+                        Amount to Charge
+                      </Typography>
+                    }
                   />
-                  <Typography variant="subtitle1" fontWeight="bold" color="primary">
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
+                    color="primary"
+                  >
                     ${calculateTotal().toFixed(2)}
                   </Typography>
                 </ListItem>
@@ -575,12 +695,21 @@ const UpcomingClasses: React.FC = () => {
             </Box>
 
             {/* Credit Card Form Placeholder */}
-            <Box sx={{ p: 3, border: '2px dashed', borderColor: 'grey.300', borderRadius: 1, textAlign: 'center' }}>
+            <Box
+              sx={{
+                p: 3,
+                border: '2px dashed',
+                borderColor: 'grey.300',
+                borderRadius: 1,
+                textAlign: 'center',
+              }}
+            >
               <Typography variant="body2" color="textSecondary" gutterBottom>
                 Credit Card Processing
               </Typography>
               <Typography variant="caption" color="textSecondary">
-                In production, this would integrate with Stripe, Square, or your payment processor
+                In production, this would integrate with Stripe, Square, or your
+                payment processor
               </Typography>
               {processingPayment && (
                 <Box sx={{ mt: 2 }}>
@@ -594,18 +723,22 @@ const UpcomingClasses: React.FC = () => {
 
             <Alert severity="info">
               <Typography variant="body2">
-                <strong>Demo Mode:</strong> Click "Process Payment" to simulate a successful credit card transaction.
+                <strong>Demo Mode:</strong> Click "Process Payment" to simulate
+                a successful credit card transaction.
               </Typography>
             </Alert>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseCreditCardDialog} disabled={processingPayment}>
+          <Button
+            onClick={handleCloseCreditCardDialog}
+            disabled={processingPayment}
+          >
             Cancel
           </Button>
-          <Button 
+          <Button
             onClick={handleCreditCardPayment}
-            variant="contained" 
+            variant="contained"
             color="primary"
             disabled={processingPayment}
           >

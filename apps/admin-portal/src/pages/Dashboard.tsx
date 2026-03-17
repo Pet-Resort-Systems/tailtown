@@ -21,7 +21,8 @@ const Dashboard: React.FC = () => {
   const sections = [
     {
       title: 'Tenant Management',
-      description: 'Manage multi-tenant accounts, subscriptions, and provisioning',
+      description:
+        'Manage multi-tenant accounts, subscriptions, and provisioning',
       icon: <BusinessIcon sx={{ fontSize: 60, color: 'primary.main' }} />,
       path: '/tenants',
     },
@@ -47,7 +48,12 @@ const Dashboard: React.FC = () => {
         <Typography variant="h3" component="h1" gutterBottom align="center">
           Tailtown Admin Portal
         </Typography>
-        <Typography variant="h6" color="text.secondary" paragraph align="center">
+        <Typography
+          variant="h6"
+          color="text.secondary"
+          paragraph
+          align="center"
+        >
           Platform Administration & Management
         </Typography>
 

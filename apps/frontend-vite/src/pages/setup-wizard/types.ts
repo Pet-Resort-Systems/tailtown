@@ -7,17 +7,17 @@
 // ============================================================================
 
 export type WizardStep =
-  | "business-info"
-  | "rooms-kennels"
-  | "services"
-  | "pricing"
-  | "operating-hours"
-  | "staff"
-  | "payment"
-  | "notifications"
-  | "branding"
-  | "policies"
-  | "review";
+  | 'business-info'
+  | 'rooms-kennels'
+  | 'services'
+  | 'pricing'
+  | 'operating-hours'
+  | 'staff'
+  | 'payment'
+  | 'notifications'
+  | 'branding'
+  | 'policies'
+  | 'review';
 
 export interface StepConfig {
   id: WizardStep;
@@ -29,80 +29,80 @@ export interface StepConfig {
 
 export const WIZARD_STEPS: StepConfig[] = [
   {
-    id: "business-info",
-    title: "Business Info",
-    description: "Name, address, contact details",
-    icon: "Business",
+    id: 'business-info',
+    title: 'Business Info',
+    description: 'Name, address, contact details',
+    icon: 'Business',
     required: true,
   },
   {
-    id: "rooms-kennels",
-    title: "Rooms & Kennels",
-    description: "Configure your facility layout",
-    icon: "MeetingRoom",
+    id: 'rooms-kennels',
+    title: 'Rooms & Kennels',
+    description: 'Configure your facility layout',
+    icon: 'MeetingRoom',
     required: true,
   },
   {
-    id: "services",
-    title: "Services",
-    description: "Boarding, daycare, grooming, etc.",
-    icon: "Pets",
+    id: 'services',
+    title: 'Services',
+    description: 'Boarding, daycare, grooming, etc.',
+    icon: 'Pets',
     required: true,
   },
   {
-    id: "pricing",
-    title: "Pricing",
-    description: "Rates, discounts, surcharges",
-    icon: "AttachMoney",
+    id: 'pricing',
+    title: 'Pricing',
+    description: 'Rates, discounts, surcharges',
+    icon: 'AttachMoney',
     required: true,
   },
   {
-    id: "operating-hours",
-    title: "Hours",
-    description: "Business hours & holidays",
-    icon: "Schedule",
+    id: 'operating-hours',
+    title: 'Hours',
+    description: 'Business hours & holidays',
+    icon: 'Schedule',
     required: true,
   },
   {
-    id: "staff",
-    title: "Staff",
-    description: "Team members & roles",
-    icon: "People",
+    id: 'staff',
+    title: 'Staff',
+    description: 'Team members & roles',
+    icon: 'People',
     required: true,
   },
   {
-    id: "payment",
-    title: "Payment",
-    description: "CardConnect merchant setup",
-    icon: "CreditCard",
+    id: 'payment',
+    title: 'Payment',
+    description: 'CardConnect merchant setup',
+    icon: 'CreditCard',
     required: true,
   },
   {
-    id: "notifications",
-    title: "Notifications",
-    description: "Email & SMS settings",
-    icon: "Notifications",
+    id: 'notifications',
+    title: 'Notifications',
+    description: 'Email & SMS settings',
+    icon: 'Notifications',
     required: false,
   },
   {
-    id: "branding",
-    title: "Branding",
-    description: "Colors & customization",
-    icon: "Palette",
+    id: 'branding',
+    title: 'Branding',
+    description: 'Colors & customization',
+    icon: 'Palette',
     required: false,
   },
   {
-    id: "policies",
-    title: "Policies",
-    description: "Cancellation, vaccinations, etc.",
-    icon: "Policy",
+    id: 'policies',
+    title: 'Policies',
+    description: 'Cancellation, vaccinations, etc.',
+    icon: 'Policy',
     required: false,
   },
   {
-    id: "review",
-    title: "Review",
-    description: "Confirm and launch",
-    icon: "CheckCircle",
+    id: 'review',
+    title: 'Review',
+    description: 'Confirm and launch',
+    icon: 'CheckCircle',
     required: true,
   },
 ];
@@ -129,7 +129,7 @@ export interface BusinessInfo {
 // Rooms & Kennels
 // ============================================================================
 
-export type KennelSize = "SMALL" | "MEDIUM" | "LARGE" | "XLARGE" | "SUITE";
+export type KennelSize = 'SMALL' | 'MEDIUM' | 'LARGE' | 'XLARGE' | 'SUITE';
 
 export interface KennelSizeConfig {
   size: KennelSize;
@@ -153,7 +153,7 @@ export interface KennelConfig {
 
 export interface RoomsKennelsData {
   rooms: RoomConfig[];
-  namingConvention: "numeric" | "alpha" | "custom";
+  namingConvention: 'numeric' | 'alpha' | 'custom';
   kennelSizes: KennelSizeConfig[];
 }
 
@@ -162,13 +162,13 @@ export interface RoomsKennelsData {
 // ============================================================================
 
 export type ServiceCategory =
-  | "BOARDING"
-  | "DAYCARE"
-  | "GROOMING"
-  | "TRAINING"
-  | "WALKING"
-  | "BATHING"
-  | "ADDON";
+  | 'BOARDING'
+  | 'DAYCARE'
+  | 'GROOMING'
+  | 'TRAINING'
+  | 'WALKING'
+  | 'BATHING'
+  | 'ADDON';
 
 export interface ServiceConfig {
   id: string;
@@ -206,7 +206,7 @@ export interface PricingData {
   };
   depositRequired: boolean;
   depositAmount?: number; // fixed amount or percentage
-  depositType: "fixed" | "percentage" | "first_night";
+  depositType: 'fixed' | 'percentage' | 'first_night';
 }
 
 // ============================================================================
@@ -245,7 +245,7 @@ export interface OperatingHoursData {
 // Staff
 // ============================================================================
 
-export type StaffRole = "ADMIN" | "MANAGER" | "STAFF" | "GROOMER" | "TRAINER";
+export type StaffRole = 'ADMIN' | 'MANAGER' | 'STAFF' | 'GROOMER' | 'TRAINER';
 
 export interface StaffMember {
   id: string;
@@ -272,7 +272,7 @@ export interface PaymentData {
     apiPassword: string;
     testMode: boolean;
   };
-  acceptedCards: ("visa" | "mastercard" | "amex" | "discover")[];
+  acceptedCards: ('visa' | 'mastercard' | 'amex' | 'discover')[];
   requireCvv: boolean;
   storeCards: boolean; // for recurring charges
 }
@@ -361,81 +361,81 @@ export interface SetupWizardData {
 // ============================================================================
 
 export const DEFAULT_KENNEL_SIZES: KennelSizeConfig[] = [
-  { size: "SMALL", label: "Small", maxWeight: 25 },
-  { size: "MEDIUM", label: "Medium", maxWeight: 50 },
-  { size: "LARGE", label: "Large", maxWeight: 80 },
-  { size: "XLARGE", label: "Extra Large", maxWeight: 120 },
-  { size: "SUITE", label: "Suite", maxWeight: 200 },
+  { size: 'SMALL', label: 'Small', maxWeight: 25 },
+  { size: 'MEDIUM', label: 'Medium', maxWeight: 50 },
+  { size: 'LARGE', label: 'Large', maxWeight: 80 },
+  { size: 'XLARGE', label: 'Extra Large', maxWeight: 120 },
+  { size: 'SUITE', label: 'Suite', maxWeight: 200 },
 ];
 
 export const DEFAULT_SERVICES: ServiceConfig[] = [
-  { id: "boarding", name: "Boarding", category: "BOARDING", enabled: true },
-  { id: "daycare", name: "Day Camp", category: "DAYCARE", enabled: true },
+  { id: 'boarding', name: 'Boarding', category: 'BOARDING', enabled: true },
+  { id: 'daycare', name: 'Day Camp', category: 'DAYCARE', enabled: true },
   {
-    id: "grooming-full",
-    name: "Full Groom",
-    category: "GROOMING",
+    id: 'grooming-full',
+    name: 'Full Groom',
+    category: 'GROOMING',
     duration: 120,
     enabled: false,
   },
   {
-    id: "grooming-bath",
-    name: "Bath & Brush",
-    category: "BATHING",
+    id: 'grooming-bath',
+    name: 'Bath & Brush',
+    category: 'BATHING',
     duration: 60,
     enabled: false,
   },
   {
-    id: "training-basic",
-    name: "Basic Training",
-    category: "TRAINING",
+    id: 'training-basic',
+    name: 'Basic Training',
+    category: 'TRAINING',
     duration: 60,
     enabled: false,
   },
   {
-    id: "walking",
-    name: "Dog Walking",
-    category: "WALKING",
+    id: 'walking',
+    name: 'Dog Walking',
+    category: 'WALKING',
     duration: 30,
     enabled: false,
   },
 ];
 
 export const DEFAULT_VACCINATIONS = [
-  "Rabies",
-  "Bordetella",
-  "DHPP (Distemper)",
-  "Canine Influenza",
+  'Rabies',
+  'Bordetella',
+  'DHPP (Distemper)',
+  'Canine Influenza',
 ];
 
 export const DEFAULT_HOURS: DayHours = {
-  open: "07:00",
-  close: "19:00",
+  open: '07:00',
+  close: '19:00',
   closed: false,
 };
 
 export const DEFAULT_HOLIDAYS: HolidayConfig[] = [
   {
-    date: "01-01",
+    date: '01-01',
     name: "New Year's Day",
     closed: false,
     surchargeApplies: true,
   },
   {
-    date: "07-04",
-    name: "Independence Day",
+    date: '07-04',
+    name: 'Independence Day',
     closed: false,
     surchargeApplies: true,
   },
   {
-    date: "11-28",
-    name: "Thanksgiving",
+    date: '11-28',
+    name: 'Thanksgiving',
     closed: true,
     surchargeApplies: false,
   },
   {
-    date: "12-25",
-    name: "Christmas Day",
+    date: '12-25',
+    name: 'Christmas Day',
     closed: true,
     surchargeApplies: false,
   },

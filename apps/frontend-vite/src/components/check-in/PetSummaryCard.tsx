@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Paper,
@@ -17,7 +17,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Warning as WarningIcon,
   CheckCircle as CheckCircleIcon,
@@ -35,12 +35,12 @@ import {
   ContactPhone as EmergencyIcon,
   History as HistoryIcon,
   Add as AddIcon,
-} from "@mui/icons-material";
-import checkInService from "../../services/checkInService";
-import PetIconDisplay from "../pets/PetIconDisplay";
+} from '@mui/icons-material';
+import checkInService from '../../services/checkInService';
+import PetIconDisplay from '../pets/PetIconDisplay';
 
 interface VaccinationStatus {
-  [key: string]: "current" | "expired" | "expiring_soon" | "missing";
+  [key: string]: 'current' | 'expired' | 'expiring_soon' | 'missing';
 }
 
 interface VaccineExpirations {
@@ -50,7 +50,7 @@ interface VaccineExpirations {
 interface Pet {
   id: string;
   name: string;
-  type: "DOG" | "CAT";
+  type: 'DOG' | 'CAT';
   breed?: string;
   color?: string;
   weight?: number;
@@ -120,20 +120,20 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
     history: false,
   });
   const [editingVet, setEditingVet] = useState(false);
-  const [vetName, setVetName] = useState(pet.vetName || "");
-  const [vetPhone, setVetPhone] = useState(pet.vetPhone || "");
+  const [vetName, setVetName] = useState(pet.vetName || '');
+  const [vetPhone, setVetPhone] = useState(pet.vetPhone || '');
 
   // Emergency contact editing
   const [editingEmergency, setEditingEmergency] = useState(false);
-  const [emergencyName, setEmergencyName] = useState(emergencyContact || "");
+  const [emergencyName, setEmergencyName] = useState(emergencyContact || '');
   const [emergencyPhoneValue, setEmergencyPhoneValue] = useState(
-    emergencyPhone || ""
+    emergencyPhone || ''
   );
 
   // Vaccine quick-add
   const [addingVaccine, setAddingVaccine] = useState(false);
-  const [newVaccineName, setNewVaccineName] = useState("");
-  const [newVaccineDate, setNewVaccineDate] = useState("");
+  const [newVaccineName, setNewVaccineName] = useState('');
+  const [newVaccineDate, setNewVaccineDate] = useState('');
 
   // Pet history
   const [previousCheckIns, setPreviousCheckIns] = useState<PreviousCheckIn[]>(
@@ -161,7 +161,7 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
         setPreviousCheckIns(response.data.slice(0, 5)); // Last 5 check-ins
       }
     } catch (err) {
-      console.error("Error loading pet history:", err);
+      console.error('Error loading pet history:', err);
     } finally {
       setLoadingHistory(false);
     }
@@ -199,15 +199,15 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
       };
       await onUpdatePet({ vaccineExpirations: updatedVaccines } as any);
       setAddingVaccine(false);
-      setNewVaccineName("");
-      setNewVaccineDate("");
+      setNewVaccineName('');
+      setNewVaccineDate('');
     }
   };
 
   // Calculate vaccine alerts
   const getVaccineAlerts = () => {
     const alerts: {
-      type: "error" | "warning" | "success";
+      type: 'error' | 'warning' | 'success';
       message: string;
       vaccine: string;
     }[] = [];
@@ -215,9 +215,9 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
     if (!pet.vaccinationStatus || !pet.vaccineExpirations) {
       return [
         {
-          type: "warning" as const,
-          message: "No vaccination records on file",
-          vaccine: "all",
+          type: 'warning' as const,
+          message: 'No vaccination records on file',
+          vaccine: 'all',
         },
       ];
     }
@@ -231,13 +231,13 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
 
       if (expDate < today) {
         alerts.push({
-          type: "error",
+          type: 'error',
           message: `${vaccine} expired on ${expDate.toLocaleDateString()}`,
           vaccine,
         });
       } else if (expDate < thirtyDaysFromNow) {
         alerts.push({
-          type: "warning",
+          type: 'warning',
           message: `${vaccine} expires on ${expDate.toLocaleDateString()}`,
           vaccine,
         });
@@ -248,8 +248,8 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
   };
 
   const vaccineAlerts = getVaccineAlerts();
-  const hasExpiredVaccines = vaccineAlerts.some((a) => a.type === "error");
-  const hasExpiringVaccines = vaccineAlerts.some((a) => a.type === "warning");
+  const hasExpiredVaccines = vaccineAlerts.some((a) => a.type === 'error');
+  const hasExpiringVaccines = vaccineAlerts.some((a) => a.type === 'warning');
 
   // Get pet age
   const getAge = () => {
@@ -259,9 +259,9 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
     const years = today.getFullYear() - birth.getFullYear();
     const months = today.getMonth() - birth.getMonth();
     if (years > 0) {
-      return `${years} year${years > 1 ? "s" : ""} old`;
+      return `${years} year${years > 1 ? 's' : ''} old`;
     }
-    return `${months} month${months > 1 ? "s" : ""} old`;
+    return `${months} month${months > 1 ? 's' : ''} old`;
   };
 
   // Check for special handling flags
@@ -269,10 +269,10 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
     pet.petIcons &&
     pet.petIcons.some(
       (icon) =>
-        icon.includes("aggressive") ||
-        icon.includes("caution") ||
-        icon.includes("bite") ||
-        icon.includes("escape")
+        icon.includes('aggressive') ||
+        icon.includes('caution') ||
+        icon.includes('bite') ||
+        icon.includes('escape')
     );
 
   return (
@@ -282,9 +282,9 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
         <Grid item xs={12} md={4}>
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
             }}
           >
             <Avatar
@@ -294,10 +294,10 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
                 height: 150,
                 mb: 2,
                 border: hasExpiredVaccines
-                  ? "4px solid #f44336"
+                  ? '4px solid #f44336'
                   : hasExpiringVaccines
-                  ? "4px solid #ff9800"
-                  : "4px solid #4caf50",
+                    ? '4px solid #ff9800'
+                    : '4px solid #4caf50',
               }}
             >
               <PetsIcon sx={{ fontSize: 80 }} />
@@ -316,7 +316,7 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
 
             {/* Pet Icons */}
             {pet.petIcons && pet.petIcons.length > 0 && (
-              <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
+              <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
                 <PetIconDisplay iconIds={pet.petIcons} size="small" />
               </Box>
             )}
@@ -333,7 +333,7 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
                 <Alert severity="error" sx={{ mb: 1 }}>
                   <AlertTitle>Expired Vaccinations</AlertTitle>
                   {vaccineAlerts
-                    .filter((a) => a.type === "error")
+                    .filter((a) => a.type === 'error')
                     .map((a, i) => (
                       <div key={i}>{a.message}</div>
                     ))}
@@ -343,7 +343,7 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
                 <Alert severity="warning" sx={{ mb: 1 }}>
                   <AlertTitle>Vaccinations Expiring Soon</AlertTitle>
                   {vaccineAlerts
-                    .filter((a) => a.type === "warning")
+                    .filter((a) => a.type === 'warning')
                     .map((a, i) => (
                       <div key={i}>{a.message}</div>
                     ))}
@@ -362,15 +362,15 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
           <Paper variant="outlined" sx={{ p: 2, mb: 2 }}>
             <Box
               sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
                 mb: 1,
               }}
             >
               <Typography variant="subtitle1" fontWeight="bold">
                 <VetIcon
-                  sx={{ mr: 1, verticalAlign: "middle", fontSize: 20 }}
+                  sx={{ mr: 1, verticalAlign: 'middle', fontSize: 20 }}
                 />
                 Veterinarian
               </Typography>
@@ -386,7 +386,7 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
                 {pet.vetPhone && (
                   <Typography variant="body2" color="text.secondary">
                     <PhoneIcon
-                      sx={{ mr: 0.5, verticalAlign: "middle", fontSize: 16 }}
+                      sx={{ mr: 0.5, verticalAlign: 'middle', fontSize: 16 }}
                     />
                     {pet.vetPhone}
                   </Typography>
@@ -412,16 +412,16 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
           <Paper variant="outlined" sx={{ p: 2, mb: 2 }}>
             <Box
               sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                cursor: "pointer",
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                cursor: 'pointer',
               }}
-              onClick={() => toggleSection("vaccines")}
+              onClick={() => toggleSection('vaccines')}
             >
               <Typography variant="subtitle1" fontWeight="bold">
                 <VaccineIcon
-                  sx={{ mr: 1, verticalAlign: "middle", fontSize: 20 }}
+                  sx={{ mr: 1, verticalAlign: 'middle', fontSize: 20 }}
                 />
                 Vaccination Status
               </Typography>
@@ -460,14 +460,14 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
                               label={`${vaccine}: ${exp.toLocaleDateString()}`}
                               color={
                                 isExpired
-                                  ? "error"
+                                  ? 'error'
                                   : isExpiring
-                                  ? "warning"
-                                  : "success"
+                                    ? 'warning'
+                                    : 'success'
                               }
                               variant="outlined"
                               size="small"
-                              sx={{ width: "100%" }}
+                              sx={{ width: '100%' }}
                             />
                           </Grid>
                         );
@@ -500,14 +500,14 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
               variant="outlined"
               sx={{
                 p: 2,
-                height: "100%",
-                bgcolor: pet.isPickyEater ? "warning.50" : undefined,
-                borderColor: pet.isPickyEater ? "warning.main" : undefined,
+                height: '100%',
+                bgcolor: pet.isPickyEater ? 'warning.50' : undefined,
+                borderColor: pet.isPickyEater ? 'warning.main' : undefined,
               }}
             >
               <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
                 <FoodIcon
-                  sx={{ mr: 1, verticalAlign: "middle", fontSize: 18 }}
+                  sx={{ mr: 1, verticalAlign: 'middle', fontSize: 18 }}
                 />
                 Feeding Instructions
                 {pet.isPickyEater && (
@@ -535,7 +535,7 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
                 </Typography>
               )}
               {pet.foodNotes && (
-                <Typography variant="body2" sx={{ mt: 1, fontStyle: "italic" }}>
+                <Typography variant="body2" sx={{ mt: 1, fontStyle: 'italic' }}>
                   {pet.foodNotes}
                 </Typography>
               )}
@@ -546,10 +546,10 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
         {/* Behavior */}
         {pet.behaviorNotes && (
           <Grid item xs={12} md={6}>
-            <Paper variant="outlined" sx={{ p: 2, height: "100%" }}>
+            <Paper variant="outlined" sx={{ p: 2, height: '100%' }}>
               <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
                 <BehaviorIcon
-                  sx={{ mr: 1, verticalAlign: "middle", fontSize: 18 }}
+                  sx={{ mr: 1, verticalAlign: 'middle', fontSize: 18 }}
                 />
                 Behavior Notes
               </Typography>
@@ -563,7 +563,7 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
           <Grid item xs={12} md={6}>
             <Paper
               variant="outlined"
-              sx={{ p: 2, height: "100%", bgcolor: "error.50" }}
+              sx={{ p: 2, height: '100%', bgcolor: 'error.50' }}
             >
               <Typography
                 variant="subtitle2"
@@ -572,7 +572,7 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
                 color="error.main"
               >
                 <MedicalIcon
-                  sx={{ mr: 1, verticalAlign: "middle", fontSize: 18 }}
+                  sx={{ mr: 1, verticalAlign: 'middle', fontSize: 18 }}
                 />
                 Medical / Allergies
               </Typography>
@@ -593,7 +593,7 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
         {/* Special Needs */}
         {pet.specialNeeds && (
           <Grid item xs={12} md={6}>
-            <Paper variant="outlined" sx={{ p: 2, height: "100%" }}>
+            <Paper variant="outlined" sx={{ p: 2, height: '100%' }}>
               <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
                 Special Needs
               </Typography>
@@ -630,17 +630,17 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
       <Box sx={{ mt: 2 }}>
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            cursor: "pointer",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            cursor: 'pointer',
             p: 1,
-            bgcolor: "grey.50",
+            bgcolor: 'grey.50',
             borderRadius: 1,
           }}
-          onClick={() => toggleSection("emergency")}
+          onClick={() => toggleSection('emergency')}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <EmergencyIcon color="warning" />
             <Typography variant="subtitle1" fontWeight="bold">
               Emergency Contact
@@ -649,21 +649,21 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
           {expandedSections.emergency ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </Box>
         <Collapse in={expandedSections.emergency}>
-          <Box sx={{ p: 2, bgcolor: "grey.50", borderRadius: 1, mt: 1 }}>
+          <Box sx={{ p: 2, bgcolor: 'grey.50', borderRadius: 1, mt: 1 }}>
             {emergencyContact || emergencyPhone ? (
               <Box
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
                 }}
               >
                 <Box>
                   <Typography variant="body2">
-                    <strong>Name:</strong> {emergencyContact || "Not set"}
+                    <strong>Name:</strong> {emergencyContact || 'Not set'}
                   </Typography>
                   <Typography variant="body2">
-                    <strong>Phone:</strong> {emergencyPhone || "Not set"}
+                    <strong>Phone:</strong> {emergencyPhone || 'Not set'}
                   </Typography>
                 </Box>
                 {showEditButtons && onUpdateCustomer && (
@@ -678,9 +678,9 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
             ) : (
               <Box
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
                 }}
               >
                 <Typography variant="body2" color="text.secondary">
@@ -719,17 +719,17 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
       <Box sx={{ mt: 2 }}>
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            cursor: "pointer",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            cursor: 'pointer',
             p: 1,
-            bgcolor: "grey.50",
+            bgcolor: 'grey.50',
             borderRadius: 1,
           }}
-          onClick={() => toggleSection("history")}
+          onClick={() => toggleSection('history')}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <HistoryIcon color="info" />
             <Typography variant="subtitle1" fontWeight="bold">
               Previous Visits
@@ -738,20 +738,20 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
           {expandedSections.history ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </Box>
         <Collapse in={expandedSections.history}>
-          <Box sx={{ p: 2, bgcolor: "grey.50", borderRadius: 1, mt: 1 }}>
+          <Box sx={{ p: 2, bgcolor: 'grey.50', borderRadius: 1, mt: 1 }}>
             {loadingHistory ? (
               <Typography variant="body2" color="text.secondary">
                 Loading visit history...
               </Typography>
             ) : previousCheckIns.length > 0 ? (
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                 {previousCheckIns.map((checkIn) => (
                   <Paper key={checkIn.id} variant="outlined" sx={{ p: 1.5 }}>
                     <Box
                       sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
                       }}
                     >
                       <Typography variant="body2" fontWeight="bold">
@@ -765,7 +765,7 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
                         label={checkIn.status}
                         size="small"
                         color={
-                          checkIn.status === "COMPLETED" ? "success" : "default"
+                          checkIn.status === 'COMPLETED' ? 'success' : 'default'
                         }
                       />
                     </Box>

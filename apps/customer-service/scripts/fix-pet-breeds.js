@@ -5,22 +5,22 @@
  * Usage: node scripts/fix-pet-breeds.js <tenantId>
  */
 
-const { PrismaClient } = require("@prisma/client");
-const fs = require("fs");
-const path = require("path");
+const { PrismaClient } = require('@prisma/client');
+const fs = require('fs');
+const path = require('path');
 
 const prisma = new PrismaClient();
 
 async function fixPetBreeds(tenantId) {
-  console.log("🐕 Fix Pet Breed Names");
-  console.log("======================");
+  console.log('🐕 Fix Pet Breed Names');
+  console.log('======================');
   console.log(`Tenant: ${tenantId}`);
-  console.log("");
+  console.log('');
 
   // Load breeds data from JSON file
   const breedsPath = path.join(
     __dirname,
-    "../../../data/gingr-reference/breeds.json"
+    '../../../data/gingr-reference/breeds.json'
   );
 
   if (!fs.existsSync(breedsPath)) {
@@ -28,7 +28,7 @@ async function fixPetBreeds(tenantId) {
     process.exit(1);
   }
 
-  const breedsData = JSON.parse(fs.readFileSync(breedsPath, "utf8"));
+  const breedsData = JSON.parse(fs.readFileSync(breedsPath, 'utf8'));
   console.log(`📚 Loaded ${breedsData.length} breeds from reference file`);
 
   // Create a map of breed ID to breed name
@@ -38,7 +38,7 @@ async function fixPetBreeds(tenantId) {
   });
 
   // Find pets with numeric breed IDs (not already converted to names)
-  console.log("\n🔍 Finding pets with numeric breed IDs...");
+  console.log('\n🔍 Finding pets with numeric breed IDs...');
 
   const pets = await prisma.pet.findMany({
     where: {
@@ -65,12 +65,12 @@ async function fixPetBreeds(tenantId) {
   );
 
   if (petsToUpdate.length === 0) {
-    console.log("\n✅ All pets already have breed names!");
+    console.log('\n✅ All pets already have breed names!');
     return;
   }
 
   // Update pets
-  console.log("\n🔄 Updating pets...");
+  console.log('\n🔄 Updating pets...');
   let updated = 0;
   let notFound = 0;
   let errors = 0;
@@ -106,36 +106,36 @@ async function fixPetBreeds(tenantId) {
     }
   }
 
-  console.log("\n✅ Update complete!");
+  console.log('\n✅ Update complete!');
   console.log(`   Updated: ${updated}`);
   console.log(`   Breed ID not found: ${notFound}`);
   console.log(`   Errors: ${errors}`);
 
   // Show sample results
-  console.log("\n📋 Sample updated pets:");
+  console.log('\n📋 Sample updated pets:');
   const samples = await prisma.pet.findMany({
     where: { tenantId },
     take: 10,
-    orderBy: { name: "asc" },
+    orderBy: { name: 'asc' },
     select: { name: true, breed: true },
   });
 
   samples.forEach((pet) => {
-    console.log(`   ${pet.name}: ${pet.breed || "N/A"}`);
+    console.log(`   ${pet.name}: ${pet.breed || 'N/A'}`);
   });
 }
 
 // Run
 const tenantId = process.argv[2];
 if (!tenantId) {
-  console.error("Usage: node scripts/fix-pet-breeds.js <tenantId>");
+  console.error('Usage: node scripts/fix-pet-breeds.js <tenantId>');
   process.exit(1);
 }
 
 fixPetBreeds(tenantId)
   .then(() => process.exit(0))
   .catch((error) => {
-    console.error("Fatal error:", error);
+    console.error('Fatal error:', error);
     process.exit(1);
   })
   .finally(() => prisma.$disconnect());

@@ -5,45 +5,45 @@
 
 export const PET_ICON_MAP: Record<string, string> = {
   // Medical Icons
-  'allergies': '⚠️',
-  'medication': '💊',
+  allergies: '⚠️',
+  medication: '💊',
   'special-needs': '⚕️',
-  'senior': '👴',
-  'puppy': '🐶',
-  'kitten': '🐱',
+  senior: '👴',
+  puppy: '🐶',
+  kitten: '🐱',
   'vaccinations-current': '💉',
   'vaccinations-overdue': '⚠️',
-  
+
   // Behavioral Icons
-  'aggressive': '⚠️',
-  'anxious': '😰',
-  'friendly': '😊',
-  'shy': '🙈',
-  'energetic': '⚡',
-  'calm': '😌',
-  
+  aggressive: '⚠️',
+  anxious: '😰',
+  friendly: '😊',
+  shy: '🙈',
+  energetic: '⚡',
+  calm: '😌',
+
   // Dietary Icons
   'food-allergies': '🚫',
   'special-diet': '🥗',
   'picky-eater': '🍽️',
-  
+
   // Training Icons
-  'trained': '🎓',
+  trained: '🎓',
   'in-training': '📚',
   'needs-training': '📝',
-  
+
   // Other Icons
   'escape-artist': '🏃',
-  'barker': '🔊',
-  'chewer': '🦴',
-  'digger': '⛏️',
-  'swimmer': '🏊',
-  'fetch': '🎾',
-  
+  barker: '🔊',
+  chewer: '🦴',
+  digger: '⛏️',
+  swimmer: '🏊',
+  fetch: '🎾',
+
   // VIP/Special
-  'vip': '⭐',
-  'birthday': '🎂',
-  'new': '🆕'
+  vip: '⭐',
+  birthday: '🎂',
+  new: '🆕',
 };
 
 /**
@@ -51,14 +51,16 @@ export const PET_ICON_MAP: Record<string, string> = {
  * @param iconIds - Array of icon ID strings
  * @returns Array of emoji characters
  */
-export const mapPetIconsToEmojis = (iconIds: string[] | null | undefined): string[] => {
+export const mapPetIconsToEmojis = (
+  iconIds: string[] | null | undefined
+): string[] => {
   if (!iconIds || !Array.isArray(iconIds)) {
     return [];
   }
-  
+
   return iconIds
-    .map(id => PET_ICON_MAP[id] || id) // Use emoji if mapped, otherwise use the ID itself
-    .filter(icon => icon && icon.trim()); // Filter out empty values
+    .map((id) => PET_ICON_MAP[id] || id) // Use emoji if mapped, otherwise use the ID itself
+    .filter((icon) => icon && icon.trim()); // Filter out empty values
 };
 
 /**

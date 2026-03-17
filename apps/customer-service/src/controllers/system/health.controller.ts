@@ -1,6 +1,6 @@
 /**
  * System Health Controller
- * 
+ *
  * Provides detailed system health metrics for monitoring and observability.
  * Used by super admin dashboard for real-time system status.
  */
@@ -81,7 +81,7 @@ async function checkDatabaseHealth(): Promise<DatabaseHealth> {
       FROM pg_stat_activity 
       WHERE datname = current_database()
     `;
-    
+
     const activeConnections = Number(result[0]?.count || 0);
 
     return {
@@ -110,7 +110,7 @@ async function checkCacheHealth(): Promise<CacheHealth> {
 
     // Test Redis connection
     await redisClient.ping();
-    
+
     // Get cache stats if available
     const info = await redisClient.info('stats');
     const hitRate = parseCacheHitRate(info);
@@ -146,16 +146,17 @@ function parseCacheHitRate(info: string): number {
  */
 async function checkReservationService(): Promise<ServiceHealth> {
   try {
-    const reservationUrl = process.env.RESERVATION_SERVICE_URL || 'http://localhost:4003';
+    const reservationUrl =
+      process.env.RESERVATION_SERVICE_URL || 'http://localhost:4003';
     const start = Date.now();
-    
+
     const response = await fetch(`${reservationUrl}/health`, {
       method: 'GET',
       signal: AbortSignal.timeout(5000),
     });
-    
+
     const responseTime = Date.now() - start;
-    
+
     return {
       status: response.ok ? 'up' : 'degraded',
       responseTime,
@@ -182,11 +183,12 @@ function collectSystemHealth(): SystemHealth {
 
   // Get CPU usage (simplified - average of all CPUs)
   const cpus = os.cpus();
-  const cpuUsage = cpus.reduce((acc, cpu) => {
-    const total = Object.values(cpu.times).reduce((a, b) => a + b, 0);
-    const idle = cpu.times.idle;
-    return acc + ((total - idle) / total) * 100;
-  }, 0) / cpus.length;
+  const cpuUsage =
+    cpus.reduce((acc, cpu) => {
+      const total = Object.values(cpu.times).reduce((a, b) => a + b, 0);
+      const idle = cpu.times.idle;
+      return acc + ((total - idle) / total) * 100;
+    }, 0) / cpus.length;
 
   const uptime = Date.now() - SERVICE_START_TIME;
 
@@ -268,10 +270,13 @@ function determineOverallStatus(
 
 /**
  * GET /api/system/health
- * 
+ *
  * Returns comprehensive system health metrics
  */
-export const getSystemHealth = async (req: Request, res: Response): Promise<void> => {
+export const getSystemHealth = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     // Check all services in parallel
     const [database, cache, reservation, system, metrics] = await Promise.all([
@@ -317,10 +322,13 @@ export const getSystemHealth = async (req: Request, res: Response): Promise<void
 
 /**
  * GET /api/system/health/simple
- * 
+ *
  * Returns simple health check (for load balancers)
  */
-export const getSimpleHealth = async (req: Request, res: Response): Promise<void> => {
+export const getSimpleHealth = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     await prisma.$queryRaw`SELECT 1`;
     res.status(200).json({

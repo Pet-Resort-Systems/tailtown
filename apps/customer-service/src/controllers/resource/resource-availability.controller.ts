@@ -10,11 +10,11 @@
  * - getBatchResourceAvailability
  */
 
-import { Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-import AppError from "../../utils/appError";
-import { TenantRequest } from "../../middleware/tenant.middleware";
-import { logger } from "../../utils/logger";
+import { Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import AppError from '../../utils/appError';
+import { TenantRequest } from '../../middleware/tenant.middleware';
+import { logger } from '../../utils/logger';
 
 const prisma = new PrismaClient();
 
@@ -40,7 +40,7 @@ export const createAvailabilitySlot = async (
       },
     });
 
-    res.status(201).json({ status: "success", data: slot });
+    res.status(201).json({ status: 'success', data: slot });
   } catch (error) {
     next(error);
   }
@@ -68,7 +68,7 @@ export const updateAvailabilitySlot = async (
       },
     });
 
-    res.status(200).json({ status: "success", data: slot });
+    res.status(200).json({ status: 'success', data: slot });
   } catch (error) {
     next(error);
   }
@@ -87,7 +87,7 @@ export const deleteAvailabilitySlot = async (
 
     await prisma.resourceAvailability.delete({ where: { id } });
 
-    res.status(204).json({ status: "success", data: null });
+    res.status(204).json({ status: 'success', data: null });
   } catch (error) {
     next(error);
   }
@@ -115,7 +115,7 @@ export const getAvailableResourcesByDate = async (
     } else if (!startDate || !endDate) {
       return next(
         new AppError(
-          "Start date and end date are required if date parameter is not provided",
+          'Start date and end date are required if date parameter is not provided',
           400
         )
       );
@@ -126,18 +126,18 @@ export const getAvailableResourcesByDate = async (
 
     if (isNaN(parsedStartDate.getTime()) || isNaN(parsedEndDate.getTime())) {
       return next(
-        new AppError("Invalid date format. Please use YYYY-MM-DD format", 400)
+        new AppError('Invalid date format. Please use YYYY-MM-DD format', 400)
       );
     }
 
     let requiredResourceTypes: string[] = [];
 
     if (resourceType) {
-      if (resourceType === "suite") {
+      if (resourceType === 'suite') {
         requiredResourceTypes = [
-          "STANDARD_SUITE",
-          "STANDARD_PLUS_SUITE",
-          "VIP_SUITE",
+          'STANDARD_SUITE',
+          'STANDARD_PLUS_SUITE',
+          'VIP_SUITE',
         ];
       } else {
         requiredResourceTypes = [resourceType as string];
@@ -150,36 +150,36 @@ export const getAvailableResourcesByDate = async (
       });
 
       if (!service) {
-        return next(new AppError("Service not found", 404));
+        return next(new AppError('Service not found', 404));
       }
 
       if (
-        service.serviceCategory === "BOARDING" ||
-        service.serviceCategory === "DAYCARE"
+        service.serviceCategory === 'BOARDING' ||
+        service.serviceCategory === 'DAYCARE'
       ) {
         requiredResourceTypes = [
-          "STANDARD_SUITE",
-          "STANDARD_PLUS_SUITE",
-          "VIP_SUITE",
+          'STANDARD_SUITE',
+          'STANDARD_PLUS_SUITE',
+          'VIP_SUITE',
         ];
-      } else if (service.serviceCategory === "GROOMING") {
+      } else if (service.serviceCategory === 'GROOMING') {
         requiredResourceTypes = [
-          "GROOMING_TABLE",
-          "BATHING_STATION",
-          "DRYING_STATION",
+          'GROOMING_TABLE',
+          'BATHING_STATION',
+          'DRYING_STATION',
         ];
-      } else if (service.serviceCategory === "TRAINING") {
-        requiredResourceTypes = ["TRAINING_ROOM", "AGILITY_COURSE"];
+      } else if (service.serviceCategory === 'TRAINING') {
+        requiredResourceTypes = ['TRAINING_ROOM', 'AGILITY_COURSE'];
       } else {
         requiredResourceTypes = [
-          "STANDARD_SUITE",
-          "STANDARD_PLUS_SUITE",
-          "VIP_SUITE",
-          "GROOMING_TABLE",
-          "BATHING_STATION",
-          "DRYING_STATION",
-          "TRAINING_ROOM",
-          "AGILITY_COURSE",
+          'STANDARD_SUITE',
+          'STANDARD_PLUS_SUITE',
+          'VIP_SUITE',
+          'GROOMING_TABLE',
+          'BATHING_STATION',
+          'DRYING_STATION',
+          'TRAINING_ROOM',
+          'AGILITY_COURSE',
         ];
       }
     }
@@ -190,7 +190,7 @@ export const getAvailableResourcesByDate = async (
           ? { type: { in: requiredResourceTypes as any } }
           : {}),
         isActive: true,
-        maintenanceStatus: { not: "IN_MAINTENANCE" },
+        maintenanceStatus: { not: 'IN_MAINTENANCE' },
       },
       include: {
         reservations: {
@@ -205,7 +205,7 @@ export const getAvailableResourcesByDate = async (
                 ],
               },
             ],
-            status: { in: ["PENDING", "CONFIRMED", "CHECKED_IN"] },
+            status: { in: ['PENDING', 'CONFIRMED', 'CHECKED_IN'] },
           },
         },
       },
@@ -215,9 +215,9 @@ export const getAvailableResourcesByDate = async (
       (resource: any) => resource.reservations.length === 0
     );
 
-    res.status(200).json({ status: "success", data: availableResources });
+    res.status(200).json({ status: 'success', data: availableResources });
   } catch (error) {
-    logger.error("Error getting available resources", { error });
+    logger.error('Error getting available resources', { error });
     next(error);
   }
 };
@@ -234,18 +234,18 @@ export const getResourceAvailability = async (
     const { resourceType, date } = req.query;
 
     if (!resourceType) {
-      return next(new AppError("Resource type is required", 400));
+      return next(new AppError('Resource type is required', 400));
     }
 
     if (!date) {
-      return next(new AppError("Date is required", 400));
+      return next(new AppError('Date is required', 400));
     }
 
     const parsedDate = new Date(date as string);
 
     if (isNaN(parsedDate.getTime())) {
       return next(
-        new AppError("Invalid date format. Please use YYYY-MM-DD format", 400)
+        new AppError('Invalid date format. Please use YYYY-MM-DD format', 400)
       );
     }
 
@@ -256,10 +256,10 @@ export const getResourceAvailability = async (
     endDate.setHours(23, 59, 59, 999);
 
     const whereClause: any =
-      resourceType === "KENNEL"
+      resourceType === 'KENNEL'
         ? {
             type: {
-              in: ["STANDARD_SUITE", "STANDARD_PLUS_SUITE", "VIP_SUITE"],
+              in: ['STANDARD_SUITE', 'STANDARD_PLUS_SUITE', 'VIP_SUITE'],
             },
             isActive: true,
           }
@@ -275,7 +275,7 @@ export const getResourceAvailability = async (
               { endDate: { gt: startDate, lte: endDate } },
               { startDate: { lte: startDate }, endDate: { gte: endDate } },
             ],
-            status: { in: ["PENDING", "CONFIRMED", "CHECKED_IN"] },
+            status: { in: ['PENDING', 'CONFIRMED', 'CHECKED_IN'] },
           },
         },
       },
@@ -295,12 +295,12 @@ export const getResourceAvailability = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: { date: parsedDate, resources: resourceAvailability },
     });
   } catch (error) {
-    logger.error("Error getting resource availability", { error });
-    next(new AppError("Failed to get resource availability", 500));
+    logger.error('Error getting resource availability', { error });
+    next(new AppError('Failed to get resource availability', 500));
   }
 };
 
@@ -320,11 +320,11 @@ export const getBatchResourceAvailability = async (
       !Array.isArray(resourceIds) ||
       resourceIds.length === 0
     ) {
-      return next(new AppError("Resource IDs array is required", 400));
+      return next(new AppError('Resource IDs array is required', 400));
     }
 
     if (!startDate || !endDate) {
-      return next(new AppError("Start date and end date are required", 400));
+      return next(new AppError('Start date and end date are required', 400));
     }
 
     const parsedStartDate = new Date(startDate);
@@ -332,7 +332,7 @@ export const getBatchResourceAvailability = async (
 
     if (isNaN(parsedStartDate.getTime()) || isNaN(parsedEndDate.getTime())) {
       return next(
-        new AppError("Invalid date format. Please use YYYY-MM-DD format", 400)
+        new AppError('Invalid date format. Please use YYYY-MM-DD format', 400)
       );
     }
 
@@ -349,7 +349,7 @@ export const getBatchResourceAvailability = async (
                 endDate: { gte: parsedEndDate },
               },
             ],
-            status: { in: ["PENDING", "CONFIRMED", "CHECKED_IN"] },
+            status: { in: ['PENDING', 'CONFIRMED', 'CHECKED_IN'] },
           },
         },
       },
@@ -369,7 +369,7 @@ export const getBatchResourceAvailability = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         startDate: parsedStartDate,
         endDate: parsedEndDate,
@@ -377,7 +377,7 @@ export const getBatchResourceAvailability = async (
       },
     });
   } catch (error) {
-    logger.error("Error getting batch resource availability", { error });
-    next(new AppError("Failed to get resource availability", 500));
+    logger.error('Error getting batch resource availability', { error });
+    next(new AppError('Failed to get resource availability', 500));
   }
 };

@@ -5,7 +5,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  Button
+  Button,
 } from '@mui/material';
 
 interface AlertDialogProps {
@@ -25,7 +25,7 @@ const AlertDialog: React.FC<AlertDialogProps> = ({
   onClose,
   onConfirm,
   confirmText = 'Confirm',
-  cancelText = 'Cancel'
+  cancelText = 'Cancel',
 }) => {
   return (
     <Dialog
@@ -44,7 +44,12 @@ const AlertDialog: React.FC<AlertDialogProps> = ({
         <Button onClick={onClose} color="primary">
           {cancelText}
         </Button>
-        <Button onClick={onConfirm} color="primary" variant="contained" autoFocus>
+        <Button
+          onClick={onConfirm}
+          color="primary"
+          variant="contained"
+          autoFocus
+        >
           {confirmText}
         </Button>
       </DialogActions>

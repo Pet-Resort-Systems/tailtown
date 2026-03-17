@@ -10,8 +10,8 @@ async function seedCheckInTemplates() {
     const existingTemplate = await prisma.checkInTemplate.findFirst({
       where: {
         tenantId: 'dev',
-        isDefault: true
-      }
+        isDefault: true,
+      },
     });
 
     if (existingTemplate) {
@@ -39,7 +39,8 @@ async function seedCheckInTemplates() {
                       isRequired: true,
                       order: 1,
                       placeholder: 'Full name',
-                      helpText: 'Primary emergency contact while pet is boarding'
+                      helpText:
+                        'Primary emergency contact while pet is boarding',
                     },
                     {
                       questionText: 'Emergency Contact Phone',
@@ -47,20 +48,21 @@ async function seedCheckInTemplates() {
                       isRequired: true,
                       order: 2,
                       placeholder: '(555) 555-5555',
-                      helpText: 'Best number to reach emergency contact'
+                      helpText: 'Best number to reach emergency contact',
                     },
                     {
                       questionText: 'Relationship to Pet Owner',
                       questionType: 'TEXT',
                       isRequired: false,
                       order: 3,
-                      placeholder: 'e.g., Spouse, Parent, Friend'
+                      placeholder: 'e.g., Spouse, Parent, Friend',
                     },
                     {
-                      questionText: 'Will you be reachable during your pet\'s stay?',
+                      questionText:
+                        "Will you be reachable during your pet's stay?",
                       questionType: 'YES_NO',
                       isRequired: true,
-                      order: 4
+                      order: 4,
                     },
                     {
                       questionText: 'Best way to contact you',
@@ -68,11 +70,11 @@ async function seedCheckInTemplates() {
                       isRequired: true,
                       order: 5,
                       options: {
-                        choices: ['Phone Call', 'Text Message', 'Email']
-                      } as any
-                    }
-                  ]
-                }
+                        choices: ['Phone Call', 'Text Message', 'Email'],
+                      } as any,
+                    },
+                  ],
+                },
               },
               {
                 title: 'Feeding Schedule',
@@ -85,14 +87,14 @@ async function seedCheckInTemplates() {
                       questionType: 'TIME',
                       isRequired: true,
                       order: 1,
-                      helpText: 'Preferred time for morning meal'
+                      helpText: 'Preferred time for morning meal',
                     },
                     {
                       questionText: 'Evening feeding time',
                       questionType: 'TIME',
                       isRequired: true,
                       order: 2,
-                      helpText: 'Preferred time for evening meal'
+                      helpText: 'Preferred time for evening meal',
                     },
                     {
                       questionText: 'Food amount per meal',
@@ -100,28 +102,30 @@ async function seedCheckInTemplates() {
                       isRequired: true,
                       order: 3,
                       placeholder: 'e.g., 1 cup, 2 scoops',
-                      helpText: 'How much food per feeding'
+                      helpText: 'How much food per feeding',
                     },
                     {
-                      questionText: 'Does your pet get food toppers or supplements?',
+                      questionText:
+                        'Does your pet get food toppers or supplements?',
                       questionType: 'YES_NO',
                       isRequired: true,
-                      order: 4
+                      order: 4,
                     },
                     {
-                      questionText: 'May we use appetite incentives (cheese, chicken, etc.) if needed?',
+                      questionText:
+                        'May we use appetite incentives (cheese, chicken, etc.) if needed?',
                       questionType: 'YES_NO',
                       isRequired: true,
-                      order: 5
+                      order: 5,
                     },
                     {
                       questionText: 'May we add probiotics to meals if needed?',
                       questionType: 'YES_NO',
                       isRequired: true,
-                      order: 6
-                    }
-                  ]
-                }
+                      order: 6,
+                    },
+                  ],
+                },
               },
               {
                 title: 'Medical & Behavioral',
@@ -130,38 +134,41 @@ async function seedCheckInTemplates() {
                 questions: {
                   create: [
                     {
-                      questionText: 'Any medical conditions we should be aware of?',
+                      questionText:
+                        'Any medical conditions we should be aware of?',
                       questionType: 'LONG_TEXT',
                       isRequired: false,
                       order: 1,
-                      placeholder: 'Describe any health issues, allergies, or concerns'
+                      placeholder:
+                        'Describe any health issues, allergies, or concerns',
                     },
                     {
                       questionText: 'Any behavioral concerns?',
                       questionType: 'LONG_TEXT',
                       isRequired: false,
                       order: 2,
-                      placeholder: 'Anxiety, aggression, fear of loud noises, etc.'
+                      placeholder:
+                        'Anxiety, aggression, fear of loud noises, etc.',
                     },
                     {
                       questionText: 'Is your pet comfortable with other dogs?',
                       questionType: 'YES_NO',
                       isRequired: true,
-                      order: 3
+                      order: 3,
                     },
                     {
                       questionText: 'Special instructions or requests',
                       questionType: 'LONG_TEXT',
                       isRequired: false,
                       order: 4,
-                      placeholder: 'Any other information we should know'
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        } as any
+                      placeholder: 'Any other information we should know',
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        } as any,
       });
 
       console.log('✓ Created default check-in template');
@@ -171,12 +178,14 @@ async function seedCheckInTemplates() {
     const existingAgreement = await prisma.serviceAgreementTemplate.findFirst({
       where: {
         tenantId: 'dev',
-        isDefault: true
-      }
+        isDefault: true,
+      },
     });
 
     if (existingAgreement) {
-      console.log('Default service agreement template already exists. Skipping...');
+      console.log(
+        'Default service agreement template already exists. Skipping...'
+      );
     } else {
       // Create default service agreement template
       const agreementTemplate = await prisma.serviceAgreementTemplate.create({
@@ -221,8 +230,8 @@ Owner Signature: {{SIGNATURE}}
 Owner Name: {{CUSTOMER_NAME}}
 Date: {{DATE}}`,
           isDefault: true,
-          isActive: true
-        }
+          isActive: true,
+        },
       });
 
       console.log('✓ Created default service agreement template');
@@ -237,8 +246,7 @@ Date: {{DATE}}`,
   }
 }
 
-seedCheckInTemplates()
-  .catch((error) => {
-    console.error('Fatal error:', error);
-    process.exit(1);
-  });
+seedCheckInTemplates().catch((error) => {
+  console.error('Fatal error:', error);
+  process.exit(1);
+});

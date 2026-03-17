@@ -12,63 +12,63 @@
  * - Created by tracking
  */
 
-const { PrismaClient } = require("@prisma/client");
-const { execSync } = require("child_process");
+const { PrismaClient } = require('@prisma/client');
+const { execSync } = require('child_process');
 const prisma = new PrismaClient();
 
-const TENANT_ID = "b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05";
+const TENANT_ID = 'b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05';
 const SQL_BACKUP_PATH =
-  "/opt/tailtown/db-backup-tailtownpetresort-2025-12-16T12_54_19-07_00.sql.gz";
+  '/opt/tailtown/db-backup-tailtownpetresort-2025-12-16T12_54_19-07_00.sql.gz';
 
 // Lookup tables for Gingr IDs (we'll extract these from the SQL)
 const TEMPERAMENT_MAP = {
-  1: "Aggressive",
-  2: "Shy",
-  3: "Playful",
-  4: "Calm",
-  5: "Energetic",
-  6: "Friendly",
-  7: "Reserved",
+  1: 'Aggressive',
+  2: 'Shy',
+  3: 'Playful',
+  4: 'Calm',
+  5: 'Energetic',
+  6: 'Friendly',
+  7: 'Reserved',
 };
 
 const FEEDING_SCHEDULE_MAP = {
-  1: "Once daily",
-  2: "Twice daily (AM/PM)",
-  3: "Three times daily",
-  4: "Free feed",
-  5: "As needed",
-  6: "Special schedule",
-  7: "Controlled portions",
+  1: 'Once daily',
+  2: 'Twice daily (AM/PM)',
+  3: 'Three times daily',
+  4: 'Free feed',
+  5: 'As needed',
+  6: 'Special schedule',
+  7: 'Controlled portions',
 };
 
 const FEEDING_METHOD_MAP = {
-  1: "Regular bowl",
-  2: "Slow feeder",
-  3: "Hand feed",
-  4: "Puzzle feeder",
-  5: "Elevated bowl",
-  6: "Separate feeding",
-  7: "Kong/toy",
+  1: 'Regular bowl',
+  2: 'Slow feeder',
+  3: 'Hand feed',
+  4: 'Puzzle feeder',
+  5: 'Elevated bowl',
+  6: 'Separate feeding',
+  7: 'Kong/toy',
 };
 
 const FOOD_TYPE_MAP = {
-  1: "Dry kibble",
-  2: "Wet food",
-  3: "Raw diet",
-  4: "Home cooked",
-  5: "Prescription diet",
-  6: "Mixed (wet & dry)",
-  7: "Special diet",
+  1: 'Dry kibble',
+  2: 'Wet food',
+  3: 'Raw diet',
+  4: 'Home cooked',
+  5: 'Prescription diet',
+  6: 'Mixed (wet & dry)',
+  7: 'Special diet',
 };
 
 async function extractGingrData() {
-  console.log("🔍 Extracting extended pet data from Gingr SQL backup...\n");
+  console.log('🔍 Extracting extended pet data from Gingr SQL backup...\n');
 
   // Extract animals table data
   const cmd = `zcat ${SQL_BACKUP_PATH} | grep 'INSERT INTO \`animals\`' | sed 's/INSERT INTO \`animals\` VALUES //g' | sed 's/;$//'`;
 
   const output = execSync(cmd, {
-    encoding: "utf8",
+    encoding: 'utf8',
     maxBuffer: 50 * 1024 * 1024,
   });
 
@@ -76,14 +76,14 @@ async function extractGingrData() {
   const petDataMap = new Map();
 
   // Split by '),(' to get individual records
-  const records = output.split("),(");
+  const records = output.split('),(');
 
   console.log(`Found ${records.length} pet records in Gingr backup\n`);
 
   records.forEach((record, index) => {
     try {
       // Clean up the record
-      record = record.replace(/^\(/, "").replace(/\)$/, "");
+      record = record.replace(/^\(/, '').replace(/\)$/, '');
 
       // Parse the fields - this is tricky because of embedded commas in text fields
       // We'll use a regex to match the pattern
@@ -124,66 +124,66 @@ async function extractGingrData() {
       // Extract remaining fields from the rest of the record
       const remainingFields = record.substring(match[0].length);
       const allergyMatch = remainingFields.match(/^'([^']*)',/);
-      const allergies = allergyMatch ? allergyMatch[1] : "";
+      const allergies = allergyMatch ? allergyMatch[1] : '';
 
       // Continue parsing for notes, grooming_notes, image, etc.
       const afterAllergies = remainingFields.substring(
         allergyMatch ? allergyMatch[0].length : 0
       );
       const notesMatch = afterAllergies.match(/^'([^']*)',/);
-      const notes = notesMatch ? notesMatch[1] : "";
+      const notes = notesMatch ? notesMatch[1] : '';
 
       const afterNotes = afterAllergies.substring(
         notesMatch ? notesMatch[0].length : 0
       );
       const groomingMatch = afterNotes.match(/^'([^']*)',/);
-      const groomingNotes = groomingMatch ? groomingMatch[1] : "";
+      const groomingNotes = groomingMatch ? groomingMatch[1] : '';
 
       const afterGrooming = afterNotes.substring(
         groomingMatch ? groomingMatch[0].length : 0
       );
       const imageMatch = afterGrooming.match(/^'([^']*)',/);
-      const image = imageMatch ? imageMatch[1] : "";
+      const image = imageMatch ? imageMatch[1] : '';
 
       // Parse remaining numeric fields
       const afterImage = afterGrooming.substring(
         imageMatch ? imageMatch[0].length : 0
       );
-      const numericFields = afterImage.split(",").map((f) => f.trim());
+      const numericFields = afterImage.split(',').map((f) => f.trim());
 
       const createdAt =
-        numericFields[0] !== "NULL" ? parseInt(numericFields[0]) : null;
-      const createdBy = numericFields[1] !== "NULL" ? numericFields[1] : null;
+        numericFields[0] !== 'NULL' ? parseInt(numericFields[0]) : null;
+      const createdBy = numericFields[1] !== 'NULL' ? numericFields[1] : null;
       const nextImmunization =
-        numericFields[3] !== "NULL" ? parseInt(numericFields[3]) : null;
+        numericFields[3] !== 'NULL' ? parseInt(numericFields[3]) : null;
       const vetId =
-        numericFields[4] !== "NULL" ? parseInt(numericFields[4]) : null;
+        numericFields[4] !== 'NULL' ? parseInt(numericFields[4]) : null;
       const checkedOutCount =
-        numericFields[5] !== "NULL" ? parseInt(numericFields[5]) : 0;
+        numericFields[5] !== 'NULL' ? parseInt(numericFields[5]) : 0;
       const incidentCount =
-        numericFields[6] !== "NULL" ? parseInt(numericFields[6]) : 0;
+        numericFields[6] !== 'NULL' ? parseInt(numericFields[6]) : 0;
       const evaluationCategories =
-        numericFields[7] !== "NULL" ? numericFields[7].replace(/'/g, "") : null;
+        numericFields[7] !== 'NULL' ? numericFields[7].replace(/'/g, '') : null;
       const evaluationNotes =
-        numericFields[8] !== "NULL" ? numericFields[8].replace(/'/g, "") : null;
+        numericFields[8] !== 'NULL' ? numericFields[8].replace(/'/g, '') : null;
 
       petDataMap.set(firstName.toLowerCase(), {
         name: firstName,
-        isVip: vip === "1",
+        isVip: vip === '1',
         temperament:
-          temperament !== "NULL"
+          temperament !== 'NULL'
             ? TEMPERAMENT_MAP[parseInt(temperament)]
             : null,
         feedingSchedule:
-          feedingSchedule !== "NULL"
+          feedingSchedule !== 'NULL'
             ? FEEDING_SCHEDULE_MAP[parseInt(feedingSchedule)]
             : null,
         feedingMethod:
-          feedingMethod !== "NULL"
+          feedingMethod !== 'NULL'
             ? FEEDING_METHOD_MAP[parseInt(feedingMethod)]
             : null,
         foodType:
-          foodType !== "NULL" ? FOOD_TYPE_MAP[parseInt(foodType)] : null,
+          foodType !== 'NULL' ? FOOD_TYPE_MAP[parseInt(foodType)] : null,
         nextVaccineDate: nextImmunization
           ? new Date(nextImmunization * 1000)
           : null,
@@ -205,12 +205,12 @@ async function extractGingrData() {
 }
 
 async function importExtendedData() {
-  console.log("📥 Starting extended Gingr data import...\n");
+  console.log('📥 Starting extended Gingr data import...\n');
 
   const petDataMap = await extractGingrData();
 
   // Load all active pets from database
-  console.log("📥 Loading all pets from database...");
+  console.log('📥 Loading all pets from database...');
   const allPets = await prisma.pet.findMany({
     where: {
       tenantId: TENANT_ID,
@@ -235,7 +235,7 @@ async function importExtendedData() {
   console.log(`Found ${allPets.length} active pets in database\n`);
 
   // Prepare updates
-  console.log("💾 Preparing updates...\n");
+  console.log('💾 Preparing updates...\n');
   const updates = [];
   let matched = 0;
   let noData = 0;
@@ -323,13 +323,13 @@ async function importExtendedData() {
   console.log(`   Total updates to apply: ${updates.length}\n`);
 
   if (updates.length === 0) {
-    console.log("✅ No updates needed - all data already current");
+    console.log('✅ No updates needed - all data already current');
     await prisma.$disconnect();
     return;
   }
 
   // Apply updates in batches
-  console.log("⚡ Applying updates in batches...\n");
+  console.log('⚡ Applying updates in batches...\n');
   const batchSize = 50;
   let completed = 0;
 
@@ -380,7 +380,7 @@ async function importExtendedData() {
     where: { tenantId: TENANT_ID, isActive: true, incidentCount: { gt: 0 } },
   });
 
-  console.log("\n📈 Final Database Statistics:");
+  console.log('\n📈 Final Database Statistics:');
   console.log(`   Total active pets: ${stats._count._all}`);
   console.log(`   VIP pets: ${withVip}`);
   console.log(`   Pets with temperament: ${withTemperament}`);
@@ -388,10 +388,10 @@ async function importExtendedData() {
   console.log(`   Pets with incidents: ${withIncidents}`);
 
   await prisma.$disconnect();
-  console.log("\n✅ Extended data import completed successfully");
+  console.log('\n✅ Extended data import completed successfully');
 }
 
 importExtendedData().catch((error) => {
-  console.error("❌ Import failed:", error);
+  console.error('❌ Import failed:', error);
   process.exit(1);
 });

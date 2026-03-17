@@ -4,12 +4,12 @@
  * Tests for API pagination limits and filtering
  */
 
-import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
-import { getAllReservations } from "../../controllers/reservation/get-reservation.controller";
+import { Request, Response } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { getAllReservations } from '../../controllers/reservation/get-reservation.controller';
 
 // Mock the Prisma client
-jest.mock("@prisma/client", () => {
+jest.mock('@prisma/client', () => {
   const mockPrismaClient = {
     reservation: {
       findMany: jest.fn(),
@@ -26,19 +26,19 @@ jest.mock("@prisma/client", () => {
 const prisma = new PrismaClient();
 
 // Mock the catchAsync middleware to just execute the function
-jest.mock("../../middleware/catchAsync", () => ({
+jest.mock('../../middleware/catchAsync', () => ({
   catchAsync: (fn: any) => fn,
 }));
 
 // Mock AppError
-jest.mock("../../utils/service", () => ({
+jest.mock('../../utils/service', () => ({
   AppError: {
     authorizationError: jest.fn((msg) => new Error(msg)),
     validationError: jest.fn((msg) => new Error(msg)),
   },
 }));
 
-describe("Reservation Pagination", () => {
+describe('Reservation Pagination', () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
 
@@ -50,7 +50,7 @@ describe("Reservation Pagination", () => {
       params: {},
     };
     // Add tenantId
-    (mockRequest as any).tenantId = "tenant-1";
+    (mockRequest as any).tenantId = 'tenant-1';
 
     mockResponse = {
       status: jest.fn().mockReturnThis(),
@@ -61,8 +61,8 @@ describe("Reservation Pagination", () => {
     (prisma.reservation.count as jest.Mock).mockResolvedValue(0);
   });
 
-  describe("GET /api/reservations - Pagination Limits", () => {
-    it("should default to limit of 10 when no limit specified", async () => {
+  describe('GET /api/reservations - Pagination Limits', () => {
+    it('should default to limit of 10 when no limit specified', async () => {
       mockRequest.query = {};
       (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
 
@@ -78,8 +78,8 @@ describe("Reservation Pagination", () => {
       );
     });
 
-    it("should accept custom limit", async () => {
-      mockRequest.query = { limit: "50" };
+    it('should accept custom limit', async () => {
+      mockRequest.query = { limit: '50' };
       (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
 
       await getAllReservations(
@@ -94,8 +94,8 @@ describe("Reservation Pagination", () => {
       );
     });
 
-    it("should handle page parameter for offset", async () => {
-      mockRequest.query = { page: "2", limit: "10" };
+    it('should handle page parameter for offset', async () => {
+      mockRequest.query = { page: '2', limit: '10' };
       (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
 
       await getAllReservations(
@@ -111,7 +111,7 @@ describe("Reservation Pagination", () => {
       );
     });
 
-    it("should return empty array when no reservations exist", async () => {
+    it('should return empty array when no reservations exist', async () => {
       mockRequest.query = {};
       (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
 
@@ -122,7 +122,7 @@ describe("Reservation Pagination", () => {
 
       expect(mockResponse.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           data: expect.objectContaining({
             reservations: [],
           }),
@@ -130,12 +130,12 @@ describe("Reservation Pagination", () => {
       );
     });
 
-    it("should return reservations with pagination metadata", async () => {
+    it('should return reservations with pagination metadata', async () => {
       const mockReservations = [
-        { id: "res-1", startDate: new Date("2026-06-10") },
-        { id: "res-2", startDate: new Date("2026-06-11") },
+        { id: 'res-1', startDate: new Date('2026-06-10') },
+        { id: 'res-2', startDate: new Date('2026-06-11') },
       ];
-      mockRequest.query = { limit: "10" };
+      mockRequest.query = { limit: '10' };
       (prisma.reservation.findMany as jest.Mock).mockResolvedValue(
         mockReservations
       );
@@ -148,7 +148,7 @@ describe("Reservation Pagination", () => {
 
       expect(mockResponse.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           data: expect.objectContaining({
             reservations: mockReservations,
           }),
@@ -157,9 +157,9 @@ describe("Reservation Pagination", () => {
     });
   });
 
-  describe("GET /api/reservations - Filtering", () => {
-    it("should filter by status", async () => {
-      mockRequest.query = { status: "CONFIRMED" };
+  describe('GET /api/reservations - Filtering', () => {
+    it('should filter by status', async () => {
+      mockRequest.query = { status: 'CONFIRMED' };
       (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
 
       await getAllReservations(
@@ -170,14 +170,14 @@ describe("Reservation Pagination", () => {
       expect(prisma.reservation.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            status: "CONFIRMED",
+            status: 'CONFIRMED',
           }),
         })
       );
     });
 
-    it("should filter by startDate", async () => {
-      mockRequest.query = { startDate: "2026-06-10" };
+    it('should filter by startDate', async () => {
+      mockRequest.query = { startDate: '2026-06-10' };
       (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
 
       await getAllReservations(
@@ -194,8 +194,8 @@ describe("Reservation Pagination", () => {
       );
     });
 
-    it("should filter by customerId", async () => {
-      mockRequest.query = { customerId: "customer-1" };
+    it('should filter by customerId', async () => {
+      mockRequest.query = { customerId: 'customer-1' };
       (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
 
       await getAllReservations(
@@ -206,14 +206,14 @@ describe("Reservation Pagination", () => {
       expect(prisma.reservation.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            customerId: "customer-1",
+            customerId: 'customer-1',
           }),
         })
       );
     });
 
-    it("should filter by resourceId", async () => {
-      mockRequest.query = { resourceId: "resource-1" };
+    it('should filter by resourceId', async () => {
+      mockRequest.query = { resourceId: 'resource-1' };
       (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
 
       await getAllReservations(
@@ -224,13 +224,13 @@ describe("Reservation Pagination", () => {
       expect(prisma.reservation.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            resourceId: "resource-1",
+            resourceId: 'resource-1',
           }),
         })
       );
     });
 
-    it("should always filter by tenantId", async () => {
+    it('should always filter by tenantId', async () => {
       mockRequest.query = {};
       (prisma.reservation.findMany as jest.Mock).mockResolvedValue([]);
 
@@ -242,7 +242,7 @@ describe("Reservation Pagination", () => {
       expect(prisma.reservation.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            tenantId: "tenant-1",
+            tenantId: 'tenant-1',
           }),
         })
       );

@@ -25,25 +25,25 @@ import {
 } from '@mui/material';
 import Grid from '@mui/material/GridLegacy';
 import InvoiceDetailsDialog from '../invoices/InvoiceDetailsDialog';
-import { 
+import {
   AccountBalance as AccountBalanceIcon,
   Receipt as ReceiptIcon,
   Payment as PaymentIcon,
   CreditCard as CreditCardIcon,
   Add as AddIcon,
-  MoneyOff as MoneyOffIcon
+  MoneyOff as MoneyOffIcon,
 } from '@mui/icons-material';
 import { format } from 'date-fns';
-import { 
-  Invoice, 
-  Payment, 
+import {
+  Invoice,
+  Payment,
   AccountBalance,
-  invoiceService 
+  invoiceService,
 } from '../../services/invoiceService';
-import { 
-  paymentService, 
-  StoreCredit, 
-  CreditApplication 
+import {
+  paymentService,
+  StoreCredit,
+  CreditApplication,
 } from '../../services/paymentService';
 
 interface TabPanelProps {
@@ -63,11 +63,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`account-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 }
@@ -77,21 +73,31 @@ interface AccountHistoryProps {
   onInvoiceCreated?: () => void;
 }
 
-const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCreated }) => {
+const AccountHistory: React.FC<AccountHistoryProps> = ({
+  customerId,
+  onInvoiceCreated,
+}) => {
   const [tabValue, setTabValue] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
-  const [accountBalance, setAccountBalance] = useState<AccountBalance | null>(null);
-  
+  const [accountBalance, setAccountBalance] = useState<AccountBalance | null>(
+    null
+  );
+
   // State for modal forms
-  const [openNewPaymentModal, setOpenNewPaymentModal] = useState<boolean>(false);
-  const [openStoreCreditModal, setOpenStoreCreditModal] = useState<boolean>(false);
-  const [openApplyCreditModal, setOpenApplyCreditModal] = useState<boolean>(false);
-  const [openInvoiceDetailsDialog, setOpenInvoiceDetailsDialog] = useState<boolean>(false);
-  const [selectedInvoiceDetails, setSelectedInvoiceDetails] = useState<Invoice | null>(null);
-  
+  const [openNewPaymentModal, setOpenNewPaymentModal] =
+    useState<boolean>(false);
+  const [openStoreCreditModal, setOpenStoreCreditModal] =
+    useState<boolean>(false);
+  const [openApplyCreditModal, setOpenApplyCreditModal] =
+    useState<boolean>(false);
+  const [openInvoiceDetailsDialog, setOpenInvoiceDetailsDialog] =
+    useState<boolean>(false);
+  const [selectedInvoiceDetails, setSelectedInvoiceDetails] =
+    useState<Invoice | null>(null);
+
   // Form states
   const [selectedInvoice, setSelectedInvoice] = useState<string>('');
   const [paymentAmount, setPaymentAmount] = useState<string>('');
@@ -109,14 +115,14 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
     try {
       setLoading(true);
       setError(null);
-      
+
       // Fetch invoices, payments, and account balance in parallel
       const [invoicesData, paymentsData, balanceData] = await Promise.all([
         invoiceService.getCustomerInvoices(customerId),
         paymentService.getCustomerPayments(customerId),
-        invoiceService.getCustomerAccountBalance(customerId)
+        invoiceService.getCustomerAccountBalance(customerId),
       ]);
-      
+
       setInvoices(invoicesData);
       setPayments(paymentsData);
       setAccountBalance(balanceData);
@@ -159,7 +165,7 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
         return 'default';
     }
   };
-  
+
   const getPaymentStatusColor = (status: string) => {
     switch (status) {
       case 'PAID':
@@ -190,7 +196,7 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
         amount: parseFloat(paymentAmount),
         method: paymentMethod as any,
         status: 'PAID',
-        notes: paymentNotes
+        notes: paymentNotes,
       });
 
       // Reset form and refresh data
@@ -217,7 +223,7 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
       const storeCreditData: StoreCredit = {
         customerId,
         amount: parseFloat(creditAmount),
-        reason: creditReason
+        reason: creditReason,
       };
 
       await paymentService.recordStoreCredit(storeCreditData);
@@ -244,7 +250,7 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
       const creditApplicationData: CreditApplication = {
         invoiceId: selectedInvoice,
         customerId,
-        amount: parseFloat(applyCreditAmount)
+        amount: parseFloat(applyCreditAmount),
       };
 
       await paymentService.applyStoreCredit(creditApplicationData);
@@ -273,17 +279,25 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
       )}
 
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs 
-          value={tabValue} 
-          onChange={handleTabChange} 
+        <Tabs
+          value={tabValue}
+          onChange={handleTabChange}
           aria-label="account history tabs"
           variant="scrollable"
           scrollButtons="auto"
         >
-          <Tab icon={<AccountBalanceIcon />} iconPosition="start" label="Account Summary" />
+          <Tab
+            icon={<AccountBalanceIcon />}
+            iconPosition="start"
+            label="Account Summary"
+          />
           <Tab icon={<ReceiptIcon />} iconPosition="start" label="Invoices" />
           <Tab icon={<PaymentIcon />} iconPosition="start" label="Payments" />
-          <Tab icon={<CreditCardIcon />} iconPosition="start" label="Store Credit" />
+          <Tab
+            icon={<CreditCardIcon />}
+            iconPosition="start"
+            label="Store Credit"
+          />
         </Tabs>
       </Box>
 
@@ -294,32 +308,30 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
             Account Balance
           </Typography>
           <Divider sx={{ mb: 2 }} />
-          
+
           {accountBalance ? (
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
-                <Typography variant="subtitle1">
-                  Total Invoiced:
-                </Typography>
+                <Typography variant="subtitle1">Total Invoiced:</Typography>
                 <Typography variant="h6" color="text.secondary">
                   {formatCurrency(accountBalance.totalInvoiced)}
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Typography variant="subtitle1">
-                  Total Paid:
-                </Typography>
+                <Typography variant="subtitle1">Total Paid:</Typography>
                 <Typography variant="h6" color="text.secondary">
                   {formatCurrency(accountBalance.totalPaid)}
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Typography variant="subtitle1">
-                  Current Balance:
-                </Typography>
-                <Typography 
-                  variant="h6" 
-                  color={accountBalance.accountBalance > 0 ? 'error.main' : 'success.main'}
+                <Typography variant="subtitle1">Current Balance:</Typography>
+                <Typography
+                  variant="h6"
+                  color={
+                    accountBalance.accountBalance > 0
+                      ? 'error.main'
+                      : 'success.main'
+                  }
                 >
                   {formatCurrency(accountBalance.accountBalance)}
                   {accountBalance.accountBalance > 0 && ' (Due)'}
@@ -327,20 +339,20 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Typography variant="subtitle1">
-                  Store Credit:
-                </Typography>
+                <Typography variant="subtitle1">Store Credit:</Typography>
                 <Typography variant="h6" color="primary.main">
                   {formatCurrency(accountBalance.storeCredit)}
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography variant="subtitle1">
-                  Net Balance:
-                </Typography>
-                <Typography 
-                  variant="h4" 
-                  color={accountBalance.netBalance > 0 ? 'error.main' : 'success.main'}
+                <Typography variant="subtitle1">Net Balance:</Typography>
+                <Typography
+                  variant="h4"
+                  color={
+                    accountBalance.netBalance > 0
+                      ? 'error.main'
+                      : 'success.main'
+                  }
                   sx={{ mt: 1, fontWeight: 'bold' }}
                 >
                   {formatCurrency(accountBalance.netBalance)}
@@ -352,11 +364,11 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
           ) : (
             <Typography>No balance information available</Typography>
           )}
-          
+
           <Box sx={{ mt: 3, display: 'flex', gap: 2 }}>
-            <Button 
-              variant="outlined" 
-              startIcon={<PaymentIcon />} 
+            <Button
+              variant="outlined"
+              startIcon={<PaymentIcon />}
               onClick={() => setOpenNewPaymentModal(true)}
               disabled={invoices.length === 0}
             >
@@ -364,31 +376,44 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
             </Button>
           </Box>
         </Paper>
-        
+
         <Paper elevation={3} sx={{ p: 3 }}>
           <Typography variant="h6" gutterBottom>
             Store Credit
           </Typography>
           <Divider sx={{ mb: 2 }} />
-          
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
             <Typography variant="h6" color="primary.main">
-              Available: {accountBalance ? formatCurrency(accountBalance.storeCredit) : '$0.00'}
+              Available:{' '}
+              {accountBalance
+                ? formatCurrency(accountBalance.storeCredit)
+                : '$0.00'}
             </Typography>
             <Box>
-              <Button 
-                variant="outlined" 
-                startIcon={<AddIcon />} 
+              <Button
+                variant="outlined"
+                startIcon={<AddIcon />}
                 onClick={() => setOpenStoreCreditModal(true)}
                 sx={{ mr: 1 }}
               >
                 Add Credit
               </Button>
-              <Button 
-                variant="outlined" 
-                startIcon={<MoneyOffIcon />} 
+              <Button
+                variant="outlined"
+                startIcon={<MoneyOffIcon />}
                 onClick={() => setOpenApplyCreditModal(true)}
-                disabled={!accountBalance || accountBalance.storeCredit <= 0 || invoices.length === 0}
+                disabled={
+                  !accountBalance ||
+                  accountBalance.storeCredit <= 0 ||
+                  invoices.length === 0
+                }
               >
                 Apply Credit
               </Button>
@@ -399,10 +424,17 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
 
       {/* Invoices Tab */}
       <TabPanel value={tabValue} index={1}>
-        <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box
+          sx={{
+            mb: 2,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
           <Typography variant="h6">Invoice History</Typography>
         </Box>
-        
+
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -419,14 +451,18 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
               {invoices.length > 0 ? (
                 invoices.map((invoice) => {
                   // Calculate remaining balance
-                  const paid = invoice.payments?.reduce((sum, payment) => 
-                    payment.status === 'PAID' ? sum + payment.amount : sum, 0) || 0;
+                  const paid =
+                    invoice.payments?.reduce(
+                      (sum, payment) =>
+                        payment.status === 'PAID' ? sum + payment.amount : sum,
+                      0
+                    ) || 0;
                   const balance = invoice.total - paid;
-                  
+
                   return (
-                    <TableRow 
-                      key={invoice.id} 
-                      hover 
+                    <TableRow
+                      key={invoice.id}
+                      hover
                       onClick={() => {
                         setSelectedInvoiceDetails(invoice);
                         setOpenInvoiceDetailsDialog(true);
@@ -434,13 +470,20 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
                       style={{ cursor: 'pointer' }}
                     >
                       <TableCell>{invoice.invoiceNumber}</TableCell>
-                      <TableCell>{format(new Date(invoice.issueDate || new Date()), 'MM/dd/yyyy')}</TableCell>
-                      <TableCell>{format(new Date(invoice.dueDate), 'MM/dd/yyyy')}</TableCell>
+                      <TableCell>
+                        {format(
+                          new Date(invoice.issueDate || new Date()),
+                          'MM/dd/yyyy'
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {format(new Date(invoice.dueDate), 'MM/dd/yyyy')}
+                      </TableCell>
                       <TableCell>{formatCurrency(invoice.total)}</TableCell>
                       <TableCell>{formatCurrency(balance)}</TableCell>
                       <TableCell>
-                        <Chip 
-                          label={invoice.status} 
+                        <Chip
+                          label={invoice.status}
                           color={getInvoiceStatusColor(invoice.status) as any}
                           size="small"
                         />
@@ -450,7 +493,9 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
                 })
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} align="center">No invoices found</TableCell>
+                  <TableCell colSpan={6} align="center">
+                    No invoices found
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>
@@ -460,19 +505,26 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
 
       {/* Payments Tab */}
       <TabPanel value={tabValue} index={2}>
-        <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box
+          sx={{
+            mb: 2,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
           <Typography variant="h6">Payment History</Typography>
-          <Button 
-            variant="contained" 
-            color="primary" 
-            startIcon={<AddIcon />} 
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
             onClick={() => setOpenNewPaymentModal(true)}
             disabled={invoices.length === 0}
           >
             Record Payment
           </Button>
         </Box>
-        
+
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -489,13 +541,18 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
               {payments.length > 0 ? (
                 payments.map((payment) => (
                   <TableRow key={payment.id} hover>
-                    <TableCell>{format(new Date(payment.paymentDate || new Date()), 'MM/dd/yyyy')}</TableCell>
+                    <TableCell>
+                      {format(
+                        new Date(payment.paymentDate || new Date()),
+                        'MM/dd/yyyy'
+                      )}
+                    </TableCell>
                     <TableCell>{payment.invoiceId || '—'}</TableCell>
                     <TableCell>{payment.method.replace('_', ' ')}</TableCell>
                     <TableCell>{formatCurrency(payment.amount)}</TableCell>
                     <TableCell>
-                      <Chip 
-                        label={payment.status} 
+                      <Chip
+                        label={payment.status}
                         color={getPaymentStatusColor(payment.status) as any}
                         size="small"
                       />
@@ -505,7 +562,9 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} align="center">No payments found</TableCell>
+                  <TableCell colSpan={6} align="center">
+                    No payments found
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>
@@ -521,33 +580,45 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
               Store Credit Balance
             </Typography>
             <Divider sx={{ mb: 2 }} />
-            
-            <Typography variant="h4" color="primary.main" sx={{ fontWeight: 'bold' }}>
-              {accountBalance ? formatCurrency(accountBalance.storeCredit) : '$0.00'}
+
+            <Typography
+              variant="h4"
+              color="primary.main"
+              sx={{ fontWeight: 'bold' }}
+            >
+              {accountBalance
+                ? formatCurrency(accountBalance.storeCredit)
+                : '$0.00'}
             </Typography>
-            
+
             <Box sx={{ mt: 3, display: 'flex', gap: 2 }}>
-              <Button 
-                variant="contained" 
-                color="primary" 
-                startIcon={<AddIcon />} 
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AddIcon />}
                 onClick={() => setOpenStoreCreditModal(true)}
               >
                 Add Credit
               </Button>
-              <Button 
-                variant="outlined" 
-                startIcon={<MoneyOffIcon />} 
+              <Button
+                variant="outlined"
+                startIcon={<MoneyOffIcon />}
                 onClick={() => setOpenApplyCreditModal(true)}
-                disabled={!accountBalance || accountBalance.storeCredit <= 0 || invoices.length === 0}
+                disabled={
+                  !accountBalance ||
+                  accountBalance.storeCredit <= 0 ||
+                  invoices.length === 0
+                }
               >
                 Apply to Invoice
               </Button>
             </Box>
           </Paper>
-          
-          <Typography variant="h6" sx={{ mb: 2 }}>Store Credit Transactions</Typography>
-          
+
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Store Credit Transactions
+          </Typography>
+
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
@@ -559,20 +630,32 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
                 </TableRow>
               </TableHead>
               <TableBody>
-                {payments.filter(p => p.method === 'STORE_CREDIT').length > 0 ? (
+                {payments.filter((p) => p.method === 'STORE_CREDIT').length >
+                0 ? (
                   payments
-                    .filter(p => p.method === 'STORE_CREDIT')
+                    .filter((p) => p.method === 'STORE_CREDIT')
                     .map((credit) => (
                       <TableRow key={credit.id} hover>
-                        <TableCell>{format(new Date(credit.paymentDate || new Date()), 'MM/dd/yyyy')}</TableCell>
-                        <TableCell>{credit.amount > 0 ? 'Credit Added' : 'Credit Used'}</TableCell>
-                        <TableCell>{formatCurrency(Math.abs(credit.amount))}</TableCell>
+                        <TableCell>
+                          {format(
+                            new Date(credit.paymentDate || new Date()),
+                            'MM/dd/yyyy'
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {credit.amount > 0 ? 'Credit Added' : 'Credit Used'}
+                        </TableCell>
+                        <TableCell>
+                          {formatCurrency(Math.abs(credit.amount))}
+                        </TableCell>
                         <TableCell>{credit.notes || '—'}</TableCell>
                       </TableRow>
                     ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4} align="center">No store credit transactions found</TableCell>
+                    <TableCell colSpan={4} align="center">
+                      No store credit transactions found
+                    </TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -582,10 +665,18 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
       </TabPanel>
 
       {/* Payment Modal */}
-      <Dialog open={openNewPaymentModal} onClose={() => setOpenNewPaymentModal(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={openNewPaymentModal}
+        onClose={() => setOpenNewPaymentModal(false)}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Record Payment</DialogTitle>
         <DialogContent>
-          <Box component="form" sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box
+            component="form"
+            sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 2 }}
+          >
             <TextField
               select
               label="Invoice"
@@ -596,18 +687,20 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
               variant="outlined"
               size="small"
               InputLabelProps={{
-                shrink: true
+                shrink: true,
               }}
             >
               {invoices
-                .filter(inv => inv.status !== 'PAID' && inv.status !== 'CANCELLED')
+                .filter(
+                  (inv) => inv.status !== 'PAID' && inv.status !== 'CANCELLED'
+                )
                 .map((invoice) => (
                   <MenuItem key={invoice.id} value={invoice.id}>
                     {invoice.invoiceNumber} - {formatCurrency(invoice.total)}
                   </MenuItem>
                 ))}
             </TextField>
-            
+
             <TextField
               label="Amount"
               type="number"
@@ -618,10 +711,10 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
               variant="outlined"
               size="small"
               InputLabelProps={{
-                shrink: true
+                shrink: true,
               }}
             />
-            
+
             <TextField
               select
               label="Payment Method"
@@ -632,7 +725,7 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
               variant="outlined"
               size="small"
               InputLabelProps={{
-                shrink: true
+                shrink: true,
               }}
             >
               <MenuItem value="CREDIT_CARD">Credit Card</MenuItem>
@@ -642,7 +735,7 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
               <MenuItem value="BANK_TRANSFER">Bank Transfer</MenuItem>
               <MenuItem value="GIFT_CARD">Gift Card</MenuItem>
             </TextField>
-            
+
             <TextField
               label="Notes"
               multiline
@@ -653,24 +746,36 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
               variant="outlined"
               size="small"
               InputLabelProps={{
-                shrink: true
+                shrink: true,
               }}
             />
           </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenNewPaymentModal(false)}>Cancel</Button>
-          <Button onClick={handlePaymentSubmit} variant="contained" color="primary">
+          <Button
+            onClick={handlePaymentSubmit}
+            variant="contained"
+            color="primary"
+          >
             Save Payment
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Store Credit Modal */}
-      <Dialog open={openStoreCreditModal} onClose={() => setOpenStoreCreditModal(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={openStoreCreditModal}
+        onClose={() => setOpenStoreCreditModal(false)}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Add Store Credit</DialogTitle>
         <DialogContent>
-          <Box component="form" sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box
+            component="form"
+            sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 2 }}
+          >
             <TextField
               label="Amount"
               type="number"
@@ -681,10 +786,10 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
               variant="outlined"
               size="small"
               InputLabelProps={{
-                shrink: true
+                shrink: true,
               }}
             />
-            
+
             <TextField
               label="Reason"
               multiline
@@ -695,7 +800,7 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
               variant="outlined"
               size="small"
               InputLabelProps={{
-                shrink: true
+                shrink: true,
               }}
               placeholder="e.g., Refund for canceled service, Compensation for issue, etc."
             />
@@ -703,21 +808,36 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenStoreCreditModal(false)}>Cancel</Button>
-          <Button onClick={handleStoreCreditSubmit} variant="contained" color="primary">
+          <Button
+            onClick={handleStoreCreditSubmit}
+            variant="contained"
+            color="primary"
+          >
             Add Credit
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Apply Credit Modal */}
-      <Dialog open={openApplyCreditModal} onClose={() => setOpenApplyCreditModal(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={openApplyCreditModal}
+        onClose={() => setOpenApplyCreditModal(false)}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Apply Store Credit</DialogTitle>
         <DialogContent>
-          <Box component="form" sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box
+            component="form"
+            sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 2 }}
+          >
             <Typography variant="body1" gutterBottom>
-              Available Credit: {accountBalance ? formatCurrency(accountBalance.storeCredit) : '$0.00'}
+              Available Credit:{' '}
+              {accountBalance
+                ? formatCurrency(accountBalance.storeCredit)
+                : '$0.00'}
             </Typography>
-            
+
             <TextField
               select
               label="Invoice"
@@ -728,18 +848,20 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
               variant="outlined"
               size="small"
               InputLabelProps={{
-                shrink: true
+                shrink: true,
               }}
             >
               {invoices
-                .filter(inv => inv.status !== 'PAID' && inv.status !== 'CANCELLED')
+                .filter(
+                  (inv) => inv.status !== 'PAID' && inv.status !== 'CANCELLED'
+                )
                 .map((invoice) => (
                   <MenuItem key={invoice.id} value={invoice.id}>
                     {invoice.invoiceNumber} - {formatCurrency(invoice.total)}
                   </MenuItem>
                 ))}
             </TextField>
-            
+
             <TextField
               label="Amount to Apply"
               type="number"
@@ -750,10 +872,10 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
               variant="outlined"
               size="small"
               InputLabelProps={{
-                shrink: true
+                shrink: true,
               }}
               inputProps={{
-                max: accountBalance?.storeCredit || 0
+                max: accountBalance?.storeCredit || 0,
               }}
               helperText={`Maximum amount: ${accountBalance ? formatCurrency(accountBalance.storeCredit) : '$0.00'}`}
             />
@@ -761,7 +883,11 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({ customerId, onInvoiceCr
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenApplyCreditModal(false)}>Cancel</Button>
-          <Button onClick={handleApplyCreditSubmit} variant="contained" color="primary">
+          <Button
+            onClick={handleApplyCreditSubmit}
+            variant="contained"
+            color="primary"
+          >
             Apply Credit
           </Button>
         </DialogActions>

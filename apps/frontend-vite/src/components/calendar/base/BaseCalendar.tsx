@@ -1,26 +1,26 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   Paper,
   Typography,
   Button,
   CircularProgress,
-} from "@mui/material";
-import RefreshIcon from "@mui/icons-material/Refresh";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import interactionPlugin from "@fullcalendar/interaction";
-import { BaseCalendarProps, ViewType } from "./types";
-import useCalendarEvents from "./useCalendarEvents";
+} from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import { BaseCalendarProps, ViewType } from './types';
+import useCalendarEvents from './useCalendarEvents';
 
 /**
  * Base calendar component with common functionality
  */
 const BaseCalendar: React.FC<BaseCalendarProps> = ({
   serviceCategories,
-  calendarTitle = "Calendar",
-  initialView = "timeGridWeek",
+  calendarTitle = 'Calendar',
+  initialView = 'timeGridWeek',
   initialDate,
   showWeekends = true,
   showHeader = true,
@@ -61,14 +61,14 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({
   };
 
   return (
-    <Box sx={{ height: "calc(100vh - 200px)", p: 2 }}>
+    <Box sx={{ height: 'calc(100vh - 200px)', p: 2 }}>
       {showHeader && (
         <Box
           sx={{
             mb: 2,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
           }}
         >
           <Typography variant="h6">
@@ -87,15 +87,15 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({
 
       <Paper
         elevation={3}
-        sx={{ height: showHeader ? "calc(100% - 60px)" : "100%", p: 2 }}
+        sx={{ height: showHeader ? 'calc(100% - 60px)' : '100%', p: 2 }}
       >
         {loading ? (
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100%",
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%',
             }}
           >
             <CircularProgress />
@@ -112,9 +112,9 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({
             <FullCalendar
               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
               headerToolbar={{
-                left: "prev,next today",
-                center: "title",
-                right: "dayGridMonth,timeGridWeek,timeGridDay",
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay',
               }}
               initialView={viewType}
               editable={allowEventEditing}
@@ -134,20 +134,20 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({
               locale="en-US"
               // Fixed time format settings using object notation instead of strings
               eventTimeFormat={{
-                hour: "2-digit",
-                minute: "2-digit",
+                hour: '2-digit',
+                minute: '2-digit',
                 hour12: true,
               }}
               slotLabelFormat={{
-                hour: "2-digit",
-                minute: "2-digit",
+                hour: '2-digit',
+                minute: '2-digit',
                 hour12: true,
               }}
               buttonText={{
-                today: "Today",
-                month: "Month",
-                week: "Week",
-                day: "Day",
+                today: 'Today',
+                month: 'Month',
+                week: 'Week',
+                day: 'Day',
               }}
               initialDate={new Date()}
               firstDay={new Date().getDay()} // Start week from current day
@@ -159,9 +159,9 @@ const BaseCalendar: React.FC<BaseCalendarProps> = ({
                 timeGridWeek: {},
               }}
               dayHeaderFormat={{
-                weekday: "short",
-                month: "numeric",
-                day: "numeric",
+                weekday: 'short',
+                month: 'numeric',
+                day: 'numeric',
                 omitCommas: true,
               }}
             />

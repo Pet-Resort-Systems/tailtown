@@ -17,7 +17,7 @@ const PageLoader: React.FC<PageLoaderProps> = ({ message = 'Loading...' }) => {
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '400px',
-        gap: 2
+        gap: 2,
       }}
     >
       <CircularProgress size={40} />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -16,17 +16,17 @@ import {
   CircularProgress,
   RadioGroup,
   Radio,
-} from "@mui/material";
+} from '@mui/material';
 import {
   WifiOff as OfflineIcon,
   CreditCard as CardIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import useOnlineStatus, {
   queuePendingAction,
-} from "../../hooks/useOnlineStatus";
+} from '../../hooks/useOnlineStatus';
 import customerPaymentMethodService, {
   SavedPaymentMethod,
-} from "../../services/customerPaymentMethodService";
+} from '../../services/customerPaymentMethodService';
 
 interface FinalPaymentProps {
   invoice: any;
@@ -42,7 +42,7 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
   onBack,
 }) => {
   const { isOnline } = useOnlineStatus();
-  const [paymentMethod, setPaymentMethod] = useState("CASH");
+  const [paymentMethod, setPaymentMethod] = useState('CASH');
   const [paymentAmount, setPaymentAmount] = useState(
     invoice?.balanceDue || invoice?.total || 0
   );
@@ -62,18 +62,17 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
 
       setLoadingCards(true);
       try {
-        const cards = await customerPaymentMethodService.getPaymentMethods(
-          customerId
-        );
+        const cards =
+          await customerPaymentMethodService.getPaymentMethods(customerId);
         setSavedCards(cards);
         // Auto-select default card if available
         const defaultCard = cards.find((c) => c.isDefault);
         if (defaultCard) {
           setSelectedCardId(defaultCard.id);
-          setPaymentMethod("SAVED_CARD");
+          setPaymentMethod('SAVED_CARD');
         }
       } catch (err) {
-        console.error("Failed to load saved cards:", err);
+        console.error('Failed to load saved cards:', err);
       } finally {
         setLoadingCards(false);
       }
@@ -83,9 +82,9 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
   }, [customerId]);
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
     }).format(amount || 0);
   };
 
@@ -97,9 +96,9 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
     setError(null);
 
     // Check if offline and card payment
-    if (!isOnline && paymentMethod !== "CASH") {
+    if (!isOnline && paymentMethod !== 'CASH') {
       setError(
-        "Card payments require an internet connection. Please use cash or wait for connection to restore."
+        'Card payments require an internet connection. Please use cash or wait for connection to restore.'
       );
       setProcessing(false);
       return;
@@ -107,18 +106,18 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
 
     try {
       // For cash payments while offline, queue for later sync
-      if (!isOnline && paymentMethod === "CASH") {
+      if (!isOnline && paymentMethod === 'CASH') {
         const paymentData = {
           method: paymentMethod,
           amount: paymentAmount,
-          status: "PENDING_SYNC",
+          status: 'PENDING_SYNC',
           timestamp: new Date().toISOString(),
           offlineProcessed: true,
         };
 
         // Queue the payment for sync when back online
         queuePendingAction({
-          type: "PAYMENT",
+          type: 'PAYMENT',
           data: {
             invoiceId: invoice?.id,
             ...paymentData,
@@ -131,7 +130,7 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
       }
 
       // Handle saved card payment
-      if (paymentMethod === "SAVED_CARD" && selectedCardId && customerId) {
+      if (paymentMethod === 'SAVED_CARD' && selectedCardId && customerId) {
         const chargeResult =
           await customerPaymentMethodService.chargePaymentMethod(
             customerId,
@@ -140,15 +139,15 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
               amount: paymentAmount,
               invoiceId: invoice?.id,
               description: `Payment for Invoice ${
-                invoice?.invoiceNumber || ""
+                invoice?.invoiceNumber || ''
               }`,
             }
           );
 
         const paymentData = {
-          method: "SAVED_CARD",
+          method: 'SAVED_CARD',
           amount: paymentAmount,
-          status: "PAID",
+          status: 'PAID',
           timestamp: new Date().toISOString(),
           transactionId: chargeResult.transactionId,
           cardBrand: chargeResult.cardBrand,
@@ -165,13 +164,13 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
       const paymentData = {
         method: paymentMethod,
         amount: paymentAmount,
-        status: "PAID",
+        status: 'PAID',
         timestamp: new Date().toISOString(),
       };
 
       onContinue(paymentData);
     } catch (err: any) {
-      setError(err.message || "Payment processing failed");
+      setError(err.message || 'Payment processing failed');
       setProcessing(false);
     }
   };
@@ -207,11 +206,11 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
         </Alert>
       )}
 
-      <Paper elevation={0} sx={{ p: 3, mt: 3, bgcolor: "grey.50" }}>
+      <Paper elevation={0} sx={{ p: 3, mt: 3, bgcolor: 'grey.50' }}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Box
-              sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}
+              sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}
             >
               <Typography variant="body2">Total Invoice:</Typography>
               <Typography variant="body2">
@@ -221,7 +220,7 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
 
             {alreadyPaid > 0 && (
               <Box
-                sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}
+                sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}
               >
                 <Typography variant="body2" color="success.main">
                   Deposit Paid:
@@ -234,7 +233,7 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
 
             <Divider sx={{ my: 2 }} />
 
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant="h6" color="primary">
                 Balance Due:
               </Typography>
@@ -264,7 +263,7 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
                     label="Payment Method"
                     onChange={(e) => {
                       setPaymentMethod(e.target.value);
-                      if (e.target.value !== "SAVED_CARD") {
+                      if (e.target.value !== 'SAVED_CARD') {
                         setSelectedCardId(null);
                       }
                     }}
@@ -288,7 +287,7 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
               </Grid>
 
               {/* Saved Card Selection */}
-              {paymentMethod === "SAVED_CARD" && savedCards.length > 0 && (
+              {paymentMethod === 'SAVED_CARD' && savedCards.length > 0 && (
                 <Grid item xs={12}>
                   <Typography variant="subtitle2" gutterBottom>
                     Select a saved card:
@@ -297,7 +296,7 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
                     <CircularProgress size={20} />
                   ) : (
                     <RadioGroup
-                      value={selectedCardId || ""}
+                      value={selectedCardId || ''}
                       onChange={(e) => setSelectedCardId(e.target.value)}
                     >
                       {savedCards.map((card) => (
@@ -308,8 +307,8 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
                           label={
                             <Box
                               sx={{
-                                display: "flex",
-                                alignItems: "center",
+                                display: 'flex',
+                                alignItems: 'center',
                                 gap: 1,
                               }}
                             >
@@ -317,14 +316,14 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
                               <span>
                                 {customerPaymentMethodService.formatCardBrand(
                                   card.cardBrand
-                                )}{" "}
+                                )}{' '}
                                 ****{card.lastFour}
                               </span>
                               <Typography
                                 variant="caption"
                                 color="text.secondary"
                               >
-                                Exp:{" "}
+                                Exp:{' '}
                                 {customerPaymentMethodService.formatExpiry(
                                   card.expiryMonth,
                                   card.expiryYear
@@ -358,7 +357,7 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
                     setPaymentAmount(parseFloat(e.target.value) || 0)
                   }
                   InputProps={{
-                    startAdornment: "$",
+                    startAdornment: '$',
                   }}
                   helperText={
                     paymentAmount < balanceDue
@@ -366,15 +365,15 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
                           balanceDue - paymentAmount
                         )}`
                       : paymentAmount > balanceDue
-                      ? `Overpayment: ${formatCurrency(
-                          paymentAmount - balanceDue
-                        )}`
-                      : "Full payment"
+                        ? `Overpayment: ${formatCurrency(
+                            paymentAmount - balanceDue
+                          )}`
+                        : 'Full payment'
                   }
                 />
               </Grid>
 
-              {paymentMethod === "CREDIT_CARD" && (
+              {paymentMethod === 'CREDIT_CARD' && (
                 <Grid item xs={12}>
                   <Alert severity="info">
                     Process credit card payment through your payment terminal
@@ -386,7 +385,7 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
         </Grid>
       </Paper>
 
-      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
         <Button onClick={onBack} disabled={processing}>
           Back
         </Button>
@@ -394,7 +393,7 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
           variant="contained"
           onClick={
             canSkipPayment
-              ? () => onContinue({ method: "NONE", amount: 0, status: "PAID" })
+              ? () => onContinue({ method: 'NONE', amount: 0, status: 'PAID' })
               : handleProcessPayment
           }
           disabled={processing || (!canSkipPayment && paymentAmount <= 0)}
@@ -402,7 +401,7 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
           {processing ? (
             <CircularProgress size={24} />
           ) : canSkipPayment ? (
-            "Complete Checkout"
+            'Complete Checkout'
           ) : (
             `Process Payment (${formatCurrency(paymentAmount)})`
           )}

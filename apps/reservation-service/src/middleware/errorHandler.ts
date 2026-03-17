@@ -6,13 +6,13 @@
  * and provides detailed logging with proper context.
  */
 
-import { Request, Response, NextFunction } from "express";
-import { AppError, ErrorType } from "../utils/appError";
-import { logger } from "../utils/logger";
+import { Request, Response, NextFunction } from 'express';
+import { AppError, ErrorType } from '../utils/appError';
+import { logger } from '../utils/logger';
 import {
   reservationErrorTracker,
   ReservationErrorCategory,
-} from "../utils/reservation-error-tracker";
+} from '../utils/reservation-error-tracker';
 
 /**
  * Async handler to catch errors in async controller functions
@@ -42,35 +42,35 @@ export const handlePrismaError = (err: any): AppError => {
 
   // Map Prisma error codes to our standardized errors
   switch (errorCode) {
-    case "P2002": // Unique constraint failed
+    case 'P2002': // Unique constraint failed
       return AppError.conflictError(
         `Duplicate field value: ${
-          Array.isArray(target) ? target.join(", ") : target
+          Array.isArray(target) ? target.join(', ') : target
         }`,
         { prismaError: errorCode, fields: target }
       );
 
-    case "P2025": // Record not found
-      return AppError.notFoundError(meta.modelName || "Record", undefined, {
+    case 'P2025': // Record not found
+      return AppError.notFoundError(meta.modelName || 'Record', undefined, {
         prismaError: errorCode,
       });
 
-    case "P2003": // Foreign key constraint failed
-      return AppError.validationError("Foreign key constraint failed", {
+    case 'P2003': // Foreign key constraint failed
+      return AppError.validationError('Foreign key constraint failed', {
         prismaError: errorCode,
         field: meta.field_name,
       });
 
-    case "P2010": // Raw query failed
+    case 'P2010': // Raw query failed
       return AppError.databaseError(
-        "Database query failed",
+        'Database query failed',
         { prismaError: errorCode, query: meta.query },
         true
       );
 
     default:
       return AppError.databaseError(
-        "Database operation failed",
+        'Database operation failed',
         { prismaError: errorCode, meta },
         true
       );
@@ -97,7 +97,7 @@ export const sendErrorDev = (err: any, req: Request, res: Response): void => {
   // Send detailed error response
   res.status(statusCode).json({
     success: false,
-    status: err.status || "error",
+    status: err.status || 'error',
     message: err.message,
     error: {
       type: err.type || ErrorType.SERVER_ERROR,
@@ -105,7 +105,7 @@ export const sendErrorDev = (err: any, req: Request, res: Response): void => {
       stack: err.stack,
       context: err.context || null,
     },
-    requestId: req.headers["x-request-id"] || null,
+    requestId: req.headers['x-request-id'] || null,
     timestamp: new Date().toISOString(),
   });
 };
@@ -131,12 +131,12 @@ export const sendErrorProd = (err: any, req: Request, res: Response): void => {
     err.type === ErrorType.VALIDATION_ERROR
       ? ReservationErrorCategory.VALIDATION_ERROR
       : err.type === ErrorType.DATABASE_ERROR
-      ? ReservationErrorCategory.DB_CONNECTION_ERROR
-      : err.type === ErrorType.RESOURCE_CONFLICT
-      ? ReservationErrorCategory.RESOURCE_CONFLICT
-      : err.type === ErrorType.RESOURCE_NOT_FOUND
-      ? ReservationErrorCategory.RESOURCE_NOT_FOUND
-      : ReservationErrorCategory.UNKNOWN;
+        ? ReservationErrorCategory.DB_CONNECTION_ERROR
+        : err.type === ErrorType.RESOURCE_CONFLICT
+          ? ReservationErrorCategory.RESOURCE_CONFLICT
+          : err.type === ErrorType.RESOURCE_NOT_FOUND
+            ? ReservationErrorCategory.RESOURCE_NOT_FOUND
+            : ReservationErrorCategory.UNKNOWN;
 
   const errorId = reservationErrorTracker.trackErrorFromRequest(
     err,
@@ -151,12 +151,12 @@ export const sendErrorProd = (err: any, req: Request, res: Response): void => {
   if (err.isOperational) {
     res.status(statusCode).json({
       success: false,
-      status: err.status || "error",
+      status: err.status || 'error',
       message: err.message,
       error: {
         type: err.type || ErrorType.SERVER_ERROR,
       },
-      requestId: req.headers["x-request-id"] || null,
+      requestId: req.headers['x-request-id'] || null,
       timestamp: new Date().toISOString(),
     });
   }
@@ -174,12 +174,12 @@ export const sendErrorProd = (err: any, req: Request, res: Response): void => {
 
     res.status(500).json({
       success: false,
-      status: "error",
-      message: "Something went wrong",
+      status: 'error',
+      message: 'Something went wrong',
       error: {
         type: ErrorType.SERVER_ERROR,
       },
-      requestId: req.headers["x-request-id"] || null,
+      requestId: req.headers['x-request-id'] || null,
       timestamp: new Date().toISOString(),
     });
   }
@@ -206,7 +206,7 @@ export const errorHandler = (
 
   // Set default error properties
   err.statusCode = err.statusCode || 500;
-  err.status = err.status || "error";
+  err.status = err.status || 'error';
 
   // Add request context to error
   if (!err.context) {
@@ -219,40 +219,40 @@ export const errorHandler = (
     path: req.path,
     query: req.query,
     headers: {
-      "user-agent": req.headers["user-agent"],
-      "x-request-id": req.headers["x-request-id"],
-      "x-organization-id": req.headers["x-organization-id"],
+      'user-agent': req.headers['user-agent'],
+      'x-request-id': req.headers['x-request-id'],
+      'x-organization-id': req.headers['x-organization-id'],
     },
   };
 
   // Handle Prisma database errors
-  if (err.code && err.code.startsWith("P")) {
+  if (err.code && err.code.startsWith('P')) {
     err = handlePrismaError(err);
   }
 
   // Handle JSON parsing errors
-  if (err.type === "entity.parse.failed") {
-    err = AppError.validationError("Invalid JSON in request body", {
+  if (err.type === 'entity.parse.failed') {
+    err = AppError.validationError('Invalid JSON in request body', {
       syntaxError: err.message,
     });
   }
 
   // Handle validation errors
-  if (err.name === "ValidationError") {
+  if (err.name === 'ValidationError') {
     err = AppError.validationError(err.message, err.details || err.errors);
   }
 
   // Handle JWT errors
-  if (err.name === "JsonWebTokenError") {
-    err = AppError.authenticationError("Invalid token");
+  if (err.name === 'JsonWebTokenError') {
+    err = AppError.authenticationError('Invalid token');
   }
 
-  if (err.name === "TokenExpiredError") {
-    err = AppError.authenticationError("Token expired");
+  if (err.name === 'TokenExpiredError') {
+    err = AppError.authenticationError('Token expired');
   }
 
   // Different error handling based on environment
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, req, res);
   } else {
     sendErrorProd(err, req, res);

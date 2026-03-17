@@ -1,6 +1,6 @@
 /**
  * Super Admin Authentication Middleware
- * 
+ *
  * Protects routes that require super admin authentication.
  * Verifies JWT token and attaches super admin info to request.
  */
@@ -28,11 +28,11 @@ export const requireSuperAdmin = async (
   try {
     // Get token from Authorization header
     const authHeader = req.get('Authorization');
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({
         success: false,
-        message: 'No token provided'
+        message: 'No token provided',
       });
     }
 
@@ -44,7 +44,7 @@ export const requireSuperAdmin = async (
     if (decoded.type !== 'access') {
       return res.status(401).json({
         success: false,
-        message: 'Invalid token type'
+        message: 'Invalid token type',
       });
     }
 
@@ -52,22 +52,27 @@ export const requireSuperAdmin = async (
     (req as SuperAdminRequest).superAdmin = {
       id: decoded.id,
       email: decoded.email,
-      role: decoded.role
+      role: decoded.role,
     };
 
     next();
   } catch (error) {
-    if (error instanceof Error && (error.message === 'Token expired' || error.message === 'Invalid token')) {
+    if (
+      error instanceof Error &&
+      (error.message === 'Token expired' || error.message === 'Invalid token')
+    ) {
       return res.status(401).json({
         success: false,
-        message: error.message
+        message: error.message,
       });
     }
 
-    logger.error('SuperAdmin auth middleware error', { error: error instanceof Error ? error.message : String(error) });
+    logger.error('SuperAdmin auth middleware error', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return res.status(401).json({
       success: false,
-      message: 'Authentication failed'
+      message: 'Authentication failed',
     });
   }
 };
@@ -82,14 +87,14 @@ export const requireRole = (...roles: string[]) => {
     if (!superAdmin) {
       return res.status(401).json({
         success: false,
-        message: 'Not authenticated'
+        message: 'Not authenticated',
       });
     }
 
     if (!roles.includes(superAdmin.role)) {
       return res.status(403).json({
         success: false,
-        message: 'Insufficient permissions'
+        message: 'Insufficient permissions',
       });
     }
 

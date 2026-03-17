@@ -1,6 +1,6 @@
 /**
  * Report Card Service
- * 
+ *
  * Frontend service for pet report card operations
  */
 
@@ -15,7 +15,13 @@ export interface ReportCard {
   createdByStaffId: string;
   reportDate: string;
   serviceType: 'BOARDING' | 'DAYCARE' | 'GROOMING' | 'TRAINING' | 'GENERAL';
-  templateType?: 'DAYCARE_DAILY' | 'BOARDING_DAILY' | 'BOARDING_CHECKOUT' | 'GROOMING_COMPLETE' | 'TRAINING_SESSION' | 'CUSTOM';
+  templateType?:
+    | 'DAYCARE_DAILY'
+    | 'BOARDING_DAILY'
+    | 'BOARDING_CHECKOUT'
+    | 'GROOMING_COMPLETE'
+    | 'TRAINING_SESSION'
+    | 'CUSTOM';
   title?: string;
   summary?: string;
   moodRating?: number;
@@ -32,7 +38,13 @@ export interface ReportCard {
   concerns: string[];
   photos: ReportCardPhoto[];
   photoCount: number;
-  status: 'DRAFT' | 'PENDING_REVIEW' | 'APPROVED' | 'SENT' | 'VIEWED' | 'ARCHIVED';
+  status:
+    | 'DRAFT'
+    | 'PENDING_REVIEW'
+    | 'APPROVED'
+    | 'SENT'
+    | 'VIEWED'
+    | 'ARCHIVED';
   sentAt?: string;
   sentViaEmail: boolean;
   sentViaSMS: boolean;
@@ -163,7 +175,10 @@ class ReportCardService {
   /**
    * Update report card
    */
-  async updateReportCard(id: string, data: Partial<CreateReportCardRequest>): Promise<ReportCard> {
+  async updateReportCard(
+    id: string,
+    data: Partial<CreateReportCardRequest>
+  ): Promise<ReportCard> {
     const response = await api.patch(`/api/report-cards/${id}`, data);
     return response.data.data;
   }
@@ -178,8 +193,14 @@ class ReportCardService {
   /**
    * Upload photo to report card
    */
-  async uploadPhoto(reportCardId: string, data: UploadPhotoRequest): Promise<ReportCardPhoto> {
-    const response = await api.post(`/api/report-cards/${reportCardId}/photos`, data);
+  async uploadPhoto(
+    reportCardId: string,
+    data: UploadPhotoRequest
+  ): Promise<ReportCardPhoto> {
+    const response = await api.post(
+      `/api/report-cards/${reportCardId}/photos`,
+      data
+    );
     return response.data.data;
   }
 
@@ -193,15 +214,25 @@ class ReportCardService {
   /**
    * Update photo (caption, order)
    */
-  async updatePhoto(reportCardId: string, photoId: string, data: { caption?: string; order?: number }): Promise<ReportCardPhoto> {
-    const response = await api.patch(`/api/report-cards/${reportCardId}/photos/${photoId}`, data);
+  async updatePhoto(
+    reportCardId: string,
+    photoId: string,
+    data: { caption?: string; order?: number }
+  ): Promise<ReportCardPhoto> {
+    const response = await api.patch(
+      `/api/report-cards/${reportCardId}/photos/${photoId}`,
+      data
+    );
     return response.data.data;
   }
 
   /**
    * Send report card via email/SMS
    */
-  async sendReportCard(id: string, options?: { sendEmail?: boolean; sendSMS?: boolean }): Promise<ReportCard> {
+  async sendReportCard(
+    id: string,
+    options?: { sendEmail?: boolean; sendSMS?: boolean }
+  ): Promise<ReportCard> {
     const response = await api.post(`/api/report-cards/${id}/send`, options);
     return response.data.data;
   }
@@ -220,10 +251,16 @@ class ReportCardService {
   /**
    * Bulk send report cards
    */
-  async bulkSendReportCards(reportCardIds: string[], options?: { sendEmail?: boolean; sendSMS?: boolean }): Promise<{
+  async bulkSendReportCards(
+    reportCardIds: string[],
+    options?: { sendEmail?: boolean; sendSMS?: boolean }
+  ): Promise<{
     sent: number;
   }> {
-    const response = await api.post('/api/report-cards/bulk/send', { reportCardIds, ...options });
+    const response = await api.post('/api/report-cards/bulk/send', {
+      reportCardIds,
+      ...options,
+    });
     return response.data.data;
   }
 
@@ -246,8 +283,12 @@ class ReportCardService {
   /**
    * Get reservation's report cards
    */
-  async getReservationReportCards(reservationId: string): Promise<ReportCard[]> {
-    const response = await api.get(`/api/report-cards/reservations/${reservationId}`);
+  async getReservationReportCards(
+    reservationId: string
+  ): Promise<ReportCard[]> {
+    const response = await api.get(
+      `/api/report-cards/reservations/${reservationId}`
+    );
     return response.data.data;
   }
 
@@ -260,7 +301,7 @@ class ReportCardService {
       DAYCARE: 'Daycare',
       GROOMING: 'Grooming',
       TRAINING: 'Training',
-      GENERAL: 'General'
+      GENERAL: 'General',
     };
     return map[serviceType] || serviceType;
   }
@@ -275,7 +316,7 @@ class ReportCardService {
       APPROVED: 'Approved',
       SENT: 'Sent',
       VIEWED: 'Viewed',
-      ARCHIVED: 'Archived'
+      ARCHIVED: 'Archived',
     };
     return map[status] || status;
   }
@@ -283,14 +324,19 @@ class ReportCardService {
   /**
    * Get status color
    */
-  getStatusColor(status: string): 'success' | 'warning' | 'error' | 'info' | 'default' {
-    const map: Record<string, 'success' | 'warning' | 'error' | 'info' | 'default'> = {
+  getStatusColor(
+    status: string
+  ): 'success' | 'warning' | 'error' | 'info' | 'default' {
+    const map: Record<
+      string,
+      'success' | 'warning' | 'error' | 'info' | 'default'
+    > = {
       DRAFT: 'default',
       PENDING_REVIEW: 'warning',
       APPROVED: 'info',
       SENT: 'success',
       VIEWED: 'success',
-      ARCHIVED: 'default'
+      ARCHIVED: 'default',
     };
     return map[status] || 'default';
   }
@@ -313,27 +359,34 @@ class ReportCardService {
   /**
    * Upload file to storage (placeholder - implement with actual storage)
    */
-  async uploadFile(file: File): Promise<{ url: string; thumbnailUrl?: string }> {
+  async uploadFile(
+    file: File
+  ): Promise<{ url: string; thumbnailUrl?: string }> {
     // TODO: Implement actual file upload to S3/CloudStorage
     // For now, return a placeholder
     const formData = new FormData();
     formData.append('file', file);
-    
+
     // This would be your actual upload endpoint
     // const response = await api.post('/api/upload', formData);
     // return response.data;
-    
+
     // Placeholder
     return {
       url: URL.createObjectURL(file),
-      thumbnailUrl: URL.createObjectURL(file)
+      thumbnailUrl: URL.createObjectURL(file),
     };
   }
 
   /**
    * Compress image before upload
    */
-  async compressImage(file: File, maxWidth: number = 1200, maxHeight: number = 1200, quality: number = 0.8): Promise<File> {
+  async compressImage(
+    file: File,
+    maxWidth: number = 1200,
+    maxHeight: number = 1200,
+    quality: number = 0.8
+  ): Promise<File> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -367,7 +420,7 @@ class ReportCardService {
               if (blob) {
                 const compressedFile = new File([blob], file.name, {
                   type: 'image/jpeg',
-                  lastModified: Date.now()
+                  lastModified: Date.now(),
                 });
                 resolve(compressedFile);
               } else {

@@ -16,9 +16,9 @@ jest.mock('../../../../contexts/CustomerAuthContext', () => ({
       id: 'customer-123',
       firstName: 'John',
       lastName: 'Doe',
-      email: 'john@example.com'
-    }
-  })
+      email: 'john@example.com',
+    },
+  }),
 }));
 
 const mockPets = [
@@ -29,7 +29,7 @@ const mockPets = [
     breed: 'Golden Retriever',
     isActive: true,
     gender: 'Male',
-    weight: 65
+    weight: 65,
   },
   {
     id: 'pet-2',
@@ -38,7 +38,7 @@ const mockPets = [
     breed: 'Labrador',
     isActive: true,
     gender: 'Female',
-    weight: 55
+    weight: 55,
   },
   {
     id: 'pet-3',
@@ -47,20 +47,20 @@ const mockPets = [
     breed: 'Persian',
     isActive: false,
     gender: 'Female',
-    weight: 10
-  }
+    weight: 10,
+  },
 ];
 
 describe('PetSelection', () => {
   const mockOnNext = jest.fn();
   const mockOnBack = jest.fn();
   const mockOnUpdate = jest.fn();
-  
+
   const defaultProps = {
     bookingData: { customerId: 'customer-123' },
     onNext: mockOnNext,
     onBack: mockOnBack,
-    onUpdate: mockOnUpdate
+    onUpdate: mockOnUpdate,
   };
 
   beforeEach(() => {
@@ -70,11 +70,11 @@ describe('PetSelection', () => {
   describe('Rendering', () => {
     it('should render the component with title', async () => {
       (petService.getPetsByCustomer as jest.Mock).mockResolvedValue({
-        data: mockPets
+        data: mockPets,
       });
 
       render(<PetSelection {...defaultProps} />);
-      
+
       await waitFor(() => {
         expect(screen.getByText('Select Your Pets')).toBeInTheDocument();
       });
@@ -91,11 +91,11 @@ describe('PetSelection', () => {
 
     it('should display all active pets', async () => {
       (petService.getPetsByCustomer as jest.Mock).mockResolvedValue({
-        data: mockPets
+        data: mockPets,
       });
 
       render(<PetSelection {...defaultProps} />);
-      
+
       await waitFor(() => {
         expect(screen.getByText('Max')).toBeInTheDocument();
         expect(screen.getByText('Bella')).toBeInTheDocument();
@@ -105,11 +105,11 @@ describe('PetSelection', () => {
 
     it('should display pet details', async () => {
       (petService.getPetsByCustomer as jest.Mock).mockResolvedValue({
-        data: mockPets
+        data: mockPets,
       });
 
       render(<PetSelection {...defaultProps} />);
-      
+
       await waitFor(() => {
         expect(screen.getByText('Golden Retriever')).toBeInTheDocument();
         expect(screen.getByText('Labrador')).toBeInTheDocument();
@@ -121,25 +121,25 @@ describe('PetSelection', () => {
     it('should auto-select when customer has only one pet', async () => {
       const singlePet = [mockPets[0]];
       (petService.getPetsByCustomer as jest.Mock).mockResolvedValue({
-        data: singlePet
+        data: singlePet,
       });
 
       render(<PetSelection {...defaultProps} />);
-      
+
       await waitFor(() => {
         expect(mockOnUpdate).toHaveBeenCalledWith({
-          petIds: ['pet-1']
+          petIds: ['pet-1'],
         });
       });
     });
 
     it('should not auto-select when customer has multiple pets', async () => {
       (petService.getPetsByCustomer as jest.Mock).mockResolvedValue({
-        data: mockPets
+        data: mockPets,
       });
 
       render(<PetSelection {...defaultProps} />);
-      
+
       await waitFor(() => {
         expect(screen.getByText('Max')).toBeInTheDocument();
       });
@@ -151,15 +151,15 @@ describe('PetSelection', () => {
     it('should filter out inactive pets before auto-select', async () => {
       const petsWithInactive = [mockPets[0], mockPets[2]]; // One active, one inactive
       (petService.getPetsByCustomer as jest.Mock).mockResolvedValue({
-        data: petsWithInactive
+        data: petsWithInactive,
       });
 
       render(<PetSelection {...defaultProps} />);
-      
+
       await waitFor(() => {
         // Should auto-select the one active pet
         expect(mockOnUpdate).toHaveBeenCalledWith({
-          petIds: ['pet-1']
+          petIds: ['pet-1'],
         });
       });
     });
@@ -168,23 +168,25 @@ describe('PetSelection', () => {
   describe('Manual Pet Selection', () => {
     it.skip('should allow selecting a pet', async () => {
       // Use only active pets (Max and Bella) to prevent auto-select
-      const activePets = mockPets.filter(p => p.isActive);
+      const activePets = mockPets.filter((p) => p.isActive);
       (petService.getPetsByCustomer as jest.Mock).mockResolvedValue({
-        data: activePets
+        data: activePets,
       });
 
       render(<PetSelection {...defaultProps} />);
-      
+
       // Verify the mock was called
       await waitFor(() => {
-        expect(petService.getPetsByCustomer).toHaveBeenCalledWith('customer-123');
+        expect(petService.getPetsByCustomer).toHaveBeenCalledWith(
+          'customer-123'
+        );
       });
-      
+
       // Wait for loading to complete
       await waitFor(() => {
         expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
       });
-      
+
       // Wait for pets to render
       await waitFor(() => {
         const maxElement = screen.queryByText('Max');
@@ -194,15 +196,15 @@ describe('PetSelection', () => {
       // Find the CardActionArea by finding the pet name and going up to the clickable area
       const petName = screen.getByText('Max');
       const petCard = petName.closest('.MuiCardActionArea-root');
-      
+
       expect(petCard).toBeTruthy();
-      
+
       fireEvent.click(petCard!);
-      
+
       await waitFor(() => {
         expect(mockOnUpdate).toHaveBeenCalledWith(
           expect.objectContaining({
-            petIds: expect.arrayContaining(['pet-1'])
+            petIds: expect.arrayContaining(['pet-1']),
           })
         );
       });
@@ -210,37 +212,41 @@ describe('PetSelection', () => {
 
     it.skip('should allow selecting multiple pets', async () => {
       // Use only active pets to prevent auto-select
-      const activePets = mockPets.filter(p => p.isActive);
+      const activePets = mockPets.filter((p) => p.isActive);
       (petService.getPetsByCustomer as jest.Mock).mockResolvedValue({
-        data: activePets
+        data: activePets,
       });
 
       render(<PetSelection {...defaultProps} />);
-      
+
       // Wait for pets to load
       await waitFor(() => {
         expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
       });
-      
+
       await waitFor(() => {
         expect(screen.getByText('Max')).toBeInTheDocument();
         expect(screen.getByText('Bella')).toBeInTheDocument();
       });
 
       // Select first pet
-      const maxCard = screen.getByText('Max').closest('.MuiCardActionArea-root');
+      const maxCard = screen
+        .getByText('Max')
+        .closest('.MuiCardActionArea-root');
       expect(maxCard).toBeTruthy();
       fireEvent.click(maxCard!);
 
       // Select second pet
-      const bellaCard = screen.getByText('Bella').closest('.MuiCardActionArea-root');
+      const bellaCard = screen
+        .getByText('Bella')
+        .closest('.MuiCardActionArea-root');
       expect(bellaCard).toBeTruthy();
       fireEvent.click(bellaCard!);
 
       await waitFor(() => {
         expect(mockOnUpdate).toHaveBeenCalledWith(
           expect.objectContaining({
-            petIds: expect.arrayContaining(['pet-1', 'pet-2'])
+            petIds: expect.arrayContaining(['pet-1', 'pet-2']),
           })
         );
       });
@@ -248,35 +254,37 @@ describe('PetSelection', () => {
 
     it.skip('should allow deselecting a pet', async () => {
       // Use only active pets to prevent auto-select
-      const activePets = mockPets.filter(p => p.isActive);
+      const activePets = mockPets.filter((p) => p.isActive);
       (petService.getPetsByCustomer as jest.Mock).mockResolvedValue({
-        data: activePets
+        data: activePets,
       });
 
       render(<PetSelection {...defaultProps} />);
-      
+
       // Wait for pets to load
       await waitFor(() => {
         expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
       });
-      
+
       await waitFor(() => {
         expect(screen.getByText('Max')).toBeInTheDocument();
       });
 
-      const petCard = screen.getByText('Max').closest('.MuiCardActionArea-root');
+      const petCard = screen
+        .getByText('Max')
+        .closest('.MuiCardActionArea-root');
       expect(petCard).toBeTruthy();
-      
+
       // Select
       fireEvent.click(petCard!);
-      
+
       // Deselect
       fireEvent.click(petCard!);
 
       await waitFor(() => {
         expect(mockOnUpdate).toHaveBeenLastCalledWith(
           expect.objectContaining({
-            petIds: []
+            petIds: [],
           })
         );
       });
@@ -286,28 +294,28 @@ describe('PetSelection', () => {
   describe('Navigation', () => {
     it('should call onBack when Back button is clicked', async () => {
       (petService.getPetsByCustomer as jest.Mock).mockResolvedValue({
-        data: mockPets
+        data: mockPets,
       });
 
       render(<PetSelection {...defaultProps} />);
-      
+
       await waitFor(() => {
         expect(screen.getByText('Max')).toBeInTheDocument();
       });
 
       const backButton = screen.getByRole('button', { name: /back/i });
       fireEvent.click(backButton);
-      
+
       expect(mockOnBack).toHaveBeenCalled();
     });
 
     it('should have Continue button disabled when no pets selected', async () => {
       (petService.getPetsByCustomer as jest.Mock).mockResolvedValue({
-        data: mockPets
+        data: mockPets,
       });
 
       render(<PetSelection {...defaultProps} />);
-      
+
       await waitFor(() => {
         expect(screen.getByText('Max')).toBeInTheDocument();
       });
@@ -324,19 +332,21 @@ describe('PetSelection', () => {
       );
 
       render(<PetSelection {...defaultProps} />);
-      
+
       await waitFor(() => {
-        expect(screen.getByText('Unable to load pets. Please try again.')).toBeInTheDocument();
+        expect(
+          screen.getByText('Unable to load pets. Please try again.')
+        ).toBeInTheDocument();
       });
     });
 
     it('should display message when customer has no pets', async () => {
       (petService.getPetsByCustomer as jest.Mock).mockResolvedValue({
-        data: []
+        data: [],
       });
 
       render(<PetSelection {...defaultProps} />);
-      
+
       await waitFor(() => {
         expect(screen.getByText(/No active pets found/i)).toBeInTheDocument();
       });
@@ -344,11 +354,11 @@ describe('PetSelection', () => {
 
     it('should display message when all pets are inactive', async () => {
       (petService.getPetsByCustomer as jest.Mock).mockResolvedValue({
-        data: [mockPets[2]] // Only inactive pet
+        data: [mockPets[2]], // Only inactive pet
       });
 
       render(<PetSelection {...defaultProps} />);
-      
+
       await waitFor(() => {
         // All inactive pets are filtered out, so should show no pets message
         expect(screen.getByText(/No active pets found/i)).toBeInTheDocument();
@@ -359,11 +369,11 @@ describe('PetSelection', () => {
   describe('Accessibility', () => {
     it('should have proper ARIA labels', async () => {
       (petService.getPetsByCustomer as jest.Mock).mockResolvedValue({
-        data: mockPets
+        data: mockPets,
       });
 
       render(<PetSelection {...defaultProps} />);
-      
+
       await waitFor(() => {
         const buttons = screen.getAllByRole('button');
         expect(buttons.length).toBeGreaterThan(0);
@@ -372,11 +382,11 @@ describe('PetSelection', () => {
 
     it('should be keyboard navigable', async () => {
       (petService.getPetsByCustomer as jest.Mock).mockResolvedValue({
-        data: mockPets
+        data: mockPets,
       });
 
       render(<PetSelection {...defaultProps} />);
-      
+
       await waitFor(() => {
         const backButton = screen.getByRole('button', { name: /back/i });
         backButton.focus();

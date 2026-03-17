@@ -1,6 +1,6 @@
 /**
  * Analytics & Reports Multi-Tenancy Tests
- * 
+ *
  * Critical tests to ensure analytics and financial reports are properly isolated by tenant.
  * These tests verify that the bug we just fixed (missing tenantId filtering) doesn't happen again.
  */
@@ -33,8 +33,8 @@ describe('Analytics & Reports Tenant Isolation', () => {
         contactName: 'Test Contact A',
         contactEmail: 'contact-a@test.com',
         status: 'ACTIVE',
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     await prisma.tenant.upsert({
@@ -46,8 +46,8 @@ describe('Analytics & Reports Tenant Isolation', () => {
         contactName: 'Test Contact B',
         contactEmail: 'contact-b@test.com',
         status: 'ACTIVE',
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     // Create staff for both tenants
@@ -59,8 +59,8 @@ describe('Analytics & Reports Tenant Isolation', () => {
         password: '$2b$10$test',
         role: 'TENANT_ADMIN',
         tenantId: 'test-tenant-a',
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     const staffB = await prisma.staff.create({
@@ -71,8 +71,8 @@ describe('Analytics & Reports Tenant Isolation', () => {
         password: '$2b$10$test',
         role: 'TENANT_ADMIN',
         tenantId: 'test-tenant-b',
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     // Generate tokens
@@ -80,14 +80,14 @@ describe('Analytics & Reports Tenant Isolation', () => {
       id: staffA.id,
       email: staffA.email,
       role: 'TENANT_ADMIN',
-      tenantId: 'test-tenant-a'
+      tenantId: 'test-tenant-a',
     });
 
     tokenTenantB = generateToken({
       id: staffB.id,
       email: staffB.email,
       role: 'TENANT_ADMIN',
-      tenantId: 'test-tenant-b'
+      tenantId: 'test-tenant-b',
     });
 
     // Create customers for both tenants
@@ -96,8 +96,8 @@ describe('Analytics & Reports Tenant Isolation', () => {
         email: 'analytics-customer-a@test.com',
         firstName: 'Customer',
         lastName: 'A',
-        tenantId: 'test-tenant-a'
-      }
+        tenantId: 'test-tenant-a',
+      },
     });
     customerATenant = customerA.id;
 
@@ -106,8 +106,8 @@ describe('Analytics & Reports Tenant Isolation', () => {
         email: 'analytics-customer-b@test.com',
         firstName: 'Customer',
         lastName: 'B',
-        tenantId: 'test-tenant-b'
-      }
+        tenantId: 'test-tenant-b',
+      },
     });
     customerBTenant = customerB.id;
 
@@ -120,8 +120,8 @@ describe('Analytics & Reports Tenant Isolation', () => {
         duration: 60,
         isActive: true,
         tenantId: 'test-tenant-a',
-        serviceCategory: 'BOARDING'
-      }
+        serviceCategory: 'BOARDING',
+      },
     });
     serviceATenant = serviceA.id;
 
@@ -133,8 +133,8 @@ describe('Analytics & Reports Tenant Isolation', () => {
         duration: 60,
         isActive: true,
         tenantId: 'test-tenant-b',
-        serviceCategory: 'BOARDING'
-      }
+        serviceCategory: 'BOARDING',
+      },
     });
     serviceBTenant = serviceB.id;
 
@@ -145,8 +145,8 @@ describe('Analytics & Reports Tenant Isolation', () => {
         type: 'DOG',
         breed: 'Test Breed',
         customerId: customerATenant,
-        tenantId: 'test-tenant-a'
-      }
+        tenantId: 'test-tenant-a',
+      },
     });
 
     const petB = await prisma.pet.create({
@@ -155,8 +155,8 @@ describe('Analytics & Reports Tenant Isolation', () => {
         type: 'DOG',
         breed: 'Test Breed',
         customerId: customerBTenant,
-        tenantId: 'test-tenant-b'
-      }
+        tenantId: 'test-tenant-b',
+      },
     });
 
     // Create reservations for both tenants
@@ -168,8 +168,8 @@ describe('Analytics & Reports Tenant Isolation', () => {
         serviceId: serviceATenant,
         startDate: new Date(),
         endDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
-        status: 'CONFIRMED'
-      }
+        status: 'CONFIRMED',
+      },
     });
 
     const reservationB = await prisma.reservation.create({
@@ -180,8 +180,8 @@ describe('Analytics & Reports Tenant Isolation', () => {
         serviceId: serviceBTenant,
         startDate: new Date(),
         endDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
-        status: 'CONFIRMED'
-      }
+        status: 'CONFIRMED',
+      },
     });
 
     // Create invoices linked to reservations
@@ -196,8 +196,8 @@ describe('Analytics & Reports Tenant Isolation', () => {
         status: 'PAID',
         subtotal: 100,
         taxAmount: 10,
-        total: 110
-      }
+        total: 110,
+      },
     });
     invoiceATenant = invoiceA.id;
 
@@ -212,8 +212,8 @@ describe('Analytics & Reports Tenant Isolation', () => {
         status: 'PAID',
         subtotal: 200,
         taxAmount: 20,
-        total: 220
-      }
+        total: 220,
+      },
     });
     invoiceBTenant = invoiceB.id;
   });
@@ -222,31 +222,31 @@ describe('Analytics & Reports Tenant Isolation', () => {
     // Clean up test data in correct order (respecting foreign key constraints)
     // Delete invoices first (they reference reservations)
     await prisma.invoice.deleteMany({
-      where: { tenantId: { in: ['test-tenant-a', 'test-tenant-b'] } }
+      where: { tenantId: { in: ['test-tenant-a', 'test-tenant-b'] } },
     });
     // Then reservations (they reference pets, services, customers)
     await prisma.reservation.deleteMany({
-      where: { tenantId: { in: ['test-tenant-a', 'test-tenant-b'] } }
+      where: { tenantId: { in: ['test-tenant-a', 'test-tenant-b'] } },
     });
     // Then pets (they reference customers)
     await prisma.pet.deleteMany({
-      where: { tenantId: { in: ['test-tenant-a', 'test-tenant-b'] } }
+      where: { tenantId: { in: ['test-tenant-a', 'test-tenant-b'] } },
     });
     // Then services
     await prisma.service.deleteMany({
-      where: { tenantId: { in: ['test-tenant-a', 'test-tenant-b'] } }
+      where: { tenantId: { in: ['test-tenant-a', 'test-tenant-b'] } },
     });
     // Then customers
     await prisma.customer.deleteMany({
-      where: { tenantId: { in: ['test-tenant-a', 'test-tenant-b'] } }
+      where: { tenantId: { in: ['test-tenant-a', 'test-tenant-b'] } },
     });
     // Then staff
     await prisma.staff.deleteMany({
-      where: { tenantId: { in: ['test-tenant-a', 'test-tenant-b'] } }
+      where: { tenantId: { in: ['test-tenant-a', 'test-tenant-b'] } },
     });
     // Finally tenants
     await prisma.tenant.deleteMany({
-      where: { subdomain: { in: ['test-tenant-a', 'test-tenant-b'] } }
+      where: { subdomain: { in: ['test-tenant-a', 'test-tenant-b'] } },
     });
     await prisma.$disconnect();
   });
@@ -260,15 +260,15 @@ describe('Analytics & Reports Tenant Isolation', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.status).toBe('success');
-      
+
       const data = response.body.data;
-      
+
       // Should have exactly 1 customer from tenant A
       expect(data.customerCount).toBe(1);
-      
+
       // Should have revenue only from tenant A invoice ($110)
       expect(data.totalRevenue).toBe(110);
-      
+
       // Should have 1 reservation
       expect(data.reservationCount).toBe(1);
     });
@@ -280,15 +280,15 @@ describe('Analytics & Reports Tenant Isolation', () => {
         .set('x-tenant-subdomain', 'test-tenant-b');
 
       expect(response.status).toBe(200);
-      
+
       const data = response.body.data;
-      
+
       // Should have exactly 1 customer from tenant B
       expect(data.customerCount).toBe(1);
-      
+
       // Should have revenue only from tenant B invoice ($220)
       expect(data.totalRevenue).toBe(220);
-      
+
       // Should have 1 reservation
       expect(data.reservationCount).toBe(1);
     });
@@ -300,9 +300,9 @@ describe('Analytics & Reports Tenant Isolation', () => {
         .set('x-tenant-subdomain', 'test-tenant-a');
 
       expect(response.status).toBe(200);
-      
+
       const data = response.body.data;
-      
+
       // Revenue should NOT include tenant B's $220
       expect(data.totalRevenue).not.toBe(330); // 110 + 220
       expect(data.totalRevenue).toBe(110);
@@ -317,9 +317,9 @@ describe('Analytics & Reports Tenant Isolation', () => {
         .set('x-tenant-subdomain', 'test-tenant-a');
 
       expect(response.status).toBe(200);
-      
+
       const services = response.body.data.services;
-      
+
       // Should only have Service A
       expect(services.length).toBeGreaterThanOrEqual(1);
       const serviceNames = services.map((s: any) => s.name);
@@ -334,9 +334,9 @@ describe('Analytics & Reports Tenant Isolation', () => {
         .set('x-tenant-subdomain', 'test-tenant-b');
 
       expect(response.status).toBe(200);
-      
+
       const services = response.body.data.services;
-      
+
       // Should only have Service B
       const serviceNames = services.map((s: any) => s.name);
       expect(serviceNames).toContain('Service B');
@@ -352,9 +352,9 @@ describe('Analytics & Reports Tenant Isolation', () => {
         .set('x-tenant-subdomain', 'test-tenant-a');
 
       expect(response.status).toBe(200);
-      
+
       const customers = response.body.data;
-      
+
       // Should only have customers from tenant A
       const customerEmails = customers.map((c: any) => c.email);
       expect(customerEmails).toContain('analytics-customer-a@test.com');
@@ -368,9 +368,9 @@ describe('Analytics & Reports Tenant Isolation', () => {
         .set('x-tenant-subdomain', 'test-tenant-b');
 
       expect(response.status).toBe(200);
-      
+
       const customers = response.body.data;
-      
+
       // Should only have customers from tenant B
       const customerEmails = customers.map((c: any) => c.email);
       expect(customerEmails).toContain('analytics-customer-b@test.com');
@@ -386,7 +386,9 @@ describe('Analytics & Reports Tenant Isolation', () => {
         .set('x-tenant-subdomain', 'test-tenant-a');
 
       expect(response.status).toBe(200);
-      expect(response.body.data.customer.email).toBe('analytics-customer-a@test.com');
+      expect(response.body.data.customer.email).toBe(
+        'analytics-customer-a@test.com'
+      );
     });
 
     test('Tenant A cannot access Tenant B customer report', async () => {
@@ -397,7 +399,7 @@ describe('Analytics & Reports Tenant Isolation', () => {
 
       // Should return 404 or empty data, not tenant B's data
       expect([404, 200]).toContain(response.status);
-      
+
       if (response.status === 200) {
         // If it returns 200, it should be empty or error
         expect(response.body.data).toBeUndefined();
@@ -408,15 +410,19 @@ describe('Analytics & Reports Tenant Isolation', () => {
   describe('Financial Reports - Critical Tenant Isolation', () => {
     test('Invoice queries are filtered by tenant', async () => {
       const invoices = await prisma.invoice.findMany({
-        where: { tenantId: 'test-tenant-a' }
+        where: { tenantId: 'test-tenant-a' },
       });
 
       // Should only return tenant A invoices
       expect(invoices.length).toBeGreaterThanOrEqual(1);
-      expect(invoices.every(inv => inv.tenantId === 'test-tenant-a')).toBe(true);
-      
+      expect(invoices.every((inv) => inv.tenantId === 'test-tenant-a')).toBe(
+        true
+      );
+
       // Verify no cross-tenant data
-      const hasCrossTenantData = invoices.some(inv => inv.tenantId !== 'test-tenant-a');
+      const hasCrossTenantData = invoices.some(
+        (inv) => inv.tenantId !== 'test-tenant-a'
+      );
       expect(hasCrossTenantData).toBe(false);
     });
 
@@ -424,17 +430,17 @@ describe('Analytics & Reports Tenant Isolation', () => {
       const tenantARevenue = await prisma.invoice.aggregate({
         where: {
           tenantId: 'test-tenant-a',
-          status: { notIn: ['CANCELLED', 'REFUNDED'] }
+          status: { notIn: ['CANCELLED', 'REFUNDED'] },
         },
-        _sum: { total: true }
+        _sum: { total: true },
       });
 
       const tenantBRevenue = await prisma.invoice.aggregate({
         where: {
           tenantId: 'test-tenant-b',
-          status: { notIn: ['CANCELLED', 'REFUNDED'] }
+          status: { notIn: ['CANCELLED', 'REFUNDED'] },
         },
-        _sum: { total: true }
+        _sum: { total: true },
       });
 
       // Revenues should be different
@@ -445,11 +451,11 @@ describe('Analytics & Reports Tenant Isolation', () => {
 
     test('Customer count is tenant-specific', async () => {
       const tenantACount = await prisma.customer.count({
-        where: { tenantId: 'test-tenant-a' }
+        where: { tenantId: 'test-tenant-a' },
       });
 
       const tenantBCount = await prisma.customer.count({
-        where: { tenantId: 'test-tenant-b' }
+        where: { tenantId: 'test-tenant-b' },
       });
 
       // Each tenant should have at least their test customer
@@ -466,9 +472,9 @@ describe('Analytics & Reports Tenant Isolation', () => {
         .set('x-tenant-subdomain', 'test-tenant-a');
 
       expect(response.status).toBe(200);
-      
+
       const data = response.body.data;
-      
+
       // Should only include tenant A data for this month
       expect(data.totalRevenue).toBeLessThanOrEqual(110);
       expect(data.customerCount).toBeLessThanOrEqual(1);
@@ -481,9 +487,9 @@ describe('Analytics & Reports Tenant Isolation', () => {
         .set('x-tenant-subdomain', 'test-tenant-a');
 
       expect(response.status).toBe(200);
-      
+
       const data = response.body.data;
-      
+
       // Even with 'all' period, should only show tenant A data
       expect(data.totalRevenue).toBe(110);
       expect(data.customerCount).toBe(1);

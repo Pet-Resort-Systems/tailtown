@@ -4,11 +4,11 @@
  * Provides endpoints to retrieve tracked errors and analytics
  */
 
-import { Request, Response } from "express";
-import { reservationErrorTracker } from "../../utils/reservation-error-tracker";
-import { AppError, ErrorType } from "../../utils/appError";
-import { logger } from "../../utils/logger";
-import { asyncHandler } from "../../middleware/errorHandler";
+import { Request, Response } from 'express';
+import { reservationErrorTracker } from '../../utils/reservation-error-tracker';
+import { AppError, ErrorType } from '../../utils/appError';
+import { logger } from '../../utils/logger';
+import { asyncHandler } from '../../middleware/errorHandler';
 
 /**
  * Get all tracked errors with optional filtering
@@ -21,14 +21,14 @@ export const getAllErrors = asyncHandler(
       // Parse filters
       const filters: any = {};
       if (category) filters.category = category as string;
-      if (isResolved) filters.isResolved = isResolved === "true";
+      if (isResolved) filters.isResolved = isResolved === 'true';
 
       // Parse dates if provided
       if (startDate) {
         filters.startDate = new Date(startDate as string);
         if (isNaN(filters.startDate.getTime())) {
           throw new AppError(
-            "Invalid startDate format",
+            'Invalid startDate format',
             400,
             ErrorType.VALIDATION_ERROR
           );
@@ -39,7 +39,7 @@ export const getAllErrors = asyncHandler(
         filters.endDate = new Date(endDate as string);
         if (isNaN(filters.endDate.getTime())) {
           throw new AppError(
-            "Invalid endDate format",
+            'Invalid endDate format',
             400,
             ErrorType.VALIDATION_ERROR
           );
@@ -52,7 +52,7 @@ export const getAllErrors = asyncHandler(
         parsedLimit = parseInt(limit as string, 10);
         if (isNaN(parsedLimit)) {
           throw new AppError(
-            "Invalid limit format",
+            'Invalid limit format',
             400,
             ErrorType.VALIDATION_ERROR
           );
@@ -68,7 +68,7 @@ export const getAllErrors = asyncHandler(
       logger.info(`Retrieved ${errors.length} tracked errors`);
 
       res.status(200).json({
-        status: "success",
+        status: 'success',
         results: errors.length,
         data: { errors },
       });
@@ -101,7 +101,7 @@ export const getErrorAnalytics = asyncHandler(
       logger.info(`Retrieved error analytics with ${totalErrors} total errors`);
 
       res.status(200).json({
-        status: "success",
+        status: 'success',
         data: {
           analytics,
           totalErrors,
@@ -140,7 +140,7 @@ export const getErrorById = asyncHandler(
       logger.info(`Retrieved error with ID ${id}`);
 
       res.status(200).json({
-        status: "success",
+        status: 'success',
         data: { error },
       });
     } catch (error) {

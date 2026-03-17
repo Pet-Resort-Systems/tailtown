@@ -4,7 +4,7 @@
  * Manage global feature flags and tenant-specific overrides.
  */
 
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 import {
   getAllFeatureFlags,
   getTenantFeatureFlags,
@@ -15,8 +15,8 @@ import {
   seedDefaultFeatureFlags,
   SERVICE_MODULE_FLAGS,
   FEATURE_FLAGS,
-} from "../../services/feature-flag.service";
-import { logger } from "../../utils/logger";
+} from '../../services/feature-flag.service';
+import { logger } from '../../utils/logger';
 
 /**
  * GET /super-admin/feature-flags
@@ -61,7 +61,7 @@ export const createOrUpdateFlag = async (
     if (!key || !name) {
       return res.status(400).json({
         success: false,
-        error: "key and name are required",
+        error: 'key and name are required',
       });
     }
 
@@ -74,7 +74,7 @@ export const createOrUpdateFlag = async (
     });
 
     const superAdmin = (req as any).superAdmin;
-    logger.info("Feature flag created/updated by super admin", {
+    logger.info('Feature flag created/updated by super admin', {
       key,
       superAdminId: superAdmin?.id,
     });
@@ -134,7 +134,7 @@ export const enableForTenant = async (
 
     await enableFeatureForTenant(tenantId, key, superAdmin?.id, notes);
 
-    logger.info("Feature enabled for tenant by super admin", {
+    logger.info('Feature enabled for tenant by super admin', {
       tenantId,
       key,
       superAdminId: superAdmin?.id,
@@ -165,7 +165,7 @@ export const disableForTenant = async (
 
     await disableFeatureForTenant(tenantId, key, superAdmin?.id, notes);
 
-    logger.info("Feature disabled for tenant by super admin", {
+    logger.info('Feature disabled for tenant by super admin', {
       tenantId,
       key,
       superAdminId: superAdmin?.id,
@@ -193,13 +193,13 @@ export const seedFlags = async (
     await seedDefaultFeatureFlags();
 
     const superAdmin = (req as any).superAdmin;
-    logger.info("Default feature flags seeded by super admin", {
+    logger.info('Default feature flags seeded by super admin', {
       superAdminId: superAdmin?.id,
     });
 
     res.json({
       success: true,
-      message: "Default feature flags seeded successfully",
+      message: 'Default feature flags seeded successfully',
     });
   } catch (error) {
     next(error);
@@ -221,10 +221,10 @@ export const bulkUpdateTenantFlags = async (
     const { notes } = req.body;
     const superAdmin = (req as any).superAdmin;
 
-    if (!flags || typeof flags !== "object") {
+    if (!flags || typeof flags !== 'object') {
       return res.status(400).json({
         success: false,
-        error: "flags object is required",
+        error: 'flags object is required',
       });
     }
 
@@ -243,7 +243,7 @@ export const bulkUpdateTenantFlags = async (
       }
     }
 
-    logger.info("Bulk feature flag update by super admin", {
+    logger.info('Bulk feature flag update by super admin', {
       tenantId,
       superAdminId: superAdmin?.id,
       results,

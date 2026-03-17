@@ -7,7 +7,7 @@
  * - When the changes occurred
  */
 
-import React from "react";
+import React from 'react';
 import {
   Box,
   Typography,
@@ -20,7 +20,7 @@ import {
   Paper,
   Collapse,
   IconButton,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -34,13 +34,13 @@ import {
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon,
   History as HistoryIcon,
-} from "@mui/icons-material";
-import { format, formatDistanceToNow } from "date-fns";
+} from '@mui/icons-material';
+import { format, formatDistanceToNow } from 'date-fns';
 
 export interface ActivityLog {
   id: string;
   activityType: string;
-  actorType: "CUSTOMER" | "EMPLOYEE" | "SYSTEM";
+  actorType: 'CUSTOMER' | 'EMPLOYEE' | 'SYSTEM';
   actorId?: string;
   actorName?: string;
   description: string;
@@ -56,23 +56,23 @@ interface ReservationActivityLogProps {
 
 const getActivityIcon = (activityType: string) => {
   switch (activityType) {
-    case "CREATED":
+    case 'CREATED':
       return <AddIcon color="success" />;
-    case "UPDATED":
+    case 'UPDATED':
       return <EditIcon color="primary" />;
-    case "STATUS_CHANGED":
+    case 'STATUS_CHANGED':
       return <EditIcon color="info" />;
-    case "CHECKED_IN":
+    case 'CHECKED_IN':
       return <CheckInIcon color="success" />;
-    case "CHECKED_OUT":
+    case 'CHECKED_OUT':
       return <CheckOutIcon color="primary" />;
-    case "CANCELLED":
+    case 'CANCELLED':
       return <CancelIcon color="error" />;
-    case "CONFIRMED":
+    case 'CONFIRMED':
       return <CheckInIcon color="success" />;
-    case "PAYMENT_RECEIVED":
+    case 'PAYMENT_RECEIVED':
       return <PaymentIcon color="success" />;
-    case "NOTE_ADDED":
+    case 'NOTE_ADDED':
       return <NoteIcon color="info" />;
     default:
       return <EditIcon color="action" />;
@@ -81,11 +81,11 @@ const getActivityIcon = (activityType: string) => {
 
 const getActorIcon = (actorType: string) => {
   switch (actorType) {
-    case "CUSTOMER":
+    case 'CUSTOMER':
       return <PersonIcon fontSize="small" />;
-    case "EMPLOYEE":
+    case 'EMPLOYEE':
       return <PersonIcon fontSize="small" color="primary" />;
-    case "SYSTEM":
+    case 'SYSTEM':
       return <SystemIcon fontSize="small" color="action" />;
     default:
       return <PersonIcon fontSize="small" />;
@@ -94,22 +94,22 @@ const getActorIcon = (actorType: string) => {
 
 const getActorChipColor = (
   actorType: string
-): "default" | "primary" | "secondary" => {
+): 'default' | 'primary' | 'secondary' => {
   switch (actorType) {
-    case "CUSTOMER":
-      return "default";
-    case "EMPLOYEE":
-      return "primary";
-    case "SYSTEM":
-      return "secondary";
+    case 'CUSTOMER':
+      return 'default';
+    case 'EMPLOYEE':
+      return 'primary';
+    case 'SYSTEM':
+      return 'secondary';
     default:
-      return "default";
+      return 'default';
   }
 };
 
 const formatActivityType = (type: string): string => {
   return type
-    .replace(/_/g, " ")
+    .replace(/_/g, ' ')
     .toLowerCase()
     .replace(/\b\w/g, (l) => l.toUpperCase());
 };
@@ -139,7 +139,7 @@ const ReservationActivityLog: React.FC<ReservationActivityLogProps> = ({
         display="flex"
         alignItems="center"
         justifyContent="space-between"
-        sx={{ p: 1.5, cursor: "pointer" }}
+        sx={{ p: 1.5, cursor: 'pointer' }}
         onClick={() => setExpanded(!expanded)}
       >
         <Box display="flex" alignItems="center" gap={1}>
@@ -151,7 +151,7 @@ const ReservationActivityLog: React.FC<ReservationActivityLogProps> = ({
             label={activities.length}
             size="small"
             color="default"
-            sx={{ height: 20, fontSize: "0.75rem" }}
+            sx={{ height: 20, fontSize: '0.75rem' }}
           />
         </Box>
         <IconButton size="small">
@@ -167,7 +167,7 @@ const ReservationActivityLog: React.FC<ReservationActivityLogProps> = ({
               <ListItem
                 sx={{
                   py: 1.5,
-                  alignItems: "flex-start",
+                  alignItems: 'flex-start',
                 }}
               >
                 <ListItemIcon sx={{ minWidth: 40, mt: 0.5 }}>
@@ -190,7 +190,7 @@ const ReservationActivityLog: React.FC<ReservationActivityLogProps> = ({
                         size="small"
                         color={getActorChipColor(activity.actorType)}
                         variant="outlined"
-                        sx={{ height: 22, fontSize: "0.7rem" }}
+                        sx={{ height: 22, fontSize: '0.7rem' }}
                       />
                     </Box>
                   }
@@ -202,15 +202,15 @@ const ReservationActivityLog: React.FC<ReservationActivityLogProps> = ({
                       <Typography
                         variant="caption"
                         color="text.secondary"
-                        sx={{ display: "block", mt: 0.5 }}
+                        sx={{ display: 'block', mt: 0.5 }}
                       >
                         {formatDistanceToNow(new Date(activity.createdAt), {
                           addSuffix: true,
-                        })}{" "}
-                        •{" "}
+                        })}{' '}
+                        •{' '}
                         {format(
                           new Date(activity.createdAt),
-                          "MMM d, yyyy h:mm a"
+                          'MMM d, yyyy h:mm a'
                         )}
                       </Typography>
                     </Box>

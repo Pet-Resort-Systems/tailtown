@@ -4,12 +4,12 @@
  * Handles adding add-on services to existing reservations
  */
 
-import { Response } from "express";
-import { TenantRequest } from "../../types/request";
-import { catchAsync } from "../../middleware/catchAsync";
-import { AppError } from "../../utils/service";
-import { prisma } from "./utils/prisma-helpers";
-import { logger } from "../../utils/logger";
+import { Response } from 'express';
+import { TenantRequest } from '../../types/request';
+import { catchAsync } from '../../middleware/catchAsync';
+import { AppError } from '../../utils/service';
+import { prisma } from './utils/prisma-helpers';
+import { logger } from '../../utils/logger';
 
 /**
  * Add add-on services to a reservation
@@ -18,21 +18,21 @@ import { logger } from "../../utils/logger";
 export const addAddOnsToReservation = catchAsync(
   async (req: TenantRequest, res: Response) => {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const reservationId = req.params.id;
     const { addOns } = req.body;
 
     if (!tenantId) {
-      throw AppError.authorizationError("Tenant ID is required");
+      throw AppError.authorizationError('Tenant ID is required');
     }
 
     if (!reservationId) {
-      throw new AppError("Reservation ID is required", 400);
+      throw new AppError('Reservation ID is required', 400);
     }
 
     if (!addOns || !Array.isArray(addOns) || addOns.length === 0) {
       throw new AppError(
-        "Add-ons array is required and must not be empty",
+        'Add-ons array is required and must not be empty',
         400
       );
     }
@@ -52,7 +52,7 @@ export const addAddOnsToReservation = catchAsync(
       });
 
       if (!reservation) {
-        throw new AppError("Reservation not found", 404);
+        throw new AppError('Reservation not found', 404);
       }
 
       // Validate that all add-on services exist
@@ -71,7 +71,7 @@ export const addAddOnsToReservation = catchAsync(
           (id: string) => !foundIds.includes(id)
         );
         throw new AppError(
-          `Invalid or inactive add-on service IDs: ${missingIds.join(", ")}`,
+          `Invalid or inactive add-on service IDs: ${missingIds.join(', ')}`,
           400
         );
       }
@@ -129,7 +129,7 @@ export const addAddOnsToReservation = catchAsync(
 
       res.status(200).json({
         success: true,
-        status: "success",
+        status: 'success',
         message: `Successfully added ${createdAddOns.count} add-ons to reservation`,
         data: {
           reservation: updatedReservation,

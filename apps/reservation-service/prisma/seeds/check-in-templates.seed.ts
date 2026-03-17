@@ -10,7 +10,8 @@ export async function seedCheckInTemplates() {
     data: {
       tenantId: 'dev',
       name: 'Standard Boarding Check-In',
-      description: 'Comprehensive check-in questionnaire for boarding reservations',
+      description:
+        'Comprehensive check-in questionnaire for boarding reservations',
       isActive: true,
       isDefault: true,
       sections: {
@@ -22,55 +23,55 @@ export async function seedCheckInTemplates() {
             questions: {
               create: [
                 {
-                  questionText: 'Will you be reachable during your pet\'s stay?',
+                  questionText: "Will you be reachable during your pet's stay?",
                   questionType: QuestionType.YES_NO,
                   isRequired: true,
                   order: 1,
-                  helpText: 'We may need to contact you regarding your pet'
+                  helpText: 'We may need to contact you regarding your pet',
                 },
                 {
                   questionText: 'Best phone number to reach you',
                   questionType: QuestionType.TEXT,
                   isRequired: true,
                   order: 2,
-                  placeholder: '(555) 123-4567'
+                  placeholder: '(555) 123-4567',
                 },
                 {
                   questionText: 'Are you traveling to a different time zone?',
                   questionType: QuestionType.YES_NO,
                   isRequired: true,
-                  order: 3
+                  order: 3,
                 },
                 {
                   questionText: 'If yes, what time zone will you be in?',
                   questionType: QuestionType.TEXT,
                   isRequired: false,
                   order: 4,
-                  placeholder: 'e.g., Pacific Time, Eastern Time'
+                  placeholder: 'e.g., Pacific Time, Eastern Time',
                 },
                 {
                   questionText: 'Emergency contact name',
                   questionType: QuestionType.TEXT,
                   isRequired: true,
                   order: 5,
-                  placeholder: 'Full name'
+                  placeholder: 'Full name',
                 },
                 {
                   questionText: 'Emergency contact phone',
                   questionType: QuestionType.TEXT,
                   isRequired: true,
                   order: 6,
-                  placeholder: '(555) 123-4567'
+                  placeholder: '(555) 123-4567',
                 },
                 {
                   questionText: 'Emergency contact relationship',
                   questionType: QuestionType.TEXT,
                   isRequired: false,
                   order: 7,
-                  placeholder: 'e.g., Spouse, Friend, Family Member'
-                }
-              ]
-            }
+                  placeholder: 'e.g., Spouse, Friend, Family Member',
+                },
+              ],
+            },
           },
           {
             title: 'Feeding Schedule',
@@ -82,30 +83,35 @@ export async function seedCheckInTemplates() {
                   questionText: 'When is your pet typically fed?',
                   questionType: QuestionType.MULTIPLE_CHOICE,
                   options: {
-                    choices: ['Morning only', 'Morning & Evening', 'Morning, Lunch & Evening']
+                    choices: [
+                      'Morning only',
+                      'Morning & Evening',
+                      'Morning, Lunch & Evening',
+                    ],
                   },
                   isRequired: true,
-                  order: 1
+                  order: 1,
                 },
                 {
                   questionText: 'Morning feeding time',
                   questionType: QuestionType.TIME,
                   isRequired: true,
                   order: 2,
-                  helpText: 'What time do you typically feed your pet in the morning?'
+                  helpText:
+                    'What time do you typically feed your pet in the morning?',
                 },
                 {
                   questionText: 'Evening feeding time',
                   questionType: QuestionType.TIME,
                   isRequired: false,
                   order: 3,
-                  helpText: 'Leave blank if not applicable'
+                  helpText: 'Leave blank if not applicable',
                 },
                 {
                   questionText: 'Lunch feeding time (if applicable)',
                   questionType: QuestionType.TIME,
                   isRequired: false,
-                  order: 4
+                  order: 4,
                 },
                 {
                   questionText: 'How much food per meal?',
@@ -113,32 +119,35 @@ export async function seedCheckInTemplates() {
                   isRequired: true,
                   order: 5,
                   placeholder: 'e.g., 1 cup, 2 scoops, 1/2 can',
-                  helpText: 'Please include the unit of measurement'
+                  helpText: 'Please include the unit of measurement',
                 },
                 {
                   questionText: 'Any food toppers or supplements?',
                   questionType: QuestionType.LONG_TEXT,
                   isRequired: false,
                   order: 6,
-                  placeholder: 'Describe any toppers, supplements, or special food preparation',
-                  helpText: 'Include brand names and amounts if applicable'
+                  placeholder:
+                    'Describe any toppers, supplements, or special food preparation',
+                  helpText: 'Include brand names and amounts if applicable',
                 },
                 {
-                  questionText: 'May we add toppers (cheese, broth, etc.) if your pet isn\'t eating?',
+                  questionText:
+                    "May we add toppers (cheese, broth, etc.) if your pet isn't eating?",
                   questionType: QuestionType.YES_NO,
                   isRequired: true,
                   order: 7,
-                  helpText: 'This helps us encourage appetite if needed'
+                  helpText: 'This helps us encourage appetite if needed',
                 },
                 {
-                  questionText: 'May we give probiotics if an upset stomach occurs?',
+                  questionText:
+                    'May we give probiotics if an upset stomach occurs?',
                   questionType: QuestionType.YES_NO,
                   isRequired: true,
                   order: 8,
-                  helpText: 'We use veterinarian-approved probiotics'
-                }
-              ]
-            }
+                  helpText: 'We use veterinarian-approved probiotics',
+                },
+              ],
+            },
           },
           {
             title: 'Medications',
@@ -147,11 +156,13 @@ export async function seedCheckInTemplates() {
             questions: {
               create: [
                 {
-                  questionText: 'Will your pet need any medications during their stay?',
+                  questionText:
+                    'Will your pet need any medications during their stay?',
                   questionType: QuestionType.YES_NO,
                   isRequired: true,
                   order: 1,
-                  helpText: 'We will track each medication separately in the next step'
+                  helpText:
+                    'We will track each medication separately in the next step',
                 },
                 {
                   questionText: 'Number of different medications',
@@ -159,10 +170,11 @@ export async function seedCheckInTemplates() {
                   isRequired: false,
                   order: 2,
                   placeholder: '0',
-                  helpText: 'We will collect details for each medication during check-in'
-                }
-              ]
-            }
+                  helpText:
+                    'We will collect details for each medication during check-in',
+                },
+              ],
+            },
           },
           {
             title: 'Medical & Behavior',
@@ -171,12 +183,14 @@ export async function seedCheckInTemplates() {
             questions: {
               create: [
                 {
-                  questionText: 'Any behavioral concerns we should be aware of?',
+                  questionText:
+                    'Any behavioral concerns we should be aware of?',
                   questionType: QuestionType.LONG_TEXT,
                   isRequired: false,
                   order: 1,
-                  placeholder: 'e.g., separation anxiety, fear of loud noises, resource guarding',
-                  helpText: 'This helps us provide the best care for your pet'
+                  placeholder:
+                    'e.g., separation anxiety, fear of loud noises, resource guarding',
+                  helpText: 'This helps us provide the best care for your pet',
                 },
                 {
                   questionText: 'Any medical conditions we should monitor?',
@@ -184,10 +198,10 @@ export async function seedCheckInTemplates() {
                   isRequired: false,
                   order: 2,
                   placeholder: 'e.g., arthritis, diabetes, seizures, allergies',
-                  helpText: 'Include any symptoms we should watch for'
-                }
-              ]
-            }
+                  helpText: 'Include any symptoms we should watch for',
+                },
+              ],
+            },
           },
           {
             title: 'Additional Information',
@@ -200,15 +214,16 @@ export async function seedCheckInTemplates() {
                   questionType: QuestionType.LONG_TEXT,
                   isRequired: false,
                   order: 1,
-                  placeholder: 'Any other information we should know about your pet',
-                  helpText: 'Favorite toys, sleeping preferences, etc.'
-                }
-              ]
-            }
-          }
-        ]
-      }
-    }
+                  placeholder:
+                    'Any other information we should know about your pet',
+                  helpText: 'Favorite toys, sleeping preferences, etc.',
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
   });
 
   console.log(`✅ Created boarding template: ${boardingTemplate.name}`);
@@ -288,8 +303,8 @@ By signing below, I acknowledge that I have read, understood, and agree to all t
 {{SIGNATURE}}
 
 **Date Signed:** {{SIGNED_DATE}}
-      `.trim()
-    }
+      `.trim(),
+    },
   });
 
   console.log(`✅ Created agreement template: ${agreementTemplate.name}`);

@@ -37,16 +37,19 @@ export const VaccinationStatus: React.FC<VaccinationStatusProps> = ({
 }) => {
   // Get required vaccines based on pet type (returns lowercase names)
   const requiredVaccinesLower = getRequiredVaccines(petType);
-  
+
   // Convert to capitalized format to match existing data structure
-  const VACCINE_TYPES = requiredVaccinesLower.map(vaccine => 
-    vaccine.charAt(0).toUpperCase() + vaccine.slice(1).toLowerCase()
-  ).map(vaccine => {
-    // Special case for DHPP and FVRCP which should be all caps
-    if (vaccine === 'Dhpp') return 'DHPP';
-    if (vaccine === 'Fvrcp') return 'FVRCP';
-    return vaccine;
-  });
+  const VACCINE_TYPES = requiredVaccinesLower
+    .map(
+      (vaccine) =>
+        vaccine.charAt(0).toUpperCase() + vaccine.slice(1).toLowerCase()
+    )
+    .map((vaccine) => {
+      // Special case for DHPP and FVRCP which should be all caps
+      if (vaccine === 'Dhpp') return 'DHPP';
+      if (vaccine === 'Fvrcp') return 'FVRCP';
+      return vaccine;
+    });
   return (
     <Box sx={{ display: 'grid', gap: 2 }}>
       <Typography variant="h6" gutterBottom>
@@ -67,7 +70,8 @@ export const VaccinationStatus: React.FC<VaccinationStatusProps> = ({
             <InputLabel>Status</InputLabel>
             <Select
               value={(() => {
-                if (!vaccinationStatus || !vaccinationStatus[vaccineType]) return 'pending';
+                if (!vaccinationStatus || !vaccinationStatus[vaccineType])
+                  return 'pending';
                 const value = vaccinationStatus[vaccineType];
                 // Handle both string format and object format
                 if (typeof value === 'string') {
@@ -89,7 +93,11 @@ export const VaccinationStatus: React.FC<VaccinationStatusProps> = ({
           <TextField
             label="Expiration Date"
             type="date"
-            value={(vaccineExpirations && vaccineExpirations[vaccineType]?.split('T')[0]) || ''}
+            value={
+              (vaccineExpirations &&
+                vaccineExpirations[vaccineType]?.split('T')[0]) ||
+              ''
+            }
             onChange={(e) => {
               if (e.target.value) {
                 onVaccineExpirationChange(

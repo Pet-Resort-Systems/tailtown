@@ -5,46 +5,46 @@
  * using batch processing to avoid slow individual lookups.
  */
 
-const { PrismaClient } = require("@prisma/client");
-const { execSync } = require("child_process");
+const { PrismaClient } = require('@prisma/client');
+const { execSync } = require('child_process');
 
 const prisma = new PrismaClient();
 
-const TENANT_ID = "b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05";
+const TENANT_ID = 'b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05';
 const SQL_BACKUP_PATH =
-  "/opt/tailtown/db-backup-tailtownpetresort-2025-12-16T12_54_19-07_00.sql.gz";
+  '/opt/tailtown/db-backup-tailtownpetresort-2025-12-16T12_54_19-07_00.sql.gz';
 
 function cleanHtmlText(html) {
-  if (!html) return "";
+  if (!html) return '';
   return html
-    .replace(/<[^>]*>/g, "")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .trim();
 }
 
 function parseValue(value) {
-  if (value === "NULL" || !value) return null;
-  return value.replace(/^'|'$/g, "").replace(/\\'/g, "'");
+  if (value === 'NULL' || !value) return null;
+  return value.replace(/^'|'$/g, '').replace(/\\'/g, "'");
 }
 
 async function importPetDataBatch() {
-  console.log("🔍 Extracting pet data from SQL backup...\n");
+  console.log('🔍 Extracting pet data from SQL backup...\n');
 
   try {
-    console.log("📦 Decompressing and parsing SQL backup...");
+    console.log('📦 Decompressing and parsing SQL backup...');
     const sqlData = execSync(
       `gunzip -c "${SQL_BACKUP_PATH}" | grep "INSERT INTO \\\`animals\\\`"`,
       {
-        encoding: "utf8",
+        encoding: 'utf8',
         maxBuffer: 50 * 1024 * 1024,
       }
     );
 
-    console.log("🔍 Parsing pet data...");
+    console.log('🔍 Parsing pet data...');
 
     const valuesRegex = /\(([^)]+)\)/g;
     const matches = [...sqlData.matchAll(valuesRegex)];
@@ -58,7 +58,7 @@ async function importPetDataBatch() {
       const values = match[1];
 
       const parts = [];
-      let current = "";
+      let current = '';
       let inString = false;
       let escapeNext = false;
 
@@ -71,7 +71,7 @@ async function importPetDataBatch() {
           continue;
         }
 
-        if (char === "\\") {
+        if (char === '\\') {
           escapeNext = true;
           current += char;
           continue;
@@ -83,9 +83,9 @@ async function importPetDataBatch() {
           continue;
         }
 
-        if (char === "," && !inString) {
+        if (char === ',' && !inString) {
           parts.push(current.trim());
-          current = "";
+          current = '';
           continue;
         }
 
@@ -121,7 +121,7 @@ async function importPetDataBatch() {
     console.log(`✅ Extracted data for ${petDataMap.size} unique pet names\n`);
 
     // Fetch ALL pets from database in one query
-    console.log("📥 Loading all pets from database...");
+    console.log('📥 Loading all pets from database...');
     const allPets = await prisma.pet.findMany({
       where: {
         tenantId: TENANT_ID,
@@ -142,7 +142,7 @@ async function importPetDataBatch() {
     console.log(`Found ${allPets.length} active pets in database\n`);
 
     // Build update batch
-    console.log("💾 Preparing updates...\n");
+    console.log('💾 Preparing updates...\n');
     const updates = [];
     let matched = 0;
     let noData = 0;
@@ -168,7 +168,7 @@ async function importPetDataBatch() {
 
       if (
         data.medicines &&
-        data.medicines.toLowerCase() !== "none" &&
+        data.medicines.toLowerCase() !== 'none' &&
         !pet.medicationNotes
       ) {
         updateData.medicationNotes = data.medicines;
@@ -177,7 +177,7 @@ async function importPetDataBatch() {
 
       if (
         data.allergies &&
-        data.allergies.toLowerCase() !== "none" &&
+        data.allergies.toLowerCase() !== 'none' &&
         !pet.allergies
       ) {
         updateData.allergies = data.allergies;
@@ -201,19 +201,19 @@ async function importPetDataBatch() {
       if (data.medicines) {
         const medLower = data.medicines.toLowerCase().trim();
         const isFalsePositive =
-          medLower === "none" ||
-          medLower === "no" ||
-          medLower === "no meds" ||
-          medLower === "n/a" ||
-          medLower === "na" ||
-          medLower === "nan" ||
-          medLower === "nka" ||
-          medLower === "unknown" ||
-          medLower === "no medications" ||
-          medLower === "";
+          medLower === 'none' ||
+          medLower === 'no' ||
+          medLower === 'no meds' ||
+          medLower === 'n/a' ||
+          medLower === 'na' ||
+          medLower === 'nan' ||
+          medLower === 'nka' ||
+          medLower === 'unknown' ||
+          medLower === 'no medications' ||
+          medLower === '';
 
         if (!isFalsePositive) {
-          specialReqs.add("HAS_MEDICATION");
+          specialReqs.add('HAS_MEDICATION');
         }
       }
 
@@ -221,29 +221,29 @@ async function importPetDataBatch() {
       if (data.allergies) {
         const allergiesLower = data.allergies.toLowerCase().trim();
         const isFalsePositive =
-          allergiesLower === "none" ||
-          allergiesLower === "no" ||
-          allergiesLower === "n/a" ||
-          allergiesLower === "na" ||
-          allergiesLower === "nan" ||
-          allergiesLower === "nka" ||
-          allergiesLower === "n" ||
-          allergiesLower === "unknown" ||
-          allergiesLower === "no allergies" ||
-          allergiesLower === "no known allergies" ||
-          allergiesLower === "none known" ||
-          allergiesLower === "none to-date" ||
-          allergiesLower === "no alergies" ||
-          allergiesLower === "no know allergies" ||
-          allergiesLower === "nnone" ||
-          allergiesLower === "no e" ||
-          allergiesLower === "an" ||
-          allergiesLower === "!" ||
-          allergiesLower === "mmm" ||
-          allergiesLower === "";
+          allergiesLower === 'none' ||
+          allergiesLower === 'no' ||
+          allergiesLower === 'n/a' ||
+          allergiesLower === 'na' ||
+          allergiesLower === 'nan' ||
+          allergiesLower === 'nka' ||
+          allergiesLower === 'n' ||
+          allergiesLower === 'unknown' ||
+          allergiesLower === 'no allergies' ||
+          allergiesLower === 'no known allergies' ||
+          allergiesLower === 'none known' ||
+          allergiesLower === 'none to-date' ||
+          allergiesLower === 'no alergies' ||
+          allergiesLower === 'no know allergies' ||
+          allergiesLower === 'nnone' ||
+          allergiesLower === 'no e' ||
+          allergiesLower === 'an' ||
+          allergiesLower === '!' ||
+          allergiesLower === 'mmm' ||
+          allergiesLower === '';
 
         if (!isFalsePositive) {
-          specialReqs.add("ALLERGIES");
+          specialReqs.add('ALLERGIES');
         }
       }
 
@@ -264,7 +264,7 @@ async function importPetDataBatch() {
     console.log(`   Total updates to apply: ${updates.length}\n`);
 
     // Apply updates in batches
-    console.log("⚡ Applying updates in batches...\n");
+    console.log('⚡ Applying updates in batches...\n');
     const BATCH_SIZE = 100;
     let completed = 0;
 
@@ -309,14 +309,14 @@ async function importPetDataBatch() {
       },
     });
 
-    console.log("\n📈 Final Database Statistics:");
+    console.log('\n📈 Final Database Statistics:');
     console.log(`   Total active pets: ${allPets.length}`);
     console.log(`   Pets with food notes: ${withFood}`);
     console.log(`   Pets with medication notes: ${withMeds}`);
     console.log(`   Pets with allergies: ${withAllergies}`);
     console.log(`   Pets with special requirements: ${withSpecialReqs}`);
   } catch (error) {
-    console.error("❌ Error:", error.message);
+    console.error('❌ Error:', error.message);
     throw error;
   } finally {
     await prisma.$disconnect();
@@ -325,10 +325,10 @@ async function importPetDataBatch() {
 
 importPetDataBatch()
   .then(() => {
-    console.log("\n✅ Script completed successfully");
+    console.log('\n✅ Script completed successfully');
     process.exit(0);
   })
   .catch((error) => {
-    console.error("\n❌ Script failed:", error);
+    console.error('\n❌ Script failed:', error);
     process.exit(1);
   });

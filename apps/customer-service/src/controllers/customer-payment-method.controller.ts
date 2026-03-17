@@ -3,10 +3,10 @@
  * Handles saved cards on file for customers
  */
 
-import { Response, NextFunction } from "express";
-import { TenantRequest } from "../middleware/tenant.middleware";
-import { prisma } from "../config/prisma";
-import { AppError } from "../middleware/error.middleware";
+import { Response, NextFunction } from 'express';
+import { TenantRequest } from '../middleware/tenant.middleware';
+import { prisma } from '../config/prisma';
+import { AppError } from '../middleware/error.middleware';
 
 /**
  * GET /api/customers/:customerId/payment-methods
@@ -39,7 +39,7 @@ export const getCustomerPaymentMethods = async (
         lastUsedAt: true,
         createdAt: true,
       },
-      orderBy: [{ isDefault: "desc" }, { createdAt: "desc" }],
+      orderBy: [{ isDefault: 'desc' }, { createdAt: 'desc' }],
     });
 
     res.json({
@@ -47,8 +47,8 @@ export const getCustomerPaymentMethods = async (
       data: paymentMethods,
     });
   } catch (error) {
-    console.error("Error fetching payment methods:", error);
-    next(new AppError("Failed to fetch payment methods", 500));
+    console.error('Error fetching payment methods:', error);
+    next(new AppError('Failed to fetch payment methods', 500));
   }
 };
 
@@ -82,7 +82,7 @@ export const createCustomerPaymentMethod = async (
     // Validate required fields
     if (!token || !cardBrand || !lastFour || !expiryMonth || !expiryYear) {
       throw new AppError(
-        "Missing required fields: token, cardBrand, lastFour, expiryMonth, expiryYear",
+        'Missing required fields: token, cardBrand, lastFour, expiryMonth, expiryYear',
         400
       );
     }
@@ -93,7 +93,7 @@ export const createCustomerPaymentMethod = async (
     });
 
     if (!customer) {
-      throw new AppError("Customer not found", 404);
+      throw new AppError('Customer not found', 404);
     }
 
     // Check if token already exists for this customer
@@ -102,7 +102,7 @@ export const createCustomerPaymentMethod = async (
     });
 
     if (existingMethod) {
-      throw new AppError("This card is already saved", 400);
+      throw new AppError('This card is already saved', 400);
     }
 
     // If setting as default, unset other defaults first
@@ -150,15 +150,15 @@ export const createCustomerPaymentMethod = async (
 
     res.status(201).json({
       success: true,
-      message: "Payment method saved successfully",
+      message: 'Payment method saved successfully',
       data: paymentMethod,
     });
   } catch (error) {
     if (error instanceof AppError) {
       return next(error);
     }
-    console.error("Error saving payment method:", error);
-    next(new AppError("Failed to save payment method", 500));
+    console.error('Error saving payment method:', error);
+    next(new AppError('Failed to save payment method', 500));
   }
 };
 
@@ -182,7 +182,7 @@ export const updateCustomerPaymentMethod = async (
     });
 
     if (!existing) {
-      throw new AppError("Payment method not found", 404);
+      throw new AppError('Payment method not found', 404);
     }
 
     // If setting as default, unset other defaults first
@@ -215,15 +215,15 @@ export const updateCustomerPaymentMethod = async (
 
     res.json({
       success: true,
-      message: "Payment method updated",
+      message: 'Payment method updated',
       data: paymentMethod,
     });
   } catch (error) {
     if (error instanceof AppError) {
       return next(error);
     }
-    console.error("Error updating payment method:", error);
-    next(new AppError("Failed to update payment method", 500));
+    console.error('Error updating payment method:', error);
+    next(new AppError('Failed to update payment method', 500));
   }
 };
 
@@ -246,7 +246,7 @@ export const deleteCustomerPaymentMethod = async (
     });
 
     if (!existing) {
-      throw new AppError("Payment method not found", 404);
+      throw new AppError('Payment method not found', 404);
     }
 
     // Soft delete
@@ -259,7 +259,7 @@ export const deleteCustomerPaymentMethod = async (
     if (existing.isDefault) {
       const nextDefault = await prisma.customerPaymentMethod.findFirst({
         where: { tenantId, customerId, isActive: true },
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: 'desc' },
       });
 
       if (nextDefault) {
@@ -272,14 +272,14 @@ export const deleteCustomerPaymentMethod = async (
 
     res.json({
       success: true,
-      message: "Payment method deleted",
+      message: 'Payment method deleted',
     });
   } catch (error) {
     if (error instanceof AppError) {
       return next(error);
     }
-    console.error("Error deleting payment method:", error);
-    next(new AppError("Failed to delete payment method", 500));
+    console.error('Error deleting payment method:', error);
+    next(new AppError('Failed to delete payment method', 500));
   }
 };
 
@@ -298,7 +298,7 @@ export const chargeCustomerPaymentMethod = async (
     const { amount, invoiceId, orderId, description } = req.body;
 
     if (!amount || amount <= 0) {
-      throw new AppError("Valid amount is required", 400);
+      throw new AppError('Valid amount is required', 400);
     }
 
     // Get the saved payment method
@@ -307,7 +307,7 @@ export const chargeCustomerPaymentMethod = async (
     });
 
     if (!paymentMethod) {
-      throw new AppError("Payment method not found", 404);
+      throw new AppError('Payment method not found', 404);
     }
 
     // Check if card is expired
@@ -318,21 +318,21 @@ export const chargeCustomerPaymentMethod = async (
       0
     );
     if (expiryDate < now) {
-      throw new AppError("This card has expired", 400);
+      throw new AppError('This card has expired', 400);
     }
 
     // Call CardConnect to charge the token
     // Note: This requires the payment-service to be accessible
     const paymentServiceUrl =
-      process.env.PAYMENT_SERVICE_URL || "http://localhost:4005";
+      process.env.PAYMENT_SERVICE_URL || 'http://localhost:4005';
 
     const response = await fetch(
       `${paymentServiceUrl}/api/payments/charge-token`,
       {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": tenantId,
+          'Content-Type': 'application/json',
+          'x-tenant-id': tenantId,
         },
         body: JSON.stringify({
           token: paymentMethod.token,
@@ -341,7 +341,7 @@ export const chargeCustomerPaymentMethod = async (
           description,
           expiry: `${String(paymentMethod.expiryMonth).padStart(
             2,
-            "0"
+            '0'
           )}${String(paymentMethod.expiryYear).slice(-2)}`,
         }),
       }
@@ -353,8 +353,8 @@ export const chargeCustomerPaymentMethod = async (
       data?: { transactionId?: string };
     } = await response.json();
 
-    if (!response.ok || result.status !== "success") {
-      throw new AppError(result.message || "Payment failed", 402);
+    if (!response.ok || result.status !== 'success') {
+      throw new AppError(result.message || 'Payment failed', 402);
     }
 
     // Update last used timestamp
@@ -371,8 +371,8 @@ export const chargeCustomerPaymentMethod = async (
           invoiceId,
           customerId,
           amount,
-          method: "CREDIT_CARD",
-          status: "PAID",
+          method: 'CREDIT_CARD',
+          status: 'PAID',
           transactionId: result.data?.transactionId,
           gatewayResponse: result.data,
         },
@@ -381,7 +381,7 @@ export const chargeCustomerPaymentMethod = async (
 
     res.json({
       success: true,
-      message: "Payment processed successfully",
+      message: 'Payment processed successfully',
       data: {
         transactionId: result.data?.transactionId,
         amount,
@@ -393,8 +393,8 @@ export const chargeCustomerPaymentMethod = async (
     if (error instanceof AppError) {
       return next(error);
     }
-    console.error("Error charging payment method:", error);
-    next(new AppError("Failed to process payment", 500));
+    console.error('Error charging payment method:', error);
+    next(new AppError('Failed to process payment', 500));
   }
 };
 
@@ -434,7 +434,7 @@ export const getDefaultPaymentMethod = async (
       data: paymentMethod,
     });
   } catch (error) {
-    console.error("Error fetching default payment method:", error);
-    next(new AppError("Failed to fetch default payment method", 500));
+    console.error('Error fetching default payment method:', error);
+    next(new AppError('Failed to fetch default payment method', 500));
   }
 };

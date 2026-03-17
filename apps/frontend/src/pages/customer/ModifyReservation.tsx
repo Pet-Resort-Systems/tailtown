@@ -1,6 +1,6 @@
 /**
  * Modify Reservation Page
- * 
+ *
  * Allows customers to modify their reservation:
  * - Change dates
  * - Add/remove pets
@@ -36,7 +36,7 @@ import {
   CalendarToday as CalendarIcon,
   Pets as PetsIcon,
   CheckCircle as SuccessIcon,
-  Info as InfoIcon
+  Info as InfoIcon,
 } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { reservationManagementService } from '../../services/reservationManagementService';
@@ -46,7 +46,7 @@ import {
   ReservationDetails,
   ModifyReservationRequest,
   ModifyReservationResult,
-  PriceAdjustment
+  PriceAdjustment,
 } from '../../types/reservationManagement';
 import { Pet } from '../../types/pet';
 import { formatDate, formatCurrency } from '../../utils/formatters';
@@ -55,25 +55,29 @@ export const ModifyReservation: React.FC = () => {
   const navigate = useNavigate();
   const { reservationId } = useParams<{ reservationId: string }>();
   const { customer } = useCustomerAuth();
-  
+
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [reservation, setReservation] = useState<ReservationDetails | null>(null);
+  const [reservation, setReservation] = useState<ReservationDetails | null>(
+    null
+  );
   const [availablePets, setAvailablePets] = useState<Pet[]>([]);
-  
+
   // Modification state
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [selectedPetIds, setSelectedPetIds] = useState<string[]>([]);
   const [modificationReason, setModificationReason] = useState('');
-  
+
   // Preview state
   const [showPreview, setShowPreview] = useState(false);
-  const [priceAdjustment, setPriceAdjustment] = useState<PriceAdjustment | null>(null);
+  const [priceAdjustment, setPriceAdjustment] =
+    useState<PriceAdjustment | null>(null);
   const [previewWarnings, setPreviewWarnings] = useState<string[]>([]);
-  
+
   // Result state
-  const [modificationResult, setModificationResult] = useState<ModifyReservationResult | null>(null);
+  const [modificationResult, setModificationResult] =
+    useState<ModifyReservationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -90,12 +94,13 @@ export const ModifyReservation: React.FC = () => {
       setError(null);
 
       // Load reservation details
-      const resData = await reservationManagementService.getReservationDetails(reservationId);
-      
+      const resData =
+        await reservationManagementService.getReservationDetails(reservationId);
+
       if (!resData.canModify) {
         setError('This reservation cannot be modified.');
       }
-      
+
       setReservation(resData);
       setStartDate(resData.startDate.toString().split('T')[0]);
       setEndDate(resData.endDate.toString().split('T')[0]);
@@ -105,7 +110,9 @@ export const ModifyReservation: React.FC = () => {
       const petsData = await petService.getPetsByCustomer(customer.id);
       setAvailablePets(petsData.data || []);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load reservation details');
+      setError(
+        err.response?.data?.message || 'Failed to load reservation details'
+      );
     } finally {
       setLoading(false);
     }
@@ -121,15 +128,22 @@ export const ModifyReservation: React.FC = () => {
       const request: ModifyReservationRequest = {
         reservationId,
         modifications: {
-          startDate: startDate !== reservation?.startDate.toString().split('T')[0] ? startDate : undefined,
-          endDate: endDate !== reservation?.endDate.toString().split('T')[0] ? endDate : undefined,
-          petIds: selectedPetIds.length > 1 ? selectedPetIds : undefined
+          startDate:
+            startDate !== reservation?.startDate.toString().split('T')[0]
+              ? startDate
+              : undefined,
+          endDate:
+            endDate !== reservation?.endDate.toString().split('T')[0]
+              ? endDate
+              : undefined,
+          petIds: selectedPetIds.length > 1 ? selectedPetIds : undefined,
         },
-        reason: modificationReason.trim() || undefined
+        reason: modificationReason.trim() || undefined,
       };
 
-      const preview = await reservationManagementService.previewModification(request);
-      
+      const preview =
+        await reservationManagementService.previewModification(request);
+
       setPriceAdjustment(preview.priceAdjustment);
       setPreviewWarnings(preview.warnings);
       setShowPreview(true);
@@ -150,14 +164,21 @@ export const ModifyReservation: React.FC = () => {
       const request: ModifyReservationRequest = {
         reservationId,
         modifications: {
-          startDate: startDate !== reservation?.startDate.toString().split('T')[0] ? startDate : undefined,
-          endDate: endDate !== reservation?.endDate.toString().split('T')[0] ? endDate : undefined,
-          petIds: selectedPetIds.length > 1 ? selectedPetIds : undefined
+          startDate:
+            startDate !== reservation?.startDate.toString().split('T')[0]
+              ? startDate
+              : undefined,
+          endDate:
+            endDate !== reservation?.endDate.toString().split('T')[0]
+              ? endDate
+              : undefined,
+          petIds: selectedPetIds.length > 1 ? selectedPetIds : undefined,
         },
-        reason: modificationReason.trim() || undefined
+        reason: modificationReason.trim() || undefined,
       };
 
-      const result = await reservationManagementService.modifyReservation(request);
+      const result =
+        await reservationManagementService.modifyReservation(request);
       setModificationResult(result);
       setShowPreview(false);
     } catch (err: any) {
@@ -169,28 +190,34 @@ export const ModifyReservation: React.FC = () => {
   };
 
   const handleTogglePet = (petId: string) => {
-    setSelectedPetIds(prev => 
+    setSelectedPetIds((prev) =>
       prev.includes(petId)
-        ? prev.filter(id => id !== petId)
+        ? prev.filter((id) => id !== petId)
         : [...prev, petId]
     );
   };
 
   const hasChanges = () => {
     if (!reservation) return false;
-    
-    const dateChanged = 
+
+    const dateChanged =
       startDate !== reservation.startDate.toString().split('T')[0] ||
       endDate !== reservation.endDate.toString().split('T')[0];
-    
-    const petsChanged = selectedPetIds.length !== 1 || selectedPetIds[0] !== reservation.petId;
-    
+
+    const petsChanged =
+      selectedPetIds.length !== 1 || selectedPetIds[0] !== reservation.petId;
+
     return dateChanged || petsChanged;
   };
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -233,7 +260,9 @@ export const ModifyReservation: React.FC = () => {
         <Card>
           <CardContent>
             <Box textAlign="center" py={4}>
-              <SuccessIcon sx={{ fontSize: 64, color: 'success.main', mb: 2 }} />
+              <SuccessIcon
+                sx={{ fontSize: 64, color: 'success.main', mb: 2 }}
+              />
               <Typography variant="h5" gutterBottom>
                 Reservation Modified Successfully
               </Typography>
@@ -242,20 +271,27 @@ export const ModifyReservation: React.FC = () => {
               </Typography>
 
               {modificationResult.priceDifference !== 0 && (
-                <Paper variant="outlined" sx={{ p: 3, maxWidth: 400, mx: 'auto', my: 3 }}>
+                <Paper
+                  variant="outlined"
+                  sx={{ p: 3, maxWidth: 400, mx: 'auto', my: 3 }}
+                >
                   <Typography variant="h6" gutterBottom>
                     Price Adjustment
                   </Typography>
                   <Divider sx={{ my: 2 }} />
-                  <Typography 
-                    variant="h4" 
-                    color={modificationResult.priceDifference > 0 ? 'error.main' : 'success.main'}
+                  <Typography
+                    variant="h4"
+                    color={
+                      modificationResult.priceDifference > 0
+                        ? 'error.main'
+                        : 'success.main'
+                    }
                   >
                     {modificationResult.priceDifference > 0 ? '+' : ''}
                     {formatCurrency(modificationResult.priceDifference)}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {modificationResult.priceDifference > 0 
+                    {modificationResult.priceDifference > 0
                       ? 'Additional payment required'
                       : 'Refund will be processed'}
                   </Typography>
@@ -313,8 +349,8 @@ export const ModifyReservation: React.FC = () => {
       {/* Info Alert */}
       <Alert severity="info" icon={<InfoIcon />} sx={{ mb: 3 }}>
         <Typography variant="body2">
-          You can modify your reservation dates or add additional pets. 
-          Price adjustments will be calculated and shown before confirmation.
+          You can modify your reservation dates or add additional pets. Price
+          adjustments will be calculated and shown before confirmation.
         </Typography>
       </Alert>
 
@@ -326,12 +362,10 @@ export const ModifyReservation: React.FC = () => {
             <CardContent>
               <Stack direction="row" spacing={1} alignItems="center" mb={2}>
                 <CalendarIcon />
-                <Typography variant="h6">
-                  Modify Dates
-                </Typography>
+                <Typography variant="h6">Modify Dates</Typography>
               </Stack>
               <Divider sx={{ mb: 2 }} />
-              
+
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <TextField
@@ -342,7 +376,7 @@ export const ModifyReservation: React.FC = () => {
                     onChange={(e) => setStartDate(e.target.value)}
                     InputLabelProps={{ shrink: true }}
                     inputProps={{
-                      min: new Date().toISOString().split('T')[0]
+                      min: new Date().toISOString().split('T')[0],
                     }}
                   />
                   <Typography variant="caption" color="text.secondary">
@@ -358,7 +392,7 @@ export const ModifyReservation: React.FC = () => {
                     onChange={(e) => setEndDate(e.target.value)}
                     InputLabelProps={{ shrink: true }}
                     inputProps={{
-                      min: startDate
+                      min: startDate,
                     }}
                   />
                   <Typography variant="caption" color="text.secondary">
@@ -374,12 +408,10 @@ export const ModifyReservation: React.FC = () => {
             <CardContent>
               <Stack direction="row" spacing={1} alignItems="center" mb={2}>
                 <PetsIcon />
-                <Typography variant="h6">
-                  Select Pets
-                </Typography>
+                <Typography variant="h6">Select Pets</Typography>
               </Stack>
               <Divider sx={{ mb: 2 }} />
-              
+
               <FormGroup>
                 {availablePets.map((pet) => (
                   <FormControlLabel
@@ -392,9 +424,7 @@ export const ModifyReservation: React.FC = () => {
                     }
                     label={
                       <Box>
-                        <Typography variant="body1">
-                          {pet.name}
-                        </Typography>
+                        <Typography variant="body1">{pet.name}</Typography>
                         <Typography variant="caption" color="text.secondary">
                           {pet.breed} • {pet.type}
                         </Typography>
@@ -481,7 +511,7 @@ export const ModifyReservation: React.FC = () => {
                   <Typography variant="h6">
                     {formatCurrency(
                       (reservation.service?.price || 0) -
-                      (reservation.discount || 0)
+                        (reservation.discount || 0)
                     )}
                   </Typography>
                 </Box>
@@ -497,9 +527,15 @@ export const ModifyReservation: React.FC = () => {
                   variant="contained"
                   fullWidth
                   onClick={handlePreviewModification}
-                  disabled={!hasChanges() || selectedPetIds.length === 0 || submitting}
+                  disabled={
+                    !hasChanges() || selectedPetIds.length === 0 || submitting
+                  }
                 >
-                  {submitting ? <CircularProgress size={24} /> : 'Preview Changes'}
+                  {submitting ? (
+                    <CircularProgress size={24} />
+                  ) : (
+                    'Preview Changes'
+                  )}
                 </Button>
                 <Button
                   variant="outlined"
@@ -528,7 +564,10 @@ export const ModifyReservation: React.FC = () => {
               <Typography variant="h6" gutterBottom>
                 Price Adjustment
               </Typography>
-              <Paper variant="outlined" sx={{ p: 2, mb: 2, bgcolor: 'background.default' }}>
+              <Paper
+                variant="outlined"
+                sx={{ p: 2, mb: 2, bgcolor: 'background.default' }}
+              >
                 <Stack spacing={1}>
                   <Box display="flex" justifyContent="space-between">
                     <Typography variant="body2">Original Price:</Typography>
@@ -545,11 +584,17 @@ export const ModifyReservation: React.FC = () => {
                   <Divider />
                   <Box display="flex" justifyContent="space-between">
                     <Typography variant="h6">
-                      {priceAdjustment.difference > 0 ? 'Additional Payment:' : 'Refund:'}
+                      {priceAdjustment.difference > 0
+                        ? 'Additional Payment:'
+                        : 'Refund:'}
                     </Typography>
-                    <Typography 
+                    <Typography
                       variant="h6"
-                      color={priceAdjustment.difference > 0 ? 'error.main' : 'success.main'}
+                      color={
+                        priceAdjustment.difference > 0
+                          ? 'error.main'
+                          : 'success.main'
+                      }
                     >
                       {formatCurrency(Math.abs(priceAdjustment.difference))}
                     </Typography>
@@ -574,10 +619,7 @@ export const ModifyReservation: React.FC = () => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={() => setShowPreview(false)}
-            disabled={submitting}
-          >
+          <Button onClick={() => setShowPreview(false)} disabled={submitting}>
             Cancel
           </Button>
           <Button
@@ -585,7 +627,11 @@ export const ModifyReservation: React.FC = () => {
             variant="contained"
             disabled={submitting}
           >
-            {submitting ? <CircularProgress size={24} /> : 'Confirm Modification'}
+            {submitting ? (
+              <CircularProgress size={24} />
+            ) : (
+              'Confirm Modification'
+            )}
           </Button>
         </DialogActions>
       </Dialog>

@@ -1,6 +1,6 @@
 /**
  * Vaccine Name Normalization Utilities
- * 
+ *
  * Provides consistent vaccine name handling across the application.
  * All vaccine keys should be lowercase to prevent lookup failures.
  */
@@ -12,10 +12,10 @@ export const STANDARD_VACCINE_NAMES = [
   'bordetella',
   'fvrcp',
   'influenza',
-  'lepto'
+  'lepto',
 ] as const;
 
-export type VaccineName = typeof STANDARD_VACCINE_NAMES[number];
+export type VaccineName = (typeof STANDARD_VACCINE_NAMES)[number];
 
 /**
  * Normalize a vaccine description to a standard lowercase vaccine name
@@ -24,14 +24,15 @@ export type VaccineName = typeof STANDARD_VACCINE_NAMES[number];
  */
 export function normalizeVaccineName(description: string): VaccineName | null {
   const desc = description.toLowerCase().trim();
-  
+
   if (desc.includes('rabies')) return 'rabies';
   if (desc.includes('dhpp')) return 'dhpp';
-  if (desc.includes('bordetella') || desc.includes('bordatella')) return 'bordetella'; // Handle common typo
+  if (desc.includes('bordetella') || desc.includes('bordatella'))
+    return 'bordetella'; // Handle common typo
   if (desc.includes('fvrcp')) return 'fvrcp';
   if (desc.includes('influenza')) return 'influenza';
   if (desc.includes('lepto')) return 'lepto';
-  
+
   return null;
 }
 
@@ -45,22 +46,24 @@ export function validateVaccineKeys(data: Record<string, any>): {
   errors: string[];
 } {
   const errors: string[] = [];
-  
-  Object.keys(data).forEach(key => {
+
+  Object.keys(data).forEach((key) => {
     // Check if lowercase
     if (key !== key.toLowerCase()) {
-      errors.push(`Key "${key}" is not lowercase (should be "${key.toLowerCase()}")`);
+      errors.push(
+        `Key "${key}" is not lowercase (should be "${key.toLowerCase()}")`
+      );
     }
-    
+
     // Check if it's a standard vaccine name
     if (!STANDARD_VACCINE_NAMES.includes(key as VaccineName)) {
       errors.push(`Key "${key}" is not a recognized vaccine name`);
     }
   });
-  
+
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -69,13 +72,15 @@ export function validateVaccineKeys(data: Record<string, any>): {
  * @param data - Object with potentially mixed-case vaccine keys
  * @returns New object with lowercase keys
  */
-export function normalizVaccineKeys<T>(data: Record<string, T>): Record<string, T> {
+export function normalizVaccineKeys<T>(
+  data: Record<string, T>
+): Record<string, T> {
   const normalized: Record<string, T> = {};
-  
+
   Object.entries(data).forEach(([key, value]) => {
     normalized[key.toLowerCase()] = value;
   });
-  
+
   return normalized;
 }
 
@@ -92,37 +97,37 @@ export function normalizeVaccinationStatus(
   warnings: string[];
 } {
   const warnings: string[] = [];
-  
+
   // Normalize keys to lowercase
   const normalizedStatus = normalizVaccineKeys(vaccinationStatus || {});
   const normalizedExpirations = normalizVaccineKeys(vaccineExpirations || {});
-  
+
   // Validate keys
   const statusValidation = validateVaccineKeys(normalizedStatus);
   const expirationValidation = validateVaccineKeys(normalizedExpirations);
-  
+
   warnings.push(...statusValidation.errors, ...expirationValidation.errors);
-  
+
   // Check for mismatched keys
   const statusKeys = Object.keys(normalizedStatus);
   const expirationKeys = Object.keys(normalizedExpirations);
-  
-  statusKeys.forEach(key => {
+
+  statusKeys.forEach((key) => {
     if (!expirationKeys.includes(key)) {
       warnings.push(`Vaccine "${key}" has status but no expiration date`);
     }
   });
-  
-  expirationKeys.forEach(key => {
+
+  expirationKeys.forEach((key) => {
     if (!statusKeys.includes(key)) {
       warnings.push(`Vaccine "${key}" has expiration but no status`);
     }
   });
-  
+
   return {
     vaccinationStatus: normalizedStatus,
     vaccineExpirations: normalizedExpirations,
-    warnings
+    warnings,
   };
 }
 

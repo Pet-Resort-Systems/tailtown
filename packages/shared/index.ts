@@ -1,6 +1,6 @@
 /**
  * Shared Module Index
- * 
+ *
  * This file exports all shared components for use in services.
  */
 

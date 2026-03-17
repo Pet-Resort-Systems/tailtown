@@ -1,6 +1,6 @@
 /**
  * Multi-Pet Pricing Display Component
- * 
+ *
  * Shows pricing breakdown for multi-pet bookings
  */
 
@@ -15,14 +15,17 @@ import {
   List,
   ListItem,
   ListItemText,
-  CircularProgress
+  CircularProgress,
 } from '@mui/material';
 import {
   Pets as PetsIcon,
-  TrendingDown as SavingsIcon
+  TrendingDown as SavingsIcon,
 } from '@mui/icons-material';
 import { multiPetService } from '../../services/multiPetService';
-import { MultiPetPricingCalculation, SuiteCapacity } from '../../types/multiPet';
+import {
+  MultiPetPricingCalculation,
+  SuiteCapacity,
+} from '../../types/multiPet';
 import { formatCurrency } from '../../utils/formatters';
 
 interface MultiPetPricingDisplayProps {
@@ -34,15 +37,19 @@ interface MultiPetPricingDisplayProps {
 export const MultiPetPricingDisplay: React.FC<MultiPetPricingDisplayProps> = ({
   suiteCapacity,
   numberOfPets,
-  onPricingCalculated
+  onPricingCalculated,
 }) => {
-  const [calculation, setCalculation] = useState<MultiPetPricingCalculation | null>(null);
+  const [calculation, setCalculation] =
+    useState<MultiPetPricingCalculation | null>(null);
 
   useEffect(() => {
     if (numberOfPets > 0) {
-      const result = multiPetService.calculatePricingLocal(suiteCapacity, numberOfPets);
+      const result = multiPetService.calculatePricingLocal(
+        suiteCapacity,
+        numberOfPets
+      );
       setCalculation(result);
-      
+
       if (onPricingCalculated) {
         onPricingCalculated(result);
       }
@@ -64,7 +71,12 @@ export const MultiPetPricingDisplay: React.FC<MultiPetPricingDisplayProps> = ({
   return (
     <Card variant="outlined">
       <CardContent>
-        <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={2}
+        >
           <Box display="flex" alignItems="center">
             <PetsIcon sx={{ mr: 1, color: 'primary.main' }} />
             <Typography variant="h6">
@@ -81,10 +93,15 @@ export const MultiPetPricingDisplay: React.FC<MultiPetPricingDisplayProps> = ({
         </Typography>
 
         {calculation.savings && calculation.savings > 0 && (
-          <Alert severity="success" icon={<SavingsIcon />} sx={{ mt: 2, mb: 2 }}>
+          <Alert
+            severity="success"
+            icon={<SavingsIcon />}
+            sx={{ mt: 2, mb: 2 }}
+          >
             <Typography variant="body2">
-              <strong>Save {formatCurrency(calculation.savings)}</strong> ({calculation.savingsPercentage?.toFixed(0)}% off) 
-              compared to individual bookings!
+              <strong>Save {formatCurrency(calculation.savings)}</strong> (
+              {calculation.savingsPercentage?.toFixed(0)}% off) compared to
+              individual bookings!
             </Typography>
           </Alert>
         )}
@@ -111,7 +128,12 @@ export const MultiPetPricingDisplay: React.FC<MultiPetPricingDisplayProps> = ({
 
         <Divider sx={{ my: 1 }} />
 
-        <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mt={2}
+        >
           <Typography variant="body2" color="text.secondary">
             Per Pet Average
           </Typography>
@@ -120,7 +142,12 @@ export const MultiPetPricingDisplay: React.FC<MultiPetPricingDisplayProps> = ({
           </Typography>
         </Box>
 
-        <Box display="flex" justifyContent="space-between" alignItems="center" mt={1}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mt={1}
+        >
           <Typography variant="subtitle1" fontWeight="bold">
             Total
           </Typography>

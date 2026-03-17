@@ -1,6 +1,6 @@
 /**
  * Loyalty Program Configuration Page
- * 
+ *
  * Admin interface for configuring the loyalty rewards program
  */
 
@@ -41,7 +41,7 @@ import {
   Star as StarIcon,
   TrendingUp as TrendingUpIcon,
   CardGiftcard as GiftIcon,
-  EmojiEvents as TrophyIcon
+  EmojiEvents as TrophyIcon,
 } from '@mui/icons-material';
 import { loyaltyService } from '../../services/loyaltyService';
 import {
@@ -50,7 +50,7 @@ import {
   RedemptionOption,
   LoyaltyTier,
   PointEarningType,
-  RedemptionType
+  RedemptionType,
 } from '../../types/loyalty';
 
 export const LoyaltyProgram: React.FC = () => {
@@ -62,24 +62,32 @@ export const LoyaltyProgram: React.FC = () => {
   // Configuration state
   const [config, setConfig] = useState<LoyaltyConfig | null>(null);
   const [earningRules, setEarningRules] = useState<PointEarningRule[]>([]);
-  const [redemptionOptions, setRedemptionOptions] = useState<RedemptionOption[]>([]);
+  const [redemptionOptions, setRedemptionOptions] = useState<
+    RedemptionOption[]
+  >([]);
   const [tiers, setTiers] = useState<LoyaltyTier[]>([]);
 
   // Dialog state
   const [showEarningDialog, setShowEarningDialog] = useState(false);
   const [showRedemptionDialog, setShowRedemptionDialog] = useState(false);
-  const [editingEarningRule, setEditingEarningRule] = useState<PointEarningRule | null>(null);
-  const [editingRedemption, setEditingRedemption] = useState<RedemptionOption | null>(null);
+  const [editingEarningRule, setEditingEarningRule] =
+    useState<PointEarningRule | null>(null);
+  const [editingRedemption, setEditingRedemption] =
+    useState<RedemptionOption | null>(null);
 
   // Form state
-  const [earningFormData, setEarningFormData] = useState<Partial<PointEarningRule>>({
+  const [earningFormData, setEarningFormData] = useState<
+    Partial<PointEarningRule>
+  >({
     type: 'DOLLARS_SPENT',
-    isActive: true
+    isActive: true,
   });
 
-  const [redemptionFormData, setRedemptionFormData] = useState<Partial<RedemptionOption>>({
+  const [redemptionFormData, setRedemptionFormData] = useState<
+    Partial<RedemptionOption>
+  >({
     type: 'DISCOUNT_FIXED',
-    isActive: true
+    isActive: true,
   });
 
   useEffect(() => {
@@ -91,12 +99,14 @@ export const LoyaltyProgram: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      const [configData, rulesData, optionsData, tiersData] = await Promise.all([
-        loyaltyService.getConfig(),
-        loyaltyService.getEarningRules(),
-        loyaltyService.getRedemptionOptions(),
-        loyaltyService.getTiers()
-      ]);
+      const [configData, rulesData, optionsData, tiersData] = await Promise.all(
+        [
+          loyaltyService.getConfig(),
+          loyaltyService.getEarningRules(),
+          loyaltyService.getRedemptionOptions(),
+          loyaltyService.getTiers(),
+        ]
+      );
 
       setConfig(configData);
       setEarningRules(rulesData);
@@ -114,7 +124,9 @@ export const LoyaltyProgram: React.FC = () => {
       setError(null);
       const updated = await loyaltyService.toggleProgram(enabled);
       setConfig(updated);
-      setSuccess(`Loyalty program ${enabled ? 'enabled' : 'disabled'} successfully`);
+      setSuccess(
+        `Loyalty program ${enabled ? 'enabled' : 'disabled'} successfully`
+      );
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to toggle program');
     }
@@ -144,7 +156,10 @@ export const LoyaltyProgram: React.FC = () => {
       }
 
       if (editingEarningRule) {
-        await loyaltyService.updateEarningRule(editingEarningRule.id, earningFormData);
+        await loyaltyService.updateEarningRule(
+          editingEarningRule.id,
+          earningFormData
+        );
       } else {
         await loyaltyService.createEarningRule(earningFormData);
       }
@@ -163,14 +178,18 @@ export const LoyaltyProgram: React.FC = () => {
     try {
       setError(null);
 
-      const validation = loyaltyService.validateRedemptionOption(redemptionFormData);
+      const validation =
+        loyaltyService.validateRedemptionOption(redemptionFormData);
       if (!validation.isValid) {
         setError(validation.errors.join(', '));
         return;
       }
 
       if (editingRedemption) {
-        await loyaltyService.updateRedemptionOption(editingRedemption.id, redemptionFormData);
+        await loyaltyService.updateRedemptionOption(
+          editingRedemption.id,
+          redemptionFormData
+        );
       } else {
         await loyaltyService.createRedemptionOption(redemptionFormData);
       }
@@ -181,12 +200,15 @@ export const LoyaltyProgram: React.FC = () => {
       loadData();
       setSuccess('Redemption option saved successfully');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to save redemption option');
+      setError(
+        err.response?.data?.message || 'Failed to save redemption option'
+      );
     }
   };
 
   const handleDeleteEarningRule = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this earning rule?')) return;
+    if (!window.confirm('Are you sure you want to delete this earning rule?'))
+      return;
 
     try {
       await loyaltyService.deleteEarningRule(id);
@@ -198,14 +220,19 @@ export const LoyaltyProgram: React.FC = () => {
   };
 
   const handleDeleteRedemption = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this redemption option?')) return;
+    if (
+      !window.confirm('Are you sure you want to delete this redemption option?')
+    )
+      return;
 
     try {
       await loyaltyService.deleteRedemptionOption(id);
       loadData();
       setSuccess('Redemption option deleted successfully');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete redemption option');
+      setError(
+        err.response?.data?.message || 'Failed to delete redemption option'
+      );
     }
   };
 
@@ -218,7 +245,7 @@ export const LoyaltyProgram: React.FC = () => {
       ANNIVERSARY: 'Anniversary Bonus',
       REVIEW: 'Review',
       SOCIAL_SHARE: 'Social Share',
-      SERVICE_SPECIFIC: 'Service-Specific'
+      SERVICE_SPECIFIC: 'Service-Specific',
     };
     return labels[type];
   };
@@ -229,14 +256,19 @@ export const LoyaltyProgram: React.FC = () => {
       DISCOUNT_FIXED: 'Fixed Discount',
       FREE_SERVICE: 'Free Service',
       FREE_ADDON: 'Free Add-on',
-      UPGRADE: 'Suite Upgrade'
+      UPGRADE: 'Suite Upgrade',
     };
     return labels[type];
   };
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -245,7 +277,9 @@ export const LoyaltyProgram: React.FC = () => {
   if (!config) {
     return (
       <Box>
-        <Alert severity="error">Failed to load loyalty program configuration</Alert>
+        <Alert severity="error">
+          Failed to load loyalty program configuration
+        </Alert>
       </Box>
     );
   }
@@ -253,7 +287,12 @@ export const LoyaltyProgram: React.FC = () => {
   return (
     <Box>
       {/* Header */}
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
         <Box>
           <Typography variant="h4" component="h1" gutterBottom>
             Loyalty Rewards Program
@@ -281,7 +320,11 @@ export const LoyaltyProgram: React.FC = () => {
       )}
 
       {success && (
-        <Alert severity="success" onClose={() => setSuccess(null)} sx={{ mb: 3 }}>
+        <Alert
+          severity="success"
+          onClose={() => setSuccess(null)}
+          sx={{ mb: 3 }}
+        >
           {success}
         </Alert>
       )}
@@ -310,7 +353,9 @@ export const LoyaltyProgram: React.FC = () => {
                   fullWidth
                   label="Program Name"
                   value={config.programName}
-                  onChange={(e) => setConfig({ ...config, programName: e.target.value })}
+                  onChange={(e) =>
+                    setConfig({ ...config, programName: e.target.value })
+                  }
                   sx={{ mb: 2 }}
                   helperText="e.g., 'Happy Tails Rewards', 'Paws & Perks'"
                 />
@@ -320,7 +365,12 @@ export const LoyaltyProgram: React.FC = () => {
                   type="number"
                   label="Minimum Points to Redeem"
                   value={config.minimumPointsToRedeem}
-                  onChange={(e) => setConfig({ ...config, minimumPointsToRedeem: parseInt(e.target.value) })}
+                  onChange={(e) =>
+                    setConfig({
+                      ...config,
+                      minimumPointsToRedeem: parseInt(e.target.value),
+                    })
+                  }
                   sx={{ mb: 2 }}
                 />
 
@@ -328,7 +378,9 @@ export const LoyaltyProgram: React.FC = () => {
                   control={
                     <Switch
                       checked={config.tiersEnabled}
-                      onChange={(e) => setConfig({ ...config, tiersEnabled: e.target.checked })}
+                      onChange={(e) =>
+                        setConfig({ ...config, tiersEnabled: e.target.checked })
+                      }
                     />
                   }
                   label="Enable Tier System"
@@ -339,7 +391,12 @@ export const LoyaltyProgram: React.FC = () => {
                   control={
                     <Switch
                       checked={config.pointsExpireEnabled}
-                      onChange={(e) => setConfig({ ...config, pointsExpireEnabled: e.target.checked })}
+                      onChange={(e) =>
+                        setConfig({
+                          ...config,
+                          pointsExpireEnabled: e.target.checked,
+                        })
+                      }
                     />
                   }
                   label="Points Expire"
@@ -352,7 +409,12 @@ export const LoyaltyProgram: React.FC = () => {
                     type="number"
                     label="Points Expire After (Days)"
                     value={config.pointsExpireDays || 365}
-                    onChange={(e) => setConfig({ ...config, pointsExpireDays: parseInt(e.target.value) })}
+                    onChange={(e) =>
+                      setConfig({
+                        ...config,
+                        pointsExpireDays: parseInt(e.target.value),
+                      })
+                    }
                     sx={{ mb: 2 }}
                   />
                 )}
@@ -380,7 +442,12 @@ export const LoyaltyProgram: React.FC = () => {
                   control={
                     <Switch
                       checked={config.showPointsOnReceipts}
-                      onChange={(e) => setConfig({ ...config, showPointsOnReceipts: e.target.checked })}
+                      onChange={(e) =>
+                        setConfig({
+                          ...config,
+                          showPointsOnReceipts: e.target.checked,
+                        })
+                      }
                     />
                   }
                   label="Show Points on Receipts"
@@ -391,7 +458,12 @@ export const LoyaltyProgram: React.FC = () => {
                   control={
                     <Switch
                       checked={config.showTierOnProfile}
-                      onChange={(e) => setConfig({ ...config, showTierOnProfile: e.target.checked })}
+                      onChange={(e) =>
+                        setConfig({
+                          ...config,
+                          showTierOnProfile: e.target.checked,
+                        })
+                      }
                     />
                   }
                   label="Show Tier on Customer Profile"
@@ -406,7 +478,12 @@ export const LoyaltyProgram: React.FC = () => {
       {/* Earning Rules Tab */}
       {activeTab === 1 && (
         <Box>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={3}
+          >
             <Typography variant="h6">Point Earning Rules</Typography>
             <Button
               variant="contained"
@@ -435,11 +512,17 @@ export const LoyaltyProgram: React.FC = () => {
                 <TableRow key={rule.id}>
                   <TableCell>{getEarningTypeLabel(rule.type)}</TableCell>
                   <TableCell>
-                    {rule.type === 'DOLLARS_SPENT' && `${rule.pointsPerDollar} pts/$1`}
-                    {rule.type === 'VISIT' && `${rule.pointsPerVisit} pts/visit`}
-                    {rule.type === 'REFERRAL' && `${rule.pointsForReferrer}/${rule.pointsForReferee} pts`}
-                    {(rule.type === 'BIRTHDAY' || rule.type === 'ANNIVERSARY') && `${rule.bonusPoints} pts`}
-                    {rule.type === 'REVIEW' && `${rule.pointsPerReview} pts/review`}
+                    {rule.type === 'DOLLARS_SPENT' &&
+                      `${rule.pointsPerDollar} pts/$1`}
+                    {rule.type === 'VISIT' &&
+                      `${rule.pointsPerVisit} pts/visit`}
+                    {rule.type === 'REFERRAL' &&
+                      `${rule.pointsForReferrer}/${rule.pointsForReferee} pts`}
+                    {(rule.type === 'BIRTHDAY' ||
+                      rule.type === 'ANNIVERSARY') &&
+                      `${rule.bonusPoints} pts`}
+                    {rule.type === 'REVIEW' &&
+                      `${rule.pointsPerReview} pts/review`}
                   </TableCell>
                   <TableCell>
                     <Chip
@@ -493,19 +576,25 @@ export const LoyaltyProgram: React.FC = () => {
                       <Typography variant="h6">{tier.name}</Typography>
                     </Box>
 
-                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      gutterBottom
+                    >
                       {loyaltyService.formatPoints(tier.minPoints)}+ points
                     </Typography>
 
                     <Divider sx={{ my: 2 }} />
 
                     <Typography variant="body2" gutterBottom>
-                      <strong>Points Multiplier:</strong> {tier.pointsMultiplier}x
+                      <strong>Points Multiplier:</strong>{' '}
+                      {tier.pointsMultiplier}x
                     </Typography>
 
                     {tier.discountPercentage && tier.discountPercentage > 0 && (
                       <Typography variant="body2" gutterBottom>
-                        <strong>Discount:</strong> {tier.discountPercentage}% off
+                        <strong>Discount:</strong> {tier.discountPercentage}%
+                        off
                       </Typography>
                     )}
 
@@ -530,14 +619,22 @@ export const LoyaltyProgram: React.FC = () => {
       {/* Redemptions Tab */}
       {activeTab === 3 && (
         <Box>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={3}
+          >
             <Typography variant="h6">Redemption Options</Typography>
             <Button
               variant="contained"
               startIcon={<AddIcon />}
               onClick={() => {
                 setEditingRedemption(null);
-                setRedemptionFormData({ type: 'DISCOUNT_FIXED', isActive: true });
+                setRedemptionFormData({
+                  type: 'DISCOUNT_FIXED',
+                  isActive: true,
+                });
                 setShowRedemptionDialog(true);
               }}
             >
@@ -550,7 +647,12 @@ export const LoyaltyProgram: React.FC = () => {
               <Grid item xs={12} md={6} lg={4} key={option.id}>
                 <Card>
                   <CardContent>
-                    <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
+                    <Box
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="flex-start"
+                      mb={2}
+                    >
                       <Typography variant="h6">{option.name}</Typography>
                       <Chip
                         label={option.isActive ? 'Active' : 'Inactive'}
@@ -559,7 +661,11 @@ export const LoyaltyProgram: React.FC = () => {
                       />
                     </Box>
 
-                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      gutterBottom
+                    >
                       {option.description}
                     </Typography>
 
@@ -617,7 +723,12 @@ export const LoyaltyProgram: React.FC = () => {
                 select
                 label="Earning Type"
                 value={earningFormData.type}
-                onChange={(e) => setEarningFormData({ ...earningFormData, type: e.target.value as PointEarningType })}
+                onChange={(e) =>
+                  setEarningFormData({
+                    ...earningFormData,
+                    type: e.target.value as PointEarningType,
+                  })
+                }
               >
                 <MenuItem value="DOLLARS_SPENT">Dollars Spent</MenuItem>
                 <MenuItem value="VISIT">Visit/Check-in</MenuItem>
@@ -637,7 +748,12 @@ export const LoyaltyProgram: React.FC = () => {
                   type="number"
                   label="Points per Dollar"
                   value={earningFormData.pointsPerDollar || 1}
-                  onChange={(e) => setEarningFormData({ ...earningFormData, pointsPerDollar: parseFloat(e.target.value) })}
+                  onChange={(e) =>
+                    setEarningFormData({
+                      ...earningFormData,
+                      pointsPerDollar: parseFloat(e.target.value),
+                    })
+                  }
                 />
               </Grid>
             )}
@@ -649,7 +765,12 @@ export const LoyaltyProgram: React.FC = () => {
                   type="number"
                   label="Points per Visit"
                   value={earningFormData.pointsPerVisit || 10}
-                  onChange={(e) => setEarningFormData({ ...earningFormData, pointsPerVisit: parseInt(e.target.value) })}
+                  onChange={(e) =>
+                    setEarningFormData({
+                      ...earningFormData,
+                      pointsPerVisit: parseInt(e.target.value),
+                    })
+                  }
                 />
               </Grid>
             )}
@@ -662,7 +783,12 @@ export const LoyaltyProgram: React.FC = () => {
                     type="number"
                     label="Points for Referrer"
                     value={earningFormData.pointsForReferrer || 500}
-                    onChange={(e) => setEarningFormData({ ...earningFormData, pointsForReferrer: parseInt(e.target.value) })}
+                    onChange={(e) =>
+                      setEarningFormData({
+                        ...earningFormData,
+                        pointsForReferrer: parseInt(e.target.value),
+                      })
+                    }
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -671,20 +797,31 @@ export const LoyaltyProgram: React.FC = () => {
                     type="number"
                     label="Points for Referee"
                     value={earningFormData.pointsForReferee || 100}
-                    onChange={(e) => setEarningFormData({ ...earningFormData, pointsForReferee: parseInt(e.target.value) })}
+                    onChange={(e) =>
+                      setEarningFormData({
+                        ...earningFormData,
+                        pointsForReferee: parseInt(e.target.value),
+                      })
+                    }
                   />
                 </Grid>
               </>
             )}
 
-            {(earningFormData.type === 'BIRTHDAY' || earningFormData.type === 'ANNIVERSARY') && (
+            {(earningFormData.type === 'BIRTHDAY' ||
+              earningFormData.type === 'ANNIVERSARY') && (
               <Grid item xs={12}>
                 <TextField
                   fullWidth
                   type="number"
                   label="Bonus Points"
                   value={earningFormData.bonusPoints || 100}
-                  onChange={(e) => setEarningFormData({ ...earningFormData, bonusPoints: parseInt(e.target.value) })}
+                  onChange={(e) =>
+                    setEarningFormData({
+                      ...earningFormData,
+                      bonusPoints: parseInt(e.target.value),
+                    })
+                  }
                 />
               </Grid>
             )}
@@ -694,7 +831,12 @@ export const LoyaltyProgram: React.FC = () => {
                 control={
                   <Switch
                     checked={earningFormData.isActive}
-                    onChange={(e) => setEarningFormData({ ...earningFormData, isActive: e.target.checked })}
+                    onChange={(e) =>
+                      setEarningFormData({
+                        ...earningFormData,
+                        isActive: e.target.checked,
+                      })
+                    }
                   />
                 }
                 label="Active"
@@ -718,7 +860,9 @@ export const LoyaltyProgram: React.FC = () => {
         fullWidth
       >
         <DialogTitle>
-          {editingRedemption ? 'Edit Redemption Option' : 'Add Redemption Option'}
+          {editingRedemption
+            ? 'Edit Redemption Option'
+            : 'Add Redemption Option'}
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
@@ -727,7 +871,12 @@ export const LoyaltyProgram: React.FC = () => {
                 fullWidth
                 label="Name"
                 value={redemptionFormData.name || ''}
-                onChange={(e) => setRedemptionFormData({ ...redemptionFormData, name: e.target.value })}
+                onChange={(e) =>
+                  setRedemptionFormData({
+                    ...redemptionFormData,
+                    name: e.target.value,
+                  })
+                }
               />
             </Grid>
 
@@ -738,7 +887,12 @@ export const LoyaltyProgram: React.FC = () => {
                 rows={2}
                 label="Description"
                 value={redemptionFormData.description || ''}
-                onChange={(e) => setRedemptionFormData({ ...redemptionFormData, description: e.target.value })}
+                onChange={(e) =>
+                  setRedemptionFormData({
+                    ...redemptionFormData,
+                    description: e.target.value,
+                  })
+                }
               />
             </Grid>
 
@@ -748,10 +902,17 @@ export const LoyaltyProgram: React.FC = () => {
                 select
                 label="Redemption Type"
                 value={redemptionFormData.type}
-                onChange={(e) => setRedemptionFormData({ ...redemptionFormData, type: e.target.value as RedemptionType })}
+                onChange={(e) =>
+                  setRedemptionFormData({
+                    ...redemptionFormData,
+                    type: e.target.value as RedemptionType,
+                  })
+                }
               >
                 <MenuItem value="DISCOUNT_FIXED">Fixed Discount</MenuItem>
-                <MenuItem value="DISCOUNT_PERCENTAGE">Percentage Discount</MenuItem>
+                <MenuItem value="DISCOUNT_PERCENTAGE">
+                  Percentage Discount
+                </MenuItem>
                 <MenuItem value="FREE_SERVICE">Free Service</MenuItem>
                 <MenuItem value="FREE_ADDON">Free Add-on</MenuItem>
                 <MenuItem value="UPGRADE">Suite Upgrade</MenuItem>
@@ -764,7 +925,12 @@ export const LoyaltyProgram: React.FC = () => {
                 type="number"
                 label="Points Cost"
                 value={redemptionFormData.pointsCost || 0}
-                onChange={(e) => setRedemptionFormData({ ...redemptionFormData, pointsCost: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  setRedemptionFormData({
+                    ...redemptionFormData,
+                    pointsCost: parseInt(e.target.value),
+                  })
+                }
               />
             </Grid>
 
@@ -775,7 +941,12 @@ export const LoyaltyProgram: React.FC = () => {
                   type="number"
                   label="Discount Amount ($)"
                   value={redemptionFormData.discountAmount || 0}
-                  onChange={(e) => setRedemptionFormData({ ...redemptionFormData, discountAmount: parseFloat(e.target.value) })}
+                  onChange={(e) =>
+                    setRedemptionFormData({
+                      ...redemptionFormData,
+                      discountAmount: parseFloat(e.target.value),
+                    })
+                  }
                 />
               </Grid>
             )}
@@ -787,7 +958,12 @@ export const LoyaltyProgram: React.FC = () => {
                   type="number"
                   label="Discount Percentage (%)"
                   value={redemptionFormData.discountPercentage || 0}
-                  onChange={(e) => setRedemptionFormData({ ...redemptionFormData, discountPercentage: parseFloat(e.target.value) })}
+                  onChange={(e) =>
+                    setRedemptionFormData({
+                      ...redemptionFormData,
+                      discountPercentage: parseFloat(e.target.value),
+                    })
+                  }
                 />
               </Grid>
             )}
@@ -797,7 +973,12 @@ export const LoyaltyProgram: React.FC = () => {
                 control={
                   <Switch
                     checked={redemptionFormData.isActive}
-                    onChange={(e) => setRedemptionFormData({ ...redemptionFormData, isActive: e.target.checked })}
+                    onChange={(e) =>
+                      setRedemptionFormData({
+                        ...redemptionFormData,
+                        isActive: e.target.checked,
+                      })
+                    }
                   />
                 }
                 label="Active"

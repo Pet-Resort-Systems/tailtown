@@ -1,6 +1,6 @@
 /**
  * Audit Logging Utility
- * 
+ *
  * Tracks all tenant actions for compliance and debugging
  */
 
@@ -15,27 +15,27 @@ export enum AuditAction {
   CUSTOMER_UPDATED = 'customer.updated',
   CUSTOMER_DELETED = 'customer.deleted',
   CUSTOMER_VIEWED = 'customer.viewed',
-  
+
   // Pet actions
   PET_CREATED = 'pet.created',
   PET_UPDATED = 'pet.updated',
   PET_DELETED = 'pet.deleted',
-  
+
   // Reservation actions
   RESERVATION_CREATED = 'reservation.created',
   RESERVATION_UPDATED = 'reservation.updated',
   RESERVATION_CANCELLED = 'reservation.cancelled',
-  
+
   // Authentication actions
   LOGIN_SUCCESS = 'auth.login.success',
   LOGIN_FAILED = 'auth.login.failed',
   LOGOUT = 'auth.logout',
   PASSWORD_RESET = 'auth.password_reset',
-  
+
   // Admin actions
   SETTINGS_UPDATED = 'admin.settings.updated',
   USER_ROLE_CHANGED = 'admin.user.role_changed',
-  
+
   // System actions
   RATE_LIMIT_HIT = 'system.rate_limit.hit',
   ERROR_OCCURRED = 'system.error.occurred',
@@ -62,7 +62,7 @@ class AuditLogger {
     try {
       // In production, this would write to a dedicated audit_logs table
       // For now, we'll log to console and could extend to database
-      
+
       const logEntry = {
         ...entry,
         timestamp: entry.timestamp || new Date(),

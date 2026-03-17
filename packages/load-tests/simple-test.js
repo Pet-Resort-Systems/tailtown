@@ -27,7 +27,7 @@ console.log('');
 function makeRequest() {
   return new Promise((resolve) => {
     const startTime = Date.now();
-    
+
     const url = new URL(`${BASE_URL}/health`);
     const options = {
       hostname: url.hostname,
@@ -43,9 +43,9 @@ function makeRequest() {
     const req = http.request(options, (res) => {
       const duration = Date.now() - startTime;
       responseTimes.push(duration);
-      
+
       completed++;
-      
+
       if (res.statusCode === 200) {
         success++;
       } else if (res.statusCode === 429) {
@@ -54,7 +54,7 @@ function makeRequest() {
       } else {
         errors++;
       }
-      
+
       res.on('data', () => {}); // Consume response
       res.on('end', () => resolve());
     });
@@ -80,21 +80,21 @@ async function runBatch(batchSize) {
 
 async function runTest() {
   const batches = Math.ceil(TOTAL_REQUESTS / CONCURRENT);
-  
+
   for (let i = 0; i < batches; i++) {
-    const batchSize = Math.min(CONCURRENT, TOTAL_REQUESTS - (i * CONCURRENT));
+    const batchSize = Math.min(CONCURRENT, TOTAL_REQUESTS - i * CONCURRENT);
     await runBatch(batchSize);
-    
+
     // Small delay between batches
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
   }
-  
+
   // Calculate stats
   responseTimes.sort((a, b) => a - b);
   const avg = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
   const p95Index = Math.floor(responseTimes.length * 0.95);
   const p95 = responseTimes[p95Index];
-  
+
   console.log('');
   console.log('✅ Test Complete!');
   console.log('================');
@@ -111,7 +111,7 @@ async function runTest() {
   console.log(`  Max: ${responseTimes[responseTimes.length - 1]}ms`);
   console.log(`  P95: ${p95}ms`);
   console.log('');
-  
+
   if (rateLimited > 0) {
     console.log('✅ Rate limiting is working!');
   } else {

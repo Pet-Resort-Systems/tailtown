@@ -3,9 +3,9 @@
  * Handles feeding logs and medication administration tracking
  */
 
-import api from "./api";
+import api from './api';
 
-export type MealTime = "BREAKFAST" | "LUNCH" | "DINNER" | "SNACK";
+export type MealTime = 'BREAKFAST' | 'LUNCH' | 'DINNER' | 'SNACK';
 
 export interface FeedingLog {
   id: string;
@@ -120,7 +120,7 @@ export const careTrackingService = {
    * Get all checked-in pets for feeding tracking
    */
   getCheckedInPets: async (): Promise<CheckedInPet[]> => {
-    const response = await api.get("/api/care-tracking/feeding/pets");
+    const response = await api.get('/api/care-tracking/feeding/pets');
     return response.data?.data || [];
   },
 
@@ -136,7 +136,7 @@ export const careTrackingService = {
     notes?: string;
     foodType?: string;
   }): Promise<FeedingLog> => {
-    const response = await api.post("/api/care-tracking/feeding", data);
+    const response = await api.post('/api/care-tracking/feeding', data);
     return response.data?.data;
   },
 
@@ -165,7 +165,7 @@ export const careTrackingService = {
     stats: FeedingReportStats;
     dateRange: { start: string; end: string };
   }> => {
-    const response = await api.get("/api/care-tracking/feeding/report", {
+    const response = await api.get('/api/care-tracking/feeding/report', {
       params,
     });
     return response.data?.data;
@@ -193,7 +193,7 @@ export const careTrackingService = {
    * Get pets needing medication today
    */
   getPetsNeedingMedication: async (): Promise<CheckedInPet[]> => {
-    const response = await api.get("/api/care-tracking/medications/pets");
+    const response = await api.get('/api/care-tracking/medications/pets');
     return response.data?.data || [];
   },
 
@@ -271,7 +271,7 @@ export const careTrackingService = {
     notes?: string;
     skippedReason?: string;
   }): Promise<MedicationLog> => {
-    const response = await api.post("/api/care-tracking/medications/log", data);
+    const response = await api.post('/api/care-tracking/medications/log', data);
     return response.data?.data;
   },
 
@@ -301,7 +301,7 @@ export const careTrackingService = {
     stats: MedicationReportStats;
     dateRange: { start: string; end: string };
   }> => {
-    const response = await api.get("/api/care-tracking/medications/report", {
+    const response = await api.get('/api/care-tracking/medications/report', {
       params,
     });
     return response.data?.data;
@@ -317,12 +317,12 @@ export const careTrackingService = {
   formatRating: (rating: number): string => {
     const labels = [
       "Didn't eat",
-      "Ate a little",
-      "Ate half",
-      "Ate most",
-      "Ate all",
+      'Ate a little',
+      'Ate half',
+      'Ate most',
+      'Ate all',
     ];
-    return labels[rating] || "Unknown";
+    return labels[rating] || 'Unknown';
   },
 
   /**
@@ -330,11 +330,11 @@ export const careTrackingService = {
    */
   getRatingColor: (
     rating: number
-  ): "error" | "warning" | "info" | "success" => {
-    if (rating === 0) return "error";
-    if (rating <= 1) return "warning";
-    if (rating <= 2) return "info";
-    return "success";
+  ): 'error' | 'warning' | 'info' | 'success' => {
+    if (rating === 0) return 'error';
+    if (rating <= 1) return 'warning';
+    if (rating <= 2) return 'info';
+    return 'success';
   },
 
   /**
@@ -342,10 +342,10 @@ export const careTrackingService = {
    */
   formatMealTime: (mealTime: MealTime): string => {
     const labels: Record<MealTime, string> = {
-      BREAKFAST: "Breakfast",
-      LUNCH: "Lunch",
-      DINNER: "Dinner",
-      SNACK: "Snack",
+      BREAKFAST: 'Breakfast',
+      LUNCH: 'Lunch',
+      DINNER: 'Dinner',
+      SNACK: 'Snack',
     };
     return labels[mealTime] || mealTime;
   },

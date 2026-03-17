@@ -13,10 +13,12 @@ jest.mock('../api', () => ({
     get: jest.fn(),
     post: jest.fn(),
     put: jest.fn(),
-    delete: jest.fn()
-  }
+    delete: jest.fn(),
+  },
 }));
-const mockedReservationApi = reservationApi as jest.Mocked<typeof reservationApi>;
+const mockedReservationApi = reservationApi as jest.Mocked<
+  typeof reservationApi
+>;
 
 describe('checkInService', () => {
   beforeEach(() => {
@@ -30,8 +32,8 @@ describe('checkInService', () => {
         data: {
           id: 'template-1',
           name: 'Standard Boarding Check-In',
-          sections: []
-        }
+          sections: [],
+        },
       };
 
       mockedReservationApi.get.mockResolvedValue({ data: mockTemplate });
@@ -39,7 +41,9 @@ describe('checkInService', () => {
       await checkInService.getDefaultTemplate();
 
       // Verify the endpoint includes /api prefix
-      expect(mockedReservationApi.get).toHaveBeenCalledWith('/api/check-in-templates/default');
+      expect(mockedReservationApi.get).toHaveBeenCalledWith(
+        '/api/check-in-templates/default'
+      );
       expect(mockedReservationApi.get).toHaveBeenCalledTimes(1);
     });
 
@@ -49,8 +53,8 @@ describe('checkInService', () => {
         data: {
           id: 'agreement-1',
           name: 'Standard Boarding Agreement',
-          content: 'Agreement text...'
-        }
+          content: 'Agreement text...',
+        },
       };
 
       mockedReservationApi.get.mockResolvedValue({ data: mockAgreement });
@@ -58,19 +62,23 @@ describe('checkInService', () => {
       await checkInService.getDefaultAgreementTemplate();
 
       // Verify the endpoint includes /api prefix
-      expect(mockedReservationApi.get).toHaveBeenCalledWith('/api/service-agreement-templates/default');
+      expect(mockedReservationApi.get).toHaveBeenCalledWith(
+        '/api/service-agreement-templates/default'
+      );
       expect(mockedReservationApi.get).toHaveBeenCalledTimes(1);
     });
 
     it('should NOT call endpoints without /api prefix', async () => {
-      mockedReservationApi.get.mockResolvedValue({ data: { status: 'success', data: {} } });
+      mockedReservationApi.get.mockResolvedValue({
+        data: { status: 'success', data: {} },
+      });
 
       await checkInService.getDefaultTemplate();
       await checkInService.getDefaultAgreementTemplate();
 
       // Verify no calls were made without /api prefix
       const calls = mockedReservationApi.get.mock.calls;
-      calls.forEach(call => {
+      calls.forEach((call) => {
         const url = call[0] as string;
         expect(url).toMatch(/^\/api\//);
         expect(url).not.toMatch(/^\/check-in-templates/);
@@ -90,10 +98,10 @@ describe('checkInService', () => {
             {
               id: 'section-1',
               title: 'Contact Information',
-              questions: []
-            }
-          ]
-        }
+              questions: [],
+            },
+          ],
+        },
       };
 
       mockedReservationApi.get.mockResolvedValue({ data: mockTemplate });
@@ -101,7 +109,9 @@ describe('checkInService', () => {
       const result = await checkInService.getDefaultTemplate();
 
       expect(result).toEqual(mockTemplate);
-      expect(mockedReservationApi.get).toHaveBeenCalledWith('/api/check-in-templates/default');
+      expect(mockedReservationApi.get).toHaveBeenCalledWith(
+        '/api/check-in-templates/default'
+      );
     });
 
     it('should handle errors when template not found', async () => {
@@ -112,15 +122,17 @@ describe('checkInService', () => {
             success: false,
             error: {
               type: 'NOT_FOUND_ERROR',
-              message: 'Template not found'
-            }
-          }
-        }
+              message: 'Template not found',
+            },
+          },
+        },
       };
 
       mockedReservationApi.get.mockRejectedValue(mockError);
 
-      await expect(checkInService.getDefaultTemplate()).rejects.toEqual(mockError);
+      await expect(checkInService.getDefaultTemplate()).rejects.toEqual(
+        mockError
+      );
     });
   });
 
@@ -132,8 +144,8 @@ describe('checkInService', () => {
           id: 'agreement-1',
           name: 'Standard Boarding Agreement',
           content: 'BOARDING SERVICE AGREEMENT\n\nThis agreement...',
-          isDefault: true
-        }
+          isDefault: true,
+        },
       };
 
       mockedReservationApi.get.mockResolvedValue({ data: mockAgreement });
@@ -141,7 +153,9 @@ describe('checkInService', () => {
       const result = await checkInService.getDefaultAgreementTemplate();
 
       expect(result).toEqual(mockAgreement);
-      expect(mockedReservationApi.get).toHaveBeenCalledWith('/api/service-agreement-templates/default');
+      expect(mockedReservationApi.get).toHaveBeenCalledWith(
+        '/api/service-agreement-templates/default'
+      );
     });
 
     it('should handle errors when agreement template not found', async () => {
@@ -152,15 +166,17 @@ describe('checkInService', () => {
             success: false,
             error: {
               type: 'NOT_FOUND_ERROR',
-              message: 'Agreement template not found'
-            }
-          }
-        }
+              message: 'Agreement template not found',
+            },
+          },
+        },
       };
 
       mockedReservationApi.get.mockRejectedValue(mockError);
 
-      await expect(checkInService.getDefaultAgreementTemplate()).rejects.toEqual(mockError);
+      await expect(
+        checkInService.getDefaultAgreementTemplate()
+      ).rejects.toEqual(mockError);
     });
   });
 
@@ -171,15 +187,15 @@ describe('checkInService', () => {
         checkInDate: new Date('2025-10-23'),
         responses: {},
         medications: [],
-        belongings: []
+        belongings: [],
       };
 
       const mockResponse = {
         status: 'success',
         data: {
           id: 'checkin-1',
-          ...checkInData
-        }
+          ...checkInData,
+        },
       };
 
       mockedReservationApi.post.mockResolvedValue({ data: mockResponse });
@@ -187,7 +203,10 @@ describe('checkInService', () => {
       const result = await checkInService.createCheckIn(checkInData as any);
 
       expect(result).toEqual(mockResponse);
-      expect(mockedReservationApi.post).toHaveBeenCalledWith('/api/check-ins', checkInData);
+      expect(mockedReservationApi.post).toHaveBeenCalledWith(
+        '/api/check-ins',
+        checkInData
+      );
     });
   });
 
@@ -202,8 +221,8 @@ describe('checkInService', () => {
           checkInDate: '2025-10-23',
           responses: {},
           medications: [],
-          belongings: []
-        }
+          belongings: [],
+        },
       };
 
       mockedReservationApi.get.mockResolvedValue({ data: mockCheckIn });
@@ -211,7 +230,9 @@ describe('checkInService', () => {
       const result = await checkInService.getCheckInById(checkInId);
 
       expect(result).toEqual(mockCheckIn);
-      expect(mockedReservationApi.get).toHaveBeenCalledWith(`/api/check-ins/${checkInId}`);
+      expect(mockedReservationApi.get).toHaveBeenCalledWith(
+        `/api/check-ins/${checkInId}`
+      );
     });
   });
 
@@ -222,20 +243,23 @@ describe('checkInService', () => {
         name: 'Heartgard',
         dosage: '1 tablet',
         frequency: 'Monthly',
-        administrationMethod: 'Oral'
+        administrationMethod: 'Oral',
       };
 
       const mockResponse = {
         status: 'success',
         data: {
           id: 'med-1',
-          ...medication
-        }
+          ...medication,
+        },
       };
 
       mockedReservationApi.post.mockResolvedValue({ data: mockResponse });
 
-      const result = await checkInService.addMedication(checkInId, medication as any);
+      const result = await checkInService.addMedication(
+        checkInId,
+        medication as any
+      );
 
       expect(result).toEqual(mockResponse);
       expect(mockedReservationApi.post).toHaveBeenCalledWith(
@@ -257,13 +281,17 @@ describe('checkInService', () => {
           id: belongingId,
           returned: true,
           returnedBy,
-          returnedAt: new Date().toISOString()
-        }
+          returnedAt: new Date().toISOString(),
+        },
       };
 
       mockedReservationApi.put.mockResolvedValue({ data: mockResponse });
 
-      const result = await checkInService.returnBelonging(checkInId, belongingId, returnedBy);
+      const result = await checkInService.returnBelonging(
+        checkInId,
+        belongingId,
+        returnedBy
+      );
 
       expect(result).toEqual(mockResponse);
       expect(mockedReservationApi.put).toHaveBeenCalledWith(
@@ -281,7 +309,7 @@ describe('checkInService', () => {
         content: 'Agreement content...',
         signature: 'data:image/png;base64,...',
         signedBy: 'John Doe',
-        ipAddress: '192.168.1.1'
+        ipAddress: '192.168.1.1',
       };
 
       const mockResponse = {
@@ -289,16 +317,21 @@ describe('checkInService', () => {
         data: {
           id: 'agreement-1',
           ...agreement,
-          signedAt: new Date().toISOString()
-        }
+          signedAt: new Date().toISOString(),
+        },
       };
 
       mockedReservationApi.post.mockResolvedValue({ data: mockResponse });
 
-      const result = await checkInService.createServiceAgreement(agreement as any);
+      const result = await checkInService.createServiceAgreement(
+        agreement as any
+      );
 
       expect(result).toEqual(mockResponse);
-      expect(mockedReservationApi.post).toHaveBeenCalledWith('/api/service-agreements', agreement);
+      expect(mockedReservationApi.post).toHaveBeenCalledWith(
+        '/api/service-agreements',
+        agreement
+      );
     });
   });
 });

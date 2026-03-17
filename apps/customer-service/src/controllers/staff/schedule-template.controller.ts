@@ -7,10 +7,10 @@
  * - Holiday management
  */
 
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-import { AppError } from "../../middleware/error.middleware";
-import { logger } from "../../utils/logger";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { AppError } from '../../middleware/error.middleware';
+import { logger } from '../../utils/logger';
 
 const prisma = new PrismaClient();
 
@@ -37,7 +37,7 @@ export const getStaffTemplates = async (
     const { activeOnly } = req.query;
 
     const where: any = { tenantId, staffId };
-    if (activeOnly === "true") {
+    if (activeOnly === 'true') {
       where.isActive = true;
     }
 
@@ -45,21 +45,21 @@ export const getStaffTemplates = async (
       where,
       include: {
         entries: {
-          orderBy: [{ rotationWeek: "asc" }, { dayOfWeek: "asc" }],
+          orderBy: [{ rotationWeek: 'asc' }, { dayOfWeek: 'asc' }],
         },
         staff: {
           select: { id: true, firstName: true, lastName: true },
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: templates,
     });
   } catch (error: any) {
-    logger.error("Error fetching schedule templates", { error: error.message });
+    logger.error('Error fetching schedule templates', { error: error.message });
     next(error);
   }
 };
@@ -84,7 +84,7 @@ export const getAllActiveTemplates = async (
       },
       include: {
         entries: {
-          orderBy: [{ rotationWeek: "asc" }, { dayOfWeek: "asc" }],
+          orderBy: [{ rotationWeek: 'asc' }, { dayOfWeek: 'asc' }],
         },
         staff: {
           select: { id: true, firstName: true, lastName: true },
@@ -93,11 +93,11 @@ export const getAllActiveTemplates = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: templates,
     });
   } catch (error: any) {
-    logger.error("Error fetching active templates", { error: error.message });
+    logger.error('Error fetching active templates', { error: error.message });
     next(error);
   }
 };
@@ -126,7 +126,7 @@ export const createTemplate = async (
     } = req.body;
 
     if (!name || !effectiveFrom) {
-      return next(new AppError("Name and effectiveFrom are required", 400));
+      return next(new AppError('Name and effectiveFrom are required', 400));
     }
 
     // Verify staff exists
@@ -134,7 +134,7 @@ export const createTemplate = async (
       where: { id: staffId, tenantId },
     });
     if (!staff) {
-      return next(new AppError("Staff not found", 404));
+      return next(new AppError('Staff not found', 404));
     }
 
     const template = await prisma.scheduleTemplate.create({
@@ -142,7 +142,7 @@ export const createTemplate = async (
         tenantId,
         staffId,
         name,
-        rotationType: rotationType || "WEEKLY",
+        rotationType: rotationType || 'WEEKLY',
         rotationWeeks: rotationWeeks || 1,
         effectiveFrom: new Date(effectiveFrom),
         effectiveUntil: effectiveUntil ? new Date(effectiveUntil) : null,
@@ -172,11 +172,11 @@ export const createTemplate = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: template,
     });
   } catch (error: any) {
-    logger.error("Error creating schedule template", { error: error.message });
+    logger.error('Error creating schedule template', { error: error.message });
     next(error);
   }
 };
@@ -208,7 +208,7 @@ export const updateTemplate = async (
       where: { id: templateId, tenantId },
     });
     if (!existing) {
-      return next(new AppError("Template not found", 404));
+      return next(new AppError('Template not found', 404));
     }
 
     const template = await prisma.scheduleTemplate.update({
@@ -233,11 +233,11 @@ export const updateTemplate = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: template,
     });
   } catch (error: any) {
-    logger.error("Error updating schedule template", { error: error.message });
+    logger.error('Error updating schedule template', { error: error.message });
     next(error);
   }
 };
@@ -258,7 +258,7 @@ export const deleteTemplate = async (
       where: { id: templateId, tenantId },
     });
     if (!existing) {
-      return next(new AppError("Template not found", 404));
+      return next(new AppError('Template not found', 404));
     }
 
     await prisma.scheduleTemplate.delete({
@@ -266,11 +266,11 @@ export const deleteTemplate = async (
     });
 
     res.status(200).json({
-      status: "success",
-      message: "Template deleted successfully",
+      status: 'success',
+      message: 'Template deleted successfully',
     });
   } catch (error: any) {
-    logger.error("Error deleting schedule template", { error: error.message });
+    logger.error('Error deleting schedule template', { error: error.message });
     next(error);
   }
 };
@@ -302,7 +302,7 @@ export const addTemplateEntry = async (
 
     if (dayOfWeek === undefined || !startTime || !endTime) {
       return next(
-        new AppError("dayOfWeek, startTime, and endTime are required", 400)
+        new AppError('dayOfWeek, startTime, and endTime are required', 400)
       );
     }
 
@@ -310,7 +310,7 @@ export const addTemplateEntry = async (
       where: { id: templateId, tenantId },
     });
     if (!template) {
-      return next(new AppError("Template not found", 404));
+      return next(new AppError('Template not found', 404));
     }
 
     const entry = await prisma.scheduleTemplateEntry.create({
@@ -327,11 +327,11 @@ export const addTemplateEntry = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: entry,
     });
   } catch (error: any) {
-    logger.error("Error adding template entry", { error: error.message });
+    logger.error('Error adding template entry', { error: error.message });
     next(error);
   }
 };
@@ -360,7 +360,7 @@ export const updateTemplateEntry = async (
       where: { id: entryId },
     });
     if (!existing) {
-      return next(new AppError("Entry not found", 404));
+      return next(new AppError('Entry not found', 404));
     }
 
     const entry = await prisma.scheduleTemplateEntry.update({
@@ -377,11 +377,11 @@ export const updateTemplateEntry = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: entry,
     });
   } catch (error: any) {
-    logger.error("Error updating template entry", { error: error.message });
+    logger.error('Error updating template entry', { error: error.message });
     next(error);
   }
 };
@@ -401,7 +401,7 @@ export const deleteTemplateEntry = async (
       where: { id: entryId },
     });
     if (!existing) {
-      return next(new AppError("Entry not found", 404));
+      return next(new AppError('Entry not found', 404));
     }
 
     await prisma.scheduleTemplateEntry.delete({
@@ -409,11 +409,11 @@ export const deleteTemplateEntry = async (
     });
 
     res.status(200).json({
-      status: "success",
-      message: "Entry deleted successfully",
+      status: 'success',
+      message: 'Entry deleted successfully',
     });
   } catch (error: any) {
-    logger.error("Error deleting template entry", { error: error.message });
+    logger.error('Error deleting template entry', { error: error.message });
     next(error);
   }
 };
@@ -440,7 +440,7 @@ export const generateSchedules = async (
       include: { entries: true },
     });
     if (!template) {
-      return next(new AppError("Template not found", 404));
+      return next(new AppError('Template not found', 404));
     }
 
     const start = startDate ? new Date(startDate) : new Date();
@@ -467,7 +467,7 @@ export const generateSchedules = async (
     const timeOff = await prisma.staffTimeOff.findMany({
       where: {
         staffId: template.staffId,
-        status: "APPROVED",
+        status: 'APPROVED',
         startDate: { lte: end },
         endDate: { gte: start },
       },
@@ -493,8 +493,8 @@ export const generateSchedules = async (
       );
       if (isHoliday) {
         skippedDates.push({
-          date: currentDate.toISOString().split("T")[0],
-          reason: "Holiday",
+          date: currentDate.toISOString().split('T')[0],
+          reason: 'Holiday',
         });
         continue;
       }
@@ -505,8 +505,8 @@ export const generateSchedules = async (
       );
       if (hasTimeOff) {
         skippedDates.push({
-          date: currentDate.toISOString().split("T")[0],
-          reason: "Time off",
+          date: currentDate.toISOString().split('T')[0],
+          reason: 'Time off',
         });
         continue;
       }
@@ -542,8 +542,8 @@ export const generateSchedules = async (
 
         if (existingSchedule) {
           skippedDates.push({
-            date: currentDate.toISOString().split("T")[0],
-            reason: "Schedule already exists",
+            date: currentDate.toISOString().split('T')[0],
+            reason: 'Schedule already exists',
           });
           continue;
         }
@@ -558,8 +558,8 @@ export const generateSchedules = async (
             endTime: entry.endTime,
             location: entry.location,
             role: entry.role,
-            notes: entry.notes ? `[Auto] ${entry.notes}` : "[Auto-generated]",
-            status: "SCHEDULED",
+            notes: entry.notes ? `[Auto] ${entry.notes}` : '[Auto-generated]',
+            status: 'SCHEDULED',
           },
         });
         createdSchedules.push(schedule);
@@ -573,7 +573,7 @@ export const generateSchedules = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: {
         created: createdSchedules.length,
         skipped: skippedDates.length,
@@ -582,7 +582,7 @@ export const generateSchedules = async (
       },
     });
   } catch (error: any) {
-    logger.error("Error generating schedules", { error: error.message });
+    logger.error('Error generating schedules', { error: error.message });
     next(error);
   }
 };
@@ -623,8 +623,8 @@ export const generateAllSchedules = async (
         results.push({
           templateId: template.id,
           staffId: template.staffId,
-          status: "skipped",
-          reason: "Already up to date",
+          status: 'skipped',
+          reason: 'Already up to date',
         });
         continue;
       }
@@ -646,7 +646,7 @@ export const generateAllSchedules = async (
       const timeOff = await prisma.staffTimeOff.findMany({
         where: {
           staffId: template.staffId,
-          status: "APPROVED",
+          status: 'APPROVED',
           startDate: { lte: end },
           endDate: { gte: start },
         },
@@ -706,8 +706,8 @@ export const generateAllSchedules = async (
                 role: entry.role,
                 notes: entry.notes
                   ? `[Auto] ${entry.notes}`
-                  : "[Auto-generated]",
-                status: "SCHEDULED",
+                  : '[Auto-generated]',
+                status: 'SCHEDULED',
               },
             });
             createdCount++;
@@ -723,20 +723,20 @@ export const generateAllSchedules = async (
       results.push({
         templateId: template.id,
         staffId: template.staffId,
-        status: "success",
+        status: 'success',
         created: createdCount,
       });
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         templatesProcessed: templates.length,
         results,
       },
     });
   } catch (error: any) {
-    logger.error("Error generating all schedules", { error: error.message });
+    logger.error('Error generating all schedules', { error: error.message });
     next(error);
   }
 };
@@ -766,15 +766,15 @@ export const getHolidays = async (
 
     const holidays = await prisma.businessHoliday.findMany({
       where,
-      orderBy: { date: "asc" },
+      orderBy: { date: 'asc' },
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: holidays,
     });
   } catch (error: any) {
-    logger.error("Error fetching holidays", { error: error.message });
+    logger.error('Error fetching holidays', { error: error.message });
     next(error);
   }
 };
@@ -792,7 +792,7 @@ export const createHoliday = async (
     const { name, date, isRecurring, isClosed, notes } = req.body;
 
     if (!name || !date) {
-      return next(new AppError("Name and date are required", 400));
+      return next(new AppError('Name and date are required', 400));
     }
 
     const holiday = await prisma.businessHoliday.create({
@@ -807,14 +807,14 @@ export const createHoliday = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: holiday,
     });
   } catch (error: any) {
-    if (error.code === "P2002") {
-      return next(new AppError("A holiday already exists for this date", 400));
+    if (error.code === 'P2002') {
+      return next(new AppError('A holiday already exists for this date', 400));
     }
-    logger.error("Error creating holiday", { error: error.message });
+    logger.error('Error creating holiday', { error: error.message });
     next(error);
   }
 };
@@ -836,7 +836,7 @@ export const updateHoliday = async (
       where: { id: holidayId, tenantId },
     });
     if (!existing) {
-      return next(new AppError("Holiday not found", 404));
+      return next(new AppError('Holiday not found', 404));
     }
 
     const holiday = await prisma.businessHoliday.update({
@@ -851,11 +851,11 @@ export const updateHoliday = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: holiday,
     });
   } catch (error: any) {
-    logger.error("Error updating holiday", { error: error.message });
+    logger.error('Error updating holiday', { error: error.message });
     next(error);
   }
 };
@@ -876,7 +876,7 @@ export const deleteHoliday = async (
       where: { id: holidayId, tenantId },
     });
     if (!existing) {
-      return next(new AppError("Holiday not found", 404));
+      return next(new AppError('Holiday not found', 404));
     }
 
     await prisma.businessHoliday.delete({
@@ -884,11 +884,11 @@ export const deleteHoliday = async (
     });
 
     res.status(200).json({
-      status: "success",
-      message: "Holiday deleted successfully",
+      status: 'success',
+      message: 'Holiday deleted successfully',
     });
   } catch (error: any) {
-    logger.error("Error deleting holiday", { error: error.message });
+    logger.error('Error deleting holiday', { error: error.message });
     next(error);
   }
 };

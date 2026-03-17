@@ -19,10 +19,14 @@ import {
   TableRow,
   Chip,
   SelectChangeEvent,
-  CircularProgress
+  CircularProgress,
 } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
-import staffService, { StaffTimeOff, TimeOffType, TimeOffStatus } from '../../services/staffService';
+import staffService, {
+  StaffTimeOff,
+  TimeOffType,
+  TimeOffStatus,
+} from '../../services/staffService';
 
 interface StaffTimeOffFormProps {
   staffId: string;
@@ -35,20 +39,21 @@ const timeOffTypes = [
   'PERSONAL',
   'BEREAVEMENT',
   'JURY_DUTY',
-  'OTHER'
+  'OTHER',
 ];
 
-const statusOptions = [
-  'PENDING',
-  'APPROVED',
-  'DENIED'
-];
+const statusOptions = ['PENDING', 'APPROVED', 'DENIED'];
 
-const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) => {
+const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({
+  staffId,
+  onSave,
+}) => {
   const [timeOffList, setTimeOffList] = useState<StaffTimeOff[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [editingTimeOff, setEditingTimeOff] = useState<StaffTimeOff | null>(null);
+  const [editingTimeOff, setEditingTimeOff] = useState<StaffTimeOff | null>(
+    null
+  );
   const [formData, setFormData] = useState<Partial<StaffTimeOff>>({
     startDate: '',
     endDate: '',
@@ -56,7 +61,7 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
     status: TimeOffStatus.PENDING,
     reason: '',
     approvedById: null,
-    approvedDate: null
+    approvedDate: null,
   });
 
   const loadStaffTimeOff = useCallback(async () => {
@@ -84,7 +89,7 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -92,12 +97,14 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
 
   // Format date to YYYY-MM-DD for input fields
-  const formatDateForInput = (dateString: string | null | undefined): string => {
+  const formatDateForInput = (
+    dateString: string | null | undefined
+  ): string => {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toISOString().split('T')[0]; // Returns YYYY-MM-DD format
@@ -112,7 +119,7 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
       status: timeOff.status,
       reason: timeOff.reason || '',
       approvedById: timeOff.approvedById,
-      approvedDate: formatDateForInput(timeOff.approvedDate)
+      approvedDate: formatDateForInput(timeOff.approvedDate),
     });
   };
 
@@ -125,14 +132,14 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
       status: TimeOffStatus.PENDING,
       reason: '',
       approvedById: null,
-      approvedDate: ''
+      approvedDate: '',
     });
   };
 
   const handleSaveTimeOff = async () => {
     try {
       setLoading(true);
-      
+
       // Validate form data
       if (!formData.startDate || !formData.endDate) {
         setError('Start date and end date are required');
@@ -142,7 +149,7 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
 
       const start = new Date(formData.startDate);
       const end = new Date(formData.endDate);
-      
+
       if (start > end) {
         setError('End date must be after start date');
         setLoading(false);
@@ -153,19 +160,19 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
         // Update existing time off
         await staffService.updateStaffTimeOff(editingTimeOff.id, {
           ...formData,
-          staffId
+          staffId,
         });
       } else {
         // Create new time off
         await staffService.createStaffTimeOff(staffId, formData);
       }
-      
+
       // Reload the time off list
       await loadStaffTimeOff();
-      
+
       // Reset form
       handleCancelEdit();
-      
+
       // Call onSave callback if provided
       if (onSave) {
         onSave();
@@ -183,12 +190,12 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
       setLoading(true);
       await staffService.deleteStaffTimeOff(timeOffId);
       await loadStaffTimeOff();
-      
+
       // If we were editing the deleted item, reset the form
       if (editingTimeOff && editingTimeOff.id === timeOffId) {
         handleCancelEdit();
       }
-      
+
       // Call onSave callback if provided
       if (onSave) {
         onSave();
@@ -221,12 +228,12 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
           <Typography color="error">{error}</Typography>
         </Box>
       )}
-      
+
       <Paper sx={{ p: 2, mb: 3 }}>
         <Typography variant="subtitle1" gutterBottom>
           {editingTimeOff ? 'Edit Time Off Request' : 'Request Time Off'}
         </Typography>
-        
+
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <TextField
@@ -241,7 +248,7 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
-          
+
           <Grid item xs={12} sm={6}>
             <TextField
               name="endDate"
@@ -255,7 +262,7 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
-          
+
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth size="small">
               <InputLabel>Type</InputLabel>
@@ -268,13 +275,14 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
               >
                 {timeOffTypes.map((type) => (
                   <MenuItem key={type} value={type}>
-                    {type.charAt(0) + type.slice(1).toLowerCase().replace('_', ' ')}
+                    {type.charAt(0) +
+                      type.slice(1).toLowerCase().replace('_', ' ')}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
           </Grid>
-          
+
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth size="small">
               <InputLabel>Status</InputLabel>
@@ -293,7 +301,7 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
               </Select>
             </FormControl>
           </Grid>
-          
+
           <Grid item xs={12}>
             <TextField
               name="reason"
@@ -306,7 +314,7 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
               rows={2}
             />
           </Grid>
-          
+
           {formData.status === 'APPROVED' && (
             <>
               <Grid item xs={12} sm={6}>
@@ -320,7 +328,7 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
                   size="small"
                 />
               </Grid>
-              
+
               <Grid item xs={12} sm={6}>
                 <TextField
                   name="approvedDate"
@@ -335,19 +343,23 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
               </Grid>
             </>
           )}
-          
-          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+
+          <Grid
+            item
+            xs={12}
+            sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}
+          >
             {editingTimeOff ? (
               <>
-                <Button 
-                  variant="outlined" 
+                <Button
+                  variant="outlined"
                   onClick={handleCancelEdit}
                   size="small"
                 >
                   Cancel
                 </Button>
-                <Button 
-                  variant="contained" 
+                <Button
+                  variant="contained"
                   onClick={handleSaveTimeOff}
                   size="small"
                   disabled={loading}
@@ -356,8 +368,8 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
                 </Button>
               </>
             ) : (
-              <Button 
-                variant="contained" 
+              <Button
+                variant="contained"
                 onClick={handleSaveTimeOff}
                 size="small"
                 disabled={loading}
@@ -368,11 +380,11 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
           </Grid>
         </Grid>
       </Paper>
-      
+
       <Typography variant="subtitle1" gutterBottom>
         Time Off Requests
       </Typography>
-      
+
       {loading && !editingTimeOff ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
           <CircularProgress />
@@ -399,16 +411,25 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
               {timeOffList.map((timeOff) => (
                 <TableRow key={timeOff.id}>
                   <TableCell>{`${formatDate(timeOff.startDate)} - ${formatDate(timeOff.endDate)}`}</TableCell>
-                  <TableCell>{calculateDays(timeOff.startDate, timeOff.endDate)}</TableCell>
                   <TableCell>
-                    {timeOff.type.charAt(0) + timeOff.type.slice(1).toLowerCase().replace('_', ' ')}
+                    {calculateDays(timeOff.startDate, timeOff.endDate)}
                   </TableCell>
                   <TableCell>
-                    <Chip 
-                      label={timeOff.status.charAt(0) + timeOff.status.slice(1).toLowerCase()} 
+                    {timeOff.type.charAt(0) +
+                      timeOff.type.slice(1).toLowerCase().replace('_', ' ')}
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      label={
+                        timeOff.status.charAt(0) +
+                        timeOff.status.slice(1).toLowerCase()
+                      }
                       color={
-                        timeOff.status === 'APPROVED' ? 'success' : 
-                        timeOff.status === 'DENIED' ? 'error' : 'warning'
+                        timeOff.status === 'APPROVED'
+                          ? 'success'
+                          : timeOff.status === 'DENIED'
+                            ? 'error'
+                            : 'warning'
                       }
                       size="small"
                     />
@@ -419,8 +440,14 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
                       <>
                         {timeOff.approvedById}
                         {timeOff.approvedDate && (
-                          <Typography variant="caption" display="block" color="text.secondary">
-                            {new Date(timeOff.approvedDate).toLocaleDateString()}
+                          <Typography
+                            variant="caption"
+                            display="block"
+                            color="text.secondary"
+                          >
+                            {new Date(
+                              timeOff.approvedDate
+                            ).toLocaleDateString()}
                           </Typography>
                         )}
                       </>
@@ -429,16 +456,18 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({ staffId, onSave }) 
                     )}
                   </TableCell>
                   <TableCell align="right">
-                    <IconButton 
-                      size="small" 
+                    <IconButton
+                      size="small"
                       onClick={() => handleEditTimeOff(timeOff)}
                       aria-label="edit"
                     >
                       <EditIcon fontSize="small" />
                     </IconButton>
-                    <IconButton 
-                      size="small" 
-                      onClick={() => timeOff.id ? handleDeleteTimeOff(timeOff.id) : undefined}
+                    <IconButton
+                      size="small"
+                      onClick={() =>
+                        timeOff.id ? handleDeleteTimeOff(timeOff.id) : undefined
+                      }
                       aria-label="delete"
                     >
                       <DeleteIcon fontSize="small" />

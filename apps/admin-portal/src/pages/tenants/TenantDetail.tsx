@@ -41,7 +41,11 @@ import {
   AttachMoney as MoneyIcon,
 } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { tenantService, Tenant, TenantUsage } from '../../services/tenantService';
+import {
+  tenantService,
+  Tenant,
+  TenantUsage,
+} from '../../services/tenantService';
 
 const TenantDetail: React.FC = () => {
   const navigate = useNavigate();
@@ -190,7 +194,9 @@ const TenantDetail: React.FC = () => {
             variant="contained"
             color="success"
             startIcon={<PlayIcon />}
-            onClick={() => setConfirmDialog({ open: true, action: 'reactivate' })}
+            onClick={() =>
+              setConfirmDialog({ open: true, action: 'reactivate' })
+            }
             sx={{ mr: 1 }}
           >
             Reactivate
@@ -227,12 +233,20 @@ const TenantDetail: React.FC = () => {
         <Grid item xs={12} md={3}>
           <Card>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
                 <Box>
                   <Typography color="textSecondary" variant="body2">
                     Customers
                   </Typography>
-                  <Typography variant="h4">{usage?.customerCount || tenant.customerCount}</Typography>
+                  <Typography variant="h4">
+                    {usage?.customerCount || tenant.customerCount}
+                  </Typography>
                 </Box>
                 <PetsIcon sx={{ fontSize: 40, color: 'primary.main' }} />
               </Box>
@@ -242,12 +256,20 @@ const TenantDetail: React.FC = () => {
         <Grid item xs={12} md={3}>
           <Card>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
                 <Box>
                   <Typography color="textSecondary" variant="body2">
                     Reservations
                   </Typography>
-                  <Typography variant="h4">{usage?.reservationCount || tenant.reservationCount}</Typography>
+                  <Typography variant="h4">
+                    {usage?.reservationCount || tenant.reservationCount}
+                  </Typography>
                 </Box>
                 <ReservationIcon sx={{ fontSize: 40, color: 'success.main' }} />
               </Box>
@@ -257,12 +279,20 @@ const TenantDetail: React.FC = () => {
         <Grid item xs={12} md={3}>
           <Card>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
                 <Box>
                   <Typography color="textSecondary" variant="body2">
                     Employees
                   </Typography>
-                  <Typography variant="h4">{usage?.employeeCount || tenant.employeeCount}</Typography>
+                  <Typography variant="h4">
+                    {usage?.employeeCount || tenant.employeeCount}
+                  </Typography>
                 </Box>
                 <PeopleIcon sx={{ fontSize: 40, color: 'info.main' }} />
               </Box>
@@ -272,12 +302,20 @@ const TenantDetail: React.FC = () => {
         <Grid item xs={12} md={3}>
           <Card>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
                 <Box>
                   <Typography color="textSecondary" variant="body2">
                     Storage
                   </Typography>
-                  <Typography variant="h4">{tenant.storageUsedMB} MB</Typography>
+                  <Typography variant="h4">
+                    {tenant.storageUsedMB} MB
+                  </Typography>
                 </Box>
                 <StorageIcon sx={{ fontSize: 40, color: 'warning.main' }} />
               </Box>
@@ -319,7 +357,9 @@ const TenantDetail: React.FC = () => {
                   <Typography variant="caption" color="textSecondary">
                     Contact Phone
                   </Typography>
-                  <Typography variant="body1">{tenant.contactPhone || 'N/A'}</Typography>
+                  <Typography variant="body1">
+                    {tenant.contactPhone || 'N/A'}
+                  </Typography>
                 </Box>
               </Box>
             </Grid>
@@ -384,7 +424,9 @@ const TenantDetail: React.FC = () => {
                   <Typography variant="caption" color="textSecondary">
                     Trial Ends
                   </Typography>
-                  <Typography variant="body1">{formatDate(tenant.trialEndsAt)}</Typography>
+                  <Typography variant="body1">
+                    {formatDate(tenant.trialEndsAt)}
+                  </Typography>
                 </Box>
               )}
             </CardContent>
@@ -438,20 +480,26 @@ const TenantDetail: React.FC = () => {
               <Typography variant="caption" color="textSecondary">
                 Created
               </Typography>
-              <Typography variant="body1">{formatDate(tenant.createdAt)}</Typography>
+              <Typography variant="body1">
+                {formatDate(tenant.createdAt)}
+              </Typography>
             </Grid>
             <Grid item xs={12} md={3}>
               <Typography variant="caption" color="textSecondary">
                 Last Updated
               </Typography>
-              <Typography variant="body1">{formatDate(tenant.updatedAt)}</Typography>
+              <Typography variant="body1">
+                {formatDate(tenant.updatedAt)}
+              </Typography>
             </Grid>
             {tenant.subscriptionStartDate && (
               <Grid item xs={12} md={3}>
                 <Typography variant="caption" color="textSecondary">
                   Subscription Start
                 </Typography>
-                <Typography variant="body1">{formatDate(tenant.subscriptionStartDate)}</Typography>
+                <Typography variant="body1">
+                  {formatDate(tenant.subscriptionStartDate)}
+                </Typography>
               </Grid>
             )}
             {tenant.pausedAt && (
@@ -459,7 +507,9 @@ const TenantDetail: React.FC = () => {
                 <Typography variant="caption" color="textSecondary">
                   Paused At
                 </Typography>
-                <Typography variant="body1">{formatDate(tenant.pausedAt)}</Typography>
+                <Typography variant="body1">
+                  {formatDate(tenant.pausedAt)}
+                </Typography>
               </Grid>
             )}
           </Grid>
@@ -503,7 +553,9 @@ const TenantDetail: React.FC = () => {
                         />
                       </TableCell>
                       <TableCell>
-                        {user.lastLoginAt ? formatDate(user.lastLoginAt) : 'Never'}
+                        {user.lastLoginAt
+                          ? formatDate(user.lastLoginAt)
+                          : 'Never'}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -535,7 +587,9 @@ const TenantDetail: React.FC = () => {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setConfirmDialog({ open: false, action: null })}>
+          <Button
+            onClick={() => setConfirmDialog({ open: false, action: null })}
+          >
             Cancel
           </Button>
           <Button
@@ -543,7 +597,8 @@ const TenantDetail: React.FC = () => {
             color={confirmDialog.action === 'delete' ? 'error' : 'primary'}
             onClick={() => {
               if (confirmDialog.action === 'pause') handlePause();
-              else if (confirmDialog.action === 'reactivate') handleReactivate();
+              else if (confirmDialog.action === 'reactivate')
+                handleReactivate();
               else if (confirmDialog.action === 'delete') handleDelete();
             }}
           >

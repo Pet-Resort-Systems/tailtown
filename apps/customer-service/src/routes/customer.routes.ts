@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router } from 'express';
 import {
   getAllCustomers,
   getCustomerById,
@@ -10,38 +10,38 @@ import {
   getCustomerPermanentCoupon,
   setCustomerPermanentCoupon,
   removeCustomerPermanentCoupon,
-} from "../controllers/customer";
-import customerPaymentMethodRoutes from "./customer-payment-method.routes";
+} from '../controllers/customer';
+import customerPaymentMethodRoutes from './customer-payment-method.routes';
 
 const router = Router();
 
 // GET all customers
-router.get("/", getAllCustomers);
+router.get('/', getAllCustomers);
 
 // GET a single customer by ID
-router.get("/:id", getCustomerById);
+router.get('/:id', getCustomerById);
 
 // GET all pets for a customer
-router.get("/:id/pets", getCustomerPets);
+router.get('/:id/pets', getCustomerPets);
 
 // GET all invoices for a customer
-router.get("/:id/invoices", getCustomerInvoices);
+router.get('/:id/invoices', getCustomerInvoices);
 
 // POST create a new customer
-router.post("/", createCustomer);
+router.post('/', createCustomer);
 
 // PUT update a customer
-router.put("/:id", updateCustomer);
+router.put('/:id', updateCustomer);
 
 // DELETE a customer
-router.delete("/:id", deleteCustomer);
+router.delete('/:id', deleteCustomer);
 
 // Permanent discount coupon routes
-router.get("/:id/permanent-coupon", getCustomerPermanentCoupon);
-router.put("/:id/permanent-coupon", setCustomerPermanentCoupon);
-router.delete("/:id/permanent-coupon", removeCustomerPermanentCoupon);
+router.get('/:id/permanent-coupon', getCustomerPermanentCoupon);
+router.put('/:id/permanent-coupon', setCustomerPermanentCoupon);
+router.delete('/:id/permanent-coupon', removeCustomerPermanentCoupon);
 
 // Payment methods (card on file) routes
-router.use("/:customerId/payment-methods", customerPaymentMethodRoutes);
+router.use('/:customerId/payment-methods', customerPaymentMethodRoutes);
 
 export { router as customerRoutes };

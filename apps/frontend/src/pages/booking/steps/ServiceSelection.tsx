@@ -3,7 +3,7 @@
  * Mobile-first design with card-based selection
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Card,
@@ -14,16 +14,16 @@ import {
   Alert,
   Button,
   Avatar,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   Hotel as BoardingIcon,
   WbSunny as DaycareIcon,
   ContentCut as GroomingIcon,
   School as TrainingIcon,
   CheckCircle as CheckCircleIcon,
-} from "@mui/icons-material";
-import { serviceManagement } from "../../../services/serviceManagement";
+} from '@mui/icons-material';
+import { serviceManagement } from '../../../services/serviceManagement';
 
 interface Service {
   id: string;
@@ -47,15 +47,17 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
 }) => {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [selectedService, setSelectedService] = useState<Service | null>(null);
 
-  useEffect(() => {
+  useEffect(
+    () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      loadServices();
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    loadServices();
-  },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  []);
+    []
+  );
 
   const loadServices = async () => {
     try {
@@ -76,10 +78,10 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
         }
       }
 
-      setError("");
+      setError('');
     } catch (err: any) {
-      console.error("Error loading services:", err);
-      setError("Unable to load services. Please try again.");
+      console.error('Error loading services:', err);
+      setError('Unable to load services. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -103,13 +105,13 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
 
   const getServiceIcon = (category: string) => {
     switch (category.toUpperCase()) {
-      case "BOARDING":
+      case 'BOARDING':
         return <BoardingIcon sx={{ fontSize: { xs: 40, sm: 48 } }} />;
-      case "DAYCARE":
+      case 'DAYCARE':
         return <DaycareIcon sx={{ fontSize: { xs: 40, sm: 48 } }} />;
-      case "GROOMING":
+      case 'GROOMING':
         return <GroomingIcon sx={{ fontSize: { xs: 40, sm: 48 } }} />;
-      case "TRAINING":
+      case 'TRAINING':
         return <TrainingIcon sx={{ fontSize: { xs: 40, sm: 48 } }} />;
       default:
         return <BoardingIcon sx={{ fontSize: { xs: 40, sm: 48 } }} />;
@@ -118,16 +120,16 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
 
   const getCategoryColor = (category: string) => {
     switch (category.toUpperCase()) {
-      case "BOARDING":
-        return "#1976d2";
-      case "DAYCARE":
-        return "#ff9800";
-      case "GROOMING":
-        return "#9c27b0";
-      case "TRAINING":
-        return "#4caf50";
+      case 'BOARDING':
+        return '#1976d2';
+      case 'DAYCARE':
+        return '#ff9800';
+      case 'GROOMING':
+        return '#9c27b0';
+      case 'TRAINING':
+        return '#4caf50';
       default:
-        return "#757575";
+        return '#757575';
     }
   };
 
@@ -145,19 +147,22 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
     );
 
     // Define category order for display - Boarding and Daycare first
-    const categoryOrder = ["BOARDING", "DAYCARE", "GROOMING", "TRAINING"];
+    const categoryOrder = ['BOARDING', 'DAYCARE', 'GROOMING', 'TRAINING'];
 
-    return categoryOrder.reduce((acc, category) => {
-      if (grouped[category]) {
-        acc.push([category, grouped[category]]);
-      }
-      return acc;
-    }, [] as [string, Service[]][]);
+    return categoryOrder.reduce(
+      (acc, category) => {
+        if (grouped[category]) {
+          acc.push([category, grouped[category]]);
+        }
+        return acc;
+      },
+      [] as [string, Service[]][]
+    );
   };
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
         <CircularProgress />
       </Box>
     );
@@ -183,7 +188,7 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
         component="h2"
         gutterBottom
         sx={{
-          fontSize: { xs: "1.25rem", sm: "1.5rem" },
+          fontSize: { xs: '1.25rem', sm: '1.5rem' },
           fontWeight: 600,
           mb: 3,
         }}
@@ -193,16 +198,16 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
 
       {groupedServices.map(([category, categoryServices]) => (
         <Box key={category} sx={{ mb: 4 }}>
-          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <Box sx={{ color: getCategoryColor(category), mr: 1 }}>
               {getServiceIcon(category)}
             </Box>
             <Typography
               variant="h6"
               sx={{
-                fontSize: { xs: "1rem", sm: "1.25rem" },
+                fontSize: { xs: '1rem', sm: '1.25rem' },
                 fontWeight: 600,
-                textTransform: "capitalize",
+                textTransform: 'capitalize',
               }}
             >
               {category.toLowerCase()}
@@ -215,30 +220,30 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
                 <Card
                   elevation={selectedService?.id === service.id ? 8 : 2}
                   sx={{
-                    height: "100%",
+                    height: '100%',
                     border:
                       selectedService?.id === service.id
-                        ? "3px solid"
-                        : "1px solid",
+                        ? '3px solid'
+                        : '1px solid',
                     borderColor:
                       selectedService?.id === service.id
-                        ? "primary.main"
-                        : "divider",
-                    transition: "all 0.2s ease-in-out",
-                    "&:hover": {
-                      transform: "translateY(-2px)",
+                        ? 'primary.main'
+                        : 'divider',
+                    transition: 'all 0.2s ease-in-out',
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
                       boxShadow: 4,
                     },
                   }}
                 >
                   <CardContent sx={{ p: { xs: 1, sm: 1.5 } }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <Avatar
                         sx={{
                           width: { xs: 36, sm: 40 },
                           height: { xs: 36, sm: 40 },
                           bgcolor: getCategoryColor(service.serviceCategory),
-                          fontSize: { xs: "1.1rem", sm: "1.25rem" },
+                          fontSize: { xs: '1.1rem', sm: '1.25rem' },
                         }}
                       >
                         {getServiceIcon(service.serviceCategory)}
@@ -248,7 +253,7 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
                           variant="subtitle1"
                           component="h3"
                           sx={{
-                            fontSize: { xs: "0.875rem", sm: "0.95rem" },
+                            fontSize: { xs: '0.875rem', sm: '0.95rem' },
                             fontWeight: 600,
                             lineHeight: 1.2,
                             mb: 0.25,
@@ -261,13 +266,13 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
                             variant="body2"
                             color="text.secondary"
                             sx={{
-                              fontSize: { xs: "0.7rem", sm: "0.75rem" },
+                              fontSize: { xs: '0.7rem', sm: '0.75rem' },
                               lineHeight: 1.3,
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              display: "-webkit-box",
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              display: '-webkit-box',
                               WebkitLineClamp: 2,
-                              WebkitBoxOrient: "vertical",
+                              WebkitBoxOrient: 'vertical',
                             }}
                           >
                             {service.description}
@@ -284,9 +289,9 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
                     <Box sx={{ mt: 1 }}>
                       <Box
                         sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
                           mb: 1,
                         }}
                       >
@@ -294,7 +299,7 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
                           variant="h6"
                           color="primary"
                           fontWeight={700}
-                          sx={{ fontSize: { xs: "0.95rem", sm: "1.1rem" } }}
+                          sx={{ fontSize: { xs: '0.95rem', sm: '1.1rem' } }}
                         >
                           ${service.price.toFixed(2)}
                         </Typography>
@@ -305,8 +310,8 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
                             variant="outlined"
                             sx={{
                               height: { xs: 18, sm: 20 },
-                              fontSize: { xs: "0.6rem", sm: "0.65rem" },
-                              "& .MuiChip-label": { px: 0.75 },
+                              fontSize: { xs: '0.6rem', sm: '0.65rem' },
+                              '& .MuiChip-label': { px: 0.75 },
                             }}
                           />
                         )}
@@ -318,9 +323,9 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
                         onClick={() => handleServiceSelect(service)}
                         sx={{
                           py: { xs: 0.5, sm: 0.75 },
-                          fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
                           fontWeight: 600,
-                          textTransform: "none",
+                          textTransform: 'none',
                         }}
                       >
                         Reserve Now

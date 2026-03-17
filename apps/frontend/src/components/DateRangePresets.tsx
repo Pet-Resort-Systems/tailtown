@@ -11,9 +11,9 @@ interface DateRangePresetsProps {
   size?: 'small' | 'medium' | 'large';
 }
 
-export const DateRangePresets: React.FC<DateRangePresetsProps> = ({ 
+export const DateRangePresets: React.FC<DateRangePresetsProps> = ({
   onSelectRange,
-  size = 'small'
+  size = 'small',
 }) => {
   const getDateRange = (preset: string): { start: string; end: string } => {
     const today = new Date();
@@ -29,7 +29,7 @@ export const DateRangePresets: React.FC<DateRangePresetsProps> = ({
         start.setDate(start.getDate() - 1);
         return {
           start: start.toISOString().split('T')[0],
-          end: start.toISOString().split('T')[0]
+          end: start.toISOString().split('T')[0],
         };
       case 'last7':
         start = new Date(today);
@@ -47,7 +47,7 @@ export const DateRangePresets: React.FC<DateRangePresetsProps> = ({
         const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
         return {
           start: start.toISOString().split('T')[0],
-          end: lastMonthEnd.toISOString().split('T')[0]
+          end: lastMonthEnd.toISOString().split('T')[0],
         };
       case 'thisYear':
         start = new Date(today.getFullYear(), 0, 1);
@@ -57,7 +57,7 @@ export const DateRangePresets: React.FC<DateRangePresetsProps> = ({
         const lastYearEnd = new Date(today.getFullYear() - 1, 11, 31);
         return {
           start: start.toISOString().split('T')[0],
-          end: lastYearEnd.toISOString().split('T')[0]
+          end: lastYearEnd.toISOString().split('T')[0],
         };
       default:
         start = today;
@@ -65,7 +65,7 @@ export const DateRangePresets: React.FC<DateRangePresetsProps> = ({
 
     return {
       start: start.toISOString().split('T')[0],
-      end
+      end,
     };
   };
 
@@ -78,13 +78,21 @@ export const DateRangePresets: React.FC<DateRangePresetsProps> = ({
     <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
       <ButtonGroup size={size} variant="outlined">
         <Button onClick={() => handlePresetClick('today')}>Today</Button>
-        <Button onClick={() => handlePresetClick('yesterday')}>Yesterday</Button>
+        <Button onClick={() => handlePresetClick('yesterday')}>
+          Yesterday
+        </Button>
         <Button onClick={() => handlePresetClick('last7')}>Last 7 Days</Button>
-        <Button onClick={() => handlePresetClick('last30')}>Last 30 Days</Button>
+        <Button onClick={() => handlePresetClick('last30')}>
+          Last 30 Days
+        </Button>
       </ButtonGroup>
       <ButtonGroup size={size} variant="outlined">
-        <Button onClick={() => handlePresetClick('thisMonth')}>This Month</Button>
-        <Button onClick={() => handlePresetClick('lastMonth')}>Last Month</Button>
+        <Button onClick={() => handlePresetClick('thisMonth')}>
+          This Month
+        </Button>
+        <Button onClick={() => handlePresetClick('lastMonth')}>
+          Last Month
+        </Button>
         <Button onClick={() => handlePresetClick('thisYear')}>This Year</Button>
         <Button onClick={() => handlePresetClick('lastYear')}>Last Year</Button>
       </ButtonGroup>

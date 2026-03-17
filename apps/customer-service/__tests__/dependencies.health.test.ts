@@ -1,9 +1,9 @@
 /**
  * Dependency Health Tests
- * 
+ *
  * These tests validate that all required dependencies are installed
  * and can be imported correctly.
- * 
+ *
  * These would have caught:
  * - Missing helmet package
  * - Missing morgan package
@@ -42,8 +42,11 @@ describe('Dependency Health Checks', () => {
       // Check if types are available
       const fs = require('fs');
       const path = require('path');
-      const nodeModulesPath = path.join(__dirname, '../node_modules/@types/node');
-      
+      const nodeModulesPath = path.join(
+        __dirname,
+        '../node_modules/@types/node'
+      );
+
       expect(fs.existsSync(nodeModulesPath)).toBe(true);
     });
 
@@ -51,7 +54,7 @@ describe('Dependency Health Checks', () => {
       const fs = require('fs');
       const path = require('path');
       const typesPath = path.join(__dirname, '../node_modules/@types/express');
-      
+
       expect(fs.existsSync(typesPath)).toBe(true);
     });
 
@@ -59,7 +62,7 @@ describe('Dependency Health Checks', () => {
       const fs = require('fs');
       const path = require('path');
       const typesPath = path.join(__dirname, '../node_modules/@types/morgan');
-      
+
       expect(fs.existsSync(typesPath)).toBe(true);
     });
   });
@@ -69,13 +72,13 @@ describe('Dependency Health Checks', () => {
       const fs = require('fs');
       const path = require('path');
       const schemaPath = path.join(__dirname, '../prisma/schema.prisma');
-      
+
       expect(fs.existsSync(schemaPath)).toBe(true);
     });
 
     it('should be able to create PrismaClient without errors', () => {
       const { PrismaClient } = require('@prisma/client');
-      
+
       expect(() => new PrismaClient()).not.toThrow();
     });
 
@@ -93,11 +96,11 @@ describe('Dependency Health Checks', () => {
       const fs = require('fs');
       const path = require('path');
       const packagePath = path.join(__dirname, '../package.json');
-      
+
       expect(fs.existsSync(packagePath)).toBe(true);
-      
+
       const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
-      
+
       expect(packageJson.name).toBeDefined();
       expect(packageJson.version).toBeDefined();
       expect(packageJson.dependencies).toBeDefined();
@@ -108,17 +111,17 @@ describe('Dependency Health Checks', () => {
       const path = require('path');
       const packagePath = path.join(__dirname, '../package.json');
       const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
-      
+
       const criticalDeps = [
         'express',
         '@prisma/client',
         'helmet',
         'morgan',
         'cors',
-        'dotenv'
+        'dotenv',
       ];
-      
-      criticalDeps.forEach(dep => {
+
+      criticalDeps.forEach((dep) => {
         expect(packageJson.dependencies[dep]).toBeDefined();
       });
     });
@@ -128,7 +131,7 @@ describe('Dependency Health Checks', () => {
       const path = require('path');
       const packagePath = path.join(__dirname, '../package.json');
       const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
-      
+
       expect(packageJson.devDependencies?.typescript).toBeDefined();
       expect(packageJson.devDependencies?.['@types/node']).toBeDefined();
       expect(packageJson.devDependencies?.['@types/express']).toBeDefined();
@@ -140,7 +143,7 @@ describe('Dependency Health Checks', () => {
       const fs = require('fs');
       const path = require('path');
       const tsconfigPath = path.join(__dirname, '../tsconfig.json');
-      
+
       expect(fs.existsSync(tsconfigPath)).toBe(true);
     });
 
@@ -148,10 +151,10 @@ describe('Dependency Health Checks', () => {
       const fs = require('fs');
       const path = require('path');
       const tsconfigPath = path.join(__dirname, '../tsconfig.json');
-      
+
       if (fs.existsSync(tsconfigPath)) {
         const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, 'utf-8'));
-        
+
         expect(tsconfig.compilerOptions).toBeDefined();
         expect(tsconfig.compilerOptions.target).toBeDefined();
         expect(tsconfig.compilerOptions.module).toBeDefined();

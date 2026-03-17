@@ -8,13 +8,13 @@ const errorRate = new Rate('errors');
 // Test configuration
 export const options = {
   stages: [
-    { duration: '30s', target: 50 },  // Ramp up to 50 users
-    { duration: '1m', target: 50 },   // Stay at 50 users
-    { duration: '30s', target: 0 },   // Ramp down
+    { duration: '30s', target: 50 }, // Ramp up to 50 users
+    { duration: '1m', target: 50 }, // Stay at 50 users
+    { duration: '30s', target: 0 }, // Ramp down
   ],
   thresholds: {
-    'http_req_duration': ['p(95)<500'], // 95% of requests should be below 500ms
-    'errors': ['rate<0.1'],              // Error rate should be below 10%
+    http_req_duration: ['p(95)<500'], // 95% of requests should be below 500ms
+    errors: ['rate<0.1'], // Error rate should be below 10%
   },
 };
 
@@ -38,10 +38,11 @@ export default function () {
 
   // Test API endpoint (should be rate limited)
   const apiRes = http.get(`${BASE_URL}/api/customers`, params);
-  
+
   const isSuccess = check(apiRes, {
     'status is 200 or 429': (r) => r.status === 200 || r.status === 429,
-    'rate limit headers present': (r) => r.headers['Ratelimit-Limit'] !== undefined,
+    'rate limit headers present': (r) =>
+      r.headers['Ratelimit-Limit'] !== undefined,
   });
 
   if (!isSuccess) {
@@ -53,7 +54,9 @@ export default function () {
 
   // Log when rate limit is hit
   if (apiRes.status === 429) {
-    console.log(`Rate limit hit for tenant ${TENANT_ID} at ${new Date().toISOString()}`);
+    console.log(
+      `Rate limit hit for tenant ${TENANT_ID} at ${new Date().toISOString()}`
+    );
     console.log(`Retry-After: ${apiRes.headers['Retry-After']}`);
   }
 
@@ -62,31 +65,45 @@ export default function () {
 
 export function handleSummary(data) {
   return {
-    'load-tests/results/rate-limiting-single.json': JSON.stringify(data, null, 2),
-    'stdout': textSummary(data, { indent: ' ', enableColors: true }),
+    'load-tests/results/rate-limiting-single.json': JSON.stringify(
+      data,
+      null,
+      2
+    ),
+    stdout: textSummary(data, { indent: ' ', enableColors: true }),
   };
 }
 
 function textSummary(data, options) {
   const indent = options.indent || '';
   const enableColors = options.enableColors || false;
-  
+
   let summary = '\n' + indent + '=== Load Test Summary ===\n\n';
-  
+
   // Request stats
   summary += indent + 'Requests:\n';
   summary += indent + `  Total: ${data.metrics.http_reqs.values.count}\n`;
-  summary += indent + `  Failed: ${data.metrics.http_req_failed ? data.metrics.http_req_failed.values.rate * 100 : 0}%\n\n`;
-  
+  summary +=
+    indent +
+    `  Failed: ${data.metrics.http_req_failed ? data.metrics.http_req_failed.values.rate * 100 : 0}%\n\n`;
+
   // Response time stats
   summary += indent + 'Response Time:\n';
-  summary += indent + `  Avg: ${data.metrics.http_req_duration.values.avg.toFixed(2)}ms\n`;
-  summary += indent + `  P95: ${data.metrics.http_req_duration.values['p(95)'].toFixed(2)}ms\n`;
-  summary += indent + `  P99: ${data.metrics.http_req_duration.values['p(99)'].toFixed(2)}ms\n\n`;
-  
+  summary +=
+    indent +
+    `  Avg: ${data.metrics.http_req_duration.values.avg.toFixed(2)}ms\n`;
+  summary +=
+    indent +
+    `  P95: ${data.metrics.http_req_duration.values['p(95)'].toFixed(2)}ms\n`;
+  summary +=
+    indent +
+    `  P99: ${data.metrics.http_req_duration.values['p(99)'].toFixed(2)}ms\n\n`;
+
   // Rate limit info
   summary += indent + 'Rate Limiting:\n';
-  summary += indent + `  Error Rate: ${(data.metrics.errors.values.rate * 100).toFixed(2)}%\n`;
-  
+  summary +=
+    indent +
+    `  Error Rate: ${(data.metrics.errors.values.rate * 100).toFixed(2)}%\n`;
+
   return summary;
 }

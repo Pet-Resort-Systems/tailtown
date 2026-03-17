@@ -1,6 +1,6 @@
 /**
  * Resource Routes
- * 
+ *
  * This file defines the API routes for resource-related operations.
  * It implements our schema alignment strategy with defensive programming
  * and graceful error handling for potential schema mismatches.
@@ -15,7 +15,7 @@ import {
   createResource,
   updateResource,
   deleteResource,
-  getResourceAvailability
+  getResourceAvailability,
 } from '../controllers/resource/resource.controller';
 
 const router = express.Router();

@@ -1,251 +1,251 @@
-import React, { useEffect, Suspense, lazy } from "react";
+import React, { useEffect, Suspense, lazy } from 'react';
 import {
   Routes,
   Route,
   Navigate,
   BrowserRouter,
   useLocation,
-} from "react-router-dom";
+} from 'react-router-dom';
 import {
   Box,
   CircularProgress,
   CssBaseline,
   ThemeProvider,
-} from "@mui/material";
-import { HelmetProvider } from "react-helmet-async";
-import theme from "./theme";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import { SuperAdminProvider } from "./contexts/SuperAdminContext";
-import { CustomerAuthProvider } from "./contexts/CustomerAuthContext";
-import { ShoppingCartProvider } from "./contexts/ShoppingCartContext";
-import { HelpProvider } from "./contexts/HelpContext";
-import { OnboardingProvider } from "./contexts/OnboardingContext";
-import AccessibilityFix from "./components/AccessibilityFix";
-import ScrollFix from "./components/ScrollFix";
-import ApiTester from "./components/debug/ApiTester";
-import PageLoader from "./components/common/PageLoader";
-import "./styles/mobile.css"; // Mobile-specific styles
+} from '@mui/material';
+import { HelmetProvider } from 'react-helmet-async';
+import theme from './theme';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { SuperAdminProvider } from './contexts/SuperAdminContext';
+import { CustomerAuthProvider } from './contexts/CustomerAuthContext';
+import { ShoppingCartProvider } from './contexts/ShoppingCartContext';
+import { HelpProvider } from './contexts/HelpContext';
+import { OnboardingProvider } from './contexts/OnboardingContext';
+import AccessibilityFix from './components/AccessibilityFix';
+import ScrollFix from './components/ScrollFix';
+import ApiTester from './components/debug/ApiTester';
+import PageLoader from './components/common/PageLoader';
+import './styles/mobile.css'; // Mobile-specific styles
 
 // Layouts - Lazy loaded for code splitting
-const MainLayout = lazy(() => import("./components/layouts/MainLayout"));
-const AuthLayout = lazy(() => import("./components/layouts/AuthLayout"));
+const MainLayout = lazy(() => import('./components/layouts/MainLayout'));
+const AuthLayout = lazy(() => import('./components/layouts/AuthLayout'));
 
 // Pages - Lazy loaded for code splitting
 // All pages lazy loaded for optimal code splitting
-const Login = lazy(() => import("./pages/auth/Login"));
-const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword"));
-const ResetPassword = lazy(() => import("./pages/auth/ResetPassword"));
-const Profile = lazy(() => import("./pages/profile/Profile"));
-const Dashboard = lazy(() => import("./pages/Dashboard"));
-const NotFound = lazy(() => import("./pages/NotFound"));
+const Login = lazy(() => import('./pages/auth/Login'));
+const ForgotPassword = lazy(() => import('./pages/auth/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/auth/ResetPassword'));
+const Profile = lazy(() => import('./pages/profile/Profile'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Lazy loaded pages - Customer Management
-const Customers = lazy(() => import("./pages/customers/Customers"));
-const CustomerDetails = lazy(() => import("./pages/customers/CustomerDetails"));
+const Customers = lazy(() => import('./pages/customers/Customers'));
+const CustomerDetails = lazy(() => import('./pages/customers/CustomerDetails'));
 
 // Lazy loaded pages - Analytics & Reports
 const AnalyticsDashboard = lazy(
-  () => import("./pages/analytics/AnalyticsDashboard")
+  () => import('./pages/analytics/AnalyticsDashboard')
 );
 const CustomerValueReport = lazy(
-  () => import("./pages/analytics/CustomerValueReport")
+  () => import('./pages/analytics/CustomerValueReport')
 );
-const ReportsPage = lazy(() => import("./pages/reports/ReportsPage"));
+const ReportsPage = lazy(() => import('./pages/reports/ReportsPage'));
 const DailyCheckInOutReport = lazy(
-  () => import("./pages/reports/DailyCheckInOutReport")
+  () => import('./pages/reports/DailyCheckInOutReport')
 );
 const ReconciliationReport = lazy(
-  () => import("./pages/reports/ReconciliationReport")
+  () => import('./pages/reports/ReconciliationReport')
 );
 
 // Lazy loaded pages - Pet Management
-const Pets = lazy(() => import("./pages/pets/Pets"));
-const PetDetails = lazy(() => import("./pages/pets/PetDetails"));
+const Pets = lazy(() => import('./pages/pets/Pets'));
+const PetDetails = lazy(() => import('./pages/pets/PetDetails'));
 
 // Lazy loaded pages - Reservations
-const Reservations = lazy(() => import("./pages/reservations/Reservations"));
+const Reservations = lazy(() => import('./pages/reservations/Reservations'));
 const ReservationDetails = lazy(
-  () => import("./pages/reservations/ReservationDetails")
+  () => import('./pages/reservations/ReservationDetails')
 );
 const ReservationEdit = lazy(
-  () => import("./pages/reservations/ReservationEdit")
+  () => import('./pages/reservations/ReservationEdit')
 );
 
 // Lazy loaded pages - Calendar
-const CalendarPage = lazy(() => import("./pages/calendar/CalendarPage"));
+const CalendarPage = lazy(() => import('./pages/calendar/CalendarPage'));
 const GroomingCalendarPage = lazy(
-  () => import("./pages/calendar/GroomingCalendarPage")
+  () => import('./pages/calendar/GroomingCalendarPage')
 );
 const TrainingCalendarPage = lazy(
-  () => import("./pages/calendar/TrainingCalendarPage")
+  () => import('./pages/calendar/TrainingCalendarPage')
 );
 
 // Lazy loaded pages - Services & Resources
-const Services = lazy(() => import("./pages/services/Services"));
-const ServiceDetails = lazy(() => import("./pages/services/ServiceDetails"));
-const Resources = lazy(() => import("./pages/resources/Resources"));
-const ResourceDetails = lazy(() => import("./pages/resources/ResourceDetails"));
-const SuitesPage = lazy(() => import("./pages/suites/SuitesPage"));
+const Services = lazy(() => import('./pages/services/Services'));
+const ServiceDetails = lazy(() => import('./pages/services/ServiceDetails'));
+const Resources = lazy(() => import('./pages/resources/Resources'));
+const ResourceDetails = lazy(() => import('./pages/resources/ResourceDetails'));
+const SuitesPage = lazy(() => import('./pages/suites/SuitesPage'));
 
 // Lazy loaded pages - Settings & Admin
-const PriceRulesPage = lazy(() => import("./pages/settings/PriceRules"));
+const PriceRulesPage = lazy(() => import('./pages/settings/PriceRules'));
 const PriceRuleDetailsPage = lazy(
-  () => import("./pages/settings/PriceRuleDetailsPage")
+  () => import('./pages/settings/PriceRuleDetailsPage')
 );
-const PaymentMethods = lazy(() => import("./pages/settings/PaymentMethods"));
-const Settings = lazy(() => import("./pages/settings/Settings"));
-const Users = lazy(() => import("./pages/settings/Users"));
+const PaymentMethods = lazy(() => import('./pages/settings/PaymentMethods'));
+const Settings = lazy(() => import('./pages/settings/Settings'));
+const Users = lazy(() => import('./pages/settings/Users'));
 const ServiceAgreements = lazy(
-  () => import("./pages/settings/ServiceAgreements")
+  () => import('./pages/settings/ServiceAgreements')
 );
 const LabelPrinterTest = lazy(
-  () => import("./pages/settings/LabelPrinterTest")
+  () => import('./pages/settings/LabelPrinterTest')
 );
-const BusinessSettings = lazy(() => import("./pages/admin/BusinessSettings"));
+const BusinessSettings = lazy(() => import('./pages/admin/BusinessSettings'));
 const PriceRuleRedirect = lazy(
-  () => import("./components/redirects/PriceRuleRedirect")
+  () => import('./components/redirects/PriceRuleRedirect')
 );
 
 // Lazy loaded pages - Staff & Operations
-const Scheduling = lazy(() => import("./pages/staff/Scheduling"));
+const Scheduling = lazy(() => import('./pages/staff/Scheduling'));
 
 // Tenant Management moved to separate admin-portal app (port 3001)
-const OrderEntry = lazy(() => import("./pages/orders/OrderEntry"));
-const CheckoutPage = lazy(() => import("./pages/checkout/CheckoutPage"));
-const PrintKennelCards = lazy(() => import("./pages/kennels/PrintKennelCards"));
+const OrderEntry = lazy(() => import('./pages/orders/OrderEntry'));
+const CheckoutPage = lazy(() => import('./pages/checkout/CheckoutPage'));
+const PrintKennelCards = lazy(() => import('./pages/kennels/PrintKennelCards'));
 
 // Lazy loaded pages - Marketing
-const MarketingHub = lazy(() => import("./pages/admin/marketing/MarketingHub"));
-const SmsMarketing = lazy(() => import("./pages/admin/marketing/SmsMarketing"));
+const MarketingHub = lazy(() => import('./pages/admin/marketing/MarketingHub'));
+const SmsMarketing = lazy(() => import('./pages/admin/marketing/SmsMarketing'));
 const EmailMarketing = lazy(
-  () => import("./pages/admin/marketing/EmailMarketing")
+  () => import('./pages/admin/marketing/EmailMarketing')
 );
 const MessageTemplates = lazy(
-  () => import("./pages/admin/marketing/MessageTemplates")
+  () => import('./pages/admin/marketing/MessageTemplates')
 );
 const MarketingAnalytics = lazy(
-  () => import("./pages/admin/marketing/MarketingAnalytics")
+  () => import('./pages/admin/marketing/MarketingAnalytics')
 );
 
 // Lazy loaded pages - Check-In
-const CheckInWorkflow = lazy(() => import("./pages/check-in/CheckInWorkflow"));
+const CheckInWorkflow = lazy(() => import('./pages/check-in/CheckInWorkflow'));
 
 // Lazy loaded pages - Super Admin
-const SuperAdminLogin = lazy(() => import("./pages/super-admin/Login"));
-const SuperAdminDashboard = lazy(() => import("./pages/super-admin/Dashboard"));
-const SuperAdminRoute = lazy(() => import("./components/auth/SuperAdminRoute"));
+const SuperAdminLogin = lazy(() => import('./pages/super-admin/Login'));
+const SuperAdminDashboard = lazy(() => import('./pages/super-admin/Dashboard'));
+const SuperAdminRoute = lazy(() => import('./components/auth/SuperAdminRoute'));
 const SuperAdminOnlyRoute = lazy(
-  () => import("./components/auth/SuperAdminOnlyRoute")
+  () => import('./components/auth/SuperAdminOnlyRoute')
 );
 
 // Admin-only route wrapper (for Manager/Admin access)
-const AdminOnlyRoute = lazy(() => import("./components/auth/AdminOnlyRoute"));
+const AdminOnlyRoute = lazy(() => import('./components/auth/AdminOnlyRoute'));
 
 // Lazy loaded pages - Tenant Management
-const TenantManagement = lazy(() => import("./pages/admin/TenantManagement"));
-const CheckInComplete = lazy(() => import("./pages/check-in/CheckInComplete"));
+const TenantManagement = lazy(() => import('./pages/admin/TenantManagement'));
+const CheckInComplete = lazy(() => import('./pages/check-in/CheckInComplete'));
 const CheckInTemplateManager = lazy(
-  () => import("./pages/admin/CheckInTemplateManager")
+  () => import('./pages/admin/CheckInTemplateManager')
 );
 
 // Lazy loaded pages - Checkout
 const CheckoutWorkflow = lazy(
-  () => import("./pages/checkout/CheckoutWorkflow")
+  () => import('./pages/checkout/CheckoutWorkflow')
 );
 
 // Lazy loaded pages - Checklists
 const ChecklistTemplates = lazy(
-  () => import("./pages/admin/ChecklistTemplates")
+  () => import('./pages/admin/ChecklistTemplates')
 );
-const ChecklistView = lazy(() => import("./pages/staff/ChecklistView"));
+const ChecklistView = lazy(() => import('./pages/staff/ChecklistView'));
 
 // Lazy loaded pages - Vaccine Management
 const VaccineRequirements = lazy(
-  () => import("./pages/admin/VaccineRequirements")
+  () => import('./pages/admin/VaccineRequirements')
 );
 
 // Lazy loaded pages - Custom Icons
-const CustomIcons = lazy(() => import("./pages/admin/CustomIcons"));
+const CustomIcons = lazy(() => import('./pages/admin/CustomIcons'));
 
 // Lazy loaded pages - Announcements
 const AnnouncementManager = lazy(
-  () => import("./pages/admin/AnnouncementManager")
+  () => import('./pages/admin/AnnouncementManager')
 );
 
 // Lazy loaded pages - Loyalty Program
-const LoyaltyProgram = lazy(() => import("./pages/admin/LoyaltyProgram"));
+const LoyaltyProgram = lazy(() => import('./pages/admin/LoyaltyProgram'));
 
 // Lazy loaded pages - Coupons
-const CouponManagement = lazy(() => import("./pages/admin/CouponManagement"));
+const CouponManagement = lazy(() => import('./pages/admin/CouponManagement'));
 
 // Lazy loaded pages - Daycare Passes
 const DaycarePassManagement = lazy(
-  () => import("./pages/admin/DaycarePassManagement")
+  () => import('./pages/admin/DaycarePassManagement')
 );
 
 // Lazy loaded pages - Audit Logs
-const AuditLogs = lazy(() => import("./pages/admin/AuditLogs"));
+const AuditLogs = lazy(() => import('./pages/admin/AuditLogs'));
 
 // Lazy loaded pages - Products/POS
-const Products = lazy(() => import("./pages/products/Products"));
+const Products = lazy(() => import('./pages/products/Products'));
 
 // Lazy loaded pages - Grooming
 const GroomerAppointments = lazy(
-  () => import("./pages/grooming/GroomerAppointments")
+  () => import('./pages/grooming/GroomerAppointments')
 );
 
 // Lazy loaded pages - Training
-const TrainingClasses = lazy(() => import("./pages/training/TrainingClasses"));
+const TrainingClasses = lazy(() => import('./pages/training/TrainingClasses'));
 const ClassEnrollments = lazy(
-  () => import("./pages/training/ClassEnrollments")
+  () => import('./pages/training/ClassEnrollments')
 );
 
 // Lazy loaded pages - Report Cards
-const ReportCards = lazy(() => import("./pages/reportCards/ReportCards"));
+const ReportCards = lazy(() => import('./pages/reportCards/ReportCards'));
 
 // Lazy loaded pages - Waitlist
-const Waitlist = lazy(() => import("./pages/waitlist/Waitlist"));
+const Waitlist = lazy(() => import('./pages/waitlist/Waitlist'));
 
 // Public Booking Portal
-const BookingPortal = lazy(() => import("./pages/booking/BookingPortal"));
+const BookingPortal = lazy(() => import('./pages/booking/BookingPortal'));
 const CustomerForgotPassword = lazy(
-  () => import("./pages/booking/ForgotPassword")
+  () => import('./pages/booking/ForgotPassword')
 );
 const CustomerResetPassword = lazy(
-  () => import("./pages/booking/ResetPassword")
+  () => import('./pages/booking/ResetPassword')
 );
 
 // Setup Wizard
-const SetupWizard = lazy(() => import("./pages/setup-wizard/SetupWizard"));
+const SetupWizard = lazy(() => import('./pages/setup-wizard/SetupWizard'));
 const SetupWizardProvider = lazy(
-  () => import("./pages/setup-wizard/SetupWizardContext")
+  () => import('./pages/setup-wizard/SetupWizardContext')
 );
 const CustomerDashboard = lazy(
-  () => import("./pages/booking/CustomerDashboard")
+  () => import('./pages/booking/CustomerDashboard')
 );
 
 // Onboarding
 const OnboardingWizard = lazy(
-  () => import("./components/onboarding/OnboardingWizard")
+  () => import('./components/onboarding/OnboardingWizard')
 );
 
 // Mobile Pages
-const MobileDashboard = lazy(() => import("./pages/mobile/MobileDashboard"));
-const Checklists = lazy(() => import("./pages/mobile/Checklists"));
-const TeamChat = lazy(() => import("./pages/mobile/TeamChat"));
-const MySchedule = lazy(() => import("./pages/mobile/MySchedule"));
-const MobileProfile = lazy(() => import("./pages/mobile/Profile"));
+const MobileDashboard = lazy(() => import('./pages/mobile/MobileDashboard'));
+const Checklists = lazy(() => import('./pages/mobile/Checklists'));
+const TeamChat = lazy(() => import('./pages/mobile/TeamChat'));
+const MySchedule = lazy(() => import('./pages/mobile/MySchedule'));
+const MobileProfile = lazy(() => import('./pages/mobile/Profile'));
 const MobileReportCards = lazy(
-  () => import("./pages/mobile/MobileReportCards")
+  () => import('./pages/mobile/MobileReportCards')
 );
 const CareTrackingPage = lazy(
-  () => import("./pages/care-tracking/CareTrackingPage")
+  () => import('./pages/care-tracking/CareTrackingPage')
 );
 
 // Custom event and utility components
 
 // Custom event for route changes
-export const RouteChangeEvent = "app:route-change";
+export const RouteChangeEvent = 'app:route-change';
 
 // Emit route change event
 const RouteChangeListener = () => {
@@ -267,10 +267,10 @@ const AppRoutes = () => {
     return (
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
         }}
       >
         <CircularProgress />
@@ -910,10 +910,10 @@ const App = () => {
                       fallback={
                         <Box
                           sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            height: "100vh",
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: '100vh',
                           }}
                         >
                           <CircularProgress />

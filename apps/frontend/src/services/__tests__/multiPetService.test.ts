@@ -15,12 +15,12 @@ describe('Multi-Pet Service', () => {
       pricingType: 'PER_PET',
       basePrice: 50,
       additionalPetPrice: 40,
-      isActive: true
+      isActive: true,
     };
 
     it('should calculate price for 1 pet', () => {
       const result = multiPetService.calculatePricingLocal(capacity, 1);
-      
+
       expect(result.totalPrice).toBe(50);
       expect(result.basePrice).toBe(50);
       expect(result.additionalPetCharges).toBe(0);
@@ -29,7 +29,7 @@ describe('Multi-Pet Service', () => {
 
     it('should calculate price for 2 pets', () => {
       const result = multiPetService.calculatePricingLocal(capacity, 2);
-      
+
       expect(result.totalPrice).toBe(90); // 50 + 40
       expect(result.additionalPetCharges).toBe(40);
       expect(result.perPetCost).toBe(45);
@@ -37,7 +37,7 @@ describe('Multi-Pet Service', () => {
 
     it('should include breakdown', () => {
       const result = multiPetService.calculatePricingLocal(capacity, 2);
-      
+
       expect(result.breakdown).toHaveLength(2);
       expect(result.breakdown[0].description).toContain('First pet');
       expect(result.breakdown[1].description).toContain('Additional pet');
@@ -52,18 +52,28 @@ describe('Multi-Pet Service', () => {
       maxPets: 4,
       pricingType: 'FLAT_RATE',
       basePrice: 150,
-      isActive: true
+      isActive: true,
     };
 
     it('should charge flat rate for any number of pets', () => {
-      expect(multiPetService.calculatePricingLocal(capacity, 1).totalPrice).toBe(150);
-      expect(multiPetService.calculatePricingLocal(capacity, 2).totalPrice).toBe(150);
-      expect(multiPetService.calculatePricingLocal(capacity, 4).totalPrice).toBe(150);
+      expect(
+        multiPetService.calculatePricingLocal(capacity, 1).totalPrice
+      ).toBe(150);
+      expect(
+        multiPetService.calculatePricingLocal(capacity, 2).totalPrice
+      ).toBe(150);
+      expect(
+        multiPetService.calculatePricingLocal(capacity, 4).totalPrice
+      ).toBe(150);
     });
 
     it('should calculate per-pet cost correctly', () => {
-      expect(multiPetService.calculatePricingLocal(capacity, 2).perPetCost).toBe(75);
-      expect(multiPetService.calculatePricingLocal(capacity, 4).perPetCost).toBe(37.5);
+      expect(
+        multiPetService.calculatePricingLocal(capacity, 2).perPetCost
+      ).toBe(75);
+      expect(
+        multiPetService.calculatePricingLocal(capacity, 4).perPetCost
+      ).toBe(37.5);
     });
   });
 
@@ -79,9 +89,9 @@ describe('Multi-Pet Service', () => {
         { minPets: 1, maxPets: 1, price: 80, description: 'Single pet' },
         { minPets: 2, maxPets: 2, price: 140, description: 'Two pets' },
         { minPets: 3, maxPets: 3, price: 190, description: 'Three pets' },
-        { minPets: 4, maxPets: 4, price: 230, description: 'Four pets' }
+        { minPets: 4, maxPets: 4, price: 230, description: 'Four pets' },
       ],
-      isActive: true
+      isActive: true,
     };
 
     it('should use correct tier for 1 pet', () => {
@@ -115,12 +125,12 @@ describe('Multi-Pet Service', () => {
       basePrice: 120,
       additionalPetPrice: 100,
       percentageOff: 10,
-      isActive: true
+      isActive: true,
     };
 
     it('should apply percentage off to additional pets', () => {
       const result = multiPetService.calculatePricingLocal(capacity, 2);
-      
+
       // First pet: 120, Second pet: 100 - 10% = 90
       expect(result.totalPrice).toBe(210);
       expect(result.discounts).toBe(10);
@@ -128,7 +138,7 @@ describe('Multi-Pet Service', () => {
 
     it('should calculate savings correctly', () => {
       const result = multiPetService.calculatePricingLocal(capacity, 3);
-      
+
       // First: 120, Second: 90, Third: 90 = 300
       // Standard would be: 120 * 3 = 360
       // Savings: 60
@@ -141,11 +151,11 @@ describe('Multi-Pet Service', () => {
   describe('checkCompatibilityLocal', () => {
     it('should pass for single pet', () => {
       const pets: PetInSuite[] = [
-        { petId: '1', petName: 'Max', size: 'MEDIUM' }
+        { petId: '1', petName: 'Max', size: 'MEDIUM' },
       ];
 
       const result = multiPetService.checkCompatibilityLocal(pets);
-      
+
       expect(result.isCompatible).toBe(true);
       expect(result.issues).toHaveLength(0);
     });
@@ -154,23 +164,23 @@ describe('Multi-Pet Service', () => {
       const pets: PetInSuite[] = [
         { petId: '1', petName: 'Max', size: 'SMALL' },
         { petId: '2', petName: 'Buddy', size: 'MEDIUM' },
-        { petId: '3', petName: 'Rex', size: 'LARGE' }
+        { petId: '3', petName: 'Rex', size: 'LARGE' },
       ];
 
       const result = multiPetService.checkCompatibilityLocal(pets);
-      
+
       expect(result.warnings.length).toBeGreaterThan(0);
       expect(result.warnings[0].message).toContain('different sizes');
     });
 
     it('should warn about young and senior mix', () => {
       const pets: PetInSuite[] = [
-        { petId: '1', petName: 'Puppy', age: 6 },  // 6 months
-        { petId: '2', petName: 'Senior', age: 96 }  // 8 years
+        { petId: '1', petName: 'Puppy', age: 6 }, // 6 months
+        { petId: '2', petName: 'Senior', age: 96 }, // 8 years
       ];
 
       const result = multiPetService.checkCompatibilityLocal(pets);
-      
+
       expect(result.warnings.length).toBeGreaterThan(0);
       expect(result.warnings[0].message).toContain('young and senior');
     });
@@ -178,11 +188,11 @@ describe('Multi-Pet Service', () => {
     it('should warn about special needs', () => {
       const pets: PetInSuite[] = [
         { petId: '1', petName: 'Max', specialNeeds: ['medication'] },
-        { petId: '2', petName: 'Buddy', specialNeeds: [] }
+        { petId: '2', petName: 'Buddy', specialNeeds: [] },
       ];
 
       const result = multiPetService.checkCompatibilityLocal(pets);
-      
+
       expect(result.warnings.length).toBeGreaterThan(0);
       expect(result.warnings[0].message).toContain('special needs');
     });
@@ -270,7 +280,7 @@ describe('Multi-Pet Service', () => {
         maxPets: 2,
         basePrice: 50,
         pricingType: 'PER_PET',
-        additionalPetPrice: 40
+        additionalPetPrice: 40,
       };
 
       const result = multiPetService.validateCapacity(capacity);
@@ -282,7 +292,7 @@ describe('Multi-Pet Service', () => {
       const capacity: Partial<SuiteCapacity> = {
         maxPets: 2,
         basePrice: 50,
-        pricingType: 'PER_PET'
+        pricingType: 'PER_PET',
       };
 
       const result = multiPetService.validateCapacity(capacity);
@@ -294,7 +304,7 @@ describe('Multi-Pet Service', () => {
       const capacity: Partial<SuiteCapacity> = {
         suiteType: 'STANDARD',
         basePrice: 50,
-        pricingType: 'PER_PET'
+        pricingType: 'PER_PET',
       };
 
       const result = multiPetService.validateCapacity(capacity);
@@ -306,7 +316,7 @@ describe('Multi-Pet Service', () => {
       const capacity: Partial<SuiteCapacity> = {
         suiteType: 'STANDARD',
         maxPets: 2,
-        pricingType: 'PER_PET'
+        pricingType: 'PER_PET',
       };
 
       const result = multiPetService.validateCapacity(capacity);
@@ -319,12 +329,14 @@ describe('Multi-Pet Service', () => {
         suiteType: 'STANDARD',
         maxPets: 2,
         basePrice: 50,
-        pricingType: 'PER_PET'
+        pricingType: 'PER_PET',
       };
 
       const result = multiPetService.validateCapacity(capacity);
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Additional pet price is required for per-pet pricing');
+      expect(result.errors).toContain(
+        'Additional pet price is required for per-pet pricing'
+      );
     });
   });
 });

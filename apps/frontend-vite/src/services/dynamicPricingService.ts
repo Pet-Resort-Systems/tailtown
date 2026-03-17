@@ -1,6 +1,6 @@
 /**
  * Dynamic Pricing Service
- * 
+ *
  * Handles peak demand pricing including:
  * - Seasonal pricing
  * - Peak time surcharges
@@ -21,9 +21,12 @@ import {
   AutomatedPriceAdjustment,
   PricingInsights,
   Season,
-  DayOfWeek
+  DayOfWeek,
 } from '../types/dynamicPricing';
-import { getDayOfWeekName, isWeekend as isWeekendUtil } from '../utils/dateUtils';
+import {
+  getDayOfWeekName,
+  isWeekend as isWeekendUtil,
+} from '../utils/dateUtils';
 
 export const dynamicPricingService = {
   /**
@@ -34,7 +37,11 @@ export const dynamicPricingService = {
     isActive?: boolean;
     page?: number;
     limit?: number;
-  }): Promise<{ data: AnyPricingRule[]; totalPages: number; currentPage: number }> => {
+  }): Promise<{
+    data: AnyPricingRule[];
+    totalPages: number;
+    currentPage: number;
+  }> => {
     const response = await customerApi.get('/api/pricing/rules', { params });
     return response.data;
   },
@@ -50,7 +57,9 @@ export const dynamicPricingService = {
   /**
    * Create a new pricing rule
    */
-  createPricingRule: async (rule: Partial<AnyPricingRule>): Promise<AnyPricingRule> => {
+  createPricingRule: async (
+    rule: Partial<AnyPricingRule>
+  ): Promise<AnyPricingRule> => {
     const response = await customerApi.post('/api/pricing/rules', rule);
     return response.data;
   },
@@ -58,7 +67,10 @@ export const dynamicPricingService = {
   /**
    * Update a pricing rule
    */
-  updatePricingRule: async (id: string, updates: Partial<AnyPricingRule>): Promise<AnyPricingRule> => {
+  updatePricingRule: async (
+    id: string,
+    updates: Partial<AnyPricingRule>
+  ): Promise<AnyPricingRule> => {
     const response = await customerApi.put(`/api/pricing/rules/${id}`, updates);
     return response.data;
   },
@@ -73,7 +85,9 @@ export const dynamicPricingService = {
   /**
    * Calculate price with all applicable rules
    */
-  calculatePrice: async (request: PriceCalculationRequest): Promise<PriceCalculationResult> => {
+  calculatePrice: async (
+    request: PriceCalculationRequest
+  ): Promise<PriceCalculationResult> => {
     const response = await customerApi.post('/api/pricing/calculate', request);
     return response.data;
   },
@@ -87,7 +101,7 @@ export const dynamicPricingService = {
     serviceId: string
   ): Promise<PricingCalendar> => {
     const response = await customerApi.get('/api/pricing/calendar', {
-      params: { year, month, serviceId }
+      params: { year, month, serviceId },
     });
     return response.data;
   },
@@ -97,7 +111,7 @@ export const dynamicPricingService = {
    */
   getHolidays: async (year?: number): Promise<Holiday[]> => {
     const response = await customerApi.get('/api/pricing/holidays', {
-      params: { year }
+      params: { year },
     });
     return response.data;
   },
@@ -107,7 +121,10 @@ export const dynamicPricingService = {
    */
   saveHoliday: async (holiday: Partial<Holiday>): Promise<Holiday> => {
     if (holiday.id) {
-      const response = await customerApi.put(`/api/pricing/holidays/${holiday.id}`, holiday);
+      const response = await customerApi.put(
+        `/api/pricing/holidays/${holiday.id}`,
+        holiday
+      );
       return response.data;
     } else {
       const response = await customerApi.post('/api/pricing/holidays', holiday);
@@ -127,7 +144,7 @@ export const dynamicPricingService = {
    */
   getPricingRuleStats: async (ruleId?: string): Promise<PricingRuleStats[]> => {
     const response = await customerApi.get('/api/pricing/stats', {
-      params: { ruleId }
+      params: { ruleId },
     });
     return response.data;
   },
@@ -159,7 +176,7 @@ export const dynamicPricingService = {
     serviceId?: string
   ): Promise<PricingInsights> => {
     const response = await customerApi.get('/api/pricing/insights', {
-      params: { startDate, endDate, serviceId }
+      params: { startDate, endDate, serviceId },
     });
     return response.data;
   },
@@ -169,7 +186,7 @@ export const dynamicPricingService = {
    */
   getCurrentSeason: (date: Date = new Date()): Season => {
     const month = date.getMonth() + 1; // 1-12
-    
+
     if (month >= 3 && month <= 5) return 'SPRING';
     if (month >= 6 && month <= 8) return 'SUMMER';
     if (month >= 9 && month <= 11) return 'FALL';
@@ -194,14 +211,18 @@ export const dynamicPricingService = {
    * CLIENT-SIDE: Check if date is holiday
    */
   isHoliday: (date: Date | string, holidays: Holiday[]): boolean => {
-    const dateStr = typeof date === 'string' ? date : date.toISOString().split('T')[0];
-    return holidays.some(h => h.date === dateStr);
+    const dateStr =
+      typeof date === 'string' ? date : date.toISOString().split('T')[0];
+    return holidays.some((h) => h.date === dateStr);
   },
 
   /**
    * CLIENT-SIDE: Calculate days in advance
    */
-  calculateDaysInAdvance: (checkInDate: string, bookingDate: string = new Date().toISOString()): number => {
+  calculateDaysInAdvance: (
+    checkInDate: string,
+    bookingDate: string = new Date().toISOString()
+  ): number => {
     const checkIn = new Date(checkInDate);
     const booking = new Date(bookingDate);
     const diffTime = checkIn.getTime() - booking.getTime();
@@ -236,7 +257,10 @@ export const dynamicPricingService = {
   /**
    * CLIENT-SIDE: Apply percentage adjustment
    */
-  applyPercentageAdjustment: (basePrice: number, percentage: number): number => {
+  applyPercentageAdjustment: (
+    basePrice: number,
+    percentage: number
+  ): number => {
     return (basePrice * percentage) / 100;
   },
 
@@ -250,8 +274,12 @@ export const dynamicPricingService = {
   /**
    * CLIENT-SIDE: Calculate final price
    */
-  calculateFinalPrice: (basePrice: number, adjustments: PriceAdjustment[]): number => {
-    const totalAdjustment = dynamicPricingService.calculateTotalAdjustment(adjustments);
+  calculateFinalPrice: (
+    basePrice: number,
+    adjustments: PriceAdjustment[]
+  ): number => {
+    const totalAdjustment =
+      dynamicPricingService.calculateTotalAdjustment(adjustments);
     return Math.max(0, basePrice + totalAdjustment);
   },
 
@@ -276,7 +304,7 @@ export const dynamicPricingService = {
       SPECIAL_EVENT: 'Special Event',
       DAY_OF_WEEK: 'Day of Week',
       ADVANCE_BOOKING: 'Advance Booking',
-      LAST_MINUTE: 'Last Minute'
+      LAST_MINUTE: 'Last Minute',
     };
     return labels[type] || type;
   },
@@ -289,7 +317,7 @@ export const dynamicPricingService = {
       SPRING: 'Spring',
       SUMMER: 'Summer',
       FALL: 'Fall',
-      WINTER: 'Winter'
+      WINTER: 'Winter',
     };
     return labels[season];
   },
@@ -302,7 +330,7 @@ export const dynamicPricingService = {
       SPRING: '#4caf50',
       SUMMER: '#ff9800',
       FALL: '#f57c00',
-      WINTER: '#2196f3'
+      WINTER: '#2196f3',
     };
     return colors[season];
   },
@@ -310,7 +338,9 @@ export const dynamicPricingService = {
   /**
    * CLIENT-SIDE: Validate pricing rule
    */
-  validatePricingRule: (rule: Partial<AnyPricingRule>): { isValid: boolean; errors: string[] } => {
+  validatePricingRule: (
+    rule: Partial<AnyPricingRule>
+  ): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
 
     if (!rule.name || rule.name.trim().length === 0) {
@@ -325,7 +355,10 @@ export const dynamicPricingService = {
       errors.push('Adjustment value is required');
     }
 
-    if (rule.adjustmentType === 'PERCENTAGE' && (rule.adjustmentValue! < -100 || rule.adjustmentValue! > 100)) {
+    if (
+      rule.adjustmentType === 'PERCENTAGE' &&
+      (rule.adjustmentValue! < -100 || rule.adjustmentValue! > 100)
+    ) {
       errors.push('Percentage must be between -100 and 100');
     }
 
@@ -335,7 +368,7 @@ export const dynamicPricingService = {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   },
 
@@ -350,7 +383,7 @@ export const dynamicPricingService = {
    * CLIENT-SIDE: Filter active rules
    */
   filterActiveRules: (rules: AnyPricingRule[]): AnyPricingRule[] => {
-    return rules.filter(rule => rule.isActive);
+    return rules.filter((rule) => rule.isActive);
   },
 
   /**
@@ -364,5 +397,5 @@ export const dynamicPricingService = {
       return false;
     }
     return true;
-  }
+  },
 };

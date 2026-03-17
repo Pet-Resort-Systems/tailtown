@@ -10,14 +10,14 @@
  * TODO: Needs refactoring for new architecture
  */
 
-import request from "supertest";
+import request from 'supertest';
 // import app from '../../index'; // Commented out - starts server which conflicts with running service
-import { prisma } from "../../controllers/reservation/utils/prisma-helpers";
-import { format, addDays, subDays } from "date-fns";
+import { prisma } from '../../controllers/reservation/utils/prisma-helpers';
+import { format, addDays, subDays } from 'date-fns';
 
 // SKIPPED: These are integration tests that require the app to be running
 // TODO: Refactor to use mocked app or run in CI with test server
-describe.skip("Reservation Date Filtering", () => {
+describe.skip('Reservation Date Filtering', () => {
   let testTenantId: string;
   let testCustomerId: string;
   let testPetId: string;
@@ -30,7 +30,7 @@ describe.skip("Reservation Date Filtering", () => {
   let checkInLastWeekId: string;
 
   beforeAll(async () => {
-    testTenantId = "dev"; // Use existing dev tenant
+    testTenantId = 'dev'; // Use existing dev tenant
 
     // Note: In a real test environment, you'd create test data
     // For now, we'll use existing customer/pet/service IDs
@@ -40,21 +40,21 @@ describe.skip("Reservation Date Filtering", () => {
     const customer = await prisma.customer.findFirst({
       where: { tenantId: testTenantId },
     });
-    if (!customer) throw new Error("No customer found for testing");
+    if (!customer) throw new Error('No customer found for testing');
     testCustomerId = customer.id;
 
     // Get existing pet
     const pet = await prisma.pet.findFirst({
       where: { tenantId: testTenantId, customerId: testCustomerId },
     });
-    if (!pet) throw new Error("No pet found for testing");
+    if (!pet) throw new Error('No pet found for testing');
     testPetId = pet.id;
 
     // Get existing service
     const service = await prisma.service.findFirst({
       where: { tenantId: testTenantId },
     });
-    if (!service) throw new Error("No service found for testing");
+    if (!service) throw new Error('No service found for testing');
     testServiceId = service.id;
 
     // Create test reservations with different date ranges
@@ -80,7 +80,7 @@ describe.skip("Reservation Date Filtering", () => {
           0
         ),
         endDate: addDays(today, 3),
-        status: "CONFIRMED",
+        status: 'CONFIRMED',
       },
     });
     checkInTodayId = res1.id;
@@ -101,7 +101,7 @@ describe.skip("Reservation Date Filtering", () => {
           0
         ),
         endDate: tomorrow,
-        status: "CHECKED_IN",
+        status: 'CHECKED_IN',
       },
     });
     checkInYesterdayId = res2.id;
@@ -122,7 +122,7 @@ describe.skip("Reservation Date Filtering", () => {
           0
         ),
         endDate: addDays(tomorrow, 2),
-        status: "CONFIRMED",
+        status: 'CONFIRMED',
       },
     });
     checkInTomorrowId = res3.id;
@@ -143,7 +143,7 @@ describe.skip("Reservation Date Filtering", () => {
           0
         ),
         endDate: subDays(today, 5),
-        status: "COMPLETED",
+        status: 'COMPLETED',
       },
     });
     checkInLastWeekId = res4.id;
@@ -165,32 +165,32 @@ describe.skip("Reservation Date Filtering", () => {
     });
   });
 
-  describe("checkInDate Filter", () => {
-    it("should return only reservations checking in TODAY", async () => {
+  describe('checkInDate Filter', () => {
+    it('should return only reservations checking in TODAY', async () => {
       const today = new Date();
-      const formattedDate = format(today, "yyyy-MM-dd");
+      const formattedDate = format(today, 'yyyy-MM-dd');
 
       const response = await request(app)
-        .get("/api/reservations")
+        .get('/api/reservations')
         .query({ checkInDate: formattedDate })
-        .set("x-tenant-subdomain", "test-date-filter");
+        .set('x-tenant-subdomain', 'test-date-filter');
 
       expect(response.status).toBe(200);
-      expect(response.body.status).toBe("success");
+      expect(response.body.status).toBe('success');
 
       const reservations = response.body.data.reservations;
       expect(reservations).toHaveLength(1);
       expect(reservations[0].id).toBe(checkInTodayId);
     });
 
-    it("should return only reservations checking in YESTERDAY", async () => {
+    it('should return only reservations checking in YESTERDAY', async () => {
       const yesterday = subDays(new Date(), 1);
-      const formattedDate = format(yesterday, "yyyy-MM-dd");
+      const formattedDate = format(yesterday, 'yyyy-MM-dd');
 
       const response = await request(app)
-        .get("/api/reservations")
+        .get('/api/reservations')
         .query({ checkInDate: formattedDate })
-        .set("x-tenant-subdomain", "test-date-filter");
+        .set('x-tenant-subdomain', 'test-date-filter');
 
       expect(response.status).toBe(200);
 
@@ -199,14 +199,14 @@ describe.skip("Reservation Date Filtering", () => {
       expect(reservations[0].id).toBe(checkInYesterdayId);
     });
 
-    it("should return only reservations checking in TOMORROW", async () => {
+    it('should return only reservations checking in TOMORROW', async () => {
       const tomorrow = addDays(new Date(), 1);
-      const formattedDate = format(tomorrow, "yyyy-MM-dd");
+      const formattedDate = format(tomorrow, 'yyyy-MM-dd');
 
       const response = await request(app)
-        .get("/api/reservations")
+        .get('/api/reservations')
         .query({ checkInDate: formattedDate })
-        .set("x-tenant-subdomain", "test-date-filter");
+        .set('x-tenant-subdomain', 'test-date-filter');
 
       expect(response.status).toBe(200);
 
@@ -215,14 +215,14 @@ describe.skip("Reservation Date Filtering", () => {
       expect(reservations[0].id).toBe(checkInTomorrowId);
     });
 
-    it("should return empty array for date with no check-ins", async () => {
+    it('should return empty array for date with no check-ins', async () => {
       const futureDate = addDays(new Date(), 30);
-      const formattedDate = format(futureDate, "yyyy-MM-dd");
+      const formattedDate = format(futureDate, 'yyyy-MM-dd');
 
       const response = await request(app)
-        .get("/api/reservations")
+        .get('/api/reservations')
         .query({ checkInDate: formattedDate })
-        .set("x-tenant-subdomain", "test-date-filter");
+        .set('x-tenant-subdomain', 'test-date-filter');
 
       expect(response.status).toBe(200);
 
@@ -231,15 +231,15 @@ describe.skip("Reservation Date Filtering", () => {
     });
   });
 
-  describe("date Filter (Active Reservations)", () => {
-    it("should return reservations ACTIVE on TODAY", async () => {
+  describe('date Filter (Active Reservations)', () => {
+    it('should return reservations ACTIVE on TODAY', async () => {
       const today = new Date();
-      const formattedDate = format(today, "yyyy-MM-dd");
+      const formattedDate = format(today, 'yyyy-MM-dd');
 
       const response = await request(app)
-        .get("/api/reservations")
+        .get('/api/reservations')
         .query({ date: formattedDate })
-        .set("x-tenant-subdomain", "test-date-filter");
+        .set('x-tenant-subdomain', 'test-date-filter');
 
       expect(response.status).toBe(200);
 
@@ -255,14 +255,14 @@ describe.skip("Reservation Date Filtering", () => {
       expect(reservationIds).not.toContain(checkInLastWeekId);
     });
 
-    it("should return reservations ACTIVE on YESTERDAY", async () => {
+    it('should return reservations ACTIVE on YESTERDAY', async () => {
       const yesterday = subDays(new Date(), 1);
-      const formattedDate = format(yesterday, "yyyy-MM-dd");
+      const formattedDate = format(yesterday, 'yyyy-MM-dd');
 
       const response = await request(app)
-        .get("/api/reservations")
+        .get('/api/reservations')
         .query({ date: formattedDate })
-        .set("x-tenant-subdomain", "test-date-filter");
+        .set('x-tenant-subdomain', 'test-date-filter');
 
       expect(response.status).toBe(200);
 
@@ -278,16 +278,16 @@ describe.skip("Reservation Date Filtering", () => {
     });
   });
 
-  describe("startDate/endDate Range Filter", () => {
-    it("should return reservations overlapping a date range", async () => {
+  describe('startDate/endDate Range Filter', () => {
+    it('should return reservations overlapping a date range', async () => {
       const today = new Date();
-      const startDate = format(subDays(today, 1), "yyyy-MM-dd");
-      const endDate = format(addDays(today, 1), "yyyy-MM-dd");
+      const startDate = format(subDays(today, 1), 'yyyy-MM-dd');
+      const endDate = format(addDays(today, 1), 'yyyy-MM-dd');
 
       const response = await request(app)
-        .get("/api/reservations")
+        .get('/api/reservations')
         .query({ startDate, endDate })
-        .set("x-tenant-subdomain", "test-date-filter");
+        .set('x-tenant-subdomain', 'test-date-filter');
 
       expect(response.status).toBe(200);
 
@@ -304,20 +304,20 @@ describe.skip("Reservation Date Filtering", () => {
     });
   });
 
-  describe("Filter Priority", () => {
-    it("checkInDate should take priority over date parameter", async () => {
+  describe('Filter Priority', () => {
+    it('checkInDate should take priority over date parameter', async () => {
       const today = new Date();
       const yesterday = subDays(today, 1);
-      const checkInDateFormatted = format(today, "yyyy-MM-dd");
-      const dateFormatted = format(yesterday, "yyyy-MM-dd");
+      const checkInDateFormatted = format(today, 'yyyy-MM-dd');
+      const dateFormatted = format(yesterday, 'yyyy-MM-dd');
 
       const response = await request(app)
-        .get("/api/reservations")
+        .get('/api/reservations')
         .query({
           checkInDate: checkInDateFormatted,
           date: dateFormatted, // This should be ignored
         })
-        .set("x-tenant-subdomain", "test-date-filter");
+        .set('x-tenant-subdomain', 'test-date-filter');
 
       expect(response.status).toBe(200);
 
@@ -328,20 +328,20 @@ describe.skip("Reservation Date Filtering", () => {
       expect(reservations[0].id).toBe(checkInTodayId);
     });
 
-    it("checkInDate should take priority over startDate/endDate range", async () => {
+    it('checkInDate should take priority over startDate/endDate range', async () => {
       const today = new Date();
-      const checkInDateFormatted = format(today, "yyyy-MM-dd");
-      const rangeStart = format(subDays(today, 7), "yyyy-MM-dd");
-      const rangeEnd = format(addDays(today, 7), "yyyy-MM-dd");
+      const checkInDateFormatted = format(today, 'yyyy-MM-dd');
+      const rangeStart = format(subDays(today, 7), 'yyyy-MM-dd');
+      const rangeEnd = format(addDays(today, 7), 'yyyy-MM-dd');
 
       const response = await request(app)
-        .get("/api/reservations")
+        .get('/api/reservations')
         .query({
           checkInDate: checkInDateFormatted,
           startDate: rangeStart, // These should be ignored
           endDate: rangeEnd,
         })
-        .set("x-tenant-subdomain", "test-date-filter");
+        .set('x-tenant-subdomain', 'test-date-filter');
 
       expect(response.status).toBe(200);
 
@@ -353,48 +353,48 @@ describe.skip("Reservation Date Filtering", () => {
     });
   });
 
-  describe("Invalid Date Handling", () => {
-    it("should handle invalid checkInDate gracefully", async () => {
+  describe('Invalid Date Handling', () => {
+    it('should handle invalid checkInDate gracefully', async () => {
       const response = await request(app)
-        .get("/api/reservations")
-        .query({ checkInDate: "invalid-date" })
-        .set("x-tenant-subdomain", "test-date-filter");
+        .get('/api/reservations')
+        .query({ checkInDate: 'invalid-date' })
+        .set('x-tenant-subdomain', 'test-date-filter');
 
       expect(response.status).toBe(200);
       expect(response.body.warnings).toBeDefined();
       expect(response.body.warnings.length).toBeGreaterThan(0);
     });
 
-    it("should handle invalid date format gracefully", async () => {
+    it('should handle invalid date format gracefully', async () => {
       const response = await request(app)
-        .get("/api/reservations")
-        .query({ date: "2025/11/06" }) // Wrong format
-        .set("x-tenant-subdomain", "test-date-filter");
+        .get('/api/reservations')
+        .query({ date: '2025/11/06' }) // Wrong format
+        .set('x-tenant-subdomain', 'test-date-filter');
 
       expect(response.status).toBe(200);
       // Should still return data, just with warnings
     });
   });
 
-  describe("Tenant Isolation with Date Filters", () => {
-    it("checkInDate should respect tenant boundaries", async () => {
+  describe('Tenant Isolation with Date Filters', () => {
+    it('checkInDate should respect tenant boundaries', async () => {
       const today = new Date();
-      const formattedDate = format(today, "yyyy-MM-dd");
+      const formattedDate = format(today, 'yyyy-MM-dd');
 
       // Query with correct tenant
       const response1 = await request(app)
-        .get("/api/reservations")
+        .get('/api/reservations')
         .query({ checkInDate: formattedDate })
-        .set("x-tenant-subdomain", "test-date-filter");
+        .set('x-tenant-subdomain', 'test-date-filter');
 
       expect(response1.status).toBe(200);
       expect(response1.body.data.reservations).toHaveLength(1);
 
       // Query with different tenant (should return different results)
       const response2 = await request(app)
-        .get("/api/reservations")
+        .get('/api/reservations')
         .query({ checkInDate: formattedDate })
-        .set("x-tenant-subdomain", "tailtown"); // Different tenant
+        .set('x-tenant-subdomain', 'tailtown'); // Different tenant
 
       expect(response2.status).toBe(200);
       // Should not include our test reservation
@@ -405,19 +405,19 @@ describe.skip("Reservation Date Filtering", () => {
     });
   });
 
-  describe("Use Case: Kennel Cards", () => {
-    it("should return correct reservations for kennel cards (check-ins only)", async () => {
+  describe('Use Case: Kennel Cards', () => {
+    it('should return correct reservations for kennel cards (check-ins only)', async () => {
       const today = new Date();
-      const formattedDate = format(today, "yyyy-MM-dd");
+      const formattedDate = format(today, 'yyyy-MM-dd');
 
       const response = await request(app)
-        .get("/api/reservations")
+        .get('/api/reservations')
         .query({
           checkInDate: formattedDate,
-          status: "CONFIRMED,CHECKED_IN",
+          status: 'CONFIRMED,CHECKED_IN',
           limit: 500,
         })
-        .set("x-tenant-subdomain", "test-date-filter");
+        .set('x-tenant-subdomain', 'test-date-filter');
 
       expect(response.status).toBe(200);
 

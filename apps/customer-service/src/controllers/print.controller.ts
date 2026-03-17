@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
-import { exec } from "child_process";
-import { promisify } from "util";
-import fs from "fs";
-import path from "path";
-import os from "os";
+import { Request, Response } from 'express';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
 
 const execAsync = promisify(exec);
 
@@ -22,25 +22,25 @@ const generateKennelLabelZPL = (data: KennelLabelData): string => {
   const { dogName, customerLastName, kennelNumber, groupSize } = data;
 
   // Use blank space for missing data
-  const safeDogName = dogName || "";
-  const safeLastName = customerLastName || "";
-  const safeKennel = kennelNumber || "";
-  const safeGroup = groupSize || "";
+  const safeDogName = dogName || '';
+  const safeLastName = customerLastName || '';
+  const safeKennel = kennelNumber || '';
+  const safeGroup = groupSize || '';
 
   // Truncate names to fit on label
   const truncatedDogName =
-    safeDogName.length > 10 ? safeDogName.substring(0, 8) + ".." : safeDogName;
+    safeDogName.length > 10 ? safeDogName.substring(0, 8) + '..' : safeDogName;
   const truncatedLastName =
     safeLastName.length > 8
-      ? safeLastName.substring(0, 6) + ".."
+      ? safeLastName.substring(0, 6) + '..'
       : safeLastName;
 
   // Build the main line: Name (LastName)   #Kennel   Group
   // Leave blank spaces for missing info
-  const namePart = truncatedDogName ? `${truncatedDogName}` : "";
-  const lastNamePart = truncatedLastName ? ` (${truncatedLastName})` : "";
-  const kennelPart = safeKennel ? `   #${safeKennel}` : "";
-  const groupPart = safeGroup ? `   ${safeGroup}` : "";
+  const namePart = truncatedDogName ? `${truncatedDogName}` : '';
+  const lastNamePart = truncatedLastName ? ` (${truncatedLastName})` : '';
+  const kennelPart = safeKennel ? `   #${safeKennel}` : '';
+  const groupPart = safeGroup ? `   ${safeGroup}` : '';
   const mainLine = `${namePart}${lastNamePart}${kennelPart}${groupPart}`;
 
   // ZPL with duplicated content for collar readability
@@ -69,10 +69,10 @@ export const printKennelLabel = async (
 
     // Allow missing fields - they will be blank on the label
     const labelData: KennelLabelData = {
-      dogName: dogName || "",
-      customerLastName: customerLastName || "",
-      kennelNumber: kennelNumber || "",
-      groupSize: groupSize || "",
+      dogName: dogName || '',
+      customerLastName: customerLastName || '',
+      kennelNumber: kennelNumber || '',
+      groupSize: groupSize || '',
     };
 
     // Generate ZPL
@@ -91,8 +91,8 @@ export const printKennelLabel = async (
       // Clean up temp file
       fs.unlinkSync(tempFile);
 
-      if (stderr && !stderr.includes("request id")) {
-        console.error("Print stderr:", stderr);
+      if (stderr && !stderr.includes('request id')) {
+        console.error('Print stderr:', stderr);
       }
 
       // Extract job ID from stdout (e.g., "request id is Zebra_GK420d-123 (1 file(s))")
@@ -101,7 +101,7 @@ export const printKennelLabel = async (
 
       res.json({
         success: true,
-        message: "Label sent to printer",
+        message: 'Label sent to printer',
         jobId,
         labelData,
       });
@@ -111,30 +111,30 @@ export const printKennelLabel = async (
         fs.unlinkSync(tempFile);
       }
 
-      console.error("Print error:", printError);
+      console.error('Print error:', printError);
 
       // Return a more helpful error - not 500 for printer issues
-      const errorMessage = printError.message || "Unknown error";
+      const errorMessage = printError.message || 'Unknown error';
       const isPrinterOffline =
-        errorMessage.includes("not exist") ||
-        errorMessage.includes("not found") ||
-        errorMessage.includes("No such") ||
-        errorMessage.includes("disabled");
+        errorMessage.includes('not exist') ||
+        errorMessage.includes('not found') ||
+        errorMessage.includes('No such') ||
+        errorMessage.includes('disabled');
 
       res.status(isPrinterOffline ? 503 : 500).json({
         success: false,
         error: isPrinterOffline
-          ? "Printer is offline or not available"
-          : "Failed to send to printer",
+          ? 'Printer is offline or not available'
+          : 'Failed to send to printer',
         details: errorMessage,
         labelData,
       });
     }
   } catch (error: any) {
-    console.error("Error in printKennelLabel:", error);
+    console.error('Error in printKennelLabel:', error);
     res.status(500).json({
       success: false,
-      error: "Internal server error",
+      error: 'Internal server error',
       details: error.message,
     });
   }
@@ -151,8 +151,8 @@ export const getAvailablePrinters = async (
     const { stdout } = await execAsync("lpstat -p 2>/dev/null || echo ''");
 
     const printers = stdout
-      .split("\n")
-      .filter((line) => line.startsWith("printer "))
+      .split('\n')
+      .filter((line) => line.startsWith('printer '))
       .map((line) => {
         const match = line.match(/printer (\S+)/);
         return match ? match[1] : null;
@@ -162,13 +162,13 @@ export const getAvailablePrinters = async (
     res.json({
       success: true,
       printers,
-      defaultPrinter: "Zebra_GK420d",
+      defaultPrinter: 'Zebra_GK420d',
     });
   } catch (error: any) {
-    console.error("Error getting printers:", error);
+    console.error('Error getting printers:', error);
     res.status(500).json({
       success: false,
-      error: "Failed to get printer list",
+      error: 'Failed to get printer list',
       details: error.message,
     });
   }
@@ -182,13 +182,13 @@ export const getPrinterStatus = async (
   res: Response
 ): Promise<void> => {
   try {
-    const printerName = req.params.printerName || "Zebra_GK420d";
+    const printerName = req.params.printerName || 'Zebra_GK420d';
 
     const { stdout } = await execAsync(
       `lpstat -p ${printerName} 2>/dev/null || echo 'Printer not found'`
     );
 
-    const isOnline = stdout.includes("idle") || stdout.includes("enabled");
+    const isOnline = stdout.includes('idle') || stdout.includes('enabled');
     const status = stdout.trim();
 
     res.json({
@@ -198,10 +198,10 @@ export const getPrinterStatus = async (
       status,
     });
   } catch (error: any) {
-    console.error("Error getting printer status:", error);
+    console.error('Error getting printer status:', error);
     res.status(500).json({
       success: false,
-      error: "Failed to get printer status",
+      error: 'Failed to get printer status',
       details: error.message,
     });
   }

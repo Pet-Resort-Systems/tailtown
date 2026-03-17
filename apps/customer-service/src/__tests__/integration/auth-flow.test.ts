@@ -1,6 +1,6 @@
 /**
  * Authentication Flow Tests
- * 
+ *
  * These tests ensure the complete authentication flow works correctly:
  * - Login returns JWT tokens
  * - Tokens contain correct claims
@@ -32,15 +32,15 @@ describe('Authentication Flow', () => {
         password: hashedPassword,
         role: 'ADMIN',
         tenantId: 'test-tenant',
-        isActive: true
-      }
+        isActive: true,
+      },
     });
     testStaffId = staff.id;
   });
 
   afterAll(async () => {
     await prisma.staff.deleteMany({
-      where: { tenantId: 'test-tenant' }
+      where: { tenantId: 'test-tenant' },
     });
     await prisma.$disconnect();
   });
@@ -52,7 +52,7 @@ describe('Authentication Flow', () => {
         .set('x-tenant-id', 'test-tenant')
         .send({
           email: testEmail,
-          password: testPassword
+          password: testPassword,
         });
 
       expect(response.status).toBe(200);
@@ -67,7 +67,7 @@ describe('Authentication Flow', () => {
         .set('x-tenant-id', 'test-tenant')
         .send({
           email: testEmail,
-          password: testPassword
+          password: testPassword,
         });
 
       const token = response.body.accessToken;
@@ -77,7 +77,7 @@ describe('Authentication Flow', () => {
         id: testStaffId,
         email: testEmail,
         role: 'ADMIN',
-        tenantId: 'test-tenant'
+        tenantId: 'test-tenant',
       });
     });
 
@@ -87,7 +87,7 @@ describe('Authentication Flow', () => {
         .set('x-tenant-id', 'test-tenant')
         .send({
           email: testEmail,
-          password: 'WrongPassword123!'
+          password: 'WrongPassword123!',
         });
 
       expect(response.status).toBe(401);
@@ -100,7 +100,7 @@ describe('Authentication Flow', () => {
         .set('x-tenant-id', 'test-tenant')
         .send({
           email: 'nonexistent@example.com',
-          password: testPassword
+          password: testPassword,
         });
 
       expect(response.status).toBe(401);
@@ -115,7 +115,7 @@ describe('Authentication Flow', () => {
         id: testStaffId,
         email: testEmail,
         role: 'ADMIN',
-        tenantId: 'test-tenant'
+        tenantId: 'test-tenant',
       });
     });
 
@@ -161,7 +161,7 @@ describe('Authentication Flow', () => {
         id: 'test-id',
         email: 'test@example.com',
         role: 'ADMIN',
-        tenantId: 'test'
+        tenantId: 'test',
       });
 
       expect(() => verifyToken(validToken)).not.toThrow();
@@ -172,7 +172,7 @@ describe('Authentication Flow', () => {
         id: 'test-id',
         email: 'test@example.com',
         role: 'ADMIN',
-        tenantId: 'test'
+        tenantId: 'test',
       });
 
       // Tamper with the token
@@ -188,7 +188,7 @@ describe('Authentication Flow', () => {
         id: testStaffId,
         email: testEmail,
         role: 'ADMIN',
-        tenantId: 'test-tenant'
+        tenantId: 'test-tenant',
       });
 
       const response = await request(app)

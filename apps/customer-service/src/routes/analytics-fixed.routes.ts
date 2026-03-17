@@ -4,7 +4,7 @@ import {
   getSalesByService,
   getSalesByAddOn,
   getCustomerValue,
-  getCustomerReport
+  getCustomerReport,
 } from '../controllers/analytics.controller';
 
 const router = express.Router();

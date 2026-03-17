@@ -4,42 +4,42 @@
 
 // Define role hierarchy (higher index = more permissions)
 export const ROLE_HIERARCHY = [
-  "Staff",
-  "Groomer",
-  "Trainer",
-  "Instructor",
-  "Manager",
-  "Administrator",
-  "Admin",
-  "STAFF",
-  "GROOMER",
-  "TRAINER",
-  "MANAGER",
-  "ADMIN",
-  "TENANT_ADMIN",
-  "SUPER_ADMIN",
+  'Staff',
+  'Groomer',
+  'Trainer',
+  'Instructor',
+  'Manager',
+  'Administrator',
+  'Admin',
+  'STAFF',
+  'GROOMER',
+  'TRAINER',
+  'MANAGER',
+  'ADMIN',
+  'TENANT_ADMIN',
+  'SUPER_ADMIN',
 ] as const;
 
 // Roles that have admin access
 export const ADMIN_ROLES = [
-  "Administrator",
-  "Admin",
-  "Manager",
-  "ADMIN",
-  "MANAGER",
-  "TENANT_ADMIN",
-  "SUPER_ADMIN",
+  'Administrator',
+  'Admin',
+  'Manager',
+  'ADMIN',
+  'MANAGER',
+  'TENANT_ADMIN',
+  'SUPER_ADMIN',
 ];
 
 // Roles that have manager access (includes admin)
 export const MANAGER_ROLES = [
-  "Administrator",
-  "Admin",
-  "Manager",
-  "ADMIN",
-  "MANAGER",
-  "TENANT_ADMIN",
-  "SUPER_ADMIN",
+  'Administrator',
+  'Admin',
+  'Manager',
+  'ADMIN',
+  'MANAGER',
+  'TENANT_ADMIN',
+  'SUPER_ADMIN',
 ];
 
 /**

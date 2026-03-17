@@ -6,17 +6,17 @@ const prisma = new PrismaClient();
 async function updatePassword() {
   const email = 'rob@tailtownpetresort.com';
   const newPassword = 'Tailtown2025!';
-  
+
   try {
     // Hash the new password
     const passwordHash = await bcrypt.hash(newPassword, 10);
-    
+
     // Update super admin password
     const superAdmin = await prisma.superAdmin.update({
       where: { email },
-      data: { passwordHash }
+      data: { passwordHash },
     });
-    
+
     console.log('Super admin password updated successfully:');
     console.log(`Email: ${superAdmin.email}`);
     console.log(`New Password: ${newPassword}`);

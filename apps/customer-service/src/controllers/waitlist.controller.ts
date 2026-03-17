@@ -1,6 +1,6 @@
 /**
  * Waitlist Controller
- * 
+ *
  * Handles waitlist operations for fully booked services:
  * - Adding customers to waitlist
  * - Checking availability and notifying customers
@@ -28,7 +28,11 @@ export interface AuthRequest extends Request {
  * Add customer to waitlist
  * POST /api/waitlist
  */
-export const addToWaitlist = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const addToWaitlist = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const tenantId = req.tenantId;
     if (!tenantId) {
@@ -49,7 +53,7 @@ export const addToWaitlist = async (req: AuthRequest, res: Response, next: NextF
       groomerId,
       classId,
       preferences,
-      customerNotes
+      customerNotes,
     } = req.body;
 
     // Validate required fields
@@ -59,7 +63,7 @@ export const addToWaitlist = async (req: AuthRequest, res: Response, next: NextF
 
     // Verify customer and pet exist and belong to tenant
     const customer = await prisma.customer.findFirst({
-      where: { id: customerId, tenantId }
+      where: { id: customerId, tenantId },
     });
 
     if (!customer) {
@@ -67,7 +71,7 @@ export const addToWaitlist = async (req: AuthRequest, res: Response, next: NextF
     }
 
     const pet = await prisma.pet.findFirst({
-      where: { id: petId, customerId, tenantId }
+      where: { id: petId, customerId, tenantId },
     });
 
     if (!pet) {
@@ -82,13 +86,13 @@ export const addToWaitlist = async (req: AuthRequest, res: Response, next: NextF
       where: {
         tenantId,
         serviceType,
-        status: 'ACTIVE'
-      }
+        status: 'ACTIVE',
+      },
     });
 
     // Calculate expiration date (30 days from now by default)
     const config = await prisma.waitlistConfig.findUnique({
-      where: { tenantId }
+      where: { tenantId },
     });
 
     const expirationDays = config?.entryExpirationDays || 30;
@@ -116,7 +120,7 @@ export const addToWaitlist = async (req: AuthRequest, res: Response, next: NextF
         priority,
         position: currentPosition + 1,
         expiresAt,
-        status: 'ACTIVE'
+        status: 'ACTIVE',
       },
       include: {
         customer: {
@@ -125,18 +129,18 @@ export const addToWaitlist = async (req: AuthRequest, res: Response, next: NextF
             firstName: true,
             lastName: true,
             email: true,
-            phone: true
-          }
+            phone: true,
+          },
         },
         pet: {
           select: {
             id: true,
             name: true,
             type: true,
-            breed: true
-          }
-        }
-      }
+            breed: true,
+          },
+        },
+      },
     });
 
     // TODO: Send confirmation notification to customer
@@ -145,8 +149,8 @@ export const addToWaitlist = async (req: AuthRequest, res: Response, next: NextF
       status: 'success',
       data: {
         ...entry,
-        preferences: JSON.parse(entry.preferences)
-      }
+        preferences: JSON.parse(entry.preferences),
+      },
     });
   } catch (error) {
     next(error);
@@ -157,7 +161,11 @@ export const addToWaitlist = async (req: AuthRequest, res: Response, next: NextF
  * Get customer's waitlist entries
  * GET /api/waitlist/my-entries
  */
-export const getMyWaitlistEntries = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const getMyWaitlistEntries = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const tenantId = req.tenantId;
     const { customerId } = req.query;
@@ -171,29 +179,29 @@ export const getMyWaitlistEntries = async (req: AuthRequest, res: Response, next
         tenantId,
         customerId: customerId as string,
         status: {
-          in: ['ACTIVE', 'NOTIFIED']
-        }
+          in: ['ACTIVE', 'NOTIFIED'],
+        },
       },
       include: {
         pet: {
           select: {
             id: true,
             name: true,
-            type: true
-          }
-        }
+            type: true,
+          },
+        },
       },
       orderBy: {
-        position: 'asc'
-      }
+        position: 'asc',
+      },
     });
 
     res.json({
       status: 'success',
-      data: entries.map(entry => ({
+      data: entries.map((entry) => ({
         ...entry,
-        preferences: JSON.parse(entry.preferences)
-      }))
+        preferences: JSON.parse(entry.preferences),
+      })),
     });
   } catch (error) {
     next(error);
@@ -204,7 +212,11 @@ export const getMyWaitlistEntries = async (req: AuthRequest, res: Response, next
  * Remove from waitlist
  * DELETE /api/waitlist/:id
  */
-export const removeFromWaitlist = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const removeFromWaitlist = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const tenantId = req.tenantId;
     const { id } = req.params;
@@ -215,7 +227,7 @@ export const removeFromWaitlist = async (req: AuthRequest, res: Response, next: 
 
     // Find and verify entry
     const entry = await prisma.waitlistEntry.findFirst({
-      where: { id, tenantId }
+      where: { id, tenantId },
     });
 
     if (!entry) {
@@ -227,8 +239,8 @@ export const removeFromWaitlist = async (req: AuthRequest, res: Response, next: 
       where: { id },
       data: {
         status: 'CANCELLED',
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     });
 
     // Update positions for remaining entries
@@ -236,7 +248,7 @@ export const removeFromWaitlist = async (req: AuthRequest, res: Response, next: 
 
     res.json({
       status: 'success',
-      message: 'Removed from waitlist'
+      message: 'Removed from waitlist',
     });
   } catch (error) {
     next(error);
@@ -247,7 +259,11 @@ export const removeFromWaitlist = async (req: AuthRequest, res: Response, next: 
  * Get waitlist position
  * GET /api/waitlist/:id/position
  */
-export const getWaitlistPosition = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const getWaitlistPosition = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const tenantId = req.tenantId;
     const { id } = req.params;
@@ -262,8 +278,8 @@ export const getWaitlistPosition = async (req: AuthRequest, res: Response, next:
         position: true,
         status: true,
         requestedStartDate: true,
-        serviceType: true
-      }
+        serviceType: true,
+      },
     });
 
     if (!entry) {
@@ -275,8 +291,8 @@ export const getWaitlistPosition = async (req: AuthRequest, res: Response, next:
       where: {
         tenantId,
         serviceType: entry.serviceType,
-        status: 'ACTIVE'
-      }
+        status: 'ACTIVE',
+      },
     });
 
     res.json({
@@ -285,8 +301,8 @@ export const getWaitlistPosition = async (req: AuthRequest, res: Response, next:
         position: entry.position,
         totalInQueue,
         status: entry.status,
-        estimatedWaitTime: calculateEstimatedWait(entry.position)
-      }
+        estimatedWaitTime: calculateEstimatedWait(entry.position),
+      },
     });
   } catch (error) {
     next(error);
@@ -297,7 +313,11 @@ export const getWaitlistPosition = async (req: AuthRequest, res: Response, next:
  * List all waitlist entries (staff only)
  * GET /api/waitlist
  */
-export const listWaitlistEntries = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const listWaitlistEntries = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const tenantId = req.tenantId;
     if (!tenantId) {
@@ -335,22 +355,19 @@ export const listWaitlistEntries = async (req: AuthRequest, res: Response, next:
             firstName: true,
             lastName: true,
             email: true,
-            phone: true
-          }
+            phone: true,
+          },
         },
         pet: {
           select: {
             id: true,
             name: true,
             type: true,
-            breed: true
-          }
-        }
+            breed: true,
+          },
+        },
       },
-      orderBy: [
-        { serviceType: 'asc' },
-        { position: 'asc' }
-      ]
+      orderBy: [{ serviceType: 'asc' }, { position: 'asc' }],
     });
 
     // Group by service type
@@ -361,7 +378,7 @@ export const listWaitlistEntries = async (req: AuthRequest, res: Response, next:
       }
       acc[type].push({
         ...entry,
-        preferences: JSON.parse(entry.preferences)
+        preferences: JSON.parse(entry.preferences),
       });
       return acc;
     }, {});
@@ -369,19 +386,19 @@ export const listWaitlistEntries = async (req: AuthRequest, res: Response, next:
     res.json({
       status: 'success',
       data: {
-        entries: entries.map(e => ({
+        entries: entries.map((e) => ({
           ...e,
-          preferences: JSON.parse(e.preferences)
+          preferences: JSON.parse(e.preferences),
         })),
         grouped,
         summary: {
           total: entries.length,
-          byServiceType: Object.keys(grouped).map(type => ({
+          byServiceType: Object.keys(grouped).map((type) => ({
             serviceType: type,
-            count: grouped[type].length
-          }))
-        }
-      }
+            count: grouped[type].length,
+          })),
+        },
+      },
     });
   } catch (error) {
     next(error);
@@ -392,7 +409,11 @@ export const listWaitlistEntries = async (req: AuthRequest, res: Response, next:
  * Update waitlist entry (staff only)
  * PATCH /api/waitlist/:id
  */
-export const updateWaitlistEntry = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const updateWaitlistEntry = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const tenantId = req.tenantId;
     const { id } = req.params;
@@ -403,7 +424,7 @@ export const updateWaitlistEntry = async (req: AuthRequest, res: Response, next:
     }
 
     const entry = await prisma.waitlistEntry.findFirst({
-      where: { id, tenantId }
+      where: { id, tenantId },
     });
 
     if (!entry) {
@@ -416,20 +437,20 @@ export const updateWaitlistEntry = async (req: AuthRequest, res: Response, next:
         notes,
         status,
         position,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       include: {
         customer: true,
-        pet: true
-      }
+        pet: true,
+      },
     });
 
     res.json({
       status: 'success',
       data: {
         ...updated,
-        preferences: JSON.parse(updated.preferences)
-      }
+        preferences: JSON.parse(updated.preferences),
+      },
     });
   } catch (error) {
     next(error);
@@ -440,7 +461,11 @@ export const updateWaitlistEntry = async (req: AuthRequest, res: Response, next:
  * Convert waitlist entry to reservation (staff only)
  * POST /api/waitlist/:id/convert
  */
-export const convertToReservation = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const convertToReservation = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const tenantId = req.tenantId;
     const { id } = req.params;
@@ -455,7 +480,7 @@ export const convertToReservation = async (req: AuthRequest, res: Response, next
     }
 
     const entry = await prisma.waitlistEntry.findFirst({
-      where: { id, tenantId }
+      where: { id, tenantId },
     });
 
     if (!entry) {
@@ -469,8 +494,8 @@ export const convertToReservation = async (req: AuthRequest, res: Response, next
         status: 'CONVERTED',
         convertedToReservationId: reservationId,
         convertedAt: new Date(),
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     });
 
     // Update positions for remaining entries
@@ -481,7 +506,7 @@ export const convertToReservation = async (req: AuthRequest, res: Response, next
     res.json({
       status: 'success',
       data: updated,
-      message: 'Waitlist entry converted to reservation'
+      message: 'Waitlist entry converted to reservation',
     });
   } catch (error) {
     next(error);
@@ -492,7 +517,11 @@ export const convertToReservation = async (req: AuthRequest, res: Response, next
  * Check for matching availability and notify waitlist
  * POST /api/waitlist/check-availability
  */
-export const checkAvailability = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const checkAvailability = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const tenantId = req.tenantId;
     if (!tenantId) {
@@ -502,7 +531,9 @@ export const checkAvailability = async (req: AuthRequest, res: Response, next: N
     const { serviceType, startDate, endDate, resourceId } = req.body;
 
     if (!serviceType || !startDate) {
-      return next(new AppError('Service type and start date are required', 400));
+      return next(
+        new AppError('Service type and start date are required', 400)
+      );
     }
 
     // Find matching waitlist entries
@@ -516,7 +547,7 @@ export const checkAvailability = async (req: AuthRequest, res: Response, next: N
 
     // Get config for max notifications
     const config = await prisma.waitlistConfig.findUnique({
-      where: { tenantId }
+      where: { tenantId },
     });
 
     const maxNotifications = config?.maxNotificationsPerAvailability || 3;
@@ -525,7 +556,9 @@ export const checkAvailability = async (req: AuthRequest, res: Response, next: N
     const entriesToNotify = matchingEntries.slice(0, maxNotifications);
 
     const notifications = await Promise.all(
-      entriesToNotify.map(entry => createNotification(entry, 'SPOT_AVAILABLE'))
+      entriesToNotify.map((entry) =>
+        createNotification(entry, 'SPOT_AVAILABLE')
+      )
     );
 
     res.json({
@@ -533,8 +566,8 @@ export const checkAvailability = async (req: AuthRequest, res: Response, next: N
       data: {
         matchingEntries: matchingEntries.length,
         notified: entriesToNotify.length,
-        notifications
-      }
+        notifications,
+      },
     });
   } catch (error) {
     next(error);
@@ -551,11 +584,11 @@ async function updateWaitlistPositions(tenantId: string, serviceType: string) {
     where: {
       tenantId,
       serviceType: serviceType as any,
-      status: 'ACTIVE'
+      status: 'ACTIVE',
     },
     orderBy: {
-      priority: 'asc'
-    }
+      priority: 'asc',
+    },
   });
 
   // Update positions
@@ -563,7 +596,7 @@ async function updateWaitlistPositions(tenantId: string, serviceType: string) {
     entries.map((entry, index) =>
       prisma.waitlistEntry.update({
         where: { id: entry.id },
-        data: { position: index + 1 }
+        data: { position: index + 1 },
       })
     )
   );
@@ -582,30 +615,27 @@ async function findMatchingWaitlistEntries(
   const where: any = {
     tenantId,
     serviceType,
-    status: 'ACTIVE'
+    status: 'ACTIVE',
   };
 
   // Basic date matching (can be enhanced with flexible dates)
   where.requestedStartDate = {
-    lte: startDate
+    lte: startDate,
   };
 
   if (resourceId) {
-    where.OR = [
-      { resourceId: null },
-      { resourceId }
-    ];
+    where.OR = [{ resourceId: null }, { resourceId }];
   }
 
   const entries = await prisma.waitlistEntry.findMany({
     where,
     include: {
       customer: true,
-      pet: true
+      pet: true,
     },
     orderBy: {
-      priority: 'asc'
-    }
+      priority: 'asc',
+    },
   });
 
   return entries;
@@ -628,8 +658,8 @@ async function createNotification(entry: any, type: string) {
       status: 'PENDING',
       subject: 'Spot Available!',
       message: `Good news! A spot has opened up for your requested ${entry.serviceType} service.`,
-      expiresAt
-    }
+      expiresAt,
+    },
   });
 
   // Update entry
@@ -638,8 +668,8 @@ async function createNotification(entry: any, type: string) {
     data: {
       status: 'NOTIFIED',
       lastNotifiedAt: new Date(),
-      notificationsSent: entry.notificationsSent + 1
-    }
+      notificationsSent: entry.notificationsSent + 1,
+    },
   });
 
   return notification;

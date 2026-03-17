@@ -14,12 +14,12 @@ import {
   Grid,
   Chip,
   CircularProgress,
-  Alert
+  Alert,
 } from '@mui/material';
 import {
   ArrowBack as ArrowBackIcon,
   ArrowForward as ArrowForwardIcon,
-  CheckCircle as CheckCircleIcon
+  CheckCircle as CheckCircleIcon,
 } from '@mui/icons-material';
 import addonService, { AddOnService } from '../../../services/addonService';
 
@@ -34,26 +34,30 @@ const AddOnsSelection: React.FC<AddOnsSelectionProps> = ({
   bookingData,
   onNext,
   onBack,
-  onUpdate
+  onUpdate,
 }) => {
   const [addOns, setAddOns] = useState<AddOnService[]>([]);
-  const [selectedAddOns, setSelectedAddOns] = useState<string[]>(bookingData.addOnIds || []);
+  const [selectedAddOns, setSelectedAddOns] = useState<string[]>(
+    bookingData.addOnIds || []
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
+  useEffect(
+    () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      loadAddOns();
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    loadAddOns();
-  },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  [bookingData.serviceId]);
+    [bookingData.serviceId]
+  );
 
   const loadAddOns = async () => {
     try {
       setLoading(true);
       // Load add-ons for the selected service
       const data = await addonService.getAllAddOns(bookingData.serviceId);
-      setAddOns(data.filter(addon => addon.isActive));
+      setAddOns(data.filter((addon) => addon.isActive));
       setError('');
     } catch (err: any) {
       console.error('Error loading add-ons:', err);
@@ -65,20 +69,25 @@ const AddOnsSelection: React.FC<AddOnsSelectionProps> = ({
   };
 
   const handleToggleAddOn = (addOnId: string) => {
-    setSelectedAddOns(prev => {
+    setSelectedAddOns((prev) => {
       const newSelection = prev.includes(addOnId)
-        ? prev.filter(id => id !== addOnId)
+        ? prev.filter((id) => id !== addOnId)
         : [...prev, addOnId];
-      
+
       // Calculate total add-on price
-      const selectedAddOnObjects = addOns.filter(addon => newSelection.includes(addon.id));
-      const addOnTotal = selectedAddOnObjects.reduce((sum, addon) => sum + addon.price, 0);
-      
-      onUpdate({ 
+      const selectedAddOnObjects = addOns.filter((addon) =>
+        newSelection.includes(addon.id)
+      );
+      const addOnTotal = selectedAddOnObjects.reduce(
+        (sum, addon) => sum + addon.price,
+        0
+      );
+
+      onUpdate({
         addOnIds: newSelection,
-        addOnTotal 
+        addOnTotal,
       });
-      
+
       return newSelection;
     });
   };
@@ -94,20 +103,20 @@ const AddOnsSelection: React.FC<AddOnsSelectionProps> = ({
 
   const calculateTotal = () => {
     return addOns
-      .filter(addon => selectedAddOns.includes(addon.id))
+      .filter((addon) => selectedAddOns.includes(addon.id))
       .reduce((sum, addon) => sum + addon.price, 0);
   };
 
   return (
     <Box>
-      <Typography 
-        variant="h5" 
+      <Typography
+        variant="h5"
         component="h2"
         gutterBottom
         sx={{
           fontSize: { xs: '1.25rem', sm: '1.5rem' },
           fontWeight: 600,
-          mb: 3
+          mb: 3,
         }}
       >
         Add-Ons & Extras
@@ -149,8 +158,8 @@ const AddOnsSelection: React.FC<AddOnsSelectionProps> = ({
                     transition: 'all 0.2s ease-in-out',
                     '&:hover': {
                       transform: 'translateY(-4px)',
-                      boxShadow: 6
-                    }
+                      boxShadow: 6,
+                    },
                   }}
                 >
                   <CardActionArea
@@ -158,14 +167,21 @@ const AddOnsSelection: React.FC<AddOnsSelectionProps> = ({
                     sx={{ height: '100%' }}
                   >
                     <CardContent>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                        <Typography 
-                          variant="h6" 
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'flex-start',
+                          mb: 2,
+                        }}
+                      >
+                        <Typography
+                          variant="h6"
                           component="h3"
-                          sx={{ 
+                          sx={{
                             fontSize: { xs: '1rem', sm: '1.125rem' },
                             fontWeight: 600,
-                            flex: 1
+                            flex: 1,
                           }}
                         >
                           {addon.name}
@@ -176,8 +192,8 @@ const AddOnsSelection: React.FC<AddOnsSelectionProps> = ({
                       </Box>
 
                       {addon.description && (
-                        <Typography 
-                          variant="body2" 
+                        <Typography
+                          variant="body2"
                           color="text.secondary"
                           sx={{ mb: 2, minHeight: 40 }}
                         >
@@ -185,7 +201,13 @@ const AddOnsSelection: React.FC<AddOnsSelectionProps> = ({
                         </Typography>
                       )}
 
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
                         <Chip
                           label={`+$${addon.price.toFixed(2)}`}
                           color="primary"
@@ -209,15 +231,22 @@ const AddOnsSelection: React.FC<AddOnsSelectionProps> = ({
 
           {/* Selected Add-Ons Summary */}
           {selectedAddOns.length > 0 && (
-            <Card sx={{ mt: 3, bgcolor: 'primary.50', borderLeft: '4px solid', borderColor: 'primary.main' }}>
+            <Card
+              sx={{
+                mt: 3,
+                bgcolor: 'primary.50',
+                borderLeft: '4px solid',
+                borderColor: 'primary.main',
+              }}
+            >
               <CardContent>
                 <Typography variant="subtitle1" fontWeight={600} gutterBottom>
                   Selected Add-Ons ({selectedAddOns.length})
                 </Typography>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
                   {addOns
-                    .filter(addon => selectedAddOns.includes(addon.id))
-                    .map(addon => (
+                    .filter((addon) => selectedAddOns.includes(addon.id))
+                    .map((addon) => (
                       <Chip
                         key={addon.id}
                         label={`${addon.name} - $${addon.price.toFixed(2)}`}
@@ -249,7 +278,7 @@ const AddOnsSelection: React.FC<AddOnsSelectionProps> = ({
           zIndex: { xs: 1000, sm: 'auto' },
           display: 'flex',
           justifyContent: 'space-between',
-          gap: 2
+          gap: 2,
         }}
       >
         <Button
@@ -261,7 +290,7 @@ const AddOnsSelection: React.FC<AddOnsSelectionProps> = ({
         >
           Back
         </Button>
-        
+
         <Box sx={{ display: 'flex', gap: 1 }}>
           {addOns.length > 0 && (
             <Button

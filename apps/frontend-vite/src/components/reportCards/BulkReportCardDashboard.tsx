@@ -4,7 +4,7 @@
  * Staff dashboard for creating and sending multiple report cards at once
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Card,
@@ -31,18 +31,18 @@ import {
   CircularProgress,
   Stack,
   Badge,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Send,
   PhotoCamera,
   CheckCircle,
   Edit,
   Visibility,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import {
   reportCardService,
   CreateReportCardRequest,
-} from "../../services/reportCardService";
+} from '../../services/reportCardService';
 
 interface PetReportRow {
   petId: string;
@@ -50,7 +50,7 @@ interface PetReportRow {
   customerId: string;
   customerName: string;
   reservationId?: string;
-  serviceType: "BOARDING" | "DAYCARE" | "GROOMING" | "TRAINING";
+  serviceType: 'BOARDING' | 'DAYCARE' | 'GROOMING' | 'TRAINING';
   photoCount: number;
   hasReport: boolean;
   reportId?: string;
@@ -67,17 +67,17 @@ const BulkReportCardDashboard: React.FC = () => {
 
   // Template settings
   const [templateType, setTemplateType] = useState<
-    "DAYCARE_DAILY" | "BOARDING_DAILY"
-  >("DAYCARE_DAILY");
+    'DAYCARE_DAILY' | 'BOARDING_DAILY'
+  >('DAYCARE_DAILY');
   const [defaultMood, setDefaultMood] = useState(4);
   const [defaultEnergy, setDefaultEnergy] = useState(4);
   const [defaultAppetite, setDefaultAppetite] = useState(4);
   const [defaultSocial, setDefaultSocial] = useState(4);
   const [defaultActivities, setDefaultActivities] = useState<string[]>([
-    "Morning playtime",
-    "Lunch",
-    "Afternoon nap",
-    "Evening play session",
+    'Morning playtime',
+    'Lunch',
+    'Afternoon nap',
+    'Evening play session',
   ]);
 
   useEffect(() => {
@@ -91,20 +91,20 @@ const BulkReportCardDashboard: React.FC = () => {
 
       // Get today's date in YYYY-MM-DD format
       const today = new Date();
-      const dateStr = today.toISOString().split("T")[0];
+      const dateStr = today.toISOString().split('T')[0];
 
       // Fetch today's reservations with CHECKED_IN status
       const response = await fetch(
         `/api/reservations?date=${dateStr}&status=CHECKED_IN&limit=500`,
         {
           headers: {
-            "x-tenant-id": localStorage.getItem("tailtown_tenant_id") || "dev",
+            'x-tenant-id': localStorage.getItem('tailtown_tenant_id') || 'dev',
           },
         }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to fetch reservations");
+        throw new Error('Failed to fetch reservations');
       }
 
       const data = await response.json();
@@ -115,7 +115,7 @@ const BulkReportCardDashboard: React.FC = () => {
         `/api/report-cards?date=${dateStr}&limit=500`,
         {
           headers: {
-            "x-tenant-id": localStorage.getItem("tailtown_tenant_id") || "dev",
+            'x-tenant-id': localStorage.getItem('tailtown_tenant_id') || 'dev',
           },
         }
       );
@@ -135,13 +135,13 @@ const BulkReportCardDashboard: React.FC = () => {
 
         return {
           petId: res.petId,
-          petName: res.pet?.name || "Unknown Pet",
+          petName: res.pet?.name || 'Unknown Pet',
           customerId: res.customerId,
           customerName: res.customer
             ? `${res.customer.firstName} ${res.customer.lastName}`
-            : "Unknown Customer",
+            : 'Unknown Customer',
           reservationId: res.id,
-          serviceType: res.service?.serviceCategory || "DAYCARE",
+          serviceType: res.service?.serviceCategory || 'DAYCARE',
           photoCount: existingReport?.photos?.length || 0,
           hasReport: !!existingReport,
           reportId: existingReport?.id,
@@ -151,7 +151,7 @@ const BulkReportCardDashboard: React.FC = () => {
       setPets(petRows);
     } catch (err: any) {
       setError(err.message || "Failed to load today's pets");
-      console.error("Error loading pets:", err);
+      console.error('Error loading pets:', err);
     } finally {
       setLoading(false);
     }
@@ -197,7 +197,7 @@ const BulkReportCardDashboard: React.FC = () => {
             appetiteRating: defaultAppetite,
             socialRating: defaultSocial,
             activities: defaultActivities,
-            highlights: ["Had a great time!"],
+            highlights: ['Had a great time!'],
           };
         }
       );
@@ -208,7 +208,7 @@ const BulkReportCardDashboard: React.FC = () => {
       setTemplateDialogOpen(false);
       await loadTodaysPets();
     } catch (err: any) {
-      setError(err.message || "Failed to create report cards");
+      setError(err.message || 'Failed to create report cards');
     } finally {
       setLoading(false);
     }
@@ -224,7 +224,7 @@ const BulkReportCardDashboard: React.FC = () => {
         .map((p) => p.reportId!);
 
       if (reportIds.length === 0) {
-        setError("No reports to send. Create reports first.");
+        setError('No reports to send. Create reports first.');
         return;
       }
 
@@ -238,7 +238,7 @@ const BulkReportCardDashboard: React.FC = () => {
       setSelected(new Set());
       await loadTodaysPets();
     } catch (err: any) {
-      setError(err.message || "Failed to send report cards");
+      setError(err.message || 'Failed to send report cards');
     } finally {
       setLoading(false);
     }
@@ -258,9 +258,9 @@ const BulkReportCardDashboard: React.FC = () => {
         <CardContent>
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
               mb: 3,
             }}
           >
@@ -310,7 +310,7 @@ const BulkReportCardDashboard: React.FC = () => {
           )}
 
           {loading && (
-            <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
               <CircularProgress />
             </Box>
           )}
@@ -489,7 +489,7 @@ const BulkReportCardDashboard: React.FC = () => {
             onClick={handleApplyTemplate}
             disabled={loading}
           >
-            {loading ? <CircularProgress size={24} /> : "Apply Template"}
+            {loading ? <CircularProgress size={24} /> : 'Apply Template'}
           </Button>
         </DialogActions>
       </Dialog>

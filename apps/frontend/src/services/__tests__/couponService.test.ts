@@ -1,6 +1,6 @@
 /**
  * Coupon Service Tests
- * 
+ *
  * Tests for coupon business logic and validation.
  * These define what "working" means for the coupon system.
  */
@@ -22,13 +22,13 @@ describe('Coupon Service - Business Logic', () => {
     maxUsesPerCustomer: 1,
     status: 'ACTIVE',
     createdAt: '2025-01-01',
-    updatedAt: '2025-01-01'
+    updatedAt: '2025-01-01',
   };
 
   describe('calculateDiscount', () => {
     it('should calculate percentage discount correctly', () => {
       const result = couponService.calculateDiscount(mockCoupon, 100);
-      
+
       expect(result.discountAmount).toBe(25);
       expect(result.finalPrice).toBe(75);
     });
@@ -37,11 +37,11 @@ describe('Coupon Service - Business Logic', () => {
       const fixedCoupon: Coupon = {
         ...mockCoupon,
         type: 'FIXED_AMOUNT',
-        discountValue: 15
+        discountValue: 15,
       };
 
       const result = couponService.calculateDiscount(fixedCoupon, 100);
-      
+
       expect(result.discountAmount).toBe(15);
       expect(result.finalPrice).toBe(85);
     });
@@ -50,11 +50,11 @@ describe('Coupon Service - Business Logic', () => {
       const fixedCoupon: Coupon = {
         ...mockCoupon,
         type: 'FIXED_AMOUNT',
-        discountValue: 150
+        discountValue: 150,
       };
 
       const result = couponService.calculateDiscount(fixedCoupon, 100);
-      
+
       expect(result.discountAmount).toBe(100);
       expect(result.finalPrice).toBe(0);
     });
@@ -63,18 +63,18 @@ describe('Coupon Service - Business Logic', () => {
       const percentCoupon: Coupon = {
         ...mockCoupon,
         type: 'PERCENTAGE',
-        discountValue: 33.333
+        discountValue: 33.333,
       };
 
       const result = couponService.calculateDiscount(percentCoupon, 100);
-      
+
       expect(result.discountAmount).toBe(33.33);
       expect(result.finalPrice).toBe(66.67);
     });
 
     it('should handle zero subtotal', () => {
       const result = couponService.calculateDiscount(mockCoupon, 0);
-      
+
       expect(result.discountAmount).toBe(0);
       expect(result.finalPrice).toBe(0);
     });
@@ -83,8 +83,8 @@ describe('Coupon Service - Business Logic', () => {
   describe('validateCouponCode', () => {
     it('should accept valid coupon codes', () => {
       const validCodes = ['SUMMER2025', 'SAVE-20', 'FIRST-TIME', 'ABC123'];
-      
-      validCodes.forEach(code => {
+
+      validCodes.forEach((code) => {
         const result = couponService.validateCouponCode(code);
         expect(result.isValid).toBe(true);
       });
@@ -92,14 +92,14 @@ describe('Coupon Service - Business Logic', () => {
 
     it('should reject empty codes', () => {
       const result = couponService.validateCouponCode('');
-      
+
       expect(result.isValid).toBe(false);
       expect(result.error).toContain('required');
     });
 
     it('should reject codes that are too short', () => {
       const result = couponService.validateCouponCode('AB');
-      
+
       expect(result.isValid).toBe(false);
       expect(result.error).toContain('at least 3 characters');
     });
@@ -107,15 +107,15 @@ describe('Coupon Service - Business Logic', () => {
     it('should reject codes that are too long', () => {
       const longCode = 'A'.repeat(51);
       const result = couponService.validateCouponCode(longCode);
-      
+
       expect(result.isValid).toBe(false);
       expect(result.error).toContain('less than 50 characters');
     });
 
     it('should reject codes with special characters', () => {
       const invalidCodes = ['SAVE@20', 'SUMMER!', 'FIRST_TIME', 'CODE#123'];
-      
-      invalidCodes.forEach(code => {
+
+      invalidCodes.forEach((code) => {
         const result = couponService.validateCouponCode(code);
         expect(result.isValid).toBe(false);
         expect(result.error).toContain('letters, numbers, and hyphens');
@@ -127,22 +127,22 @@ describe('Coupon Service - Business Logic', () => {
     it('should return true for expired coupons', () => {
       const expiredCoupon: Coupon = {
         ...mockCoupon,
-        validUntil: '2020-01-01'
+        validUntil: '2020-01-01',
       };
 
       const result = couponService.isCouponExpired(expiredCoupon);
-      
+
       expect(result).toBe(true);
     });
 
     it('should return false for valid coupons', () => {
       const validCoupon: Coupon = {
         ...mockCoupon,
-        validUntil: '2030-12-31'
+        validUntil: '2030-12-31',
       };
 
       const result = couponService.isCouponExpired(validCoupon);
-      
+
       expect(result).toBe(false);
     });
 
@@ -152,11 +152,11 @@ describe('Coupon Service - Business Logic', () => {
 
       const validCoupon: Coupon = {
         ...mockCoupon,
-        validUntil: futureDate
+        validUntil: futureDate,
       };
 
       const result = couponService.isCouponExpired(validCoupon);
-      
+
       expect(result).toBe(false);
     });
   });
@@ -165,22 +165,22 @@ describe('Coupon Service - Business Logic', () => {
     it('should return true for future coupons', () => {
       const futureCoupon: Coupon = {
         ...mockCoupon,
-        validFrom: '2030-01-01'
+        validFrom: '2030-01-01',
       };
 
       const result = couponService.isCouponNotYetValid(futureCoupon);
-      
+
       expect(result).toBe(true);
     });
 
     it('should return false for currently valid coupons', () => {
       const validCoupon: Coupon = {
         ...mockCoupon,
-        validFrom: '2020-01-01'
+        validFrom: '2020-01-01',
       };
 
       const result = couponService.isCouponNotYetValid(validCoupon);
-      
+
       expect(result).toBe(false);
     });
   });
@@ -190,11 +190,11 @@ describe('Coupon Service - Business Logic', () => {
       const depletedCoupon: Coupon = {
         ...mockCoupon,
         currentUses: 100,
-        maxTotalUses: 100
+        maxTotalUses: 100,
       };
 
       const result = couponService.isCouponDepleted(depletedCoupon);
-      
+
       expect(result).toBe(true);
     });
 
@@ -202,11 +202,11 @@ describe('Coupon Service - Business Logic', () => {
       const validCoupon: Coupon = {
         ...mockCoupon,
         currentUses: 50,
-        maxTotalUses: 100
+        maxTotalUses: 100,
       };
 
       const result = couponService.isCouponDepleted(validCoupon);
-      
+
       expect(result).toBe(false);
     });
 
@@ -214,11 +214,11 @@ describe('Coupon Service - Business Logic', () => {
       const unlimitedCoupon: Coupon = {
         ...mockCoupon,
         currentUses: 1000,
-        maxTotalUses: undefined
+        maxTotalUses: undefined,
       };
 
       const result = couponService.isCouponDepleted(unlimitedCoupon);
-      
+
       expect(result).toBe(false);
     });
   });
@@ -226,7 +226,7 @@ describe('Coupon Service - Business Logic', () => {
   describe('formatCouponDiscount', () => {
     it('should format percentage discounts', () => {
       const result = couponService.formatCouponDiscount(mockCoupon);
-      
+
       expect(result).toBe('25% off');
     });
 
@@ -234,11 +234,11 @@ describe('Coupon Service - Business Logic', () => {
       const fixedCoupon: Coupon = {
         ...mockCoupon,
         type: 'FIXED_AMOUNT',
-        discountValue: 15.50
+        discountValue: 15.5,
       };
 
       const result = couponService.formatCouponDiscount(fixedCoupon);
-      
+
       expect(result).toBe('$15.50 off');
     });
 
@@ -246,11 +246,11 @@ describe('Coupon Service - Business Logic', () => {
       const fixedCoupon: Coupon = {
         ...mockCoupon,
         type: 'FIXED_AMOUNT',
-        discountValue: 20
+        discountValue: 20,
       };
 
       const result = couponService.formatCouponDiscount(fixedCoupon);
-      
+
       expect(result).toBe('$20.00 off');
     });
   });
@@ -259,7 +259,7 @@ describe('Coupon Service - Business Logic', () => {
     it('should enforce minimum purchase requirement', () => {
       const couponWithMin: Coupon = {
         ...mockCoupon,
-        minimumPurchase: 50
+        minimumPurchase: 50,
       };
 
       // Subtotal below minimum
@@ -276,11 +276,11 @@ describe('Coupon Service - Business Logic', () => {
       const fullDiscountCoupon: Coupon = {
         ...mockCoupon,
         type: 'PERCENTAGE',
-        discountValue: 100
+        discountValue: 100,
       };
 
       const result = couponService.calculateDiscount(fullDiscountCoupon, 50);
-      
+
       expect(result.discountAmount).toBe(50);
       expect(result.finalPrice).toBe(0);
     });
@@ -289,13 +289,13 @@ describe('Coupon Service - Business Logic', () => {
       const smallDiscountCoupon: Coupon = {
         ...mockCoupon,
         type: 'PERCENTAGE',
-        discountValue: 0.5
+        discountValue: 0.5,
       };
 
       const result = couponService.calculateDiscount(smallDiscountCoupon, 100);
-      
-      expect(result.discountAmount).toBe(0.50);
-      expect(result.finalPrice).toBe(99.50);
+
+      expect(result.discountAmount).toBe(0.5);
+      expect(result.finalPrice).toBe(99.5);
     });
   });
 });

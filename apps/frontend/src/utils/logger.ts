@@ -1,9 +1,9 @@
 /**
  * Frontend Logger Utility
- * 
+ *
  * Provides consistent logging across the frontend with different log levels,
  * context support, and environment-based filtering.
- * 
+ *
  * Usage:
  *   import { logger } from '@/utils/logger';
  *   logger.info('User logged in', { userId: '123' });
@@ -16,7 +16,7 @@ export enum LogLevel {
   WARN = 1,
   INFO = 2,
   SUCCESS = 3,
-  DEBUG = 4
+  DEBUG = 4,
 }
 
 // Logger configuration
@@ -33,16 +33,17 @@ const colors = {
   WARN: '#ff9800',
   INFO: '#2196f3',
   SUCCESS: '#4caf50',
-  DEBUG: '#9e9e9e'
+  DEBUG: '#9e9e9e',
 };
 
 // Default configuration based on environment
 const defaultConfig: LoggerConfig = {
-  level: process.env.NODE_ENV === 'production' 
-    ? LogLevel.WARN  // Only warnings and errors in production
-    : LogLevel.DEBUG, // All logs in development
+  level:
+    process.env.NODE_ENV === 'production'
+      ? LogLevel.WARN // Only warnings and errors in production
+      : LogLevel.DEBUG, // All logs in development
   enableColors: true,
-  includeTimestamps: process.env.NODE_ENV !== 'production'
+  includeTimestamps: process.env.NODE_ENV !== 'production',
 };
 
 /**
@@ -50,35 +51,39 @@ const defaultConfig: LoggerConfig = {
  */
 class Logger {
   private config: LoggerConfig;
-  
+
   constructor(config: Partial<LoggerConfig> = {}) {
     this.config = { ...defaultConfig, ...config };
   }
-  
+
   /**
    * Format a log message with optional context
    */
   private formatMessage(level: string, message: string, context?: any): string {
     const parts: string[] = [];
-    
+
     if (this.config.includeTimestamps) {
       parts.push(new Date().toISOString());
     }
-    
+
     if (this.config.prefix) {
       parts.push(`[${this.config.prefix}]`);
     }
-    
+
     parts.push(`[${level}]`);
     parts.push(message);
-    
+
     return parts.join(' ');
   }
-  
+
   /**
    * Log with color in browser console
    */
-  private logWithColor(level: keyof typeof colors, message: string, context?: any): void {
+  private logWithColor(
+    level: keyof typeof colors,
+    message: string,
+    context?: any
+  ): void {
     if (this.config.enableColors && typeof window !== 'undefined') {
       console.log(
         `%c${message}`,
@@ -89,7 +94,7 @@ class Logger {
       console.log(message, context !== undefined ? context : '');
     }
   }
-  
+
   /**
    * Log an error message
    */
@@ -107,7 +112,7 @@ class Logger {
       }
     }
   }
-  
+
   /**
    * Log a warning message
    */
@@ -125,7 +130,7 @@ class Logger {
       }
     }
   }
-  
+
   /**
    * Log an info message
    */
@@ -135,7 +140,7 @@ class Logger {
       this.logWithColor('INFO', formattedMessage, context);
     }
   }
-  
+
   /**
    * Log a success message
    */
@@ -145,7 +150,7 @@ class Logger {
       this.logWithColor('SUCCESS', formattedMessage, context);
     }
   }
-  
+
   /**
    * Log a debug message
    */
@@ -155,21 +160,21 @@ class Logger {
       this.logWithColor('DEBUG', formattedMessage, context);
     }
   }
-  
+
   /**
    * Set the log level
    */
   setLevel(level: LogLevel): void {
     this.config.level = level;
   }
-  
+
   /**
    * Create a child logger with a prefix
    */
   child(prefix: string): Logger {
     return new Logger({
       ...this.config,
-      prefix: this.config.prefix ? `${this.config.prefix}:${prefix}` : prefix
+      prefix: this.config.prefix ? `${this.config.prefix}:${prefix}` : prefix,
     });
   }
 }

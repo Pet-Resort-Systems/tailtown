@@ -4,13 +4,13 @@
  * Tests that actually call controller functions against the test database.
  */
 
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 import {
   getTestPrismaClient,
   createTestTenant,
   deleteTestData,
   disconnectTestDatabase,
-} from "../../test/setup-test-db";
+} from '../../test/setup-test-db';
 import {
   getAllCoupons,
   getCouponById,
@@ -18,9 +18,9 @@ import {
   createCoupon,
   updateCoupon,
   validateCoupon,
-} from "../coupon.controller";
+} from '../coupon.controller';
 
-describe("Coupon Controller Integration Tests", () => {
+describe('Coupon Controller Integration Tests', () => {
   const prisma = getTestPrismaClient();
   let testTenantId: string;
   let testCouponIds: string[] = [];
@@ -42,10 +42,10 @@ describe("Coupon Controller Integration Tests", () => {
     const customer = await prisma.customer.create({
       data: {
         tenantId: testTenantId,
-        firstName: "Coupon",
-        lastName: "Test",
+        firstName: 'Coupon',
+        lastName: 'Test',
         email: `coupon-test-${Date.now()}@example.com`,
-        phone: "555-0500",
+        phone: '555-0500',
       },
     });
     testCustomerId = customer.id;
@@ -67,16 +67,16 @@ describe("Coupon Controller Integration Tests", () => {
     jest.clearAllMocks();
   });
 
-  describe("getAllCoupons", () => {
+  describe('getAllCoupons', () => {
     beforeAll(async () => {
       // Create test coupons
       const coupon1 = await prisma.coupon.create({
         data: {
           code: `TEST10-${Date.now()}`,
-          description: "Test 10% off",
-          type: "PERCENTAGE",
+          description: 'Test 10% off',
+          type: 'PERCENTAGE',
           discountValue: 10,
-          status: "ACTIVE",
+          status: 'ACTIVE',
           validFrom: new Date(),
           validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         },
@@ -86,10 +86,10 @@ describe("Coupon Controller Integration Tests", () => {
       const coupon2 = await prisma.coupon.create({
         data: {
           code: `TEST20-${Date.now()}`,
-          description: "Test $20 off",
-          type: "FIXED_AMOUNT",
+          description: 'Test $20 off',
+          type: 'FIXED_AMOUNT',
           discountValue: 20,
-          status: "ACTIVE",
+          status: 'ACTIVE',
           validFrom: new Date(),
           validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         },
@@ -97,9 +97,9 @@ describe("Coupon Controller Integration Tests", () => {
       testCouponIds.push(coupon2.id);
     });
 
-    it("should return paginated coupons", async () => {
+    it('should return paginated coupons', async () => {
       const req = {
-        query: { page: "1", limit: "10" },
+        query: { page: '1', limit: '10' },
       } as unknown as Request;
       const res = createMockResponse();
 
@@ -108,16 +108,16 @@ describe("Coupon Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           results: expect.any(Number),
           data: expect.any(Array),
         })
       );
     });
 
-    it("should filter by status", async () => {
+    it('should filter by status', async () => {
       const req = {
-        query: { status: "ACTIVE" },
+        query: { status: 'ACTIVE' },
       } as unknown as Request;
       const res = createMockResponse();
 
@@ -126,13 +126,13 @@ describe("Coupon Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       const responseData = (res.json as jest.Mock).mock.calls[0][0];
       responseData.data.forEach((coupon: any) => {
-        expect(coupon.status).toBe("ACTIVE");
+        expect(coupon.status).toBe('ACTIVE');
       });
     });
 
-    it("should search by code", async () => {
+    it('should search by code', async () => {
       const req = {
-        query: { search: "TEST" },
+        query: { search: 'TEST' },
       } as unknown as Request;
       const res = createMockResponse();
 
@@ -142,17 +142,17 @@ describe("Coupon Controller Integration Tests", () => {
     });
   });
 
-  describe("getCouponById", () => {
+  describe('getCouponById', () => {
     let testCouponId: string;
 
     beforeAll(async () => {
       const coupon = await prisma.coupon.create({
         data: {
           code: `BYID-${Date.now()}`,
-          description: "Test coupon by ID",
-          type: "PERCENTAGE",
+          description: 'Test coupon by ID',
+          type: 'PERCENTAGE',
           discountValue: 15,
-          status: "ACTIVE",
+          status: 'ACTIVE',
           validFrom: new Date(),
           validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         },
@@ -161,7 +161,7 @@ describe("Coupon Controller Integration Tests", () => {
       testCouponIds.push(testCouponId);
     });
 
-    it("should return coupon by ID", async () => {
+    it('should return coupon by ID', async () => {
       const req = {
         params: { id: testCouponId },
       } as unknown as Request;
@@ -172,7 +172,7 @@ describe("Coupon Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           data: expect.objectContaining({
             id: testCouponId,
             discountValue: 15,
@@ -181,9 +181,9 @@ describe("Coupon Controller Integration Tests", () => {
       );
     });
 
-    it("should return 404 for non-existent coupon", async () => {
+    it('should return 404 for non-existent coupon', async () => {
       const req = {
-        params: { id: "00000000-0000-0000-0000-000000000000" },
+        params: { id: '00000000-0000-0000-0000-000000000000' },
       } as unknown as Request;
       const res = createMockResponse();
 
@@ -191,11 +191,11 @@ describe("Coupon Controller Integration Tests", () => {
 
       expect(mockNext).toHaveBeenCalled();
       const error = (mockNext as jest.Mock).mock.calls[0][0];
-      expect(error.message).toBe("Coupon not found");
+      expect(error.message).toBe('Coupon not found');
     });
   });
 
-  describe("getCouponByCode", () => {
+  describe('getCouponByCode', () => {
     let testCouponCode: string;
 
     beforeAll(async () => {
@@ -203,10 +203,10 @@ describe("Coupon Controller Integration Tests", () => {
       const coupon = await prisma.coupon.create({
         data: {
           code: testCouponCode,
-          description: "Test coupon by code",
-          type: "PERCENTAGE",
+          description: 'Test coupon by code',
+          type: 'PERCENTAGE',
           discountValue: 25,
-          status: "ACTIVE",
+          status: 'ACTIVE',
           validFrom: new Date(),
           validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         },
@@ -214,7 +214,7 @@ describe("Coupon Controller Integration Tests", () => {
       testCouponIds.push(coupon.id);
     });
 
-    it("should find coupon by code (case-insensitive)", async () => {
+    it('should find coupon by code (case-insensitive)', async () => {
       const req = {
         params: { code: testCouponCode.toLowerCase() },
       } as unknown as Request;
@@ -225,7 +225,7 @@ describe("Coupon Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           data: expect.objectContaining({
             discountValue: 25,
           }),
@@ -233,9 +233,9 @@ describe("Coupon Controller Integration Tests", () => {
       );
     });
 
-    it("should return 404 for non-existent code", async () => {
+    it('should return 404 for non-existent code', async () => {
       const req = {
-        params: { code: "NONEXISTENT" },
+        params: { code: 'NONEXISTENT' },
       } as unknown as Request;
       const res = createMockResponse();
 
@@ -245,13 +245,13 @@ describe("Coupon Controller Integration Tests", () => {
     });
   });
 
-  describe("createCoupon", () => {
-    it("should create coupon with all fields", async () => {
+  describe('createCoupon', () => {
+    it('should create coupon with all fields', async () => {
       const req = {
         body: {
           code: `NEW-${Date.now()}`,
-          description: "New test coupon",
-          type: "PERCENTAGE",
+          description: 'New test coupon',
+          type: 'PERCENTAGE',
           discountValue: 30,
           validFrom: new Date().toISOString(),
           validUntil: new Date(
@@ -266,10 +266,10 @@ describe("Coupon Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           data: expect.objectContaining({
             discountValue: 30,
-            status: "ACTIVE",
+            status: 'ACTIVE',
           }),
         })
       );
@@ -279,9 +279,9 @@ describe("Coupon Controller Integration Tests", () => {
       testCouponIds.push(createdCoupon.id);
     });
 
-    it("should reject coupon without required fields", async () => {
+    it('should reject coupon without required fields', async () => {
       const req = {
-        body: { code: "INCOMPLETE" },
+        body: { code: 'INCOMPLETE' },
       } as unknown as Request;
       const res = createMockResponse();
 
@@ -291,17 +291,17 @@ describe("Coupon Controller Integration Tests", () => {
     });
   });
 
-  describe("updateCoupon", () => {
+  describe('updateCoupon', () => {
     let updateCouponId: string;
 
     beforeAll(async () => {
       const coupon = await prisma.coupon.create({
         data: {
           code: `UPDATE-${Date.now()}`,
-          description: "Coupon to update",
-          type: "PERCENTAGE",
+          description: 'Coupon to update',
+          type: 'PERCENTAGE',
           discountValue: 10,
-          status: "ACTIVE",
+          status: 'ACTIVE',
           validFrom: new Date(),
           validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         },
@@ -310,10 +310,10 @@ describe("Coupon Controller Integration Tests", () => {
       testCouponIds.push(updateCouponId);
     });
 
-    it("should update coupon status", async () => {
+    it('should update coupon status', async () => {
       const req = {
         params: { id: updateCouponId },
-        body: { status: "INACTIVE" },
+        body: { status: 'INACTIVE' },
       } as unknown as Request;
       const res = createMockResponse();
 
@@ -322,18 +322,18 @@ describe("Coupon Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           data: expect.objectContaining({
-            status: "INACTIVE",
+            status: 'INACTIVE',
           }),
         })
       );
     });
 
-    it("should return 404 for non-existent coupon", async () => {
+    it('should return 404 for non-existent coupon', async () => {
       const req = {
-        params: { id: "00000000-0000-0000-0000-000000000000" },
-        body: { status: "INACTIVE" },
+        params: { id: '00000000-0000-0000-0000-000000000000' },
+        body: { status: 'INACTIVE' },
       } as unknown as Request;
       const res = createMockResponse();
 
@@ -343,7 +343,7 @@ describe("Coupon Controller Integration Tests", () => {
     });
   });
 
-  describe("validateCoupon", () => {
+  describe('validateCoupon', () => {
     let validCouponCode: string;
     let expiredCouponCode: string;
 
@@ -353,10 +353,10 @@ describe("Coupon Controller Integration Tests", () => {
       const validCoupon = await prisma.coupon.create({
         data: {
           code: validCouponCode,
-          description: "Valid coupon",
-          type: "PERCENTAGE",
+          description: 'Valid coupon',
+          type: 'PERCENTAGE',
           discountValue: 20,
-          status: "ACTIVE",
+          status: 'ACTIVE',
           validFrom: new Date(Date.now() - 24 * 60 * 60 * 1000),
           validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         },
@@ -368,10 +368,10 @@ describe("Coupon Controller Integration Tests", () => {
       const expiredCoupon = await prisma.coupon.create({
         data: {
           code: expiredCouponCode,
-          description: "Expired coupon",
-          type: "PERCENTAGE",
+          description: 'Expired coupon',
+          type: 'PERCENTAGE',
           discountValue: 50,
-          status: "ACTIVE",
+          status: 'ACTIVE',
           validFrom: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
           validUntil: new Date(Date.now() - 24 * 60 * 60 * 1000), // Expired yesterday
         },
@@ -379,7 +379,7 @@ describe("Coupon Controller Integration Tests", () => {
       testCouponIds.push(expiredCoupon.id);
     });
 
-    it("should validate active coupon within date range", async () => {
+    it('should validate active coupon within date range', async () => {
       const req = {
         body: {
           code: validCouponCode,
@@ -394,7 +394,7 @@ describe("Coupon Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           data: expect.objectContaining({
             isValid: true,
           }),
@@ -402,7 +402,7 @@ describe("Coupon Controller Integration Tests", () => {
       );
     });
 
-    it("should reject expired coupon", async () => {
+    it('should reject expired coupon', async () => {
       const req = {
         body: {
           code: expiredCouponCode,
@@ -424,10 +424,10 @@ describe("Coupon Controller Integration Tests", () => {
       );
     });
 
-    it("should return invalid for non-existent coupon", async () => {
+    it('should return invalid for non-existent coupon', async () => {
       const req = {
         body: {
-          code: "NONEXISTENT",
+          code: 'NONEXISTENT',
           customerId: testCustomerId,
           subtotal: 100,
         },

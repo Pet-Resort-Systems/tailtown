@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Box,
   Typography,
@@ -12,7 +12,7 @@ import {
   Button,
   Divider,
   Chip,
-} from "@mui/material";
+} from '@mui/material';
 
 interface FinalInvoiceReviewProps {
   invoice: any;
@@ -24,9 +24,9 @@ const FinalInvoiceReview: React.FC<FinalInvoiceReviewProps> = ({
   onContinue,
 }) => {
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
     }).format(amount || 0);
   };
 
@@ -39,7 +39,7 @@ const FinalInvoiceReview: React.FC<FinalInvoiceReviewProps> = ({
     // Otherwise calculate from payments array
     if (invoice?.payments && Array.isArray(invoice.payments)) {
       return invoice.payments.reduce((sum: number, payment: any) => {
-        if (payment.status === "PAID") {
+        if (payment.status === 'PAID') {
           return sum + (payment.amount || 0);
         }
         return sum;
@@ -54,16 +54,16 @@ const FinalInvoiceReview: React.FC<FinalInvoiceReviewProps> = ({
 
   const getPaymentStatusColor = (status: string) => {
     switch (status?.toUpperCase()) {
-      case "PAID":
-        return "success";
-      case "DEPOSIT_PAID":
-      case "PARTIALLY_PAID":
-        return "warning";
-      case "PENDING":
-      case "DRAFT":
-        return "default";
+      case 'PAID':
+        return 'success';
+      case 'DEPOSIT_PAID':
+      case 'PARTIALLY_PAID':
+        return 'warning';
+      case 'PENDING':
+      case 'DRAFT':
+        return 'default';
       default:
-        return "default";
+        return 'default';
     }
   };
 
@@ -76,20 +76,20 @@ const FinalInvoiceReview: React.FC<FinalInvoiceReviewProps> = ({
         Review the final charges before proceeding with checkout
       </Typography>
 
-      <Paper elevation={0} sx={{ p: 3, mt: 3, bgcolor: "grey.50" }}>
+      <Paper elevation={0} sx={{ p: 3, mt: 3, bgcolor: 'grey.50' }}>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             mb: 2,
           }}
         >
           <Typography variant="subtitle1">
-            Invoice #{invoice?.invoiceNumber || "N/A"}
+            Invoice #{invoice?.invoiceNumber || 'N/A'}
           </Typography>
           <Chip
-            label={invoice?.status || "PENDING"}
+            label={invoice?.status || 'PENDING'}
             color={getPaymentStatusColor(invoice?.status)}
             size="small"
           />
@@ -127,7 +127,7 @@ const FinalInvoiceReview: React.FC<FinalInvoiceReviewProps> = ({
               {invoice?.discount > 0 && (
                 <TableRow>
                   <TableCell>Discount</TableCell>
-                  <TableCell align="right" sx={{ color: "error.main" }}>
+                  <TableCell align="right" sx={{ color: 'error.main' }}>
                     -{formatCurrency(invoice?.discount || 0)}
                   </TableCell>
                 </TableRow>
@@ -151,10 +151,10 @@ const FinalInvoiceReview: React.FC<FinalInvoiceReviewProps> = ({
               {paidAmount > 0 && (
                 <>
                   <TableRow>
-                    <TableCell sx={{ color: "success.main" }}>
+                    <TableCell sx={{ color: 'success.main' }}>
                       Amount Paid
                     </TableCell>
-                    <TableCell align="right" sx={{ color: "success.main" }}>
+                    <TableCell align="right" sx={{ color: 'success.main' }}>
                       -{formatCurrency(paidAmount)}
                     </TableCell>
                   </TableRow>
@@ -195,7 +195,7 @@ const FinalInvoiceReview: React.FC<FinalInvoiceReviewProps> = ({
         )}
       </Paper>
 
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
         <Button variant="contained" onClick={() => onContinue(invoice)}>
           Continue to Return Items
         </Button>

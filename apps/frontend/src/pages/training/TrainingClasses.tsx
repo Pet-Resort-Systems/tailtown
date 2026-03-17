@@ -100,7 +100,7 @@ const TrainingClasses: React.FC = () => {
       loadClasses();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [filters],
+    [filters]
   );
 
   const loadClasses = async () => {
@@ -181,7 +181,7 @@ const TrainingClasses: React.FC = () => {
         !formData.pricePerSeries
       ) {
         setError(
-          'Please fill in all required fields (name, instructor, capacity, dates, times, price)',
+          'Please fill in all required fields (name, instructor, capacity, dates, times, price)'
         );
         return;
       }
@@ -211,7 +211,7 @@ const TrainingClasses: React.FC = () => {
       if (editingClass) {
         await schedulingService.trainingClasses.update(
           editingClass.id,
-          apiData as any,
+          apiData as any
         );
       } else {
         await schedulingService.trainingClasses.create(apiData);
@@ -223,7 +223,7 @@ const TrainingClasses: React.FC = () => {
       setError(
         err.response?.data?.message ||
           err.message ||
-          'Failed to save training class',
+          'Failed to save training class'
       );
     }
   };
@@ -316,7 +316,7 @@ const TrainingClasses: React.FC = () => {
           customerId: enrollmentData.customerId,
           petId: enrollmentData.petId,
           amountPaid: enrollmentData.amountPaid,
-        },
+        }
       );
 
       await loadClasses();
@@ -324,7 +324,7 @@ const TrainingClasses: React.FC = () => {
       setError(null);
     } catch (err: any) {
       setError(
-        err.response?.data?.message || err.message || 'Failed to enroll pet',
+        err.response?.data?.message || err.message || 'Failed to enroll pet'
       );
     }
   };
@@ -574,7 +574,7 @@ const TrainingClasses: React.FC = () => {
                           size="small"
                           onClick={() =>
                             navigate(
-                              `/training/classes/${trainingClass.id}/enrollments`,
+                              `/training/classes/${trainingClass.id}/enrollments`
                             )
                           }
                           color="info"
@@ -770,7 +770,7 @@ const TrainingClasses: React.FC = () => {
                     'Start date changed to:',
                     newDate,
                     'Day of week:',
-                    dayOfWeek,
+                    dayOfWeek
                   );
                   setFormData({
                     ...formData,

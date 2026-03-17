@@ -4,7 +4,7 @@ import {
   getAddOnServiceById,
   createAddOnService,
   updateAddOnService,
-  deleteAddOnService
+  deleteAddOnService,
 } from '../controllers/addon.controller';
 
 const router = express.Router();

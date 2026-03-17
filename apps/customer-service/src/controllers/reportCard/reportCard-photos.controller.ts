@@ -7,9 +7,9 @@
  * - updatePhoto
  */
 
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-import { AppError } from "../../middleware/error.middleware";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { AppError } from '../../middleware/error.middleware';
 
 const prisma = new PrismaClient();
 
@@ -17,7 +17,7 @@ export interface AuthRequest extends Request {
   user?: {
     id: string;
     email: string;
-    role: "SUPER_ADMIN" | "TENANT_ADMIN" | "MANAGER" | "STAFF";
+    role: 'SUPER_ADMIN' | 'TENANT_ADMIN' | 'MANAGER' | 'STAFF';
     tenantId?: string;
   };
   tenantId?: string;
@@ -49,7 +49,7 @@ export const uploadPhoto = async (
     } = req.body;
 
     if (!url) {
-      return next(new AppError("Photo URL is required", 400));
+      return next(new AppError('Photo URL is required', 400));
     }
 
     const reportCard = await prisma.reportCard.findFirst({
@@ -57,7 +57,7 @@ export const uploadPhoto = async (
     });
 
     if (!reportCard) {
-      return next(new AppError("Report card not found", 404));
+      return next(new AppError('Report card not found', 404));
     }
 
     const photo = await prisma.reportCardPhoto.create({
@@ -82,7 +82,7 @@ export const uploadPhoto = async (
 
     res.status(201).json({ success: true, data: photo });
   } catch (error: any) {
-    next(new AppError(error.message || "Failed to upload photo", 500));
+    next(new AppError(error.message || 'Failed to upload photo', 500));
   }
 };
 
@@ -104,7 +104,7 @@ export const deletePhoto = async (
     });
 
     if (!reportCard) {
-      return next(new AppError("Report card not found", 404));
+      return next(new AppError('Report card not found', 404));
     }
 
     const photo = await prisma.reportCardPhoto.findFirst({
@@ -112,14 +112,14 @@ export const deletePhoto = async (
     });
 
     if (!photo) {
-      return next(new AppError("Photo not found", 404));
+      return next(new AppError('Photo not found', 404));
     }
 
     await prisma.reportCardPhoto.delete({ where: { id: photoId } });
 
-    res.json({ success: true, message: "Photo deleted successfully" });
+    res.json({ success: true, message: 'Photo deleted successfully' });
   } catch (error: any) {
-    next(new AppError(error.message || "Failed to delete photo", 500));
+    next(new AppError(error.message || 'Failed to delete photo', 500));
   }
 };
 
@@ -142,7 +142,7 @@ export const updatePhoto = async (
     });
 
     if (!reportCard) {
-      return next(new AppError("Report card not found", 404));
+      return next(new AppError('Report card not found', 404));
     }
 
     const photo = await prisma.reportCardPhoto.update({
@@ -155,6 +155,6 @@ export const updatePhoto = async (
 
     res.json({ success: true, data: photo });
   } catch (error: any) {
-    next(new AppError(error.message || "Failed to update photo", 500));
+    next(new AppError(error.message || 'Failed to update photo', 500));
   }
 };

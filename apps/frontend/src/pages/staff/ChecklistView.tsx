@@ -13,14 +13,17 @@ import {
   FormGroup,
   LinearProgress,
   Alert,
-  Chip
+  Chip,
 } from '@mui/material';
 import {
   CheckCircle as CheckIcon,
   Camera as CameraIcon,
-  Edit as SignatureIcon
+  Edit as SignatureIcon,
 } from '@mui/icons-material';
-import { ChecklistInstance, ChecklistInstanceItem } from '../../types/checklist';
+import {
+  ChecklistInstance,
+  ChecklistInstanceItem,
+} from '../../types/checklist';
 
 export default function ChecklistView() {
   const { id: checklistId } = useParams<{ id: string }>();
@@ -31,7 +34,12 @@ export default function ChecklistView() {
   const loadChecklist = React.useCallback(async () => {
     try {
       const response = await fetch(`/api/checklists/instances/${checklistId}`, {
-        headers: { 'x-tenant-id': (localStorage.getItem('tailtown_tenant_id') || localStorage.getItem('tenantId') || 'dev') }
+        headers: {
+          'x-tenant-id':
+            localStorage.getItem('tailtown_tenant_id') ||
+            localStorage.getItem('tenantId') ||
+            'dev',
+        },
       });
       const data = await response.json();
       setChecklist(data.data);
@@ -46,26 +54,32 @@ export default function ChecklistView() {
     loadChecklist();
   }, [loadChecklist]);
 
-  const handleUpdateItem = async (item: ChecklistInstanceItem, values: Partial<ChecklistInstanceItem>) => {
+  const handleUpdateItem = async (
+    item: ChecklistInstanceItem,
+    values: Partial<ChecklistInstanceItem>
+  ) => {
     if (!checklist) return;
-    
+
     setSaving(true);
     try {
       await fetch(`/api/checklists/instances/${checklistId}/item`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'x-tenant-id': (localStorage.getItem('tailtown_tenant_id') || localStorage.getItem('tenantId') || 'dev')
+          'x-tenant-id':
+            localStorage.getItem('tailtown_tenant_id') ||
+            localStorage.getItem('tenantId') ||
+            'dev',
         },
         body: JSON.stringify({
           templateItemId: item.templateItemId,
-          ...values
-        })
+          ...values,
+        }),
       });
-      
+
       // Update local state
-      const updatedItems = checklist.items.map(i => 
-        i.templateItemId === item.templateItemId 
+      const updatedItems = checklist.items.map((i) =>
+        i.templateItemId === item.templateItemId
           ? { ...i, ...values, isCompleted: true }
           : i
       );
@@ -79,27 +93,30 @@ export default function ChecklistView() {
 
   const handleComplete = async () => {
     if (!checklist) return;
-    
-    const requiredItems = checklist.items.filter(i => i.isRequired);
-    const completedRequired = requiredItems.filter(i => i.isCompleted);
-    
+
+    const requiredItems = checklist.items.filter((i) => i.isRequired);
+    const completedRequired = requiredItems.filter((i) => i.isCompleted);
+
     if (completedRequired.length < requiredItems.length) {
       alert('Please complete all required items before finishing.');
       return;
     }
-    
+
     try {
       await fetch(`/api/checklists/instances/${checklistId}/complete`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-tenant-id': (localStorage.getItem('tailtown_tenant_id') || localStorage.getItem('tenantId') || 'dev')
+          'x-tenant-id':
+            localStorage.getItem('tailtown_tenant_id') ||
+            localStorage.getItem('tenantId') ||
+            'dev',
         },
         body: JSON.stringify({
-          notes: ''
-        })
+          notes: '',
+        }),
       });
-      
+
       alert('Checklist completed!');
       loadChecklist();
     } catch (error) {
@@ -115,7 +132,7 @@ export default function ChecklistView() {
     return <Alert severity="error">Checklist not found</Alert>;
   }
 
-  const completedCount = checklist.items.filter(i => i.isCompleted).length;
+  const completedCount = checklist.items.filter((i) => i.isCompleted).length;
   const totalCount = checklist.items.length;
   const progress = (completedCount / totalCount) * 100;
 
@@ -130,24 +147,24 @@ export default function ChecklistView() {
           <Typography variant="body2" color="text.secondary" gutterBottom>
             {checklist.template?.description}
           </Typography>
-          
+
           <Box sx={{ mt: 2, mb: 1 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+            <Box
+              sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}
+            >
               <Typography variant="body2">
                 Progress: {completedCount} / {totalCount}
               </Typography>
-              <Typography variant="body2">
-                {Math.round(progress)}%
-              </Typography>
+              <Typography variant="body2">{Math.round(progress)}%</Typography>
             </Box>
             <LinearProgress variant="determinate" value={progress} />
           </Box>
-          
+
           {checklist.status === 'COMPLETED' && (
-            <Chip 
-              icon={<CheckIcon />} 
-              label="Completed" 
-              color="success" 
+            <Chip
+              icon={<CheckIcon />}
+              label="Completed"
+              color="success"
               sx={{ mt: 1 }}
             />
           )}
@@ -162,12 +179,15 @@ export default function ChecklistView() {
               <Typography variant="h6" sx={{ flex: 1 }}>
                 {item.label}
                 {item.isRequired && (
-                  <Chip label="Required" size="small" color="error" sx={{ ml: 1 }} />
+                  <Chip
+                    label="Required"
+                    size="small"
+                    color="error"
+                    sx={{ ml: 1 }}
+                  />
                 )}
               </Typography>
-              {item.isCompleted && (
-                <CheckIcon color="success" />
-              )}
+              {item.isCompleted && <CheckIcon color="success" />}
             </Box>
 
             {item.description && (
@@ -182,7 +202,11 @@ export default function ChecklistView() {
                 control={
                   <Checkbox
                     checked={item.checkboxValue || false}
-                    onChange={(e) => handleUpdateItem(item, { checkboxValue: e.target.checked })}
+                    onChange={(e) =>
+                      handleUpdateItem(item, {
+                        checkboxValue: e.target.checked,
+                      })
+                    }
                     disabled={checklist.status === 'COMPLETED'}
                   />
                 }
@@ -197,7 +221,9 @@ export default function ChecklistView() {
                 multiline
                 rows={2}
                 value={item.textValue || ''}
-                onChange={(e) => handleUpdateItem(item, { textValue: e.target.value })}
+                onChange={(e) =>
+                  handleUpdateItem(item, { textValue: e.target.value })
+                }
                 placeholder="Enter text..."
                 disabled={checklist.status === 'COMPLETED'}
               />
@@ -209,7 +235,11 @@ export default function ChecklistView() {
                 fullWidth
                 type="number"
                 value={item.numberValue || ''}
-                onChange={(e) => handleUpdateItem(item, { numberValue: parseFloat(e.target.value) })}
+                onChange={(e) =>
+                  handleUpdateItem(item, {
+                    numberValue: parseFloat(e.target.value),
+                  })
+                }
                 placeholder="Enter number..."
                 disabled={checklist.status === 'COMPLETED'}
               />
@@ -220,7 +250,9 @@ export default function ChecklistView() {
               <Box>
                 <Rating
                   value={item.ratingValue || 0}
-                  onChange={(e, value) => handleUpdateItem(item, { ratingValue: value || 0 })}
+                  onChange={(e, value) =>
+                    handleUpdateItem(item, { ratingValue: value || 0 })
+                  }
                   disabled={checklist.status === 'COMPLETED'}
                 />
               </Box>
@@ -255,7 +287,11 @@ export default function ChecklistView() {
                   Add Signature
                 </Button>
                 {item.signatureUrl && (
-                  <Typography variant="body2" sx={{ mt: 1 }} color="success.main">
+                  <Typography
+                    variant="body2"
+                    sx={{ mt: 1 }}
+                    color="success.main"
+                  >
                     ✓ Signed
                   </Typography>
                 )}

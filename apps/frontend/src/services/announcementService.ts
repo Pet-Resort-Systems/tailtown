@@ -32,7 +32,9 @@ export const getActiveAnnouncements = async (): Promise<Announcement[]> => {
  */
 export const getAllAnnouncements = async (): Promise<Announcement[]> => {
   try {
-    const response = await api.get<AnnouncementResponse>('/api/announcements/all');
+    const response = await api.get<AnnouncementResponse>(
+      '/api/announcements/all'
+    );
     return response.data.data || [];
   } catch (error) {
     console.error('Error fetching all announcements:', error);
@@ -43,16 +45,27 @@ export const getAllAnnouncements = async (): Promise<Announcement[]> => {
 /**
  * Create a new announcement
  */
-export const createAnnouncement = async (data: Partial<Announcement>): Promise<Announcement> => {
-  const response = await api.post<SingleAnnouncementResponse>('/api/announcements', data);
+export const createAnnouncement = async (
+  data: Partial<Announcement>
+): Promise<Announcement> => {
+  const response = await api.post<SingleAnnouncementResponse>(
+    '/api/announcements',
+    data
+  );
   return response.data.data;
 };
 
 /**
  * Update an announcement
  */
-export const updateAnnouncement = async (id: string, data: Partial<Announcement>): Promise<Announcement> => {
-  const response = await api.put<SingleAnnouncementResponse>(`/api/announcements/${id}`, data);
+export const updateAnnouncement = async (
+  id: string,
+  data: Partial<Announcement>
+): Promise<Announcement> => {
+  const response = await api.put<SingleAnnouncementResponse>(
+    `/api/announcements/${id}`,
+    data
+  );
   return response.data.data;
 };
 
@@ -76,5 +89,5 @@ export default {
   createAnnouncement,
   updateAnnouncement,
   deleteAnnouncement,
-  dismissAnnouncement
+  dismissAnnouncement,
 };

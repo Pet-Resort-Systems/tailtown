@@ -5,10 +5,10 @@
  * Tests the error tracking retrieval controller endpoints.
  */
 
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 
 // Mock dependencies
-jest.mock("../../../utils/reservation-error-tracker", () => ({
+jest.mock('../../../utils/reservation-error-tracker', () => ({
   reservationErrorTracker: {
     getErrors: jest.fn().mockResolvedValue([]),
     getError: jest.fn().mockResolvedValue(null),
@@ -16,7 +16,7 @@ jest.mock("../../../utils/reservation-error-tracker", () => ({
   },
 }));
 
-jest.mock("../../../utils/logger", () => ({
+jest.mock('../../../utils/logger', () => ({
   logger: {
     error: jest.fn(),
     info: jest.fn(),
@@ -25,8 +25,8 @@ jest.mock("../../../utils/logger", () => ({
   },
 }));
 
-import { reservationErrorTracker } from "../../../utils/reservation-error-tracker";
-import { logger } from "../../../utils/logger";
+import { reservationErrorTracker } from '../../../utils/reservation-error-tracker';
+import { logger } from '../../../utils/logger';
 
 // Helper to create mock request
 const createMockRequest = (overrides: any = {}): Request => {
@@ -47,97 +47,97 @@ const createMockResponse = (): Response => {
   return res as Response;
 };
 
-describe("Get Errors Controller", () => {
+describe('Get Errors Controller', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe("getAllErrors", () => {
-    describe("filter parsing", () => {
-      it("should parse category filter", () => {
-        const query = { category: "VALIDATION_ERROR" };
+  describe('getAllErrors', () => {
+    describe('filter parsing', () => {
+      it('should parse category filter', () => {
+        const query = { category: 'VALIDATION_ERROR' };
         const filters: any = {};
         if (query.category) filters.category = query.category;
 
-        expect(filters.category).toBe("VALIDATION_ERROR");
+        expect(filters.category).toBe('VALIDATION_ERROR');
       });
 
-      it("should parse isResolved filter as boolean", () => {
-        const query = { isResolved: "true" };
+      it('should parse isResolved filter as boolean', () => {
+        const query = { isResolved: 'true' };
         const filters: any = {};
-        if (query.isResolved) filters.isResolved = query.isResolved === "true";
+        if (query.isResolved) filters.isResolved = query.isResolved === 'true';
 
         expect(filters.isResolved).toBe(true);
       });
 
-      it("should parse isResolved=false correctly", () => {
-        const query = { isResolved: "false" };
+      it('should parse isResolved=false correctly', () => {
+        const query = { isResolved: 'false' };
         const filters: any = {};
-        if (query.isResolved) filters.isResolved = query.isResolved === "true";
+        if (query.isResolved) filters.isResolved = query.isResolved === 'true';
 
         expect(filters.isResolved).toBe(false);
       });
 
-      it("should parse startDate filter", () => {
-        const query = { startDate: "2024-06-15" };
+      it('should parse startDate filter', () => {
+        const query = { startDate: '2024-06-15' };
         const startDate = new Date(query.startDate);
 
         expect(startDate).toBeInstanceOf(Date);
         expect(isNaN(startDate.getTime())).toBe(false);
       });
 
-      it("should parse endDate filter", () => {
-        const query = { endDate: "2024-06-20" };
+      it('should parse endDate filter', () => {
+        const query = { endDate: '2024-06-20' };
         const endDate = new Date(query.endDate);
 
         expect(endDate).toBeInstanceOf(Date);
         expect(isNaN(endDate.getTime())).toBe(false);
       });
 
-      it("should detect invalid startDate", () => {
-        const query = { startDate: "invalid-date" };
+      it('should detect invalid startDate', () => {
+        const query = { startDate: 'invalid-date' };
         const startDate = new Date(query.startDate);
 
         expect(isNaN(startDate.getTime())).toBe(true);
       });
 
-      it("should detect invalid endDate", () => {
-        const query = { endDate: "invalid-date" };
+      it('should detect invalid endDate', () => {
+        const query = { endDate: 'invalid-date' };
         const endDate = new Date(query.endDate);
 
         expect(isNaN(endDate.getTime())).toBe(true);
       });
 
-      it("should parse limit filter", () => {
-        const query = { limit: "50" };
+      it('should parse limit filter', () => {
+        const query = { limit: '50' };
         const limit = parseInt(query.limit, 10);
 
         expect(limit).toBe(50);
       });
 
-      it("should detect invalid limit", () => {
-        const query = { limit: "invalid" };
+      it('should detect invalid limit', () => {
+        const query = { limit: 'invalid' };
         const limit = parseInt(query.limit, 10);
 
         expect(isNaN(limit)).toBe(true);
       });
     });
 
-    describe("response structure", () => {
-      it("should return success status", () => {
+    describe('response structure', () => {
+      it('should return success status', () => {
         const response = {
-          status: "success",
+          status: 'success',
           results: 5,
           data: { errors: [] },
         };
 
-        expect(response.status).toBe("success");
+        expect(response.status).toBe('success');
       });
 
-      it("should include results count", () => {
+      it('should include results count', () => {
         const errors = [{}, {}, {}];
         const response = {
-          status: "success",
+          status: 'success',
           results: errors.length,
           data: { errors },
         };
@@ -147,8 +147,8 @@ describe("Get Errors Controller", () => {
     });
   });
 
-  describe("getErrorAnalytics", () => {
-    it("should call getErrorAnalytics from tracker", async () => {
+  describe('getErrorAnalytics', () => {
+    it('should call getErrorAnalytics from tracker', async () => {
       (reservationErrorTracker.getErrorAnalytics as jest.Mock).mockReturnValue({
         VALIDATION_ERROR: 10,
         DATABASE_ERROR: 5,
@@ -160,7 +160,7 @@ describe("Get Errors Controller", () => {
       expect(analytics.DATABASE_ERROR).toBe(5);
     });
 
-    it("should calculate total errors", () => {
+    it('should calculate total errors', () => {
       const analytics = {
         VALIDATION_ERROR: 10,
         DATABASE_ERROR: 5,
@@ -175,7 +175,7 @@ describe("Get Errors Controller", () => {
       expect(totalErrors).toBe(18);
     });
 
-    it("should handle empty analytics", () => {
+    it('should handle empty analytics', () => {
       const analytics = {};
       const totalErrors = Object.values(analytics).reduce(
         (sum: number, count: number) => sum + count,
@@ -186,34 +186,34 @@ describe("Get Errors Controller", () => {
     });
   });
 
-  describe("getErrorById", () => {
-    it("should call getError with correct ID", async () => {
-      const errorId = "err-123";
+  describe('getErrorById', () => {
+    it('should call getError with correct ID', async () => {
+      const errorId = 'err-123';
       await reservationErrorTracker.getError(errorId);
 
       expect(reservationErrorTracker.getError).toHaveBeenCalledWith(errorId);
     });
 
-    it("should handle error not found", async () => {
+    it('should handle error not found', async () => {
       (reservationErrorTracker.getError as jest.Mock).mockResolvedValue(null);
 
-      const error = await reservationErrorTracker.getError("nonexistent");
+      const error = await reservationErrorTracker.getError('nonexistent');
 
       expect(error).toBeNull();
     });
 
-    it("should return error when found", async () => {
+    it('should return error when found', async () => {
       const mockError = {
-        id: "err-123",
-        message: "Test error",
-        category: "VALIDATION_ERROR",
+        id: 'err-123',
+        message: 'Test error',
+        category: 'VALIDATION_ERROR',
         isResolved: false,
       };
       (reservationErrorTracker.getError as jest.Mock).mockResolvedValue(
         mockError
       );
 
-      const error = await reservationErrorTracker.getError("err-123");
+      const error = await reservationErrorTracker.getError('err-123');
 
       expect(error).toEqual(mockError);
     });

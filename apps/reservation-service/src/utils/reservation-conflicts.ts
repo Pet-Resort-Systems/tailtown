@@ -1,9 +1,9 @@
 import {
   ExtendedReservationWhereInput,
   ExtendedReservationStatus,
-} from "../types/prisma-extensions";
-import { prisma } from "../config/prisma";
-import { logger } from "./logger";
+} from '../types/prisma-extensions';
+import { prisma } from '../config/prisma';
+import { logger } from './logger';
 
 /**
  * Interface for conflict detection parameters
@@ -60,7 +60,7 @@ export async function detectReservationConflicts(
 
   // Validate date logic
   if (startDate >= endDate) {
-    result.warnings.push("Start date must be before end date");
+    result.warnings.push('Start date must be before end date');
     result.hasConflicts = true;
     return result;
   }
@@ -71,7 +71,7 @@ export async function detectReservationConflicts(
 
   if (startDate < currentDate) {
     result.warnings.push(
-      "Start date is in the past. This is allowed but may indicate an error."
+      'Start date is in the past. This is allowed but may indicate an error.'
     );
   }
 
@@ -126,7 +126,7 @@ export async function detectReservationConflicts(
         error,
       });
       result.warnings.push(
-        "Error checking resource availability. Please try again."
+        'Error checking resource availability. Please try again.'
       );
     }
   }
@@ -177,7 +177,7 @@ export async function detectReservationConflicts(
     } catch (error) {
       logger.error(`[${requestId}] Error checking pet conflicts:`, { error });
       result.warnings.push(
-        "Error checking pet availability. Please try again."
+        'Error checking pet availability. Please try again.'
       );
     }
   }

@@ -12,8 +12,8 @@
  * - Supports 7-year retention for compliance
  */
 
-import { PrismaClient } from "@prisma/client";
-import { Request } from "express";
+import { PrismaClient } from '@prisma/client';
+import { Request } from 'express';
 
 const prisma = new PrismaClient();
 
@@ -23,59 +23,59 @@ const prisma = new PrismaClient();
 
 export enum AuditAction {
   // CRUD Operations
-  CREATE = "CREATE",
-  READ = "READ",
-  UPDATE = "UPDATE",
-  DELETE = "DELETE",
+  CREATE = 'CREATE',
+  READ = 'READ',
+  UPDATE = 'UPDATE',
+  DELETE = 'DELETE',
 
   // Authentication
-  LOGIN = "LOGIN",
-  LOGOUT = "LOGOUT",
-  LOGIN_FAILED = "LOGIN_FAILED",
-  PASSWORD_RESET = "PASSWORD_RESET",
-  PASSWORD_CHANGED = "PASSWORD_CHANGED",
+  LOGIN = 'LOGIN',
+  LOGOUT = 'LOGOUT',
+  LOGIN_FAILED = 'LOGIN_FAILED',
+  PASSWORD_RESET = 'PASSWORD_RESET',
+  PASSWORD_CHANGED = 'PASSWORD_CHANGED',
 
   // Status Changes
-  CHECK_IN = "CHECK_IN",
-  CHECK_OUT = "CHECK_OUT",
-  CANCEL = "CANCEL",
-  CONFIRM = "CONFIRM",
+  CHECK_IN = 'CHECK_IN',
+  CHECK_OUT = 'CHECK_OUT',
+  CANCEL = 'CANCEL',
+  CONFIRM = 'CONFIRM',
 
   // Financial
-  PAYMENT_RECEIVED = "PAYMENT_RECEIVED",
-  REFUND_ISSUED = "REFUND_ISSUED",
-  INVOICE_CREATED = "INVOICE_CREATED",
+  PAYMENT_RECEIVED = 'PAYMENT_RECEIVED',
+  REFUND_ISSUED = 'REFUND_ISSUED',
+  INVOICE_CREATED = 'INVOICE_CREATED',
 
   // Settings
-  SETTINGS_CHANGED = "SETTINGS_CHANGED",
-  PERMISSION_CHANGED = "PERMISSION_CHANGED",
-  ROLE_ASSIGNED = "ROLE_ASSIGNED",
+  SETTINGS_CHANGED = 'SETTINGS_CHANGED',
+  PERMISSION_CHANGED = 'PERMISSION_CHANGED',
+  ROLE_ASSIGNED = 'ROLE_ASSIGNED',
 
   // Data Operations
-  EXPORT = "EXPORT",
-  IMPORT = "IMPORT",
-  BULK_UPDATE = "BULK_UPDATE",
-  BULK_DELETE = "BULK_DELETE",
+  EXPORT = 'EXPORT',
+  IMPORT = 'IMPORT',
+  BULK_UPDATE = 'BULK_UPDATE',
+  BULK_DELETE = 'BULK_DELETE',
 }
 
 export enum AuditCategory {
-  CUSTOMER = "CUSTOMER",
-  PET = "PET",
-  RESERVATION = "RESERVATION",
-  PAYMENT = "PAYMENT",
-  INVOICE = "INVOICE",
-  STAFF = "STAFF",
-  SERVICE = "SERVICE",
-  RESOURCE = "RESOURCE",
-  AUTH = "AUTH",
-  SETTINGS = "SETTINGS",
-  SYSTEM = "SYSTEM",
+  CUSTOMER = 'CUSTOMER',
+  PET = 'PET',
+  RESERVATION = 'RESERVATION',
+  PAYMENT = 'PAYMENT',
+  INVOICE = 'INVOICE',
+  STAFF = 'STAFF',
+  SERVICE = 'SERVICE',
+  RESOURCE = 'RESOURCE',
+  AUTH = 'AUTH',
+  SETTINGS = 'SETTINGS',
+  SYSTEM = 'SYSTEM',
 }
 
 export enum AuditSeverity {
-  INFO = "INFO",
-  WARNING = "WARNING",
-  CRITICAL = "CRITICAL",
+  INFO = 'INFO',
+  WARNING = 'WARNING',
+  CRITICAL = 'CRITICAL',
 }
 
 export interface AuditLogData {
@@ -120,17 +120,17 @@ export interface AuditQueryFilters {
  * Handles proxies and load balancers
  */
 function getClientIp(req: Request): string {
-  const forwarded = req.get("x-forwarded-for");
+  const forwarded = req.get('x-forwarded-for');
   if (forwarded) {
-    return forwarded.split(",")[0].trim();
+    return forwarded.split(',')[0].trim();
   }
 
-  const realIp = req.get("x-real-ip");
+  const realIp = req.get('x-real-ip');
   if (realIp) {
     return realIp;
   }
 
-  return req.ip || req.socket?.remoteAddress || "unknown";
+  return req.ip || req.socket?.remoteAddress || 'unknown';
 }
 
 /**
@@ -149,7 +149,7 @@ function getUserFromRequest(req: Request): {
     userId: user.id,
     userEmail: user.email,
     userName:
-      user.name || `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+      user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim(),
     userRole: user.role,
   };
 }
@@ -165,7 +165,7 @@ function getChangedFields(previous: any, current: any): string[] {
 
   for (const key of allKeys) {
     // Skip internal fields
-    if (["updatedAt", "createdAt", "id"].includes(key)) continue;
+    if (['updatedAt', 'createdAt', 'id'].includes(key)) continue;
 
     const prevValue = JSON.stringify(previous[key]);
     const currValue = JSON.stringify(current[key]);
@@ -186,24 +186,24 @@ function sanitizeData(data: any): any {
   if (!data) return data;
 
   const sensitiveFields = [
-    "password",
-    "passwordHash",
-    "token",
-    "refreshToken",
-    "accessToken",
-    "apiKey",
-    "secret",
-    "creditCard",
-    "cardNumber",
-    "cvv",
-    "ssn",
+    'password',
+    'passwordHash',
+    'token',
+    'refreshToken',
+    'accessToken',
+    'apiKey',
+    'secret',
+    'creditCard',
+    'cardNumber',
+    'cvv',
+    'ssn',
   ];
 
   const sanitized = { ...data };
 
   for (const field of sensitiveFields) {
     if (field in sanitized) {
-      sanitized[field] = "[REDACTED]";
+      sanitized[field] = '[REDACTED]';
     }
   }
 
@@ -221,7 +221,7 @@ class TenantAuditLogService {
   async log(data: AuditLogData, req?: Request): Promise<void> {
     try {
       const ipAddress = req ? getClientIp(req) : null;
-      const userAgent = req?.get("user-agent") || null;
+      const userAgent = req?.get('user-agent') || null;
       const requestMethod = req?.method || null;
       const requestPath = req?.path || null;
 
@@ -255,21 +255,21 @@ class TenantAuditLogService {
       });
 
       // Also log to console for debugging (can be disabled in production)
-      if (process.env.NODE_ENV !== "production") {
+      if (process.env.NODE_ENV !== 'production') {
         console.log(
           `[TenantAudit] ${data.action} ${data.entityType} by ${
-            data.userEmail || "system"
+            data.userEmail || 'system'
           }`,
           {
             tenantId: data.tenantId,
             entityId: data.entityId,
-            severity: data.severity || "INFO",
+            severity: data.severity || 'INFO',
           }
         );
       }
     } catch (error) {
       // Never let audit logging break the application
-      console.error("[TenantAudit] Failed to create audit log:", error);
+      console.error('[TenantAudit] Failed to create audit log:', error);
     }
   }
 
@@ -293,7 +293,7 @@ class TenantAuditLogService {
     const tenantId = (req as any).tenantId;
     if (!tenantId) {
       console.warn(
-        "[TenantAudit] No tenantId found in request, skipping audit log"
+        '[TenantAudit] No tenantId found in request, skipping audit log'
       );
       return;
     }
@@ -339,7 +339,7 @@ class TenantAuditLogService {
       req,
       action,
       AuditCategory.CUSTOMER,
-      "customer",
+      'customer',
       customerId,
       customerName,
       options
@@ -360,7 +360,7 @@ class TenantAuditLogService {
       req,
       action,
       AuditCategory.PET,
-      "pet",
+      'pet',
       petId,
       petName,
       options
@@ -386,7 +386,7 @@ class TenantAuditLogService {
       req,
       action,
       AuditCategory.RESERVATION,
-      "reservation",
+      'reservation',
       reservationId,
       reservationName,
       options
@@ -407,7 +407,7 @@ class TenantAuditLogService {
       req,
       action,
       AuditCategory.PAYMENT,
-      "payment",
+      'payment',
       paymentId,
       undefined,
       {
@@ -431,7 +431,7 @@ class TenantAuditLogService {
       req,
       action,
       AuditCategory.STAFF,
-      "staff",
+      'staff',
       staffId,
       staffName,
       {
@@ -460,7 +460,7 @@ class TenantAuditLogService {
       req,
       action,
       AuditCategory.AUTH,
-      "auth",
+      'auth',
       userId,
       userEmail,
       {
@@ -521,16 +521,16 @@ class TenantAuditLogService {
 
     if (filters.searchTerm) {
       where.OR = [
-        { entityName: { contains: filters.searchTerm, mode: "insensitive" } },
-        { userEmail: { contains: filters.searchTerm, mode: "insensitive" } },
-        { userName: { contains: filters.searchTerm, mode: "insensitive" } },
+        { entityName: { contains: filters.searchTerm, mode: 'insensitive' } },
+        { userEmail: { contains: filters.searchTerm, mode: 'insensitive' } },
+        { userName: { contains: filters.searchTerm, mode: 'insensitive' } },
       ];
     }
 
     const [logs, total] = await Promise.all([
       prisma.tenantAuditLog.findMany({
         where,
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: 'desc' },
         take: filters.limit || 50,
         skip: filters.offset || 0,
       }),
@@ -554,7 +554,7 @@ class TenantAuditLogService {
         entityType,
         entityId,
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
   }
 
@@ -580,7 +580,7 @@ class TenantAuditLogService {
 
     return prisma.tenantAuditLog.findMany({
       where,
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
       take: 100,
     });
   }
@@ -594,7 +594,7 @@ class TenantAuditLogService {
     endDate: Date
   ): Promise<{ action: string; category: string; count: number }[]> {
     const result = await prisma.tenantAuditLog.groupBy({
-      by: ["action", "category"],
+      by: ['action', 'category'],
       where: {
         tenantId,
         createdAt: {
@@ -624,7 +624,7 @@ class TenantAuditLogService {
         tenantId,
         severity: AuditSeverity.CRITICAL,
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
       take: limit,
     });
   }
@@ -639,7 +639,7 @@ class TenantAuditLogService {
         action: AuditAction.LOGIN_FAILED,
         createdAt: { gte: since },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
   }
 }

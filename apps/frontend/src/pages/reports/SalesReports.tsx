@@ -3,7 +3,7 @@
  * Displays sales analytics and reports
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -25,13 +25,13 @@ import {
   CircularProgress,
   Alert,
   Chip,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   TrendingUp as TrendingUpIcon,
   GetApp as ExportIcon,
   Print as PrintIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import {
   getSalesDailyReport,
   getSalesMonthlyReport,
@@ -40,19 +40,19 @@ import {
   exportReportCSV,
   formatCurrency,
   formatPercentage,
-} from "../../services/reportService";
+} from '../../services/reportService';
 
 type ReportPeriod =
-  | "daily"
-  | "monthly"
-  | "last-month"
-  | "ytd"
-  | "top-customers";
+  | 'daily'
+  | 'monthly'
+  | 'last-month'
+  | 'ytd'
+  | 'top-customers';
 
 const SalesReports: React.FC = () => {
-  const [period, setPeriod] = useState<ReportPeriod>("monthly");
+  const [period, setPeriod] = useState<ReportPeriod>('monthly');
   const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split('T')[0]
   );
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
@@ -77,13 +77,13 @@ const SalesReports: React.FC = () => {
 
       let response;
       switch (period) {
-        case "daily":
+        case 'daily':
           response = await getSalesDailyReport(selectedDate);
           break;
-        case "monthly":
+        case 'monthly':
           response = await getSalesMonthlyReport(selectedYear, selectedMonth);
           break;
-        case "last-month":
+        case 'last-month':
           const lastMonth = new Date();
           lastMonth.setMonth(lastMonth.getMonth() - 1);
           response = await getSalesMonthlyReport(
@@ -91,16 +91,16 @@ const SalesReports: React.FC = () => {
             lastMonth.getMonth() + 1
           );
           break;
-        case "ytd":
+        case 'ytd':
           response = await getSalesYTDReport(selectedYear);
           break;
-        case "top-customers":
-          const endDate = new Date().toISOString().split("T")[0];
+        case 'top-customers':
+          const endDate = new Date().toISOString().split('T')[0];
           const startDate = new Date(
             new Date().setMonth(new Date().getMonth() - 1)
           )
             .toISOString()
-            .split("T")[0];
+            .split('T')[0];
           response = await getTopCustomersReport(startDate, endDate, 10);
           break;
       }
@@ -109,8 +109,8 @@ const SalesReports: React.FC = () => {
       const data = response?.data || response;
       setReportData(data);
     } catch (err: any) {
-      console.error("Error loading report:", err);
-      setError(err.response?.data?.message || "Failed to load report");
+      console.error('Error loading report:', err);
+      setError(err.response?.data?.message || 'Failed to load report');
     } finally {
       setLoading(false);
     }
@@ -128,16 +128,16 @@ const SalesReports: React.FC = () => {
       <Box
         sx={{
           mb: 3,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
         }}
       >
         <Typography variant="h5">
-          <TrendingUpIcon sx={{ mr: 1, verticalAlign: "middle" }} />
+          <TrendingUpIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
           Sales Reports
         </Typography>
-        <Box sx={{ display: "flex", gap: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1 }}>
           <Button
             variant="outlined"
             startIcon={<PrintIcon />}
@@ -177,7 +177,7 @@ const SalesReports: React.FC = () => {
             </FormControl>
           </Grid>
 
-          {period === "daily" && (
+          {period === 'daily' && (
             <Grid item xs={12} sm={3}>
               <TextField
                 fullWidth
@@ -191,7 +191,7 @@ const SalesReports: React.FC = () => {
             </Grid>
           )}
 
-          {(period === "monthly" || period === "ytd") && (
+          {(period === 'monthly' || period === 'ytd') && (
             <>
               <Grid item xs={12} sm={2}>
                 <TextField
@@ -204,7 +204,7 @@ const SalesReports: React.FC = () => {
                   inputProps={{ min: 2020, max: 2030 }}
                 />
               </Grid>
-              {period === "monthly" && (
+              {period === 'monthly' && (
                 <Grid item xs={12} sm={2}>
                   <FormControl fullWidth size="small">
                     <InputLabel>Month</InputLabel>
@@ -217,8 +217,8 @@ const SalesReports: React.FC = () => {
                     >
                       {Array.from({ length: 12 }, (_, i) => (
                         <MenuItem key={i + 1} value={i + 1}>
-                          {new Date(2000, i).toLocaleDateString("en-US", {
-                            month: "long",
+                          {new Date(2000, i).toLocaleDateString('en-US', {
+                            month: 'long',
                           })}
                         </MenuItem>
                       ))}
@@ -236,7 +236,7 @@ const SalesReports: React.FC = () => {
               onClick={loadReport}
               disabled={loading}
             >
-              {loading ? <CircularProgress size={24} /> : "Generate"}
+              {loading ? <CircularProgress size={24} /> : 'Generate'}
             </Button>
           </Grid>
         </Grid>
@@ -251,7 +251,7 @@ const SalesReports: React.FC = () => {
 
       {/* Loading */}
       {loading && (
-        <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
           <CircularProgress />
         </Box>
       )}
@@ -382,7 +382,7 @@ const SalesReports: React.FC = () => {
             )}
 
           {/* Top Customers */}
-          {period === "top-customers" && Array.isArray(reportData.data) && (
+          {period === 'top-customers' && Array.isArray(reportData.data) && (
             <Paper sx={{ p: 2 }}>
               <Typography variant="h6" gutterBottom>
                 Top Customers by Revenue

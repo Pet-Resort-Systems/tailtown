@@ -5,33 +5,33 @@
  * Tests the JWT utility functions for staff authentication.
  */
 
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
 import {
   generateToken,
   verifyToken,
   generateRefreshToken,
   verifyRefreshToken,
   JWTPayload,
-} from "../../utils/jwt";
+} from '../../utils/jwt';
 
-describe("JWT utilities", () => {
+describe('JWT utilities', () => {
   const mockPayload: JWTPayload = {
-    id: "user-123",
-    email: "test@example.com",
-    role: "admin",
-    tenantId: "tenant-456",
+    id: 'user-123',
+    email: 'test@example.com',
+    role: 'admin',
+    tenantId: 'tenant-456',
   };
 
-  describe("generateToken", () => {
-    it("should generate a valid JWT token", () => {
+  describe('generateToken', () => {
+    it('should generate a valid JWT token', () => {
       const token = generateToken(mockPayload);
 
       expect(token).toBeDefined();
-      expect(typeof token).toBe("string");
-      expect(token.split(".")).toHaveLength(3); // JWT has 3 parts
+      expect(typeof token).toBe('string');
+      expect(token.split('.')).toHaveLength(3); // JWT has 3 parts
     });
 
-    it("should include payload data in token", () => {
+    it('should include payload data in token', () => {
       const token = generateToken(mockPayload);
       const decoded = jwt.decode(token) as any;
 
@@ -41,15 +41,15 @@ describe("JWT utilities", () => {
       expect(decoded.tenantId).toBe(mockPayload.tenantId);
     });
 
-    it("should set correct issuer and audience", () => {
+    it('should set correct issuer and audience', () => {
       const token = generateToken(mockPayload);
       const decoded = jwt.decode(token) as any;
 
-      expect(decoded.iss).toBe("tailtown-staff");
-      expect(decoded.aud).toBe("tailtown-platform");
+      expect(decoded.iss).toBe('tailtown-staff');
+      expect(decoded.aud).toBe('tailtown-platform');
     });
 
-    it("should set expiration time", () => {
+    it('should set expiration time', () => {
       const token = generateToken(mockPayload);
       const decoded = jwt.decode(token) as any;
 
@@ -59,8 +59,8 @@ describe("JWT utilities", () => {
     });
   });
 
-  describe("verifyToken", () => {
-    it("should verify a valid token", () => {
+  describe('verifyToken', () => {
+    it('should verify a valid token', () => {
       const token = generateToken(mockPayload);
       const decoded = verifyToken(token);
 
@@ -70,80 +70,80 @@ describe("JWT utilities", () => {
       expect(decoded.tenantId).toBe(mockPayload.tenantId);
     });
 
-    it("should throw error for invalid token", () => {
-      expect(() => verifyToken("invalid-token")).toThrow("Invalid token");
+    it('should throw error for invalid token', () => {
+      expect(() => verifyToken('invalid-token')).toThrow('Invalid token');
     });
 
-    it("should throw error for tampered token", () => {
+    it('should throw error for tampered token', () => {
       const token = generateToken(mockPayload);
-      const tamperedToken = token.slice(0, -5) + "xxxxx";
+      const tamperedToken = token.slice(0, -5) + 'xxxxx';
 
-      expect(() => verifyToken(tamperedToken)).toThrow("Invalid token");
+      expect(() => verifyToken(tamperedToken)).toThrow('Invalid token');
     });
 
-    it("should throw error for expired token", () => {
+    it('should throw error for expired token', () => {
       // Create a token that's already expired
       const expiredToken = jwt.sign(
         mockPayload,
-        process.env.JWT_SECRET || "your-secret-key-change-in-production",
+        process.env.JWT_SECRET || 'your-secret-key-change-in-production',
         {
-          expiresIn: "-1s",
-          issuer: "tailtown-staff",
-          audience: "tailtown-platform",
+          expiresIn: '-1s',
+          issuer: 'tailtown-staff',
+          audience: 'tailtown-platform',
         }
       );
 
-      expect(() => verifyToken(expiredToken)).toThrow("Token expired");
+      expect(() => verifyToken(expiredToken)).toThrow('Token expired');
     });
 
-    it("should throw error for wrong issuer", () => {
+    it('should throw error for wrong issuer', () => {
       const wrongIssuerToken = jwt.sign(
         mockPayload,
-        process.env.JWT_SECRET || "your-secret-key-change-in-production",
+        process.env.JWT_SECRET || 'your-secret-key-change-in-production',
         {
-          expiresIn: "1h",
-          issuer: "wrong-issuer",
-          audience: "tailtown-platform",
+          expiresIn: '1h',
+          issuer: 'wrong-issuer',
+          audience: 'tailtown-platform',
         }
       );
 
-      expect(() => verifyToken(wrongIssuerToken)).toThrow("Invalid token");
+      expect(() => verifyToken(wrongIssuerToken)).toThrow('Invalid token');
     });
 
-    it("should throw error for wrong audience", () => {
+    it('should throw error for wrong audience', () => {
       const wrongAudienceToken = jwt.sign(
         mockPayload,
-        process.env.JWT_SECRET || "your-secret-key-change-in-production",
+        process.env.JWT_SECRET || 'your-secret-key-change-in-production',
         {
-          expiresIn: "1h",
-          issuer: "tailtown-staff",
-          audience: "wrong-audience",
+          expiresIn: '1h',
+          issuer: 'tailtown-staff',
+          audience: 'wrong-audience',
         }
       );
 
-      expect(() => verifyToken(wrongAudienceToken)).toThrow("Invalid token");
+      expect(() => verifyToken(wrongAudienceToken)).toThrow('Invalid token');
     });
   });
 
-  describe("generateRefreshToken", () => {
-    it("should generate a valid refresh token", () => {
-      const token = generateRefreshToken({ id: "user-123" });
+  describe('generateRefreshToken', () => {
+    it('should generate a valid refresh token', () => {
+      const token = generateRefreshToken({ id: 'user-123' });
 
       expect(token).toBeDefined();
-      expect(typeof token).toBe("string");
-      expect(token.split(".")).toHaveLength(3);
+      expect(typeof token).toBe('string');
+      expect(token.split('.')).toHaveLength(3);
     });
 
-    it("should include user ID in token", () => {
-      const token = generateRefreshToken({ id: "user-123" });
+    it('should include user ID in token', () => {
+      const token = generateRefreshToken({ id: 'user-123' });
       const decoded = jwt.decode(token) as any;
 
-      expect(decoded.id).toBe("user-123");
+      expect(decoded.id).toBe('user-123');
     });
 
-    it("should set longer expiration than access token", () => {
+    it('should set longer expiration than access token', () => {
       const accessToken = generateToken(mockPayload);
-      const refreshToken = generateRefreshToken({ id: "user-123" });
+      const refreshToken = generateRefreshToken({ id: 'user-123' });
 
       const accessDecoded = jwt.decode(accessToken) as any;
       const refreshDecoded = jwt.decode(refreshToken) as any;
@@ -155,46 +155,46 @@ describe("JWT utilities", () => {
     });
   });
 
-  describe("verifyRefreshToken", () => {
-    it("should verify a valid refresh token", () => {
-      const token = generateRefreshToken({ id: "user-123" });
+  describe('verifyRefreshToken', () => {
+    it('should verify a valid refresh token', () => {
+      const token = generateRefreshToken({ id: 'user-123' });
       const decoded = verifyRefreshToken(token);
 
-      expect(decoded.id).toBe("user-123");
+      expect(decoded.id).toBe('user-123');
     });
 
-    it("should throw error for invalid refresh token", () => {
-      expect(() => verifyRefreshToken("invalid-token")).toThrow(
-        "Invalid refresh token"
+    it('should throw error for invalid refresh token', () => {
+      expect(() => verifyRefreshToken('invalid-token')).toThrow(
+        'Invalid refresh token'
       );
     });
 
-    it("should throw error for expired refresh token", () => {
+    it('should throw error for expired refresh token', () => {
       const expiredToken = jwt.sign(
-        { id: "user-123" },
+        { id: 'user-123' },
         process.env.JWT_REFRESH_SECRET ||
-          "your-refresh-secret-key-change-in-production",
+          'your-refresh-secret-key-change-in-production',
         {
-          expiresIn: "-1s",
-          issuer: "tailtown-staff",
-          audience: "tailtown-platform",
+          expiresIn: '-1s',
+          issuer: 'tailtown-staff',
+          audience: 'tailtown-platform',
         }
       );
 
       expect(() => verifyRefreshToken(expiredToken)).toThrow(
-        "Refresh token expired"
+        'Refresh token expired'
       );
     });
 
-    it("should not accept access token as refresh token", () => {
+    it('should not accept access token as refresh token', () => {
       const accessToken = generateToken(mockPayload);
 
       expect(() => verifyRefreshToken(accessToken)).toThrow();
     });
   });
 
-  describe("Token round-trip", () => {
-    it("should generate and verify access token successfully", () => {
+  describe('Token round-trip', () => {
+    it('should generate and verify access token successfully', () => {
       const token = generateToken(mockPayload);
       const decoded = verifyToken(token);
 
@@ -202,21 +202,21 @@ describe("JWT utilities", () => {
       expect(decoded.email).toBe(mockPayload.email);
     });
 
-    it("should generate and verify refresh token successfully", () => {
-      const token = generateRefreshToken({ id: "user-123" });
+    it('should generate and verify refresh token successfully', () => {
+      const token = generateRefreshToken({ id: 'user-123' });
       const decoded = verifyRefreshToken(token);
 
-      expect(decoded.id).toBe("user-123");
+      expect(decoded.id).toBe('user-123');
     });
   });
 
-  describe("JWTPayload interface", () => {
-    it("should require all fields", () => {
+  describe('JWTPayload interface', () => {
+    it('should require all fields', () => {
       const payload: JWTPayload = {
-        id: "user-1",
-        email: "test@test.com",
-        role: "staff",
-        tenantId: "tenant-1",
+        id: 'user-1',
+        email: 'test@test.com',
+        role: 'staff',
+        tenantId: 'tenant-1',
       };
 
       expect(payload.id).toBeDefined();

@@ -9,16 +9,16 @@ const dbErrors = new Rate('db_errors');
 // Test configuration - stress test connection pooling
 export const options = {
   stages: [
-    { duration: '30s', target: 50 },   // Warm up
-    { duration: '1m', target: 100 },   // Increase load
-    { duration: '1m', target: 200 },   // High load (test pool limits)
-    { duration: '30s', target: 100 },  // Cool down
-    { duration: '30s', target: 0 },    // Ramp down
+    { duration: '30s', target: 50 }, // Warm up
+    { duration: '1m', target: 100 }, // Increase load
+    { duration: '1m', target: 200 }, // High load (test pool limits)
+    { duration: '30s', target: 100 }, // Cool down
+    { duration: '30s', target: 0 }, // Ramp down
   ],
   thresholds: {
-    'http_req_duration': ['p(95)<1000'], // Allow higher latency under stress
-    'errors': ['rate<0.05'],              // Max 5% error rate
-    'db_errors': ['rate<0.01'],           // Max 1% database errors
+    http_req_duration: ['p(95)<1000'], // Allow higher latency under stress
+    errors: ['rate<0.05'], // Max 5% error rate
+    db_errors: ['rate<0.01'], // Max 1% database errors
   },
 };
 
@@ -34,11 +34,7 @@ export default function () {
   };
 
   // Make database-heavy requests
-  const endpoints = [
-    '/api/customers',
-    '/api/pets',
-    '/api/services',
-  ];
+  const endpoints = ['/api/customers', '/api/pets', '/api/services'];
 
   const endpoint = endpoints[Math.floor(Math.random() * endpoints.length)];
   const res = http.get(`${BASE_URL}${endpoint}`, params);
@@ -50,13 +46,14 @@ export default function () {
 
   if (!isSuccess) {
     errorRate.add(1);
-    
+
     // Check for database-specific errors
-    if (res.body && (
-      res.body.includes('connection') ||
-      res.body.includes('pool') ||
-      res.body.includes('timeout')
-    )) {
+    if (
+      res.body &&
+      (res.body.includes('connection') ||
+        res.body.includes('pool') ||
+        res.body.includes('timeout'))
+    ) {
       dbErrors.add(1);
       console.log(`DB Error at ${new Date().toISOString()}: ${res.status}`);
     }
@@ -75,7 +72,9 @@ export function handleSummary(data) {
     results: {
       total_requests: data.metrics.http_reqs.values.count,
       error_rate: data.metrics.errors.values.rate,
-      db_error_rate: data.metrics.db_errors ? data.metrics.db_errors.values.rate : 0,
+      db_error_rate: data.metrics.db_errors
+        ? data.metrics.db_errors.values.rate
+        : 0,
       response_times: {
         avg: data.metrics.http_req_duration.values.avg,
         min: data.metrics.http_req_duration.values.min,
@@ -91,7 +90,7 @@ export function handleSummary(data) {
 
   return {
     'load-tests/results/connection-pool.json': JSON.stringify(summary, null, 2),
-    'stdout': formatSummary(summary),
+    stdout: formatSummary(summary),
   };
 }
 
@@ -124,8 +123,12 @@ function assessPerformance(data) {
 }
 
 function formatSummary(summary) {
-  const status = summary.assessment.overall === 'PASS' ? '✅' : 
-                 summary.assessment.overall === 'WARNING' ? '⚠️' : '❌';
+  const status =
+    summary.assessment.overall === 'PASS'
+      ? '✅'
+      : summary.assessment.overall === 'WARNING'
+        ? '⚠️'
+        : '❌';
 
   return `
 === Connection Pool Stress Test ===
@@ -147,7 +150,7 @@ Response Times:
   Max: ${summary.results.response_times.max.toFixed(2)}ms
 
 Assessment:
-${summary.assessment.issues.map(issue => `  - ${issue}`).join('\n')}
+${summary.assessment.issues.map((issue) => `  - ${issue}`).join('\n')}
 
 Connection Pool Performance:
   ${summary.assessment.overall === 'PASS' ? '✅ Pool handled load without exhaustion' : '❌ Pool may need tuning'}

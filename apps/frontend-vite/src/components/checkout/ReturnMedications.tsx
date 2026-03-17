@@ -26,7 +26,9 @@ const ReturnMedications: React.FC<ReturnMedicationsProps> = ({
   onContinue,
   onBack,
 }) => {
-  const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
+  const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>(
+    {}
+  );
 
   const handleToggle = (itemId: string) => {
     setCheckedItems({
@@ -35,11 +37,12 @@ const ReturnMedications: React.FC<ReturnMedicationsProps> = ({
     });
   };
 
-  const allItemsReturned = medications.length === 0 || 
-    medications.every(item => checkedItems[item.id]);
+  const allItemsReturned =
+    medications.length === 0 ||
+    medications.every((item) => checkedItems[item.id]);
 
   const handleContinue = () => {
-    const updatedMedications = medications.map(item => ({
+    const updatedMedications = medications.map((item) => ({
       ...item,
       returned: checkedItems[item.id] || false,
     }));
@@ -57,7 +60,8 @@ const ReturnMedications: React.FC<ReturnMedicationsProps> = ({
 
       {medications.length === 0 ? (
         <Alert severity="info" sx={{ mt: 3 }}>
-          No medications were recorded during check-in. You can proceed to the next step.
+          No medications were recorded during check-in. You can proceed to the
+          next step.
         </Alert>
       ) : (
         <Paper elevation={0} sx={{ mt: 3, bgcolor: 'grey.50' }}>
@@ -69,7 +73,8 @@ const ReturnMedications: React.FC<ReturnMedicationsProps> = ({
                 button
                 onClick={() => handleToggle(item.id || index.toString())}
                 sx={{
-                  borderBottom: index < medications.length - 1 ? '1px solid' : 'none',
+                  borderBottom:
+                    index < medications.length - 1 ? '1px solid' : 'none',
                   borderColor: 'divider',
                   '&:hover': {
                     bgcolor: 'action.hover',
@@ -90,12 +95,26 @@ const ReturnMedications: React.FC<ReturnMedicationsProps> = ({
                 </ListItemIcon>
                 <ListItemText
                   primary={
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        flexWrap: 'wrap',
+                      }}
+                    >
                       <Typography variant="body1" fontWeight="medium">
-                        {item.name || item.medicationName || 'Unknown Medication'}
+                        {item.name ||
+                          item.medicationName ||
+                          'Unknown Medication'}
                       </Typography>
                       {item.dosage && (
-                        <Chip label={item.dosage} size="small" color="primary" variant="outlined" />
+                        <Chip
+                          label={item.dosage}
+                          size="small"
+                          color="primary"
+                          variant="outlined"
+                        />
                       )}
                     </Box>
                   }
@@ -144,9 +163,7 @@ const ReturnMedications: React.FC<ReturnMedicationsProps> = ({
       )}
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
-        <Button onClick={onBack}>
-          Back
-        </Button>
+        <Button onClick={onBack}>Back</Button>
         <Button
           variant="contained"
           onClick={handleContinue}

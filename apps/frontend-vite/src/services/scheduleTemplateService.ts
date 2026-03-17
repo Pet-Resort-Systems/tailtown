@@ -3,9 +3,9 @@
  * Handles recurring schedule templates and holiday management
  */
 
-import api from "./api";
+import api from './api';
 
-export type ScheduleRotationType = "WEEKLY" | "BIWEEKLY" | "MONTHLY" | "CUSTOM";
+export type ScheduleRotationType = 'WEEKLY' | 'BIWEEKLY' | 'MONTHLY' | 'CUSTOM';
 
 export interface ScheduleTemplateEntry {
   id: string;
@@ -90,7 +90,7 @@ export const scheduleTemplateService = {
    * Get all active templates
    */
   getAllActiveTemplates: async (): Promise<ScheduleTemplate[]> => {
-    const response = await api.get("/api/schedule-templates/templates");
+    const response = await api.get('/api/schedule-templates/templates');
     return response.data?.data || [];
   },
 
@@ -110,7 +110,7 @@ export const scheduleTemplateService = {
       notes?: string;
       entries?: Omit<
         ScheduleTemplateEntry,
-        "id" | "templateId" | "createdAt" | "updatedAt"
+        'id' | 'templateId' | 'createdAt' | 'updatedAt'
       >[];
     }
   ): Promise<ScheduleTemplate> => {
@@ -168,7 +168,7 @@ export const scheduleTemplateService = {
     results: any[];
   }> => {
     const response = await api.post(
-      "/api/schedule-templates/templates/generate-all"
+      '/api/schedule-templates/templates/generate-all'
     );
     return response.data?.data;
   },
@@ -228,7 +228,7 @@ export const scheduleTemplateService = {
    * Get all holidays
    */
   getHolidays: async (year?: number): Promise<BusinessHoliday[]> => {
-    const response = await api.get("/api/schedule-templates/holidays", {
+    const response = await api.get('/api/schedule-templates/holidays', {
       params: year ? { year: year.toString() } : undefined,
     });
     return response.data?.data || [];
@@ -244,7 +244,7 @@ export const scheduleTemplateService = {
     isClosed?: boolean;
     notes?: string;
   }): Promise<BusinessHoliday> => {
-    const response = await api.post("/api/schedule-templates/holidays", data);
+    const response = await api.post('/api/schedule-templates/holidays', data);
     return response.data?.data;
   },
 
@@ -278,23 +278,23 @@ export const scheduleTemplateService = {
    */
   getDayName: (dayOfWeek: number): string => {
     const days = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
     ];
-    return days[dayOfWeek] || "";
+    return days[dayOfWeek] || '';
   },
 
   /**
    * Get short day name
    */
   getShortDayName: (dayOfWeek: number): string => {
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    return days[dayOfWeek] || "";
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    return days[dayOfWeek] || '';
   },
 
   /**
@@ -302,10 +302,10 @@ export const scheduleTemplateService = {
    */
   formatRotationType: (type: ScheduleRotationType): string => {
     const labels: Record<ScheduleRotationType, string> = {
-      WEEKLY: "Weekly",
-      BIWEEKLY: "Bi-Weekly",
-      MONTHLY: "Monthly",
-      CUSTOM: "Custom",
+      WEEKLY: 'Weekly',
+      BIWEEKLY: 'Bi-Weekly',
+      MONTHLY: 'Monthly',
+      CUSTOM: 'Custom',
     };
     return labels[type] || type;
   },

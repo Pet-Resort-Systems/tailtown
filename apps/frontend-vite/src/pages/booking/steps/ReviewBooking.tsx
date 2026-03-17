@@ -3,7 +3,7 @@
  * Shows booking summary and handles reservation creation
  */
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -20,7 +20,7 @@ import {
   TextField,
   Avatar,
   InputAdornment,
-} from "@mui/material";
+} from '@mui/material';
 import {
   ArrowBack as ArrowBackIcon,
   CheckCircle as CheckCircleIcon,
@@ -29,14 +29,14 @@ import {
   Event as EventIcon,
   AttachMoney as MoneyIcon,
   Groups as GroupsIcon,
-} from "@mui/icons-material";
-import { useCustomerAuth } from "../../../contexts/CustomerAuthContext";
-import { reservationService } from "../../../services/reservationService";
+} from '@mui/icons-material';
+import { useCustomerAuth } from '../../../contexts/CustomerAuthContext';
+import { reservationService } from '../../../services/reservationService';
 import {
   paymentService,
   CardPaymentRequest,
-} from "../../../services/paymentService";
-import tipService from "../../../services/tipService";
+} from '../../../services/paymentService';
+import tipService from '../../../services/tipService';
 
 interface ReviewBookingProps {
   bookingData: any;
@@ -53,23 +53,23 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
 }) => {
   const { customer } = useCustomerAuth();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [paymentProcessing, setPaymentProcessing] = useState(false);
 
   // Payment form state
-  const [cardNumber, setCardNumber] = useState("");
-  const [expiry, setExpiry] = useState("");
-  const [cvv, setCvv] = useState("");
+  const [cardNumber, setCardNumber] = useState('');
+  const [expiry, setExpiry] = useState('');
+  const [cvv, setCvv] = useState('');
   const [cardName, setCardName] = useState(
-    `${customer?.firstName || ""} ${customer?.lastName || ""}`.trim()
+    `${customer?.firstName || ''} ${customer?.lastName || ''}`.trim()
   );
 
   // Tip state
   const [tipPercentage, setTipPercentage] = useState<number | null>(null);
-  const [customTip, setCustomTip] = useState<string>("");
-  const [tipMode, setTipMode] = useState<"percentage" | "custom" | "none">(
-    "none"
+  const [customTip, setCustomTip] = useState<string>('');
+  const [tipMode, setTipMode] = useState<'percentage' | 'custom' | 'none'>(
+    'none'
   );
 
   // Calculate totals
@@ -80,10 +80,10 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
 
   // Calculate tip
   const calculateTip = (): number => {
-    if (tipMode === "percentage" && tipPercentage) {
+    if (tipMode === 'percentage' && tipPercentage) {
       return Math.round(subtotal * (tipPercentage / 100) * 100) / 100;
     }
-    if (tipMode === "custom" && customTip) {
+    if (tipMode === 'custom' && customTip) {
       return parseFloat(customTip) || 0;
     }
     return 0;
@@ -93,54 +93,54 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
 
   // Check if this is a grooming service
   const isGroomingService =
-    bookingData.serviceCategory === "GROOMING" ||
-    bookingData.serviceName?.toLowerCase().includes("groom");
+    bookingData.serviceCategory === 'GROOMING' ||
+    bookingData.serviceName?.toLowerCase().includes('groom');
 
   const TIP_PERCENTAGES = [15, 20, 25];
 
   const handleTipPercentageClick = (pct: number) => {
-    if (tipMode === "percentage" && tipPercentage === pct) {
-      setTipMode("none");
+    if (tipMode === 'percentage' && tipPercentage === pct) {
+      setTipMode('none');
       setTipPercentage(null);
     } else {
-      setTipMode("percentage");
+      setTipMode('percentage');
       setTipPercentage(pct);
-      setCustomTip("");
+      setCustomTip('');
     }
   };
 
   const handleCustomTipChange = (value: string) => {
     setCustomTip(value);
     if (value) {
-      setTipMode("custom");
+      setTipMode('custom');
       setTipPercentage(null);
     } else {
-      setTipMode("none");
+      setTipMode('none');
     }
   };
 
   const handleCompleteBooking = async () => {
     if (!agreeToTerms) {
-      setError("Please agree to the terms and conditions");
+      setError('Please agree to the terms and conditions');
       return;
     }
 
     // Validate payment info
     if (!cardNumber || !expiry || !cvv) {
-      setError("Please enter complete payment information");
+      setError('Please enter complete payment information');
       return;
     }
 
     try {
       setLoading(true);
       setPaymentProcessing(true);
-      setError("");
+      setError('');
 
       // Process payment first
       const paymentRequest: CardPaymentRequest = {
         amount: total,
-        cardNumber: cardNumber.replace(/\s/g, ""),
-        expiry: expiry.replace("/", ""),
+        cardNumber: cardNumber.replace(/\s/g, ''),
+        expiry: expiry.replace('/', ''),
         cvv,
         name: cardName,
         email: customer?.email,
@@ -152,26 +152,25 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
         capture: true,
       };
 
-      const paymentResult = await paymentService.processCardPayment(
-        paymentRequest
-      );
+      const paymentResult =
+        await paymentService.processCardPayment(paymentRequest);
 
       // Check if payment was successful
       if (
         !paymentResult ||
-        paymentResult.status !== "success" ||
+        paymentResult.status !== 'success' ||
         !paymentResult.data?.approved
       ) {
         let errorMessage =
           paymentResult?.data?.responseText ||
           paymentResult?.message ||
           paymentResult?.error ||
-          "Payment declined. Please check your card details and try again.";
+          'Payment declined. Please check your card details and try again.';
 
         // Add helpful test card info in development
-        if (process.env.NODE_ENV === "development") {
+        if (process.env.NODE_ENV === 'development') {
           errorMessage +=
-            "\n\nTest Cards:\n• 4111111111111111 (Visa - Approved)\n• 4000000000000002 (Declined)\n• Expiry: Any future date (MM/YY)\n• CVV: Any 3 digits";
+            '\n\nTest Cards:\n• 4111111111111111 (Visa - Approved)\n• 4000000000000002 (Declined)\n• Expiry: Any future date (MM/YY)\n• CVV: Any 3 digits';
         }
 
         setError(errorMessage);
@@ -183,40 +182,39 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
       // Payment successful, create reservation
       const reservationData = {
         customerId: bookingData.customerId,
-        petId: bookingData.petIds?.[0] || "",
+        petId: bookingData.petIds?.[0] || '',
         serviceId: bookingData.serviceId,
         startDate: bookingData.startDate,
         endDate: bookingData.endDate,
-        status: "CONFIRMED" as const,
+        status: 'CONFIRMED' as const,
         totalPrice: total,
         // Include resource type for kennel assignment (boarding services)
         suiteType: bookingData.resourceType || undefined,
         resourceId: bookingData.resourceId || undefined,
         notes: `Booked via customer portal. Pets: ${
           bookingData.petIds?.length || 0
-        }. Room: ${bookingData.resourceType || "N/A"}. Payment: ${
+        }. Room: ${bookingData.resourceType || 'N/A'}. Payment: ${
           paymentResult.data?.transactionId
         }`,
       } as any;
 
-      const reservation = await reservationService.createReservation(
-        reservationData
-      );
+      const reservation =
+        await reservationService.createReservation(reservationData);
 
       // Save tip if any was added
       if (tipAmount > 0 && bookingData.customerId) {
         try {
           await tipService.createTip({
-            type: isGroomingService ? "GROOMER" : "GENERAL",
+            type: isGroomingService ? 'GROOMER' : 'GENERAL',
             amount: tipAmount,
-            percentage: tipMode === "percentage" ? tipPercentage : null,
-            collectionMethod: "ONLINE",
+            percentage: tipMode === 'percentage' ? tipPercentage : null,
+            collectionMethod: 'ONLINE',
             customerId: bookingData.customerId,
             reservationId: reservation.id,
             groomerId: isGroomingService ? bookingData.groomerId : null,
           });
         } catch (tipErr) {
-          console.error("Error saving tip:", tipErr);
+          console.error('Error saving tip:', tipErr);
           // Continue anyway - tip is optional
         }
       }
@@ -233,10 +231,10 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
       // Move to confirmation
       onNext();
     } catch (err: any) {
-      console.error("Error completing booking:", err);
+      console.error('Error completing booking:', err);
       setError(
         err.response?.data?.message ||
-          "Failed to complete booking. Please try again."
+          'Failed to complete booking. Please try again.'
       );
     } finally {
       setLoading(false);
@@ -251,7 +249,7 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
         component="h2"
         gutterBottom
         sx={{
-          fontSize: { xs: "1.25rem", sm: "1.5rem" },
+          fontSize: { xs: '1.25rem', sm: '1.5rem' },
           fontWeight: 600,
           mb: 3,
         }}
@@ -260,7 +258,7 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
       </Typography>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError("")}>
+        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>
           {error}
         </Alert>
       )}
@@ -270,8 +268,8 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
         <Grid item xs={12}>
           <Card>
             <CardContent>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                <PersonIcon sx={{ mr: 1, color: "primary.main" }} />
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <PersonIcon sx={{ mr: 1, color: 'primary.main' }} />
                 <Typography variant="h6">Customer Information</Typography>
               </Box>
               <Typography variant="body1" fontWeight={600}>
@@ -291,8 +289,8 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
         <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                <EventIcon sx={{ mr: 1, color: "primary.main" }} />
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <EventIcon sx={{ mr: 1, color: 'primary.main' }} />
                 <Typography variant="h6">Service</Typography>
               </Box>
               <Typography variant="body1" fontWeight={600}>
@@ -312,8 +310,8 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
         <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                <PetsIcon sx={{ mr: 1, color: "primary.main" }} />
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <PetsIcon sx={{ mr: 1, color: 'primary.main' }} />
                 <Typography variant="h6">Pets</Typography>
               </Box>
               <Typography variant="body1">
@@ -331,7 +329,7 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
                 <Typography variant="h6" gutterBottom>
                   Add-Ons ({bookingData.addOnIds.length})
                 </Typography>
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                   {bookingData.addOnIds.map((id: string, index: number) => (
                     <Chip
                       key={id}
@@ -348,18 +346,18 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
 
         {/* Price Summary */}
         <Grid item xs={12}>
-          <Card sx={{ bgcolor: "primary.50" }}>
+          <Card sx={{ bgcolor: 'primary.50' }}>
             <CardContent>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                <MoneyIcon sx={{ mr: 1, color: "primary.main" }} />
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <MoneyIcon sx={{ mr: 1, color: 'primary.main' }} />
                 <Typography variant="h6">Price Summary</Typography>
               </Box>
 
               <Box sx={{ mb: 2 }}>
                 <Box
                   sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
+                    display: 'flex',
+                    justifyContent: 'space-between',
                     mb: 1,
                   }}
                 >
@@ -372,8 +370,8 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
                 {addOnTotal > 0 && (
                   <Box
                     sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
+                      display: 'flex',
+                      justifyContent: 'space-between',
                       mb: 1,
                     }}
                   >
@@ -386,8 +384,8 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
 
                 <Box
                   sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
+                    display: 'flex',
+                    justifyContent: 'space-between',
                     mb: 1,
                   }}
                 >
@@ -401,8 +399,8 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
 
                 <Box
                   sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
+                    display: 'flex',
+                    justifyContent: 'space-between',
                     mb: 2,
                   }}
                 >
@@ -417,14 +415,14 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
                 {tipAmount > 0 && (
                   <Box
                     sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
+                      display: 'flex',
+                      justifyContent: 'space-between',
                       mb: 2,
                     }}
                   >
                     <Typography variant="body2" color="success.main">
-                      Tip{" "}
-                      {tipMode === "percentage" ? `(${tipPercentage}%)` : ""}
+                      Tip{' '}
+                      {tipMode === 'percentage' ? `(${tipPercentage}%)` : ''}
                     </Typography>
                     <Typography variant="body2" color="success.main">
                       ${tipAmount.toFixed(2)}
@@ -434,7 +432,7 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
 
                 <Divider sx={{ my: 2 }} />
 
-                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Typography variant="h6" color="primary">
                     Total
                   </Typography>
@@ -451,26 +449,26 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
         <Grid item xs={12}>
           <Card
             sx={{
-              bgcolor: "success.50",
-              border: "1px solid",
-              borderColor: "success.200",
+              bgcolor: 'success.50',
+              border: '1px solid',
+              borderColor: 'success.200',
             }}
           >
             <CardContent>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Avatar
-                  sx={{ bgcolor: "success.main", mr: 2, width: 36, height: 36 }}
+                  sx={{ bgcolor: 'success.main', mr: 2, width: 36, height: 36 }}
                 >
                   <GroupsIcon fontSize="small" />
                 </Avatar>
                 <Box>
                   <Typography variant="h6">
-                    {isGroomingService ? "Tip for Your Groomer" : "Add a Tip"}
+                    {isGroomingService ? 'Tip for Your Groomer' : 'Add a Tip'}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     {isGroomingService
                       ? "Show appreciation for your groomer's great work"
-                      : "Tips are optional and appreciated by our team"}
+                      : 'Tips are optional and appreciated by our team'}
                   </Typography>
                 </Box>
               </Box>
@@ -481,15 +479,15 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
                     <Button
                       fullWidth
                       variant={
-                        tipMode === "percentage" && tipPercentage === pct
-                          ? "contained"
-                          : "outlined"
+                        tipMode === 'percentage' && tipPercentage === pct
+                          ? 'contained'
+                          : 'outlined'
                       }
                       color="success"
                       onClick={() => handleTipPercentageClick(pct)}
                       sx={{
                         py: 1.5,
-                        flexDirection: "column",
+                        flexDirection: 'column',
                       }}
                     >
                       <Typography variant="h6" component="span">
@@ -520,15 +518,15 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
               />
 
               {tipAmount > 0 && (
-                <Box sx={{ mt: 2, textAlign: "center" }}>
+                <Box sx={{ mt: 2, textAlign: 'center' }}>
                   <Chip
                     label={`Tip: $${tipAmount.toFixed(2)}`}
                     color="success"
                     variant="filled"
                     onDelete={() => {
-                      setTipMode("none");
+                      setTipMode('none');
                       setTipPercentage(null);
-                      setCustomTip("");
+                      setCustomTip('');
                     }}
                   />
                 </Box>
@@ -541,8 +539,8 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
         <Grid item xs={12}>
           <Card>
             <CardContent>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                <MoneyIcon sx={{ mr: 1, color: "primary.main" }} />
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <MoneyIcon sx={{ mr: 1, color: 'primary.main' }} />
                 <Typography variant="h6">Payment Information</Typography>
               </Box>
 
@@ -554,11 +552,11 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
                     required
                     value={cardNumber}
                     onChange={(e) => {
-                      const value = e.target.value.replace(/\s/g, "");
+                      const value = e.target.value.replace(/\s/g, '');
                       if (/^\d{0,16}$/.test(value)) {
                         // Format as XXXX XXXX XXXX XXXX
                         const formatted =
-                          value.match(/.{1,4}/g)?.join(" ") || value;
+                          value.match(/.{1,4}/g)?.join(' ') || value;
                         setCardNumber(formatted);
                       }
                     }}
@@ -575,9 +573,9 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
                     required
                     value={expiry}
                     onChange={(e) => {
-                      let value = e.target.value.replace(/\D/g, "");
+                      let value = e.target.value.replace(/\D/g, '');
                       if (value.length >= 2) {
-                        value = value.slice(0, 2) + "/" + value.slice(2, 4);
+                        value = value.slice(0, 2) + '/' + value.slice(2, 4);
                       }
                       if (value.length <= 5) {
                         setExpiry(value);
@@ -596,7 +594,7 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
                     required
                     value={cvv}
                     onChange={(e) => {
-                      const value = e.target.value.replace(/\D/g, "");
+                      const value = e.target.value.replace(/\D/g, '');
                       if (value.length <= 4) {
                         setCvv(value);
                       }
@@ -645,19 +643,19 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
                 }
                 label={
                   <Typography variant="body2">
-                    I agree to the{" "}
+                    I agree to the{' '}
                     <a
                       href="/terms"
                       target="_blank"
-                      style={{ color: "#1976d2" }}
+                      style={{ color: '#1976d2' }}
                     >
                       Terms and Conditions
-                    </a>{" "}
-                    and{" "}
+                    </a>{' '}
+                    and{' '}
                     <a
                       href="/cancellation-policy"
                       target="_blank"
-                      style={{ color: "#1976d2" }}
+                      style={{ color: '#1976d2' }}
                     >
                       Cancellation Policy
                     </a>
@@ -672,17 +670,17 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
       {/* Navigation Buttons - Fixed on mobile */}
       <Box
         sx={{
-          position: { xs: "fixed", sm: "static" },
-          bottom: { xs: 0, sm: "auto" },
-          left: { xs: 0, sm: "auto" },
-          right: { xs: 0, sm: "auto" },
+          position: { xs: 'fixed', sm: 'static' },
+          bottom: { xs: 0, sm: 'auto' },
+          left: { xs: 0, sm: 'auto' },
+          right: { xs: 0, sm: 'auto' },
           p: { xs: 2, sm: 0 },
           mt: { xs: 0, sm: 4 },
-          bgcolor: { xs: "background.paper", sm: "transparent" },
-          boxShadow: { xs: "0 -2px 10px rgba(0,0,0,0.1)", sm: "none" },
-          zIndex: { xs: 1000, sm: "auto" },
-          display: "flex",
-          justifyContent: "space-between",
+          bgcolor: { xs: 'background.paper', sm: 'transparent' },
+          boxShadow: { xs: '0 -2px 10px rgba(0,0,0,0.1)', sm: 'none' },
+          zIndex: { xs: 1000, sm: 'auto' },
+          display: 'flex',
+          justifyContent: 'space-between',
         }}
       >
         <Button
@@ -705,12 +703,12 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
           }
           sx={{ py: { xs: 1.5, sm: 1.5 } }}
         >
-          {loading ? "Processing..." : "Complete Booking"}
+          {loading ? 'Processing...' : 'Complete Booking'}
         </Button>
       </Box>
 
       {/* Spacer for fixed button on mobile */}
-      <Box sx={{ display: { xs: "block", sm: "none" }, height: 80 }} />
+      <Box sx={{ display: { xs: 'block', sm: 'none' }, height: 80 }} />
     </Box>
   );
 };

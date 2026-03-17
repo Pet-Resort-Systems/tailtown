@@ -1,6 +1,6 @@
 /**
  * Report Card Integration Tests
- * 
+ *
  * End-to-end tests for report card API
  */
 
@@ -19,7 +19,7 @@ describe('Report Card API Integration Tests', () => {
   beforeAll(async () => {
     // Setup: Get auth token (mock for now)
     authToken = 'test-token';
-    
+
     // Create test data
     testCustomerId = 'test-customer-123';
     testPetId = 'test-pet-123';
@@ -29,10 +29,10 @@ describe('Report Card API Integration Tests', () => {
     // Cleanup: Delete test data
     if (testReportCardId) {
       await prisma.reportCard.deleteMany({
-        where: { id: testReportCardId }
+        where: { id: testReportCardId },
       });
     }
-    
+
     await prisma.$disconnect();
   });
 
@@ -48,7 +48,7 @@ describe('Report Card API Integration Tests', () => {
         socialRating: 4,
         activities: ['Playtime', 'Nap time'],
         highlights: ['Had a great day!'],
-        summary: 'Max had an amazing day at daycare!'
+        summary: 'Max had an amazing day at daycare!',
       };
 
       const response = await request(API_URL)
@@ -71,7 +71,7 @@ describe('Report Card API Integration Tests', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .send({
           // Missing petId, customerId, serviceType
-          moodRating: 5
+          moodRating: 5,
         })
         .expect(400);
 
@@ -134,7 +134,7 @@ describe('Report Card API Integration Tests', () => {
       const updateData = {
         summary: 'Updated summary - Max had an even better day!',
         moodRating: 5,
-        highlights: ['Made new friends', 'Learned a new trick']
+        highlights: ['Made new friends', 'Learned a new trick'],
       };
 
       const response = await request(API_URL)
@@ -155,7 +155,7 @@ describe('Report Card API Integration Tests', () => {
         url: 'https://example.com/photos/max-playing.jpg',
         thumbnailUrl: 'https://example.com/photos/max-playing-thumb.jpg',
         caption: 'Max playing fetch!',
-        order: 0
+        order: 0,
       };
 
       const response = await request(API_URL)
@@ -177,7 +177,7 @@ describe('Report Card API Integration Tests', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .send({
           sendEmail: true,
-          sendSMS: true
+          sendSMS: true,
         })
         .expect(200);
 
@@ -196,15 +196,15 @@ describe('Report Card API Integration Tests', () => {
             petId: 'pet-1',
             customerId: 'customer-1',
             serviceType: 'DAYCARE',
-            moodRating: 5
+            moodRating: 5,
           },
           {
             petId: 'pet-2',
             customerId: 'customer-2',
             serviceType: 'DAYCARE',
-            moodRating: 4
-          }
-        ]
+            moodRating: 4,
+          },
+        ],
       };
 
       const response = await request(API_URL)

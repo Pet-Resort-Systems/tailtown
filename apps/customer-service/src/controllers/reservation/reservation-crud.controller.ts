@@ -7,36 +7,36 @@
  * - deleteReservation
  */
 
-import { Response, NextFunction } from "express";
-import { PrismaClient, ReservationStatus } from "@prisma/client";
-import { TenantRequest } from "../../middleware/tenant.middleware";
-import { AppError } from "../../middleware/error.middleware";
-import { logger } from "../../utils/logger";
+import { Response, NextFunction } from 'express';
+import { PrismaClient, ReservationStatus } from '@prisma/client';
+import { TenantRequest } from '../../middleware/tenant.middleware';
+import { AppError } from '../../middleware/error.middleware';
+import { logger } from '../../utils/logger';
 import {
   tenantAuditLog,
   AuditAction,
   AuditSeverity,
-} from "../../services/tenant-audit-log.service";
-import { generateOrderNumber } from "./utils/order-number";
+} from '../../services/tenant-audit-log.service';
+import { generateOrderNumber } from './utils/order-number';
 
 const prisma = new PrismaClient();
 
 // Valid resource types
 const VALID_RESOURCE_TYPES = [
-  "JUNIOR_KENNEL",
-  "QUEEN_KENNEL",
-  "KING_KENNEL",
-  "VIP_ROOM",
-  "CAT_CONDO",
-  "DAY_CAMP_FULL",
-  "DAY_CAMP_HALF",
+  'JUNIOR_KENNEL',
+  'QUEEN_KENNEL',
+  'KING_KENNEL',
+  'VIP_ROOM',
+  'CAT_CONDO',
+  'DAY_CAMP_FULL',
+  'DAY_CAMP_HALF',
 ];
 
 // Legacy suite types for backward compatibility
 const LEGACY_SUITE_TYPES = [
-  "VIP_SUITE",
-  "STANDARD_PLUS_SUITE",
-  "STANDARD_SUITE",
+  'VIP_SUITE',
+  'STANDARD_PLUS_SUITE',
+  'STANDARD_SUITE',
 ];
 
 const ALL_VALID_TYPES = [...VALID_RESOURCE_TYPES, ...LEGACY_SUITE_TYPES];
@@ -55,7 +55,7 @@ async function isSuiteAvailable(
 
   const where: any = {
     resourceId: suiteId,
-    status: { in: ["CONFIRMED", "CHECKED_IN"] },
+    status: { in: ['CONFIRMED', 'CHECKED_IN'] },
     OR: [
       {
         startDate: { lte: reservationEndDate },
@@ -89,13 +89,13 @@ export const createReservation = async (
       endDate,
       suiteType,
       resourceId,
-      status = "PENDING",
-      notes = "",
+      status = 'PENDING',
+      notes = '',
     } = req.body;
 
     // Validate required fields
     if (!serviceId) {
-      return next(new AppError("Service ID is required", 400));
+      return next(new AppError('Service ID is required', 400));
     }
 
     // Check if the service requires a suite type
@@ -105,16 +105,16 @@ export const createReservation = async (
 
     const serviceCategory = service ? (service as any).serviceCategory : null;
     const requiresSuiteType =
-      serviceCategory === "DAYCARE" || serviceCategory === "BOARDING";
+      serviceCategory === 'DAYCARE' || serviceCategory === 'BOARDING';
 
     // Validate and normalize suite type
     let finalSuiteType = suiteType;
     if (requiresSuiteType) {
       if (!suiteType) {
-        finalSuiteType = "JUNIOR_KENNEL"; // Default
+        finalSuiteType = 'JUNIOR_KENNEL'; // Default
       } else if (!ALL_VALID_TYPES.includes(suiteType)) {
         logger.warn(`Invalid suiteType provided: "${suiteType}"`);
-        finalSuiteType = "JUNIOR_KENNEL";
+        finalSuiteType = 'JUNIOR_KENNEL';
       }
     } else {
       finalSuiteType = null;
@@ -126,7 +126,7 @@ export const createReservation = async (
     });
 
     if (!customer) {
-      return next(new AppError("Customer not found", 404));
+      return next(new AppError('Customer not found', 404));
     }
 
     // Validate pet exists and belongs to customer
@@ -135,12 +135,12 @@ export const createReservation = async (
     });
 
     if (!pet) {
-      return next(new AppError("Pet not found", 404));
+      return next(new AppError('Pet not found', 404));
     }
 
     if (pet.customerId !== customerId) {
       return next(
-        new AppError("The pet does not belong to this customer", 400)
+        new AppError('The pet does not belong to this customer', 400)
       );
     }
 
@@ -165,7 +165,7 @@ export const createReservation = async (
 
         if (!suite.isActive) {
           return next(
-            new AppError("Selected suite/kennel is marked as inactive", 404)
+            new AppError('Selected suite/kennel is marked as inactive', 404)
           );
         }
 
@@ -186,7 +186,7 @@ export const createReservation = async (
         if (!available) {
           return next(
             new AppError(
-              "Selected suite/kennel is not available for the requested dates",
+              'Selected suite/kennel is not available for the requested dates',
               400
             )
           );
@@ -195,7 +195,7 @@ export const createReservation = async (
         // Auto-assign: find an available suite of the requested type
         const candidateSuites = await prisma.resource.findMany({
           where: { isActive: true, type: finalSuiteType },
-          orderBy: { name: "asc" },
+          orderBy: { name: 'asc' },
         });
 
         let found = false;
@@ -256,16 +256,16 @@ export const createReservation = async (
       req,
       AuditAction.CREATE,
       newReservation.id,
-      `${newReservation.pet?.name || "Unknown"} - ${newReservation.startDate}`,
+      `${newReservation.pet?.name || 'Unknown'} - ${newReservation.startDate}`,
       { newValue: newReservation }
     );
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: newReservation,
     });
   } catch (error) {
-    logger.error("Error in createReservation", { error });
+    logger.error('Error in createReservation', { error });
     next(error);
   }
 };
@@ -288,7 +288,7 @@ export const updateReservation = async (
       if (!validStatuses.includes(reservationData.status)) {
         return next(
           new AppError(
-            `Invalid status. Must be one of: ${validStatuses.join(", ")}`,
+            `Invalid status. Must be one of: ${validStatuses.join(', ')}`,
             400
           )
         );
@@ -302,7 +302,7 @@ export const updateReservation = async (
       });
 
       if (!customer) {
-        return next(new AppError("Customer not found", 404));
+        return next(new AppError('Customer not found', 404));
       }
 
       const pet = await prisma.pet.findUnique({
@@ -310,12 +310,12 @@ export const updateReservation = async (
       });
 
       if (!pet) {
-        return next(new AppError("Pet not found", 404));
+        return next(new AppError('Pet not found', 404));
       }
 
       if (pet.customerId !== reservationData.customerId) {
         return next(
-          new AppError("The pet does not belong to this customer", 400)
+          new AppError('The pet does not belong to this customer', 400)
         );
       }
     } else if (reservationData.customerId) {
@@ -324,7 +324,7 @@ export const updateReservation = async (
       });
 
       if (!customer) {
-        return next(new AppError("Customer not found", 404));
+        return next(new AppError('Customer not found', 404));
       }
 
       const currentReservation = await prisma.reservation.findUnique({
@@ -333,12 +333,12 @@ export const updateReservation = async (
       });
 
       if (!currentReservation) {
-        return next(new AppError("Reservation not found", 404));
+        return next(new AppError('Reservation not found', 404));
       }
 
       if (currentReservation.pet.customerId !== reservationData.customerId) {
         return next(
-          new AppError("The pet does not belong to this customer", 400)
+          new AppError('The pet does not belong to this customer', 400)
         );
       }
     } else if (reservationData.petId) {
@@ -347,7 +347,7 @@ export const updateReservation = async (
       });
 
       if (!pet) {
-        return next(new AppError("Pet not found", 404));
+        return next(new AppError('Pet not found', 404));
       }
 
       const currentReservation = await prisma.reservation.findUnique({
@@ -355,12 +355,12 @@ export const updateReservation = async (
       });
 
       if (!currentReservation) {
-        return next(new AppError("Reservation not found", 404));
+        return next(new AppError('Reservation not found', 404));
       }
 
       if (pet.customerId !== currentReservation.customerId) {
         return next(
-          new AppError("The pet does not belong to this customer", 400)
+          new AppError('The pet does not belong to this customer', 400)
         );
       }
     }
@@ -373,7 +373,7 @@ export const updateReservation = async (
     if (shouldAutoAssign) {
       const candidateSuites = await prisma.resource.findMany({
         where: { type: suiteType, isActive: true },
-        orderBy: { name: "asc" },
+        orderBy: { name: 'asc' },
       });
 
       const currentReservation = await prisma.reservation.findUnique({
@@ -440,14 +440,14 @@ export const updateReservation = async (
       req,
       AuditAction.UPDATE,
       id,
-      `${updatedReservation.pet?.name || "Unknown"} - ${
+      `${updatedReservation.pet?.name || 'Unknown'} - ${
         updatedReservation.startDate
       }`,
       { previousValue: existingReservation, newValue: updatedReservation }
     );
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: updatedReservation,
     });
   } catch (error) {
@@ -474,7 +474,7 @@ export const deleteReservation = async (
     });
 
     if (!existingReservation) {
-      return next(AppError.notFoundError("Reservation", id));
+      return next(AppError.notFoundError('Reservation', id));
     }
 
     // First, unlink any invoices that reference this reservation
@@ -510,7 +510,7 @@ export const deleteReservation = async (
         req,
         AuditAction.DELETE,
         id,
-        `${existingReservation.pet?.name || "Unknown"} - ${
+        `${existingReservation.pet?.name || 'Unknown'} - ${
           existingReservation.startDate
         }`,
         { previousValue: existingReservation, severity: AuditSeverity.CRITICAL }
@@ -518,7 +518,7 @@ export const deleteReservation = async (
     }
 
     res.status(204).json({
-      status: "success",
+      status: 'success',
       data: null,
     });
   } catch (error) {

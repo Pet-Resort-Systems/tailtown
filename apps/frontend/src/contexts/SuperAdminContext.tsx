@@ -11,8 +11,8 @@ import React, {
   useState,
   useEffect,
   ReactNode,
-} from "react";
-import axios from "axios";
+} from 'react';
+import axios from 'axios';
 
 interface SuperAdmin {
   id: string;
@@ -50,7 +50,7 @@ export const SuperAdminProvider: React.FC<{ children: ReactNode }> = ({
   // Load super admin from localStorage on mount
   useEffect(() => {
     const loadSuperAdmin = async () => {
-      const accessToken = localStorage.getItem("superAdminAccessToken");
+      const accessToken = localStorage.getItem('superAdminAccessToken');
 
       if (accessToken) {
         try {
@@ -64,10 +64,10 @@ export const SuperAdminProvider: React.FC<{ children: ReactNode }> = ({
             setSuperAdmin(response.data.data);
           }
         } catch (error) {
-          console.error("Failed to load super admin:", error);
+          console.error('Failed to load super admin:', error);
           // Clear invalid tokens
-          localStorage.removeItem("superAdminAccessToken");
-          localStorage.removeItem("superAdminRefreshToken");
+          localStorage.removeItem('superAdminAccessToken');
+          localStorage.removeItem('superAdminRefreshToken');
         }
       }
 
@@ -88,32 +88,32 @@ export const SuperAdminProvider: React.FC<{ children: ReactNode }> = ({
         const { user, accessToken, refreshToken } = response.data.data;
 
         // Store tokens
-        localStorage.setItem("superAdminAccessToken", accessToken);
-        localStorage.setItem("superAdminRefreshToken", refreshToken);
+        localStorage.setItem('superAdminAccessToken', accessToken);
+        localStorage.setItem('superAdminRefreshToken', refreshToken);
 
         // CRITICAL: Also set as regular tokens so AuthContext and SuperAdminOnlyRoute work
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("token", accessToken);
-        localStorage.setItem("tokenTimestamp", Date.now().toString());
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('token', accessToken);
+        localStorage.setItem('tokenTimestamp', Date.now().toString());
 
         // CRITICAL: Clear any tenant IDs - super admin should not have tenant context
-        localStorage.removeItem("tailtown_tenant_id");
-        localStorage.removeItem("tenantId");
+        localStorage.removeItem('tailtown_tenant_id');
+        localStorage.removeItem('tenantId');
 
         // Set user
         setSuperAdmin(user);
       } else {
-        throw new Error(response.data.message || "Login failed");
+        throw new Error(response.data.message || 'Login failed');
       }
     } catch (error: any) {
-      console.error("Login error:", error);
-      throw new Error(error.response?.data?.message || "Login failed");
+      console.error('Login error:', error);
+      throw new Error(error.response?.data?.message || 'Login failed');
     }
   };
 
   const logout = async () => {
     try {
-      const accessToken = localStorage.getItem("superAdminAccessToken");
+      const accessToken = localStorage.getItem('superAdminAccessToken');
 
       if (accessToken) {
         await axios.post(
@@ -127,26 +127,26 @@ export const SuperAdminProvider: React.FC<{ children: ReactNode }> = ({
         );
       }
     } catch (error) {
-      console.error("Logout error:", error);
+      console.error('Logout error:', error);
     } finally {
       // Clear tokens and user regardless of API call success
-      localStorage.removeItem("superAdminAccessToken");
-      localStorage.removeItem("superAdminRefreshToken");
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("token");
-      localStorage.removeItem("tokenTimestamp");
-      localStorage.removeItem("tailtown_tenant_id");
-      localStorage.removeItem("tenantId");
+      localStorage.removeItem('superAdminAccessToken');
+      localStorage.removeItem('superAdminRefreshToken');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('token');
+      localStorage.removeItem('tokenTimestamp');
+      localStorage.removeItem('tailtown_tenant_id');
+      localStorage.removeItem('tenantId');
       setSuperAdmin(null);
     }
   };
 
   const refreshToken = async () => {
     try {
-      const refreshToken = localStorage.getItem("superAdminRefreshToken");
+      const refreshToken = localStorage.getItem('superAdminRefreshToken');
 
       if (!refreshToken) {
-        throw new Error("No refresh token available");
+        throw new Error('No refresh token available');
       }
 
       const response = await axios.post(`${SUPER_ADMIN_API}/refresh`, {
@@ -157,16 +157,16 @@ export const SuperAdminProvider: React.FC<{ children: ReactNode }> = ({
         const { accessToken, refreshToken: newRefreshToken } =
           response.data.data;
 
-        localStorage.setItem("superAdminAccessToken", accessToken);
-        localStorage.setItem("superAdminRefreshToken", newRefreshToken);
+        localStorage.setItem('superAdminAccessToken', accessToken);
+        localStorage.setItem('superAdminRefreshToken', newRefreshToken);
 
         // Also update regular tokens
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("token", accessToken);
-        localStorage.setItem("tokenTimestamp", Date.now().toString());
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('token', accessToken);
+        localStorage.setItem('tokenTimestamp', Date.now().toString());
       }
     } catch (error) {
-      console.error("Token refresh error:", error);
+      console.error('Token refresh error:', error);
       // If refresh fails, logout
       await logout();
       throw error;
@@ -185,7 +185,7 @@ export const SuperAdminProvider: React.FC<{ children: ReactNode }> = ({
 export const useSuperAdmin = () => {
   const context = useContext(SuperAdminContext);
   if (context === undefined) {
-    throw new Error("useSuperAdmin must be used within a SuperAdminProvider");
+    throw new Error('useSuperAdmin must be used within a SuperAdminProvider');
   }
   return context;
 };

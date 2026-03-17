@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -15,16 +15,16 @@ import {
   LinearProgress,
   Divider,
   IconButton,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import LabelIcon from "@mui/icons-material/Label";
-import PrintIcon from "@mui/icons-material/Print";
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import LabelIcon from '@mui/icons-material/Label';
+import PrintIcon from '@mui/icons-material/Print';
 import {
   KennelLabelData,
   printKennelLabelsBatch,
-} from "../../services/labelPrintService";
+} from '../../services/labelPrintService';
 
-type PrintMethod = "local" | "browser" | "server" | "usb" | "download";
+type PrintMethod = 'local' | 'browser' | 'server' | 'usb' | 'download';
 
 type ReservationLike = {
   id: string;
@@ -48,22 +48,22 @@ interface BatchLabelPrintDialogProps {
 
 const formatDateLocal = (date: Date) => {
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 };
 
 const getLocalDateString = (dateString: string): string => {
   const date = new Date(dateString);
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 };
 
 const toLabelData = (r: ReservationLike): KennelLabelData | null => {
-  const dogName = r.pet?.name?.trim() || "";
-  const customerLastName = r.customer?.lastName?.trim() || "";
+  const dogName = r.pet?.name?.trim() || '';
+  const customerLastName = r.customer?.lastName?.trim() || '';
   const kennelNumber = r.resource?.name?.trim() || undefined;
 
   // Only require dog name - kennel and group can be blank
@@ -71,10 +71,10 @@ const toLabelData = (r: ReservationLike): KennelLabelData | null => {
 
   // Map playgroupCompatibility enum to display labels
   const playgroupMap: Record<string, string> = {
-    LARGE_DOG: "Large",
-    MEDIUM_DOG: "Medium",
-    SMALL_DOG: "Small",
-    SOLO_ONLY: "Solo",
+    LARGE_DOG: 'Large',
+    MEDIUM_DOG: 'Medium',
+    SMALL_DOG: 'Small',
+    SOLO_ONLY: 'Solo',
   };
 
   const groupSize = r.pet?.playgroupCompatibility
@@ -95,7 +95,7 @@ const BatchLabelPrintDialog: React.FC<BatchLabelPrintDialogProps> = ({
   reservations,
   selectedDate,
 }) => {
-  const [method, setMethod] = useState<PrintMethod>("local");
+  const [method, setMethod] = useState<PrintMethod>('local');
   const [printing, setPrinting] = useState(false);
   const [progressText, setProgressText] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -116,19 +116,19 @@ const BatchLabelPrintDialog: React.FC<BatchLabelPrintDialogProps> = ({
       if (startDateStr !== selectedDateStr) return false;
 
       const status = r.status?.toUpperCase();
-      return status !== "CANCELLED" && status !== "NO_SHOW";
+      return status !== 'CANCELLED' && status !== 'NO_SHOW';
     });
   }, [reservations, selectedDateStr]);
 
   const daycareReservations = useMemo(() => {
     return checkInsForDay.filter(
-      (r) => r.service?.serviceCategory?.toUpperCase() === "DAYCARE"
+      (r) => r.service?.serviceCategory?.toUpperCase() === 'DAYCARE'
     );
   }, [checkInsForDay]);
 
   const boardingReservations = useMemo(() => {
     return checkInsForDay.filter(
-      (r) => r.service?.serviceCategory?.toUpperCase() === "BOARDING"
+      (r) => r.service?.serviceCategory?.toUpperCase() === 'BOARDING'
     );
   }, [checkInsForDay]);
 
@@ -208,13 +208,13 @@ const BatchLabelPrintDialog: React.FC<BatchLabelPrintDialogProps> = ({
     printable: number,
     skipped: number
   ) => (
-    <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}>
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
       <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
         {title}
       </Typography>
       <Typography variant="body2" color="text.secondary">
         {printable}/{totalReservations} printable
-        {skipped > 0 ? ` (${skipped} missing kennel/name)` : ""}
+        {skipped > 0 ? ` (${skipped} missing kennel/name)` : ''}
       </Typography>
     </Box>
   );
@@ -224,12 +224,12 @@ const BatchLabelPrintDialog: React.FC<BatchLabelPrintDialogProps> = ({
       <DialogTitle>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <LabelIcon />
             <Typography variant="h6">Batch Print Kennel Labels</Typography>
           </Box>
@@ -286,19 +286,19 @@ const BatchLabelPrintDialog: React.FC<BatchLabelPrintDialogProps> = ({
           </Box>
         )}
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Box>
             {batchSummaryLine(
-              "Daycare",
+              'Daycare',
               daycareReservations.length,
               daycareBatch.labels.length,
               daycareBatch.skipped.length
             )}
-            <Box sx={{ mt: 1, display: "flex", gap: 1 }}>
+            <Box sx={{ mt: 1, display: 'flex', gap: 1 }}>
               <Button
                 variant="contained"
                 startIcon={<PrintIcon />}
-                onClick={() => handlePrintBatch("Daycare", daycareBatch.labels)}
+                onClick={() => handlePrintBatch('Daycare', daycareBatch.labels)}
                 disabled={printing}
               >
                 Print Daycare Labels
@@ -310,17 +310,17 @@ const BatchLabelPrintDialog: React.FC<BatchLabelPrintDialogProps> = ({
 
           <Box>
             {batchSummaryLine(
-              "Boarding",
+              'Boarding',
               boardingReservations.length,
               boardingBatch.labels.length,
               boardingBatch.skipped.length
             )}
-            <Box sx={{ mt: 1, display: "flex", gap: 1 }}>
+            <Box sx={{ mt: 1, display: 'flex', gap: 1 }}>
               <Button
                 variant="contained"
                 startIcon={<PrintIcon />}
                 onClick={() =>
-                  handlePrintBatch("Boarding", boardingBatch.labels)
+                  handlePrintBatch('Boarding', boardingBatch.labels)
                 }
                 disabled={printing}
               >

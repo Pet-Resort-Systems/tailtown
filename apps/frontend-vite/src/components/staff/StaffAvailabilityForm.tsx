@@ -19,7 +19,7 @@ import {
   TableRow,
   Chip,
   SelectChangeEvent,
-  CircularProgress
+  CircularProgress,
 } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import staffService, { StaffAvailability } from '../../services/staffService';
@@ -36,21 +36,27 @@ const dayNames = [
   'Wednesday',
   'Thursday',
   'Friday',
-  'Saturday'
+  'Saturday',
 ];
 
-const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({ staffId, onSave }) => {
-  const [availabilityList, setAvailabilityList] = useState<StaffAvailability[]>([]);
+const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({
+  staffId,
+  onSave,
+}) => {
+  const [availabilityList, setAvailabilityList] = useState<StaffAvailability[]>(
+    []
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [editingAvailability, setEditingAvailability] = useState<StaffAvailability | null>(null);
+  const [editingAvailability, setEditingAvailability] =
+    useState<StaffAvailability | null>(null);
   const [formData, setFormData] = useState<Partial<StaffAvailability>>({
     dayOfWeek: 0,
     startTime: '09:00',
     endTime: '17:00',
     isAvailable: true,
     effectiveFrom: null,
-    effectiveUntil: null
+    effectiveUntil: null,
     // Removed notes field as it's not supported in the backend schema
   });
 
@@ -80,7 +86,7 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({ staffId, 
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -88,7 +94,7 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({ staffId, 
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: name === 'dayOfWeek' ? parseInt(value, 10) : value === 'true'
+      [name]: name === 'dayOfWeek' ? parseInt(value, 10) : value === 'true',
     });
   };
 
@@ -100,7 +106,7 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({ staffId, 
       endTime: availability.endTime,
       isAvailable: availability.isAvailable,
       effectiveFrom: availability.effectiveFrom,
-      effectiveUntil: availability.effectiveUntil
+      effectiveUntil: availability.effectiveUntil,
       // Removed notes field as it's not supported in the backend schema
     });
   };
@@ -113,7 +119,7 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({ staffId, 
       endTime: '17:00',
       isAvailable: true,
       effectiveFrom: null,
-      effectiveUntil: null
+      effectiveUntil: null,
       // Removed notes field as it's not supported in the backend schema
     });
   };
@@ -121,9 +127,13 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({ staffId, 
   const handleSaveAvailability = async () => {
     try {
       setLoading(true);
-      
+
       // Validate form data
-      if (formData.startTime && formData.endTime && formData.startTime >= formData.endTime) {
+      if (
+        formData.startTime &&
+        formData.endTime &&
+        formData.startTime >= formData.endTime
+      ) {
         setError('End time must be after start time');
         setLoading(false);
         return;
@@ -133,19 +143,19 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({ staffId, 
         // Update existing availability
         await staffService.updateStaffAvailability(editingAvailability.id, {
           ...formData,
-          staffId
+          staffId,
         });
       } else {
         // Create new availability
         await staffService.createStaffAvailability(staffId, formData);
       }
-      
+
       // Reload the availability list
       await loadStaffAvailability();
-      
+
       // Reset form
       handleCancelEdit();
-      
+
       // Call onSave callback if provided
       if (onSave) {
         onSave();
@@ -163,12 +173,12 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({ staffId, 
       setLoading(true);
       await staffService.deleteStaffAvailability(availabilityId);
       await loadStaffAvailability();
-      
+
       // If we were editing the deleted item, reset the form
       if (editingAvailability && editingAvailability.id === availabilityId) {
         handleCancelEdit();
       }
-      
+
       // Call onSave callback if provided
       if (onSave) {
         onSave();
@@ -188,12 +198,12 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({ staffId, 
           <Typography color="error">{error}</Typography>
         </Box>
       )}
-      
+
       <Paper sx={{ p: 2, mb: 3 }}>
         <Typography variant="subtitle1" gutterBottom>
           {editingAvailability ? 'Edit Availability' : 'Add New Availability'}
         </Typography>
-        
+
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth size="small">
@@ -205,12 +215,14 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({ staffId, 
                 onChange={handleSelectChange}
               >
                 {dayNames.map((day, index) => (
-                  <MenuItem key={day} value={index.toString()}>{day}</MenuItem>
+                  <MenuItem key={day} value={index.toString()}>
+                    {day}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
           </Grid>
-          
+
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth size="small">
               <InputLabel>Available</InputLabel>
@@ -225,7 +237,7 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({ staffId, 
               </Select>
             </FormControl>
           </Grid>
-          
+
           <Grid item xs={12} sm={6}>
             <TextField
               name="startTime"
@@ -239,7 +251,7 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({ staffId, 
               inputProps={{ step: 300 }}
             />
           </Grid>
-          
+
           <Grid item xs={12} sm={6}>
             <TextField
               name="endTime"
@@ -253,7 +265,7 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({ staffId, 
               inputProps={{ step: 300 }}
             />
           </Grid>
-          
+
           <Grid item xs={12} sm={6}>
             <TextField
               name="effectiveFrom"
@@ -266,7 +278,7 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({ staffId, 
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
-          
+
           <Grid item xs={12} sm={6}>
             <TextField
               name="effectiveUntil"
@@ -279,21 +291,25 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({ staffId, 
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
-          
+
           {/* Removed notes field as it's not supported in the backend schema */}
-          
-          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+
+          <Grid
+            item
+            xs={12}
+            sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}
+          >
             {editingAvailability ? (
               <>
-                <Button 
-                  variant="outlined" 
+                <Button
+                  variant="outlined"
                   onClick={handleCancelEdit}
                   size="small"
                 >
                   Cancel
                 </Button>
-                <Button 
-                  variant="contained" 
+                <Button
+                  variant="contained"
                   onClick={handleSaveAvailability}
                   size="small"
                   disabled={loading}
@@ -302,8 +318,8 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({ staffId, 
                 </Button>
               </>
             ) : (
-              <Button 
-                variant="contained" 
+              <Button
+                variant="contained"
                 onClick={handleSaveAvailability}
                 size="small"
                 disabled={loading}
@@ -314,11 +330,11 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({ staffId, 
           </Grid>
         </Grid>
       </Paper>
-      
+
       <Typography variant="subtitle1" gutterBottom>
         Current Availability Schedule
       </Typography>
-      
+
       {loading && !editingAvailability ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
           <CircularProgress />
@@ -345,34 +361,49 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({ staffId, 
                   <TableCell>{dayNames[availability.dayOfWeek]}</TableCell>
                   <TableCell>{`${availability.startTime} - ${availability.endTime}`}</TableCell>
                   <TableCell>
-                    <Chip 
-                      label={availability.isAvailable ? 'Available' : 'Unavailable'} 
+                    <Chip
+                      label={
+                        availability.isAvailable ? 'Available' : 'Unavailable'
+                      }
                       color={availability.isAvailable ? 'success' : 'error'}
                       size="small"
                     />
                   </TableCell>
                   <TableCell>
-                    {availability.effectiveFrom || availability.effectiveUntil ? (
+                    {availability.effectiveFrom ||
+                    availability.effectiveUntil ? (
                       <>
-                        {availability.effectiveFrom ? new Date(availability.effectiveFrom).toLocaleDateString() : 'Always'} 
-                        {' - '} 
-                        {availability.effectiveUntil ? new Date(availability.effectiveUntil).toLocaleDateString() : 'Forever'}
+                        {availability.effectiveFrom
+                          ? new Date(
+                              availability.effectiveFrom
+                            ).toLocaleDateString()
+                          : 'Always'}
+                        {' - '}
+                        {availability.effectiveUntil
+                          ? new Date(
+                              availability.effectiveUntil
+                            ).toLocaleDateString()
+                          : 'Forever'}
                       </>
                     ) : (
                       'Always'
                     )}
                   </TableCell>
                   <TableCell align="right">
-                    <IconButton 
-                      size="small" 
+                    <IconButton
+                      size="small"
                       onClick={() => handleEditAvailability(availability)}
                       aria-label="edit"
                     >
                       <EditIcon fontSize="small" />
                     </IconButton>
-                    <IconButton 
-                      size="small" 
-                      onClick={() => availability.id ? handleDeleteAvailability(availability.id) : undefined}
+                    <IconButton
+                      size="small"
+                      onClick={() =>
+                        availability.id
+                          ? handleDeleteAvailability(availability.id)
+                          : undefined
+                      }
                       aria-label="delete"
                     >
                       <DeleteIcon fontSize="small" />

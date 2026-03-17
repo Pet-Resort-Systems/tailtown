@@ -4,12 +4,12 @@
  * Tests for report card API endpoints
  */
 
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-import * as reportCardController from "../reportCard";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import * as reportCardController from '../reportCard';
 
 // Mock Prisma
-jest.mock("@prisma/client", () => {
+jest.mock('@prisma/client', () => {
   const mockPrisma = {
     reportCard: {
       create: jest.fn(),
@@ -38,7 +38,7 @@ jest.mock("@prisma/client", () => {
 
 const prisma = new PrismaClient();
 
-describe("ReportCard Controller", () => {
+describe('ReportCard Controller', () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
   let mockNext: NextFunction;
@@ -46,12 +46,12 @@ describe("ReportCard Controller", () => {
   beforeEach(() => {
     mockRequest = {
       user: {
-        id: "staff-123",
-        email: "staff@test.com",
-        role: "STAFF",
-        tenantId: "tenant-1",
+        id: 'staff-123',
+        email: 'staff@test.com',
+        role: 'STAFF',
+        tenantId: 'tenant-1',
       },
-      tenantId: "tenant-1",
+      tenantId: 'tenant-1',
       params: {},
       query: {},
       body: {},
@@ -68,36 +68,36 @@ describe("ReportCard Controller", () => {
     jest.clearAllMocks();
   });
 
-  describe("createReportCard", () => {
-    it("should create a report card successfully", async () => {
+  describe('createReportCard', () => {
+    it('should create a report card successfully', async () => {
       const mockPet = {
-        id: "pet-123",
-        name: "Max",
-        customerId: "customer-123",
-        tenantId: "tenant-1",
+        id: 'pet-123',
+        name: 'Max',
+        customerId: 'customer-123',
+        tenantId: 'tenant-1',
       };
 
       const mockReportCard = {
-        id: "report-123",
-        tenantId: "tenant-1",
-        petId: "pet-123",
-        customerId: "customer-123",
-        createdByStaffId: "staff-123",
-        serviceType: "DAYCARE",
+        id: 'report-123',
+        tenantId: 'tenant-1',
+        petId: 'pet-123',
+        customerId: 'customer-123',
+        createdByStaffId: 'staff-123',
+        serviceType: 'DAYCARE',
         moodRating: 5,
         energyRating: 4,
         appetiteRating: 5,
         socialRating: 4,
-        activities: ["Playtime", "Nap"],
-        highlights: ["Great day!"],
+        activities: ['Playtime', 'Nap'],
+        highlights: ['Great day!'],
         photoCount: 0,
-        status: "DRAFT",
+        status: 'DRAFT',
         pet: mockPet,
-        customer: { id: "customer-123", firstName: "John", lastName: "Doe" },
+        customer: { id: 'customer-123', firstName: 'John', lastName: 'Doe' },
         createdByStaff: {
-          id: "staff-123",
-          firstName: "Jane",
-          lastName: "Smith",
+          id: 'staff-123',
+          firstName: 'Jane',
+          lastName: 'Smith',
         },
         photos: [],
       };
@@ -106,15 +106,15 @@ describe("ReportCard Controller", () => {
       (prisma.reportCard.create as jest.Mock).mockResolvedValue(mockReportCard);
 
       mockRequest.body = {
-        petId: "pet-123",
-        customerId: "customer-123",
-        serviceType: "DAYCARE",
+        petId: 'pet-123',
+        customerId: 'customer-123',
+        serviceType: 'DAYCARE',
         moodRating: 5,
         energyRating: 4,
         appetiteRating: 5,
         socialRating: 4,
-        activities: ["Playtime", "Nap"],
-        highlights: ["Great day!"],
+        activities: ['Playtime', 'Nap'],
+        highlights: ['Great day!'],
       };
 
       await reportCardController.createReportCard(
@@ -125,9 +125,9 @@ describe("ReportCard Controller", () => {
 
       expect(prisma.pet.findFirst).toHaveBeenCalledWith({
         where: {
-          id: "pet-123",
-          customerId: "customer-123",
-          tenantId: "tenant-1",
+          id: 'pet-123',
+          customerId: 'customer-123',
+          tenantId: 'tenant-1',
         },
       });
 
@@ -139,13 +139,13 @@ describe("ReportCard Controller", () => {
       });
     });
 
-    it("should return error if pet not found", async () => {
+    it('should return error if pet not found', async () => {
       (prisma.pet.findFirst as jest.Mock).mockResolvedValue(null);
 
       mockRequest.body = {
-        petId: "invalid-pet",
-        customerId: "customer-123",
-        serviceType: "DAYCARE",
+        petId: 'invalid-pet',
+        customerId: 'customer-123',
+        serviceType: 'DAYCARE',
       };
 
       await reportCardController.createReportCard(
@@ -156,13 +156,13 @@ describe("ReportCard Controller", () => {
 
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: "Pet not found or does not belong to customer",
+          message: 'Pet not found or does not belong to customer',
           statusCode: 404,
         })
       );
     });
 
-    it("should return error if required fields missing", async () => {
+    it('should return error if required fields missing', async () => {
       mockRequest.body = {
         // Missing petId, customerId, serviceType
       };
@@ -175,24 +175,24 @@ describe("ReportCard Controller", () => {
 
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: "Pet ID, Customer ID, and Service Type are required",
+          message: 'Pet ID, Customer ID, and Service Type are required',
           statusCode: 400,
         })
       );
     });
   });
 
-  describe("listReportCards", () => {
-    it("should list report cards with filters", async () => {
+  describe('listReportCards', () => {
+    it('should list report cards with filters', async () => {
       const mockReportCards = [
         {
-          id: "report-1",
-          petId: "pet-123",
-          serviceType: "DAYCARE",
-          status: "SENT",
-          pet: { id: "pet-123", name: "Max" },
-          customer: { id: "customer-123", firstName: "John" },
-          createdByStaff: { id: "staff-123", firstName: "Jane" },
+          id: 'report-1',
+          petId: 'pet-123',
+          serviceType: 'DAYCARE',
+          status: 'SENT',
+          pet: { id: 'pet-123', name: 'Max' },
+          customer: { id: 'customer-123', firstName: 'John' },
+          createdByStaff: { id: 'staff-123', firstName: 'Jane' },
           photos: [],
         },
       ];
@@ -203,10 +203,10 @@ describe("ReportCard Controller", () => {
       (prisma.reportCard.count as jest.Mock).mockResolvedValue(1);
 
       mockRequest.query = {
-        petId: "pet-123",
-        status: "SENT",
-        limit: "10",
-        offset: "0",
+        petId: 'pet-123',
+        status: 'SENT',
+        limit: '10',
+        offset: '0',
       };
 
       await reportCardController.listReportCards(
@@ -218,9 +218,9 @@ describe("ReportCard Controller", () => {
       expect(prisma.reportCard.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            tenantId: "tenant-1",
-            petId: "pet-123",
-            status: "SENT",
+            tenantId: 'tenant-1',
+            petId: 'pet-123',
+            status: 'SENT',
           }),
           take: 10,
           skip: 0,
@@ -239,13 +239,13 @@ describe("ReportCard Controller", () => {
     });
   });
 
-  describe("getReportCard", () => {
-    it("should get a single report card and track view", async () => {
+  describe('getReportCard', () => {
+    it('should get a single report card and track view', async () => {
       const mockReportCard = {
-        id: "report-123",
-        petId: "pet-123",
-        pet: { id: "pet-123", name: "Max" },
-        customer: { id: "customer-123", firstName: "John" },
+        id: 'report-123',
+        petId: 'pet-123',
+        pet: { id: 'pet-123', name: 'Max' },
+        customer: { id: 'customer-123', firstName: 'John' },
         photos: [],
         viewCount: 0,
       };
@@ -258,7 +258,7 @@ describe("ReportCard Controller", () => {
         viewCount: 1,
       });
 
-      mockRequest.params = { id: "report-123" };
+      mockRequest.params = { id: 'report-123' };
 
       await reportCardController.getReportCard(
         mockRequest as any,
@@ -267,7 +267,7 @@ describe("ReportCard Controller", () => {
       );
 
       expect(prisma.reportCard.update).toHaveBeenCalledWith({
-        where: { id: "report-123" },
+        where: { id: 'report-123' },
         data: {
           viewCount: { increment: 1 },
           viewedAt: expect.any(Date),
@@ -280,10 +280,10 @@ describe("ReportCard Controller", () => {
       });
     });
 
-    it("should return 404 if report card not found", async () => {
+    it('should return 404 if report card not found', async () => {
       (prisma.reportCard.findFirst as jest.Mock).mockResolvedValue(null);
 
-      mockRequest.params = { id: "invalid-id" };
+      mockRequest.params = { id: 'invalid-id' };
 
       await reportCardController.getReportCard(
         mockRequest as any,
@@ -293,24 +293,24 @@ describe("ReportCard Controller", () => {
 
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: "Report card not found",
+          message: 'Report card not found',
           statusCode: 404,
         })
       );
     });
   });
 
-  describe("uploadPhoto", () => {
-    it("should upload photo to report card", async () => {
+  describe('uploadPhoto', () => {
+    it('should upload photo to report card', async () => {
       const mockReportCard = {
-        id: "report-123",
-        tenantId: "tenant-1",
+        id: 'report-123',
+        tenantId: 'tenant-1',
       };
 
       const mockPhoto = {
-        id: "photo-123",
-        reportCardId: "report-123",
-        url: "https://example.com/photo.jpg",
+        id: 'photo-123',
+        reportCardId: 'report-123',
+        url: 'https://example.com/photo.jpg',
         order: 0,
       };
 
@@ -319,11 +319,11 @@ describe("ReportCard Controller", () => {
       );
       (prisma.reportCardPhoto.create as jest.Mock).mockResolvedValue(mockPhoto);
 
-      mockRequest.params = { id: "report-123" };
+      mockRequest.params = { id: 'report-123' };
       mockRequest.body = {
-        url: "https://example.com/photo.jpg",
-        thumbnailUrl: "https://example.com/thumb.jpg",
-        caption: "Playing fetch!",
+        url: 'https://example.com/photo.jpg',
+        thumbnailUrl: 'https://example.com/thumb.jpg',
+        caption: 'Playing fetch!',
         order: 0,
       };
 
@@ -336,9 +336,9 @@ describe("ReportCard Controller", () => {
       expect(prisma.reportCardPhoto.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
-            reportCardId: "report-123",
-            url: "https://example.com/photo.jpg",
-            caption: "Playing fetch!",
+            reportCardId: 'report-123',
+            url: 'https://example.com/photo.jpg',
+            caption: 'Playing fetch!',
           }),
         })
       );
@@ -350,11 +350,11 @@ describe("ReportCard Controller", () => {
       });
     });
 
-    it("should return error if URL missing", async () => {
-      mockRequest.params = { id: "report-123" };
+    it('should return error if URL missing', async () => {
+      mockRequest.params = { id: 'report-123' };
       mockRequest.body = {
         // Missing url
-        caption: "Test",
+        caption: 'Test',
       };
 
       await reportCardController.uploadPhoto(
@@ -365,18 +365,18 @@ describe("ReportCard Controller", () => {
 
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: "Photo URL is required",
+          message: 'Photo URL is required',
           statusCode: 400,
         })
       );
     });
   });
 
-  describe("bulkCreateReportCards", () => {
-    it("should create multiple report cards", async () => {
+  describe('bulkCreateReportCards', () => {
+    it('should create multiple report cards', async () => {
       const mockReportCards = [
-        { id: "report-1", petId: "pet-1", pet: { name: "Max" } },
-        { id: "report-2", petId: "pet-2", pet: { name: "Bella" } },
+        { id: 'report-1', petId: 'pet-1', pet: { name: 'Max' } },
+        { id: 'report-2', petId: 'pet-2', pet: { name: 'Bella' } },
       ];
 
       (prisma.reportCard.create as jest.Mock)
@@ -385,8 +385,8 @@ describe("ReportCard Controller", () => {
 
       mockRequest.body = {
         reportCards: [
-          { petId: "pet-1", customerId: "customer-1", serviceType: "DAYCARE" },
-          { petId: "pet-2", customerId: "customer-2", serviceType: "DAYCARE" },
+          { petId: 'pet-1', customerId: 'customer-1', serviceType: 'DAYCARE' },
+          { petId: 'pet-2', customerId: 'customer-2', serviceType: 'DAYCARE' },
         ],
       };
 
@@ -407,7 +407,7 @@ describe("ReportCard Controller", () => {
       });
     });
 
-    it("should return error if reportCards array empty", async () => {
+    it('should return error if reportCards array empty', async () => {
       mockRequest.body = {
         reportCards: [],
       };
@@ -420,29 +420,29 @@ describe("ReportCard Controller", () => {
 
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: "Report cards array is required",
+          message: 'Report cards array is required',
           statusCode: 400,
         })
       );
     });
   });
 
-  describe("sendReportCard", () => {
-    it("should send report card and update status", async () => {
+  describe('sendReportCard', () => {
+    it('should send report card and update status', async () => {
       const mockReportCard = {
-        id: "report-123",
-        tenantId: "tenant-1",
+        id: 'report-123',
+        tenantId: 'tenant-1',
         customer: {
-          email: "customer@test.com",
-          phone: "+1234567890",
+          email: 'customer@test.com',
+          phone: '+1234567890',
         },
-        pet: { name: "Max" },
+        pet: { name: 'Max' },
         photos: [],
       };
 
       const mockUpdated = {
         ...mockReportCard,
-        status: "SENT",
+        status: 'SENT',
         sentAt: new Date(),
         sentViaEmail: true,
         sentViaSMS: true,
@@ -453,7 +453,7 @@ describe("ReportCard Controller", () => {
       );
       (prisma.reportCard.update as jest.Mock).mockResolvedValue(mockUpdated);
 
-      mockRequest.params = { id: "report-123" };
+      mockRequest.params = { id: 'report-123' };
       mockRequest.body = {
         sendEmail: true,
         sendSMS: true,
@@ -467,9 +467,9 @@ describe("ReportCard Controller", () => {
 
       expect(prisma.reportCard.update).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { id: "report-123" },
+          where: { id: 'report-123' },
           data: expect.objectContaining({
-            status: "SENT",
+            status: 'SENT',
             sentViaEmail: true,
             sentViaSMS: true,
           }),
@@ -479,16 +479,16 @@ describe("ReportCard Controller", () => {
       expect(mockResponse.json).toHaveBeenCalledWith({
         success: true,
         data: mockUpdated,
-        message: "Report card sent successfully",
+        message: 'Report card sent successfully',
       });
     });
   });
 
-  describe("deleteReportCard", () => {
-    it("should delete report card", async () => {
+  describe('deleteReportCard', () => {
+    it('should delete report card', async () => {
       const mockReportCard = {
-        id: "report-123",
-        tenantId: "tenant-1",
+        id: 'report-123',
+        tenantId: 'tenant-1',
       };
 
       (prisma.reportCard.findFirst as jest.Mock).mockResolvedValue(
@@ -496,7 +496,7 @@ describe("ReportCard Controller", () => {
       );
       (prisma.reportCard.delete as jest.Mock).mockResolvedValue(mockReportCard);
 
-      mockRequest.params = { id: "report-123" };
+      mockRequest.params = { id: 'report-123' };
 
       await reportCardController.deleteReportCard(
         mockRequest as any,
@@ -505,12 +505,12 @@ describe("ReportCard Controller", () => {
       );
 
       expect(prisma.reportCard.delete).toHaveBeenCalledWith({
-        where: { id: "report-123" },
+        where: { id: 'report-123' },
       });
 
       expect(mockResponse.json).toHaveBeenCalledWith({
         success: true,
-        message: "Report card deleted successfully",
+        message: 'Report card deleted successfully',
       });
     });
   });

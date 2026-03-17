@@ -1,5 +1,5 @@
-import { Resource, ResourceAvailability } from "../types/resource";
-import { reservationApi as api } from "./api";
+import { Resource, ResourceAvailability } from '../types/resource';
+import { reservationApi as api } from './api';
 
 // Get all resources with pagination support
 export const getAllResources = async () => {
@@ -9,7 +9,7 @@ export const getAllResources = async () => {
     let totalPages = 1;
 
     // Fetch first page with cache-busting
-    const firstResponse = await api.get("/api/resources", {
+    const firstResponse = await api.get('/api/resources', {
       params: {
         page: currentPage,
         limit: 100,
@@ -17,14 +17,14 @@ export const getAllResources = async () => {
       },
     });
 
-    if (firstResponse.data && firstResponse.data.status === "success") {
+    if (firstResponse.data && firstResponse.data.status === 'success') {
       allResources = firstResponse.data.data || [];
       totalPages = firstResponse.data.totalPages || 1;
 
       // Fetch remaining pages if there are any
       while (currentPage < totalPages) {
         currentPage++;
-        const pageResponse = await api.get("/api/resources", {
+        const pageResponse = await api.get('/api/resources', {
           params: {
             page: currentPage,
             limit: 100,
@@ -34,7 +34,7 @@ export const getAllResources = async () => {
 
         if (
           pageResponse.data &&
-          pageResponse.data.status === "success" &&
+          pageResponse.data.status === 'success' &&
           pageResponse.data.data
         ) {
           allResources = [...allResources, ...pageResponse.data.data];
@@ -44,11 +44,11 @@ export const getAllResources = async () => {
       return allResources;
     }
 
-    console.error("Unexpected response format:", firstResponse.data);
-    throw new Error("Failed to get resources: Invalid response format");
+    console.error('Unexpected response format:', firstResponse.data);
+    throw new Error('Failed to get resources: Invalid response format');
   } catch (error: any) {
     console.error(
-      "Error getting resources:",
+      'Error getting resources:',
       error.response?.data || error.message
     );
     throw error;
@@ -62,7 +62,7 @@ export const getResourceById = async (id: string) => {
     return response.data.data;
   } catch (error: any) {
     console.error(
-      "Error getting resource:",
+      'Error getting resource:',
       error.response?.data || error.message
     );
     throw error;
@@ -71,21 +71,21 @@ export const getResourceById = async (id: string) => {
 
 // Create a new resource
 export const createResource = async (
-  resourceData: Omit<Resource, "id" | "createdAt" | "updatedAt">
+  resourceData: Omit<Resource, 'id' | 'createdAt' | 'updatedAt'>
 ) => {
   try {
-    const response = await api.post("/api/resources", {
+    const response = await api.post('/api/resources', {
       ...resourceData,
       isActive: true,
       attributes: resourceData.attributes || {},
     });
-    if (response.data.status === "success") {
+    if (response.data.status === 'success') {
       return response.data.data;
     }
-    throw new Error("Failed to create resource");
+    throw new Error('Failed to create resource');
   } catch (error: any) {
     console.error(
-      "Error creating resource:",
+      'Error creating resource:',
       error.response?.data || error.message
     );
     throw error;
@@ -102,7 +102,7 @@ export const updateResource = async (
     return response.data.data;
   } catch (error: any) {
     console.error(
-      "Error updating resource:",
+      'Error updating resource:',
       error.response?.data || error.message
     );
     throw error;
@@ -116,7 +116,7 @@ export const deleteResource = async (id: string) => {
     return response.data.data;
   } catch (error: any) {
     console.error(
-      "Error deleting resource:",
+      'Error deleting resource:',
       error.response?.data || error.message
     );
     throw error;
@@ -128,7 +128,7 @@ export const createAvailabilitySlot = async (
   resourceId: string,
   slotData: Omit<
     ResourceAvailability,
-    "id" | "resourceId" | "createdAt" | "updatedAt"
+    'id' | 'resourceId' | 'createdAt' | 'updatedAt'
   >
 ) => {
   const response = await api.post(
@@ -142,7 +142,7 @@ export const createAvailabilitySlot = async (
 export const updateAvailabilitySlot = async (
   id: string,
   slotData: Partial<
-    Omit<ResourceAvailability, "id" | "resourceId" | "createdAt" | "updatedAt">
+    Omit<ResourceAvailability, 'id' | 'resourceId' | 'createdAt' | 'updatedAt'>
   >
 ) => {
   const response = await api.put(`/api/resources/availability/${id}`, slotData);

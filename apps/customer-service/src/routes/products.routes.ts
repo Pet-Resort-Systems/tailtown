@@ -9,7 +9,7 @@ import {
   getInventoryLogs,
   getLowStockProducts,
   getAllCategories,
-  createCategory
+  createCategory,
 } from '../controllers/products.controller';
 
 const router = Router();

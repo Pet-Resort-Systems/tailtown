@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from "react";
-import {
-  useParams,
-  useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container,
   Box,
@@ -16,26 +14,26 @@ import {
   DialogContent,
   DialogActions,
   IconButton,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import PrintIcon from "@mui/icons-material/Print";
-import LabelIcon from "@mui/icons-material/Label";
-import HomeIcon from "@mui/icons-material/Home";
-import EditIcon from "@mui/icons-material/Edit";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import PrintIcon from '@mui/icons-material/Print';
+import LabelIcon from '@mui/icons-material/Label';
+import HomeIcon from '@mui/icons-material/Home';
+import EditIcon from '@mui/icons-material/Edit';
 import checkInService, {
   CheckInBelonging,
-} from "../../services/checkInService";
-import BelongingsForm from "../../components/check-in/BelongingsForm";
-import KennelLabelPrint from "../../components/labels/KennelLabelPrint";
+} from '../../services/checkInService';
+import BelongingsForm from '../../components/check-in/BelongingsForm';
+import KennelLabelPrint from '../../components/labels/KennelLabelPrint';
 
 // Map PlayGroupType enum to display-friendly group size
 const mapPlayGroupToSize = (playGroup?: string): string => {
-  if (!playGroup) return "Medium";
+  if (!playGroup) return 'Medium';
   const group = playGroup.toUpperCase();
-  if (group.includes("SMALL")) return "Small";
-  if (group.includes("LARGE")) return "Large";
-  return "Medium";
+  if (group.includes('SMALL')) return 'Small';
+  if (group.includes('LARGE')) return 'Large';
+  return 'Medium';
 };
 
 const CheckInComplete: React.FC = () => {
@@ -68,9 +66,9 @@ const CheckInComplete: React.FC = () => {
       const response = await checkInService.getCheckInById(checkInId!);
       setCheckIn(response.data);
     } catch (err: any) {
-      console.error("Error loading check-in:", err);
+      console.error('Error loading check-in:', err);
       setError(
-        err.response?.data?.message || "Failed to load check-in details"
+        err.response?.data?.message || 'Failed to load check-in details'
       );
     } finally {
       setLoading(false);
@@ -93,7 +91,7 @@ const CheckInComplete: React.FC = () => {
       setCheckIn({ ...checkIn, belongings });
       setEditingBelongings(false);
     } catch (err) {
-      console.error("Error saving belongings:", err);
+      console.error('Error saving belongings:', err);
     } finally {
       setSavingBelongings(false);
     }
@@ -104,10 +102,10 @@ const CheckInComplete: React.FC = () => {
       <Container>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            minHeight: "400px",
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '400px',
           }}
         >
           <CircularProgress />
@@ -121,7 +119,7 @@ const CheckInComplete: React.FC = () => {
       <Container>
         <Box sx={{ py: 4 }}>
           <Alert severity="error">{error}</Alert>
-          <Button onClick={() => navigate("/dashboard")} sx={{ mt: 2 }}>
+          <Button onClick={() => navigate('/dashboard')} sx={{ mt: 2 }}>
             Return to Dashboard
           </Button>
         </Box>
@@ -132,9 +130,9 @@ const CheckInComplete: React.FC = () => {
   return (
     <Container maxWidth="md">
       <Box sx={{ py: 4 }}>
-        <Paper sx={{ p: 4, textAlign: "center", mb: 3 }}>
+        <Paper sx={{ p: 4, textAlign: 'center', mb: 3 }}>
           <CheckCircleIcon
-            sx={{ fontSize: 80, color: "success.main", mb: 2 }}
+            sx={{ fontSize: 80, color: 'success.main', mb: 2 }}
           />
           <Typography variant="h4" gutterBottom>
             Check-In Complete!
@@ -176,7 +174,7 @@ const CheckInComplete: React.FC = () => {
                 Checked In By
               </Typography>
               <Typography variant="body1">
-                {checkIn?.checkInBy || "Staff"}
+                {checkIn?.checkInBy || 'Staff'}
               </Typography>
             </Grid>
           </Grid>
@@ -205,7 +203,7 @@ const CheckInComplete: React.FC = () => {
                 Agreement
               </Typography>
               <Typography variant="h6" color="success.main">
-                {checkIn?.agreement ? "✓ Signed" : "✗ Not Signed"}
+                {checkIn?.agreement ? '✓ Signed' : '✗ Not Signed'}
               </Typography>
             </Grid>
           </Grid>
@@ -226,9 +224,9 @@ const CheckInComplete: React.FC = () => {
                   Dosage: {med.dosage} | Frequency: {med.frequency}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Method: {med.administrationMethod.replace(/_/g, " ")}
+                  Method: {med.administrationMethod.replace(/_/g, ' ')}
                   {med.timeOfDay && ` | Time: ${med.timeOfDay}`}
-                  {med.withFood && " | Give with food"}
+                  {med.withFood && ' | Give with food'}
                 </Typography>
               </Box>
             ))}
@@ -238,9 +236,9 @@ const CheckInComplete: React.FC = () => {
         <Paper sx={{ p: 3, mb: 3 }}>
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
             }}
           >
             <Typography variant="h6" gutterBottom>
@@ -249,7 +247,7 @@ const CheckInComplete: React.FC = () => {
             <IconButton
               size="small"
               onClick={handleOpenEditBelongings}
-              sx={{ "@media print": { display: "none" } }}
+              sx={{ '@media print': { display: 'none' } }}
             >
               <EditIcon />
             </IconButton>
@@ -271,11 +269,11 @@ const CheckInComplete: React.FC = () => {
 
         <Box
           sx={{
-            display: "flex",
+            display: 'flex',
             gap: 2,
-            justifyContent: "center",
+            justifyContent: 'center',
             mt: 4,
-            "@media print": { display: "none" },
+            '@media print': { display: 'none' },
           }}
         >
           <Button
@@ -295,7 +293,7 @@ const CheckInComplete: React.FC = () => {
           <Button
             variant="contained"
             startIcon={<HomeIcon />}
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate('/dashboard')}
           >
             Return to Dashboard
           </Button>
@@ -324,7 +322,7 @@ const CheckInComplete: React.FC = () => {
               onClick={handleSaveBelongings}
               disabled={savingBelongings}
             >
-              {savingBelongings ? "Saving..." : "Save Changes"}
+              {savingBelongings ? 'Saving...' : 'Save Changes'}
             </Button>
           </DialogActions>
         </Dialog>
@@ -334,12 +332,12 @@ const CheckInComplete: React.FC = () => {
           open={showLabelPrint}
           onClose={() => setShowLabelPrint(false)}
           initialData={{
-            dogName: checkIn?.pet?.name || "",
+            dogName: checkIn?.pet?.name || '',
             customerLastName:
               checkIn?.reservation?.customer?.lastName ||
               checkIn?.pet?.Customer?.lastName ||
-              "",
-            kennelNumber: checkIn?.reservation?.resource?.name || "",
+              '',
+            kennelNumber: checkIn?.reservation?.resource?.name || '',
             groupSize: mapPlayGroupToSize(checkIn?.pet?.idealPlayGroup),
           }}
         />

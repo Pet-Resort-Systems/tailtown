@@ -3,7 +3,7 @@
  * Displays operational analytics and reports
  */
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -26,13 +26,13 @@ import {
   CircularProgress,
   Alert,
   LinearProgress,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Business as BusinessIcon,
   GetApp as ExportIcon,
   Assignment as AssignmentIcon,
-} from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+} from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 import {
   formatCurrency,
   formatPercentage,
@@ -41,20 +41,20 @@ import {
   getOperationalBookingsReport,
   getOperationalCapacityReport,
   exportReportCSV,
-} from "../../services/reportService";
+} from '../../services/reportService';
 
-type ReportType = "staff" | "resources" | "bookings" | "capacity";
+type ReportType = 'staff' | 'resources' | 'bookings' | 'capacity';
 
 const OperationalReports: React.FC = () => {
   const navigate = useNavigate();
-  const [reportType, setReportType] = useState<ReportType>("resources");
+  const [reportType, setReportType] = useState<ReportType>('resources');
   const [startDate, setStartDate] = useState(
     new Date(new Date().setMonth(new Date().getMonth() - 1))
       .toISOString()
-      .split("T")[0]
+      .split('T')[0]
   );
   const [endDate, setEndDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split('T')[0]
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -67,16 +67,16 @@ const OperationalReports: React.FC = () => {
 
       let response;
       switch (reportType) {
-        case "staff":
+        case 'staff':
           response = await getOperationalStaffReport(startDate, endDate);
           break;
-        case "resources":
+        case 'resources':
           response = await getOperationalResourcesReport(startDate, endDate);
           break;
-        case "bookings":
+        case 'bookings':
           response = await getOperationalBookingsReport(startDate, endDate);
           break;
-        case "capacity":
+        case 'capacity':
           response = await getOperationalCapacityReport(startDate, endDate);
           break;
       }
@@ -85,8 +85,8 @@ const OperationalReports: React.FC = () => {
       const data = response?.data || response;
       setReportData(data);
     } catch (err: any) {
-      console.error("Error loading report:", err);
-      setError(err.response?.data?.message || "Failed to load report");
+      console.error('Error loading report:', err);
+      setError(err.response?.data?.message || 'Failed to load report');
     } finally {
       setLoading(false);
     }
@@ -102,7 +102,7 @@ const OperationalReports: React.FC = () => {
     if (!reportData?.summary) return null;
 
     switch (reportType) {
-      case "staff":
+      case 'staff':
         return (
           <>
             <Grid item xs={12} sm={4}>
@@ -144,7 +144,7 @@ const OperationalReports: React.FC = () => {
           </>
         );
 
-      case "resources":
+      case 'resources':
         return (
           <>
             <Grid item xs={12} sm={4}>
@@ -188,7 +188,7 @@ const OperationalReports: React.FC = () => {
           </>
         );
 
-      case "bookings":
+      case 'bookings':
         return (
           <>
             <Grid item xs={12} sm={4}>
@@ -210,7 +210,7 @@ const OperationalReports: React.FC = () => {
                     Peak Day
                   </Typography>
                   <Typography variant="h4">
-                    {reportData.summary.peakDay || "-"}
+                    {reportData.summary.peakDay || '-'}
                   </Typography>
                 </CardContent>
               </Card>
@@ -230,7 +230,7 @@ const OperationalReports: React.FC = () => {
           </>
         );
 
-      case "capacity":
+      case 'capacity':
         return (
           <>
             <Grid item xs={12} sm={4}>
@@ -281,17 +281,17 @@ const OperationalReports: React.FC = () => {
     <Box>
       {/* Quick Access Card */}
       <Card
-        sx={{ mb: 3, bgcolor: "primary.light", color: "primary.contrastText" }}
+        sx={{ mb: 3, bgcolor: 'primary.light', color: 'primary.contrastText' }}
       >
         <CardContent>
           <Box
             sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <AssignmentIcon sx={{ fontSize: 40, mr: 2 }} />
               <Box>
                 <Typography variant="h6">Daily Check-In/Out Report</Typography>
@@ -304,8 +304,8 @@ const OperationalReports: React.FC = () => {
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => navigate("/reports/daily-check-in-out")}
-              sx={{ whiteSpace: "nowrap" }}
+              onClick={() => navigate('/reports/daily-check-in-out')}
+              sx={{ whiteSpace: 'nowrap' }}
             >
               Open Report
             </Button>
@@ -317,13 +317,13 @@ const OperationalReports: React.FC = () => {
       <Box
         sx={{
           mb: 3,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
         }}
       >
         <Typography variant="h5">
-          <BusinessIcon sx={{ mr: 1, verticalAlign: "middle" }} />
+          <BusinessIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
           Operational Reports
         </Typography>
         <Button
@@ -401,7 +401,7 @@ const OperationalReports: React.FC = () => {
 
       {/* Loading */}
       {loading && (
-        <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
           <CircularProgress />
         </Box>
       )}
@@ -420,7 +420,7 @@ const OperationalReports: React.FC = () => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    {reportType === "staff" && (
+                    {reportType === 'staff' && (
                       <>
                         <TableCell>Staff Name</TableCell>
                         <TableCell>Role</TableCell>
@@ -429,7 +429,7 @@ const OperationalReports: React.FC = () => {
                         <TableCell align="right">Efficiency</TableCell>
                       </>
                     )}
-                    {reportType === "resources" && (
+                    {reportType === 'resources' && (
                       <>
                         <TableCell>Resource Name</TableCell>
                         <TableCell>Type</TableCell>
@@ -438,7 +438,7 @@ const OperationalReports: React.FC = () => {
                         <TableCell align="right">Revenue</TableCell>
                       </>
                     )}
-                    {reportType === "bookings" && (
+                    {reportType === 'bookings' && (
                       <>
                         <TableCell>Date/Period</TableCell>
                         <TableCell align="right">Bookings</TableCell>
@@ -446,7 +446,7 @@ const OperationalReports: React.FC = () => {
                         <TableCell align="right">Avg Duration</TableCell>
                       </>
                     )}
-                    {reportType === "capacity" && (
+                    {reportType === 'capacity' && (
                       <>
                         <TableCell>Date/Period</TableCell>
                         <TableCell align="right">Capacity Used</TableCell>
@@ -460,10 +460,10 @@ const OperationalReports: React.FC = () => {
                   {reportData.data && reportData.data.length > 0 ? (
                     reportData.data.map((row: any, index: number) => (
                       <TableRow key={index}>
-                        {reportType === "staff" && (
+                        {reportType === 'staff' && (
                           <>
-                            <TableCell>{row.staffName || "-"}</TableCell>
-                            <TableCell>{row.role || "-"}</TableCell>
+                            <TableCell>{row.staffName || '-'}</TableCell>
+                            <TableCell>{row.role || '-'}</TableCell>
                             <TableCell align="right">
                               {row.services || 0}
                             </TableCell>
@@ -473,8 +473,8 @@ const OperationalReports: React.FC = () => {
                             <TableCell align="right">
                               <Box
                                 sx={{
-                                  display: "flex",
-                                  alignItems: "center",
+                                  display: 'flex',
+                                  alignItems: 'center',
                                   gap: 1,
                                 }}
                               >
@@ -494,15 +494,15 @@ const OperationalReports: React.FC = () => {
                             </TableCell>
                           </>
                         )}
-                        {reportType === "resources" && (
+                        {reportType === 'resources' && (
                           <>
-                            <TableCell>{row.resourceName || "-"}</TableCell>
-                            <TableCell>{row.resourceType || "-"}</TableCell>
+                            <TableCell>{row.resourceName || '-'}</TableCell>
+                            <TableCell>{row.resourceType || '-'}</TableCell>
                             <TableCell align="right">
                               <Box
                                 sx={{
-                                  display: "flex",
-                                  alignItems: "center",
+                                  display: 'flex',
+                                  alignItems: 'center',
                                   gap: 1,
                                 }}
                               >
@@ -528,23 +528,23 @@ const OperationalReports: React.FC = () => {
                             </TableCell>
                           </>
                         )}
-                        {reportType === "bookings" && (
+                        {reportType === 'bookings' && (
                           <>
-                            <TableCell>{row.period || "-"}</TableCell>
+                            <TableCell>{row.period || '-'}</TableCell>
                             <TableCell align="right">
                               {row.bookings || 0}
                             </TableCell>
                             <TableCell align="right">
-                              {row.peakTime || "-"}
+                              {row.peakTime || '-'}
                             </TableCell>
                             <TableCell align="right">
-                              {row.avgDuration || "-"}
+                              {row.avgDuration || '-'}
                             </TableCell>
                           </>
                         )}
-                        {reportType === "capacity" && (
+                        {reportType === 'capacity' && (
                           <>
-                            <TableCell>{row.period || "-"}</TableCell>
+                            <TableCell>{row.period || '-'}</TableCell>
                             <TableCell align="right">
                               {row.capacityUsed || 0}
                             </TableCell>
@@ -554,8 +554,8 @@ const OperationalReports: React.FC = () => {
                             <TableCell align="right">
                               <Box
                                 sx={{
-                                  display: "flex",
-                                  alignItems: "center",
+                                  display: 'flex',
+                                  alignItems: 'center',
                                   gap: 1,
                                 }}
                               >
@@ -595,7 +595,7 @@ const OperationalReports: React.FC = () => {
 
       {/* Instructions */}
       {!loading && !reportData && !error && (
-        <Paper sx={{ p: 4, textAlign: "center" }}>
+        <Paper sx={{ p: 4, textAlign: 'center' }}>
           <Typography variant="h6" gutterBottom>
             Operational Reports
           </Typography>

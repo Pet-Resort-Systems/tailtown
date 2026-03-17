@@ -2,13 +2,13 @@ import { PrismaClient } from '@prisma/client';
 
 /**
  * Prisma Schema Validation Tests
- * 
+ *
  * These tests ensure that:
  * 1. Prisma client is properly generated
  * 2. Schema matches database structure
  * 3. All models are accessible
  * 4. No field name mismatches
- * 
+ *
  * Purpose: Prevent issues like the Nov 16, 2025 deployment failure
  * where Prisma client was out of sync with database schema.
  */
@@ -38,12 +38,19 @@ describe('Prisma Schema Validation', () => {
   describe('Critical Models', () => {
     it('should have Tenant model with correct fields', async () => {
       const tenant = await prisma.tenant.findFirst();
-      
+
       if (tenant) {
         // Verify status is TenantStatus enum, not string
         expect(tenant.status).toBeDefined();
-        expect(['TRIAL', 'ACTIVE', 'PAUSED', 'CANCELLED', 'DELETED', 'PENDING']).toContain(tenant.status);
-        
+        expect([
+          'TRIAL',
+          'ACTIVE',
+          'PAUSED',
+          'CANCELLED',
+          'DELETED',
+          'PENDING',
+        ]).toContain(tenant.status);
+
         // Verify other critical fields
         expect(tenant.id).toBeDefined();
         expect(tenant.subdomain).toBeDefined();
@@ -85,9 +92,9 @@ describe('Prisma Schema Validation', () => {
               // Note: classWaitlist is NOT valid in _count
               // waitlist is also NOT valid in _count
               // Only direct relations work in _count
-            }
-          }
-        }
+            },
+          },
+        },
       });
 
       expect(classes).toBeDefined();
@@ -102,8 +109,8 @@ describe('Prisma Schema Validation', () => {
       // Verify the relation name is classWaitlist, not waitlist
       const classWithWaitlist = await prisma.trainingClass.findFirst({
         include: {
-          classWaitlist: true
-        }
+          classWaitlist: true,
+        },
       });
 
       expect(classWithWaitlist).toBeDefined();
@@ -115,17 +122,31 @@ describe('Prisma Schema Validation', () => {
 
   describe('Enum Validations', () => {
     it('should validate TenantStatus enum values', () => {
-      const validStatuses = ['TRIAL', 'ACTIVE', 'PAUSED', 'CANCELLED', 'DELETED', 'PENDING'];
-      
+      const validStatuses = [
+        'TRIAL',
+        'ACTIVE',
+        'PAUSED',
+        'CANCELLED',
+        'DELETED',
+        'PENDING',
+      ];
+
       // This would have caught the String vs Enum mismatch
-      validStatuses.forEach(status => {
-        expect(['TRIAL', 'ACTIVE', 'PAUSED', 'CANCELLED', 'DELETED', 'PENDING']).toContain(status);
+      validStatuses.forEach((status) => {
+        expect([
+          'TRIAL',
+          'ACTIVE',
+          'PAUSED',
+          'CANCELLED',
+          'DELETED',
+          'PENDING',
+        ]).toContain(status);
       });
     });
 
     it('should validate PetType enum values', () => {
       const validTypes = ['DOG', 'CAT'];
-      validTypes.forEach(type => {
+      validTypes.forEach((type) => {
         expect(['DOG', 'CAT']).toContain(type);
       });
     });
@@ -147,11 +168,11 @@ describe('Prisma Schema Validation', () => {
   describe('Common Query Patterns', () => {
     it('should handle tenant filtering correctly', async () => {
       const testTenantId = 'test-tenant-id';
-      
+
       // This pattern is used throughout the codebase
       const customers = await prisma.customer.findMany({
         where: { tenantId: testTenantId },
-        take: 1
+        take: 1,
       });
 
       expect(Array.isArray(customers)).toBe(true);
@@ -161,8 +182,8 @@ describe('Prisma Schema Validation', () => {
       const customer = await prisma.customer.findFirst({
         include: {
           pets: true,
-          reservations: true
-        }
+          reservations: true,
+        },
       });
 
       if (customer) {
@@ -191,7 +212,7 @@ describe('Prisma Schema Validation', () => {
         isTemplate: false,
         gingrSyncEnabled: false,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       expect(mockTenant.status).toBe('ACTIVE');

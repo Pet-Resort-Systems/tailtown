@@ -1,29 +1,29 @@
 /**
  * PriceRules Component
- * 
+ *
  * This component displays a list of price rules and provides functionality
  * to manage them (add, edit, delete). It's part of the Settings section
  * and provides a table view of all price rules with their key properties.
  */
 import React, { useState, useEffect, useCallback } from 'react';
-import { 
-  Container, 
-  Typography, 
-  Box, 
+import {
+  Container,
+  Typography,
+  Box,
   Paper,
-  Button, 
-  TableContainer, 
-  Table, 
-  TableHead, 
-  TableBody, 
-  TableRow, 
-  TableCell, 
+  Button,
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
   TablePagination,
   IconButton,
   CircularProgress,
   Alert,
   Breadcrumbs,
-  Link as MuiLink
+  Link as MuiLink,
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
@@ -31,7 +31,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 // Import price rule types and service
-import { PriceRule, PriceRuleServiceCategory, PriceRuleService } from '../../types/priceRule';
+import {
+  PriceRule,
+  PriceRuleServiceCategory,
+  PriceRuleService,
+} from '../../types/priceRule';
 import priceRuleService from '../../services/priceRuleService';
 // Import the alert dialog component for confirmations
 import AlertDialog from '../../components/common/AlertDialog';
@@ -45,7 +49,7 @@ const PriceRules: React.FC = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedRuleId, setSelectedRuleId] = useState<string | null>(null);
-  
+
   const navigate = useNavigate();
 
   const fetchPriceRules = useCallback(async () => {
@@ -53,7 +57,7 @@ const PriceRules: React.FC = () => {
     try {
       const response = await priceRuleService.getAllPriceRules({
         page: page + 1,
-        limit: rowsPerPage
+        limit: rowsPerPage,
       });
       setPriceRules(response.data);
       setTotalCount(response.totalPages * rowsPerPage);
@@ -75,14 +79,16 @@ const PriceRules: React.FC = () => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
   const handleDelete = async () => {
     if (!selectedRuleId) return;
-    
+
     try {
       await priceRuleService.deletePriceRule(selectedRuleId);
       fetchPriceRules();
@@ -153,10 +159,16 @@ const PriceRules: React.FC = () => {
         </Box>
 
         <Typography variant="body1" color="text.secondary" paragraph>
-          Manage pricing rules for services. Create discounts to reduce prices or surcharges to increase prices based on days of the week, multi-day stays, or multiple pets.
+          Manage pricing rules for services. Create discounts to reduce prices
+          or surcharges to increase prices based on days of the week, multi-day
+          stays, or multiple pets.
         </Typography>
 
-        {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+        {error && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {error}
+          </Alert>
+        )}
 
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
           <Button
@@ -202,13 +214,24 @@ const PriceRules: React.FC = () => {
                       <TableCell>{getRuleTypeDisplay(rule)}</TableCell>
                       <TableCell>{getDiscountDisplay(rule)}</TableCell>
                       <TableCell>
-                        {rule.serviceCategories && rule.serviceCategories.length > 0 ? (
+                        {rule.serviceCategories &&
+                        rule.serviceCategories.length > 0 ? (
                           <Typography variant="body2">
-                            {rule.serviceCategories.map((sc: PriceRuleServiceCategory) => sc.serviceCategory).join(', ')}
+                            {rule.serviceCategories
+                              .map(
+                                (sc: PriceRuleServiceCategory) =>
+                                  sc.serviceCategory
+                              )
+                              .join(', ')}
                           </Typography>
                         ) : rule.services && rule.services.length > 0 ? (
                           <Typography variant="body2">
-                            {rule.services.map((s: PriceRuleService) => s.service?.name || 'Unknown').join(', ')}
+                            {rule.services
+                              .map(
+                                (s: PriceRuleService) =>
+                                  s.service?.name || 'Unknown'
+                              )
+                              .join(', ')}
                           </Typography>
                         ) : (
                           <Typography variant="body2">All Services</Typography>
@@ -216,13 +239,15 @@ const PriceRules: React.FC = () => {
                       </TableCell>
                       <TableCell>{rule.isActive ? 'Yes' : 'No'}</TableCell>
                       <TableCell align="right">
-                        <IconButton 
-                          onClick={() => navigate(`/settings/price-rules/${rule.id}`)}
+                        <IconButton
+                          onClick={() =>
+                            navigate(`/settings/price-rules/${rule.id}`)
+                          }
                           size="small"
                         >
                           <EditIcon fontSize="small" />
                         </IconButton>
-                        <IconButton 
+                        <IconButton
                           onClick={() => openDeleteDialog(rule.id)}
                           size="small"
                           color="error"

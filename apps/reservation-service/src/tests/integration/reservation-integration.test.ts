@@ -12,17 +12,17 @@
  * TODO: Needs refactoring for new architecture
  */
 
-import { PrismaClient } from "@prisma/client";
-import request from "supertest";
-import app from "../../index"; // Your Express app
+import { PrismaClient } from '@prisma/client';
+import request from 'supertest';
+import app from '../../index'; // Your Express app
 
 // PrismaClient uses DATABASE_URL from environment automatically
 const prisma = new PrismaClient();
 
 // Test tenant ID
-const TEST_TENANT_ID = "test-tenant-integration";
+const TEST_TENANT_ID = 'test-tenant-integration';
 
-describe.skip("Reservation Integration Tests", () => {
+describe.skip('Reservation Integration Tests', () => {
   let testCustomerId: string;
   let testPetId: string;
   let testServiceBoardingId: string;
@@ -75,10 +75,10 @@ describe.skip("Reservation Integration Tests", () => {
     // Create test customer
     const customer = await prisma.customer.create({
       data: {
-        firstName: "Integration",
-        lastName: "Test",
-        email: "integration@test.com",
-        phone: "555-0000",
+        firstName: 'Integration',
+        lastName: 'Test',
+        email: 'integration@test.com',
+        phone: '555-0000',
         tenantId: TEST_TENANT_ID,
       },
     });
@@ -87,8 +87,8 @@ describe.skip("Reservation Integration Tests", () => {
     // Create test pet
     const pet = await prisma.pet.create({
       data: {
-        name: "TestPet",
-        breed: "Test Breed",
+        name: 'TestPet',
+        breed: 'Test Breed',
         customerId: testCustomerId,
         tenantId: TEST_TENANT_ID,
       },
@@ -98,8 +98,8 @@ describe.skip("Reservation Integration Tests", () => {
     // Create boarding service
     const boardingService = await prisma.service.create({
       data: {
-        name: "Integration Boarding",
-        serviceCategory: "BOARDING",
+        name: 'Integration Boarding',
+        serviceCategory: 'BOARDING',
         price: 50.0,
         tenantId: TEST_TENANT_ID,
       },
@@ -109,8 +109,8 @@ describe.skip("Reservation Integration Tests", () => {
     // Create grooming service
     const groomingService = await prisma.service.create({
       data: {
-        name: "Integration Grooming",
-        serviceCategory: "GROOMING",
+        name: 'Integration Grooming',
+        serviceCategory: 'GROOMING',
         price: 40.0,
         tenantId: TEST_TENANT_ID,
       },
@@ -120,18 +120,18 @@ describe.skip("Reservation Integration Tests", () => {
     // Create test resource (kennel)
     const resource = await prisma.resource.create({
       data: {
-        name: "Test Kennel A01",
-        type: "STANDARD_SUITE",
+        name: 'Test Kennel A01',
+        type: 'STANDARD_SUITE',
         tenantId: TEST_TENANT_ID,
         attributes: {
-          suiteNumber: "A01",
+          suiteNumber: 'A01',
         },
       },
     });
     testResourceId = resource.id;
   }
 
-  describe("Pagination Integration", () => {
+  describe('Pagination Integration', () => {
     beforeEach(async () => {
       // Clean up reservations before each test
       await prisma.reservation.deleteMany({
@@ -139,7 +139,7 @@ describe.skip("Reservation Integration Tests", () => {
       });
     });
 
-    it("should return up to 250 reservations", async () => {
+    it('should return up to 250 reservations', async () => {
       // Create 260 test reservations
       const reservations = [];
       for (let i = 0; i < 260; i++) {
@@ -149,12 +149,12 @@ describe.skip("Reservation Integration Tests", () => {
           serviceId: testServiceBoardingId,
           resourceId: testResourceId,
           startDate: new Date(
-            `2025-11-${String((i % 28) + 1).padStart(2, "0")}`
+            `2025-11-${String((i % 28) + 1).padStart(2, '0')}`
           ),
           endDate: new Date(
-            `2025-11-${String((i % 28) + 1 + 1).padStart(2, "0")}`
+            `2025-11-${String((i % 28) + 1 + 1).padStart(2, '0')}`
           ),
-          status: "CONFIRMED",
+          status: 'CONFIRMED',
           tenantId: TEST_TENANT_ID,
         });
       }
@@ -165,47 +165,47 @@ describe.skip("Reservation Integration Tests", () => {
 
       // Request 250 reservations
       const response = await request(app)
-        .get("/api/reservations")
+        .get('/api/reservations')
         .query({ limit: 250 })
-        .set("x-tenant-id", TEST_TENANT_ID)
+        .set('x-tenant-id', TEST_TENANT_ID)
         .expect(200);
 
       expect(response.body.data).toHaveLength(250);
       expect(response.body.pagination.total).toBeGreaterThanOrEqual(250);
     });
 
-    it("should reject limit > 500", async () => {
+    it('should reject limit > 500', async () => {
       const response = await request(app)
-        .get("/api/reservations")
+        .get('/api/reservations')
         .query({ limit: 1000 })
-        .set("x-tenant-id", TEST_TENANT_ID)
+        .set('x-tenant-id', TEST_TENANT_ID)
         .expect(200);
 
       // Should use default limit and include warning
       expect(response.body.warnings).toBeDefined();
       expect(
-        response.body.warnings.some((w: string) => w.includes("Invalid limit"))
+        response.body.warnings.some((w: string) => w.includes('Invalid limit'))
       ).toBe(true);
     });
   });
 
-  describe("Kennel Assignment Integration", () => {
+  describe('Kennel Assignment Integration', () => {
     beforeEach(async () => {
       await prisma.reservation.deleteMany({
         where: { tenantId: TEST_TENANT_ID },
       });
     });
 
-    it("should require resourceId for boarding service", async () => {
+    it('should require resourceId for boarding service', async () => {
       const response = await request(app)
-        .post("/api/reservations")
-        .set("x-tenant-id", TEST_TENANT_ID)
+        .post('/api/reservations')
+        .set('x-tenant-id', TEST_TENANT_ID)
         .send({
           customerId: testCustomerId,
           petId: testPetId,
           serviceId: testServiceBoardingId,
-          startDate: "2025-10-25",
-          endDate: "2025-10-27",
+          startDate: '2025-10-25',
+          endDate: '2025-10-27',
           // Missing resourceId
         })
         .expect(400);
@@ -215,17 +215,17 @@ describe.skip("Reservation Integration Tests", () => {
       );
     });
 
-    it("should allow boarding with specific resourceId", async () => {
+    it('should allow boarding with specific resourceId', async () => {
       const response = await request(app)
-        .post("/api/reservations")
-        .set("x-tenant-id", TEST_TENANT_ID)
+        .post('/api/reservations')
+        .set('x-tenant-id', TEST_TENANT_ID)
         .send({
           customerId: testCustomerId,
           petId: testPetId,
           serviceId: testServiceBoardingId,
           resourceId: testResourceId,
-          startDate: "2025-10-25",
-          endDate: "2025-10-27",
+          startDate: '2025-10-25',
+          endDate: '2025-10-27',
         })
         .expect(201);
 
@@ -237,18 +237,18 @@ describe.skip("Reservation Integration Tests", () => {
       });
     });
 
-    it("should allow boarding with auto-assign (empty resourceId + suiteType)", async () => {
+    it('should allow boarding with auto-assign (empty resourceId + suiteType)', async () => {
       const response = await request(app)
-        .post("/api/reservations")
-        .set("x-tenant-id", TEST_TENANT_ID)
+        .post('/api/reservations')
+        .set('x-tenant-id', TEST_TENANT_ID)
         .send({
           customerId: testCustomerId,
           petId: testPetId,
           serviceId: testServiceBoardingId,
-          resourceId: "",
-          suiteType: "STANDARD_SUITE",
-          startDate: "2025-10-25",
-          endDate: "2025-10-27",
+          resourceId: '',
+          suiteType: 'STANDARD_SUITE',
+          startDate: '2025-10-25',
+          endDate: '2025-10-27',
         })
         .expect(201);
 
@@ -261,16 +261,16 @@ describe.skip("Reservation Integration Tests", () => {
       });
     });
 
-    it("should NOT require resourceId for grooming service", async () => {
+    it('should NOT require resourceId for grooming service', async () => {
       const response = await request(app)
-        .post("/api/reservations")
-        .set("x-tenant-id", TEST_TENANT_ID)
+        .post('/api/reservations')
+        .set('x-tenant-id', TEST_TENANT_ID)
         .send({
           customerId: testCustomerId,
           petId: testPetId,
           serviceId: testServiceGroomingId,
-          startDate: "2025-10-25",
-          endDate: "2025-10-25",
+          startDate: '2025-10-25',
+          endDate: '2025-10-25',
           // No resourceId - should be OK for grooming
         })
         .expect(201);
@@ -283,7 +283,7 @@ describe.skip("Reservation Integration Tests", () => {
       });
     });
 
-    it("should prevent removing resourceId from boarding reservation", async () => {
+    it('should prevent removing resourceId from boarding reservation', async () => {
       // Create boarding reservation with kennel
       const reservation = await prisma.reservation.create({
         data: {
@@ -291,9 +291,9 @@ describe.skip("Reservation Integration Tests", () => {
           petId: testPetId,
           serviceId: testServiceBoardingId,
           resourceId: testResourceId,
-          startDate: new Date("2025-10-25"),
-          endDate: new Date("2025-10-27"),
-          status: "CONFIRMED",
+          startDate: new Date('2025-10-25'),
+          endDate: new Date('2025-10-27'),
+          status: 'CONFIRMED',
           tenantId: TEST_TENANT_ID,
         },
       });
@@ -301,7 +301,7 @@ describe.skip("Reservation Integration Tests", () => {
       // Try to remove resourceId
       const response = await request(app)
         .put(`/api/reservations/${reservation.id}`)
-        .set("x-tenant-id", TEST_TENANT_ID)
+        .set('x-tenant-id', TEST_TENANT_ID)
         .send({
           resourceId: null,
         })
@@ -316,14 +316,14 @@ describe.skip("Reservation Integration Tests", () => {
     });
   });
 
-  describe("Double-Booking Prevention Integration", () => {
+  describe('Double-Booking Prevention Integration', () => {
     beforeEach(async () => {
       await prisma.reservation.deleteMany({
         where: { tenantId: TEST_TENANT_ID },
       });
     });
 
-    it("should prevent overlapping reservations on same kennel", async () => {
+    it('should prevent overlapping reservations on same kennel', async () => {
       // Create first reservation
       const firstReservation = await prisma.reservation.create({
         data: {
@@ -331,24 +331,24 @@ describe.skip("Reservation Integration Tests", () => {
           petId: testPetId,
           serviceId: testServiceBoardingId,
           resourceId: testResourceId,
-          startDate: new Date("2025-10-25"),
-          endDate: new Date("2025-10-27"),
-          status: "CONFIRMED",
+          startDate: new Date('2025-10-25'),
+          endDate: new Date('2025-10-27'),
+          status: 'CONFIRMED',
           tenantId: TEST_TENANT_ID,
         },
       });
 
       // Try to create overlapping reservation
       const response = await request(app)
-        .post("/api/reservations")
-        .set("x-tenant-id", TEST_TENANT_ID)
+        .post('/api/reservations')
+        .set('x-tenant-id', TEST_TENANT_ID)
         .send({
           customerId: testCustomerId,
           petId: testPetId,
           serviceId: testServiceBoardingId,
           resourceId: testResourceId,
-          startDate: "2025-10-26", // Overlaps with existing
-          endDate: "2025-10-28",
+          startDate: '2025-10-26', // Overlaps with existing
+          endDate: '2025-10-28',
         })
         .expect(409);
 
@@ -362,7 +362,7 @@ describe.skip("Reservation Integration Tests", () => {
       });
     });
 
-    it("should allow non-overlapping reservations on same kennel", async () => {
+    it('should allow non-overlapping reservations on same kennel', async () => {
       // Create first reservation
       const firstReservation = await prisma.reservation.create({
         data: {
@@ -370,24 +370,24 @@ describe.skip("Reservation Integration Tests", () => {
           petId: testPetId,
           serviceId: testServiceBoardingId,
           resourceId: testResourceId,
-          startDate: new Date("2025-10-25"),
-          endDate: new Date("2025-10-27"),
-          status: "CONFIRMED",
+          startDate: new Date('2025-10-25'),
+          endDate: new Date('2025-10-27'),
+          status: 'CONFIRMED',
           tenantId: TEST_TENANT_ID,
         },
       });
 
       // Create non-overlapping reservation
       const response = await request(app)
-        .post("/api/reservations")
-        .set("x-tenant-id", TEST_TENANT_ID)
+        .post('/api/reservations')
+        .set('x-tenant-id', TEST_TENANT_ID)
         .send({
           customerId: testCustomerId,
           petId: testPetId,
           serviceId: testServiceBoardingId,
           resourceId: testResourceId,
-          startDate: "2025-10-28", // After first reservation
-          endDate: "2025-10-30",
+          startDate: '2025-10-28', // After first reservation
+          endDate: '2025-10-30',
         })
         .expect(201);
 
@@ -401,7 +401,7 @@ describe.skip("Reservation Integration Tests", () => {
       });
     });
 
-    it("should allow editing own reservation without conflict", async () => {
+    it('should allow editing own reservation without conflict', async () => {
       // Create reservation
       const reservation = await prisma.reservation.create({
         data: {
@@ -409,9 +409,9 @@ describe.skip("Reservation Integration Tests", () => {
           petId: testPetId,
           serviceId: testServiceBoardingId,
           resourceId: testResourceId,
-          startDate: new Date("2025-10-25"),
-          endDate: new Date("2025-10-27"),
-          status: "CONFIRMED",
+          startDate: new Date('2025-10-25'),
+          endDate: new Date('2025-10-27'),
+          status: 'CONFIRMED',
           tenantId: TEST_TENANT_ID,
         },
       });
@@ -419,9 +419,9 @@ describe.skip("Reservation Integration Tests", () => {
       // Update same reservation (should not conflict with itself)
       const response = await request(app)
         .put(`/api/reservations/${reservation.id}`)
-        .set("x-tenant-id", TEST_TENANT_ID)
+        .set('x-tenant-id', TEST_TENANT_ID)
         .send({
-          notes: "Updated notes",
+          notes: 'Updated notes',
         })
         .expect(200);
 
@@ -434,9 +434,9 @@ describe.skip("Reservation Integration Tests", () => {
     });
   });
 
-  describe("Multi-Tenant Isolation Integration", () => {
-    const TENANT_A = "tenant-a-integration";
-    const TENANT_B = "tenant-b-integration";
+  describe('Multi-Tenant Isolation Integration', () => {
+    const TENANT_A = 'tenant-a-integration';
+    const TENANT_B = 'tenant-b-integration';
     let tenantACustomerId: string;
     let tenantAPetId: string;
     let tenantAServiceId: string;
@@ -446,9 +446,9 @@ describe.skip("Reservation Integration Tests", () => {
       // Create data for tenant A
       const customerA = await prisma.customer.create({
         data: {
-          firstName: "Tenant",
-          lastName: "A",
-          email: "tenanta@test.com",
+          firstName: 'Tenant',
+          lastName: 'A',
+          email: 'tenanta@test.com',
           tenantId: TENANT_A,
         },
       });
@@ -456,7 +456,7 @@ describe.skip("Reservation Integration Tests", () => {
 
       const petA = await prisma.pet.create({
         data: {
-          name: "PetA",
+          name: 'PetA',
           customerId: tenantACustomerId,
           tenantId: TENANT_A,
         },
@@ -465,8 +465,8 @@ describe.skip("Reservation Integration Tests", () => {
 
       const serviceA = await prisma.service.create({
         data: {
-          name: "Service A",
-          serviceCategory: "BOARDING",
+          name: 'Service A',
+          serviceCategory: 'BOARDING',
           price: 50,
           tenantId: TENANT_A,
         },
@@ -475,8 +475,8 @@ describe.skip("Reservation Integration Tests", () => {
 
       const resourceA = await prisma.resource.create({
         data: {
-          name: "Kennel A",
-          type: "STANDARD_SUITE",
+          name: 'Kennel A',
+          type: 'STANDARD_SUITE',
           tenantId: TENANT_A,
         },
       });
@@ -494,7 +494,7 @@ describe.skip("Reservation Integration Tests", () => {
       await prisma.reservation.deleteMany({ where: { tenantId: TENANT_B } });
     });
 
-    it("should not see other tenant reservations", async () => {
+    it('should not see other tenant reservations', async () => {
       // Create reservation for tenant A
       const reservationA = await prisma.reservation.create({
         data: {
@@ -502,17 +502,17 @@ describe.skip("Reservation Integration Tests", () => {
           petId: tenantAPetId,
           serviceId: tenantAServiceId,
           resourceId: tenantAResourceId,
-          startDate: new Date("2025-10-25"),
-          endDate: new Date("2025-10-27"),
-          status: "CONFIRMED",
+          startDate: new Date('2025-10-25'),
+          endDate: new Date('2025-10-27'),
+          status: 'CONFIRMED',
           tenantId: TENANT_A,
         },
       });
 
       // Query as tenant B
       const response = await request(app)
-        .get("/api/reservations")
-        .set("x-tenant-id", TENANT_B)
+        .get('/api/reservations')
+        .set('x-tenant-id', TENANT_B)
         .expect(200);
 
       // Should not see tenant A's reservation
@@ -527,18 +527,18 @@ describe.skip("Reservation Integration Tests", () => {
       });
     });
 
-    it("should not allow using other tenant resources", async () => {
+    it('should not allow using other tenant resources', async () => {
       // Try to create reservation for tenant B using tenant A's resource
       const response = await request(app)
-        .post("/api/reservations")
-        .set("x-tenant-id", TENANT_B)
+        .post('/api/reservations')
+        .set('x-tenant-id', TENANT_B)
         .send({
           customerId: testCustomerId, // This won't work either
           petId: testPetId,
           serviceId: testServiceBoardingId,
           resourceId: tenantAResourceId, // Tenant A's resource
-          startDate: "2025-10-25",
-          endDate: "2025-10-27",
+          startDate: '2025-10-25',
+          endDate: '2025-10-27',
         })
         .expect(400); // Should fail validation
 

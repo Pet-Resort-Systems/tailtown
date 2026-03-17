@@ -2,7 +2,7 @@
 
 /**
  * Bulk Customer-Veterinarian Association Script
- * 
+ *
  * Automatically associates customers with veterinarians based on:
  * 1. Their pets' existing veterinarian assignments
  * 2. Most common veterinarian per customer
@@ -36,8 +36,10 @@ async function bulkAssociateCustomersToVeterinarians() {
     `;
 
     // Step 1: Get all customers with pets that have veterinarianId
-    console.log('\n📊 Step 1: Finding customers with pets that have veterinarians...');
-    
+    console.log(
+      '\n📊 Step 1: Finding customers with pets that have veterinarians...'
+    );
+
     const customersWithPetVets = await prisma.$queryRaw`
       SELECT DISTINCT 
         c.id as customer_id,
@@ -58,11 +60,15 @@ async function bulkAssociateCustomersToVeterinarians() {
       ORDER BY pet_count DESC, last_pet_update DESC
     `;
 
-    console.log(`Found ${customersWithPetVets.length} customers with pets that have veterinarians`);
+    console.log(
+      `Found ${customersWithPetVets.length} customers with pets that have veterinarians`
+    );
 
     // Step 2: Get customers with pets that have legacy vetName/vetPhone
-    console.log('\n📊 Step 2: Finding customers with pets that have legacy vet data...');
-    
+    console.log(
+      '\n📊 Step 2: Finding customers with pets that have legacy vet data...'
+    );
+
     const customersWithLegacyVets = await prisma.$queryRaw`
       SELECT DISTINCT 
         c.id as customer_id,
@@ -82,13 +88,17 @@ async function bulkAssociateCustomersToVeterinarians() {
       ORDER BY pet_count DESC
     `;
 
-    console.log(`Found ${customersWithLegacyVets.length} customers with pets that have legacy vet data`);
+    console.log(
+      `Found ${customersWithLegacyVets.length} customers with pets that have legacy vet data`
+    );
 
     let totalUpdated = 0;
 
     // Step 3: Update customers with veterinarianId from their pets
-    console.log('\n🔄 Step 3: Updating customers with veterinarianId from pets...');
-    
+    console.log(
+      '\n🔄 Step 3: Updating customers with veterinarianId from pets...'
+    );
+
     for (const customer of customersWithPetVets) {
       await prisma.$executeRaw`
         UPDATE customers
@@ -97,13 +107,15 @@ async function bulkAssociateCustomersToVeterinarians() {
         WHERE id = ${customer.customer_id}
       `;
 
-      console.log(`✅ Updated: ${customer.firstName} ${customer.lastName} → ${customer.vet_name} (${customer.pet_count} pets)`);
+      console.log(
+        `✅ Updated: ${customer.firstName} ${customer.lastName} → ${customer.vet_name} (${customer.pet_count} pets)`
+      );
       totalUpdated++;
     }
 
     // Step 4: Try to match legacy vet names to actual veterinarians
     console.log('\n🔄 Step 4: Matching legacy vet names to veterinarians...');
-    
+
     for (const customer of customersWithLegacyVets) {
       // Try exact match first
       let vetMatch = await prisma.$queryRaw`
@@ -129,7 +141,7 @@ async function bulkAssociateCustomersToVeterinarians() {
 
       if (vetMatch && vetMatch.length > 0) {
         const vet = vetMatch[0];
-        
+
         await prisma.$executeRaw`
           UPDATE customers
           SET "veterinarianId" = ${vet.id},
@@ -137,9 +149,11 @@ async function bulkAssociateCustomersToVeterinarians() {
           WHERE id = ${customer.customer_id}
         `;
 
-        console.log(`✅ Matched: ${customer.firstName} ${customer.lastName} → ${vet.name} (from "${customer.vetName}")`);
+        console.log(
+          `✅ Matched: ${customer.firstName} ${customer.lastName} → ${vet.name} (from "${customer.vetName}")`
+        );
         totalUpdated++;
-        
+
         // Also update the pets to use the veterinarianId
         await prisma.$executeRaw`
           UPDATE pets
@@ -150,13 +164,17 @@ async function bulkAssociateCustomersToVeterinarians() {
             AND "veterinarianId" IS NULL
         `;
       } else {
-        console.log(`❌ No match: ${customer.firstName} ${customer.lastName} → "${customer.vetName}"`);
+        console.log(
+          `❌ No match: ${customer.firstName} ${customer.lastName} → "${customer.vetName}"`
+        );
       }
     }
 
     // Step 5: Update all pets for customers with veterinarians
-    console.log('\n🔄 Step 5: Updating all pets for customers with veterinarians...');
-    
+    console.log(
+      '\n🔄 Step 5: Updating all pets for customers with veterinarians...'
+    );
+
     const petsUpdated = await prisma.$executeRaw`
       UPDATE pets p
       SET "veterinarianId" = c."veterinarianId",
@@ -185,11 +203,18 @@ async function bulkAssociateCustomersToVeterinarians() {
     console.log('═══════════════════════════════════════════════════');
     console.log(`✅ Customers updated: ${totalUpdated}`);
     console.log(`✅ Pets automatically updated: ${petsUpdated}`);
-    console.log(`📊 Customers with veterinarian: ${finalStats[0].customers_with_vet} / ${finalStats[0].total_customers}`);
-    console.log(`📊 Pets with veterinarian: ${finalStats[0].pets_with_vet} / ${finalStats[0].total_pets}`);
-    console.log(`📈 Customer coverage: ${((finalStats[0].customers_with_vet / finalStats[0].total_customers) * 100).toFixed(2)}%`);
-    console.log(`📈 Pet coverage: ${((finalStats[0].pets_with_vet / finalStats[0].total_pets) * 100).toFixed(2)}%`);
-
+    console.log(
+      `📊 Customers with veterinarian: ${finalStats[0].customers_with_vet} / ${finalStats[0].total_customers}`
+    );
+    console.log(
+      `📊 Pets with veterinarian: ${finalStats[0].pets_with_vet} / ${finalStats[0].total_pets}`
+    );
+    console.log(
+      `📈 Customer coverage: ${((finalStats[0].customers_with_vet / finalStats[0].total_customers) * 100).toFixed(2)}%`
+    );
+    console.log(
+      `📈 Pet coverage: ${((finalStats[0].pets_with_vet / finalStats[0].total_pets) * 100).toFixed(2)}%`
+    );
   } catch (error) {
     console.error('❌ Error in bulk association:', error);
     process.exit(1);

@@ -1,7 +1,7 @@
 /**
  * Reservation Service Load Test
  * Tests the reservation service under various load conditions
- * 
+ *
  * Run with: k6 run reservation-load-test.js
  */
 
@@ -18,18 +18,18 @@ const failedReservations = new Counter('failed_reservations');
 // Test configuration
 export const options = {
   stages: [
-    { duration: '30s', target: 10 },  // Ramp up to 10 users
-    { duration: '1m', target: 10 },   // Stay at 10 users
-    { duration: '30s', target: 50 },  // Ramp up to 50 users
-    { duration: '2m', target: 50 },   // Stay at 50 users
+    { duration: '30s', target: 10 }, // Ramp up to 10 users
+    { duration: '1m', target: 10 }, // Stay at 10 users
+    { duration: '30s', target: 50 }, // Ramp up to 50 users
+    { duration: '2m', target: 50 }, // Stay at 50 users
     { duration: '30s', target: 100 }, // Spike to 100 users
-    { duration: '1m', target: 100 },  // Stay at 100 users
-    { duration: '30s', target: 0 },   // Ramp down to 0
+    { duration: '1m', target: 100 }, // Stay at 100 users
+    { duration: '30s', target: 0 }, // Ramp down to 0
   ],
   thresholds: {
     http_req_duration: ['p(95)<500'], // 95% of requests should be below 500ms
-    http_req_failed: ['rate<0.1'],    // Error rate should be below 10%
-    errors: ['rate<0.1'],             // Custom error rate below 10%
+    http_req_failed: ['rate<0.1'], // Error rate should be below 10%
+    errors: ['rate<0.1'], // Custom error rate below 10%
   },
 };
 
@@ -72,11 +72,10 @@ export default function () {
 
 function testGetReservations(headers) {
   const startTime = new Date();
-  
-  const response = http.get(
-    `${BASE_URL}/api/reservations?limit=250`,
-    { headers }
-  );
+
+  const response = http.get(`${BASE_URL}/api/reservations?limit=250`, {
+    headers,
+  });
 
   const duration = new Date() - startTime;
   reservationQueryTime.add(duration);
@@ -128,17 +127,15 @@ function testCreateReservation(headers) {
     status: 'CONFIRMED',
   });
 
-  const response = http.post(
-    `${BASE_URL}/api/reservations`,
-    payload,
-    { headers }
-  );
+  const response = http.post(`${BASE_URL}/api/reservations`, payload, {
+    headers,
+  });
 
   const duration = new Date() - startTime;
   reservationCreationTime.add(duration);
 
   const success = check(response, {
-    'create reservation status is 201 or 409': (r) => 
+    'create reservation status is 201 or 409': (r) =>
       r.status === 201 || r.status === 409, // 409 = conflict (expected in load test)
     'create reservation returns within 1s': () => duration < 1000,
   });
@@ -177,10 +174,9 @@ function testCheckAvailability(headers) {
 
 function testGetReservationById(headers) {
   // First get a list to find an ID
-  const listResponse = http.get(
-    `${BASE_URL}/api/reservations?limit=1`,
-    { headers }
-  );
+  const listResponse = http.get(`${BASE_URL}/api/reservations?limit=1`, {
+    headers,
+  });
 
   if (listResponse.status === 200) {
     const body = JSON.parse(listResponse.body);
@@ -207,7 +203,8 @@ function testGetReservationById(headers) {
 
 export function handleSummary(data) {
   return {
-    'performance/results/reservation-load-test-summary.json': JSON.stringify(data),
+    'performance/results/reservation-load-test-summary.json':
+      JSON.stringify(data),
     stdout: textSummary(data, { indent: ' ', enableColors: true }),
   };
 }

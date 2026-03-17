@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Box,
   Chip,
@@ -7,14 +7,14 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-} from "@mui/material";
+} from '@mui/material';
 import {
   ExpandMore,
   HealthAndSafety,
   Pets,
   Warning,
   ContentCut,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 
 interface FlagData {
   icon: string;
@@ -34,32 +34,32 @@ interface CompatibilityFlagsProps {
 
 const CATEGORY_CONFIG = {
   health: {
-    label: "Health & Medical",
+    label: 'Health & Medical',
     icon: HealthAndSafety,
-    color: "#e617dd",
+    color: '#e617dd',
   },
   behavior: {
-    label: "Behavior",
+    label: 'Behavior',
     icon: Pets,
-    color: "#4bb4d2",
+    color: '#4bb4d2',
   },
   aggression: {
-    label: "Aggression Warnings",
+    label: 'Aggression Warnings',
     icon: Warning,
-    color: "#f2212e",
+    color: '#f2212e',
   },
   grooming: {
-    label: "Grooming",
+    label: 'Grooming',
     icon: ContentCut,
-    color: "#f1c232",
+    color: '#f1c232',
   },
 };
 
 const formatRequirement = (req: string): string => {
   return req
-    .split("_")
+    .split('_')
     .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
-    .join(" ");
+    .join(' ');
 };
 
 export const CompatibilityFlags: React.FC<CompatibilityFlagsProps> = ({
@@ -85,7 +85,7 @@ export const CompatibilityFlags: React.FC<CompatibilityFlagsProps> = ({
 
   if (compact) {
     return (
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
         {healthFlags.map((flag, idx) => (
           <Tooltip
             key={`health-${idx}`}
@@ -97,8 +97,8 @@ export const CompatibilityFlags: React.FC<CompatibilityFlagsProps> = ({
               size="small"
               sx={{
                 backgroundColor: flag.color,
-                color: "white",
-                fontSize: "0.7rem",
+                color: 'white',
+                fontSize: '0.7rem',
               }}
             />
           </Tooltip>
@@ -114,8 +114,8 @@ export const CompatibilityFlags: React.FC<CompatibilityFlagsProps> = ({
               size="small"
               sx={{
                 backgroundColor: flag.color,
-                color: "white",
-                fontSize: "0.7rem",
+                color: 'white',
+                fontSize: '0.7rem',
               }}
             />
           </Tooltip>
@@ -131,8 +131,8 @@ export const CompatibilityFlags: React.FC<CompatibilityFlagsProps> = ({
               size="small"
               sx={{
                 backgroundColor: flag.color,
-                color: "white",
-                fontSize: "0.7rem",
+                color: 'white',
+                fontSize: '0.7rem',
               }}
             />
           </Tooltip>
@@ -146,7 +146,7 @@ export const CompatibilityFlags: React.FC<CompatibilityFlagsProps> = ({
       {healthFlags.length > 0 && (
         <Accordion defaultExpanded={aggressionFlags.length > 0}>
           <AccordionSummary expandIcon={<ExpandMore />}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <HealthAndSafety sx={{ color: CATEGORY_CONFIG.health.color }} />
               <Typography variant="subtitle2">
                 {CATEGORY_CONFIG.health.label} ({healthFlags.length})
@@ -154,15 +154,15 @@ export const CompatibilityFlags: React.FC<CompatibilityFlagsProps> = ({
             </Box>
           </AccordionSummary>
           <AccordionDetails>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {healthFlags.map((flag, idx) => (
-                <Tooltip key={idx} title={flag.content || ""} arrow>
+                <Tooltip key={idx} title={flag.content || ''} arrow>
                   <Chip
                     label={flag.title}
                     size="small"
                     sx={{
                       backgroundColor: flag.color,
-                      color: "white",
+                      color: 'white',
                     }}
                   />
                 </Tooltip>
@@ -175,7 +175,7 @@ export const CompatibilityFlags: React.FC<CompatibilityFlagsProps> = ({
       {behaviorFlags.length > 0 && (
         <Accordion>
           <AccordionSummary expandIcon={<ExpandMore />}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Pets sx={{ color: CATEGORY_CONFIG.behavior.color }} />
               <Typography variant="subtitle2">
                 {CATEGORY_CONFIG.behavior.label} ({behaviorFlags.length})
@@ -183,15 +183,15 @@ export const CompatibilityFlags: React.FC<CompatibilityFlagsProps> = ({
             </Box>
           </AccordionSummary>
           <AccordionDetails>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {behaviorFlags.map((flag, idx) => (
-                <Tooltip key={idx} title={flag.content || ""} arrow>
+                <Tooltip key={idx} title={flag.content || ''} arrow>
                   <Chip
                     label={flag.title}
                     size="small"
                     sx={{
                       backgroundColor: flag.color,
-                      color: "white",
+                      color: 'white',
                     }}
                   />
                 </Tooltip>
@@ -204,7 +204,7 @@ export const CompatibilityFlags: React.FC<CompatibilityFlagsProps> = ({
       {aggressionFlags.length > 0 && (
         <Accordion defaultExpanded>
           <AccordionSummary expandIcon={<ExpandMore />}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Warning sx={{ color: CATEGORY_CONFIG.aggression.color }} />
               <Typography
                 variant="subtitle2"
@@ -218,15 +218,15 @@ export const CompatibilityFlags: React.FC<CompatibilityFlagsProps> = ({
             </Box>
           </AccordionSummary>
           <AccordionDetails>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {aggressionFlags.map((flag, idx) => (
-                <Tooltip key={idx} title={flag.content || ""} arrow>
+                <Tooltip key={idx} title={flag.content || ''} arrow>
                   <Chip
                     label={flag.title}
                     size="small"
                     sx={{
                       backgroundColor: flag.color,
-                      color: "white",
+                      color: 'white',
                       fontWeight: 600,
                     }}
                   />
@@ -242,7 +242,7 @@ export const CompatibilityFlags: React.FC<CompatibilityFlagsProps> = ({
           <Typography variant="subtitle2" gutterBottom>
             Special Requirements
           </Typography>
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
             {specialRequirements.map((req, idx) => (
               <Chip
                 key={idx}

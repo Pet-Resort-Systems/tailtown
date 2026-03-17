@@ -14,7 +14,7 @@
  * Component rendering tests have React hooks issues in the test environment.
  */
 
-import { ServiceCategory } from "../../../types/service";
+import { ServiceCategory } from '../../../types/service';
 
 // Type for reservation with service
 interface ReservationWithService {
@@ -62,47 +62,47 @@ function extractReservationsFromResponse(
   return reservationsArray || [];
 }
 
-describe("Grooming Calendar Filtering Logic", () => {
-  describe("Service Category Filtering", () => {
-    it("should filter reservations by GROOMING service category", () => {
+describe('Grooming Calendar Filtering Logic', () => {
+  describe('Service Category Filtering', () => {
+    it('should filter reservations by GROOMING service category', () => {
       const mockReservations: ReservationWithService[] = [
         {
-          id: "grooming-1",
-          startDate: "2025-12-03T10:00:00.000Z",
-          endDate: "2025-12-03T12:00:00.000Z",
-          status: "CONFIRMED",
-          pet: { id: "pet-1", name: "Buddy" },
-          customer: { firstName: "John", lastName: "Doe" },
+          id: 'grooming-1',
+          startDate: '2025-12-03T10:00:00.000Z',
+          endDate: '2025-12-03T12:00:00.000Z',
+          status: 'CONFIRMED',
+          pet: { id: 'pet-1', name: 'Buddy' },
+          customer: { firstName: 'John', lastName: 'Doe' },
           service: {
-            id: "service-1",
-            name: "Grooming | Full Service",
-            serviceCategory: "GROOMING",
+            id: 'service-1',
+            name: 'Grooming | Full Service',
+            serviceCategory: 'GROOMING',
           },
         },
         {
-          id: "boarding-1",
-          startDate: "2025-12-03T10:00:00.000Z",
-          endDate: "2025-12-05T10:00:00.000Z",
-          status: "CONFIRMED",
-          pet: { id: "pet-2", name: "Max" },
-          customer: { firstName: "Jane", lastName: "Smith" },
+          id: 'boarding-1',
+          startDate: '2025-12-03T10:00:00.000Z',
+          endDate: '2025-12-05T10:00:00.000Z',
+          status: 'CONFIRMED',
+          pet: { id: 'pet-2', name: 'Max' },
+          customer: { firstName: 'Jane', lastName: 'Smith' },
           service: {
-            id: "service-2",
-            name: "Boarding | Standard Suite",
-            serviceCategory: "BOARDING",
+            id: 'service-2',
+            name: 'Boarding | Standard Suite',
+            serviceCategory: 'BOARDING',
           },
         },
         {
-          id: "grooming-2",
-          startDate: "2025-12-04T14:00:00.000Z",
-          endDate: "2025-12-04T16:00:00.000Z",
-          status: "PENDING",
-          pet: { id: "pet-3", name: "Luna" },
-          customer: { firstName: "Bob", lastName: "Wilson" },
+          id: 'grooming-2',
+          startDate: '2025-12-04T14:00:00.000Z',
+          endDate: '2025-12-04T16:00:00.000Z',
+          status: 'PENDING',
+          pet: { id: 'pet-3', name: 'Luna' },
+          customer: { firstName: 'Bob', lastName: 'Wilson' },
           service: {
-            id: "service-1",
-            name: "Grooming | Full Service",
-            serviceCategory: "GROOMING",
+            id: 'service-1',
+            name: 'Grooming | Full Service',
+            serviceCategory: 'GROOMING',
           },
         },
       ];
@@ -114,36 +114,36 @@ describe("Grooming Calendar Filtering Logic", () => {
       // Should only show GROOMING reservations (2 out of 3)
       expect(filtered.length).toBe(2);
       expect(
-        filtered.every((r) => r.service.serviceCategory === "GROOMING")
+        filtered.every((r) => r.service.serviceCategory === 'GROOMING')
       ).toBe(true);
     });
 
-    it("should show all reservations when no service category filter", () => {
+    it('should show all reservations when no service category filter', () => {
       const mockReservations: ReservationWithService[] = [
         {
-          id: "grooming-1",
-          startDate: "2025-12-03T10:00:00.000Z",
-          endDate: "2025-12-03T12:00:00.000Z",
-          status: "CONFIRMED",
-          pet: { id: "pet-1", name: "Buddy" },
-          customer: { firstName: "John", lastName: "Doe" },
+          id: 'grooming-1',
+          startDate: '2025-12-03T10:00:00.000Z',
+          endDate: '2025-12-03T12:00:00.000Z',
+          status: 'CONFIRMED',
+          pet: { id: 'pet-1', name: 'Buddy' },
+          customer: { firstName: 'John', lastName: 'Doe' },
           service: {
-            id: "service-1",
-            name: "Grooming | Full Service",
-            serviceCategory: "GROOMING",
+            id: 'service-1',
+            name: 'Grooming | Full Service',
+            serviceCategory: 'GROOMING',
           },
         },
         {
-          id: "boarding-1",
-          startDate: "2025-12-03T10:00:00.000Z",
-          endDate: "2025-12-05T10:00:00.000Z",
-          status: "CONFIRMED",
-          pet: { id: "pet-2", name: "Max" },
-          customer: { firstName: "Jane", lastName: "Smith" },
+          id: 'boarding-1',
+          startDate: '2025-12-03T10:00:00.000Z',
+          endDate: '2025-12-05T10:00:00.000Z',
+          status: 'CONFIRMED',
+          pet: { id: 'pet-2', name: 'Max' },
+          customer: { firstName: 'Jane', lastName: 'Smith' },
           service: {
-            id: "service-2",
-            name: "Boarding | Standard Suite",
-            serviceCategory: "BOARDING",
+            id: 'service-2',
+            name: 'Boarding | Standard Suite',
+            serviceCategory: 'BOARDING',
           },
         },
       ];
@@ -157,19 +157,19 @@ describe("Grooming Calendar Filtering Logic", () => {
       expect(filtered.length).toBe(2);
     });
 
-    it("should return empty array when no GROOMING reservations exist", () => {
+    it('should return empty array when no GROOMING reservations exist', () => {
       const mockReservations: ReservationWithService[] = [
         {
-          id: "boarding-1",
-          startDate: "2025-12-03T10:00:00.000Z",
-          endDate: "2025-12-05T10:00:00.000Z",
-          status: "CONFIRMED",
-          pet: { id: "pet-1", name: "Max" },
-          customer: { firstName: "Jane", lastName: "Smith" },
+          id: 'boarding-1',
+          startDate: '2025-12-03T10:00:00.000Z',
+          endDate: '2025-12-05T10:00:00.000Z',
+          status: 'CONFIRMED',
+          pet: { id: 'pet-1', name: 'Max' },
+          customer: { firstName: 'Jane', lastName: 'Smith' },
           service: {
-            id: "service-2",
-            name: "Boarding | Standard Suite",
-            serviceCategory: "BOARDING",
+            id: 'service-2',
+            name: 'Boarding | Standard Suite',
+            serviceCategory: 'BOARDING',
           },
         },
       ];
@@ -181,45 +181,45 @@ describe("Grooming Calendar Filtering Logic", () => {
       expect(filtered.length).toBe(0);
     });
 
-    it("should handle multiple service categories", () => {
+    it('should handle multiple service categories', () => {
       const mockReservations: ReservationWithService[] = [
         {
-          id: "grooming-1",
-          startDate: "2025-12-03T10:00:00.000Z",
-          endDate: "2025-12-03T12:00:00.000Z",
-          status: "CONFIRMED",
-          pet: { id: "pet-1", name: "Buddy" },
-          customer: { firstName: "John", lastName: "Doe" },
+          id: 'grooming-1',
+          startDate: '2025-12-03T10:00:00.000Z',
+          endDate: '2025-12-03T12:00:00.000Z',
+          status: 'CONFIRMED',
+          pet: { id: 'pet-1', name: 'Buddy' },
+          customer: { firstName: 'John', lastName: 'Doe' },
           service: {
-            id: "service-1",
-            name: "Grooming | Full Service",
-            serviceCategory: "GROOMING",
+            id: 'service-1',
+            name: 'Grooming | Full Service',
+            serviceCategory: 'GROOMING',
           },
         },
         {
-          id: "boarding-1",
-          startDate: "2025-12-03T10:00:00.000Z",
-          endDate: "2025-12-05T10:00:00.000Z",
-          status: "CONFIRMED",
-          pet: { id: "pet-2", name: "Max" },
-          customer: { firstName: "Jane", lastName: "Smith" },
+          id: 'boarding-1',
+          startDate: '2025-12-03T10:00:00.000Z',
+          endDate: '2025-12-05T10:00:00.000Z',
+          status: 'CONFIRMED',
+          pet: { id: 'pet-2', name: 'Max' },
+          customer: { firstName: 'Jane', lastName: 'Smith' },
           service: {
-            id: "service-2",
-            name: "Boarding | Standard Suite",
-            serviceCategory: "BOARDING",
+            id: 'service-2',
+            name: 'Boarding | Standard Suite',
+            serviceCategory: 'BOARDING',
           },
         },
         {
-          id: "daycare-1",
-          startDate: "2025-12-03T08:00:00.000Z",
-          endDate: "2025-12-03T18:00:00.000Z",
-          status: "CONFIRMED",
-          pet: { id: "pet-3", name: "Luna" },
-          customer: { firstName: "Bob", lastName: "Wilson" },
+          id: 'daycare-1',
+          startDate: '2025-12-03T08:00:00.000Z',
+          endDate: '2025-12-03T18:00:00.000Z',
+          status: 'CONFIRMED',
+          pet: { id: 'pet-3', name: 'Luna' },
+          customer: { firstName: 'Bob', lastName: 'Wilson' },
           service: {
-            id: "service-3",
-            name: "Day Camp | Full Day",
-            serviceCategory: "DAYCARE",
+            id: 'service-3',
+            name: 'Day Camp | Full Day',
+            serviceCategory: 'DAYCARE',
           },
         },
       ];
@@ -231,74 +231,74 @@ describe("Grooming Calendar Filtering Logic", () => {
 
       expect(filtered.length).toBe(2);
       expect(
-        filtered.some((r) => r.service.serviceCategory === "GROOMING")
+        filtered.some((r) => r.service.serviceCategory === 'GROOMING')
       ).toBe(true);
       expect(
-        filtered.some((r) => r.service.serviceCategory === "BOARDING")
+        filtered.some((r) => r.service.serviceCategory === 'BOARDING')
       ).toBe(true);
     });
   });
 
-  describe("API Response Format Handling", () => {
-    it("should handle direct array response format", () => {
+  describe('API Response Format Handling', () => {
+    it('should handle direct array response format', () => {
       const mockReservations: ReservationWithService[] = [
         {
-          id: "res-1",
-          startDate: "2025-12-03T10:00:00.000Z",
-          endDate: "2025-12-03T12:00:00.000Z",
-          status: "CONFIRMED",
-          pet: { id: "pet-1", name: "Buddy" },
-          customer: { firstName: "John", lastName: "Doe" },
+          id: 'res-1',
+          startDate: '2025-12-03T10:00:00.000Z',
+          endDate: '2025-12-03T12:00:00.000Z',
+          status: 'CONFIRMED',
+          pet: { id: 'pet-1', name: 'Buddy' },
+          customer: { firstName: 'John', lastName: 'Doe' },
           service: {
-            id: "service-1",
-            name: "Grooming | Full Service",
-            serviceCategory: "GROOMING",
+            id: 'service-1',
+            name: 'Grooming | Full Service',
+            serviceCategory: 'GROOMING',
           },
         },
       ];
 
       // Direct array format: { status: "success", data: [...] }
       const response = {
-        status: "success",
+        status: 'success',
         data: mockReservations,
       };
 
       const extracted = extractReservationsFromResponse(response);
       expect(extracted.length).toBe(1);
-      expect(extracted[0].id).toBe("res-1");
+      expect(extracted[0].id).toBe('res-1');
     });
 
-    it("should handle nested reservations object format", () => {
+    it('should handle nested reservations object format', () => {
       const mockReservations: ReservationWithService[] = [
         {
-          id: "res-1",
-          startDate: "2025-12-03T10:00:00.000Z",
-          endDate: "2025-12-03T12:00:00.000Z",
-          status: "CONFIRMED",
-          pet: { id: "pet-1", name: "Buddy" },
-          customer: { firstName: "John", lastName: "Doe" },
+          id: 'res-1',
+          startDate: '2025-12-03T10:00:00.000Z',
+          endDate: '2025-12-03T12:00:00.000Z',
+          status: 'CONFIRMED',
+          pet: { id: 'pet-1', name: 'Buddy' },
+          customer: { firstName: 'John', lastName: 'Doe' },
           service: {
-            id: "service-1",
-            name: "Grooming | Full Service",
-            serviceCategory: "GROOMING",
+            id: 'service-1',
+            name: 'Grooming | Full Service',
+            serviceCategory: 'GROOMING',
           },
         },
       ];
 
       // Nested format: { status: "success", data: { reservations: [...] } }
       const response = {
-        status: "success",
+        status: 'success',
         data: { reservations: mockReservations },
       };
 
       const extracted = extractReservationsFromResponse(response);
       expect(extracted.length).toBe(1);
-      expect(extracted[0].id).toBe("res-1");
+      expect(extracted[0].id).toBe('res-1');
     });
 
-    it("should handle empty response gracefully", () => {
+    it('should handle empty response gracefully', () => {
       const response = {
-        status: "success",
+        status: 'success',
         data: [],
       };
 
@@ -306,106 +306,106 @@ describe("Grooming Calendar Filtering Logic", () => {
       expect(extracted.length).toBe(0);
     });
 
-    it("should handle null/undefined response gracefully", () => {
+    it('should handle null/undefined response gracefully', () => {
       expect(extractReservationsFromResponse(null)).toEqual([]);
       expect(extractReservationsFromResponse(undefined)).toEqual([]);
       expect(extractReservationsFromResponse({})).toEqual([]);
     });
   });
 
-  describe("Grooming Duration Defaults", () => {
-    it("should default grooming appointments to 2 hours", () => {
-      const startDate = new Date("2025-12-03T10:00:00.000Z");
+  describe('Grooming Duration Defaults', () => {
+    it('should default grooming appointments to 2 hours', () => {
+      const startDate = new Date('2025-12-03T10:00:00.000Z');
       const groomingDurationHours = 2;
       const expectedEndDate = new Date(
         startDate.getTime() + groomingDurationHours * 60 * 60 * 1000
       );
 
-      expect(expectedEndDate.toISOString()).toBe("2025-12-03T12:00:00.000Z");
+      expect(expectedEndDate.toISOString()).toBe('2025-12-03T12:00:00.000Z');
     });
 
-    it("should keep grooming appointments on the same day", () => {
-      const startDate = new Date("2025-12-03T10:00:00.000Z");
+    it('should keep grooming appointments on the same day', () => {
+      const startDate = new Date('2025-12-03T10:00:00.000Z');
       const groomingDurationHours = 2;
       const endDate = new Date(
         startDate.getTime() + groomingDurationHours * 60 * 60 * 1000
       );
 
       // Both dates should be on the same day
-      expect(startDate.toISOString().split("T")[0]).toBe(
-        endDate.toISOString().split("T")[0]
+      expect(startDate.toISOString().split('T')[0]).toBe(
+        endDate.toISOString().split('T')[0]
       );
     });
 
-    it("should handle late afternoon appointments correctly", () => {
+    it('should handle late afternoon appointments correctly', () => {
       // 4 PM appointment + 2 hours = 6 PM (same day)
-      const startDate = new Date("2025-12-03T16:00:00.000Z");
+      const startDate = new Date('2025-12-03T16:00:00.000Z');
       const groomingDurationHours = 2;
       const endDate = new Date(
         startDate.getTime() + groomingDurationHours * 60 * 60 * 1000
       );
 
-      expect(endDate.toISOString()).toBe("2025-12-03T18:00:00.000Z");
-      expect(startDate.toISOString().split("T")[0]).toBe(
-        endDate.toISOString().split("T")[0]
+      expect(endDate.toISOString()).toBe('2025-12-03T18:00:00.000Z');
+      expect(startDate.toISOString().split('T')[0]).toBe(
+        endDate.toISOString().split('T')[0]
       );
     });
   });
 
-  describe("Reservation Status Handling", () => {
-    it("should include PENDING, CONFIRMED, and CHECKED_IN reservations", () => {
-      const validStatuses = ["PENDING", "CONFIRMED", "CHECKED_IN"];
+  describe('Reservation Status Handling', () => {
+    it('should include PENDING, CONFIRMED, and CHECKED_IN reservations', () => {
+      const validStatuses = ['PENDING', 'CONFIRMED', 'CHECKED_IN'];
       const mockReservations: ReservationWithService[] = [
         {
-          id: "pending-res",
-          startDate: "2025-12-03T10:00:00.000Z",
-          endDate: "2025-12-03T12:00:00.000Z",
-          status: "PENDING",
-          pet: { id: "pet-1", name: "Buddy" },
-          customer: { firstName: "John", lastName: "Doe" },
+          id: 'pending-res',
+          startDate: '2025-12-03T10:00:00.000Z',
+          endDate: '2025-12-03T12:00:00.000Z',
+          status: 'PENDING',
+          pet: { id: 'pet-1', name: 'Buddy' },
+          customer: { firstName: 'John', lastName: 'Doe' },
           service: {
-            id: "service-1",
-            name: "Grooming | Full Service",
-            serviceCategory: "GROOMING",
+            id: 'service-1',
+            name: 'Grooming | Full Service',
+            serviceCategory: 'GROOMING',
           },
         },
         {
-          id: "confirmed-res",
-          startDate: "2025-12-03T14:00:00.000Z",
-          endDate: "2025-12-03T16:00:00.000Z",
-          status: "CONFIRMED",
-          pet: { id: "pet-2", name: "Max" },
-          customer: { firstName: "Jane", lastName: "Smith" },
+          id: 'confirmed-res',
+          startDate: '2025-12-03T14:00:00.000Z',
+          endDate: '2025-12-03T16:00:00.000Z',
+          status: 'CONFIRMED',
+          pet: { id: 'pet-2', name: 'Max' },
+          customer: { firstName: 'Jane', lastName: 'Smith' },
           service: {
-            id: "service-1",
-            name: "Grooming | Full Service",
-            serviceCategory: "GROOMING",
+            id: 'service-1',
+            name: 'Grooming | Full Service',
+            serviceCategory: 'GROOMING',
           },
         },
         {
-          id: "checked-in-res",
-          startDate: "2025-12-03T09:00:00.000Z",
-          endDate: "2025-12-03T11:00:00.000Z",
-          status: "CHECKED_IN",
-          pet: { id: "pet-3", name: "Luna" },
-          customer: { firstName: "Bob", lastName: "Wilson" },
+          id: 'checked-in-res',
+          startDate: '2025-12-03T09:00:00.000Z',
+          endDate: '2025-12-03T11:00:00.000Z',
+          status: 'CHECKED_IN',
+          pet: { id: 'pet-3', name: 'Luna' },
+          customer: { firstName: 'Bob', lastName: 'Wilson' },
           service: {
-            id: "service-1",
-            name: "Grooming | Full Service",
-            serviceCategory: "GROOMING",
+            id: 'service-1',
+            name: 'Grooming | Full Service',
+            serviceCategory: 'GROOMING',
           },
         },
         {
-          id: "cancelled-res",
-          startDate: "2025-12-03T11:00:00.000Z",
-          endDate: "2025-12-03T13:00:00.000Z",
-          status: "CANCELLED",
-          pet: { id: "pet-4", name: "Rocky" },
-          customer: { firstName: "Alice", lastName: "Brown" },
+          id: 'cancelled-res',
+          startDate: '2025-12-03T11:00:00.000Z',
+          endDate: '2025-12-03T13:00:00.000Z',
+          status: 'CANCELLED',
+          pet: { id: 'pet-4', name: 'Rocky' },
+          customer: { firstName: 'Alice', lastName: 'Brown' },
           service: {
-            id: "service-1",
-            name: "Grooming | Full Service",
-            serviceCategory: "GROOMING",
+            id: 'service-1',
+            name: 'Grooming | Full Service',
+            serviceCategory: 'GROOMING',
           },
         },
       ];

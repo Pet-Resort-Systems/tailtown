@@ -1,14 +1,14 @@
-import { Response, NextFunction } from "express";
-import { AppError } from "../../utils/appError";
-import { TenantRequest } from "../../types/request";
+import { Response, NextFunction } from 'express';
+import { AppError } from '../../utils/appError';
+import { TenantRequest } from '../../types/request';
 import {
   ExtendedReservationWhereInput,
   ExtendedReservationStatus,
-} from "../../types/prisma-extensions";
-import { prisma } from "../../config/prisma";
-import { safeExecutePrismaQuery } from "../../utils/schemaUtils";
-import { logger } from "../../utils/logger";
-import { getCache, setCache, getCacheKey } from "../../utils/redis";
+} from '../../types/prisma-extensions';
+import { prisma } from '../../config/prisma';
+import { safeExecutePrismaQuery } from '../../utils/schemaUtils';
+import { logger } from '../../utils/logger';
+import { getCache, setCache, getCacheKey } from '../../utils/redis';
 
 // Cache TTL for availability checks (60 seconds - short to ensure accuracy)
 const AVAILABILITY_CACHE_TTL = 60;
@@ -34,9 +34,9 @@ export const checkResourceAvailability = async (
   try {
     // Get tenant ID from request - added by tenant middleware (required)
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     if (!tenantId) {
-      return next(AppError.authorizationError("Tenant ID is required"));
+      return next(AppError.authorizationError('Tenant ID is required'));
     }
 
     // Get query parameters
@@ -45,7 +45,7 @@ export const checkResourceAvailability = async (
     // Either resourceId or resourceType is required
     if (!resourceId && !resourceType) {
       return next(
-        new AppError("Either Resource ID or Resource Type is required", 400)
+        new AppError('Either Resource ID or Resource Type is required', 400)
       );
     }
 
@@ -57,7 +57,7 @@ export const checkResourceAvailability = async (
       // If a single date is provided, we check just that date
       const parsedDate = new Date(date as string);
       if (isNaN(parsedDate.getTime())) {
-        return next(new AppError("Invalid date format", 400));
+        return next(new AppError('Invalid date format', 400));
       }
 
       // Set the start and end date to be the same date (beginning and end of day)
@@ -72,12 +72,12 @@ export const checkResourceAvailability = async (
       checkEndDate = new Date(endDate as string);
 
       if (isNaN(checkStartDate.getTime()) || isNaN(checkEndDate.getTime())) {
-        return next(new AppError("Invalid date format", 400));
+        return next(new AppError('Invalid date format', 400));
       }
     } else {
       return next(
         new AppError(
-          "Either date or both startDate and endDate are required",
+          'Either date or both startDate and endDate are required',
           400
         )
       );
@@ -86,16 +86,16 @@ export const checkResourceAvailability = async (
     // Generate cache key based on query parameters
     const cacheKey = getCacheKey(
       tenantId as string,
-      "availability",
+      'availability',
       `${resourceId || resourceType}:${
-        checkStartDate.toISOString().split("T")[0]
-      }:${checkEndDate.toISOString().split("T")[0]}`
+        checkStartDate.toISOString().split('T')[0]
+      }:${checkEndDate.toISOString().split('T')[0]}`
     );
 
     // Check cache first
     const cachedResult = await getCache<any>(cacheKey);
     if (cachedResult) {
-      logger.debug("Availability cache hit", { cacheKey });
+      logger.debug('Availability cache hit', { cacheKey });
       return res.status(200).json(cachedResult);
     }
 
@@ -120,7 +120,7 @@ export const checkResourceAvailability = async (
         } as any,
       });
 
-      logger.debug("Found resources by type", {
+      logger.debug('Found resources by type', {
         count: resources.length,
         resourceType,
       });
@@ -129,7 +129,7 @@ export const checkResourceAvailability = async (
     // If no resources found, return empty result
     if (resources.length === 0) {
       return res.status(200).json({
-        status: "success",
+        status: 'success',
         data: {
           checkDate: date ? date : null,
           checkStartDate: startDate ? startDate : checkStartDate.toISOString(),
@@ -180,7 +180,7 @@ export const checkResourceAvailability = async (
         });
       },
       [], // Empty array fallback if there's an error
-      "Error finding overlapping reservations"
+      'Error finding overlapping reservations'
     );
 
     // Group reservations by resource ID
@@ -212,7 +212,7 @@ export const checkResourceAvailability = async (
 
     // Build response
     const response = {
-      status: "success",
+      status: 'success',
       data: {
         checkDate: date ? date : null,
         checkStartDate: startDate ? startDate : checkStartDate.toISOString(),
@@ -223,7 +223,7 @@ export const checkResourceAvailability = async (
 
     // Cache the result
     await setCache(cacheKey, response, AVAILABILITY_CACHE_TTL);
-    logger.debug("Availability cached", {
+    logger.debug('Availability cached', {
       cacheKey,
       ttl: AVAILABILITY_CACHE_TTL,
     });
@@ -231,7 +231,7 @@ export const checkResourceAvailability = async (
     // Return the result including availability status for all resources
     res.status(200).json(response);
   } catch (error: any) {
-    logger.error("Error checking resource availability", {
+    logger.error('Error checking resource availability', {
       resourceId: req.query.resourceId,
       tenantId: req.tenantId,
       error: error.message,
@@ -239,14 +239,14 @@ export const checkResourceAvailability = async (
     // More graceful error handling - return an empty result instead of a 500 error
     // This follows our schema alignment strategy of providing fallbacks
     return res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         resourceId: req.query.resourceId as string,
         isAvailable: true, // Default to available if we can't determine
         checkDate: (req.query.date as string) || null,
         checkStartDate: (req.query.startDate as string) || null,
         checkEndDate: (req.query.endDate as string) || null,
-        message: "Availability check completed with limited data",
+        message: 'Availability check completed with limited data',
         conflictingReservations: [],
       },
     });

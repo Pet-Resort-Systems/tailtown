@@ -66,10 +66,12 @@ export class CardConnectService {
   private site: string;
 
   constructor() {
-    const apiUrl = process.env.CARDCONNECT_API_URL || 'https://fts-uat.cardconnect.com/cardconnect/rest';
+    const apiUrl =
+      process.env.CARDCONNECT_API_URL ||
+      'https://fts-uat.cardconnect.com/cardconnect/rest';
     const username = process.env.CARDCONNECT_USERNAME || 'testing';
     const password = process.env.CARDCONNECT_PASSWORD || 'testing123';
-    
+
     this.merchantId = process.env.CARDCONNECT_MERCHANT_ID || '496160873888';
     this.site = process.env.CARDCONNECT_SITE || 'fts-uat';
 
@@ -132,7 +134,9 @@ export class CardConnectService {
    * @param request Authorization request
    * @returns Authorization response
    */
-  async authorize(request: AuthorizationRequest): Promise<AuthorizationResponse> {
+  async authorize(
+    request: AuthorizationRequest
+  ): Promise<AuthorizationResponse> {
     try {
       const payload = {
         ...request,
@@ -142,7 +146,7 @@ export class CardConnectService {
       };
 
       const response = await this.client.put('/auth', payload);
-      
+
       logger.info('Authorization result', {
         respstat: response.data.respstat,
         retref: response.data.retref,
@@ -169,7 +173,7 @@ export class CardConnectService {
       };
 
       const response = await this.client.put('/capture', payload);
-      
+
       logger.info('Capture result', {
         respstat: response.data.respstat,
         retref: response.data.retref,
@@ -195,7 +199,7 @@ export class CardConnectService {
       };
 
       const response = await this.client.put('/refund', payload);
-      
+
       logger.info('Refund result', {
         respstat: response.data.respstat,
         retref: response.data.retref,
@@ -221,7 +225,7 @@ export class CardConnectService {
       };
 
       const response = await this.client.put('/void', payload);
-      
+
       logger.info('Void result', {
         respstat: response.data.respstat,
         retref: response.data.retref,
@@ -242,8 +246,10 @@ export class CardConnectService {
   async inquire(request: InquireRequest): Promise<any> {
     try {
       const merchid = request.merchid || this.merchantId;
-      const response = await this.client.get(`/inquire/${request.retref}/${merchid}`);
-      
+      const response = await this.client.get(
+        `/inquire/${request.retref}/${merchid}`
+      );
+
       logger.info('Inquire result', {
         retref: request.retref,
         found: !!response.data,

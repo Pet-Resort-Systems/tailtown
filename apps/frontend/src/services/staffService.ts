@@ -59,14 +59,14 @@ export enum TimeOffType {
   PERSONAL = 'PERSONAL',
   BEREAVEMENT = 'BEREAVEMENT',
   JURY_DUTY = 'JURY_DUTY',
-  OTHER = 'OTHER'
+  OTHER = 'OTHER',
 }
 
 export enum TimeOffStatus {
   PENDING = 'PENDING',
   APPROVED = 'APPROVED',
   DENIED = 'DENIED',
-  CANCELLED = 'CANCELLED'
+  CANCELLED = 'CANCELLED',
 }
 
 export enum ScheduleStatus {
@@ -75,7 +75,7 @@ export enum ScheduleStatus {
   IN_PROGRESS = 'IN_PROGRESS',
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
-  NO_SHOW = 'NO_SHOW'
+  NO_SHOW = 'NO_SHOW',
 }
 
 export interface StaffSchedule {
@@ -123,11 +123,15 @@ const staffService = {
       const response = await api.get('/api/staff?limit=100');
       if (response.data && response.data.status === 'success') {
         // Transform the backend data to match the frontend interface
-        const staffList = Array.isArray(response.data.data) ? response.data.data : [];
+        const staffList = Array.isArray(response.data.data)
+          ? response.data.data
+          : [];
         return staffList.map((staff: any) => ({
           ...staff,
           status: staff.isActive ? 'Active' : 'Inactive', // Convert isActive to status string
-          hireDate: staff.createdAt ? new Date(staff.createdAt).toISOString().split('T')[0] : ''
+          hireDate: staff.createdAt
+            ? new Date(staff.createdAt).toISOString().split('T')[0]
+            : '',
         }));
       }
       return [];
@@ -167,7 +171,7 @@ const staffService = {
         city: staffData.city || '',
         state: staffData.state || '',
         zipCode: staffData.zipCode || '',
-        specialties: staffData.specialties || []
+        specialties: staffData.specialties || [],
       };
 
       const response = await api.post('/api/staff', formattedData);
@@ -181,11 +185,14 @@ const staffService = {
     }
   },
 
-  updateStaff: async (id: string, staffData: Partial<Staff>): Promise<Staff | null> => {
+  updateStaff: async (
+    id: string,
+    staffData: Partial<Staff>
+  ): Promise<Staff | null> => {
     try {
       // Format the data to match the backend model
       const formattedData: any = {};
-      
+
       if (staffData.firstName) formattedData.firstName = staffData.firstName;
       if (staffData.lastName) formattedData.lastName = staffData.lastName;
       if (staffData.email) formattedData.email = staffData.email;
@@ -198,8 +205,9 @@ const staffService = {
       if (staffData.city) formattedData.city = staffData.city;
       if (staffData.state) formattedData.state = staffData.state;
       if (staffData.zipCode) formattedData.zipCode = staffData.zipCode;
-      if (staffData.specialties) formattedData.specialties = staffData.specialties;
-      
+      if (staffData.specialties)
+        formattedData.specialties = staffData.specialties;
+
       // Convert status to isActive if present
       if (staffData.status) {
         formattedData.isActive = staffData.status === 'Active';
@@ -227,7 +235,9 @@ const staffService = {
   },
 
   // Staff Availability Management
-  getStaffAvailability: async (staffId: string): Promise<StaffAvailability[]> => {
+  getStaffAvailability: async (
+    staffId: string
+  ): Promise<StaffAvailability[]> => {
     try {
       const response = await api.get(`/api/staff/${staffId}/availability`);
       if (response.data && response.data.status === 'success') {
@@ -235,16 +245,22 @@ const staffService = {
       }
       return [];
     } catch (error) {
-      console.error(`Error fetching availability for staff ID ${staffId}:`, error);
+      console.error(
+        `Error fetching availability for staff ID ${staffId}:`,
+        error
+      );
       throw error;
     }
   },
 
-  createStaffAvailability: async (staffId: string, availability: Partial<StaffAvailability>): Promise<StaffAvailability | null> => {
+  createStaffAvailability: async (
+    staffId: string,
+    availability: Partial<StaffAvailability>
+  ): Promise<StaffAvailability | null> => {
     try {
       const response = await api.post(`/api/staff/${staffId}/availability`, {
         ...availability,
-        staffId
+        staffId,
       });
       if (response.data && response.data.status === 'success') {
         return response.data.data;
@@ -256,9 +272,15 @@ const staffService = {
     }
   },
 
-  updateStaffAvailability: async (id: string, availability: Partial<StaffAvailability>): Promise<StaffAvailability | null> => {
+  updateStaffAvailability: async (
+    id: string,
+    availability: Partial<StaffAvailability>
+  ): Promise<StaffAvailability | null> => {
     try {
-      const response = await api.put(`/api/staff/availability/${id}`, availability);
+      const response = await api.put(
+        `/api/staff/availability/${id}`,
+        availability
+      );
       if (response.data && response.data.status === 'success') {
         return response.data.data;
       }
@@ -280,9 +302,14 @@ const staffService = {
   },
 
   // Staff Time Off Management
-  getStaffTimeOff: async (staffId: string, params?: { status?: TimeOffStatus }): Promise<StaffTimeOff[]> => {
+  getStaffTimeOff: async (
+    staffId: string,
+    params?: { status?: TimeOffStatus }
+  ): Promise<StaffTimeOff[]> => {
     try {
-      const response = await api.get(`/api/staff/${staffId}/time-off`, { params });
+      const response = await api.get(`/api/staff/${staffId}/time-off`, {
+        params,
+      });
       if (response.data && response.data.status === 'success') {
         return response.data.data || [];
       }
@@ -293,13 +320,16 @@ const staffService = {
     }
   },
 
-  createStaffTimeOff: async (staffId: string, timeOff: Partial<StaffTimeOff>): Promise<StaffTimeOff | null> => {
+  createStaffTimeOff: async (
+    staffId: string,
+    timeOff: Partial<StaffTimeOff>
+  ): Promise<StaffTimeOff | null> => {
     try {
       const response = await api.post(`/api/staff/${staffId}/time-off`, {
         ...timeOff,
         staffId,
         type: timeOff.type || TimeOffType.VACATION,
-        status: timeOff.status || TimeOffStatus.PENDING
+        status: timeOff.status || TimeOffStatus.PENDING,
       });
       if (response.data && response.data.status === 'success') {
         return response.data.data;
@@ -311,7 +341,10 @@ const staffService = {
     }
   },
 
-  updateStaffTimeOff: async (id: string, timeOff: Partial<StaffTimeOff>): Promise<StaffTimeOff | null> => {
+  updateStaffTimeOff: async (
+    id: string,
+    timeOff: Partial<StaffTimeOff>
+  ): Promise<StaffTimeOff | null> => {
     try {
       const response = await api.put(`/api/staff/time-off/${id}`, timeOff);
       if (response.data && response.data.status === 'success') {
@@ -335,7 +368,12 @@ const staffService = {
   },
 
   // Staff Scheduling
-  getAvailableStaff: async (params: { date: string, startTime: string, endTime: string, specialties?: string[] }): Promise<Staff[]> => {
+  getAvailableStaff: async (params: {
+    date: string;
+    startTime: string;
+    endTime: string;
+    specialties?: string[];
+  }): Promise<Staff[]> => {
     try {
       const response = await api.get('/api/staff/available', { params });
       if (response.data && response.data.status === 'success') {
@@ -349,7 +387,11 @@ const staffService = {
   },
 
   // Staff Schedule methods
-  getStaffSchedules: async (staffId: string, startDate?: string, endDate?: string): Promise<StaffSchedule[]> => {
+  getStaffSchedules: async (
+    staffId: string,
+    startDate?: string,
+    endDate?: string
+  ): Promise<StaffSchedule[]> => {
     try {
       let url = `/api/schedules/staff/${staffId}`;
       if (startDate && endDate) {
@@ -366,7 +408,10 @@ const staffService = {
     }
   },
 
-  getAllSchedules: async (startDate?: string, endDate?: string): Promise<StaffSchedule[]> => {
+  getAllSchedules: async (
+    startDate?: string,
+    endDate?: string
+  ): Promise<StaffSchedule[]> => {
     try {
       let url = '/api/schedules';
       if (startDate && endDate) {
@@ -383,9 +428,15 @@ const staffService = {
     }
   },
 
-  createStaffSchedule: async (staffId: string, scheduleData: Partial<StaffSchedule>): Promise<StaffSchedule | null> => {
+  createStaffSchedule: async (
+    staffId: string,
+    scheduleData: Partial<StaffSchedule>
+  ): Promise<StaffSchedule | null> => {
     try {
-      const response = await api.post(`/api/schedules/staff/${staffId}`, scheduleData);
+      const response = await api.post(
+        `/api/schedules/staff/${staffId}`,
+        scheduleData
+      );
       if (response.data && response.data.status === 'success') {
         return response.data.data;
       }
@@ -396,9 +447,15 @@ const staffService = {
     }
   },
 
-  updateStaffSchedule: async (scheduleId: string, scheduleData: Partial<StaffSchedule>): Promise<StaffSchedule | null> => {
+  updateStaffSchedule: async (
+    scheduleId: string,
+    scheduleData: Partial<StaffSchedule>
+  ): Promise<StaffSchedule | null> => {
     try {
-      const response = await api.put(`/api/schedules/${scheduleId}`, scheduleData);
+      const response = await api.put(
+        `/api/schedules/${scheduleId}`,
+        scheduleData
+      );
       if (response.data && response.data.status === 'success') {
         return response.data.data;
       }
@@ -418,10 +475,14 @@ const staffService = {
       throw error;
     }
   },
-  
-  bulkCreateSchedules: async (scheduleData: Partial<StaffSchedule>[]): Promise<StaffSchedule[]> => {
+
+  bulkCreateSchedules: async (
+    scheduleData: Partial<StaffSchedule>[]
+  ): Promise<StaffSchedule[]> => {
     try {
-      const response = await api.post('/api/schedules/bulk', { schedules: scheduleData });
+      const response = await api.post('/api/schedules/bulk', {
+        schedules: scheduleData,
+      });
       if (response.data && response.data.status === 'success') {
         return response.data.data || [];
       }
@@ -430,7 +491,7 @@ const staffService = {
       console.error('Error creating bulk schedules:', error);
       throw error;
     }
-  }
+  },
 };
 
 export default staffService;

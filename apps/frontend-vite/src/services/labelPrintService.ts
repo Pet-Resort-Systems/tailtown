@@ -10,7 +10,7 @@
  * Uses ZPL (Zebra Programming Language) for label formatting
  */
 
-import { customerApi } from "./api";
+import { customerApi } from './api';
 
 export interface KennelLabelData {
   dogName: string;
@@ -43,15 +43,15 @@ export const generateKennelLabelZPL = (data: KennelLabelData): string => {
 
   // Truncate names to fit on label
   const truncatedDogName =
-    dogName.length > 10 ? dogName.substring(0, 8) + ".." : dogName;
+    dogName.length > 10 ? dogName.substring(0, 8) + '..' : dogName;
   const truncatedLastName =
     customerLastName.length > 8
-      ? customerLastName.substring(0, 6) + ".."
+      ? customerLastName.substring(0, 6) + '..'
       : customerLastName;
 
   // Use placeholders for missing data
-  const displayKennel = kennelNumber || "___";
-  const displayGroup = groupSize || "___";
+  const displayKennel = kennelNumber || '___';
+  const displayGroup = groupSize || '___';
 
   // Build the main line: Name (LastName) #Kennel Group
   const mainLine = `${truncatedDogName} (${truncatedLastName})   #${displayKennel}   ${displayGroup}`;
@@ -92,19 +92,19 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
  */
 export const printKennelLabelsBatch = async (
   labels: KennelLabelData[],
-  method: "local" | "browser" | "server" | "usb" | "download" = "local",
+  method: 'local' | 'browser' | 'server' | 'usb' | 'download' = 'local',
   options?: {
     delayMs?: number;
     onProgress?: (progress: BatchPrintProgress) => void;
     printFn?: (
       data: KennelLabelData,
-      method: "local" | "browser" | "server" | "usb" | "download"
+      method: 'local' | 'browser' | 'server' | 'usb' | 'download'
     ) => Promise<boolean>;
   }
 ): Promise<BatchPrintResult> => {
   const delayMs = options?.delayMs ?? 250;
   const printFn = options?.printFn ?? printKennelLabel;
-  const failures: BatchPrintResult["failures"] = [];
+  const failures: BatchPrintResult['failures'] = [];
   let successCount = 0;
 
   for (let i = 0; i < labels.length; i++) {
@@ -119,14 +119,14 @@ export const printKennelLabelsBatch = async (
         failures.push({
           index: i,
           label,
-          error: "Print returned false",
+          error: 'Print returned false',
         });
       }
     } catch (e: any) {
       failures.push({
         index: i,
         label,
-        error: e?.message || "Failed to print label",
+        error: e?.message || 'Failed to print label',
       });
     }
 
@@ -151,11 +151,11 @@ export const downloadZPLFile = async (
   const zpl = generateKennelLabelZPL(data);
 
   // Create a Blob with the ZPL content
-  const blob = new Blob([zpl], { type: "application/x-zpl" });
+  const blob = new Blob([zpl], { type: 'application/x-zpl' });
   const url = URL.createObjectURL(blob);
 
   // Create a hidden link and trigger download
-  const link = document.createElement("a");
+  const link = document.createElement('a');
   link.href = url;
   link.download = `kennel-label-${data.kennelNumber}.zpl`;
   document.body.appendChild(link);
@@ -177,15 +177,15 @@ export const printLabelViaBrowser = async (
 
   // Truncate names to fit on label (same logic as ZPL)
   const truncatedDogName =
-    dogName.length > 10 ? dogName.substring(0, 8) + ".." : dogName;
+    dogName.length > 10 ? dogName.substring(0, 8) + '..' : dogName;
   const truncatedLastName =
     customerLastName.length > 8
-      ? customerLastName.substring(0, 6) + ".."
+      ? customerLastName.substring(0, 6) + '..'
       : customerLastName;
 
   // Use placeholders for missing data
-  const displayKennel = kennelNumber || "___";
-  const displayGroup = groupSize || "___";
+  const displayKennel = kennelNumber || '___';
+  const displayGroup = groupSize || '___';
 
   // Create HTML content for the label
   // Designed for 1" x 14" continuous label with text rotated 90°
@@ -249,9 +249,9 @@ export const printLabelViaBrowser = async (
   `;
 
   // Open a new window with the label content
-  const printWindow = window.open("", "_blank", "width=800,height=200");
+  const printWindow = window.open('', '_blank', 'width=800,height=200');
   if (!printWindow) {
-    throw new Error("Could not open print window. Please allow popups.");
+    throw new Error('Could not open print window. Please allow popups.');
   }
 
   printWindow.document.write(htmlContent);
@@ -270,9 +270,9 @@ export const printLabelViaUSB = async (
   const zpl = generateKennelLabelZPL(data);
 
   // Check if Web Serial API is available
-  if (!("serial" in navigator)) {
-    console.error("Web Serial API not supported in this browser");
-    throw new Error("Web Serial API not supported. Please use Chrome or Edge.");
+  if (!('serial' in navigator)) {
+    console.error('Web Serial API not supported in this browser');
+    throw new Error('Web Serial API not supported. Please use Chrome or Edge.');
   }
 
   try {
@@ -285,7 +285,7 @@ export const printLabelViaUSB = async (
       baudRate: 9600,
       dataBits: 8,
       stopBits: 1,
-      parity: "none",
+      parity: 'none',
     });
 
     // Get a writer
@@ -304,7 +304,7 @@ export const printLabelViaUSB = async (
 
     return true;
   } catch (error) {
-    console.error("Error printing label:", error);
+    console.error('Error printing label:', error);
     throw error;
   }
 };
@@ -318,14 +318,14 @@ export const printLabelViaServer = async (
 ): Promise<{ success: boolean; jobId?: string; error?: string }> => {
   try {
     const response = await customerApi.post(
-      "/api/system/print/kennel-label",
+      '/api/system/print/kennel-label',
       data
     );
     return response.data;
   } catch (error: any) {
-    console.error("Error printing via server:", error);
+    console.error('Error printing via server:', error);
     throw new Error(
-      error.response?.data?.error || "Failed to print label via server"
+      error.response?.data?.error || 'Failed to print label via server'
     );
   }
 };
@@ -338,24 +338,24 @@ export const printLabelViaLocalAgent = async (
   data: KennelLabelData
 ): Promise<boolean> => {
   const zpl = generateKennelLabelZPL(data);
-  const LOCAL_AGENT_URL = "http://localhost:9101";
+  const LOCAL_AGENT_URL = 'http://localhost:9101';
 
   try {
     const response = await fetch(`${LOCAL_AGENT_URL}/print`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ zpl }),
     });
 
     const result = await response.json();
     if (!result.success) {
-      throw new Error(result.error || "Print failed");
+      throw new Error(result.error || 'Print failed');
     }
     return true;
   } catch (error: any) {
-    if (error.message?.includes("Failed to fetch")) {
+    if (error.message?.includes('Failed to fetch')) {
       throw new Error(
-        "Local Print Agent not running. Start it with: node tools/local-print-agent/server.js"
+        'Local Print Agent not running. Start it with: node tools/local-print-agent/server.js'
       );
     }
     throw error;
@@ -369,11 +369,11 @@ export const checkLocalAgentStatus = async (): Promise<{
   running: boolean;
   printer?: string;
 }> => {
-  const LOCAL_AGENT_URL = "http://localhost:9101";
+  const LOCAL_AGENT_URL = 'http://localhost:9101';
   try {
     const response = await fetch(`${LOCAL_AGENT_URL}/health`);
     const result = await response.json();
-    return { running: result.status === "ok", printer: result.printer };
+    return { running: result.status === 'ok', printer: result.printer };
   } catch {
     return { running: false };
   }
@@ -384,19 +384,19 @@ export const checkLocalAgentStatus = async (): Promise<{
  */
 export const printKennelLabel = async (
   data: KennelLabelData,
-  method: "local" | "browser" | "server" | "usb" | "download" = "local"
+  method: 'local' | 'browser' | 'server' | 'usb' | 'download' = 'local'
 ): Promise<boolean> => {
   switch (method) {
-    case "local":
+    case 'local':
       return printLabelViaLocalAgent(data);
-    case "browser":
+    case 'browser':
       return printLabelViaBrowser(data);
-    case "server":
+    case 'server':
       const result = await printLabelViaServer(data);
       return result.success;
-    case "usb":
+    case 'usb':
       return printLabelViaUSB(data);
-    case "download":
+    case 'download':
       return downloadZPLFile(data);
     default:
       return printLabelViaBrowser(data);

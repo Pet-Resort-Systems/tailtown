@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -13,19 +13,19 @@ import {
   Grid,
   FormHelperText,
   SelectChangeEvent,
-} from "@mui/material";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+} from '@mui/material';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import {
   LocalizationProvider,
   DatePicker,
   TimePicker,
-} from "@mui/x-date-pickers";
-import { format, parse } from "date-fns";
+} from '@mui/x-date-pickers';
+import { format, parse } from 'date-fns';
 import {
   StaffSchedule,
   ScheduleStatus,
   Staff,
-} from "../../services/staffService";
+} from '../../services/staffService';
 
 interface StaffScheduleFormProps {
   open: boolean;
@@ -52,17 +52,17 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
 }) => {
   const [formData, setFormData] = useState<Partial<StaffSchedule>>({
     id: schedule?.id || undefined, // Keep the ID for updates to prevent duplicates
-    staffId: staffId || "",
+    staffId: staffId || '',
     date: initialDate
-      ? format(initialDate, "yyyy-MM-dd")
-      : new Date().toISOString().split("T")[0],
-    startTime: "09:00",
-    endTime: "17:00",
+      ? format(initialDate, 'yyyy-MM-dd')
+      : new Date().toISOString().split('T')[0],
+    startTime: '09:00',
+    endTime: '17:00',
     status: ScheduleStatus.SCHEDULED,
-    notes: "",
-    location: "",
-    startingLocation: "", // Add starting location field
-    role: "",
+    notes: '',
+    location: '',
+    startingLocation: '', // Add starting location field
+    role: '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -72,10 +72,10 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
     if (schedule) {
       setFormData({
         ...schedule,
-        startingLocation: schedule.startingLocation || "", // Initialize starting location
+        startingLocation: schedule.startingLocation || '', // Initialize starting location
         date: schedule.date
-          ? schedule.date.toString().split("T")[0]
-          : new Date().toISOString().split("T")[0],
+          ? schedule.date.toString().split('T')[0]
+          : new Date().toISOString().split('T')[0],
       });
     } else if (staffId) {
       setFormData((prev) => ({ ...prev, staffId }));
@@ -91,7 +91,7 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
 
       // Clear error when field is updated
       if (errors[name]) {
-        setErrors((prev) => ({ ...prev, [name]: "" }));
+        setErrors((prev) => ({ ...prev, [name]: '' }));
       }
     }
   };
@@ -103,7 +103,7 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
 
       // Clear error when field is updated
       if (errors[name]) {
-        setErrors((prev) => ({ ...prev, [name]: "" }));
+        setErrors((prev) => ({ ...prev, [name]: '' }));
       }
     }
   };
@@ -113,22 +113,22 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
     if (date) {
       // Format date in local timezone to avoid timezone shift
       const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
       const localDateString = `${year}-${month}-${day}`;
 
       setFormData((prev) => ({ ...prev, date: localDateString }));
       if (errors.date) {
-        setErrors((prev) => ({ ...prev, date: "" }));
+        setErrors((prev) => ({ ...prev, date: '' }));
       }
     }
   };
 
   const handleTimeChange = (field: string, time: Date | null) => {
     if (time) {
-      setFormData((prev) => ({ ...prev, [field]: format(time, "HH:mm") }));
+      setFormData((prev) => ({ ...prev, [field]: format(time, 'HH:mm') }));
       if (errors[field]) {
-        setErrors((prev) => ({ ...prev, [field]: "" }));
+        setErrors((prev) => ({ ...prev, [field]: '' }));
       }
     }
   };
@@ -137,26 +137,26 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
     const newErrors: Record<string, string> = {};
 
     if (!formData.staffId) {
-      newErrors.staffId = "Staff member is required";
+      newErrors.staffId = 'Staff member is required';
     }
 
     if (!formData.date) {
-      newErrors.date = "Date is required";
+      newErrors.date = 'Date is required';
     }
 
     if (!formData.startTime) {
-      newErrors.startTime = "Start time is required";
+      newErrors.startTime = 'Start time is required';
     }
 
     if (!formData.endTime) {
-      newErrors.endTime = "End time is required";
+      newErrors.endTime = 'End time is required';
     }
 
     if (formData.startTime && formData.endTime) {
       const start = parseTimeString(formData.startTime);
       const end = parseTimeString(formData.endTime);
       if (start >= end) {
-        newErrors.endTime = "End time must be after start time";
+        newErrors.endTime = 'End time must be after start time';
       }
     }
 
@@ -181,11 +181,11 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
         // Compare dates - handle both ISO format and simple date string
         let existingDateStr: string;
         if (
-          typeof existingSchedule.date === "string" &&
-          existingSchedule.date.includes("T")
+          typeof existingSchedule.date === 'string' &&
+          existingSchedule.date.includes('T')
         ) {
           // ISO format: extract date part before 'T'
-          existingDateStr = existingSchedule.date.split("T")[0];
+          existingDateStr = existingSchedule.date.split('T')[0];
         } else {
           existingDateStr = String(existingSchedule.date);
         }
@@ -208,7 +208,7 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
 
       if (hasOverlap) {
         newErrors.startTime =
-          "This staff member already has a schedule during this time";
+          'This staff member already has a schedule during this time';
       }
     }
 
@@ -217,7 +217,7 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
   };
 
   const parseTimeString = (timeString: string): Date => {
-    return parse(timeString, "HH:mm", new Date());
+    return parse(timeString, 'HH:mm', new Date());
   };
 
   const handleSubmit = async () => {
@@ -237,7 +237,7 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
-        {isEditing ? "Edit Schedule" : "Add New Schedule"}
+        {isEditing ? 'Edit Schedule' : 'Add New Schedule'}
       </DialogTitle>
       <DialogContent>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -248,7 +248,7 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
                   <InputLabel>Staff Member</InputLabel>
                   <Select
                     name="staffId"
-                    value={formData.staffId || ""}
+                    value={formData.staffId || ''}
                     onChange={handleSelectChange}
                     label="Staff Member"
                   >
@@ -288,7 +288,7 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
                     ? parseTimeString(formData.startTime)
                     : null
                 }
-                onChange={(time) => handleTimeChange("startTime", time)}
+                onChange={(time) => handleTimeChange('startTime', time)}
                 slotProps={{
                   textField: {
                     fullWidth: true,
@@ -305,7 +305,7 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
                 value={
                   formData.endTime ? parseTimeString(formData.endTime) : null
                 }
-                onChange={(time) => handleTimeChange("endTime", time)}
+                onChange={(time) => handleTimeChange('endTime', time)}
                 slotProps={{
                   textField: {
                     fullWidth: true,
@@ -327,7 +327,7 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
                 >
                   {Object.values(ScheduleStatus).map((status) => (
                     <MenuItem key={status} value={status}>
-                      {status.replace("_", " ")}
+                      {status.replace('_', ' ')}
                     </MenuItem>
                   ))}
                 </Select>
@@ -339,7 +339,7 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
                 fullWidth
                 label="Location"
                 name="location"
-                value={formData.location || ""}
+                value={formData.location || ''}
                 onChange={handleInputChange}
                 placeholder="Department or work area"
               />
@@ -350,7 +350,7 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
                 fullWidth
                 label="Starting Location"
                 name="startingLocation"
-                value={formData.startingLocation || ""}
+                value={formData.startingLocation || ''}
                 onChange={handleInputChange}
                 placeholder="Initial assignment location"
                 helperText="Where staff should report at the beginning of shift"
@@ -362,7 +362,7 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
                 fullWidth
                 label="Role"
                 name="role"
-                value={formData.role || ""}
+                value={formData.role || ''}
                 onChange={handleInputChange}
                 placeholder="Specific role for this shift"
               />
@@ -373,7 +373,7 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
                 fullWidth
                 label="Notes"
                 name="notes"
-                value={formData.notes || ""}
+                value={formData.notes || ''}
                 onChange={handleInputChange}
                 multiline
                 rows={3}
@@ -393,7 +393,7 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
           variant="contained"
           disabled={isSaving}
         >
-          {isSaving ? "Saving..." : isEditing ? "Update" : "Save"}
+          {isSaving ? 'Saving...' : isEditing ? 'Update' : 'Save'}
         </Button>
       </DialogActions>
     </Dialog>

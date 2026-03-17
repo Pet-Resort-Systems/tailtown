@@ -11,8 +11,16 @@ import {
 describe('vaccineUtils', () => {
   describe('getRequiredVaccines', () => {
     it('should return correct vaccines for dogs', () => {
-      expect(getRequiredVaccines('DOG')).toEqual(['rabies', 'dhpp', 'bordetella']);
-      expect(getRequiredVaccines('dog')).toEqual(['rabies', 'dhpp', 'bordetella']);
+      expect(getRequiredVaccines('DOG')).toEqual([
+        'rabies',
+        'dhpp',
+        'bordetella',
+      ]);
+      expect(getRequiredVaccines('dog')).toEqual([
+        'rabies',
+        'dhpp',
+        'bordetella',
+      ]);
     });
 
     it('should return correct vaccines for cats', () => {
@@ -94,7 +102,10 @@ describe('vaccineUtils', () => {
         rabies: pastDate.toISOString().split('T')[0],
       };
 
-      const result = recalculateVaccineStatus(vaccinationStatus, vaccineExpirations);
+      const result = recalculateVaccineStatus(
+        vaccinationStatus,
+        vaccineExpirations
+      );
 
       // Should recalculate based on date, not trust stored status
       expect(result.rabies.status).toBe('EXPIRED');

@@ -1,6 +1,6 @@
 /**
  * Authorization & Tenant Isolation Security Tests
- * 
+ *
  * Tests to ensure:
  * - Role-Based Access Control (RBAC)
  * - Tenant isolation (users can't access other tenants' data)
@@ -38,8 +38,8 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
         password: adminPassword,
         role: 'ADMIN',
         tenantId: tenant1Id,
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     // Create staff user for tenant 1
@@ -52,8 +52,8 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
         password: staffPassword,
         role: 'STAFF',
         tenantId: tenant1Id,
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     // Create user for tenant 2
@@ -66,8 +66,8 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
         password: tenant2Password,
         role: 'ADMIN',
         tenantId: tenant2Id,
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     // Get auth tokens
@@ -94,7 +94,7 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
         firstName: 'Customer',
         lastName: 'Tenant1',
         email: 'customer1@tenant1.com',
-        phone: '1234567890'
+        phone: '1234567890',
       });
     customer1Id = customer1Response.body.data.id;
 
@@ -105,23 +105,23 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
         firstName: 'Customer',
         lastName: 'Tenant2',
         email: 'customer2@tenant2.com',
-        phone: '0987654321'
+        phone: '0987654321',
       });
     customer2Id = customer2Response.body.data.id;
   });
 
   afterAll(async () => {
     await prisma.customer.deleteMany({
-      where: { tenantId: { in: [tenant1Id, tenant2Id] } }
+      where: { tenantId: { in: [tenant1Id, tenant2Id] } },
     });
     await prisma.staff.deleteMany({
-      where: { tenantId: { in: [tenant1Id, tenant2Id] } }
+      where: { tenantId: { in: [tenant1Id, tenant2Id] } },
     });
     await prisma.$disconnect();
   });
 
   describe('Tenant Isolation', () => {
-    it('should prevent access to other tenant\'s customers', async () => {
+    it("should prevent access to other tenant's customers", async () => {
       // Tenant 1 trying to access Tenant 2's customer
       const response = await request(app)
         .get(`/api/customers/${customer2Id}`)
@@ -130,19 +130,19 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
       expect(response.status).toBe(404); // Should not find it
     });
 
-    it('should prevent updating other tenant\'s customers', async () => {
+    it("should prevent updating other tenant's customers", async () => {
       const response = await request(app)
         .put(`/api/customers/${customer2Id}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .send({
           firstName: 'Hacked',
-          lastName: 'Customer'
+          lastName: 'Customer',
         });
 
       expect(response.status).toBe(404);
     });
 
-    it('should prevent deleting other tenant\'s customers', async () => {
+    it("should prevent deleting other tenant's customers", async () => {
       const response = await request(app)
         .delete(`/api/customers/${customer2Id}`)
         .set('Authorization', `Bearer ${adminToken}`);
@@ -150,14 +150,14 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
       expect(response.status).toBe(404);
     });
 
-    it('should only return own tenant\'s data in list endpoints', async () => {
+    it("should only return own tenant's data in list endpoints", async () => {
       const response = await request(app)
         .get('/api/customers')
         .set('Authorization', `Bearer ${adminToken}`);
 
       expect(response.status).toBe(200);
       const customers = response.body.data || response.body;
-      
+
       // Should only contain tenant 1's customers
       customers.forEach((customer: any) => {
         expect(customer.tenantId).toBe(tenant1Id);
@@ -172,7 +172,7 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
 
       expect(response.status).toBe(200);
       const results = response.body.data || response.body;
-      
+
       // Should only find tenant 1's customers
       results.forEach((customer: any) => {
         expect(customer.tenantId).toBe(tenant1Id);
@@ -205,7 +205,7 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
           firstName: 'New',
           lastName: 'Staff',
           password: 'NewStaff123!',
-          role: 'STAFF'
+          role: 'STAFF',
         });
 
       expect(response.status).toBe(201);
@@ -220,7 +220,7 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
           firstName: 'Unauthorized',
           lastName: 'Staff',
           password: 'UnauthorizedStaff123!',
-          role: 'STAFF'
+          role: 'STAFF',
         });
 
       expect(response.status).toBe(403); // Forbidden
@@ -236,7 +236,7 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
           firstName: 'To',
           lastName: 'Delete',
           password: 'ToDelete123!',
-          role: 'STAFF'
+          role: 'STAFF',
         });
 
       const staffId = createResponse.body.data.id;
@@ -272,7 +272,7 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
           firstName: 'Staff',
           lastName: 'Created',
           email: `staff-created-${Date.now()}@example.com`,
-          phone: '5555555555'
+          phone: '5555555555',
         });
 
       expect(response.status).toBe(201);
@@ -284,7 +284,7 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
         .put('/api/staff/self')
         .set('Authorization', `Bearer ${staffToken}`)
         .send({
-          role: 'ADMIN'
+          role: 'ADMIN',
         });
 
       expect(response.status).toBe(403);
@@ -295,7 +295,7 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
         .put(`/api/staff/some-id`)
         .set('Authorization', `Bearer ${staffToken}`)
         .send({
-          role: 'ADMIN'
+          role: 'ADMIN',
         });
 
       expect(response.status).toBe(403);
@@ -304,8 +304,7 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
 
   describe('Unauthorized Access Prevention', () => {
     it('should reject requests without authentication token', async () => {
-      const response = await request(app)
-        .get('/api/customers');
+      const response = await request(app).get('/api/customers');
 
       expect(response.status).toBe(401);
     });
@@ -329,16 +328,14 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
           password: inactivePassword,
           role: 'STAFF',
           tenantId: tenant1Id,
-          isActive: false
-        }
+          isActive: false,
+        },
       });
 
-      const loginResponse = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: inactive.email,
-          password: 'InactivePass123!'
-        });
+      const loginResponse = await request(app).post('/api/auth/login').send({
+        email: inactive.email,
+        password: 'InactivePass123!',
+      });
 
       expect(loginResponse.status).toBe(401);
       expect(loginResponse.body.message).toContain('inactive');
@@ -349,7 +346,7 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
         '/api/admin/settings',
         '/api/admin/users',
         '/api/admin/audit-logs',
-        '/api/admin/system-stats'
+        '/api/admin/system-stats',
       ];
 
       for (const endpoint of adminEndpoints) {
@@ -388,7 +385,7 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
         .put(`/api/customers/${customer1Id}`)
         .set('Authorization', `Bearer ${tenant2Token}`)
         .send({
-          firstName: 'Hacked'
+          firstName: 'Hacked',
         });
 
       expect(response.status).toBe(404);
@@ -413,7 +410,7 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
           firstName: 'Test',
           lastName: 'Customer',
           email: 'test@example.com',
-          phone: '1234567890'
+          phone: '1234567890',
         });
 
       expect(response.status).toBe(403);
@@ -452,7 +449,7 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
           customerId: customer1Id,
           startDate: '2025-12-01',
           endDate: '2025-12-05',
-          serviceId: 'test-service-id'
+          serviceId: 'test-service-id',
         });
 
       const reservationId = reservationResponse.body.data?.id;
@@ -472,7 +469,7 @@ describe('Authorization & Tenant Isolation Security Tests', () => {
         .put(`/api/customers/${customer1Id}`)
         .set('Authorization', `Bearer ${tenant2Token}`)
         .send({
-          firstName: 'Modified'
+          firstName: 'Modified',
         });
 
       expect(response.status).toBe(404);

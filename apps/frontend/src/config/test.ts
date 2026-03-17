@@ -19,8 +19,8 @@ const testConfig: AppConfig = {
     ...developmentConfig.features,
     // Enable mock API for tests
     mockApi: true,
-    useNewCalendarComponents: true
-  }
+    useNewCalendarComponents: true,
+  },
 };
 
 export default testConfig;

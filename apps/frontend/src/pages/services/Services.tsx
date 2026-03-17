@@ -24,7 +24,7 @@ import {
   ToggleButton,
   TextField,
   InputAdornment,
-  Tooltip
+  Tooltip,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -49,7 +49,7 @@ const Services: React.FC = () => {
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
-    severity: 'success' as 'success' | 'error'
+    severity: 'success' as 'success' | 'error',
   });
 
   const loadServices = useCallback(async () => {
@@ -74,7 +74,7 @@ const Services: React.FC = () => {
       setSnackbar({
         open: true,
         message: 'Failed to load services',
-        severity: 'error'
+        severity: 'error',
       });
       setServices([]);
       setLoading(false);
@@ -104,29 +104,38 @@ const Services: React.FC = () => {
     try {
       // First try to delete the service
       try {
-        const result = await serviceManagement.deleteService(serviceToDelete.id);
-        
+        const result = await serviceManagement.deleteService(
+          serviceToDelete.id
+        );
+
         // Check if it was a soft delete (returns a message) or hard delete (returns nothing)
         const message = result?.message || 'Service deleted successfully';
-        
+
         setSnackbar({
           open: true,
           message,
-          severity: 'success'
+          severity: 'success',
         });
         loadServices();
       } catch (deleteErr: any) {
         // If deletion fails due to active reservations, automatically deactivate instead
-        if (deleteErr.message && (deleteErr.message.includes('active reservations') || deleteErr.message.includes('deactivate'))) {
-          console.log('Service could not be deleted, automatically deactivating instead');
-          
+        if (
+          deleteErr.message &&
+          (deleteErr.message.includes('active reservations') ||
+            deleteErr.message.includes('deactivate'))
+        ) {
+          console.log(
+            'Service could not be deleted, automatically deactivating instead'
+          );
+
           // Automatically deactivate the service
           await serviceManagement.deactivateService(serviceToDelete.id);
-          
+
           setSnackbar({
             open: true,
-            message: 'Service has been deactivated instead of deleted because it has reservations',
-            severity: 'success'
+            message:
+              'Service has been deactivated instead of deleted because it has reservations',
+            severity: 'success',
           });
           loadServices();
         } else {
@@ -137,14 +146,14 @@ const Services: React.FC = () => {
     } catch (err: any) {
       // Show the specific error message for any other errors
       const errorMessage = err.message || 'Failed to delete service';
-      
+
       setSnackbar({
         open: true,
         message: errorMessage,
-        severity: 'error'
+        severity: 'error',
       });
     }
-    
+
     // Always close the delete dialog and clear the service reference
     setDeleteDialogOpen(false);
     setServiceToDelete(null);
@@ -162,39 +171,53 @@ const Services: React.FC = () => {
   };
 
   // Filter services
-  const filteredServices = services.filter(service => {
+  const filteredServices = services.filter((service) => {
     // Category filter
-    if (categoryFilter !== 'ALL' && service.serviceCategory !== categoryFilter) {
+    if (
+      categoryFilter !== 'ALL' &&
+      service.serviceCategory !== categoryFilter
+    ) {
       return false;
     }
-    
+
     // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       return (
         service.name.toLowerCase().includes(query) ||
-        (service.description && service.description.toLowerCase().includes(query))
+        (service.description &&
+          service.description.toLowerCase().includes(query))
       );
     }
-    
+
     return true;
   });
 
   // Calculate statistics
   const stats = {
     total: services.length,
-    withGingrId: services.filter(s => s.externalId).length,
-    withoutPrice: services.filter(s => s.price === 0).length,
-    byCategory: services.reduce((acc, s) => {
-      acc[s.serviceCategory] = (acc[s.serviceCategory] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>)
+    withGingrId: services.filter((s) => s.externalId).length,
+    withoutPrice: services.filter((s) => s.price === 0).length,
+    byCategory: services.reduce(
+      (acc, s) => {
+        acc[s.serviceCategory] = (acc[s.serviceCategory] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    ),
   };
 
   if (loading) {
     return (
       <Container maxWidth="lg">
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '50vh',
+          }}
+        >
           <Typography>Loading services...</Typography>
         </Box>
       </Container>
@@ -204,7 +227,14 @@ const Services: React.FC = () => {
   if (error) {
     return (
       <Container maxWidth="lg">
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '50vh',
+          }}
+        >
           <Typography color="error">{error}</Typography>
         </Box>
       </Container>
@@ -229,16 +259,27 @@ const Services: React.FC = () => {
         </Box>
 
         {/* Statistics Cards */}
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 2, mb: 3 }}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: 2,
+            mb: 3,
+          }}
+        >
           <Paper sx={{ p: 2 }}>
-            <Typography variant="body2" color="textSecondary">Total Services</Typography>
+            <Typography variant="body2" color="textSecondary">
+              Total Services
+            </Typography>
             <Typography variant="h4">{stats.total}</Typography>
           </Paper>
           <Paper sx={{ p: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <LinkIcon color="primary" />
               <Box>
-                <Typography variant="body2" color="textSecondary">Linked to Gingr</Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Linked to Gingr
+                </Typography>
                 <Typography variant="h4">{stats.withGingrId}</Typography>
               </Box>
             </Box>
@@ -247,7 +288,9 @@ const Services: React.FC = () => {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <WarningIcon color="warning" />
               <Box>
-                <Typography variant="body2" color="textSecondary">Need Pricing</Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Need Pricing
+                </Typography>
                 <Typography variant="h4">{stats.withoutPrice}</Typography>
               </Box>
             </Box>
@@ -256,7 +299,14 @@ const Services: React.FC = () => {
 
         {/* Filters */}
         <Paper sx={{ p: 2, mb: 3 }}>
-          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 2,
+              flexWrap: 'wrap',
+              alignItems: 'center',
+            }}
+          >
             <TextField
               placeholder="Search services..."
               value={searchQuery}
@@ -277,9 +327,7 @@ const Services: React.FC = () => {
               onChange={(_, value) => value && setCategoryFilter(value)}
               size="small"
             >
-              <ToggleButton value="ALL">
-                All ({stats.total})
-              </ToggleButton>
+              <ToggleButton value="ALL">All ({stats.total})</ToggleButton>
               <ToggleButton value="BOARDING">
                 Boarding ({stats.byCategory.BOARDING || 0})
               </ToggleButton>
@@ -311,83 +359,93 @@ const Services: React.FC = () => {
               {filteredServices.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} align="center">
-                    <Typography variant="body2" color="textSecondary" sx={{ py: 3 }}>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      sx={{ py: 3 }}
+                    >
                       No services found
                     </Typography>
                   </TableCell>
                 </TableRow>
               ) : (
                 filteredServices.map((service) => (
-                <TableRow key={service.id}>
-                  <TableCell>{service.name}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={service.serviceCategory}
-                      color="primary"
-                      variant="outlined"
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell>{service.description}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={`$${service.price}`}
-                      color="primary"
-                      variant="outlined"
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={(() => {
-                        const hours = Math.floor(service.duration / 60);
-                        const minutes = service.duration % 60;
-                        
-                        if (hours === 0 && minutes === 0) return '0m';
-                        if (hours === 0) return `${minutes}m`;
-                        if (minutes === 0) return `${hours}h`;
-                        return `${hours}h ${minutes}m`;
-                      })()}
-                      color="secondary"
-                      variant="outlined"
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Tooltip title={service.externalId ? `Gingr ID: ${service.externalId}` : 'Not linked to Gingr'}>
-                      {service.externalId ? (
-                        <LinkIcon color="primary" fontSize="small" />
-                      ) : (
-                        <LinkOffIcon color="disabled" fontSize="small" />
-                      )}
-                    </Tooltip>
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={service.isActive ? 'Active' : 'Inactive'}
-                      color={service.isActive ? 'success' : 'error'}
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell align="right">
-                    <IconButton
-                      size="small"
-                      onClick={() => handleEditService(service.id)}
-                      aria-label="edit"
-                      title="Edit service"
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleDeleteClick(service)}
-                      aria-label="delete"
-                      title="Delete service"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
+                  <TableRow key={service.id}>
+                    <TableCell>{service.name}</TableCell>
+                    <TableCell>
+                      <Chip
+                        label={service.serviceCategory}
+                        color="primary"
+                        variant="outlined"
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell>{service.description}</TableCell>
+                    <TableCell>
+                      <Chip
+                        label={`$${service.price}`}
+                        color="primary"
+                        variant="outlined"
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={(() => {
+                          const hours = Math.floor(service.duration / 60);
+                          const minutes = service.duration % 60;
+
+                          if (hours === 0 && minutes === 0) return '0m';
+                          if (hours === 0) return `${minutes}m`;
+                          if (minutes === 0) return `${hours}h`;
+                          return `${hours}h ${minutes}m`;
+                        })()}
+                        color="secondary"
+                        variant="outlined"
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip
+                        title={
+                          service.externalId
+                            ? `Gingr ID: ${service.externalId}`
+                            : 'Not linked to Gingr'
+                        }
+                      >
+                        {service.externalId ? (
+                          <LinkIcon color="primary" fontSize="small" />
+                        ) : (
+                          <LinkOffIcon color="disabled" fontSize="small" />
+                        )}
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={service.isActive ? 'Active' : 'Inactive'}
+                        color={service.isActive ? 'success' : 'error'}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <IconButton
+                        size="small"
+                        onClick={() => handleEditService(service.id)}
+                        aria-label="edit"
+                        title="Edit service"
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleDeleteClick(service)}
+                        aria-label="delete"
+                        title="Delete service"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
                 ))
               )}
             </TableBody>
@@ -399,7 +457,8 @@ const Services: React.FC = () => {
           <DialogTitle>Delete Service</DialogTitle>
           <DialogContent>
             <Typography>
-              Are you sure you want to delete {serviceToDelete?.name}? This action cannot be undone.
+              Are you sure you want to delete {serviceToDelete?.name}? This
+              action cannot be undone.
             </Typography>
           </DialogContent>
           <DialogActions>
@@ -409,7 +468,6 @@ const Services: React.FC = () => {
             </Button>
           </DialogActions>
         </Dialog>
-
       </Box>
 
       {/* Snackbar for notifications */}

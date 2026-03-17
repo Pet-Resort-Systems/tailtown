@@ -14,11 +14,11 @@
  * This ensures pets with current vaccines show as compliant instead of "3 Due"
  */
 
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function fixUnknownVaccines() {
-  console.log("Starting Unknown vaccine fix...\n");
+  console.log('Starting Unknown vaccine fix...\n');
 
   // Get all pets with Unknown vaccine records
   const allPets = await prisma.pet.findMany({
@@ -61,13 +61,13 @@ async function fixUnknownVaccines() {
       }
 
       // Determine the status based on expiration date
-      let status = "CURRENT";
+      let status = 'CURRENT';
       if (unknownExpiration) {
         const expDate = new Date(unknownExpiration);
         expDate.setHours(0, 0, 0, 0);
-        status = expDate >= today ? "CURRENT" : "EXPIRED";
+        status = expDate >= today ? 'CURRENT' : 'EXPIRED';
       } else if (unknownStatus) {
-        status = unknownStatus === "current" ? "CURRENT" : "EXPIRED";
+        status = unknownStatus === 'current' ? 'CURRENT' : 'EXPIRED';
       }
 
       // Map to Rabies (capitalized to match frontend expectations)
@@ -113,7 +113,7 @@ async function fixUnknownVaccines() {
     }
   }
 
-  console.log("\n=== Summary ===");
+  console.log('\n=== Summary ===');
   console.log(`Total pets with Unknown vaccines: ${petsWithUnknown.length}`);
   console.log(`Successfully updated: ${updatedCount}`);
   console.log(`Skipped: ${skippedCount}`);
@@ -123,6 +123,6 @@ async function fixUnknownVaccines() {
 }
 
 fixUnknownVaccines().catch((error) => {
-  console.error("Script failed:", error);
+  console.error('Script failed:', error);
   process.exit(1);
 });

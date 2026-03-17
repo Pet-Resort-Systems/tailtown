@@ -1,6 +1,6 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-module.exports = function(app) {
+module.exports = function (app) {
   // Route reservation-related APIs to reservation-service (4003)
   app.use(
     '/api/reservations',
@@ -11,7 +11,7 @@ module.exports = function(app) {
       onError: (err, req, res) => {
         console.error('Proxy Error:', err);
         res.status(500).json({ error: 'Proxy Error', details: err.message });
-      }
+      },
     })
   );
 
@@ -24,7 +24,7 @@ module.exports = function(app) {
       onError: (err, req, res) => {
         console.error('Proxy Error:', err);
         res.status(500).json({ error: 'Proxy Error', details: err.message });
-      }
+      },
     })
   );
 
@@ -37,7 +37,7 @@ module.exports = function(app) {
       onError: (err, req, res) => {
         console.error('Proxy Error:', err);
         res.status(500).json({ error: 'Proxy Error', details: err.message });
-      }
+      },
     })
   );
 
@@ -54,7 +54,7 @@ module.exports = function(app) {
       onError: (err, req, res) => {
         console.error('Proxy Error:', err);
         res.status(500).json({ error: 'Proxy Error', details: err.message });
-      }
+      },
     })
   );
 
@@ -68,7 +68,7 @@ module.exports = function(app) {
       onError: (err, req, res) => {
         console.error('Proxy Error:', err);
         res.status(500).json({ error: 'Proxy Error', details: err.message });
-      }
+      },
     })
   );
 };

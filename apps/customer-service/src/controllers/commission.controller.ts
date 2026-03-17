@@ -5,10 +5,10 @@
  * and commission calculation/reporting
  */
 
-import { Response, NextFunction } from "express";
-import { PrismaClient, CommissionType } from "@prisma/client";
-import { AppError } from "../middleware/error.middleware";
-import { TenantRequest } from "../middleware/tenant.middleware";
+import { Response, NextFunction } from 'express';
+import { PrismaClient, CommissionType } from '@prisma/client';
+import { AppError } from '../middleware/error.middleware';
+import { TenantRequest } from '../middleware/tenant.middleware';
 
 const prisma = new PrismaClient();
 
@@ -37,11 +37,11 @@ export const getStaffCommissions = async (
           },
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: commissions.length,
       data: commissions,
     });
@@ -85,11 +85,11 @@ export const getCommissionById = async (
     });
 
     if (!commission) {
-      return next(new AppError("Commission not found", 404));
+      return next(new AppError('Commission not found', 404));
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: commission,
     });
   } catch (error) {
@@ -120,17 +120,17 @@ export const createCommission = async (
     if (!staffId || !name || !commissionType || commissionValue === undefined) {
       return next(
         new AppError(
-          "Missing required fields: staffId, name, commissionType, commissionValue",
+          'Missing required fields: staffId, name, commissionType, commissionValue',
           400
         )
       );
     }
 
     // Validate commission type
-    if (!["PERCENTAGE", "FLAT_AMOUNT"].includes(commissionType)) {
+    if (!['PERCENTAGE', 'FLAT_AMOUNT'].includes(commissionType)) {
       return next(
         new AppError(
-          "Invalid commission type. Must be PERCENTAGE or FLAT_AMOUNT",
+          'Invalid commission type. Must be PERCENTAGE or FLAT_AMOUNT',
           400
         )
       );
@@ -138,14 +138,14 @@ export const createCommission = async (
 
     // Validate commission value
     if (
-      commissionType === "PERCENTAGE" &&
+      commissionType === 'PERCENTAGE' &&
       (commissionValue < 0 || commissionValue > 100)
     ) {
-      return next(new AppError("Percentage must be between 0 and 100", 400));
+      return next(new AppError('Percentage must be between 0 and 100', 400));
     }
 
-    if (commissionType === "FLAT_AMOUNT" && commissionValue < 0) {
-      return next(new AppError("Flat amount must be positive", 400));
+    if (commissionType === 'FLAT_AMOUNT' && commissionValue < 0) {
+      return next(new AppError('Flat amount must be positive', 400));
     }
 
     // Verify staff exists
@@ -154,7 +154,7 @@ export const createCommission = async (
     });
 
     if (!staff) {
-      return next(new AppError("Staff member not found", 404));
+      return next(new AppError('Staff member not found', 404));
     }
 
     // Create commission with service links
@@ -187,7 +187,7 @@ export const createCommission = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: commission,
     });
   } catch (error) {
@@ -221,22 +221,22 @@ export const updateCommission = async (
     });
 
     if (!existing) {
-      return next(new AppError("Commission not found", 404));
+      return next(new AppError('Commission not found', 404));
     }
 
     // Validate commission value if provided
-    if (commissionType === "PERCENTAGE" && commissionValue !== undefined) {
+    if (commissionType === 'PERCENTAGE' && commissionValue !== undefined) {
       if (commissionValue < 0 || commissionValue > 100) {
-        return next(new AppError("Percentage must be between 0 and 100", 400));
+        return next(new AppError('Percentage must be between 0 and 100', 400));
       }
     }
 
     if (
-      commissionType === "FLAT_AMOUNT" &&
+      commissionType === 'FLAT_AMOUNT' &&
       commissionValue !== undefined &&
       commissionValue < 0
     ) {
-      return next(new AppError("Flat amount must be positive", 400));
+      return next(new AppError('Flat amount must be positive', 400));
     }
 
     // Update commission
@@ -282,7 +282,7 @@ export const updateCommission = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: commission,
     });
   } catch (error) {
@@ -307,7 +307,7 @@ export const deleteCommission = async (
     });
 
     if (!existing) {
-      return next(new AppError("Commission not found", 404));
+      return next(new AppError('Commission not found', 404));
     }
 
     await prisma.staffCommission.delete({
@@ -334,7 +334,7 @@ export const getAllCommissions = async (
 
     const where: any = { tenantId };
     if (isActive !== undefined) {
-      where.isActive = isActive === "true";
+      where.isActive = isActive === 'true';
     }
 
     const commissions = await prisma.staffCommission.findMany({
@@ -355,11 +355,11 @@ export const getAllCommissions = async (
           },
         },
       },
-      orderBy: [{ staff: { lastName: "asc" } }, { createdAt: "desc" }],
+      orderBy: [{ staff: { lastName: 'asc' } }, { createdAt: 'desc' }],
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: commissions.length,
       data: commissions,
     });
@@ -384,7 +384,7 @@ export const calculateCommission = async (
     if (!staffId || !serviceId || serviceAmount === undefined) {
       return next(
         new AppError(
-          "Missing required fields: staffId, serviceId, serviceAmount",
+          'Missing required fields: staffId, serviceId, serviceAmount',
           400
         )
       );
@@ -406,7 +406,7 @@ export const calculateCommission = async (
 
     if (!commission) {
       return res.status(200).json({
-        status: "success",
+        status: 'success',
         data: {
           hasCommission: false,
           commissionAmount: 0,
@@ -416,14 +416,14 @@ export const calculateCommission = async (
 
     // Calculate commission amount
     let commissionAmount = 0;
-    if (commission.commissionType === "PERCENTAGE") {
+    if (commission.commissionType === 'PERCENTAGE') {
       commissionAmount = serviceAmount * (commission.commissionValue / 100);
     } else {
       commissionAmount = commission.commissionValue;
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         hasCommission: true,
         commissionId: commission.id,
@@ -470,12 +470,12 @@ export const getCommissionReport = async (
 
     if (commissions.length === 0) {
       return res.status(200).json({
-        status: "success",
+        status: 'success',
         data: {
           staffId,
           totalCommission: 0,
           commissionDetails: [],
-          message: "No active commissions found for this staff member",
+          message: 'No active commissions found for this staff member',
         },
       });
     }
@@ -500,7 +500,7 @@ export const getCommissionReport = async (
         tenantId,
         staffAssignedId: staffId,
         serviceId: { in: serviceIds },
-        status: "COMPLETED",
+        status: 'COMPLETED',
         ...(Object.keys(dateFilter).length > 0 ? { endDate: dateFilter } : {}),
       },
       include: {
@@ -538,7 +538,7 @@ export const getCommissionReport = async (
         }
 
         let commissionAmount = 0;
-        if (applicableCommission.commissionType === "PERCENTAGE") {
+        if (applicableCommission.commissionType === 'PERCENTAGE') {
           commissionAmount =
             serviceAmount * (applicableCommission.commissionValue / 100);
         } else {
@@ -561,7 +561,7 @@ export const getCommissionReport = async (
       .filter(Boolean);
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         staffId,
         dateRange: {

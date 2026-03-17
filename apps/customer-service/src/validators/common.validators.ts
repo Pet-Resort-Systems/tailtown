@@ -1,6 +1,6 @@
 /**
  * Common Validation Schemas
- * 
+ *
  * Centralized validation schemas using Zod for type-safe input validation
  * Prevents injection attacks, data corruption, and ensures data integrity
  */
@@ -69,9 +69,7 @@ export const phoneSchema = z
 /**
  * UUID validation schema
  */
-export const uuidSchema = z
-  .string()
-  .uuid('Invalid UUID format');
+export const uuidSchema = z.string().uuid('Invalid UUID format');
 
 /**
  * Tenant ID validation schema
@@ -118,14 +116,14 @@ export const paginationSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
   sortBy: z.string().optional(),
-  sortOrder: z.enum(['asc', 'desc']).default('asc')
+  sortOrder: z.enum(['asc', 'desc']).default('asc'),
 });
 
 /**
  * ID parameter schema (for route params)
  */
 export const idParamSchema = z.object({
-  id: uuidSchema
+  id: uuidSchema,
 });
 
 /**
@@ -133,7 +131,7 @@ export const idParamSchema = z.object({
  */
 export const searchQuerySchema = z.object({
   q: z.string().min(1).max(200).trim(),
-  ...paginationSchema.shape
+  ...paginationSchema.shape,
 });
 
 /**
@@ -173,7 +171,7 @@ export const urlSchema = z
 export const sanitizedStringSchema = z
   .string()
   .max(10000, 'Text must not exceed 10000 characters')
-  .transform((str) => 
+  .transform((str) =>
     str
       .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
       .replace(/javascript:/gi, '')

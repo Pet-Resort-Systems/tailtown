@@ -9,24 +9,24 @@
  * Only updates pets that don't already have a playgroup assigned.
  */
 
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-const TENANT_ID = "b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05";
+const TENANT_ID = 'b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05';
 
 // Weight thresholds in pounds
 const SMALL_DOG_MAX = 25;
 const MEDIUM_DOG_MAX = 50;
 
 function getPlaygroupByWeight(weight) {
-  if (weight < SMALL_DOG_MAX) return "SMALL_DOG";
-  if (weight <= MEDIUM_DOG_MAX) return "MEDIUM_DOG";
-  return "LARGE_DOG";
+  if (weight < SMALL_DOG_MAX) return 'SMALL_DOG';
+  if (weight <= MEDIUM_DOG_MAX) return 'MEDIUM_DOG';
+  return 'LARGE_DOG';
 }
 
 async function assignPlaygroupByWeight() {
-  console.log("🐕 Assigning playgroup compatibility by weight...\n");
+  console.log('🐕 Assigning playgroup compatibility by weight...\n');
 
   try {
     // Get pets without playgroup compatibility but with weight
@@ -34,7 +34,7 @@ async function assignPlaygroupByWeight() {
       where: {
         tenantId: TENANT_ID,
         isActive: true,
-        type: "DOG", // Only dogs get playgroup assignments
+        type: 'DOG', // Only dogs get playgroup assignments
         weight: { not: null },
         playgroupCompatibility: null,
       },
@@ -66,12 +66,12 @@ async function assignPlaygroupByWeight() {
         data: { playgroupCompatibility: playgroup },
       });
 
-      if (playgroup === "SMALL_DOG") smallCount++;
-      else if (playgroup === "MEDIUM_DOG") mediumCount++;
+      if (playgroup === 'SMALL_DOG') smallCount++;
+      else if (playgroup === 'MEDIUM_DOG') mediumCount++;
       else largeCount++;
     }
 
-    console.log("📊 Summary:");
+    console.log('📊 Summary:');
     console.log(`   🐕 Small Dogs (< ${SMALL_DOG_MAX} lbs): ${smallCount}`);
     console.log(
       `   🐕 Medium Dogs (${SMALL_DOG_MAX}-${MEDIUM_DOG_MAX} lbs): ${mediumCount}`
@@ -81,23 +81,23 @@ async function assignPlaygroupByWeight() {
 
     // Final stats
     const finalStats = await prisma.pet.groupBy({
-      by: ["playgroupCompatibility"],
+      by: ['playgroupCompatibility'],
       where: {
         tenantId: TENANT_ID,
         isActive: true,
-        type: "DOG",
+        type: 'DOG',
       },
       _count: true,
     });
 
-    console.log("\n📈 Final playgroup distribution:");
+    console.log('\n📈 Final playgroup distribution:');
     for (const stat of finalStats) {
       console.log(
-        `   ${stat.playgroupCompatibility || "NULL"}: ${stat._count}`
+        `   ${stat.playgroupCompatibility || 'NULL'}: ${stat._count}`
       );
     }
   } catch (error) {
-    console.error("❌ Error:", error.message);
+    console.error('❌ Error:', error.message);
     console.error(error.stack);
   } finally {
     await prisma.$disconnect();

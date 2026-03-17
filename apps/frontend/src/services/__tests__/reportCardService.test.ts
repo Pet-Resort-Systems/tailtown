@@ -1,6 +1,6 @@
 /**
  * Report Card Service Tests
- * 
+ *
  * Tests for frontend report card service
  */
 
@@ -25,11 +25,11 @@ describe('ReportCardService', () => {
         serviceType: 'DAYCARE' as const,
         moodRating: 5,
         energyRating: 4,
-        status: 'DRAFT' as const
+        status: 'DRAFT' as const,
       };
 
       mockedApi.post.mockResolvedValue({
-        data: { data: mockReportCard }
+        data: { data: mockReportCard },
       } as any);
 
       const result = await reportCardService.createReportCard({
@@ -37,7 +37,7 @@ describe('ReportCardService', () => {
         customerId: 'customer-123',
         serviceType: 'DAYCARE',
         moodRating: 5,
-        energyRating: 4
+        energyRating: 4,
       });
 
       expect(mockedApi.post).toHaveBeenCalledWith('/api/report-cards', {
@@ -45,7 +45,7 @@ describe('ReportCardService', () => {
         customerId: 'customer-123',
         serviceType: 'DAYCARE',
         moodRating: 5,
-        energyRating: 4
+        energyRating: 4,
       });
 
       expect(result).toEqual(mockReportCard);
@@ -57,29 +57,29 @@ describe('ReportCardService', () => {
       const mockResponse = {
         reportCards: [
           { id: 'report-1', petId: 'pet-123' },
-          { id: 'report-2', petId: 'pet-456' }
+          { id: 'report-2', petId: 'pet-456' },
         ],
         total: 2,
         limit: 50,
-        offset: 0
+        offset: 0,
       };
 
       mockedApi.get.mockResolvedValue({
-        data: { data: mockResponse }
+        data: { data: mockResponse },
       } as any);
 
       const result = await reportCardService.listReportCards({
         petId: 'pet-123',
         status: 'SENT',
-        limit: 50
+        limit: 50,
       });
 
       expect(mockedApi.get).toHaveBeenCalledWith('/api/report-cards', {
         params: {
           petId: 'pet-123',
           status: 'SENT',
-          limit: 50
-        }
+          limit: 50,
+        },
       });
 
       expect(result).toEqual(mockResponse);
@@ -92,17 +92,17 @@ describe('ReportCardService', () => {
         id: 'photo-123',
         reportCardId: 'report-123',
         url: 'https://example.com/photo.jpg',
-        order: 0
+        order: 0,
       };
 
       mockedApi.post.mockResolvedValue({
-        data: { data: mockPhoto }
+        data: { data: mockPhoto },
       } as any);
 
       const result = await reportCardService.uploadPhoto('report-123', {
         url: 'https://example.com/photo.jpg',
         caption: 'Playing fetch!',
-        order: 0
+        order: 0,
       });
 
       expect(mockedApi.post).toHaveBeenCalledWith(
@@ -110,7 +110,7 @@ describe('ReportCardService', () => {
         {
           url: 'https://example.com/photo.jpg',
           caption: 'Playing fetch!',
-          order: 0
+          order: 0,
         }
       );
 
@@ -124,23 +124,23 @@ describe('ReportCardService', () => {
         id: 'report-123',
         status: 'SENT' as const,
         sentViaEmail: true,
-        sentViaSMS: true
+        sentViaSMS: true,
       };
 
       mockedApi.post.mockResolvedValue({
-        data: { data: mockReportCard }
+        data: { data: mockReportCard },
       } as any);
 
       const result = await reportCardService.sendReportCard('report-123', {
         sendEmail: true,
-        sendSMS: true
+        sendSMS: true,
       });
 
       expect(mockedApi.post).toHaveBeenCalledWith(
         '/api/report-cards/report-123/send',
         {
           sendEmail: true,
-          sendSMS: true
+          sendSMS: true,
         }
       );
 
@@ -154,24 +154,24 @@ describe('ReportCardService', () => {
         created: 2,
         reportCards: [
           { id: 'report-1', petId: 'pet-1' },
-          { id: 'report-2', petId: 'pet-2' }
-        ]
+          { id: 'report-2', petId: 'pet-2' },
+        ],
       };
 
       mockedApi.post.mockResolvedValue({
-        data: { data: mockResponse }
+        data: { data: mockResponse },
       } as any);
 
       const result = await reportCardService.bulkCreateReportCards([
         { petId: 'pet-1', customerId: 'customer-1', serviceType: 'DAYCARE' },
-        { petId: 'pet-2', customerId: 'customer-2', serviceType: 'DAYCARE' }
+        { petId: 'pet-2', customerId: 'customer-2', serviceType: 'DAYCARE' },
       ]);
 
       expect(mockedApi.post).toHaveBeenCalledWith('/api/report-cards/bulk', {
         reportCards: [
           { petId: 'pet-1', customerId: 'customer-1', serviceType: 'DAYCARE' },
-          { petId: 'pet-2', customerId: 'customer-2', serviceType: 'DAYCARE' }
-        ]
+          { petId: 'pet-2', customerId: 'customer-2', serviceType: 'DAYCARE' },
+        ],
       });
 
       expect(result).toEqual(mockResponse);
@@ -194,7 +194,9 @@ describe('ReportCardService', () => {
 
     it('should get correct status color', () => {
       expect(reportCardService.getStatusColor('DRAFT')).toBe('default');
-      expect(reportCardService.getStatusColor('PENDING_REVIEW')).toBe('warning');
+      expect(reportCardService.getStatusColor('PENDING_REVIEW')).toBe(
+        'warning'
+      );
       expect(reportCardService.getStatusColor('SENT')).toBe('success');
       expect(reportCardService.getStatusColor('VIEWED')).toBe('success');
     });
@@ -220,9 +222,9 @@ describe('ReportCardService', () => {
       // Mock canvas and image
       const mockCanvas = document.createElement('canvas');
       const mockContext = {
-        drawImage: jest.fn()
+        drawImage: jest.fn(),
       };
-      
+
       jest.spyOn(document, 'createElement').mockReturnValue(mockCanvas as any);
       jest.spyOn(mockCanvas, 'getContext').mockReturnValue(mockContext as any);
       jest.spyOn(mockCanvas, 'toBlob').mockImplementation((callback: any) => {
@@ -230,7 +232,12 @@ describe('ReportCardService', () => {
         callback(blob);
       });
 
-      const result = await reportCardService.compressImage(mockFile, 800, 800, 0.8);
+      const result = await reportCardService.compressImage(
+        mockFile,
+        800,
+        800,
+        0.8
+      );
 
       expect(result).toBeInstanceOf(File);
       expect(result.type).toBe('image/jpeg');

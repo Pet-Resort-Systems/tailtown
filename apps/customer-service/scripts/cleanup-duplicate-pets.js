@@ -9,14 +9,14 @@
  * 5. Deactivates duplicate records
  */
 
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-const TENANT_ID = "b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05";
+const TENANT_ID = 'b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05';
 
 async function cleanupDuplicatePets() {
-  console.log("🔍 Starting duplicate pet cleanup...\n");
+  console.log('🔍 Starting duplicate pet cleanup...\n');
 
   try {
     // Step 1: Find all duplicate pets (same name + customerId)
@@ -45,7 +45,7 @@ async function cleanupDuplicatePets() {
         include: {
           reservations: {
             where: {
-              status: { in: ["CONFIRMED", "CHECKED_IN", "PENDING"] },
+              status: { in: ['CONFIRMED', 'CHECKED_IN', 'PENDING'] },
             },
           },
         },
@@ -76,7 +76,7 @@ async function cleanupDuplicatePets() {
 
       console.log(`\n📝 Processing: ${dup.name} (${dup.count} duplicates)`);
       console.log(`   Best record: ${bestPet.id}`);
-      console.log(`   Playgroup: ${bestPet.playgroupCompatibility || "none"}`);
+      console.log(`   Playgroup: ${bestPet.playgroupCompatibility || 'none'}`);
 
       // Merge compatibility data from all duplicates
       const mergedData = {
@@ -160,7 +160,7 @@ async function cleanupDuplicatePets() {
           },
           data: {
             isActive: false,
-            deactivationReason: "Duplicate record - merged into " + bestPet.id,
+            deactivationReason: 'Duplicate record - merged into ' + bestPet.id,
           },
         });
 
@@ -171,7 +171,7 @@ async function cleanupDuplicatePets() {
     }
 
     // Step 2: Clear old petIcons from all remaining active pets
-    console.log("\n🧹 Clearing old petIcons from all active pets...");
+    console.log('\n🧹 Clearing old petIcons from all active pets...');
 
     const iconClearResult = await prisma.pet.updateMany({
       where: {
@@ -186,7 +186,7 @@ async function cleanupDuplicatePets() {
 
     totalIconsCleared += iconClearResult.count;
 
-    console.log("\n✅ Cleanup Complete!");
+    console.log('\n✅ Cleanup Complete!');
     console.log(`   📊 Total duplicate sets processed: ${duplicates.length}`);
     console.log(`   🔀 Total duplicate pets deactivated: ${totalMerged}`);
     console.log(
@@ -195,7 +195,7 @@ async function cleanupDuplicatePets() {
     console.log(`   🧹 Total old icons cleared: ${totalIconsCleared}`);
 
     // Verification
-    console.log("\n📊 Final Statistics:");
+    console.log('\n📊 Final Statistics:');
     const stats = await prisma.$queryRaw`
       SELECT 
         COUNT(*) as total_active_pets,
@@ -212,7 +212,7 @@ async function cleanupDuplicatePets() {
     console.log(`   With playgroup: ${stats[0].with_playgroup}`);
     console.log(`   With old icons: ${stats[0].with_old_icons}`);
   } catch (error) {
-    console.error("❌ Error during cleanup:", error);
+    console.error('❌ Error during cleanup:', error);
     throw error;
   } finally {
     await prisma.$disconnect();
@@ -222,10 +222,10 @@ async function cleanupDuplicatePets() {
 // Run the cleanup
 cleanupDuplicatePets()
   .then(() => {
-    console.log("\n✅ Script completed successfully");
+    console.log('\n✅ Script completed successfully');
     process.exit(0);
   })
   .catch((error) => {
-    console.error("\n❌ Script failed:", error);
+    console.error('\n❌ Script failed:', error);
     process.exit(1);
   });

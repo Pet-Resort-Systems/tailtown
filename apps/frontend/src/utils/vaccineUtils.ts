@@ -16,7 +16,7 @@ export interface VaccinationStatus {
  * Recalculates vaccine status based on current date
  * This ensures that vaccines that have expired since the last database update
  * are properly marked as expired
- * 
+ *
  * NOTE: This function processes ALL vaccines in the data, but only required
  * vaccines should be checked when counting status (see getRequiredVaccines)
  */
@@ -35,47 +35,54 @@ export const recalculateVaccineStatus = (
 
   // If we have vaccineExpirations, use those to determine status
   if (vaccineExpirations && typeof vaccineExpirations === 'object') {
-    Object.entries(vaccineExpirations).forEach(([vaccineName, expirationDate]) => {
-      if (typeof expirationDate === 'string' && expirationDate.trim() !== '') {
-        // Parse date as local time to avoid timezone issues
-        const [year, month, day] = expirationDate.split('-').map(Number);
-        const expDate = new Date(year, month - 1, day);
-        expDate.setHours(0, 0, 0, 0);
+    Object.entries(vaccineExpirations).forEach(
+      ([vaccineName, expirationDate]) => {
+        if (
+          typeof expirationDate === 'string' &&
+          expirationDate.trim() !== ''
+        ) {
+          // Parse date as local time to avoid timezone issues
+          const [year, month, day] = expirationDate.split('-').map(Number);
+          const expDate = new Date(year, month - 1, day);
+          expDate.setHours(0, 0, 0, 0);
 
-        recalculated[vaccineName.toLowerCase()] = {
-          status: expDate >= today ? 'CURRENT' : 'EXPIRED',
-          expiration: expirationDate as string,
-        };
+          recalculated[vaccineName.toLowerCase()] = {
+            status: expDate >= today ? 'CURRENT' : 'EXPIRED',
+            expiration: expirationDate as string,
+          };
+        }
+        // Skip vaccines with empty/pending dates - don't add them to recalculated
       }
-      // Skip vaccines with empty/pending dates - don't add them to recalculated
-    });
+    );
   }
 
   // Also check vaccinationStatus for any additional vaccines
   if (vaccinationStatus && typeof vaccinationStatus === 'object') {
-    Object.entries(vaccinationStatus).forEach(([vaccineName, record]: [string, any]) => {
-      const lowerName = vaccineName.toLowerCase();
-      
-      // Skip if we already calculated from vaccineExpirations
-      if (recalculated[lowerName]) {
-        return;
-      }
+    Object.entries(vaccinationStatus).forEach(
+      ([vaccineName, record]: [string, any]) => {
+        const lowerName = vaccineName.toLowerCase();
 
-      if (record && record.expiration) {
-        const expDate = new Date(record.expiration);
-        expDate.setHours(0, 0, 0, 0);
+        // Skip if we already calculated from vaccineExpirations
+        if (recalculated[lowerName]) {
+          return;
+        }
 
-        recalculated[lowerName] = {
-          status: expDate >= today ? 'CURRENT' : 'EXPIRED',
-          expiration: record.expiration,
-          lastAdministered: record.lastAdministered,
-        };
-      } else if (record && record.status && record.status !== 'PENDING') {
-        // Only include if status is not PENDING
-        recalculated[lowerName] = record;
+        if (record && record.expiration) {
+          const expDate = new Date(record.expiration);
+          expDate.setHours(0, 0, 0, 0);
+
+          recalculated[lowerName] = {
+            status: expDate >= today ? 'CURRENT' : 'EXPIRED',
+            expiration: record.expiration,
+            lastAdministered: record.lastAdministered,
+          };
+        } else if (record && record.status && record.status !== 'PENDING') {
+          // Only include if status is not PENDING
+          recalculated[lowerName] = record;
+        }
+        // Skip PENDING vaccines - don't add them to recalculated
       }
-      // Skip PENDING vaccines - don't add them to recalculated
-    });
+    );
   }
 
   return recalculated;

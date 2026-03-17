@@ -25,8 +25,8 @@ export const options = {
     },
   },
   thresholds: {
-    'http_req_duration': ['p(95)<500'],
-    'errors': ['rate<0.1'],
+    http_req_duration: ['p(95)<500'],
+    errors: ['rate<0.1'],
   },
 };
 
@@ -55,7 +55,9 @@ function makeRequest(tenantId, counter) {
 
   if (res.status === 429) {
     rateLimitHits.add(1);
-    console.log(`Rate limit hit for tenant ${tenantId} at ${new Date().toISOString()}`);
+    console.log(
+      `Rate limit hit for tenant ${tenantId} at ${new Date().toISOString()}`
+    );
   }
 
   sleep(0.05);
@@ -75,9 +77,15 @@ export function handleSummary(data) {
     test: 'Multi-Tenant Rate Limiting',
     results: {
       total_requests: data.metrics.http_reqs.values.count,
-      tenant_a_requests: data.metrics.tenant_a_requests ? data.metrics.tenant_a_requests.values.count : 0,
-      tenant_b_requests: data.metrics.tenant_b_requests ? data.metrics.tenant_b_requests.values.count : 0,
-      rate_limit_hits: data.metrics.rate_limit_hits ? data.metrics.rate_limit_hits.values.count : 0,
+      tenant_a_requests: data.metrics.tenant_a_requests
+        ? data.metrics.tenant_a_requests.values.count
+        : 0,
+      tenant_b_requests: data.metrics.tenant_b_requests
+        ? data.metrics.tenant_b_requests.values.count
+        : 0,
+      rate_limit_hits: data.metrics.rate_limit_hits
+        ? data.metrics.rate_limit_hits.values.count
+        : 0,
       error_rate: data.metrics.errors.values.rate,
       avg_response_time: data.metrics.http_req_duration.values.avg,
       p95_response_time: data.metrics.http_req_duration.values['p(95)'],
@@ -85,8 +93,12 @@ export function handleSummary(data) {
   };
 
   return {
-    'load-tests/results/rate-limiting-multi.json': JSON.stringify(summary, null, 2),
-    'stdout': formatSummary(summary),
+    'load-tests/results/rate-limiting-multi.json': JSON.stringify(
+      summary,
+      null,
+      2
+    ),
+    stdout: formatSummary(summary),
   };
 }
 

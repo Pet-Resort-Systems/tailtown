@@ -1,6 +1,6 @@
 /**
  * Price Rule Integration Tests
- * 
+ *
  * Tests against real database to ensure pricing is always correct
  * Run with: npm test -- priceRule.integration.test
  */
@@ -23,8 +23,8 @@ describe('Price Rule Integration Tests', () => {
         serviceCategory: 'BOARDING',
         price: 100,
         duration: 60,
-        isActive: true
-      }
+        isActive: true,
+      },
     });
     testServiceId = service.id;
   });
@@ -32,16 +32,16 @@ describe('Price Rule Integration Tests', () => {
   afterAll(async () => {
     // Clean up test data
     await prisma.priceRuleService.deleteMany({
-      where: { priceRuleId: { in: testRuleIds } }
+      where: { priceRuleId: { in: testRuleIds } },
     });
     await prisma.priceRuleServiceCategory.deleteMany({
-      where: { priceRuleId: { in: testRuleIds } }
+      where: { priceRuleId: { in: testRuleIds } },
     });
     await prisma.priceRule.deleteMany({
-      where: { id: { in: testRuleIds } }
+      where: { id: { in: testRuleIds } },
     });
     await prisma.service.delete({
-      where: { id: testServiceId }
+      where: { id: testServiceId },
     });
     await prisma.$disconnect();
   });
@@ -50,13 +50,13 @@ describe('Price Rule Integration Tests', () => {
     // Clean up rules after each test
     if (testRuleIds.length > 0) {
       await prisma.priceRuleService.deleteMany({
-        where: { priceRuleId: { in: testRuleIds } }
+        where: { priceRuleId: { in: testRuleIds } },
       });
       await prisma.priceRuleServiceCategory.deleteMany({
-        where: { priceRuleId: { in: testRuleIds } }
+        where: { priceRuleId: { in: testRuleIds } },
       });
       await prisma.priceRule.deleteMany({
-        where: { id: { in: testRuleIds } }
+        where: { id: { in: testRuleIds } },
       });
       testRuleIds = [];
     }
@@ -75,24 +75,26 @@ describe('Price Rule Integration Tests', () => {
           discountValue: 20,
           minQuantity: 5,
           isActive: true,
-          priority: 10
-        }
+          priority: 10,
+        },
       });
       testRuleIds.push(rule.id);
 
       // Get service
       const service = await prisma.service.findUnique({
-        where: { id: testServiceId }
+        where: { id: testServiceId },
       });
 
       // Calculate
       const startDate = new Date('2025-11-01');
       const endDate = new Date('2025-11-06');
-      const durationInDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+      const durationInDays = Math.ceil(
+        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+      );
       const petCount = 1;
 
       const basePrice = service!.price * durationInDays * petCount;
-      const expectedDiscount = basePrice * 0.20;
+      const expectedDiscount = basePrice * 0.2;
       const expectedFinalPrice = basePrice - expectedDiscount;
 
       expect(basePrice).toBe(500);
@@ -111,13 +113,13 @@ describe('Price Rule Integration Tests', () => {
           discountValue: 50,
           minQuantity: 2,
           isActive: true,
-          priority: 10
-        }
+          priority: 10,
+        },
       });
       testRuleIds.push(rule.id);
 
       const service = await prisma.service.findUnique({
-        where: { id: testServiceId }
+        where: { id: testServiceId },
       });
 
       const startDate = new Date('2025-11-01');
@@ -143,13 +145,13 @@ describe('Price Rule Integration Tests', () => {
           discountValue: 15,
           daysOfWeek: '[5,6]', // Friday, Saturday
           isActive: true,
-          priority: 10
-        }
+          priority: 10,
+        },
       });
       testRuleIds.push(rule.id);
 
       const service = await prisma.service.findUnique({
-        where: { id: testServiceId }
+        where: { id: testServiceId },
       });
 
       const basePrice = service!.price * 1 * 1; // 1 day, 1 pet
@@ -173,8 +175,8 @@ describe('Price Rule Integration Tests', () => {
           discountValue: 10,
           minQuantity: 5,
           isActive: true,
-          priority: 20
-        }
+          priority: 20,
+        },
       });
       testRuleIds.push(rule1.id);
 
@@ -188,18 +190,18 @@ describe('Price Rule Integration Tests', () => {
           discountValue: 30,
           minQuantity: 2,
           isActive: true,
-          priority: 15
-        }
+          priority: 15,
+        },
       });
       testRuleIds.push(rule2.id);
 
       const service = await prisma.service.findUnique({
-        where: { id: testServiceId }
+        where: { id: testServiceId },
       });
 
       // 5 days, 2 pets
       const basePrice = service!.price * 5 * 2;
-      const discount1 = basePrice * 0.10; // 10% off
+      const discount1 = basePrice * 0.1; // 10% off
       const discount2 = 30; // $30 off
       const expectedFinalPrice = basePrice - discount1 - discount2;
 
@@ -221,8 +223,8 @@ describe('Price Rule Integration Tests', () => {
           discountValue: 10,
           minQuantity: 3,
           isActive: true,
-          priority: 20 // Higher priority
-        }
+          priority: 20, // Higher priority
+        },
       });
       testRuleIds.push(highPriorityRule.id);
 
@@ -236,8 +238,8 @@ describe('Price Rule Integration Tests', () => {
           discountValue: 20,
           minQuantity: 3,
           isActive: true,
-          priority: 10 // Lower priority
-        }
+          priority: 10, // Lower priority
+        },
       });
       testRuleIds.push(lowPriorityRule.id);
 
@@ -245,9 +247,9 @@ describe('Price Rule Integration Tests', () => {
       const rules = await prisma.priceRule.findMany({
         where: {
           id: { in: testRuleIds },
-          isActive: true
+          isActive: true,
         },
-        orderBy: { priority: 'desc' }
+        orderBy: { priority: 'desc' },
       });
 
       // Should return high priority rule first
@@ -275,8 +277,8 @@ describe('Price Rule Integration Tests', () => {
           startDate,
           endDate,
           isActive: true,
-          priority: 10
-        }
+          priority: 10,
+        },
       });
       testRuleIds.push(rule.id);
 
@@ -287,11 +289,8 @@ describe('Price Rule Integration Tests', () => {
           isActive: true,
           ruleType: 'SEASONAL',
           startDate: { lte: now },
-          OR: [
-            { endDate: { gte: now } },
-            { endDate: null }
-          ]
-        }
+          OR: [{ endDate: { gte: now } }, { endDate: null }],
+        },
       });
 
       expect(activeRules).toHaveLength(1);
@@ -316,8 +315,8 @@ describe('Price Rule Integration Tests', () => {
           startDate,
           endDate,
           isActive: true,
-          priority: 10
-        }
+          priority: 10,
+        },
       });
       testRuleIds.push(rule.id);
 
@@ -328,8 +327,8 @@ describe('Price Rule Integration Tests', () => {
           isActive: true,
           ruleType: 'SEASONAL',
           startDate: { lte: now },
-          endDate: { gte: now }
-        }
+          endDate: { gte: now },
+        },
       });
 
       expect(activeRules).toHaveLength(0);
@@ -347,8 +346,8 @@ describe('Price Rule Integration Tests', () => {
           discountType: 'PERCENTAGE',
           discountValue: 10,
           isActive: true,
-          priority: 10
-        }
+          priority: 10,
+        },
       });
       testRuleIds.push(rule.id);
 
@@ -357,8 +356,8 @@ describe('Price Rule Integration Tests', () => {
         data: {
           tenantId: 'test',
           priceRuleId: rule.id,
-          serviceCategory: 'BOARDING'
-        }
+          serviceCategory: 'BOARDING',
+        },
       });
 
       // Query rules for BOARDING category
@@ -368,13 +367,13 @@ describe('Price Rule Integration Tests', () => {
           isActive: true,
           serviceCategories: {
             some: {
-              serviceCategory: 'BOARDING'
-            }
-          }
+              serviceCategory: 'BOARDING',
+            },
+          },
         },
         include: {
-          serviceCategories: true
-        }
+          serviceCategories: true,
+        },
       });
 
       expect(rules).toHaveLength(1);
@@ -391,8 +390,8 @@ describe('Price Rule Integration Tests', () => {
           discountType: 'PERCENTAGE',
           discountValue: 10,
           isActive: true,
-          priority: 10
-        }
+          priority: 10,
+        },
       });
       testRuleIds.push(rule.id);
 
@@ -401,8 +400,8 @@ describe('Price Rule Integration Tests', () => {
         data: {
           tenantId: 'test',
           priceRuleId: rule.id,
-          serviceCategory: 'GROOMING'
-        }
+          serviceCategory: 'GROOMING',
+        },
       });
 
       // Query rules for BOARDING category (should not match)
@@ -412,10 +411,10 @@ describe('Price Rule Integration Tests', () => {
           isActive: true,
           serviceCategories: {
             some: {
-              serviceCategory: 'BOARDING'
-            }
-          }
-        }
+              serviceCategory: 'BOARDING',
+            },
+          },
+        },
       });
 
       expect(rules).toHaveLength(0);
@@ -433,13 +432,13 @@ describe('Price Rule Integration Tests', () => {
           discountType: 'FIXED_AMOUNT',
           discountValue: 10000, // More than any reasonable price
           isActive: true,
-          priority: 10
-        }
+          priority: 10,
+        },
       });
       testRuleIds.push(rule.id);
 
       const service = await prisma.service.findUnique({
-        where: { id: testServiceId }
+        where: { id: testServiceId },
       });
 
       const basePrice = service!.price * 1 * 1;
@@ -468,8 +467,8 @@ describe('Price Rule Integration Tests', () => {
           serviceCategory: 'OTHER',
           price: 0,
           duration: 30,
-          isActive: true
-        }
+          isActive: true,
+        },
       });
 
       const rule = await prisma.priceRule.create({
@@ -481,13 +480,13 @@ describe('Price Rule Integration Tests', () => {
           discountType: 'PERCENTAGE',
           discountValue: 50,
           isActive: true,
-          priority: 10
-        }
+          priority: 10,
+        },
       });
       testRuleIds.push(rule.id);
 
       const basePrice = freeService.price * 1 * 1;
-      const discount = basePrice * 0.50;
+      const discount = basePrice * 0.5;
       const finalPrice = basePrice - discount;
 
       expect(finalPrice).toBe(0);
@@ -511,8 +510,8 @@ describe('Price Rule Integration Tests', () => {
             discountValue: 10,
             minQuantity: 3,
             isActive: true,
-            priority: 20
-          }
+            priority: 20,
+          },
         }),
         prisma.priceRule.create({
           data: {
@@ -524,8 +523,8 @@ describe('Price Rule Integration Tests', () => {
             discountValue: 25,
             minQuantity: 2,
             isActive: true,
-            priority: 19
-          }
+            priority: 19,
+          },
         }),
         prisma.priceRule.create({
           data: {
@@ -537,20 +536,20 @@ describe('Price Rule Integration Tests', () => {
             discountValue: 5,
             daysOfWeek: '[5,6]',
             isActive: true,
-            priority: 18
-          }
-        })
+            priority: 18,
+          },
+        }),
       ]);
 
-      testRuleIds.push(...rules.map(r => r.id));
+      testRuleIds.push(...rules.map((r) => r.id));
 
       // All rules should be retrievable
       const allRules = await prisma.priceRule.findMany({
         where: {
           id: { in: testRuleIds },
-          isActive: true
+          isActive: true,
         },
-        orderBy: { priority: 'desc' }
+        orderBy: { priority: 'desc' },
       });
 
       expect(allRules).toHaveLength(3);

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, Link, useSearchParams } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import {
   Formik,
   Form,
@@ -7,8 +7,8 @@ import {
   FormikHelpers,
   FormikErrors,
   FormikTouched,
-} from "formik";
-import * as Yup from "yup";
+} from 'formik';
+import * as Yup from 'yup';
 import {
   Box,
   TextField,
@@ -17,8 +17,8 @@ import {
   Link as MuiLink,
   CircularProgress,
   Alert,
-} from "@mui/material";
-import { useAuth } from "../../contexts/AuthContext";
+} from '@mui/material';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface LoginFormValues {
   email: string;
@@ -27,9 +27,9 @@ interface LoginFormValues {
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
-    .email("Invalid email address")
-    .required("Email is required"),
-  password: Yup.string().required("Password is required"),
+    .email('Invalid email address')
+    .required('Email is required'),
+  password: Yup.string().required('Password is required'),
 });
 
 const Login = () => {
@@ -41,11 +41,11 @@ const Login = () => {
 
   // Handle tenant parameter from wizard redirect
   useEffect(() => {
-    const tenant = searchParams.get("tenant");
+    const tenant = searchParams.get('tenant');
     if (tenant) {
-      localStorage.setItem("tailtown_tenant_id", tenant);
+      localStorage.setItem('tailtown_tenant_id', tenant);
       setTenantName(tenant);
-      console.log("Set tenant ID from URL:", tenant);
+      console.log('Set tenant ID from URL:', tenant);
     }
   }, [searchParams]);
 
@@ -55,27 +55,27 @@ const Login = () => {
   ) => {
     try {
       await login(values.email, values.password);
-      navigate("/dashboard");
+      navigate('/dashboard');
     } catch (error) {
-      setErrorMessage("Invalid email or password");
+      setErrorMessage('Invalid email or password');
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <Box sx={{ width: "100%", maxWidth: 400, mx: "auto" }}>
+    <Box sx={{ width: '100%', maxWidth: 400, mx: 'auto' }}>
       <Typography
         variant="h5"
         component="h2"
-        sx={{ mb: 3, textAlign: "center" }}
+        sx={{ mb: 3, textAlign: 'center' }}
       >
         Sign In
       </Typography>
 
       {tenantName && (
         <Alert severity="success" sx={{ mb: 3 }}>
-          Welcome to <strong>{tenantName.replace(/-/g, " ")}</strong>! Please
+          Welcome to <strong>{tenantName.replace(/-/g, ' ')}</strong>! Please
           sign in with your staff credentials.
         </Alert>
       )}
@@ -88,8 +88,8 @@ const Login = () => {
 
       <Formik
         initialValues={{
-          email: "",
-          password: "",
+          email: '',
+          password: '',
         }}
         validationSchema={LoginSchema}
         onSubmit={handleSubmit}
@@ -139,10 +139,10 @@ const Login = () => {
               disabled={isSubmitting}
               sx={{ mt: 3, mb: 2, py: 1.2 }}
             >
-              {isSubmitting ? <CircularProgress size={24} /> : "Sign In"}
+              {isSubmitting ? <CircularProgress size={24} /> : 'Sign In'}
             </Button>
 
-            <Box sx={{ textAlign: "center", mt: 2 }}>
+            <Box sx={{ textAlign: 'center', mt: 2 }}>
               <MuiLink component={Link} to="/forgot-password" variant="body2">
                 Forgot password?
               </MuiLink>

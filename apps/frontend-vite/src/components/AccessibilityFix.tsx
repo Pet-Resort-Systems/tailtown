@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
  * This component fixes the accessibility issue with Material UI dialogs
  * where aria-hidden="true" is applied to the root element but descendant elements
  * retain focus, causing accessibility warnings.
- * 
+ *
  * The fix works by removing the aria-hidden attribute from the root element
  * when the component mounts and setting up a mutation observer to prevent
  * it from being added again.

@@ -1,12 +1,16 @@
 /**
  * Availability Service Tests
- * 
+ *
  * Tests for real-time availability checking business logic.
  * These define what "working" means for availability checking.
  */
 
 import { availabilityService } from '../availabilityService';
-import { AvailabilityCalendar, DateAvailability, AlternativeDateSuggestion } from '../../types/availability';
+import {
+  AvailabilityCalendar,
+  DateAvailability,
+  AlternativeDateSuggestion,
+} from '../../types/availability';
 
 describe('Availability Service - Business Logic', () => {
   describe('calculateAvailabilityStatus', () => {
@@ -34,7 +38,9 @@ describe('Availability Service - Business Logic', () => {
   describe('getStatusColor', () => {
     it('should return correct colors for each status', () => {
       expect(availabilityService.getStatusColor('AVAILABLE')).toBe('success');
-      expect(availabilityService.getStatusColor('PARTIALLY_AVAILABLE')).toBe('warning');
+      expect(availabilityService.getStatusColor('PARTIALLY_AVAILABLE')).toBe(
+        'warning'
+      );
       expect(availabilityService.getStatusColor('UNAVAILABLE')).toBe('error');
       expect(availabilityService.getStatusColor('WAITLIST')).toBe('info');
     });
@@ -43,17 +49,29 @@ describe('Availability Service - Business Logic', () => {
   describe('getStatusLabel', () => {
     it('should return correct labels for each status', () => {
       expect(availabilityService.getStatusLabel('AVAILABLE')).toBe('Available');
-      expect(availabilityService.getStatusLabel('PARTIALLY_AVAILABLE')).toBe('Limited Availability');
-      expect(availabilityService.getStatusLabel('UNAVAILABLE')).toBe('Fully Booked');
-      expect(availabilityService.getStatusLabel('WAITLIST')).toBe('Waitlist Available');
+      expect(availabilityService.getStatusLabel('PARTIALLY_AVAILABLE')).toBe(
+        'Limited Availability'
+      );
+      expect(availabilityService.getStatusLabel('UNAVAILABLE')).toBe(
+        'Fully Booked'
+      );
+      expect(availabilityService.getStatusLabel('WAITLIST')).toBe(
+        'Waitlist Available'
+      );
     });
   });
 
   describe('formatCapacity', () => {
     it('should format capacity correctly', () => {
-      expect(availabilityService.formatCapacity(5, 10)).toBe('5 of 10 available');
-      expect(availabilityService.formatCapacity(0, 10)).toBe('0 of 10 available');
-      expect(availabilityService.formatCapacity(10, 10)).toBe('10 of 10 available');
+      expect(availabilityService.formatCapacity(5, 10)).toBe(
+        '5 of 10 available'
+      );
+      expect(availabilityService.formatCapacity(0, 10)).toBe(
+        '0 of 10 available'
+      );
+      expect(availabilityService.formatCapacity(10, 10)).toBe(
+        '10 of 10 available'
+      );
     });
   });
 
@@ -102,16 +120,34 @@ describe('Availability Service - Business Logic', () => {
         month: 11,
         year: 2026,
         dates: [
-          { date: '2026-11-01', status: 'UNAVAILABLE', availableCount: 0, totalCount: 10, availableSuites: [] },
-          { date: '2026-11-02', status: 'AVAILABLE', availableCount: 10, totalCount: 10, availableSuites: ['s1', 's2'] },
-          { date: '2026-11-03', status: 'AVAILABLE', availableCount: 8, totalCount: 10, availableSuites: ['s1'] }
+          {
+            date: '2026-11-01',
+            status: 'UNAVAILABLE',
+            availableCount: 0,
+            totalCount: 10,
+            availableSuites: [],
+          },
+          {
+            date: '2026-11-02',
+            status: 'AVAILABLE',
+            availableCount: 10,
+            totalCount: 10,
+            availableSuites: ['s1', 's2'],
+          },
+          {
+            date: '2026-11-03',
+            status: 'AVAILABLE',
+            availableCount: 8,
+            totalCount: 10,
+            availableSuites: ['s1'],
+          },
         ],
         summary: {
           totalDays: 3,
           availableDays: 2,
           partiallyAvailableDays: 0,
-          unavailableDays: 1
-        }
+          unavailableDays: 1,
+        },
       };
 
       const nextDate = availabilityService.getNextAvailableDate(calendar);
@@ -123,15 +159,27 @@ describe('Availability Service - Business Logic', () => {
         month: 11,
         year: 2025,
         dates: [
-          { date: '2025-11-01', status: 'UNAVAILABLE', availableCount: 0, totalCount: 10, availableSuites: [] },
-          { date: '2025-11-02', status: 'UNAVAILABLE', availableCount: 0, totalCount: 10, availableSuites: [] }
+          {
+            date: '2025-11-01',
+            status: 'UNAVAILABLE',
+            availableCount: 0,
+            totalCount: 10,
+            availableSuites: [],
+          },
+          {
+            date: '2025-11-02',
+            status: 'UNAVAILABLE',
+            availableCount: 0,
+            totalCount: 10,
+            availableSuites: [],
+          },
         ],
         summary: {
           totalDays: 2,
           availableDays: 0,
           partiallyAvailableDays: 0,
-          unavailableDays: 2
-        }
+          unavailableDays: 2,
+        },
       };
 
       const nextDate = availabilityService.getNextAvailableDate(calendar);
@@ -141,10 +189,34 @@ describe('Availability Service - Business Logic', () => {
 
   describe('filterAvailableDates', () => {
     const dates: DateAvailability[] = [
-      { date: '2026-11-01', status: 'AVAILABLE', availableCount: 10, totalCount: 10, availableSuites: [] },
-      { date: '2026-11-02', status: 'PARTIALLY_AVAILABLE', availableCount: 3, totalCount: 10, availableSuites: [] },
-      { date: '2026-11-03', status: 'UNAVAILABLE', availableCount: 0, totalCount: 10, availableSuites: [] },
-      { date: '2020-01-01', status: 'AVAILABLE', availableCount: 10, totalCount: 10, availableSuites: [] } // Past date
+      {
+        date: '2026-11-01',
+        status: 'AVAILABLE',
+        availableCount: 10,
+        totalCount: 10,
+        availableSuites: [],
+      },
+      {
+        date: '2026-11-02',
+        status: 'PARTIALLY_AVAILABLE',
+        availableCount: 3,
+        totalCount: 10,
+        availableSuites: [],
+      },
+      {
+        date: '2026-11-03',
+        status: 'UNAVAILABLE',
+        availableCount: 0,
+        totalCount: 10,
+        availableSuites: [],
+      },
+      {
+        date: '2020-01-01',
+        status: 'AVAILABLE',
+        availableCount: 10,
+        totalCount: 10,
+        availableSuites: [],
+      }, // Past date
     ];
 
     it('should filter dates with at least 1 available', () => {
@@ -162,7 +234,9 @@ describe('Availability Service - Business Logic', () => {
 
     it('should exclude past dates', () => {
       const filtered = availabilityService.filterAvailableDates(dates, 1);
-      expect(filtered.every(d => !availabilityService.isPastDate(d.date))).toBe(true);
+      expect(
+        filtered.every((d) => !availabilityService.isPastDate(d.date))
+      ).toBe(true);
     });
   });
 
@@ -173,27 +247,30 @@ describe('Availability Service - Business Logic', () => {
         endDate: '2025-11-12',
         availableCount: 5,
         price: 200,
-        reason: 'Far from requested'
+        reason: 'Far from requested',
       },
       {
         startDate: '2025-11-02',
         endDate: '2025-11-04',
         availableCount: 8,
         price: 180,
-        reason: 'Close to requested'
+        reason: 'Close to requested',
       },
       {
         startDate: '2025-11-03',
         endDate: '2025-11-05',
         availableCount: 10,
         price: 190,
-        reason: 'Very close to requested'
-      }
+        reason: 'Very close to requested',
+      },
     ];
 
     it('should sort by proximity to requested date', () => {
-      const sorted = availabilityService.sortAlternatives(alternatives, '2025-11-01');
-      
+      const sorted = availabilityService.sortAlternatives(
+        alternatives,
+        '2025-11-01'
+      );
+
       // Closest date should be first
       expect(sorted[0].startDate).toBe('2025-11-02');
       expect(sorted[1].startDate).toBe('2025-11-03');
@@ -207,37 +284,49 @@ describe('Availability Service - Business Logic', () => {
           endDate: '2025-11-07',
           availableCount: 3,
           price: 200,
-          reason: 'Less available'
+          reason: 'Less available',
         },
         {
           startDate: '2025-11-05',
           endDate: '2025-11-07',
           availableCount: 10,
           price: 200,
-          reason: 'More available'
-        }
+          reason: 'More available',
+        },
       ];
 
-      const sorted = availabilityService.sortAlternatives(equallyClose, '2025-11-01');
+      const sorted = availabilityService.sortAlternatives(
+        equallyClose,
+        '2025-11-01'
+      );
       expect(sorted[0].availableCount).toBe(10);
     });
   });
 
   describe('formatDateRange', () => {
     it.skip('should format date range within same month (locale-dependent)', () => {
-      const formatted = availabilityService.formatDateRange('2025-11-01', '2025-11-05');
+      const formatted = availabilityService.formatDateRange(
+        '2025-11-01',
+        '2025-11-05'
+      );
       // Format may vary by locale
       expect(formatted).toBeTruthy();
     });
 
     it('should format date range across months', () => {
-      const formatted = availabilityService.formatDateRange('2025-11-30', '2025-12-05');
+      const formatted = availabilityService.formatDateRange(
+        '2025-11-30',
+        '2025-12-05'
+      );
       expect(formatted).toContain('Nov');
       expect(formatted).toContain('Dec');
     });
 
     it('should format date range across years', () => {
-      const formatted = availabilityService.formatDateRange('2025-12-30', '2026-01-05');
+      const formatted = availabilityService.formatDateRange(
+        '2025-12-30',
+        '2026-01-05'
+      );
       expect(formatted).toContain('2025');
       expect(formatted).toContain('2026');
     });
@@ -245,21 +334,33 @@ describe('Availability Service - Business Logic', () => {
 
   describe('calculateNights', () => {
     it('should calculate number of nights correctly', () => {
-      expect(availabilityService.calculateNights('2025-11-01', '2025-11-03')).toBe(2);
-      expect(availabilityService.calculateNights('2025-11-01', '2025-11-02')).toBe(1);
-      expect(availabilityService.calculateNights('2025-11-01', '2025-11-08')).toBe(7);
+      expect(
+        availabilityService.calculateNights('2025-11-01', '2025-11-03')
+      ).toBe(2);
+      expect(
+        availabilityService.calculateNights('2025-11-01', '2025-11-02')
+      ).toBe(1);
+      expect(
+        availabilityService.calculateNights('2025-11-01', '2025-11-08')
+      ).toBe(7);
     });
 
     it('should return 0 for same day', () => {
-      expect(availabilityService.calculateNights('2025-11-01', '2025-11-01')).toBe(0);
+      expect(
+        availabilityService.calculateNights('2025-11-01', '2025-11-01')
+      ).toBe(0);
     });
 
     it('should handle month boundaries', () => {
-      expect(availabilityService.calculateNights('2025-11-30', '2025-12-02')).toBe(2);
+      expect(
+        availabilityService.calculateNights('2025-11-30', '2025-12-02')
+      ).toBe(2);
     });
 
     it('should handle year boundaries', () => {
-      expect(availabilityService.calculateNights('2025-12-30', '2026-01-02')).toBe(3);
+      expect(
+        availabilityService.calculateNights('2025-12-30', '2026-01-02')
+      ).toBe(3);
     });
   });
 
@@ -280,22 +381,31 @@ describe('Availability Service - Business Logic', () => {
     });
 
     it('should reject past start date', () => {
-      const result = availabilityService.validateDateRange('2020-01-01', '2020-01-05');
-      
+      const result = availabilityService.validateDateRange(
+        '2020-01-01',
+        '2020-01-05'
+      );
+
       expect(result.isValid).toBe(false);
       expect(result.error).toContain('past');
     });
 
     it('should reject end date before start date', () => {
-      const result = availabilityService.validateDateRange('2025-11-05', '2025-11-01');
-      
+      const result = availabilityService.validateDateRange(
+        '2025-11-05',
+        '2025-11-01'
+      );
+
       expect(result.isValid).toBe(false);
       expect(result.error).toContain('after start date');
     });
 
     it('should reject end date same as start date', () => {
-      const result = availabilityService.validateDateRange('2025-11-01', '2025-11-01');
-      
+      const result = availabilityService.validateDateRange(
+        '2025-11-01',
+        '2025-11-01'
+      );
+
       expect(result.isValid).toBe(false);
       expect(result.error).toContain('after start date');
     });
@@ -305,7 +415,7 @@ describe('Availability Service - Business Logic', () => {
       const end = '2026-11-02'; // 366 days
 
       const result = availabilityService.validateDateRange(start, end);
-      
+
       expect(result.isValid).toBe(false);
       expect(result.error).toContain('365 days');
     });
@@ -315,7 +425,7 @@ describe('Availability Service - Business Logic', () => {
       const end = '2026-11-01'; // Exactly 365 days
 
       const result = availabilityService.validateDateRange(start, end);
-      
+
       expect(result.isValid).toBe(true);
     });
   });
@@ -332,12 +442,18 @@ describe('Availability Service - Business Logic', () => {
     });
 
     it('should validate minimum stay requirements', () => {
-      const nights = availabilityService.calculateNights('2025-11-01', '2025-11-02');
+      const nights = availabilityService.calculateNights(
+        '2025-11-01',
+        '2025-11-02'
+      );
       expect(nights).toBeGreaterThanOrEqual(1); // Minimum 1 night
     });
 
     it('should prevent booking in the past', () => {
-      const validation = availabilityService.validateDateRange('2020-01-01', '2020-01-05');
+      const validation = availabilityService.validateDateRange(
+        '2020-01-01',
+        '2020-01-05'
+      );
       expect(validation.isValid).toBe(false);
     });
   });

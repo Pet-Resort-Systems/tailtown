@@ -14,7 +14,11 @@ import {
 } from '@mui/material';
 import { ArrowBack as BackIcon } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { tenantService, Tenant, UpdateTenantDto } from '../../services/tenantService';
+import {
+  tenantService,
+  Tenant,
+  UpdateTenantDto,
+} from '../../services/tenantService';
 
 const TenantEdit: React.FC = () => {
   const navigate = useNavigate();
@@ -78,11 +82,11 @@ const TenantEdit: React.FC = () => {
     }
   };
 
-  const handleChange = (field: keyof UpdateTenantDto) => (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setFormData({ ...formData, [field]: e.target.value });
-  };
+  const handleChange =
+    (field: keyof UpdateTenantDto) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData({ ...formData, [field]: e.target.value });
+    };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,7 +118,10 @@ const TenantEdit: React.FC = () => {
   return (
     <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-        <IconButton onClick={() => navigate(`/admin-portal/tenants/${id}`)} sx={{ mr: 2 }}>
+        <IconButton
+          onClick={() => navigate(`/admin-portal/tenants/${id}`)}
+          sx={{ mr: 2 }}
+        >
           <BackIcon />
         </IconButton>
         <Box>
@@ -343,11 +350,7 @@ const TenantEdit: React.FC = () => {
           >
             Cancel
           </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={saving}
-          >
+          <Button type="submit" variant="contained" disabled={saving}>
             {saving ? 'Saving...' : 'Save Changes'}
           </Button>
         </Box>

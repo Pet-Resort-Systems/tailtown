@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Typography,
@@ -20,17 +20,17 @@ import {
   CircularProgress,
   Tooltip,
   TextField,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Visibility as ViewIcon,
   Block as InvalidateIcon,
   CheckCircle as ValidIcon,
   Cancel as InvalidIcon,
-} from "@mui/icons-material";
-import { format } from "date-fns";
+} from '@mui/icons-material';
+import { format } from 'date-fns';
 import serviceAgreementService, {
   ServiceAgreement,
-} from "../../services/serviceAgreementService";
+} from '../../services/serviceAgreementService';
 
 interface CustomerAgreementHistoryProps {
   customerId: string;
@@ -53,20 +53,19 @@ const CustomerAgreementHistory: React.FC<CustomerAgreementHistoryProps> = ({
   const [invalidateDialogOpen, setInvalidateDialogOpen] = useState(false);
   const [selectedAgreement, setSelectedAgreement] =
     useState<ServiceAgreement | null>(null);
-  const [invalidateReason, setInvalidateReason] = useState("");
+  const [invalidateReason, setInvalidateReason] = useState('');
   const [invalidating, setInvalidating] = useState(false);
 
   const loadAgreements = useCallback(async () => {
     try {
       setLoading(true);
-      const result = await serviceAgreementService.getCustomerAgreements(
-        customerId
-      );
+      const result =
+        await serviceAgreementService.getCustomerAgreements(customerId);
       setAgreements(result.agreements);
       setTotal(result.total);
       setError(null);
     } catch (err: any) {
-      setError(err.message || "Failed to load agreements");
+      setError(err.message || 'Failed to load agreements');
     } finally {
       setLoading(false);
     }
@@ -85,7 +84,7 @@ const CustomerAgreementHistory: React.FC<CustomerAgreementHistoryProps> = ({
 
   const handleOpenInvalidate = (agreement: ServiceAgreement) => {
     setSelectedAgreement(agreement);
-    setInvalidateReason("");
+    setInvalidateReason('');
     setInvalidateDialogOpen(true);
   };
 
@@ -101,7 +100,7 @@ const CustomerAgreementHistory: React.FC<CustomerAgreementHistoryProps> = ({
       setInvalidateDialogOpen(false);
       loadAgreements();
     } catch (err: any) {
-      setError(err.message || "Failed to invalidate agreement");
+      setError(err.message || 'Failed to invalidate agreement');
     } finally {
       setInvalidating(false);
     }
@@ -164,7 +163,7 @@ const CustomerAgreementHistory: React.FC<CustomerAgreementHistoryProps> = ({
       )}
 
       <TableContainer component={compact ? Box : Paper}>
-        <Table size={compact ? "small" : "medium"}>
+        <Table size={compact ? 'small' : 'medium'}>
           <TableHead>
             <TableRow>
               <TableCell>Date Signed</TableCell>
@@ -178,10 +177,10 @@ const CustomerAgreementHistory: React.FC<CustomerAgreementHistoryProps> = ({
             {agreements.map((agreement) => (
               <TableRow key={agreement.id}>
                 <TableCell>
-                  {format(new Date(agreement.signedAt), "MMM d, yyyy h:mm a")}
+                  {format(new Date(agreement.signedAt), 'MMM d, yyyy h:mm a')}
                 </TableCell>
                 <TableCell>
-                  {agreement.template?.name || "Unknown Template"}
+                  {agreement.template?.name || 'Unknown Template'}
                   {agreement.templateVersion && (
                     <Typography
                       variant="caption"
@@ -231,11 +230,11 @@ const CustomerAgreementHistory: React.FC<CustomerAgreementHistoryProps> = ({
         <DialogTitle>
           Service Agreement
           <Typography variant="subtitle2" color="textSecondary">
-            Signed on{" "}
+            Signed on{' '}
             {selectedAgreement &&
               format(
                 new Date(selectedAgreement.signedAt),
-                "MMMM d, yyyy at h:mm a"
+                'MMMM d, yyyy at h:mm a'
               )}
           </Typography>
         </DialogTitle>
@@ -249,15 +248,15 @@ const CustomerAgreementHistory: React.FC<CustomerAgreementHistoryProps> = ({
                     Agreement Invalidated
                   </Typography>
                   <Typography variant="body2">
-                    Reason:{" "}
-                    {selectedAgreement.invalidReason || "No reason provided"}
+                    Reason:{' '}
+                    {selectedAgreement.invalidReason || 'No reason provided'}
                   </Typography>
                   {selectedAgreement.invalidatedAt && (
                     <Typography variant="caption">
-                      Invalidated on{" "}
+                      Invalidated on{' '}
                       {format(
                         new Date(selectedAgreement.invalidatedAt),
-                        "MMM d, yyyy"
+                        'MMM d, yyyy'
                       )}
                     </Typography>
                   )}
@@ -267,7 +266,7 @@ const CustomerAgreementHistory: React.FC<CustomerAgreementHistoryProps> = ({
               {/* Agreement Content */}
               <Paper
                 variant="outlined"
-                sx={{ p: 3, mb: 3, maxHeight: "300px", overflow: "auto" }}
+                sx={{ p: 3, mb: 3, maxHeight: '300px', overflow: 'auto' }}
               >
                 <div
                   dangerouslySetInnerHTML={{
@@ -328,11 +327,11 @@ const CustomerAgreementHistory: React.FC<CustomerAgreementHistoryProps> = ({
                             {qr.question}
                           </Typography>
                           <Typography variant="body1" fontWeight="medium">
-                            {typeof qr.response === "boolean"
+                            {typeof qr.response === 'boolean'
                               ? qr.response
-                                ? "Yes"
-                                : "No"
-                              : String(qr.response || "No response")}
+                                ? 'Yes'
+                                : 'No'
+                              : String(qr.response || 'No response')}
                           </Typography>
                         </Box>
                       ))}
@@ -348,12 +347,12 @@ const CustomerAgreementHistory: React.FC<CustomerAgreementHistoryProps> = ({
                   </Typography>
                   <Paper
                     variant="outlined"
-                    sx={{ p: 2, display: "inline-block" }}
+                    sx={{ p: 2, display: 'inline-block' }}
                   >
                     <img
                       src={selectedAgreement.signature}
                       alt="Signature"
-                      style={{ maxWidth: "300px", maxHeight: "100px" }}
+                      style={{ maxWidth: '300px', maxHeight: '100px' }}
                     />
                   </Paper>
                 </Box>
@@ -420,7 +419,7 @@ const CustomerAgreementHistory: React.FC<CustomerAgreementHistoryProps> = ({
             variant="contained"
             disabled={!invalidateReason.trim() || invalidating}
           >
-            {invalidating ? "Invalidating..." : "Invalidate Agreement"}
+            {invalidating ? 'Invalidating...' : 'Invalidate Agreement'}
           </Button>
         </DialogActions>
       </Dialog>

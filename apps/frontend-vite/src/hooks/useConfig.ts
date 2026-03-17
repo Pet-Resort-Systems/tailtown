@@ -18,7 +18,7 @@ export function useConfig(): {
     },
     []
   );
-  
+
   /**
    * Get the URL for a service
    */
@@ -30,11 +30,11 @@ export function useConfig(): {
     },
     []
   );
-  
+
   return {
     config,
     isFeatureEnabled,
-    getServiceUrl
+    getServiceUrl,
   };
 }
 

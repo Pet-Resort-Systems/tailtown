@@ -1,6 +1,6 @@
 /**
  * Reference Data Service
- * 
+ *
  * Handles API calls for reference data (breeds, vets, temperaments)
  * imported from Gingr
  */
@@ -100,7 +100,10 @@ class ReferenceDataService {
   /**
    * Update temperaments for a pet
    */
-  async updatePetTemperaments(petId: string, temperaments: string[]): Promise<void> {
+  async updatePetTemperaments(
+    petId: string,
+    temperaments: string[]
+  ): Promise<void> {
     try {
       await api.put(`/api/pets/${petId}/temperaments`, { temperaments });
     } catch (error) {

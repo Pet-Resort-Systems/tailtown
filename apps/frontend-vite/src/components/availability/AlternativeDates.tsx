@@ -9,7 +9,7 @@
  * - Click to select alternative
  */
 
-import React from "react";
+import React from 'react';
 import {
   Box,
   Typography,
@@ -21,15 +21,15 @@ import {
   Grid,
   Alert,
   Divider,
-} from "@mui/material";
+} from '@mui/material';
 import {
   CalendarToday as CalendarIcon,
   TrendingDown as SavingsIcon,
   CheckCircle as AvailableIcon,
-} from "@mui/icons-material";
-import { AlternativeDateSuggestion } from "../../types/availability";
-import { availabilityService } from "../../services/availabilityService";
-import { formatCurrency } from "../../utils/formatters";
+} from '@mui/icons-material';
+import { AlternativeDateSuggestion } from '../../types/availability';
+import { availabilityService } from '../../services/availabilityService';
+import { formatCurrency } from '../../utils/formatters';
 
 interface AlternativeDatesProps {
   alternatives: AlternativeDateSuggestion[];
@@ -92,12 +92,12 @@ export const AlternativeDates: React.FC<AlternativeDatesProps> = ({
               <Card
                 variant="outlined"
                 sx={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
                   border: index === 0 ? 2 : 1,
-                  borderColor: index === 0 ? "primary.main" : "divider",
-                  position: "relative",
+                  borderColor: index === 0 ? 'primary.main' : 'divider',
+                  position: 'relative',
                 }}
               >
                 {index === 0 && (
@@ -106,7 +106,7 @@ export const AlternativeDates: React.FC<AlternativeDatesProps> = ({
                     color="primary"
                     size="small"
                     sx={{
-                      position: "absolute",
+                      position: 'absolute',
                       top: 8,
                       right: 8,
                     }}
@@ -126,7 +126,7 @@ export const AlternativeDates: React.FC<AlternativeDatesProps> = ({
                     color="text.secondary"
                     gutterBottom
                   >
-                    {nights} night{nights !== 1 ? "s" : ""}
+                    {nights} night{nights !== 1 ? 's' : ''}
                   </Typography>
 
                   <Divider sx={{ my: 2 }} />
@@ -136,7 +136,7 @@ export const AlternativeDates: React.FC<AlternativeDatesProps> = ({
                     <AvailableIcon color="success" fontSize="small" />
                     <Typography variant="body2">
                       {alternative.availableCount} suite
-                      {alternative.availableCount !== 1 ? "s" : ""} available
+                      {alternative.availableCount !== 1 ? 's' : ''} available
                     </Typography>
                   </Box>
 
@@ -177,7 +177,7 @@ export const AlternativeDates: React.FC<AlternativeDatesProps> = ({
 
                 <CardActions>
                   <Button
-                    variant={index === 0 ? "contained" : "outlined"}
+                    variant={index === 0 ? 'contained' : 'outlined'}
                     fullWidth
                     onClick={() => onSelectAlternative(alternative)}
                   >

@@ -1,6 +1,6 @@
 /**
  * Deposit Information Component
- * 
+ *
  * Displays deposit requirements and refund policy to customers
  */
 
@@ -18,13 +18,13 @@ import {
   ListItemIcon,
   ListItemText,
   CircularProgress,
-  Grid
+  Grid,
 } from '@mui/material';
 import {
   AttachMoney as MoneyIcon,
   Event as EventIcon,
   Policy as PolicyIcon,
-  CheckCircle as CheckIcon
+  CheckCircle as CheckIcon,
 } from '@mui/icons-material';
 import { depositService } from '../../services/depositService';
 import { DepositCalculation } from '../../types/deposit';
@@ -45,10 +45,12 @@ export const DepositInfo: React.FC<DepositInfoProps> = ({
   endDate,
   serviceId,
   isFirstTimeCustomer,
-  onDepositCalculated
+  onDepositCalculated,
 }) => {
   const [loading, setLoading] = useState(true);
-  const [calculation, setCalculation] = useState<DepositCalculation | null>(null);
+  const [calculation, setCalculation] = useState<DepositCalculation | null>(
+    null
+  );
 
   useEffect(() => {
     calculateDeposit();
@@ -62,11 +64,11 @@ export const DepositInfo: React.FC<DepositInfoProps> = ({
         totalCost,
         startDate,
         endDate,
-        serviceId
+        serviceId,
       });
 
       setCalculation(result);
-      
+
       if (onDepositCalculated) {
         onDepositCalculated(result);
       }
@@ -108,9 +110,7 @@ export const DepositInfo: React.FC<DepositInfoProps> = ({
         </Box>
 
         <Alert severity="info" sx={{ mb: 2 }}>
-          <Typography variant="body2">
-            {calculation.explanation}
-          </Typography>
+          <Typography variant="body2">{calculation.explanation}</Typography>
         </Alert>
 
         <Grid container spacing={2}>
@@ -144,9 +144,12 @@ export const DepositInfo: React.FC<DepositInfoProps> = ({
           {calculation.depositDueDate && (
             <Grid item xs={12}>
               <Box display="flex" alignItems="center" mt={1}>
-                <EventIcon sx={{ mr: 1, fontSize: 20, color: 'text.secondary' }} />
+                <EventIcon
+                  sx={{ mr: 1, fontSize: 20, color: 'text.secondary' }}
+                />
                 <Typography variant="body2" color="text.secondary">
-                  Due by: {new Date(calculation.depositDueDate).toLocaleDateString()}
+                  Due by:{' '}
+                  {new Date(calculation.depositDueDate).toLocaleDateString()}
                 </Typography>
               </Box>
             </Grid>
@@ -158,7 +161,8 @@ export const DepositInfo: React.FC<DepositInfoProps> = ({
         <Box display="flex" alignItems="center" mb={1}>
           <PolicyIcon sx={{ mr: 1, fontSize: 20, color: 'text.secondary' }} />
           <Typography variant="subtitle2">
-            Refund Policy: {depositService.getRefundPolicyText(calculation.refundPolicy)}
+            Refund Policy:{' '}
+            {depositService.getRefundPolicyText(calculation.refundPolicy)}
           </Typography>
         </Box>
 

@@ -11,7 +11,7 @@
 export interface ResourceServiceMapping {
   resourceType: string;
   serviceName: string;
-  serviceCategory: "BOARDING" | "DAYCARE" | "GROOMING" | "TRAINING" | "OTHER";
+  serviceCategory: 'BOARDING' | 'DAYCARE' | 'GROOMING' | 'TRAINING' | 'OTHER';
   description: string;
 }
 
@@ -22,54 +22,54 @@ export interface ResourceServiceMapping {
 export const RESOURCE_SERVICE_MAPPINGS: ResourceServiceMapping[] = [
   // Dog Boarding - Indoor Suite (Junior & Queen kennels)
   {
-    resourceType: "JUNIOR_KENNEL",
-    serviceName: "Boarding | Indoor Suite",
-    serviceCategory: "BOARDING",
-    description: "Standard indoor boarding for small to medium dogs",
+    resourceType: 'JUNIOR_KENNEL',
+    serviceName: 'Boarding | Indoor Suite',
+    serviceCategory: 'BOARDING',
+    description: 'Standard indoor boarding for small to medium dogs',
   },
   {
-    resourceType: "QUEEN_KENNEL",
-    serviceName: "Boarding | Indoor Suite",
-    serviceCategory: "BOARDING",
-    description: "Standard indoor boarding for medium to large dogs",
+    resourceType: 'QUEEN_KENNEL',
+    serviceName: 'Boarding | Indoor Suite',
+    serviceCategory: 'BOARDING',
+    description: 'Standard indoor boarding for medium to large dogs',
   },
 
   // Dog Boarding - King Suite
   {
-    resourceType: "KING_KENNEL",
-    serviceName: "Boarding | King Suite",
-    serviceCategory: "BOARDING",
-    description: "Premium boarding with extra space for large dogs",
+    resourceType: 'KING_KENNEL',
+    serviceName: 'Boarding | King Suite',
+    serviceCategory: 'BOARDING',
+    description: 'Premium boarding with extra space for large dogs',
   },
 
   // Dog Boarding - VIP Suite
   {
-    resourceType: "VIP_ROOM",
-    serviceName: "Boarding | VIP Suite",
-    serviceCategory: "BOARDING",
-    description: "Luxury private room with premium amenities",
+    resourceType: 'VIP_ROOM',
+    serviceName: 'Boarding | VIP Suite',
+    serviceCategory: 'BOARDING',
+    description: 'Luxury private room with premium amenities',
   },
 
   // Cat Boarding
   {
-    resourceType: "CAT_CONDO",
-    serviceName: "Boarding | Cat Cabana",
-    serviceCategory: "BOARDING",
-    description: "Comfortable condo for feline guests",
+    resourceType: 'CAT_CONDO',
+    serviceName: 'Boarding | Cat Cabana',
+    serviceCategory: 'BOARDING',
+    description: 'Comfortable condo for feline guests',
   },
 
   // Daycare
   {
-    resourceType: "DAY_CAMP_FULL",
-    serviceName: "Day Camp | Full Day",
-    serviceCategory: "DAYCARE",
-    description: "Full day of supervised play and socialization",
+    resourceType: 'DAY_CAMP_FULL',
+    serviceName: 'Day Camp | Full Day',
+    serviceCategory: 'DAYCARE',
+    description: 'Full day of supervised play and socialization',
   },
   {
-    resourceType: "DAY_CAMP_HALF",
-    serviceName: "Day Camp | Half Day",
-    serviceCategory: "DAYCARE",
-    description: "Half day of supervised play and socialization",
+    resourceType: 'DAY_CAMP_HALF',
+    serviceName: 'Day Camp | Half Day',
+    serviceCategory: 'DAYCARE',
+    description: 'Half day of supervised play and socialization',
   },
 ];
 

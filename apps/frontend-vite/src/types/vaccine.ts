@@ -8,20 +8,20 @@ export interface VaccineRequirement {
   tenantId: string;
   name: string;
   description?: string;
-  
+
   // Applicability
   petType?: 'DOG' | 'CAT' | null; // null = all types
   serviceType?: 'BOARDING' | 'DAYCARE' | 'GROOMING' | null; // null = all services
-  
+
   // Requirements
   isRequired: boolean;
   validityPeriodMonths?: number;
   reminderDaysBefore?: number;
-  
+
   // Status
   isActive: boolean;
   displayOrder: number;
-  
+
   notes?: string;
   createdAt: Date | string;
   updatedAt: Date | string;

@@ -12,22 +12,22 @@ describe('Service Controller Integration Tests', () => {
   beforeAll(async () => {
     // Use actual Prisma client for integration tests
     prisma = new PrismaClient();
-    
+
     // Clean up any test data from previous runs
     await prisma.addOnService.deleteMany({
       where: {
         name: {
-          startsWith: 'Test_'
-        }
-      }
+          startsWith: 'Test_',
+        },
+      },
     });
-    
+
     await prisma.service.deleteMany({
       where: {
         name: {
-          startsWith: 'Test_'
-        }
-      }
+          startsWith: 'Test_',
+        },
+      },
     });
   });
 
@@ -36,7 +36,7 @@ describe('Service Controller Integration Tests', () => {
     mockRes = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn((data) => data),
-      send: jest.fn()
+      send: jest.fn(),
     };
     mockNext = jest.fn();
   });
@@ -46,19 +46,19 @@ describe('Service Controller Integration Tests', () => {
     await prisma.addOnService.deleteMany({
       where: {
         name: {
-          startsWith: 'Test_'
-        }
-      }
+          startsWith: 'Test_',
+        },
+      },
     });
-    
+
     await prisma.service.deleteMany({
       where: {
         name: {
-          startsWith: 'Test_'
-        }
-      }
+          startsWith: 'Test_',
+        },
+      },
     });
-    
+
     await prisma.$disconnect();
   });
 
@@ -75,9 +75,9 @@ describe('Service Controller Integration Tests', () => {
         {
           name: 'Test_AddOn',
           description: 'Test add-on',
-          price: 10.0
-        }
-      ]
+          price: 10.0,
+        },
+      ],
     };
 
     await serviceController.createService(
@@ -94,7 +94,7 @@ describe('Service Controller Integration Tests', () => {
 
     // 2. Retrieve the service
     mockReq = { params: { id: testServiceId } };
-    
+
     await serviceController.getServiceById(
       mockReq as Request,
       mockRes as Response,
@@ -113,10 +113,10 @@ describe('Service Controller Integration Tests', () => {
       params: { id: testServiceId },
       body: {
         name: 'Test_Integration_Service_Updated',
-        price: 55.0
-      }
+        price: 55.0,
+      },
     };
-    
+
     await serviceController.updateService(
       mockReq as Request,
       mockRes as Response,
@@ -131,7 +131,7 @@ describe('Service Controller Integration Tests', () => {
 
     // 4. Get the add-ons
     mockReq = { params: { id: testServiceId } };
-    
+
     await serviceController.getServiceAddOns(
       mockReq as Request,
       mockRes as Response,
@@ -153,7 +153,8 @@ describe('Service Controller Integration Tests', () => {
 
     // Verify service was deactivated
     expect(mockRes.status).toHaveBeenCalledWith(200);
-    const deactivatedService = (mockRes.json as jest.Mock).mock.calls[4][0].data;
+    const deactivatedService = (mockRes.json as jest.Mock).mock.calls[4][0]
+      .data;
     expect(deactivatedService.isActive).toBe(false);
 
     // 6. Delete the service
@@ -168,13 +169,13 @@ describe('Service Controller Integration Tests', () => {
 
     // 7. Verify service no longer exists
     mockReq = { params: { id: testServiceId } };
-    
+
     await serviceController.getServiceById(
       mockReq as Request,
       mockRes as Response,
       mockNext
     );
-    
+
     expect(mockNext).toHaveBeenCalled();
     const error = mockNext.mock.calls[0][0];
     expect(error.statusCode).toBe(404);
@@ -187,7 +188,7 @@ describe('Service Controller Integration Tests', () => {
       duration: 60,
       price: 40.0,
       serviceCategory: ServiceCategory.GROOMING,
-      isActive: true
+      isActive: true,
     };
     await serviceController.createService(
       mockReq as Request,
@@ -200,7 +201,7 @@ describe('Service Controller Integration Tests', () => {
       duration: 1440,
       price: 60.0,
       serviceCategory: ServiceCategory.BOARDING,
-      isActive: true
+      isActive: true,
     };
     await serviceController.createService(
       mockReq as Request,
@@ -212,15 +213,15 @@ describe('Service Controller Integration Tests', () => {
     mockReq = {
       query: {
         category: ServiceCategory.GROOMING,
-        isActive: 'true'
-      }
+        isActive: 'true',
+      },
     };
-    
+
     mockRes = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      json: jest.fn(),
     };
-    
+
     await serviceController.getAllServices(
       mockReq as Request,
       mockRes as Response,
@@ -240,21 +241,21 @@ describe('Service Controller Integration Tests', () => {
   it('should prevent deletion of a service with active reservations', async () => {
     // This test would need to create a service and add active reservations
     // For now, we'll mock the behavior by mocking the reservation count
-    
+
     // 1. Create a test service
     mockReq.body = {
       name: 'Test_Service_With_Reservations',
       duration: 60,
       price: 45.0,
       serviceCategory: ServiceCategory.OTHER,
-      isActive: true
+      isActive: true,
     };
 
     const createRes = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn((data) => data)
+      json: jest.fn((data) => data),
     };
-    
+
     await serviceController.createService(
       mockReq as Request,
       createRes as any,
@@ -272,10 +273,10 @@ describe('Service Controller Integration Tests', () => {
     mockRes = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
-      send: jest.fn()
+      send: jest.fn(),
     };
     mockNext = jest.fn();
-    
+
     // Note: This test can't fully test the prevention of deletion without
     // actually creating reservations. In a real integration test with a test database,
     // this would work properly.

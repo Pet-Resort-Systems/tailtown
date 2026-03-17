@@ -34,21 +34,26 @@ exec('which markdown-pdf', (error) => {
   }
 
   // Generate PDF
-  exec(`markdown-pdf "${markdownFile}" -o "${pdfFile}"`, (error, stdout, stderr) => {
-    if (error) {
-      console.error('❌ Error generating PDF:', error.message);
-      process.exit(1);
-    }
+  exec(
+    `markdown-pdf "${markdownFile}" -o "${pdfFile}"`,
+    (error, stdout, stderr) => {
+      if (error) {
+        console.error('❌ Error generating PDF:', error.message);
+        process.exit(1);
+      }
 
-    console.log('✅ PDF report generated successfully!');
-    console.log('');
-    console.log(`📄 File: ${pdfFile}`);
-    console.log('');
-    console.log('Next steps:');
-    console.log('1. Open the PDF to review');
-    console.log('2. Email it using the command below:');
-    console.log('');
-    console.log('Email command:');
-    console.log(`  node send-report-email.js "${pdfFile}" rob@tailtownpetresort.com`);
-  });
+      console.log('✅ PDF report generated successfully!');
+      console.log('');
+      console.log(`📄 File: ${pdfFile}`);
+      console.log('');
+      console.log('Next steps:');
+      console.log('1. Open the PDF to review');
+      console.log('2. Email it using the command below:');
+      console.log('');
+      console.log('Email command:');
+      console.log(
+        `  node send-report-email.js "${pdfFile}" rob@tailtownpetresort.com`
+      );
+    }
+  );
 });

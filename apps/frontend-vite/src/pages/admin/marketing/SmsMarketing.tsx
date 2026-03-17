@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { 
-  Container, 
-  Typography, 
-  Box, 
-  Paper, 
+import {
+  Container,
+  Typography,
+  Box,
+  Paper,
   Grid,
   Button,
   TextField,
@@ -18,15 +18,15 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
-  IconButton
+  IconButton,
 } from '@mui/material';
-import { 
+import {
   Sms as SmsIcon,
   Send as SendIcon,
   Settings as SettingsIcon,
   Delete as DeleteIcon,
   Edit as EditIcon,
-  Add as AddIcon
+  Add as AddIcon,
 } from '@mui/icons-material';
 
 const SmsMarketing: React.FC = () => {
@@ -37,22 +37,55 @@ const SmsMarketing: React.FC = () => {
 
   // Mock data - replace with actual API calls
   const templates = [
-    { id: '1', name: 'Appointment Reminder', content: 'Hi {customerName}, this is a reminder about your pet\'s appointment tomorrow at {time}.' },
-    { id: '2', name: 'Pickup Ready', content: 'Hello {customerName}, {petName} is ready for pickup! Please come by when convenient.' },
-    { id: '3', name: 'Special Offer', content: 'Special offer for {customerName}! Get 20% off your next grooming service. Book now!' }
+    {
+      id: '1',
+      name: 'Appointment Reminder',
+      content:
+        "Hi {customerName}, this is a reminder about your pet's appointment tomorrow at {time}.",
+    },
+    {
+      id: '2',
+      name: 'Pickup Ready',
+      content:
+        'Hello {customerName}, {petName} is ready for pickup! Please come by when convenient.',
+    },
+    {
+      id: '3',
+      name: 'Special Offer',
+      content:
+        'Special offer for {customerName}! Get 20% off your next grooming service. Book now!',
+    },
   ];
 
   const contactLists = [
     { id: '1', name: 'All Customers', count: 245 },
     { id: '2', name: 'Boarding Customers', count: 89 },
     { id: '3', name: 'Grooming Customers', count: 156 },
-    { id: '4', name: 'VIP Customers', count: 23 }
+    { id: '4', name: 'VIP Customers', count: 23 },
   ];
 
   const recentCampaigns = [
-    { id: '1', name: 'Holiday Boarding Reminder', sent: '2024-01-15', recipients: 89, status: 'Delivered' },
-    { id: '2', name: 'Grooming Special Offer', sent: '2024-01-10', recipients: 156, status: 'Delivered' },
-    { id: '3', name: 'New Year Greetings', sent: '2024-01-01', recipients: 245, status: 'Delivered' }
+    {
+      id: '1',
+      name: 'Holiday Boarding Reminder',
+      sent: '2024-01-15',
+      recipients: 89,
+      status: 'Delivered',
+    },
+    {
+      id: '2',
+      name: 'Grooming Special Offer',
+      sent: '2024-01-10',
+      recipients: 156,
+      status: 'Delivered',
+    },
+    {
+      id: '3',
+      name: 'New Year Greetings',
+      sent: '2024-01-01',
+      recipients: 245,
+      status: 'Delivered',
+    },
   ];
 
   const handleSendCampaign = () => {
@@ -76,16 +109,21 @@ const SmsMarketing: React.FC = () => {
         </Box>
 
         {!isConfigured && (
-          <Alert 
-            severity="warning" 
+          <Alert
+            severity="warning"
             sx={{ mb: 3 }}
             action={
-              <Button color="inherit" size="small" onClick={handleConfigureTwilio}>
+              <Button
+                color="inherit"
+                size="small"
+                onClick={handleConfigureTwilio}
+              >
                 Configure
               </Button>
             }
           >
-            Twilio SMS integration is not configured. Set up your Twilio credentials to start sending SMS campaigns.
+            Twilio SMS integration is not configured. Set up your Twilio
+            credentials to start sending SMS campaigns.
           </Alert>
         )}
 
@@ -96,7 +134,7 @@ const SmsMarketing: React.FC = () => {
               <Typography variant="h6" gutterBottom>
                 Create SMS Campaign
               </Typography>
-              
+
               <Grid container spacing={2}>
                 <Grid item xs={12} md={6}>
                   <FormControl fullWidth sx={{ mb: 2 }}>
@@ -151,20 +189,16 @@ const SmsMarketing: React.FC = () => {
 
                 <Grid item xs={12}>
                   <Box sx={{ display: 'flex', gap: 2 }}>
-                    <Button 
-                      variant="contained" 
+                    <Button
+                      variant="contained"
                       startIcon={<SendIcon />}
                       onClick={handleSendCampaign}
                       disabled={!isConfigured || !message || !selectedContacts}
                     >
                       Send Campaign
                     </Button>
-                    <Button variant="outlined">
-                      Save as Template
-                    </Button>
-                    <Button variant="outlined">
-                      Preview
-                    </Button>
+                    <Button variant="outlined">Save as Template</Button>
+                    <Button variant="outlined">Preview</Button>
                   </Box>
                 </Grid>
               </Grid>
@@ -179,16 +213,28 @@ const SmsMarketing: React.FC = () => {
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <Box>
-                  <Typography variant="h4" color="primary.main">0</Typography>
-                  <Typography variant="body2" color="text.secondary">Messages Sent This Month</Typography>
+                  <Typography variant="h4" color="primary.main">
+                    0
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Messages Sent This Month
+                  </Typography>
                 </Box>
                 <Box>
-                  <Typography variant="h4" color="success.main">0%</Typography>
-                  <Typography variant="body2" color="text.secondary">Delivery Rate</Typography>
+                  <Typography variant="h4" color="success.main">
+                    0%
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Delivery Rate
+                  </Typography>
                 </Box>
                 <Box>
-                  <Typography variant="h4" color="warning.main">$0.00</Typography>
-                  <Typography variant="body2" color="text.secondary">SMS Costs This Month</Typography>
+                  <Typography variant="h4" color="warning.main">
+                    $0.00
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    SMS Costs This Month
+                  </Typography>
                 </Box>
               </Box>
             </Paper>
@@ -204,17 +250,21 @@ const SmsMarketing: React.FC = () => {
               </Box>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Typography variant="body2" sx={{ flexGrow: 1 }}>Twilio Account</Typography>
-                  <Chip 
-                    label={isConfigured ? "Connected" : "Not Configured"} 
-                    color={isConfigured ? "success" : "error"}
+                  <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                    Twilio Account
+                  </Typography>
+                  <Chip
+                    label={isConfigured ? 'Connected' : 'Not Configured'}
+                    color={isConfigured ? 'success' : 'error'}
                     size="small"
                   />
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Typography variant="body2" sx={{ flexGrow: 1 }}>Phone Number</Typography>
+                  <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                    Phone Number
+                  </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {isConfigured ? "+1 (555) 123-4567" : "Not Set"}
+                    {isConfigured ? '+1 (555) 123-4567' : 'Not Set'}
                   </Typography>
                 </Box>
               </Box>
@@ -241,10 +291,10 @@ const SmsMarketing: React.FC = () => {
                       secondary={`Sent: ${campaign.sent} • Recipients: ${campaign.recipients}`}
                     />
                     <ListItemSecondaryAction>
-                      <Chip 
-                        label={campaign.status} 
-                        color="success" 
-                        size="small" 
+                      <Chip
+                        label={campaign.status}
+                        color="success"
+                        size="small"
                         sx={{ mr: 1 }}
                       />
                       <IconButton edge="end" size="small">

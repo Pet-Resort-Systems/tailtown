@@ -11,9 +11,9 @@ const mockPrisma = {
   pet: {
     findMany: jest.fn(),
     update: jest.fn(),
-    $queryRaw: jest.fn()
+    $queryRaw: jest.fn(),
   },
-  $disconnect: jest.fn()
+  $disconnect: jest.fn(),
 };
 
 // Import the functions we want to test
@@ -30,82 +30,108 @@ describe('Vaccination Data Enhancement', () => {
       const dogVaccines = [
         { id: 'rabies', name: 'Rabies', validityMonths: 36, required: true },
         { id: 'dhpp', name: 'DHPP', validityMonths: 12, required: true },
-        { id: 'bordetella', name: 'Bordetella', validityMonths: 6, required: true },
-        { id: 'canine_influenza', name: 'Canine Influenza', validityMonths: 12, required: false }
+        {
+          id: 'bordetella',
+          name: 'Bordetella',
+          validityMonths: 6,
+          required: true,
+        },
+        {
+          id: 'canine_influenza',
+          name: 'Canine Influenza',
+          validityMonths: 12,
+          required: false,
+        },
       ];
 
       expect(dogVaccines).toHaveLength(4);
-      expect(dogVaccines.filter(v => v.required)).toHaveLength(3);
+      expect(dogVaccines.filter((v) => v.required)).toHaveLength(3);
     });
 
     it('has correct vaccine types for cats', () => {
       const catVaccines = [
         { id: 'rabies', name: 'Rabies', validityMonths: 36, required: true },
         { id: 'fvrcp', name: 'FVRCP', validityMonths: 12, required: true },
-        { id: 'feline_leukemia', name: 'Feline Leukemia', validityMonths: 12, required: false }
+        {
+          id: 'feline_leukemia',
+          name: 'Feline Leukemia',
+          validityMonths: 12,
+          required: false,
+        },
       ];
 
       expect(catVaccines).toHaveLength(3);
-      expect(catVaccines.filter(v => v.required)).toHaveLength(2);
+      expect(catVaccines.filter((v) => v.required)).toHaveLength(2);
     });
   });
 
   describe('Vaccination Record Generation', () => {
     const generateVaccinationRecords = (expirationDate, petType, baseDate) => {
       if (!expirationDate) return {};
-      
+
       const expDate = new Date(expirationDate);
       const vaccinations = {};
-      
-      const vaccineTypes = petType === 'DOG' ? [
-        { id: 'rabies', validityMonths: 36, required: true },
-        { id: 'dhpp', validityMonths: 12, required: true },
-        { id: 'bordetella', validityMonths: 6, required: true },
-        { id: 'canine_influenza', validityMonths: 12, required: false }
-      ] : [
-        { id: 'rabies', validityMonths: 36, required: true },
-        { id: 'fvrcp', validityMonths: 12, required: true },
-        { id: 'feline_leukemia', validityMonths: 12, required: false }
-      ];
-      
-      vaccineTypes.forEach(vaccine => {
+
+      const vaccineTypes =
+        petType === 'DOG'
+          ? [
+              { id: 'rabies', validityMonths: 36, required: true },
+              { id: 'dhpp', validityMonths: 12, required: true },
+              { id: 'bordetella', validityMonths: 6, required: true },
+              { id: 'canine_influenza', validityMonths: 12, required: false },
+            ]
+          : [
+              { id: 'rabies', validityMonths: 36, required: true },
+              { id: 'fvrcp', validityMonths: 12, required: true },
+              { id: 'feline_leukemia', validityMonths: 12, required: false },
+            ];
+
+      vaccineTypes.forEach((vaccine) => {
         const daysVariation = Math.floor(Math.random() * 90) - 45;
         const lastGiven = new Date(expDate);
         lastGiven.setMonth(lastGiven.getMonth() - vaccine.validityMonths);
         lastGiven.setDate(lastGiven.getDate() + daysVariation);
-        
+
         const adjustedExpiration = new Date(expDate);
         const statusVariation = Math.random();
-        
+
         if (statusVariation < 0.15) {
-          adjustedExpiration.setDate(adjustedExpiration.getDate() - Math.floor(Math.random() * 60));
+          adjustedExpiration.setDate(
+            adjustedExpiration.getDate() - Math.floor(Math.random() * 60)
+          );
         } else if (statusVariation < 0.25) {
-          adjustedExpiration.setDate(adjustedExpiration.getDate() + Math.floor(Math.random() * 30));
+          adjustedExpiration.setDate(
+            adjustedExpiration.getDate() + Math.floor(Math.random() * 30)
+          );
         }
-        
+
         if (!vaccine.required && Math.random() < 0.3) {
           return;
         }
-        
+
         const status = adjustedExpiration > baseDate ? 'CURRENT' : 'EXPIRED';
-        
+
         vaccinations[vaccine.id] = {
           status,
           lastGiven: lastGiven.toISOString(),
           expiration: adjustedExpiration.toISOString(),
-          lastChecked: new Date().toISOString()
+          lastChecked: new Date().toISOString(),
         };
       });
-      
+
       return vaccinations;
     };
 
     it('generates correct number of vaccines for dogs', () => {
       const expirationDate = '2025-12-01T00:00:00.000Z';
       const baseDate = new Date();
-      
-      const records = generateVaccinationRecords(expirationDate, 'DOG', baseDate);
-      
+
+      const records = generateVaccinationRecords(
+        expirationDate,
+        'DOG',
+        baseDate
+      );
+
       expect(Object.keys(records)).toHaveLength(3); // 3 required vaccines
       expect(records).toHaveProperty('rabies');
       expect(records).toHaveProperty('dhpp');
@@ -115,9 +141,13 @@ describe('Vaccination Data Enhancement', () => {
     it('generates correct number of vaccines for cats', () => {
       const expirationDate = '2025-12-01T00:00:00.000Z';
       const baseDate = new Date();
-      
-      const records = generateVaccinationRecords(expirationDate, 'CAT', baseDate);
-      
+
+      const records = generateVaccinationRecords(
+        expirationDate,
+        'CAT',
+        baseDate
+      );
+
       expect(Object.keys(records)).toHaveLength(2); // 2 required vaccines
       expect(records).toHaveProperty('rabies');
       expect(records).toHaveProperty('fvrcp');
@@ -126,15 +156,19 @@ describe('Vaccination Data Enhancement', () => {
     it('generates valid vaccination record structure', () => {
       const expirationDate = '2025-12-01T00:00:00.000Z';
       const baseDate = new Date();
-      
-      const records = generateVaccinationRecords(expirationDate, 'DOG', baseDate);
-      
-      Object.values(records).forEach(record => {
+
+      const records = generateVaccinationRecords(
+        expirationDate,
+        'DOG',
+        baseDate
+      );
+
+      Object.values(records).forEach((record) => {
         expect(record).toHaveProperty('status');
         expect(record).toHaveProperty('lastGiven');
         expect(record).toHaveProperty('expiration');
         expect(record).toHaveProperty('lastChecked');
-        
+
         expect(['CURRENT', 'EXPIRED']).toContain(record.status);
         expect(typeof record.lastGiven).toBe('string');
         expect(typeof record.expiration).toBe('string');
@@ -150,17 +184,22 @@ describe('Vaccination Data Enhancement', () => {
     it('calculates last given dates correctly', () => {
       const expirationDate = '2025-12-01T00:00:00.000Z';
       const baseDate = new Date();
-      
-      const records = generateVaccinationRecords(expirationDate, 'DOG', baseDate);
-      
+
+      const records = generateVaccinationRecords(
+        expirationDate,
+        'DOG',
+        baseDate
+      );
+
       const rabiesRecord = records.rabies;
       const lastGiven = new Date(rabiesRecord.lastGiven);
       const expiration = new Date(rabiesRecord.expiration);
-      
+
       // Rabies should be approximately 36 months before expiration
-      const monthsDiff = (expiration.getFullYear() - lastGiven.getFullYear()) * 12 + 
-                        (expiration.getMonth() - lastGiven.getMonth());
-      
+      const monthsDiff =
+        (expiration.getFullYear() - lastGiven.getFullYear()) * 12 +
+        (expiration.getMonth() - lastGiven.getMonth());
+
       expect(monthsDiff).toBeCloseTo(36, 0);
     });
   });
@@ -179,14 +218,14 @@ describe('Vaccination Data Enhancement', () => {
     it('generates expiration dates object correctly', () => {
       const vaccinationRecords = {
         rabies: { status: 'CURRENT', expiration: '2025-12-01T00:00:00.000Z' },
-        dhpp: { status: 'EXPIRED', expiration: '2024-01-01T00:00:00.000Z' }
+        dhpp: { status: 'EXPIRED', expiration: '2024-01-01T00:00:00.000Z' },
       };
-      
+
       const expirations = generateVaccineExpirations(vaccinationRecords);
-      
+
       expect(expirations).toEqual({
         rabies: '2025-12-01T00:00:00.000Z',
-        dhpp: '2024-01-01T00:00:00.000Z'
+        dhpp: '2024-01-01T00:00:00.000Z',
       });
     });
 
@@ -200,10 +239,14 @@ describe('Vaccination Data Enhancement', () => {
     it('validates date formats', () => {
       const expirationDate = '2025-12-01T00:00:00.000Z';
       const baseDate = new Date();
-      
-      const records = generateVaccinationRecords(expirationDate, 'DOG', baseDate);
-      
-      Object.values(records).forEach(record => {
+
+      const records = generateVaccinationRecords(
+        expirationDate,
+        'DOG',
+        baseDate
+      );
+
+      Object.values(records).forEach((record) => {
         expect(() => new Date(record.lastGiven)).not.toThrow();
         expect(() => new Date(record.expiration)).not.toThrow();
         expect(() => new Date(record.lastChecked)).not.toThrow();
@@ -213,13 +256,17 @@ describe('Vaccination Data Enhancement', () => {
     it('ensures last given date is before expiration date', () => {
       const expirationDate = '2025-12-01T00:00:00.000Z';
       const baseDate = new Date();
-      
-      const records = generateVaccinationRecords(expirationDate, 'DOG', baseDate);
-      
-      Object.values(records).forEach(record => {
+
+      const records = generateVaccinationRecords(
+        expirationDate,
+        'DOG',
+        baseDate
+      );
+
+      Object.values(records).forEach((record) => {
         const lastGiven = new Date(record.lastGiven);
         const expiration = new Date(record.expiration);
-        
+
         expect(lastGiven.getTime()).toBeLessThan(expiration.getTime());
       });
     });

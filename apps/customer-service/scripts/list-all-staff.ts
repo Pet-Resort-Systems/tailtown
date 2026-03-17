@@ -34,7 +34,6 @@ async function listAllStaff() {
     });
 
     console.log(`Total: ${allStaff.length} staff account(s)`);
-
   } catch (error) {
     console.error('❌ Error:', error);
   } finally {

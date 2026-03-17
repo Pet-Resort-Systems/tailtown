@@ -5,9 +5,9 @@
  * Designed for mobile-friendly staff access
  */
 
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient, MealTime } from "@prisma/client";
-import { AppError } from "../middleware/error.middleware";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient, MealTime } from '@prisma/client';
+import { AppError } from '../middleware/error.middleware';
 
 const prisma = new PrismaClient();
 
@@ -44,7 +44,7 @@ export const getCheckedInPets = async (
     const reservations = await prisma.reservation.findMany({
       where: {
         tenantId,
-        status: { in: ["CHECKED_IN", "CONFIRMED"] },
+        status: { in: ['CHECKED_IN', 'CONFIRMED'] },
         startDate: { lte: tomorrow },
         endDate: { gte: today },
       },
@@ -112,7 +112,7 @@ export const getCheckedInPets = async (
     }));
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: petsWithLogs.length,
       data: petsWithLogs,
     });
@@ -136,21 +136,21 @@ export const createFeedingLog = async (
       req.body;
 
     if (!staffId) {
-      return next(new AppError("Staff authentication required", 401));
+      return next(new AppError('Staff authentication required', 401));
     }
 
     if (!petId || !mealTime || rating === undefined) {
       return next(
-        new AppError("Pet ID, meal time, and rating are required", 400)
+        new AppError('Pet ID, meal time, and rating are required', 400)
       );
     }
 
     if (rating < 0 || rating > 4) {
-      return next(new AppError("Rating must be between 0 and 4", 400));
+      return next(new AppError('Rating must be between 0 and 4', 400));
     }
 
-    if (!["BREAKFAST", "LUNCH", "DINNER", "SNACK"].includes(mealTime)) {
-      return next(new AppError("Invalid meal time", 400));
+    if (!['BREAKFAST', 'LUNCH', 'DINNER', 'SNACK'].includes(mealTime)) {
+      return next(new AppError('Invalid meal time', 400));
     }
 
     // Use provided date or today
@@ -210,7 +210,7 @@ export const createFeedingLog = async (
           petId,
           date: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
         },
-        orderBy: { date: "desc" },
+        orderBy: { date: 'desc' },
         take: 5,
       });
 
@@ -224,7 +224,7 @@ export const createFeedingLog = async (
     }
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: feedingLog,
     });
   } catch (error) {
@@ -258,12 +258,12 @@ export const getFeedingLogs = async (
       include: {
         staff: { select: { id: true, firstName: true, lastName: true } },
       },
-      orderBy: [{ date: "desc" }, { mealTime: "asc" }],
+      orderBy: [{ date: 'desc' }, { mealTime: 'asc' }],
       take: parseInt(limit as string),
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: logs.length,
       data: logs,
     });
@@ -308,7 +308,7 @@ export const getFeedingReport = async (
         },
         staff: { select: { id: true, firstName: true, lastName: true } },
       },
-      orderBy: [{ date: "desc" }, { mealTime: "asc" }],
+      orderBy: [{ date: 'desc' }, { mealTime: 'asc' }],
     });
 
     // Calculate statistics
@@ -325,7 +325,7 @@ export const getFeedingReport = async (
     };
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         logs,
         stats,
@@ -352,18 +352,18 @@ export const getPetMedications = async (
   try {
     const tenantId = req.tenantId!;
     const { petId } = req.params;
-    const { activeOnly = "true" } = req.query;
+    const { activeOnly = 'true' } = req.query;
 
     const where: any = { tenantId, petId };
-    if (activeOnly === "true") where.isActive = true;
+    if (activeOnly === 'true') where.isActive = true;
 
     const medications = await prisma.petMedication.findMany({
       where,
-      orderBy: { medicationName: "asc" },
+      orderBy: { medicationName: 'asc' },
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: medications.length,
       data: medications,
     });
@@ -399,7 +399,7 @@ export const createPetMedication = async (
     if (!medicationName || !dosage || !frequency || !administrationMethod) {
       return next(
         new AppError(
-          "Medication name, dosage, frequency, and administration method are required",
+          'Medication name, dosage, frequency, and administration method are required',
           400
         )
       );
@@ -423,7 +423,7 @@ export const createPetMedication = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: medication,
     });
   } catch (error) {
@@ -448,7 +448,7 @@ export const updatePetMedication = async (
     });
 
     if (!existing) {
-      return next(new AppError("Medication not found", 404));
+      return next(new AppError('Medication not found', 404));
     }
 
     const medication = await prisma.petMedication.update({
@@ -457,7 +457,7 @@ export const updatePetMedication = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: medication,
     });
   } catch (error) {
@@ -482,7 +482,7 @@ export const deletePetMedication = async (
     });
 
     if (!existing) {
-      return next(new AppError("Medication not found", 404));
+      return next(new AppError('Medication not found', 404));
     }
 
     await prisma.petMedication.update({
@@ -519,7 +519,7 @@ export const getPetsNeedingMedication = async (
     const reservations = await prisma.reservation.findMany({
       where: {
         tenantId,
-        status: { in: ["CHECKED_IN", "CONFIRMED"] },
+        status: { in: ['CHECKED_IN', 'CONFIRMED'] },
         startDate: { lte: tomorrow },
         endDate: { gte: today },
       },
@@ -564,7 +564,7 @@ export const getPetsNeedingMedication = async (
       }));
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: petsWithMeds.length,
       data: petsWithMeds,
     });
@@ -595,13 +595,13 @@ export const createMedicationLog = async (
     } = req.body;
 
     if (!staffId) {
-      return next(new AppError("Staff authentication required", 401));
+      return next(new AppError('Staff authentication required', 401));
     }
 
     if (!petId || !medicationId || !scheduledTime) {
       return next(
         new AppError(
-          "Pet ID, medication ID, and scheduled time are required",
+          'Pet ID, medication ID, and scheduled time are required',
           400
         )
       );
@@ -613,7 +613,7 @@ export const createMedicationLog = async (
     });
 
     if (!medication) {
-      return next(new AppError("Medication not found", 404));
+      return next(new AppError('Medication not found', 404));
     }
 
     const log = await prisma.medicationLog.create({
@@ -637,7 +637,7 @@ export const createMedicationLog = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: log,
     });
   } catch (error) {
@@ -672,12 +672,12 @@ export const getMedicationLogs = async (
         medication: true,
         staff: { select: { id: true, firstName: true, lastName: true } },
       },
-      orderBy: { scheduledTime: "desc" },
+      orderBy: { scheduledTime: 'desc' },
       take: parseInt(limit as string),
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: logs.length,
       data: logs,
     });
@@ -722,7 +722,7 @@ export const getMedicationReport = async (
         medication: true,
         staff: { select: { id: true, firstName: true, lastName: true } },
       },
-      orderBy: { scheduledTime: "desc" },
+      orderBy: { scheduledTime: 'desc' },
     });
 
     // Calculate statistics
@@ -738,7 +738,7 @@ export const getMedicationReport = async (
     };
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         logs,
         stats,
@@ -768,7 +768,7 @@ export const togglePickyEater = async (
     });
 
     if (!pet) {
-      return next(new AppError("Pet not found", 404));
+      return next(new AppError('Pet not found', 404));
     }
 
     const updated = await prisma.pet.update({
@@ -780,7 +780,7 @@ export const togglePickyEater = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: { id: updated.id, isPickyEater: updated.isPickyEater },
     });
   } catch (error) {

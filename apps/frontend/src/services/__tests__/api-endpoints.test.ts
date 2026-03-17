@@ -1,9 +1,9 @@
 /**
  * API Endpoint Integration Tests
- * 
+ *
  * These tests verify that API endpoints are constructed correctly
  * and include the proper /api prefix where required.
- * 
+ *
  * This prevents issues like:
  * - Missing /api prefix (404 errors)
  * - Incorrect base URLs
@@ -29,7 +29,9 @@ describe('API Endpoint URL Construction', () => {
 
       expect(endpoint).toMatch(/^\/api\//);
       expect(endpoint).toContain('/check-in-templates/default');
-      expect(expectedURL).toBe('http://localhost:4003/api/check-in-templates/default');
+      expect(expectedURL).toBe(
+        'http://localhost:4003/api/check-in-templates/default'
+      );
     });
 
     it('should construct service agreement template URL with /api prefix', () => {
@@ -39,7 +41,9 @@ describe('API Endpoint URL Construction', () => {
 
       expect(endpoint).toMatch(/^\/api\//);
       expect(endpoint).toContain('/service-agreement-templates/default');
-      expect(expectedURL).toBe('http://localhost:4003/api/service-agreement-templates/default');
+      expect(expectedURL).toBe(
+        'http://localhost:4003/api/service-agreement-templates/default'
+      );
     });
 
     it('should construct reservations URL with /api prefix', () => {
@@ -91,17 +95,17 @@ describe('API Endpoint URL Construction', () => {
       '/api/pets',
       '/api/resources',
       '/api/check-ins',
-      '/api/service-agreements'
+      '/api/service-agreements',
     ];
 
-    validEndpoints.forEach(endpoint => {
+    validEndpoints.forEach((endpoint) => {
       it(`should validate endpoint: ${endpoint}`, () => {
         // All endpoints should start with /api/
         expect(endpoint).toMatch(/^\/api\//);
-        
+
         // Should not have double slashes
         expect(endpoint).not.toMatch(/\/\//);
-        
+
         // Should not end with slash (unless it's just /api/)
         if (endpoint !== '/api/') {
           expect(endpoint).not.toMatch(/\/$/);
@@ -117,16 +121,17 @@ describe('API Endpoint URL Construction', () => {
       '/api/reservations/', // Trailing slash
     ];
 
-    invalidEndpoints.forEach(endpoint => {
+    invalidEndpoints.forEach((endpoint) => {
       it(`should detect invalid endpoint: ${endpoint}`, () => {
         // Should either not start with /api/ or have other issues
         const startsWithApi = endpoint.match(/^\/api\//) !== null;
         const hasDoubleSlash = endpoint.match(/\/\//) !== null;
         const hasTrailingSlash = endpoint.match(/\/$/) !== null;
         const isLongEnough = endpoint.length > 5;
-        
-        const isValid = startsWithApi && !hasDoubleSlash && !hasTrailingSlash && isLongEnough;
-        
+
+        const isValid =
+          startsWithApi && !hasDoubleSlash && !hasTrailingSlash && isLongEnough;
+
         expect(isValid).toBe(false);
       });
     });
@@ -135,11 +140,11 @@ describe('API Endpoint URL Construction', () => {
   describe('Template Endpoint Regression Tests', () => {
     /**
      * Regression test for issue where template endpoints were missing /api prefix
-     * 
+     *
      * Issue: Frontend was calling /check-in-templates/default
      * Expected: /api/check-in-templates/default
      * Result: 404 errors
-     * 
+     *
      * This test ensures the issue doesn't happen again
      */
     it('should prevent regression: check-in template endpoint must include /api', () => {
@@ -173,23 +178,24 @@ describe('API Endpoint URL Construction', () => {
         {
           baseURL: 'http://localhost:4003',
           endpoint: '/api/check-in-templates/default',
-          expected: 'http://localhost:4003/api/check-in-templates/default'
+          expected: 'http://localhost:4003/api/check-in-templates/default',
         },
         {
           baseURL: 'http://localhost:4003',
           endpoint: '/api/service-agreement-templates/default',
-          expected: 'http://localhost:4003/api/service-agreement-templates/default'
+          expected:
+            'http://localhost:4003/api/service-agreement-templates/default',
         },
         {
           baseURL: 'http://localhost:4003',
           endpoint: '/api/reservations',
-          expected: 'http://localhost:4003/api/reservations'
+          expected: 'http://localhost:4003/api/reservations',
         },
         {
           baseURL: 'http://localhost:4004',
           endpoint: '/api/customers',
-          expected: 'http://localhost:4004/api/customers'
-        }
+          expected: 'http://localhost:4004/api/customers',
+        },
       ];
 
       testCases.forEach(({ baseURL, endpoint, expected }) => {

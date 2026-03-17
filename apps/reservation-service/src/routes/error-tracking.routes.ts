@@ -1,6 +1,6 @@
 /**
  * Error Tracking Routes
- * 
+ *
  * API routes for error tracking and management
  */
 
@@ -9,7 +9,7 @@ import {
   getAllErrors,
   getErrorAnalytics,
   getErrorById,
-  resolveError
+  resolveError,
 } from '../controllers/error-tracking';
 
 // Initialize router

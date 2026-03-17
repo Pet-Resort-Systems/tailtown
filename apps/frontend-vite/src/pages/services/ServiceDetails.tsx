@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container,
   Box,
@@ -19,16 +19,16 @@ import {
   Snackbar,
   Alert,
   SelectChangeEvent,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
-import { serviceManagement } from "../../services/serviceManagement";
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import { serviceManagement } from '../../services/serviceManagement';
 import {
   Service,
   ServiceCategory,
   AddOnService,
   DepositType,
-} from "../../types/service";
+} from '../../types/service';
 
 interface AddOnFormData {
   name: string;
@@ -47,14 +47,14 @@ const ServiceDetails: React.FC = () => {
   const isNewService = !id;
 
   const [service, setService] = useState<Partial<Service>>({
-    name: "",
-    description: "",
+    name: '',
+    description: '',
     serviceCategory: ServiceCategory.DAYCARE,
     price: 0,
     duration: 0, // Explicitly set to 0
     requiresStaff: false,
     isActive: true,
-    notes: "",
+    notes: '',
     availableAddOns: [],
     depositRequired: false,
     depositType: undefined,
@@ -64,16 +64,16 @@ const ServiceDetails: React.FC = () => {
   const [loading, setLoading] = useState(!isNewService);
   const [saving, setSaving] = useState(false);
   const [newAddOn, setNewAddOn] = useState<AddOnFormData>({
-    name: "",
-    description: "",
+    name: '',
+    description: '',
     price: 0,
     duration: 0,
   });
   const [showAddOnForm, setShowAddOnForm] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
-    message: "",
-    severity: "success" as "success" | "error" | "warning",
+    message: '',
+    severity: 'success' as 'success' | 'error' | 'warning',
   });
 
   const loadService = useCallback(async () => {
@@ -87,25 +87,25 @@ const ServiceDetails: React.FC = () => {
         setSnackbar({
           open: true,
           message:
-            "This service has been deactivated and is not available for booking",
-          severity: "warning",
+            'This service has been deactivated and is not available for booking',
+          severity: 'warning',
         });
       }
 
       setLoading(false);
     } catch (err: any) {
       // If service not found, navigate back to services list
-      const errorMessage = err.message || "Failed to load service";
+      const errorMessage = err.message || 'Failed to load service';
 
       setSnackbar({
         open: true,
         message: errorMessage,
-        severity: "error",
+        severity: 'error',
       });
 
       // Redirect back to services list after a short delay
       setTimeout(() => {
-        navigate("/services");
+        navigate('/services');
       }, 2000);
 
       setLoading(false);
@@ -123,7 +123,7 @@ const ServiceDetails: React.FC = () => {
     const { name, value, type } = e.target;
     setService((prev: Partial<Service>) => ({
       ...prev,
-      [name]: type === "number" ? Number(value) : value,
+      [name]: type === 'number' ? Number(value) : value,
     }));
   };
 
@@ -150,7 +150,7 @@ const ServiceDetails: React.FC = () => {
     const { name, value, type } = e.target;
     setNewAddOn((prev: AddOnFormData) => ({
       ...prev,
-      [name]: type === "number" ? Number(value) : value,
+      [name]: type === 'number' ? Number(value) : value,
     }));
   };
 
@@ -160,8 +160,8 @@ const ServiceDetails: React.FC = () => {
       availableAddOns: [...(prev.availableAddOns || []), newAddOn],
     }));
     setNewAddOn({
-      name: "",
-      description: "",
+      name: '',
+      description: '',
       price: 0,
       duration: 0,
     });
@@ -180,7 +180,7 @@ const ServiceDetails: React.FC = () => {
   const handleSave = async () => {
     try {
       setSaving(true);
-      console.log("Saving service:", service);
+      console.log('Saving service:', service);
 
       // Always ensure isActive is set to true when saving
       const serviceToSave = {
@@ -207,27 +207,27 @@ const ServiceDetails: React.FC = () => {
 
       setSnackbar({
         open: true,
-        message: `Service ${isNewService ? "created" : "updated"} successfully`,
-        severity: "success",
+        message: `Service ${isNewService ? 'created' : 'updated'} successfully`,
+        severity: 'success',
       });
-      navigate("/services");
+      navigate('/services');
     } catch (err: any) {
       // Show the specific error message if available
       const errorMessage =
         err.message ||
-        `Failed to ${isNewService ? "create" : "update"} service`;
+        `Failed to ${isNewService ? 'create' : 'update'} service`;
 
       setSnackbar({
         open: true,
         message: errorMessage,
-        severity: "error",
+        severity: 'error',
       });
       setSaving(false);
     }
   };
 
   const handleCancel = () => {
-    navigate("/services");
+    navigate('/services');
   };
 
   const handleSnackbarClose = () => {
@@ -239,10 +239,10 @@ const ServiceDetails: React.FC = () => {
       <Container maxWidth="lg">
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "50vh",
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '50vh',
           }}
         >
           <Typography>Loading service...</Typography>
@@ -255,7 +255,7 @@ const ServiceDetails: React.FC = () => {
     <Container maxWidth="lg">
       <Box sx={{ py: 4 }}>
         <Typography variant="h4" component="h1" sx={{ mb: 4 }}>
-          {isNewService ? "New Service" : "Edit Service"}
+          {isNewService ? 'New Service' : 'Edit Service'}
         </Typography>
 
         <Grid container spacing={3}>
@@ -316,7 +316,7 @@ const ServiceDetails: React.FC = () => {
                     value={service.price}
                     onChange={handleInputChange}
                     InputProps={{
-                      startAdornment: "$",
+                      startAdornment: '$',
                     }}
                   />
                 </Grid>
@@ -387,8 +387,8 @@ const ServiceDetails: React.FC = () => {
                         fullWidth
                         label={
                           service.depositType === DepositType.PERCENTAGE
-                            ? "Deposit Percentage"
-                            : "Deposit Amount"
+                            ? 'Deposit Percentage'
+                            : 'Deposit Amount'
                         }
                         name="depositAmount"
                         type="number"
@@ -397,12 +397,12 @@ const ServiceDetails: React.FC = () => {
                         InputProps={{
                           startAdornment:
                             service.depositType === DepositType.PERCENTAGE
-                              ? ""
-                              : "$",
+                              ? ''
+                              : '$',
                           endAdornment:
                             service.depositType === DepositType.PERCENTAGE
-                              ? "%"
-                              : "",
+                              ? '%'
+                              : '',
                           inputProps: {
                             min: 0,
                             max:
@@ -434,8 +434,8 @@ const ServiceDetails: React.FC = () => {
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                  <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-                    <Typography variant="body2" sx={{ minWidth: "60px" }}>
+                  <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                    <Typography variant="body2" sx={{ minWidth: '60px' }}>
                       Duration:
                     </Typography>
                     <TextField
@@ -459,7 +459,7 @@ const ServiceDetails: React.FC = () => {
                         }));
                       }}
                       size="small"
-                      sx={{ width: "100px" }}
+                      sx={{ width: '100px' }}
                     />
                     <TextField
                       label="Min"
@@ -481,7 +481,7 @@ const ServiceDetails: React.FC = () => {
                         }));
                       }}
                       size="small"
-                      sx={{ width: "100px" }}
+                      sx={{ width: '100px' }}
                     >
                       <MenuItem key={0} value={0}>
                         0
@@ -575,9 +575,9 @@ const ServiceDetails: React.FC = () => {
             <Paper sx={{ p: 3 }}>
               <Box
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
                   mb: 2,
                 }}
               >
@@ -598,8 +598,8 @@ const ServiceDetails: React.FC = () => {
                   sx={{
                     mb: 3,
                     p: 2,
-                    border: "1px solid",
-                    borderColor: "divider",
+                    border: '1px solid',
+                    borderColor: 'divider',
                     borderRadius: 1,
                   }}
                 >
@@ -634,7 +634,7 @@ const ServiceDetails: React.FC = () => {
                         onChange={handleAddOnInputChange}
                         size="small"
                         InputProps={{
-                          startAdornment: "$",
+                          startAdornment: '$',
                         }}
                       />
                     </Grid>
@@ -652,9 +652,9 @@ const ServiceDetails: React.FC = () => {
                     <Grid item xs={12}>
                       <Box
                         sx={{
-                          display: "flex",
+                          display: 'flex',
                           gap: 1,
-                          justifyContent: "flex-end",
+                          justifyContent: 'flex-end',
                         }}
                       >
                         <Button
@@ -686,15 +686,15 @@ const ServiceDetails: React.FC = () => {
                     sx={{
                       p: 2,
                       mb: 1,
-                      border: "1px solid",
-                      borderColor: "divider",
+                      border: '1px solid',
+                      borderColor: 'divider',
                       borderRadius: 1,
-                      position: "relative",
+                      position: 'relative',
                     }}
                   >
                     <IconButton
                       size="small"
-                      sx={{ position: "absolute", top: 8, right: 8 }}
+                      sx={{ position: 'absolute', top: 8, right: 8 }}
                       onClick={() => handleRemoveAddOn(index)}
                     >
                       <DeleteIcon />
@@ -716,7 +716,7 @@ const ServiceDetails: React.FC = () => {
         </Grid>
 
         <Box
-          sx={{ mt: 4, display: "flex", gap: 2, justifyContent: "flex-end" }}
+          sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'flex-end' }}
         >
           <Button onClick={handleCancel}>Cancel</Button>
           <Button
@@ -724,7 +724,7 @@ const ServiceDetails: React.FC = () => {
             onClick={handleSave}
             disabled={saving || !service.name}
           >
-            {saving ? "Saving..." : "Save"}
+            {saving ? 'Saving...' : 'Save'}
           </Button>
         </Box>
       </Box>
@@ -737,7 +737,7 @@ const ServiceDetails: React.FC = () => {
         <Alert
           onClose={handleSnackbarClose}
           severity={snackbar.severity}
-          sx={{ width: "100%" }}
+          sx={{ width: '100%' }}
         >
           {snackbar.message}
         </Alert>

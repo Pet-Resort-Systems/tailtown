@@ -1,238 +1,264 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Suite Availability Test</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1,
+      h2 {
+        color: #333;
+      }
+      .controls {
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #f5f5f5;
+        border-radius: 5px;
+      }
+      .suite-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 15px;
+      }
+      .suite-card {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 15px;
+        background-color: white;
+      }
+      .suite-card h3 {
+        margin-top: 0;
+        color: #2c3e50;
+      }
+      .available {
+        color: green;
+        font-weight: bold;
+      }
+      .unavailable {
+        color: red;
+        font-weight: bold;
+      }
+      button {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+      }
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
         }
-        h1, h2 {
-            color: #333;
-        }
-        .controls {
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: #f5f5f5;
-            border-radius: 5px;
-        }
-        .suite-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 15px;
-        }
-        .suite-card {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 15px;
-            background-color: white;
-        }
-        .suite-card h3 {
-            margin-top: 0;
-            color: #2c3e50;
-        }
-        .available {
-            color: green;
-            font-weight: bold;
-        }
-        .unavailable {
-            color: red;
-            font-weight: bold;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .error {
-            color: red;
-            background-color: #ffeeee;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-        .info {
-            color: #31708f;
-            background-color: #d9edf7;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-        pre {
-            background-color: #f8f8f8;
-            padding: 10px;
-            border-radius: 5px;
-            overflow: auto;
-        }
+      }
+      .error {
+        color: red;
+        background-color: #ffeeee;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+      }
+      .info {
+        color: #31708f;
+        background-color: #d9edf7;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+      }
+      pre {
+        background-color: #f8f8f8;
+        padding: 10px;
+        border-radius: 5px;
+        overflow: auto;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Suite Availability Test</h1>
-    
+
     <div class="controls">
-        <div>
-            <label for="apiUrl">API URL:</label>
-            <input type="text" id="apiUrl" value="http://localhost:4004" style="width: 300px;">
-        </div>
-        <div style="margin-top: 10px;">
-            <label for="date">Date (YYYY-MM-DD):</label>
-            <input type="text" id="date" value="">
-        </div>
-        <div style="margin-top: 15px;">
-            <button id="fetchButton" onclick="fetchSuiteAvailability()">Fetch Suite Availability</button>
-        </div>
+      <div>
+        <label for="apiUrl">API URL:</label>
+        <input
+          type="text"
+          id="apiUrl"
+          value="http://localhost:4004"
+          style="width: 300px"
+        />
+      </div>
+      <div style="margin-top: 10px">
+        <label for="date">Date (YYYY-MM-DD):</label>
+        <input type="text" id="date" value="" />
+      </div>
+      <div style="margin-top: 15px">
+        <button id="fetchButton" onclick="fetchSuiteAvailability()">
+          Fetch Suite Availability
+        </button>
+      </div>
     </div>
-    
-    <div id="error" class="error" style="display: none;"></div>
-    <div id="info" class="info" style="display: none;"></div>
-    
+
+    <div id="error" class="error" style="display: none"></div>
+    <div id="info" class="info" style="display: none"></div>
+
     <div id="results">
-        <h2>Results</h2>
-        <div id="suiteCount"></div>
-        <div id="suiteGrid" class="suite-grid"></div>
+      <h2>Results</h2>
+      <div id="suiteCount"></div>
+      <div id="suiteGrid" class="suite-grid"></div>
     </div>
-    
-    <div style="margin-top: 30px;">
-        <h2>Raw Response</h2>
-        <pre id="rawResponse">No data yet. Click "Fetch Suite Availability" to test the API.</pre>
+
+    <div style="margin-top: 30px">
+      <h2>Raw Response</h2>
+      <pre id="rawResponse">
+No data yet. Click "Fetch Suite Availability" to test the API.</pre
+      >
     </div>
-    
+
     <script>
-        // Set today's date as the default
-        document.getElementById('date').value = formatDate(new Date());
-        
-        function formatDate(date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-        
-        async function fetchSuiteAvailability() {
-            // Get values from inputs
-            const apiUrl = document.getElementById('apiUrl').value;
-            const date = document.getElementById('date').value;
-            
-            // Clear previous results
-            document.getElementById('error').style.display = 'none';
-            document.getElementById('info').style.display = 'none';
-            document.getElementById('suiteCount').textContent = '';
-            document.getElementById('suiteGrid').innerHTML = '';
-            document.getElementById('rawResponse').textContent = 'Loading...';
-            
-            // Disable button and show loading state
-            const button = document.getElementById('fetchButton');
-            const originalButtonText = button.textContent;
-            button.disabled = true;
-            button.innerHTML = '<span class="loading"></span> Loading...';
-            
-            try {
-                // Log request details
-                console.log(`Fetching suite availability from ${apiUrl}/api/resources/availability?resourceType=suite&date=${date}`);
-                
-                // Make the request
-                const response = await fetch(`${apiUrl}/api/resources/availability?resourceType=suite&date=${date}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                // Get response as text first for raw display
-                const responseText = await response.text();
-                document.getElementById('rawResponse').textContent = responseText;
-                
-                // Parse response as JSON
-                let data;
-                try {
-                    data = JSON.parse(responseText);
-                } catch (e) {
-                    throw new Error(`Invalid JSON response: ${e.message}`);
-                }
-                
-                // Check if response is successful
-                if (!response.ok) {
-                    throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
-                }
-                
-                // Process the data
-                let suites = [];
-                
-                if (data?.status === 'success' && Array.isArray(data?.data)) {
-                    // Format 1: { status: 'success', data: [...] }
-                    suites = data.data;
-                } else if (data?.resources && Array.isArray(data.resources)) {
-                    // Format 2: { resources: [...] }
-                    suites = data.resources;
-                } else {
-                    throw new Error('Unexpected response format');
-                }
-                
-                // Display suite count
-                document.getElementById('suiteCount').textContent = `Found ${suites.length} suites`;
-                
-                // Display suites
-                const suiteGrid = document.getElementById('suiteGrid');
-                
-                if (suites.length === 0) {
-                    document.getElementById('info').textContent = 'No suites found for the selected date.';
-                    document.getElementById('info').style.display = 'block';
-                } else {
-                    suites.forEach(suite => {
-                        const suiteName = suite.name || suite.resourceName || 'Unnamed Suite';
-                        const suiteType = suite.type || suite.resourceType || 'Unknown Type';
-                        const isAvailable = suite.isAvailable === true || suite.isAvailable === undefined;
-                        
-                        const suiteCard = document.createElement('div');
-                        suiteCard.className = 'suite-card';
-                        suiteCard.innerHTML = `
+      // Set today's date as the default
+      document.getElementById('date').value = formatDate(new Date());
+
+      function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
+
+      async function fetchSuiteAvailability() {
+        // Get values from inputs
+        const apiUrl = document.getElementById('apiUrl').value;
+        const date = document.getElementById('date').value;
+
+        // Clear previous results
+        document.getElementById('error').style.display = 'none';
+        document.getElementById('info').style.display = 'none';
+        document.getElementById('suiteCount').textContent = '';
+        document.getElementById('suiteGrid').innerHTML = '';
+        document.getElementById('rawResponse').textContent = 'Loading...';
+
+        // Disable button and show loading state
+        const button = document.getElementById('fetchButton');
+        const originalButtonText = button.textContent;
+        button.disabled = true;
+        button.innerHTML = '<span class="loading"></span> Loading...';
+
+        try {
+          // Log request details
+          console.log(
+            `Fetching suite availability from ${apiUrl}/api/resources/availability?resourceType=suite&date=${date}`
+          );
+
+          // Make the request
+          const response = await fetch(
+            `${apiUrl}/api/resources/availability?resourceType=suite&date=${date}`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+
+          // Get response as text first for raw display
+          const responseText = await response.text();
+          document.getElementById('rawResponse').textContent = responseText;
+
+          // Parse response as JSON
+          let data;
+          try {
+            data = JSON.parse(responseText);
+          } catch (e) {
+            throw new Error(`Invalid JSON response: ${e.message}`);
+          }
+
+          // Check if response is successful
+          if (!response.ok) {
+            throw new Error(
+              `HTTP error ${response.status}: ${response.statusText}`
+            );
+          }
+
+          // Process the data
+          let suites = [];
+
+          if (data?.status === 'success' && Array.isArray(data?.data)) {
+            // Format 1: { status: 'success', data: [...] }
+            suites = data.data;
+          } else if (data?.resources && Array.isArray(data.resources)) {
+            // Format 2: { resources: [...] }
+            suites = data.resources;
+          } else {
+            throw new Error('Unexpected response format');
+          }
+
+          // Display suite count
+          document.getElementById('suiteCount').textContent =
+            `Found ${suites.length} suites`;
+
+          // Display suites
+          const suiteGrid = document.getElementById('suiteGrid');
+
+          if (suites.length === 0) {
+            document.getElementById('info').textContent =
+              'No suites found for the selected date.';
+            document.getElementById('info').style.display = 'block';
+          } else {
+            suites.forEach((suite) => {
+              const suiteName =
+                suite.name || suite.resourceName || 'Unnamed Suite';
+              const suiteType =
+                suite.type || suite.resourceType || 'Unknown Type';
+              const isAvailable =
+                suite.isAvailable === true || suite.isAvailable === undefined;
+
+              const suiteCard = document.createElement('div');
+              suiteCard.className = 'suite-card';
+              suiteCard.innerHTML = `
                             <h3>${suiteName}</h3>
                             <p>Type: ${suiteType}</p>
                             <p>Status: <span class="${isAvailable ? 'available' : 'unavailable'}">${isAvailable ? 'Available' : 'Unavailable'}</span></p>
                             <p>ID: ${suite.id || suite.resourceId || 'Unknown'}</p>
                         `;
-                        
-                        suiteGrid.appendChild(suiteCard);
-                    });
-                }
-            } catch (error) {
-                console.error('Error fetching suite availability:', error);
-                document.getElementById('error').textContent = `Error: ${error.message}`;
-                document.getElementById('error').style.display = 'block';
-                document.getElementById('rawResponse').textContent = error.stack || error.message;
-            } finally {
-                // Restore button state
-                button.disabled = false;
-                button.textContent = originalButtonText;
-            }
+
+              suiteGrid.appendChild(suiteCard);
+            });
+          }
+        } catch (error) {
+          console.error('Error fetching suite availability:', error);
+          document.getElementById('error').textContent =
+            `Error: ${error.message}`;
+          document.getElementById('error').style.display = 'block';
+          document.getElementById('rawResponse').textContent =
+            error.stack || error.message;
+        } finally {
+          // Restore button state
+          button.disabled = false;
+          button.textContent = originalButtonText;
         }
+      }
     </script>
-</body>
+  </body>
 </html>

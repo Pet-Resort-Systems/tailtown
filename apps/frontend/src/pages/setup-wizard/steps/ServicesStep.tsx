@@ -4,7 +4,7 @@
  * Configure available services: boarding, daycare, grooming, training, etc.
  */
 
-import React from "react";
+import React from 'react';
 import {
   Box,
   Typography,
@@ -15,8 +15,8 @@ import {
   FormControlLabel,
   TextField,
   Chip,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   ArrowForward,
   ArrowBack,
@@ -26,9 +26,9 @@ import {
   School,
   DirectionsWalk,
   Bathtub,
-} from "@mui/icons-material";
-import { useSetupWizard } from "../SetupWizardContext";
-import { ServiceCategory } from "../types";
+} from '@mui/icons-material';
+import { useSetupWizard } from '../SetupWizardContext';
+import { ServiceCategory } from '../types';
 
 const CATEGORY_ICONS: Record<ServiceCategory, React.ReactNode> = {
   BOARDING: <Hotel />,
@@ -41,13 +41,13 @@ const CATEGORY_ICONS: Record<ServiceCategory, React.ReactNode> = {
 };
 
 const CATEGORY_COLORS: Record<ServiceCategory, string> = {
-  BOARDING: "#1976d2",
-  DAYCARE: "#ff9800",
-  GROOMING: "#9c27b0",
-  TRAINING: "#4caf50",
-  WALKING: "#00bcd4",
-  BATHING: "#2196f3",
-  ADDON: "#757575",
+  BOARDING: '#1976d2',
+  DAYCARE: '#ff9800',
+  GROOMING: '#9c27b0',
+  TRAINING: '#4caf50',
+  WALKING: '#00bcd4',
+  BATHING: '#2196f3',
+  ADDON: '#757575',
 };
 
 export default function ServicesStep() {
@@ -72,18 +72,21 @@ export default function ServicesStep() {
   const handleNext = () => {
     const hasEnabledServices = services.services.some((s) => s.enabled);
     if (hasEnabledServices) {
-      completeStep("services");
+      completeStep('services');
       nextStep();
     }
   };
 
-  const groupedServices = services.services.reduce((acc, service) => {
-    if (!acc[service.category]) {
-      acc[service.category] = [];
-    }
-    acc[service.category].push(service);
-    return acc;
-  }, {} as Record<ServiceCategory, typeof services.services>);
+  const groupedServices = services.services.reduce(
+    (acc, service) => {
+      if (!acc[service.category]) {
+        acc[service.category] = [];
+      }
+      acc[service.category].push(service);
+      return acc;
+    },
+    {} as Record<ServiceCategory, typeof services.services>
+  );
 
   return (
     <Box>
@@ -96,7 +99,7 @@ export default function ServicesStep() {
       </Typography>
 
       {/* Quick Toggles */}
-      <Box sx={{ mb: 4, display: "flex", gap: 2, flexWrap: "wrap" }}>
+      <Box sx={{ mb: 4, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
         <FormControlLabel
           control={
             <Switch
@@ -136,7 +139,7 @@ export default function ServicesStep() {
           <Grid item xs={12} key={category}>
             <Box sx={{ mb: 2 }}>
               <Box
-                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
+                sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}
               >
                 <Box
                   sx={{ color: CATEGORY_COLORS[category as ServiceCategory] }}
@@ -155,18 +158,18 @@ export default function ServicesStep() {
                       sx={{
                         borderColor: service.enabled
                           ? CATEGORY_COLORS[service.category]
-                          : "divider",
+                          : 'divider',
                         bgcolor: service.enabled
-                          ? "action.selected"
-                          : "background.paper",
+                          ? 'action.selected'
+                          : 'background.paper',
                       }}
                     >
                       <CardContent>
                         <Box
                           sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
                           }}
                         >
                           <TextField
@@ -200,14 +203,14 @@ export default function ServicesStep() {
       </Grid>
 
       {/* Summary */}
-      <Box sx={{ p: 2, bgcolor: "grey.100", borderRadius: 1, mt: 3 }}>
+      <Box sx={{ p: 2, bgcolor: 'grey.100', borderRadius: 1, mt: 3 }}>
         <Typography variant="subtitle2">
           {services.services.filter((s) => s.enabled).length} services enabled
         </Typography>
       </Box>
 
       {/* Navigation */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button startIcon={<ArrowBack />} onClick={prevStep}>
           Back
         </Button>

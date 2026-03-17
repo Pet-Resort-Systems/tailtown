@@ -2,7 +2,7 @@
  * MyPets - View and update pet information
  */
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Card,
@@ -20,29 +20,29 @@ import {
   TextField,
   MenuItem,
   IconButton,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   Pets as PetsIcon,
   Edit as EditIcon,
   Add as AddIcon,
   Male as MaleIcon,
   Female as FemaleIcon,
-} from "@mui/icons-material";
-import { format, parseISO } from "date-fns";
-import { useCustomerAuth } from "../../../contexts/CustomerAuthContext";
+} from '@mui/icons-material';
+import { format, parseISO } from 'date-fns';
+import { useCustomerAuth } from '../../../contexts/CustomerAuthContext';
 import customerAccountService, {
   CustomerPet,
-} from "../../../services/customerAccountService";
+} from '../../../services/customerAccountService';
 
-const SPECIES_OPTIONS = ["Dog", "Cat", "Bird", "Rabbit", "Other"];
-const GENDER_OPTIONS = ["Male", "Female", "Unknown"];
+const SPECIES_OPTIONS = ['Dog', 'Cat', 'Bird', 'Rabbit', 'Other'];
+const GENDER_OPTIONS = ['Male', 'Female', 'Unknown'];
 
 const MyPets: React.FC = () => {
   const { customer } = useCustomerAuth();
   const [pets, setPets] = useState<CustomerPet[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedPet, setSelectedPet] = useState<CustomerPet | null>(null);
   const [saving, setSaving] = useState(false);
@@ -53,12 +53,12 @@ const MyPets: React.FC = () => {
 
     try {
       setLoading(true);
-      setError("");
+      setError('');
       const data = await customerAccountService.getCustomerPets(customer.id);
       setPets(data.filter((p) => p.isActive));
     } catch (err: any) {
-      console.error("Error loading pets:", err);
-      setError("Unable to load pets. Please try again.");
+      console.error('Error loading pets:', err);
+      setError('Unable to load pets. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -88,12 +88,12 @@ const MyPets: React.FC = () => {
   const handleAddClick = () => {
     setSelectedPet(null);
     setFormData({
-      name: "",
-      species: "Dog",
-      breed: "",
-      color: "",
-      gender: "Unknown",
-      notes: "",
+      name: '',
+      species: 'Dog',
+      breed: '',
+      color: '',
+      gender: 'Unknown',
+      notes: '',
     });
     setEditDialogOpen(true);
   };
@@ -101,7 +101,7 @@ const MyPets: React.FC = () => {
   const handleSave = async () => {
     try {
       setSaving(true);
-      setError("");
+      setError('');
 
       if (selectedPet) {
         // Update existing pet
@@ -117,7 +117,7 @@ const MyPets: React.FC = () => {
       setEditDialogOpen(false);
       loadPets();
     } catch (err: any) {
-      setError("Unable to save pet information. Please try again.");
+      setError('Unable to save pet information. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -130,7 +130,7 @@ const MyPets: React.FC = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -140,9 +140,9 @@ const MyPets: React.FC = () => {
     <Box>
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           mb: 3,
         }}
       >
@@ -159,14 +159,14 @@ const MyPets: React.FC = () => {
       </Box>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError("")}>
+        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>
           {error}
         </Alert>
       )}
 
       {pets.length === 0 ? (
-        <Box sx={{ textAlign: "center", py: 6 }}>
-          <PetsIcon sx={{ fontSize: 64, color: "text.disabled", mb: 2 }} />
+        <Box sx={{ textAlign: 'center', py: 6 }}>
+          <PetsIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
           <Typography variant="h6" color="text.secondary" gutterBottom>
             No Pets Added Yet
           </Typography>
@@ -187,14 +187,14 @@ const MyPets: React.FC = () => {
             <Grid item xs={12} sm={6} md={4} key={pet.id}>
               <Card variant="outlined">
                 <CardContent>
-                  <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                     <Avatar
                       src={pet.photoUrl}
                       sx={{
                         width: 56,
                         height: 56,
                         mr: 2,
-                        bgcolor: "primary.light",
+                        bgcolor: 'primary.light',
                       }}
                     >
                       <PetsIcon />
@@ -216,14 +216,14 @@ const MyPets: React.FC = () => {
                   </Box>
 
                   <Box
-                    sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 2 }}
+                    sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}
                   >
                     <Chip size="small" label={pet.species} variant="outlined" />
-                    {pet.gender && pet.gender !== "Unknown" && (
+                    {pet.gender && pet.gender !== 'Unknown' && (
                       <Chip
                         size="small"
                         icon={
-                          pet.gender === "Male" ? <MaleIcon /> : <FemaleIcon />
+                          pet.gender === 'Male' ? <MaleIcon /> : <FemaleIcon />
                         }
                         label={pet.gender}
                         variant="outlined"
@@ -244,7 +244,7 @@ const MyPets: React.FC = () => {
                       color="text.secondary"
                       display="block"
                     >
-                      Born: {format(parseISO(pet.birthDate), "MMM d, yyyy")}
+                      Born: {format(parseISO(pet.birthDate), 'MMM d, yyyy')}
                     </Typography>
                   )}
 
@@ -273,7 +273,7 @@ const MyPets: React.FC = () => {
         fullWidth
       >
         <DialogTitle>
-          {selectedPet ? `Edit ${selectedPet.name}` : "Add New Pet"}
+          {selectedPet ? `Edit ${selectedPet.name}` : 'Add New Pet'}
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
@@ -282,8 +282,8 @@ const MyPets: React.FC = () => {
                 label="Pet Name"
                 fullWidth
                 required
-                value={formData.name || ""}
-                onChange={handleFormChange("name")}
+                value={formData.name || ''}
+                onChange={handleFormChange('name')}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -291,8 +291,8 @@ const MyPets: React.FC = () => {
                 label="Species"
                 fullWidth
                 select
-                value={formData.species || "Dog"}
-                onChange={handleFormChange("species")}
+                value={formData.species || 'Dog'}
+                onChange={handleFormChange('species')}
               >
                 {SPECIES_OPTIONS.map((option) => (
                   <MenuItem key={option} value={option}>
@@ -305,16 +305,16 @@ const MyPets: React.FC = () => {
               <TextField
                 label="Breed"
                 fullWidth
-                value={formData.breed || ""}
-                onChange={handleFormChange("breed")}
+                value={formData.breed || ''}
+                onChange={handleFormChange('breed')}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Color"
                 fullWidth
-                value={formData.color || ""}
-                onChange={handleFormChange("color")}
+                value={formData.color || ''}
+                onChange={handleFormChange('color')}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -322,8 +322,8 @@ const MyPets: React.FC = () => {
                 label="Gender"
                 fullWidth
                 select
-                value={formData.gender || "Unknown"}
-                onChange={handleFormChange("gender")}
+                value={formData.gender || 'Unknown'}
+                onChange={handleFormChange('gender')}
               >
                 {GENDER_OPTIONS.map((option) => (
                   <MenuItem key={option} value={option}>
@@ -337,8 +337,8 @@ const MyPets: React.FC = () => {
                 label="Weight (lbs)"
                 fullWidth
                 type="number"
-                value={formData.weight || ""}
-                onChange={handleFormChange("weight")}
+                value={formData.weight || ''}
+                onChange={handleFormChange('weight')}
               />
             </Grid>
             <Grid item xs={12}>
@@ -347,9 +347,9 @@ const MyPets: React.FC = () => {
                 fullWidth
                 type="date"
                 value={
-                  formData.birthDate ? formData.birthDate.split("T")[0] : ""
+                  formData.birthDate ? formData.birthDate.split('T')[0] : ''
                 }
-                onChange={handleFormChange("birthDate")}
+                onChange={handleFormChange('birthDate')}
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
@@ -359,8 +359,8 @@ const MyPets: React.FC = () => {
                 fullWidth
                 multiline
                 rows={2}
-                value={formData.notes || ""}
-                onChange={handleFormChange("notes")}
+                value={formData.notes || ''}
+                onChange={handleFormChange('notes')}
                 placeholder="Any special notes about your pet"
               />
             </Grid>
@@ -370,8 +370,8 @@ const MyPets: React.FC = () => {
                 fullWidth
                 multiline
                 rows={2}
-                value={formData.feedingInstructions || ""}
-                onChange={handleFormChange("feedingInstructions")}
+                value={formData.feedingInstructions || ''}
+                onChange={handleFormChange('feedingInstructions')}
                 placeholder="Special feeding requirements"
               />
             </Grid>
@@ -381,8 +381,8 @@ const MyPets: React.FC = () => {
                 fullWidth
                 multiline
                 rows={2}
-                value={formData.medicationInstructions || ""}
-                onChange={handleFormChange("medicationInstructions")}
+                value={formData.medicationInstructions || ''}
+                onChange={handleFormChange('medicationInstructions')}
                 placeholder="Any medications your pet needs"
               />
             </Grid>
@@ -397,7 +397,7 @@ const MyPets: React.FC = () => {
             variant="contained"
             disabled={saving || !formData.name}
           >
-            {saving ? "Saving..." : "Save"}
+            {saving ? 'Saving...' : 'Save'}
           </Button>
         </DialogActions>
       </Dialog>

@@ -5,32 +5,32 @@
  * It implements schema alignment strategy with defensive programming.
  */
 
-import { Response } from "express";
-import { TenantRequest } from "../../types/request";
-import { AppError } from "../../utils/service";
-import { catchAsync } from "../../middleware/catchAsync";
-import { logger } from "../../utils/logger";
-import { detectReservationConflicts } from "../../utils/reservation-conflicts";
+import { Response } from 'express';
+import { TenantRequest } from '../../types/request';
+import { AppError } from '../../utils/service';
+import { catchAsync } from '../../middleware/catchAsync';
+import { logger } from '../../utils/logger';
+import { detectReservationConflicts } from '../../utils/reservation-conflicts';
 import {
   ExtendedResourceWhereInput,
   ExtendedReservationInclude,
   ExtendedServiceWhereInput,
-} from "../../types/prisma-extensions";
-import { safeExecutePrismaQuery, prisma } from "./utils/prisma-helpers";
-import { customerServiceClient } from "../../clients/customer-service.client";
-import { notificationClient } from "../../clients/notification.client";
-import { logReservationCreated } from "../../services/reservation-activity.service";
+} from '../../types/prisma-extensions';
+import { safeExecutePrismaQuery, prisma } from './utils/prisma-helpers';
+import { customerServiceClient } from '../../clients/customer-service.client';
+import { notificationClient } from '../../clients/notification.client';
+import { logReservationCreated } from '../../services/reservation-activity.service';
 
 /**
  * Helper function to determine suite type based on service type
  */
 function determineSuiteType(serviceType: string): string | null {
   const serviceToSuiteMap: Record<string, string> = {
-    BOARDING: "KENNEL",
-    DAYCARE: "PLAY_AREA",
-    GROOMING: "GROOMING_STATION",
-    TRAINING: "TRAINING_AREA",
-    VET: "EXAM_ROOM",
+    BOARDING: 'KENNEL',
+    DAYCARE: 'PLAY_AREA',
+    GROOMING: 'GROOMING_STATION',
+    TRAINING: 'TRAINING_AREA',
+    VET: 'EXAM_ROOM',
   };
 
   return serviceToSuiteMap[serviceType.toUpperCase()] || null;
@@ -54,11 +54,11 @@ export const createReservation = catchAsync(
 
     // Get tenant ID from request - added by tenant middleware
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
     if (!tenantId) {
       logger.warn(`Missing tenant ID in request`, { requestId });
-      throw AppError.authorizationError("Tenant ID is required");
+      throw AppError.authorizationError('Tenant ID is required');
     }
 
     // Validate required fields
@@ -83,27 +83,27 @@ export const createReservation = catchAsync(
     // Validate required fields
     if (!customerId) {
       logger.warn(`Missing required field: customerId`, { requestId });
-      throw AppError.validationError("Customer ID is required");
+      throw AppError.validationError('Customer ID is required');
     }
 
     if (!petId) {
       logger.warn(`Missing required field: petId`, { requestId });
-      throw AppError.validationError("Pet ID is required");
+      throw AppError.validationError('Pet ID is required');
     }
 
     if (!startDate) {
       logger.warn(`Missing required field: startDate`, { requestId });
-      throw AppError.validationError("Start date is required");
+      throw AppError.validationError('Start date is required');
     }
 
     if (!endDate) {
       logger.warn(`Missing required field: endDate`, { requestId });
-      throw AppError.validationError("End date is required");
+      throw AppError.validationError('End date is required');
     }
 
     if (!serviceId) {
       logger.warn(`Missing required field: serviceId`, { requestId });
-      throw AppError.validationError("Service ID is required");
+      throw AppError.validationError('Service ID is required');
     }
 
     // Parse dates
@@ -115,7 +115,7 @@ export const createReservation = catchAsync(
       if (isNaN(parsedStartDate.getTime())) {
         logger.warn(`Invalid start date format: ${startDate}`, { requestId });
         throw AppError.validationError(
-          "Invalid start date format. Use YYYY-MM-DD"
+          'Invalid start date format. Use YYYY-MM-DD'
         );
       }
     } catch (error) {
@@ -124,7 +124,7 @@ export const createReservation = catchAsync(
         error,
       });
       throw AppError.validationError(
-        "Invalid start date format. Use YYYY-MM-DD"
+        'Invalid start date format. Use YYYY-MM-DD'
       );
     }
 
@@ -133,12 +133,12 @@ export const createReservation = catchAsync(
       if (isNaN(parsedEndDate.getTime())) {
         logger.warn(`Invalid end date format: ${endDate}`, { requestId });
         throw AppError.validationError(
-          "Invalid end date format. Use YYYY-MM-DD"
+          'Invalid end date format. Use YYYY-MM-DD'
         );
       }
     } catch (error) {
       logger.warn(`Error parsing end date: ${endDate}`, { requestId, error });
-      throw AppError.validationError("Invalid end date format. Use YYYY-MM-DD");
+      throw AppError.validationError('Invalid end date format. Use YYYY-MM-DD');
     }
 
     // Check if start date is before end date
@@ -147,7 +147,7 @@ export const createReservation = catchAsync(
         `Start date must be before end date: ${startDate} - ${endDate}`,
         { requestId }
       );
-      throw AppError.validationError("Start date must be before end date");
+      throw AppError.validationError('Start date must be before end date');
     }
 
     // Verify customer exists and belongs to tenant via Customer Service API
@@ -202,7 +202,7 @@ export const createReservation = catchAsync(
       // MANDATORY KENNEL ASSIGNMENT VALIDATION
       // For BOARDING and DAYCARE services, resourceId is required (or suiteType for auto-assign)
       const requiresKennel =
-        serviceCategory === "BOARDING" || serviceCategory === "DAYCARE";
+        serviceCategory === 'BOARDING' || serviceCategory === 'DAYCARE';
 
       if (requiresKennel) {
         // Check if resourceId is provided (can be empty string for auto-assign)
@@ -222,7 +222,7 @@ export const createReservation = catchAsync(
             `Auto-assignment requested for ${serviceCategory} with suiteType: ${requestedSuiteType}`,
             { requestId }
           );
-        } else if (requestedResourceId === "") {
+        } else if (requestedResourceId === '') {
           // Empty string means auto-assign, suiteType is required
           if (!requestedSuiteType) {
             logger.warn(
@@ -255,7 +255,7 @@ export const createReservation = catchAsync(
             { requestId }
           );
           // Use a default suite type instead of throwing an error
-          determinedSuiteType = "KENNEL";
+          determinedSuiteType = 'KENNEL';
         }
         logger.info(
           `Determined suite type: ${determinedSuiteType} from service category: ${serviceCategory}`,
@@ -267,12 +267,12 @@ export const createReservation = catchAsync(
         throw error;
       }
       logger.error(`Error fetching service details: ${error}`, { requestId });
-      throw AppError.serverError("Error processing service information");
+      throw AppError.serverError('Error processing service information');
     }
 
     if (!determinedSuiteType) {
       // If no suite type could be determined, use a default
-      determinedSuiteType = "KENNEL";
+      determinedSuiteType = 'KENNEL';
       logger.info(`Using default suite type: ${determinedSuiteType}`, {
         requestId,
       });
@@ -323,7 +323,7 @@ export const createReservation = catchAsync(
         );
         throw AppError.conflictError(
           `Resource is not available for the requested dates: ${conflictResult.warnings.join(
-            ", "
+            ', '
           )}`
         );
       }
@@ -402,7 +402,7 @@ export const createReservation = catchAsync(
               });
               throw AppError.conflictError(
                 `Pet already has a reservation during this time: ${petConflictResult.warnings.join(
-                  ", "
+                  ', '
                 )}`
               );
             }
@@ -423,7 +423,7 @@ export const createReservation = catchAsync(
 
         logger.warn(`Error auto-assigning resource:`, { requestId, error });
         warnings.push(
-          "Failed to auto-assign a resource. The reservation will be created without a resource assignment."
+          'Failed to auto-assign a resource. The reservation will be created without a resource assignment.'
         );
       }
     }
@@ -456,7 +456,7 @@ export const createReservation = catchAsync(
       },
       // suiteType is handled through resource assignment
       // organizationId removed as it's not in the schema
-      status: status || "PENDING",
+      status: status || 'PENDING',
     };
 
     // Add optional fields if provided
@@ -537,7 +537,7 @@ export const createReservation = catchAsync(
                     reservationId: newReservation.id,
                     serviceId: addOn.serviceId,
                     quantity: addOn.quantity || 1,
-                    notes: addOn.notes || "",
+                    notes: addOn.notes || '',
                     // organizationId removed as it's not in the schema
                   } as any,
                 });
@@ -550,7 +550,7 @@ export const createReservation = catchAsync(
       } catch (error) {
         logger.warn(`Error processing add-on services:`, { requestId, error });
         warnings.push(
-          "There was an issue processing add-on services, but the reservation was created successfully."
+          'There was an issue processing add-on services, but the reservation was created successfully.'
         );
       }
     }
@@ -558,14 +558,14 @@ export const createReservation = catchAsync(
     // Add null check for newReservation before accessing id
     logger.success(`Reservation created successfully`, {
       requestId,
-      reservationId: newReservation?.id || "unknown",
+      reservationId: newReservation?.id || 'unknown',
     });
 
     // Log the activity
     if (newReservation?.id) {
       // Determine actor type - if staffAssignedId is provided, it's likely an employee booking
       // Otherwise assume it's a customer online booking or system
-      const actorType = staffAssignedId ? "EMPLOYEE" : "CUSTOMER";
+      const actorType = staffAssignedId ? 'EMPLOYEE' : 'CUSTOMER';
 
       logReservationCreated(
         tenantId as string,
@@ -580,12 +580,12 @@ export const createReservation = catchAsync(
           startDate: parsedStartDate,
           endDate: parsedEndDate,
           resourceId: assignedResourceId,
-          status: status || "PENDING",
+          status: status || 'PENDING',
         },
         req.ip,
-        req.get("user-agent")
+        req.get('user-agent')
       ).catch((err) =>
-        logger.warn("Failed to log reservation creation activity", { err })
+        logger.warn('Failed to log reservation creation activity', { err })
       );
     }
 
@@ -607,7 +607,7 @@ export const createReservation = catchAsync(
     // Prepare response with warnings if any
     const responseData: any = {
       success: true,
-      status: "success",
+      status: 'success',
       data: {
         reservation: newReservation,
       },
@@ -616,7 +616,7 @@ export const createReservation = catchAsync(
     // Add message about resource assignment if needed
     if (!assignedResourceId) {
       responseData.data.message =
-        "Reservation created without a specific resource assignment. Please assign a resource when available.";
+        'Reservation created without a specific resource assignment. Please assign a resource when available.';
     }
 
     // Add warnings to response if any were detected

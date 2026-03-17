@@ -1,10 +1,10 @@
-import { Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-import { AppError } from "../middleware/error.middleware";
-import { TenantRequest } from "../middleware/tenant.middleware";
-import multer from "multer";
-import path from "path";
-import fs from "fs";
+import { Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { AppError } from '../middleware/error.middleware';
+import { TenantRequest } from '../middleware/tenant.middleware';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 
 const prisma = new PrismaClient();
 
@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
     file: Express.Multer.File,
     cb: (error: Error | null, destination: string) => void
   ) => {
-    const uploadDir = "uploads/pets";
+    const uploadDir = 'uploads/pets';
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
@@ -26,8 +26,8 @@ const storage = multer.diskStorage({
     file: Express.Multer.File,
     cb: (error: Error | null, filename: string) => void
   ) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, "pet-" + uniqueSuffix + path.extname(file.originalname));
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, 'pet-' + uniqueSuffix + path.extname(file.originalname));
   },
 });
 
@@ -39,14 +39,14 @@ const upload = multer({
     file: Express.Multer.File,
     cb: multer.FileFilterCallback
   ) => {
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error("Invalid file type. Only JPEG, PNG and GIF are allowed."));
+      cb(new Error('Invalid file type. Only JPEG, PNG and GIF are allowed.'));
     }
   },
-}).single("photo");
+}).single('photo');
 
 // Get all pets
 /**
@@ -65,7 +65,7 @@ export const getAllPets = async (
     // Process get all pets request
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
-    const search = String(req.query.search || "");
+    const search = String(req.query.search || '');
     const skip = (page - 1) * limit;
 
     // Use tenant ID from middleware
@@ -79,8 +79,8 @@ export const getAllPets = async (
     // Add search filter if provided
     if (search) {
       where.OR = [
-        { name: { contains: search, mode: "insensitive" as const } },
-        { breed: { contains: search, mode: "insensitive" as const } },
+        { name: { contains: search, mode: 'insensitive' as const } },
+        { breed: { contains: search, mode: 'insensitive' as const } },
       ];
     }
 
@@ -89,7 +89,7 @@ export const getAllPets = async (
         where,
         skip,
         take: limit,
-        orderBy: { name: "asc" },
+        orderBy: { name: 'asc' },
         select: {
           id: true,
           name: true,
@@ -122,7 +122,7 @@ export const getAllPets = async (
     ]);
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: total,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
@@ -148,7 +148,7 @@ export const getPetById = async (
       include: {
         medicalRecords: {
           orderBy: {
-            recordDate: "desc",
+            recordDate: 'desc',
           },
         },
       },
@@ -157,7 +157,7 @@ export const getPetById = async (
     // Photo handling removed as profilePhoto is not in the current schema
 
     if (!pet) {
-      return next(new AppError("Pet not found", 404));
+      return next(new AppError('Pet not found', 404));
     }
 
     // Auto-sync vaccination data from medical records to vaccinationStatus field
@@ -168,16 +168,16 @@ export const getPetById = async (
 
       // Map medical records to vaccination data
       const vaccineMap: { [key: string]: string } = {
-        "rabies vaccination": "Rabies",
-        "dhpp vaccination": "DHPP",
-        "bordetella vaccination": "Bordetella",
-        "fvrcp vaccination": "FVRCP",
-        "canine influenza vaccination": "Influenza",
-        "feline leukemia vaccination": "Lepto",
+        'rabies vaccination': 'Rabies',
+        'dhpp vaccination': 'DHPP',
+        'bordetella vaccination': 'Bordetella',
+        'fvrcp vaccination': 'FVRCP',
+        'canine influenza vaccination': 'Influenza',
+        'feline leukemia vaccination': 'Lepto',
       };
 
       pet.medicalRecords.forEach((record: any) => {
-        if (record.recordType === "VACCINATION" && record.description) {
+        if (record.recordType === 'VACCINATION' && record.description) {
           const vaccineName = vaccineMap[record.description.toLowerCase()];
 
           if (vaccineName && record.expirationDate) {
@@ -185,7 +185,7 @@ export const getPetById = async (
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             expDate.setHours(0, 0, 0, 0);
-            const status = expDate >= today ? "CURRENT" : "EXPIRED";
+            const status = expDate >= today ? 'CURRENT' : 'EXPIRED';
 
             // Check if this vaccine is missing or outdated in vaccinationStatus
             if (
@@ -225,7 +225,7 @@ export const getPetById = async (
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: pet,
     });
   } catch (error) {
@@ -248,15 +248,15 @@ export const getPetReservations = async (
     });
 
     if (!pet) {
-      return next(new AppError("Pet not found", 404));
+      return next(new AppError('Pet not found', 404));
     }
 
     if (!pet || !pet.reservations || pet.reservations.length === 0) {
-      return next(new AppError("No reservations found for this pet", 404));
+      return next(new AppError('No reservations found for this pet', 404));
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: pet.reservations.length,
       data: pet.reservations,
     });
@@ -283,7 +283,7 @@ export const createPet = async (
     let petData = { ...req.body };
 
     // Handle empty date strings
-    if (petData.birthdate === "") {
+    if (petData.birthdate === '') {
       petData.birthdate = null;
     } else if (petData.birthdate) {
       petData.birthdate = new Date(petData.birthdate);
@@ -292,23 +292,23 @@ export const createPet = async (
     // Handle vaccine data - keep as JSON strings, don't convert to Date objects
     if (petData.vaccineExpirations) {
       try {
-        if (typeof petData.vaccineExpirations === "string") {
+        if (typeof petData.vaccineExpirations === 'string') {
           petData.vaccineExpirations = JSON.parse(petData.vaccineExpirations);
         }
         // JSON fields need strings, not Date objects - leave dates as strings
       } catch (e) {
-        return next(new AppError("Invalid vaccine expiration data", 400));
+        return next(new AppError('Invalid vaccine expiration data', 400));
       }
     }
 
     // Handle vaccination status
     if (petData.vaccinationStatus) {
       try {
-        if (typeof petData.vaccinationStatus === "string") {
+        if (typeof petData.vaccinationStatus === 'string') {
           petData.vaccinationStatus = JSON.parse(petData.vaccinationStatus);
         }
       } catch (e) {
-        return next(new AppError("Invalid vaccination status data", 400));
+        return next(new AppError('Invalid vaccination status data', 400));
       }
     }
 
@@ -321,7 +321,7 @@ export const createPet = async (
     });
 
     if (!customer) {
-      return next(new AppError("Customer not found", 404));
+      return next(new AppError('Customer not found', 404));
     }
 
     // Add tenantId to pet data
@@ -333,7 +333,7 @@ export const createPet = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: newPet,
     });
   } catch (error) {
@@ -359,7 +359,7 @@ export const updatePet = async (
     let petData = { ...req.body };
 
     // Handle empty date strings
-    if (petData.birthdate === "") {
+    if (petData.birthdate === '') {
       petData.birthdate = null;
     } else if (petData.birthdate) {
       petData.birthdate = new Date(petData.birthdate);
@@ -368,23 +368,23 @@ export const updatePet = async (
     // Handle vaccine data - keep as JSON strings, don't convert to Date objects
     if (petData.vaccineExpirations) {
       try {
-        if (typeof petData.vaccineExpirations === "string") {
+        if (typeof petData.vaccineExpirations === 'string') {
           petData.vaccineExpirations = JSON.parse(petData.vaccineExpirations);
         }
         // JSON fields need strings, not Date objects - leave dates as strings
       } catch (e) {
-        return next(new AppError("Invalid vaccine expiration data", 400));
+        return next(new AppError('Invalid vaccine expiration data', 400));
       }
     }
 
     // Handle vaccination status
     if (petData.vaccinationStatus) {
       try {
-        if (typeof petData.vaccinationStatus === "string") {
+        if (typeof petData.vaccinationStatus === 'string') {
           petData.vaccinationStatus = JSON.parse(petData.vaccinationStatus);
         }
       } catch (e) {
-        return next(new AppError("Invalid vaccination status data", 400));
+        return next(new AppError('Invalid vaccination status data', 400));
       }
     }
 
@@ -397,7 +397,7 @@ export const updatePet = async (
     });
 
     if (!existingPet) {
-      return next(new AppError("Pet not found", 404));
+      return next(new AppError('Pet not found', 404));
     }
 
     // If customerId is being updated, check if the customer exists and belongs to this tenant
@@ -410,7 +410,7 @@ export const updatePet = async (
       });
 
       if (!customer) {
-        return next(new AppError("Customer not found", 404));
+        return next(new AppError('Customer not found', 404));
       }
     }
 
@@ -420,7 +420,7 @@ export const updatePet = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: updatedPet,
     });
   } catch (error) {
@@ -444,7 +444,7 @@ export const uploadPetPhoto = async (
     });
 
     if (!pet) {
-      return next(new AppError("Pet not found", 404));
+      return next(new AppError('Pet not found', 404));
     }
 
     // Handle file upload
@@ -456,7 +456,7 @@ export const uploadPetPhoto = async (
       }
 
       if (!req.file) {
-        return next(new AppError("No file uploaded", 400));
+        return next(new AppError('No file uploaded', 400));
       }
 
       // Delete old photo if it exists
@@ -477,9 +477,9 @@ export const uploadPetPhoto = async (
       });
 
       res.status(200).json({
-        status: "success",
+        status: 'success',
         data: updatedPet,
-        message: "Photo uploaded successfully",
+        message: 'Photo uploaded successfully',
       });
     });
   } catch (error) {
@@ -502,16 +502,16 @@ export const getPetsByCustomer = async (
     });
 
     if (!customer) {
-      return next(new AppError("Customer not found", 404));
+      return next(new AppError('Customer not found', 404));
     }
 
     const pets = await prisma.pet.findMany({
       where: { customerId },
-      orderBy: { name: "asc" },
+      orderBy: { name: 'asc' },
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: pets.length,
       totalPages: 1,
       currentPage: 1,
@@ -535,7 +535,7 @@ export const deletePet = async (
     });
 
     res.status(204).json({
-      status: "success",
+      status: 'success',
       data: null,
     });
   } catch (error) {
@@ -565,7 +565,7 @@ export const deactivatePet = async (
     });
 
     if (!existingPet) {
-      return next(new AppError("Pet not found", 404));
+      return next(new AppError('Pet not found', 404));
     }
 
     // Deactivate the pet
@@ -579,8 +579,8 @@ export const deactivatePet = async (
     });
 
     res.status(200).json({
-      status: "success",
-      message: "Pet has been deactivated",
+      status: 'success',
+      message: 'Pet has been deactivated',
       data: updatedPet,
     });
   } catch (error) {
@@ -607,7 +607,7 @@ export const reactivatePet = async (
     });
 
     if (!existingPet) {
-      return next(new AppError("Pet not found", 404));
+      return next(new AppError('Pet not found', 404));
     }
 
     // Reactivate the pet
@@ -621,8 +621,8 @@ export const reactivatePet = async (
     });
 
     res.status(200).json({
-      status: "success",
-      message: "Pet has been reactivated",
+      status: 'success',
+      message: 'Pet has been reactivated',
       data: updatedPet,
     });
   } catch (error) {

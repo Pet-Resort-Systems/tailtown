@@ -8,7 +8,7 @@ import {
   getDepositRules,
   createDepositRule,
   updateDepositRule,
-  deleteDepositRule
+  deleteDepositRule,
 } from '../controllers/deposit.controller';
 
 const router = express.Router();

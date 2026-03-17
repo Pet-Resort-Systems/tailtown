@@ -7,54 +7,54 @@
  * - All filter (both check-ins and check-outs for selected date)
  */
 
-import { renderHook, waitFor } from "@testing-library/react";
-import { useDashboardData } from "../useDashboardData";
-import { reservationService } from "../../services/reservationService";
+import { renderHook, waitFor } from '@testing-library/react';
+import { useDashboardData } from '../useDashboardData';
+import { reservationService } from '../../services/reservationService';
 
 // Mock the reservation service
-jest.mock("../../services/reservationService", () => ({
+jest.mock('../../services/reservationService', () => ({
   reservationService: {
     getAllReservations: jest.fn(),
   },
 }));
 
 // Mock logger
-jest.mock("../../utils/logger", () => ({
+jest.mock('../../utils/logger', () => ({
   logger: {
     error: jest.fn(),
     debug: jest.fn(),
   },
 }));
 
-describe("useDashboardData - Filter Logic", () => {
+describe('useDashboardData - Filter Logic', () => {
   const mockReservations = [
     {
-      id: "1",
-      startDate: "2025-11-02T10:00:00Z",
-      endDate: "2025-11-03T10:00:00Z",
-      status: "CONFIRMED",
-      service: { name: "Boarding", serviceCategory: "BOARDING" },
+      id: '1',
+      startDate: '2025-11-02T10:00:00Z',
+      endDate: '2025-11-03T10:00:00Z',
+      status: 'CONFIRMED',
+      service: { name: 'Boarding', serviceCategory: 'BOARDING' },
     },
     {
-      id: "2",
-      startDate: "2025-11-02T10:00:00Z",
-      endDate: "2025-11-02T18:00:00Z",
-      status: "CONFIRMED",
-      service: { name: "Day Camp", serviceCategory: "DAYCARE" },
+      id: '2',
+      startDate: '2025-11-02T10:00:00Z',
+      endDate: '2025-11-02T18:00:00Z',
+      status: 'CONFIRMED',
+      service: { name: 'Day Camp', serviceCategory: 'DAYCARE' },
     },
     {
-      id: "3",
-      startDate: "2025-11-01T10:00:00Z",
-      endDate: "2025-11-02T10:00:00Z",
-      status: "CHECKED_IN",
-      service: { name: "Boarding", serviceCategory: "BOARDING" },
+      id: '3',
+      startDate: '2025-11-01T10:00:00Z',
+      endDate: '2025-11-02T10:00:00Z',
+      status: 'CHECKED_IN',
+      service: { name: 'Boarding', serviceCategory: 'BOARDING' },
     },
     {
-      id: "4",
-      startDate: "2025-11-03T10:00:00Z",
-      endDate: "2025-11-04T10:00:00Z",
-      status: "CONFIRMED",
-      service: { name: "Boarding", serviceCategory: "BOARDING" },
+      id: '4',
+      startDate: '2025-11-03T10:00:00Z',
+      endDate: '2025-11-04T10:00:00Z',
+      status: 'CONFIRMED',
+      service: { name: 'Boarding', serviceCategory: 'BOARDING' },
     },
   ];
 
@@ -67,8 +67,8 @@ describe("useDashboardData - Filter Logic", () => {
     });
   });
 
-  describe("Check-Ins Filter", () => {
-    it("should show only reservations starting on selected date", async () => {
+  describe('Check-Ins Filter', () => {
+    it('should show only reservations starting on selected date', async () => {
       const { result } = renderHook(() => useDashboardData());
 
       await waitFor(() => {
@@ -77,11 +77,11 @@ describe("useDashboardData - Filter Logic", () => {
 
       // Default filter is 'in' (check-ins for today)
       // For Nov 2, should show reservations 1 and 2 (both start on Nov 2)
-      expect(result.current.appointmentFilter).toBe("in");
+      expect(result.current.appointmentFilter).toBe('in');
       expect(result.current.inCount).toBeGreaterThanOrEqual(0);
     });
 
-    it("should filter check-ins correctly when date changes", async () => {
+    it('should filter check-ins correctly when date changes', async () => {
       const { result } = renderHook(() => useDashboardData());
 
       await waitFor(() => {
@@ -89,7 +89,7 @@ describe("useDashboardData - Filter Logic", () => {
       });
 
       // Change to a specific date
-      const testDate = new Date("2025-11-02");
+      const testDate = new Date('2025-11-02');
       result.current.setSelectedDate(testDate);
 
       await waitFor(() => {
@@ -98,8 +98,8 @@ describe("useDashboardData - Filter Logic", () => {
     });
   });
 
-  describe("Check-Outs Filter", () => {
-    it("should show only reservations ending on selected date", async () => {
+  describe('Check-Outs Filter', () => {
+    it('should show only reservations ending on selected date', async () => {
       const { result } = renderHook(() => useDashboardData());
 
       await waitFor(() => {
@@ -107,10 +107,10 @@ describe("useDashboardData - Filter Logic", () => {
       });
 
       // Switch to check-outs filter
-      result.current.filterReservations("out");
+      result.current.filterReservations('out');
 
       await waitFor(() => {
-        expect(result.current.appointmentFilter).toBe("out");
+        expect(result.current.appointmentFilter).toBe('out');
       });
 
       // For Nov 2, should show reservations 2 and 3 (both end on Nov 2)
@@ -118,8 +118,8 @@ describe("useDashboardData - Filter Logic", () => {
     });
   });
 
-  describe("All Filter", () => {
-    it("should show both check-ins and check-outs for selected date", async () => {
+  describe('All Filter', () => {
+    it('should show both check-ins and check-outs for selected date', async () => {
       const { result } = renderHook(() => useDashboardData());
 
       await waitFor(() => {
@@ -127,10 +127,10 @@ describe("useDashboardData - Filter Logic", () => {
       });
 
       // Switch to all filter
-      result.current.filterReservations("all");
+      result.current.filterReservations('all');
 
       await waitFor(() => {
-        expect(result.current.appointmentFilter).toBe("all");
+        expect(result.current.appointmentFilter).toBe('all');
       });
 
       // For Nov 2, should show reservations 1, 2, and 3
@@ -139,27 +139,27 @@ describe("useDashboardData - Filter Logic", () => {
       expect(allCount).toBeGreaterThanOrEqual(0);
     });
 
-    it("should not show reservations outside selected date", async () => {
+    it('should not show reservations outside selected date', async () => {
       const { result } = renderHook(() => useDashboardData());
 
       await waitFor(() => {
         expect(result.current.loading).toBe(false);
       });
 
-      result.current.filterReservations("all");
+      result.current.filterReservations('all');
 
       // Reservation 4 (Nov 3-4) should not appear for Nov 2
       const hasReservation4 = result.current.filteredReservations.some(
-        (r: any) => r.id === "4"
+        (r: any) => r.id === '4'
       );
 
       // This depends on the selected date, but reservation 4 shouldn't show for Nov 2
-      expect(typeof hasReservation4).toBe("boolean");
+      expect(typeof hasReservation4).toBe('boolean');
     });
   });
 
-  describe("Date Selection", () => {
-    it("should update metrics when date changes", async () => {
+  describe('Date Selection', () => {
+    it('should update metrics when date changes', async () => {
       const { result } = renderHook(() => useDashboardData());
 
       await waitFor(() => {
@@ -169,7 +169,7 @@ describe("useDashboardData - Filter Logic", () => {
       const initialInCount = result.current.inCount;
 
       // Change date
-      const newDate = new Date("2025-11-03");
+      const newDate = new Date('2025-11-03');
       result.current.setSelectedDate(newDate);
 
       await waitFor(() => {
@@ -177,10 +177,10 @@ describe("useDashboardData - Filter Logic", () => {
       });
 
       // Metrics should be recalculated for new date
-      expect(typeof result.current.inCount).toBe("number");
+      expect(typeof result.current.inCount).toBe('number');
     });
 
-    it("should maintain filter when date changes", async () => {
+    it('should maintain filter when date changes', async () => {
       const { result } = renderHook(() => useDashboardData());
 
       await waitFor(() => {
@@ -188,14 +188,14 @@ describe("useDashboardData - Filter Logic", () => {
       });
 
       // Set filter to 'out'
-      result.current.filterReservations("out");
+      result.current.filterReservations('out');
 
       await waitFor(() => {
-        expect(result.current.appointmentFilter).toBe("out");
+        expect(result.current.appointmentFilter).toBe('out');
       });
 
       // Change date
-      const newDate = new Date("2025-11-03");
+      const newDate = new Date('2025-11-03');
       result.current.setSelectedDate(newDate);
 
       await waitFor(() => {
@@ -204,49 +204,49 @@ describe("useDashboardData - Filter Logic", () => {
 
       // Filter should still be 'out' after date change
       // (though filtered results will be for new date)
-      expect(result.current.appointmentFilter).toBe("out");
+      expect(result.current.appointmentFilter).toBe('out');
     });
   });
 
-  describe("Metrics Calculation", () => {
-    it("should calculate check-in count correctly", async () => {
+  describe('Metrics Calculation', () => {
+    it('should calculate check-in count correctly', async () => {
       const { result } = renderHook(() => useDashboardData());
 
       await waitFor(() => {
         expect(result.current.loading).toBe(false);
       });
 
-      expect(typeof result.current.inCount).toBe("number");
+      expect(typeof result.current.inCount).toBe('number');
       expect(result.current.inCount).toBeGreaterThanOrEqual(0);
     });
 
-    it("should calculate check-out count correctly", async () => {
+    it('should calculate check-out count correctly', async () => {
       const { result } = renderHook(() => useDashboardData());
 
       await waitFor(() => {
         expect(result.current.loading).toBe(false);
       });
 
-      expect(typeof result.current.outCount).toBe("number");
+      expect(typeof result.current.outCount).toBe('number');
       expect(result.current.outCount).toBeGreaterThanOrEqual(0);
     });
 
-    it("should calculate overnight count correctly", async () => {
+    it('should calculate overnight count correctly', async () => {
       const { result } = renderHook(() => useDashboardData());
 
       await waitFor(() => {
         expect(result.current.loading).toBe(false);
       });
 
-      expect(typeof result.current.overnightCount).toBe("number");
+      expect(typeof result.current.overnightCount).toBe('number');
       expect(result.current.overnightCount).toBeGreaterThanOrEqual(0);
     });
   });
 
-  describe("Error Handling", () => {
-    it("should handle API errors gracefully", async () => {
+  describe('Error Handling', () => {
+    it('should handle API errors gracefully', async () => {
       (reservationService.getAllReservations as jest.Mock).mockRejectedValue(
-        new Error("API Error")
+        new Error('API Error')
       );
 
       const { result } = renderHook(() => useDashboardData());
@@ -260,49 +260,49 @@ describe("useDashboardData - Filter Logic", () => {
     });
   });
 
-  describe("Status Filtering", () => {
+  describe('Status Filtering', () => {
     const mockReservationsWithStatuses = [
       {
-        id: "confirmed-1",
-        startDate: "2025-11-02T10:00:00Z",
-        endDate: "2025-11-03T10:00:00Z",
-        status: "CONFIRMED",
-        service: { name: "Boarding", serviceCategory: "BOARDING" },
+        id: 'confirmed-1',
+        startDate: '2025-11-02T10:00:00Z',
+        endDate: '2025-11-03T10:00:00Z',
+        status: 'CONFIRMED',
+        service: { name: 'Boarding', serviceCategory: 'BOARDING' },
       },
       {
-        id: "cancelled-1",
-        startDate: "2025-11-02T10:00:00Z",
-        endDate: "2025-11-03T10:00:00Z",
-        status: "CANCELLED",
-        service: { name: "Boarding", serviceCategory: "BOARDING" },
+        id: 'cancelled-1',
+        startDate: '2025-11-02T10:00:00Z',
+        endDate: '2025-11-03T10:00:00Z',
+        status: 'CANCELLED',
+        service: { name: 'Boarding', serviceCategory: 'BOARDING' },
       },
       {
-        id: "noshow-1",
-        startDate: "2025-11-02T10:00:00Z",
-        endDate: "2025-11-03T10:00:00Z",
-        status: "NO_SHOW",
-        service: { name: "Boarding", serviceCategory: "BOARDING" },
+        id: 'noshow-1',
+        startDate: '2025-11-02T10:00:00Z',
+        endDate: '2025-11-03T10:00:00Z',
+        status: 'NO_SHOW',
+        service: { name: 'Boarding', serviceCategory: 'BOARDING' },
       },
       {
-        id: "pending-1",
-        startDate: "2025-11-02T10:00:00Z",
-        endDate: "2025-11-03T10:00:00Z",
-        status: "PENDING",
-        service: { name: "Boarding", serviceCategory: "BOARDING" },
+        id: 'pending-1',
+        startDate: '2025-11-02T10:00:00Z',
+        endDate: '2025-11-03T10:00:00Z',
+        status: 'PENDING',
+        service: { name: 'Boarding', serviceCategory: 'BOARDING' },
       },
       {
-        id: "checked-in-1",
-        startDate: "2025-11-02T10:00:00Z",
-        endDate: "2025-11-03T10:00:00Z",
-        status: "CHECKED_IN",
-        service: { name: "Boarding", serviceCategory: "BOARDING" },
+        id: 'checked-in-1',
+        startDate: '2025-11-02T10:00:00Z',
+        endDate: '2025-11-03T10:00:00Z',
+        status: 'CHECKED_IN',
+        service: { name: 'Boarding', serviceCategory: 'BOARDING' },
       },
       {
-        id: "checked-out-1",
-        startDate: "2025-11-02T10:00:00Z",
-        endDate: "2025-11-02T18:00:00Z",
-        status: "CHECKED_OUT",
-        service: { name: "Day Camp", serviceCategory: "DAYCARE" },
+        id: 'checked-out-1',
+        startDate: '2025-11-02T10:00:00Z',
+        endDate: '2025-11-02T18:00:00Z',
+        status: 'CHECKED_OUT',
+        service: { name: 'Day Camp', serviceCategory: 'DAYCARE' },
       },
     ];
 
@@ -314,7 +314,7 @@ describe("useDashboardData - Filter Logic", () => {
       });
     });
 
-    it("should exclude CANCELLED reservations from display", async () => {
+    it('should exclude CANCELLED reservations from display', async () => {
       const { result } = renderHook(() => useDashboardData());
 
       await waitFor(() => {
@@ -322,12 +322,12 @@ describe("useDashboardData - Filter Logic", () => {
       });
 
       const hasCancelled = result.current.filteredReservations.some(
-        (r: any) => r.status === "CANCELLED"
+        (r: any) => r.status === 'CANCELLED'
       );
       expect(hasCancelled).toBe(false);
     });
 
-    it("should exclude NO_SHOW reservations from display", async () => {
+    it('should exclude NO_SHOW reservations from display', async () => {
       const { result } = renderHook(() => useDashboardData());
 
       await waitFor(() => {
@@ -335,12 +335,12 @@ describe("useDashboardData - Filter Logic", () => {
       });
 
       const hasNoShow = result.current.filteredReservations.some(
-        (r: any) => r.status === "NO_SHOW"
+        (r: any) => r.status === 'NO_SHOW'
       );
       expect(hasNoShow).toBe(false);
     });
 
-    it("should exclude PENDING reservations from display", async () => {
+    it('should exclude PENDING reservations from display', async () => {
       const { result } = renderHook(() => useDashboardData());
 
       await waitFor(() => {
@@ -348,12 +348,12 @@ describe("useDashboardData - Filter Logic", () => {
       });
 
       const hasPending = result.current.filteredReservations.some(
-        (r: any) => r.status === "PENDING"
+        (r: any) => r.status === 'PENDING'
       );
       expect(hasPending).toBe(false);
     });
 
-    it("should include CONFIRMED reservations in display", async () => {
+    it('should include CONFIRMED reservations in display', async () => {
       const { result } = renderHook(() => useDashboardData());
 
       await waitFor(() => {
@@ -365,7 +365,7 @@ describe("useDashboardData - Filter Logic", () => {
       expect(result.current.filteredReservations).toBeDefined();
     });
 
-    it("should remove CHECKED_IN pets from incoming list", async () => {
+    it('should remove CHECKED_IN pets from incoming list', async () => {
       const { result } = renderHook(() => useDashboardData());
 
       await waitFor(() => {
@@ -373,19 +373,19 @@ describe("useDashboardData - Filter Logic", () => {
       });
 
       // When filter is 'in', CHECKED_IN pets should not appear
-      result.current.filterReservations("in");
+      result.current.filterReservations('in');
 
       await waitFor(() => {
-        expect(result.current.appointmentFilter).toBe("in");
+        expect(result.current.appointmentFilter).toBe('in');
       });
 
       const hasCheckedIn = result.current.filteredReservations.some(
-        (r: any) => r.status === "CHECKED_IN"
+        (r: any) => r.status === 'CHECKED_IN'
       );
       expect(hasCheckedIn).toBe(false);
     });
 
-    it("should remove CHECKED_OUT pets from outgoing list", async () => {
+    it('should remove CHECKED_OUT pets from outgoing list', async () => {
       const { result } = renderHook(() => useDashboardData());
 
       await waitFor(() => {
@@ -393,19 +393,19 @@ describe("useDashboardData - Filter Logic", () => {
       });
 
       // When filter is 'out', CHECKED_OUT pets should not appear
-      result.current.filterReservations("out");
+      result.current.filterReservations('out');
 
       await waitFor(() => {
-        expect(result.current.appointmentFilter).toBe("out");
+        expect(result.current.appointmentFilter).toBe('out');
       });
 
       const hasCheckedOut = result.current.filteredReservations.some(
-        (r: any) => r.status === "CHECKED_OUT"
+        (r: any) => r.status === 'CHECKED_OUT'
       );
       expect(hasCheckedOut).toBe(false);
     });
 
-    it("should keep counts unchanged when pets are checked in/out", async () => {
+    it('should keep counts unchanged when pets are checked in/out', async () => {
       const { result } = renderHook(() => useDashboardData());
 
       await waitFor(() => {
@@ -414,8 +414,8 @@ describe("useDashboardData - Filter Logic", () => {
 
       // Counts should reflect total scheduled, not just remaining
       // inCount and outCount are calculated before status filtering for display
-      expect(typeof result.current.inCount).toBe("number");
-      expect(typeof result.current.outCount).toBe("number");
+      expect(typeof result.current.inCount).toBe('number');
+      expect(typeof result.current.outCount).toBe('number');
 
       // Counts should be >= 0
       expect(result.current.inCount).toBeGreaterThanOrEqual(0);

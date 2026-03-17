@@ -1,6 +1,6 @@
 /**
  * Super Admin JWT Utilities
- * 
+ *
  * Handles JWT token generation and validation for super admin authentication.
  * Uses separate secret from regular staff tokens for additional security.
  */
@@ -8,7 +8,9 @@
 import jwt from 'jsonwebtoken';
 
 // Use separate secret for super admin tokens
-const SUPER_ADMIN_JWT_SECRET = process.env.SUPER_ADMIN_JWT_SECRET || 'super-admin-secret-change-in-production';
+const SUPER_ADMIN_JWT_SECRET =
+  process.env.SUPER_ADMIN_JWT_SECRET ||
+  'super-admin-secret-change-in-production';
 const JWT_EXPIRES_IN = '8h'; // 8 hour sessions
 const REFRESH_TOKEN_EXPIRES_IN = '7d'; // 7 day refresh tokens
 
@@ -22,36 +24,44 @@ export interface SuperAdminTokenPayload {
 /**
  * Generate access token for super admin
  */
-export function generateAccessToken(superAdmin: { id: string; email: string; role: string }): string {
+export function generateAccessToken(superAdmin: {
+  id: string;
+  email: string;
+  role: string;
+}): string {
   const payload: SuperAdminTokenPayload = {
     id: superAdmin.id,
     email: superAdmin.email,
     role: superAdmin.role,
-    type: 'access'
+    type: 'access',
   };
 
   return jwt.sign(payload, SUPER_ADMIN_JWT_SECRET, {
     expiresIn: JWT_EXPIRES_IN,
     issuer: 'tailtown-super-admin',
-    audience: 'tailtown-platform'
+    audience: 'tailtown-platform',
   });
 }
 
 /**
  * Generate refresh token for super admin
  */
-export function generateRefreshToken(superAdmin: { id: string; email: string; role: string }): string {
+export function generateRefreshToken(superAdmin: {
+  id: string;
+  email: string;
+  role: string;
+}): string {
   const payload: SuperAdminTokenPayload = {
     id: superAdmin.id,
     email: superAdmin.email,
     role: superAdmin.role,
-    type: 'refresh'
+    type: 'refresh',
   };
 
   return jwt.sign(payload, SUPER_ADMIN_JWT_SECRET, {
     expiresIn: REFRESH_TOKEN_EXPIRES_IN,
     issuer: 'tailtown-super-admin',
-    audience: 'tailtown-platform'
+    audience: 'tailtown-platform',
   });
 }
 
@@ -62,7 +72,7 @@ export function verifyToken(token: string): SuperAdminTokenPayload {
   try {
     const decoded = jwt.verify(token, SUPER_ADMIN_JWT_SECRET, {
       issuer: 'tailtown-super-admin',
-      audience: 'tailtown-platform'
+      audience: 'tailtown-platform',
     }) as SuperAdminTokenPayload;
 
     return decoded;
@@ -80,9 +90,13 @@ export function verifyToken(token: string): SuperAdminTokenPayload {
 /**
  * Generate both access and refresh tokens
  */
-export function generateTokenPair(superAdmin: { id: string; email: string; role: string }) {
+export function generateTokenPair(superAdmin: {
+  id: string;
+  email: string;
+  role: string;
+}) {
   return {
     accessToken: generateAccessToken(superAdmin),
-    refreshToken: generateRefreshToken(superAdmin)
+    refreshToken: generateRefreshToken(superAdmin),
   };
 }

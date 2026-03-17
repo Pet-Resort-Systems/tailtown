@@ -6,8 +6,8 @@
  * and enriches the reservation objects with this data.
  */
 
-import { customerApi } from "../services/api";
-import { logger } from "./logger";
+import { customerApi } from '../services/api';
+import { logger } from './logger';
 
 interface MinimalReservation {
   id: string;
@@ -99,7 +99,7 @@ async function fetchPetsMap(petIds: string[]): Promise<Map<string, any>> {
       await Promise.all(petPromises);
     }
   } catch (error) {
-    logger.error("Error fetching pets:", error);
+    logger.error('Error fetching pets:', error);
   }
 
   return petsMap;
@@ -139,7 +139,7 @@ async function fetchCustomersMap(
       await Promise.all(customerPromises);
     }
   } catch (error) {
-    logger.error("Error fetching customers:", error);
+    logger.error('Error fetching customers:', error);
   }
 
   return customersMap;

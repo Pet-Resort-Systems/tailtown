@@ -165,7 +165,7 @@ export const SuiteAvailabilityList: React.FC<SuiteAvailabilityListProps> = ({
                                     {formatDate(reservation.startDate)} -{' '}
                                     {formatDate(reservation.endDate)}
                                   </Typography>
-                                ),
+                                )
                               )}
                             </Box>
                           )}

@@ -1,28 +1,28 @@
 import React from 'react';
-import { 
-  Container, 
-  Typography, 
-  Box, 
-  Paper, 
+import {
+  Container,
+  Typography,
+  Box,
+  Paper,
   Grid,
   Card,
   CardContent,
   Button,
-  Chip
+  Chip,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { 
+import {
   Sms as SmsIcon,
   Email as EmailIcon,
   Campaign as CampaignIcon,
   Analytics as AnalyticsIcon,
   ContactMail as ContactsIcon,
-  Description as TemplatesIcon
+  Description as TemplatesIcon,
 } from '@mui/icons-material';
 
 const MarketingHub: React.FC = () => {
   const navigate = useNavigate();
-  
+
   const marketingSections = [
     {
       title: 'SMS Marketing',
@@ -31,7 +31,7 @@ const MarketingHub: React.FC = () => {
       path: '/admin/marketing/sms',
       stats: 'Messages Sent: 0',
       status: 'Setup Required',
-      statusColor: 'warning' as const
+      statusColor: 'warning' as const,
     },
     {
       title: 'Email Marketing',
@@ -40,7 +40,7 @@ const MarketingHub: React.FC = () => {
       path: '/admin/marketing/email',
       stats: 'Emails Sent: 0',
       status: 'Setup Required',
-      statusColor: 'warning' as const
+      statusColor: 'warning' as const,
     },
     {
       title: 'Campaign Manager',
@@ -49,7 +49,7 @@ const MarketingHub: React.FC = () => {
       path: '/admin/marketing/campaigns',
       stats: 'Active Campaigns: 0',
       status: 'Ready',
-      statusColor: 'success' as const
+      statusColor: 'success' as const,
     },
     {
       title: 'Contact Lists',
@@ -58,7 +58,7 @@ const MarketingHub: React.FC = () => {
       path: '/admin/marketing/contacts',
       stats: 'Contact Lists: 0',
       status: 'Ready',
-      statusColor: 'success' as const
+      statusColor: 'success' as const,
     },
     {
       title: 'Message Templates',
@@ -67,7 +67,7 @@ const MarketingHub: React.FC = () => {
       path: '/admin/marketing/templates',
       stats: 'Templates: 0',
       status: 'Ready',
-      statusColor: 'success' as const
+      statusColor: 'success' as const,
     },
     {
       title: 'Marketing Analytics',
@@ -76,8 +76,8 @@ const MarketingHub: React.FC = () => {
       path: '/admin/marketing/analytics',
       stats: 'Reports Available: 5',
       status: 'Ready',
-      statusColor: 'success' as const
-    }
+      statusColor: 'success' as const,
+    },
   ];
 
   return (
@@ -87,53 +87,74 @@ const MarketingHub: React.FC = () => {
           Marketing Hub
         </Typography>
         <Typography variant="body1" color="text.secondary" paragraph>
-          Manage SMS and email marketing campaigns to engage with your customers.
+          Manage SMS and email marketing campaigns to engage with your
+          customers.
         </Typography>
-        
+
         <Paper sx={{ p: 3, mt: 3 }}>
           <Grid container spacing={3}>
             {marketingSections.map((section, index) => (
               <Grid item xs={12} md={6} lg={4} key={index}>
-                <Card 
-                  sx={{ 
-                    height: '100%', 
+                <Card
+                  sx={{
+                    height: '100%',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease-in-out',
                     '&:hover': {
                       transform: 'translateY(-2px)',
-                      boxShadow: 4
-                    }
+                      boxShadow: 4,
+                    },
                   }}
                   onClick={() => navigate(section.path)}
                 >
                   <CardContent sx={{ p: 3 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
-                      <Box sx={{ mr: 2 }}>
-                        {section.icon}
-                      </Box>
+                    <Box
+                      sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}
+                    >
+                      <Box sx={{ mr: 2 }}>{section.icon}</Box>
                       <Box sx={{ flexGrow: 1 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                          <Typography variant="h6" component="h2" sx={{ mr: 1 }}>
+                        <Box
+                          sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
+                        >
+                          <Typography
+                            variant="h6"
+                            component="h2"
+                            sx={{ mr: 1 }}
+                          >
                             {section.title}
                           </Typography>
-                          <Chip 
-                            label={section.status} 
+                          <Chip
+                            label={section.status}
                             color={section.statusColor}
                             size="small"
                           />
                         </Box>
-                        <Typography variant="body2" color="text.secondary" paragraph>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          paragraph
+                        >
                           {section.description}
                         </Typography>
-                        <Typography variant="caption" color="primary.main" sx={{ fontWeight: 'medium' }}>
+                        <Typography
+                          variant="caption"
+                          color="primary.main"
+                          sx={{ fontWeight: 'medium' }}
+                        >
                           {section.stats}
                         </Typography>
                       </Box>
                     </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                      <Button 
-                        variant="outlined" 
-                        color="primary" 
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        mt: 2,
+                      }}
+                    >
+                      <Button
+                        variant="outlined"
+                        color="primary"
                         size="small"
                         onClick={(e) => {
                           e.stopPropagation();

@@ -1,6 +1,6 @@
 /**
  * Report Card Viewer
- * 
+ *
  * Customer-facing component for viewing pet report cards
  */
 
@@ -20,14 +20,13 @@ import {
   Alert,
   CircularProgress,
   Dialog,
-  IconButton
+  IconButton,
 } from '@mui/material';
+import { Download, Share, Close } from '@mui/icons-material';
 import {
-  Download,
-  Share,
-  Close
-} from '@mui/icons-material';
-import { reportCardService, ReportCard } from '../../services/reportCardService';
+  reportCardService,
+  ReportCard,
+} from '../../services/reportCardService';
 import { format } from 'date-fns';
 
 interface ReportCardViewerProps {
@@ -35,7 +34,10 @@ interface ReportCardViewerProps {
   onClose?: () => void;
 }
 
-const ReportCardViewer: React.FC<ReportCardViewerProps> = ({ reportCardId, onClose }) => {
+const ReportCardViewer: React.FC<ReportCardViewerProps> = ({
+  reportCardId,
+  onClose,
+}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [reportCard, setReportCard] = useState<ReportCard | null>(null);
@@ -68,7 +70,7 @@ const ReportCardViewer: React.FC<ReportCardViewerProps> = ({ reportCardId, onClo
       navigator.share({
         title: reportCard?.title || 'Pet Report Card',
         text: reportCard?.summary || '',
-        url: window.location.href
+        url: window.location.href,
       });
     } else {
       alert('Share feature not supported on this device');
@@ -84,11 +86,7 @@ const ReportCardViewer: React.FC<ReportCardViewerProps> = ({ reportCardId, onClo
   }
 
   if (error || !reportCard) {
-    return (
-      <Alert severity="error">
-        {error || 'Report card not found'}
-      </Alert>
-    );
+    return <Alert severity="error">{error || 'Report card not found'}</Alert>;
   }
 
   return (
@@ -96,7 +94,14 @@ const ReportCardViewer: React.FC<ReportCardViewerProps> = ({ reportCardId, onClo
       <Card>
         <CardContent>
           {/* Header */}
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              mb: 3,
+            }}
+          >
             <Box>
               <Typography variant="h4" gutterBottom>
                 🐾 {reportCard.pet?.name}'s Report Card
@@ -105,7 +110,9 @@ const ReportCardViewer: React.FC<ReportCardViewerProps> = ({ reportCardId, onClo
                 {format(new Date(reportCard.reportDate), 'MMMM dd, yyyy')}
               </Typography>
               <Chip
-                label={reportCardService.formatServiceType(reportCard.serviceType)}
+                label={reportCardService.formatServiceType(
+                  reportCard.serviceType
+                )}
                 size="small"
                 color="primary"
                 sx={{ mt: 1 }}
@@ -135,7 +142,11 @@ const ReportCardViewer: React.FC<ReportCardViewerProps> = ({ reportCardId, onClo
                       src={photo.thumbnailUrl || photo.url}
                       alt={photo.caption || 'Pet photo'}
                       loading="lazy"
-                      style={{ height: 200, objectFit: 'cover', borderRadius: 8 }}
+                      style={{
+                        height: 200,
+                        objectFit: 'cover',
+                        borderRadius: 8,
+                      }}
                     />
                     {photo.caption && (
                       <Box
@@ -146,10 +157,12 @@ const ReportCardViewer: React.FC<ReportCardViewerProps> = ({ reportCardId, onClo
                           right: 0,
                           bgcolor: 'rgba(0,0,0,0.6)',
                           color: 'white',
-                          p: 1
+                          p: 1,
                         }}
                       >
-                        <Typography variant="caption">{photo.caption}</Typography>
+                        <Typography variant="caption">
+                          {photo.caption}
+                        </Typography>
                       </Box>
                     )}
                   </ImageListItem>
@@ -198,34 +211,63 @@ const ReportCardViewer: React.FC<ReportCardViewerProps> = ({ reportCardId, onClo
             <Stack spacing={2}>
               {reportCard.moodRating && (
                 <Box>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    Mood {reportCardService.getRatingEmoji(reportCard.moodRating)}
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    gutterBottom
+                  >
+                    Mood{' '}
+                    {reportCardService.getRatingEmoji(reportCard.moodRating)}
                   </Typography>
                   <Rating value={reportCard.moodRating} readOnly size="large" />
                 </Box>
               )}
               {reportCard.energyRating && (
                 <Box>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    gutterBottom
+                  >
                     Energy Level ⚡
                   </Typography>
-                  <Rating value={reportCard.energyRating} readOnly size="large" />
+                  <Rating
+                    value={reportCard.energyRating}
+                    readOnly
+                    size="large"
+                  />
                 </Box>
               )}
               {reportCard.appetiteRating && (
                 <Box>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    gutterBottom
+                  >
                     Appetite 🍖
                   </Typography>
-                  <Rating value={reportCard.appetiteRating} readOnly size="large" />
+                  <Rating
+                    value={reportCard.appetiteRating}
+                    readOnly
+                    size="large"
+                  />
                 </Box>
               )}
               {reportCard.socialRating && (
                 <Box>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    gutterBottom
+                  >
                     Social Behavior 👥
                   </Typography>
-                  <Rating value={reportCard.socialRating} readOnly size="large" />
+                  <Rating
+                    value={reportCard.socialRating}
+                    readOnly
+                    size="large"
+                  />
                 </Box>
               )}
             </Stack>
@@ -241,7 +283,10 @@ const ReportCardViewer: React.FC<ReportCardViewerProps> = ({ reportCardId, onClo
               </Typography>
               <Stack spacing={1}>
                 {reportCard.activities.map((activity, index) => (
-                  <Box key={index} sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Box
+                    key={index}
+                    sx={{ display: 'flex', alignItems: 'center' }}
+                  >
                     <Typography variant="body1">✓ {activity}</Typography>
                   </Box>
                 ))}
@@ -296,10 +341,12 @@ const ReportCardViewer: React.FC<ReportCardViewerProps> = ({ reportCardId, onClo
                   p: 2,
                   borderRadius: 1,
                   borderLeft: 4,
-                  borderColor: 'primary.main'
+                  borderColor: 'primary.main',
                 }}
               >
-                <Typography variant="body1">{reportCard.behaviorNotes}</Typography>
+                <Typography variant="body1">
+                  {reportCard.behaviorNotes}
+                </Typography>
               </Box>
             </Box>
           )}
@@ -330,7 +377,9 @@ const ReportCardViewer: React.FC<ReportCardViewerProps> = ({ reportCardId, onClo
                   Medication Administered
                 </Typography>
                 {reportCard.medicationNotes && (
-                  <Typography variant="body2">{reportCard.medicationNotes}</Typography>
+                  <Typography variant="body2">
+                    {reportCard.medicationNotes}
+                  </Typography>
                 )}
               </Alert>
             </Box>
@@ -341,10 +390,12 @@ const ReportCardViewer: React.FC<ReportCardViewerProps> = ({ reportCardId, onClo
           {/* Footer */}
           <Box sx={{ textAlign: 'center', color: 'text.secondary' }}>
             <Typography variant="body2">
-              Report created by {reportCard.createdByStaff?.firstName} {reportCard.createdByStaff?.lastName}
+              Report created by {reportCard.createdByStaff?.firstName}{' '}
+              {reportCard.createdByStaff?.lastName}
             </Typography>
             <Typography variant="caption">
-              We loved having {reportCard.pet?.name} with us! Looking forward to next time. 💙
+              We loved having {reportCard.pet?.name} with us! Looking forward to
+              next time. 💙
             </Typography>
           </Box>
         </CardContent>
@@ -359,7 +410,12 @@ const ReportCardViewer: React.FC<ReportCardViewerProps> = ({ reportCardId, onClo
       >
         <IconButton
           onClick={() => setSelectedPhoto(null)}
-          sx={{ position: 'absolute', right: 8, top: 8, bgcolor: 'background.paper' }}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            bgcolor: 'background.paper',
+          }}
         >
           <Close />
         </IconButton>

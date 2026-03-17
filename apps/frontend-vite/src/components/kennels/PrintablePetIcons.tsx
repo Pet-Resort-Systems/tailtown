@@ -19,16 +19,15 @@ const PrintablePetIcons: React.FC<PrintablePetIconsProps> = ({
   petType = 'DOG',
   size = 'large',
   showLabels = true,
-  customNotes = {}
+  customNotes = {},
 }) => {
   // Log the incoming icon IDs for debugging
-  
+
   // Ensure we have icons to display - IMPORTANT: don't modify the original array
   let displayIconIds = [...iconIds];
-  
+
   // If no icons provided, add default ones based on pet type
   if (!displayIconIds || displayIconIds.length === 0) {
-    
     if (petType === 'DOG') {
       displayIconIds = ['medium-size', 'small-group'];
     } else if (petType === 'CAT') {
@@ -42,53 +41,52 @@ const PrintablePetIcons: React.FC<PrintablePetIconsProps> = ({
   const sizeMap = {
     small: {
       fontSize: '1.2rem',
-      spacing: 0.5
+      spacing: 0.5,
     },
     medium: {
       fontSize: '1.5rem',
-      spacing: 0.75
+      spacing: 0.75,
     },
     large: {
       fontSize: '1.8rem',
-      spacing: 1
-    }
+      spacing: 1,
+    },
   };
 
   const { fontSize, spacing } = sizeMap[size];
 
   // Log the display icon IDs before filtering
-  
+
   // Filter out any invalid icon IDs
-  const validIconIds = displayIconIds.filter(id => {
+  const validIconIds = displayIconIds.filter((id) => {
     const icon = getIconById(id);
     if (!icon) {
       return false;
     }
     return true;
   });
-  
-  
+
   // If we still have no valid icons, add a default one
   if (validIconIds.length === 0) {
     validIconIds.push('medium-size');
   }
 
   return (
-    <Box 
-      sx={{ 
-        display: 'flex', 
-        flexWrap: 'wrap', 
+    <Box
+      sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
         gap: spacing,
         '@media print': {
-          display: 'flex !important'
-        }
-      }} 
+          display: 'flex !important',
+        },
+      }}
       className="printable-pet-icons-container"
     >
-      {validIconIds.map(iconId => {
+      {validIconIds.map((iconId) => {
         const icon = getIconById(iconId);
         if (!icon) return null;
-        
+
         return (
           <Box
             key={iconId}
@@ -106,26 +104,23 @@ const PrintablePetIcons: React.FC<PrintablePetIconsProps> = ({
                 backgroundColor: '#f9f9f9 !important',
                 border: '1px solid #e0e0e0 !important',
                 printColorAdjust: 'exact',
-                WebkitPrintColorAdjust: 'exact'
-              }
+                WebkitPrintColorAdjust: 'exact',
+              },
             }}
             className="printable-pet-icon-box"
           >
-            <span 
-              style={{ fontSize }} 
-              className="printable-pet-icon-emoji"
-            >
+            <span style={{ fontSize }} className="printable-pet-icon-emoji">
               {icon.icon}
             </span>
             {showLabels && (
-              <Typography 
-                variant="caption" 
-                sx={{ 
+              <Typography
+                variant="caption"
+                sx={{
                   mt: 0.5,
                   fontWeight: 'bold',
                   '@media print': {
-                    display: 'block !important'
-                  }
+                    display: 'block !important',
+                  },
                 }}
               >
                 {icon.label}

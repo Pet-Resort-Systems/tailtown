@@ -7,7 +7,7 @@
  * Uses Jest mocks to simulate API responses.
  */
 
-import { CustomerServiceClient } from "../../clients/customer-service.client";
+import { CustomerServiceClient } from '../../clients/customer-service.client';
 
 // Mock axios module
 const mockGet = jest.fn();
@@ -18,33 +18,33 @@ const mockAxiosCreate = jest.fn(() => ({
   },
 }));
 
-jest.mock("axios", () => ({
+jest.mock('axios', () => ({
   create: () => mockAxiosCreate(),
   default: { create: () => mockAxiosCreate() },
 }));
 
-describe("Service Integration Tests", () => {
-  const tenantId = "test-tenant-123";
-  const customerId = "customer-uuid-456";
-  const petId = "pet-uuid-789";
+describe('Service Integration Tests', () => {
+  const tenantId = 'test-tenant-123';
+  const customerId = 'customer-uuid-456';
+  const petId = 'pet-uuid-789';
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe("Customer Verification", () => {
-    it("should successfully verify a customer exists", async () => {
+  describe('Customer Verification', () => {
+    it('should successfully verify a customer exists', async () => {
       const customerData = {
         id: customerId,
         tenantId: tenantId,
-        firstName: "John",
-        lastName: "Doe",
-        email: "john@example.com",
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@example.com',
         isActive: true,
       };
 
       mockGet.mockResolvedValueOnce({
-        data: { status: "success", data: customerData },
+        data: { status: 'success', data: customerData },
       });
 
       const client = new CustomerServiceClient();
@@ -52,19 +52,19 @@ describe("Service Integration Tests", () => {
       expect(result).toBe(true);
     });
 
-    it("should return full customer data", async () => {
+    it('should return full customer data', async () => {
       const customerData = {
         id: customerId,
         tenantId: tenantId,
-        firstName: "Jane",
-        lastName: "Smith",
-        email: "jane@example.com",
-        phone: "555-1234",
+        firstName: 'Jane',
+        lastName: 'Smith',
+        email: 'jane@example.com',
+        phone: '555-1234',
         isActive: true,
       };
 
       mockGet.mockResolvedValueOnce({
-        data: { status: "success", data: customerData },
+        data: { status: 'success', data: customerData },
       });
 
       const client = new CustomerServiceClient();
@@ -72,19 +72,19 @@ describe("Service Integration Tests", () => {
       expect(result).toEqual(customerData);
     });
 
-    it("should reject customer from different tenant", async () => {
-      const wrongTenantId = "wrong-tenant-999";
+    it('should reject customer from different tenant', async () => {
+      const wrongTenantId = 'wrong-tenant-999';
       const customerData = {
         id: customerId,
         tenantId: tenantId, // Customer belongs to different tenant
-        firstName: "John",
-        lastName: "Doe",
-        email: "john@example.com",
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@example.com',
         isActive: true,
       };
 
       mockGet.mockResolvedValueOnce({
-        data: { status: "success", data: customerData },
+        data: { status: 'success', data: customerData },
       });
 
       const client = new CustomerServiceClient();
@@ -93,18 +93,18 @@ describe("Service Integration Tests", () => {
       ).rejects.toThrow(/does not belong to this tenant/i);
     });
 
-    it("should pass tenant ID header on requests", async () => {
+    it('should pass tenant ID header on requests', async () => {
       const customerData = {
         id: customerId,
         tenantId: tenantId,
-        firstName: "Test",
-        lastName: "User",
-        email: "test@example.com",
+        firstName: 'Test',
+        lastName: 'User',
+        email: 'test@example.com',
         isActive: true,
       };
 
       mockGet.mockResolvedValueOnce({
-        data: { status: "success", data: customerData },
+        data: { status: 'success', data: customerData },
       });
 
       const client = new CustomerServiceClient();
@@ -114,27 +114,27 @@ describe("Service Integration Tests", () => {
         `/api/customers/${customerId}`,
         expect.objectContaining({
           headers: expect.objectContaining({
-            "x-tenant-id": tenantId,
+            'x-tenant-id': tenantId,
           }),
         })
       );
     });
   });
 
-  describe("Pet Verification", () => {
-    it("should successfully verify a pet exists", async () => {
+  describe('Pet Verification', () => {
+    it('should successfully verify a pet exists', async () => {
       const petData = {
         id: petId,
         tenantId: tenantId,
         customerId: customerId,
-        name: "Buddy",
-        species: "DOG",
-        breed: "Golden Retriever",
+        name: 'Buddy',
+        species: 'DOG',
+        breed: 'Golden Retriever',
         isActive: true,
       };
 
       mockGet.mockResolvedValueOnce({
-        data: { status: "success", data: petData },
+        data: { status: 'success', data: petData },
       });
 
       const client = new CustomerServiceClient();
@@ -142,19 +142,19 @@ describe("Service Integration Tests", () => {
       expect(result).toBe(true);
     });
 
-    it("should return full pet data", async () => {
+    it('should return full pet data', async () => {
       const petData = {
         id: petId,
         tenantId: tenantId,
         customerId: customerId,
-        name: "Max",
-        species: "DOG",
-        breed: "Labrador",
+        name: 'Max',
+        species: 'DOG',
+        breed: 'Labrador',
         isActive: true,
       };
 
       mockGet.mockResolvedValueOnce({
-        data: { status: "success", data: petData },
+        data: { status: 'success', data: petData },
       });
 
       const client = new CustomerServiceClient();
@@ -162,19 +162,19 @@ describe("Service Integration Tests", () => {
       expect(result).toEqual(petData);
     });
 
-    it("should reject pet from different tenant", async () => {
-      const wrongTenantId = "wrong-tenant-999";
+    it('should reject pet from different tenant', async () => {
+      const wrongTenantId = 'wrong-tenant-999';
       const petData = {
         id: petId,
         tenantId: tenantId, // Pet belongs to different tenant
         customerId: customerId,
-        name: "Buddy",
-        species: "DOG",
+        name: 'Buddy',
+        species: 'DOG',
         isActive: true,
       };
 
       mockGet.mockResolvedValueOnce({
-        data: { status: "success", data: petData },
+        data: { status: 'success', data: petData },
       });
 
       const client = new CustomerServiceClient();
@@ -184,8 +184,8 @@ describe("Service Integration Tests", () => {
     });
   });
 
-  describe("Health Check", () => {
-    it("should return true when customer service is healthy", async () => {
+  describe('Health Check', () => {
+    it('should return true when customer service is healthy', async () => {
       mockGet.mockResolvedValueOnce({ status: 200 });
 
       const client = new CustomerServiceClient();
@@ -193,8 +193,8 @@ describe("Service Integration Tests", () => {
       expect(result).toBe(true);
     });
 
-    it("should return false when customer service is down", async () => {
-      mockGet.mockRejectedValueOnce(new Error("Service unavailable"));
+    it('should return false when customer service is down', async () => {
+      mockGet.mockRejectedValueOnce(new Error('Service unavailable'));
 
       const client = new CustomerServiceClient();
       const result = await client.healthCheck();
@@ -202,21 +202,21 @@ describe("Service Integration Tests", () => {
     });
   });
 
-  describe("Tenant Isolation Across Services", () => {
-    it("should prevent accessing resources from other tenants", async () => {
-      const tenantA = "tenant-a";
-      const tenantB = "tenant-b";
+  describe('Tenant Isolation Across Services', () => {
+    it('should prevent accessing resources from other tenants', async () => {
+      const tenantA = 'tenant-a';
+      const tenantB = 'tenant-b';
 
       // Customer belongs to tenant A but request is from tenant B
       mockGet.mockResolvedValueOnce({
         data: {
-          status: "success",
+          status: 'success',
           data: {
             id: customerId,
             tenantId: tenantA, // Different tenant!
-            firstName: "Test",
-            lastName: "User",
-            email: "test@example.com",
+            firstName: 'Test',
+            lastName: 'User',
+            email: 'test@example.com',
             isActive: true,
           },
         },
@@ -228,18 +228,18 @@ describe("Service Integration Tests", () => {
       );
     });
 
-    it("should allow access to own tenant resources", async () => {
+    it('should allow access to own tenant resources', async () => {
       const customerData = {
         id: customerId,
         tenantId: tenantId,
-        firstName: "Test",
-        lastName: "User",
-        email: "test@example.com",
+        firstName: 'Test',
+        lastName: 'User',
+        email: 'test@example.com',
         isActive: true,
       };
 
       mockGet.mockResolvedValueOnce({
-        data: { status: "success", data: customerData },
+        data: { status: 'success', data: customerData },
       });
 
       const client = new CustomerServiceClient();

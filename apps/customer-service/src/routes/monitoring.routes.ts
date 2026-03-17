@@ -5,9 +5,9 @@
  * Includes Prometheus-compatible /metrics endpoint
  */
 
-import { Router } from "express";
-import { monitoring } from "../utils/monitoring";
-import { prometheusMetrics } from "../utils/prometheus";
+import { Router } from 'express';
+import { monitoring } from '../utils/monitoring';
+import { prometheusMetrics } from '../utils/prometheus';
 
 const router = Router();
 
@@ -15,13 +15,13 @@ const router = Router();
  * GET /monitoring/prometheus
  * Prometheus-compatible metrics endpoint
  */
-router.get("/prometheus", (req, res) => {
+router.get('/prometheus', (req, res) => {
   try {
     const metrics = prometheusMetrics.generateMetrics();
-    res.set("Content-Type", "text/plain; version=0.0.4; charset=utf-8");
+    res.set('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
     res.send(metrics);
   } catch (error) {
-    res.status(500).send("# Error generating metrics\n");
+    res.status(500).send('# Error generating metrics\n');
   }
 });
 
@@ -29,12 +29,12 @@ router.get("/prometheus", (req, res) => {
  * GET /monitoring/metrics
  * Get current metrics
  */
-router.get("/metrics", (req, res) => {
+router.get('/metrics', (req, res) => {
   try {
     const metrics = monitoring.getMetrics();
     res.json(metrics);
   } catch (error) {
-    res.status(500).json({ error: "Failed to retrieve metrics" });
+    res.status(500).json({ error: 'Failed to retrieve metrics' });
   }
 });
 
@@ -42,7 +42,7 @@ router.get("/metrics", (req, res) => {
  * GET /monitoring/health
  * Get health status
  */
-router.get("/health", (req, res) => {
+router.get('/health', (req, res) => {
   try {
     const metrics = monitoring.getMetrics();
     res.json({
@@ -53,7 +53,7 @@ router.get("/health", (req, res) => {
       health: metrics.health,
     });
   } catch (error) {
-    res.status(500).json({ error: "Failed to retrieve health status" });
+    res.status(500).json({ error: 'Failed to retrieve health status' });
   }
 });
 
@@ -61,7 +61,7 @@ router.get("/health", (req, res) => {
  * GET /monitoring/alerts
  * Get active alerts
  */
-router.get("/alerts", (req, res) => {
+router.get('/alerts', (req, res) => {
   try {
     const alerts = monitoring.checkAlerts();
     res.json({
@@ -70,7 +70,7 @@ router.get("/alerts", (req, res) => {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    res.status(500).json({ error: "Failed to retrieve alerts" });
+    res.status(500).json({ error: 'Failed to retrieve alerts' });
   }
 });
 
@@ -78,7 +78,7 @@ router.get("/alerts", (req, res) => {
  * GET /monitoring/dashboard
  * HTML dashboard for viewing metrics
  */
-router.get("/dashboard", (req, res) => {
+router.get('/dashboard', (req, res) => {
   const metrics = monitoring.getMetrics();
   const alerts = monitoring.checkAlerts();
 
@@ -163,10 +163,10 @@ router.get("/dashboard", (req, res) => {
         </div>
       `
         )
-        .join("")}
+        .join('')}
     </div>
     `
-        : ""
+        : ''
     }
     
     <div class="grid">
@@ -192,8 +192,8 @@ router.get("/dashboard", (req, res) => {
         <h2>Error Rate</h2>
         <div class="metric ${
           metrics.errors.total / Math.max(metrics.requests.total, 1) > 0.05
-            ? "error"
-            : "success"
+            ? 'error'
+            : 'success'
         }">
           ${(
             (metrics.errors.total / Math.max(metrics.requests.total, 1)) *
@@ -206,7 +206,7 @@ router.get("/dashboard", (req, res) => {
       <div class="card">
         <h2>Response Time (P95)</h2>
         <div class="metric ${
-          metrics.responseTimes.p95 > 1000 ? "warning" : "success"
+          metrics.responseTimes.p95 > 1000 ? 'warning' : 'success'
         }">
           ${metrics.responseTimes.p95}ms
         </div>
@@ -216,7 +216,7 @@ router.get("/dashboard", (req, res) => {
       <div class="card">
         <h2>Rate Limit Hits</h2>
         <div class="metric ${
-          metrics.rateLimits.hits > 0 ? "warning" : "success"
+          metrics.rateLimits.hits > 0 ? 'warning' : 'success'
         }">
           ${metrics.rateLimits.hits.toLocaleString()}
         </div>
@@ -249,7 +249,7 @@ router.get("/dashboard", (req, res) => {
                 <tr><td>${tenant}</td><td>${count}</td></tr>
               `
               )
-              .join("")}
+              .join('')}
           </tbody>
         </table>
       </div>
@@ -269,7 +269,7 @@ router.get("/dashboard", (req, res) => {
                 <tr><td>${endpoint}</td><td>${count}</td></tr>
               `
               )
-              .join("")}
+              .join('')}
           </tbody>
         </table>
       </div>
@@ -291,16 +291,16 @@ router.get("/dashboard", (req, res) => {
             <tr>
               <td>${new Date(err.timestamp).toLocaleTimeString()}</td>
               <td>${err.error}</td>
-              <td>${err.tenant || "N/A"}</td>
+              <td>${err.tenant || 'N/A'}</td>
             </tr>
           `
             )
-            .join("")}
+            .join('')}
         </tbody>
       </table>
     </div>
     `
-        : ""
+        : ''
     }
   </div>
   
@@ -321,15 +321,15 @@ router.get("/dashboard", (req, res) => {
  * POST /monitoring/reset
  * Reset metrics (for testing)
  */
-router.post("/reset", (req, res) => {
-  if (process.env.NODE_ENV === "production") {
+router.post('/reset', (req, res) => {
+  if (process.env.NODE_ENV === 'production') {
     return res
       .status(403)
-      .json({ error: "Cannot reset metrics in production" });
+      .json({ error: 'Cannot reset metrics in production' });
   }
 
   monitoring.reset();
-  res.json({ message: "Metrics reset successfully" });
+  res.json({ message: 'Metrics reset successfully' });
 });
 
 export default router;

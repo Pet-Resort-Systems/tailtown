@@ -17,7 +17,7 @@ export {
   getMonthlySales,
   getYTDSales,
   getTopCustomersReport,
-} from "./reports-sales.controller";
+} from './reports-sales.controller';
 
 // Tax Reports
 export {
@@ -25,7 +25,7 @@ export {
   getQuarterlyTax,
   getAnnualTax,
   getTaxBreakdownReport,
-} from "./reports-tax.controller";
+} from './reports-tax.controller';
 
 // Financial Reports
 export {
@@ -34,7 +34,7 @@ export {
   getOutstanding,
   getRefunds,
   getReconciliation,
-} from "./reports-financial.controller";
+} from './reports-financial.controller';
 
 // Customer Reports
 export {
@@ -43,7 +43,7 @@ export {
   getCustomerLifetimeValue,
   getCustomerDemographics,
   getInactiveCustomers,
-} from "./reports-customer.controller";
+} from './reports-customer.controller';
 
 // Operations Reports
 export {
@@ -51,4 +51,4 @@ export {
   getResourceUtilization,
   getBookingPatterns,
   getCapacityAnalysis,
-} from "./reports-operations.controller";
+} from './reports-operations.controller';

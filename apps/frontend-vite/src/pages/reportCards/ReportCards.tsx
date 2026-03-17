@@ -1,6 +1,6 @@
 /**
  * Report Cards Page - Desktop/Main App
- * 
+ *
  * Staff dashboard for managing pet report cards with tabs for:
  * - Quick Create (single report card)
  * - Bulk Operations (multiple reports at once)
@@ -8,18 +8,11 @@
  */
 
 import React, { useState } from 'react';
-import {
-  Container,
-  Paper,
-  Typography,
-  Box,
-  Tabs,
-  Tab
-} from '@mui/material';
+import { Container, Paper, Typography, Box, Tabs, Tab } from '@mui/material';
 import {
   PhotoCamera as PhotoIcon,
   ViewList as ListIcon,
-  DynamicFeed as BulkIcon
+  DynamicFeed as BulkIcon,
 } from '@mui/icons-material';
 import QuickReportCard from '../../components/reportCards/QuickReportCard';
 import BulkReportCardDashboard from '../../components/reportCards/BulkReportCardDashboard';
@@ -41,11 +34,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`report-card-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 }

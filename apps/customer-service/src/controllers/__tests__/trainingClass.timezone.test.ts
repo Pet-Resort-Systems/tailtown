@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { 
-  createTrainingClass, 
+import {
+  createTrainingClass,
   getTrainingClassById,
-  getClassSessions 
+  getClassSessions,
 } from '../trainingClass.controller';
 
 // Mock Prisma
@@ -36,20 +36,20 @@ describe('Training Class Timezone Tests', () => {
   beforeEach(() => {
     jsonMock = jest.fn();
     statusMock = jest.fn().mockReturnValue({ json: jsonMock });
-    
+
     mockRequest = {
       headers: { 'x-tenant-id': 'test-tenant' },
       body: {},
       params: {},
     };
-    
+
     mockResponse = {
       status: statusMock,
       json: jsonMock,
     };
-    
+
     mockNext = jest.fn();
-    
+
     jest.clearAllMocks();
   });
 
@@ -57,7 +57,7 @@ describe('Training Class Timezone Tests', () => {
     it('should store session dates without timezone conversion', async () => {
       const startDate = '2024-11-04'; // Monday, Nov 4, 2024
       const startTime = '18:00';
-      
+
       mockRequest.body = {
         name: 'Puppy Training',
         description: 'Basic puppy training',
@@ -84,7 +84,9 @@ describe('Training Class Timezone Tests', () => {
       };
 
       (prisma.trainingClass.create as jest.Mock).mockResolvedValue(mockClass);
-      (prisma.classSession.createMany as jest.Mock).mockResolvedValue({ count: 4 });
+      (prisma.classSession.createMany as jest.Mock).mockResolvedValue({
+        count: 4,
+      });
 
       await createTrainingClass(
         mockRequest as Request,
@@ -104,7 +106,8 @@ describe('Training Class Timezone Tests', () => {
       });
 
       // Get the actual dates that were stored
-      const createManyCall = (prisma.classSession.createMany as jest.Mock).mock.calls[0][0];
+      const createManyCall = (prisma.classSession.createMany as jest.Mock).mock
+        .calls[0][0];
       const sessions = createManyCall.data;
 
       // Verify first session is on Nov 4, 2024
@@ -117,7 +120,7 @@ describe('Training Class Timezone Tests', () => {
 
     it('should maintain date consistency across multiple weeks', async () => {
       const startDate = '2024-11-04'; // Monday
-      
+
       mockRequest.body = {
         name: 'Advanced Training',
         description: 'Advanced training',
@@ -144,7 +147,9 @@ describe('Training Class Timezone Tests', () => {
       };
 
       (prisma.trainingClass.create as jest.Mock).mockResolvedValue(mockClass);
-      (prisma.classSession.createMany as jest.Mock).mockResolvedValue({ count: 6 });
+      (prisma.classSession.createMany as jest.Mock).mockResolvedValue({
+        count: 6,
+      });
 
       await createTrainingClass(
         mockRequest as Request,
@@ -152,7 +157,8 @@ describe('Training Class Timezone Tests', () => {
         mockNext
       );
 
-      const createManyCall = (prisma.classSession.createMany as jest.Mock).mock.calls[0][0];
+      const createManyCall = (prisma.classSession.createMany as jest.Mock).mock
+        .calls[0][0];
       const sessions = createManyCall.data;
 
       // Should have 6 sessions (3 weeks × 2 days)
@@ -163,7 +169,7 @@ describe('Training Class Timezone Tests', () => {
       // Week 2: Nov 11 (Mon), Nov 13 (Wed)
       // Week 3: Nov 18 (Mon), Nov 20 (Wed)
       const expectedDates = [4, 6, 11, 13, 18, 20];
-      
+
       sessions.forEach((session: any, index: number) => {
         const sessionDate = new Date(session.scheduledDate);
         expect(sessionDate.getDate()).toBe(expectedDates[index]);
@@ -199,7 +205,9 @@ describe('Training Class Timezone Tests', () => {
         },
       ];
 
-      (prisma.classSession.findMany as jest.Mock).mockResolvedValue(mockSessions);
+      (prisma.classSession.findMany as jest.Mock).mockResolvedValue(
+        mockSessions
+      );
 
       await getClassSessions(
         mockRequest as Request,
@@ -222,7 +230,7 @@ describe('Training Class Timezone Tests', () => {
     it('should handle sessions across daylight saving time boundaries', async () => {
       // Test sessions that span DST change (March 10, 2024 in US)
       const startDate = '2024-03-04'; // Week before DST
-      
+
       mockRequest.body = {
         name: 'Spring Training',
         description: 'Training across DST',
@@ -249,7 +257,9 @@ describe('Training Class Timezone Tests', () => {
       };
 
       (prisma.trainingClass.create as jest.Mock).mockResolvedValue(mockClass);
-      (prisma.classSession.createMany as jest.Mock).mockResolvedValue({ count: 3 });
+      (prisma.classSession.createMany as jest.Mock).mockResolvedValue({
+        count: 3,
+      });
 
       await createTrainingClass(
         mockRequest as Request,
@@ -257,12 +267,13 @@ describe('Training Class Timezone Tests', () => {
         mockNext
       );
 
-      const createManyCall = (prisma.classSession.createMany as jest.Mock).mock.calls[0][0];
+      const createManyCall = (prisma.classSession.createMany as jest.Mock).mock
+        .calls[0][0];
       const sessions = createManyCall.data;
 
       // Verify dates: March 4, March 11 (after DST), March 18
       const expectedDates = [4, 11, 18];
-      
+
       sessions.forEach((session: any, index: number) => {
         const sessionDate = new Date(session.scheduledDate);
         expect(sessionDate.getDate()).toBe(expectedDates[index]);
@@ -275,7 +286,7 @@ describe('Training Class Timezone Tests', () => {
   describe('Edge Cases', () => {
     it('should handle sessions starting on the last day of the month', async () => {
       const startDate = '2024-10-31'; // Thursday, Oct 31
-      
+
       mockRequest.body = {
         name: 'Halloween Training',
         description: 'Training starting end of month',
@@ -302,7 +313,9 @@ describe('Training Class Timezone Tests', () => {
       };
 
       (prisma.trainingClass.create as jest.Mock).mockResolvedValue(mockClass);
-      (prisma.classSession.createMany as jest.Mock).mockResolvedValue({ count: 2 });
+      (prisma.classSession.createMany as jest.Mock).mockResolvedValue({
+        count: 2,
+      });
 
       await createTrainingClass(
         mockRequest as Request,
@@ -310,7 +323,8 @@ describe('Training Class Timezone Tests', () => {
         mockNext
       );
 
-      const createManyCall = (prisma.classSession.createMany as jest.Mock).mock.calls[0][0];
+      const createManyCall = (prisma.classSession.createMany as jest.Mock).mock
+        .calls[0][0];
       const sessions = createManyCall.data;
 
       // First session: Oct 31
@@ -326,7 +340,7 @@ describe('Training Class Timezone Tests', () => {
 
     it('should handle leap year dates correctly', async () => {
       const startDate = '2024-02-26'; // Monday in leap year
-      
+
       mockRequest.body = {
         name: 'Leap Year Training',
         description: 'Training in leap year',
@@ -353,7 +367,9 @@ describe('Training Class Timezone Tests', () => {
       };
 
       (prisma.trainingClass.create as jest.Mock).mockResolvedValue(mockClass);
-      (prisma.classSession.createMany as jest.Mock).mockResolvedValue({ count: 4 });
+      (prisma.classSession.createMany as jest.Mock).mockResolvedValue({
+        count: 4,
+      });
 
       await createTrainingClass(
         mockRequest as Request,
@@ -361,13 +377,14 @@ describe('Training Class Timezone Tests', () => {
         mockNext
       );
 
-      const createManyCall = (prisma.classSession.createMany as jest.Mock).mock.calls[0][0];
+      const createManyCall = (prisma.classSession.createMany as jest.Mock).mock
+        .calls[0][0];
       const sessions = createManyCall.data;
 
       // Week 1: Feb 26 (Mon), Feb 29 (Thu - leap day)
       // Week 2: Mar 4 (Mon), Mar 7 (Thu)
       expect(sessions).toHaveLength(4);
-      
+
       const dates = sessions.map((s: any) => {
         const d = new Date(s.scheduledDate);
         return { month: d.getMonth(), date: d.getDate() };
@@ -375,13 +392,13 @@ describe('Training Class Timezone Tests', () => {
 
       expect(dates[0]).toEqual({ month: 1, date: 26 }); // Feb 26
       expect(dates[1]).toEqual({ month: 1, date: 29 }); // Feb 29 (leap day)
-      expect(dates[2]).toEqual({ month: 2, date: 4 });  // Mar 4
-      expect(dates[3]).toEqual({ month: 2, date: 7 });  // Mar 7
+      expect(dates[2]).toEqual({ month: 2, date: 4 }); // Mar 4
+      expect(dates[3]).toEqual({ month: 2, date: 7 }); // Mar 7
     });
 
     it('should handle year boundary correctly', async () => {
       const startDate = '2024-12-30'; // Monday, Dec 30
-      
+
       mockRequest.body = {
         name: 'New Year Training',
         description: 'Training across year boundary',
@@ -408,7 +425,9 @@ describe('Training Class Timezone Tests', () => {
       };
 
       (prisma.trainingClass.create as jest.Mock).mockResolvedValue(mockClass);
-      (prisma.classSession.createMany as jest.Mock).mockResolvedValue({ count: 2 });
+      (prisma.classSession.createMany as jest.Mock).mockResolvedValue({
+        count: 2,
+      });
 
       await createTrainingClass(
         mockRequest as Request,
@@ -416,7 +435,8 @@ describe('Training Class Timezone Tests', () => {
         mockNext
       );
 
-      const createManyCall = (prisma.classSession.createMany as jest.Mock).mock.calls[0][0];
+      const createManyCall = (prisma.classSession.createMany as jest.Mock).mock
+        .calls[0][0];
       const sessions = createManyCall.data;
 
       // First session: Dec 30, 2024
@@ -437,7 +457,7 @@ describe('Training Class Timezone Tests', () => {
     it('should maintain the same time across all sessions regardless of date', async () => {
       const startDate = '2024-11-04';
       const startTime = '18:30'; // 6:30 PM
-      
+
       mockRequest.body = {
         name: 'Evening Training',
         description: 'Consistent time training',
@@ -464,7 +484,9 @@ describe('Training Class Timezone Tests', () => {
       };
 
       (prisma.trainingClass.create as jest.Mock).mockResolvedValue(mockClass);
-      (prisma.classSession.createMany as jest.Mock).mockResolvedValue({ count: 12 });
+      (prisma.classSession.createMany as jest.Mock).mockResolvedValue({
+        count: 12,
+      });
 
       await createTrainingClass(
         mockRequest as Request,
@@ -472,7 +494,8 @@ describe('Training Class Timezone Tests', () => {
         mockNext
       );
 
-      const createManyCall = (prisma.classSession.createMany as jest.Mock).mock.calls[0][0];
+      const createManyCall = (prisma.classSession.createMany as jest.Mock).mock
+        .calls[0][0];
       const sessions = createManyCall.data;
 
       // All sessions should have the same time

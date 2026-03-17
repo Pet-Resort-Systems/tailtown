@@ -1,6 +1,6 @@
 /**
  * Multi-Pet Suite Service
- * 
+ *
  * Handles multi-pet bookings, capacity management, and pricing
  */
 
@@ -15,12 +15,12 @@ import {
   SuiteAvailability,
   PetInSuite,
   MultiPetPricingType,
-  PricingBreakdown
+  PricingBreakdown,
 } from '../types/multiPet';
 
 export const multiPetService = {
   // ==================== Configuration Management ====================
-  
+
   /**
    * Get suite capacity configuration
    */
@@ -32,13 +32,15 @@ export const multiPetService = {
   /**
    * Update suite capacity configuration
    */
-  updateConfig: async (config: Partial<SuiteCapacityConfig>): Promise<SuiteCapacityConfig> => {
+  updateConfig: async (
+    config: Partial<SuiteCapacityConfig>
+  ): Promise<SuiteCapacityConfig> => {
     const response = await customerApi.put('/api/multi-pet/config', config);
     return response.data;
   },
 
   // ==================== Suite Capacity Management ====================
-  
+
   /**
    * Get all suite capacities
    */
@@ -50,16 +52,27 @@ export const multiPetService = {
   /**
    * Create suite capacity
    */
-  createSuiteCapacity: async (capacity: Partial<SuiteCapacity>): Promise<SuiteCapacity> => {
-    const response = await customerApi.post('/api/multi-pet/capacities', capacity);
+  createSuiteCapacity: async (
+    capacity: Partial<SuiteCapacity>
+  ): Promise<SuiteCapacity> => {
+    const response = await customerApi.post(
+      '/api/multi-pet/capacities',
+      capacity
+    );
     return response.data;
   },
 
   /**
    * Update suite capacity
    */
-  updateSuiteCapacity: async (id: string, updates: Partial<SuiteCapacity>): Promise<SuiteCapacity> => {
-    const response = await customerApi.put(`/api/multi-pet/capacities/${id}`, updates);
+  updateSuiteCapacity: async (
+    id: string,
+    updates: Partial<SuiteCapacity>
+  ): Promise<SuiteCapacity> => {
+    const response = await customerApi.put(
+      `/api/multi-pet/capacities/${id}`,
+      updates
+    );
     return response.data;
   },
 
@@ -71,7 +84,7 @@ export const multiPetService = {
   },
 
   // ==================== Pricing Calculations ====================
-  
+
   /**
    * Calculate multi-pet pricing
    */
@@ -79,10 +92,13 @@ export const multiPetService = {
     suiteType: string,
     numberOfPets: number
   ): Promise<MultiPetPricingCalculation> => {
-    const response = await customerApi.post('/api/multi-pet/calculate-pricing', {
-      suiteType,
-      numberOfPets
-    });
+    const response = await customerApi.post(
+      '/api/multi-pet/calculate-pricing',
+      {
+        suiteType,
+        numberOfPets,
+      }
+    );
     return response.data;
   },
 
@@ -104,7 +120,7 @@ export const multiPetService = {
         totalPrice: 0,
         perPetCost: 0,
         breakdown: [],
-        explanation: 'No pets selected'
+        explanation: 'No pets selected',
       };
     }
 
@@ -120,7 +136,7 @@ export const multiPetService = {
         description: `First pet (${capacity.suiteType})`,
         amount: capacity.basePrice,
         petId: pets?.[0]?.petId,
-        petName: pets?.[0]?.petName
+        petName: pets?.[0]?.petName,
       });
 
       if (numberOfPets > 1 && capacity.additionalPetPrice) {
@@ -132,7 +148,7 @@ export const multiPetService = {
             description: `Additional pet ${i}`,
             amount: capacity.additionalPetPrice,
             petId: pets?.[i]?.petId,
-            petName: pets?.[i]?.petName
+            petName: pets?.[i]?.petName,
           });
         }
       }
@@ -141,26 +157,26 @@ export const multiPetService = {
       totalPrice = capacity.basePrice;
       breakdown.push({
         description: `Flat rate for ${numberOfPets} pet(s)`,
-        amount: capacity.basePrice
+        amount: capacity.basePrice,
       });
     } else if (capacity.pricingType === 'TIERED' && capacity.tieredPricing) {
       // Find matching tier
       const tier = capacity.tieredPricing.find(
-        t => numberOfPets >= t.minPets && numberOfPets <= t.maxPets
+        (t) => numberOfPets >= t.minPets && numberOfPets <= t.maxPets
       );
 
       if (tier) {
         totalPrice = tier.price;
         breakdown.push({
           description: tier.description || `${numberOfPets} pet(s)`,
-          amount: tier.price
+          amount: tier.price,
         });
       } else {
         // Fallback to base price
         totalPrice = capacity.basePrice;
         breakdown.push({
           description: `${numberOfPets} pet(s) (base rate)`,
-          amount: capacity.basePrice
+          amount: capacity.basePrice,
         });
       }
     } else if (capacity.pricingType === 'PERCENTAGE_OFF') {
@@ -170,14 +186,19 @@ export const multiPetService = {
         description: `First pet`,
         amount: capacity.basePrice,
         petId: pets?.[0]?.petId,
-        petName: pets?.[0]?.petName
+        petName: pets?.[0]?.petName,
       });
 
-      if (numberOfPets > 1 && capacity.additionalPetPrice && capacity.percentageOff) {
+      if (
+        numberOfPets > 1 &&
+        capacity.additionalPetPrice &&
+        capacity.percentageOff
+      ) {
         for (let i = 1; i < numberOfPets; i++) {
-          const discount = capacity.additionalPetPrice * (capacity.percentageOff / 100);
+          const discount =
+            capacity.additionalPetPrice * (capacity.percentageOff / 100);
           const discountedPrice = capacity.additionalPetPrice - discount;
-          
+
           totalPrice += discountedPrice;
           additionalCharges += discountedPrice;
           discounts += discount;
@@ -186,7 +207,7 @@ export const multiPetService = {
             description: `Additional pet ${i} (${capacity.percentageOff}% off)`,
             amount: discountedPrice,
             petId: pets?.[i]?.petId,
-            petName: pets?.[i]?.petName
+            petName: pets?.[i]?.petName,
           });
         }
       }
@@ -216,7 +237,7 @@ export const multiPetService = {
         numberOfPets,
         totalPrice,
         savings
-      )
+      ),
     };
   },
 
@@ -249,16 +270,17 @@ export const multiPetService = {
   },
 
   // ==================== Compatibility Checks ====================
-  
+
   /**
    * Check pet compatibility
    */
-  checkCompatibility: async (
-    petIds: string[]
-  ): Promise<CompatibilityCheck> => {
-    const response = await customerApi.post('/api/multi-pet/check-compatibility', {
-      petIds
-    });
+  checkCompatibility: async (petIds: string[]): Promise<CompatibilityCheck> => {
+    const response = await customerApi.post(
+      '/api/multi-pet/check-compatibility',
+      {
+        petIds,
+      }
+    );
     return response.data;
   },
 
@@ -278,44 +300,50 @@ export const multiPetService = {
         isCompatible: true,
         issues: [],
         warnings: [],
-        recommendations: []
+        recommendations: [],
       };
     }
 
     // Check size compatibility
-    const sizes = pets.map(p => p.size).filter(Boolean);
+    const sizes = pets.map((p) => p.size).filter(Boolean);
     if (sizes.length > 1) {
       const uniqueSizes = new Set(sizes);
       if (uniqueSizes.size > 2) {
         warnings.push({
           message: 'Pets have significantly different sizes',
-          affectedPets: pets.map(p => p.petName)
+          affectedPets: pets.map((p) => p.petName),
         });
         recommendations.push('Consider grouping pets of similar sizes');
       }
     }
 
     // Check age compatibility
-    const ages = pets.map(p => p.age).filter(Boolean) as number[];
+    const ages = pets.map((p) => p.age).filter(Boolean) as number[];
     if (ages.length > 1) {
-      const hasYoung = ages.some(age => age < 12); // Less than 1 year
-      const hasSenior = ages.some(age => age > 84); // Over 7 years
+      const hasYoung = ages.some((age) => age < 12); // Less than 1 year
+      const hasSenior = ages.some((age) => age > 84); // Over 7 years
 
       if (hasYoung && hasSenior) {
         warnings.push({
           message: 'Mix of young and senior pets',
-          affectedPets: pets.filter(p => p.age && (p.age < 12 || p.age > 84)).map(p => p.petName)
+          affectedPets: pets
+            .filter((p) => p.age && (p.age < 12 || p.age > 84))
+            .map((p) => p.petName),
         });
-        recommendations.push('Monitor interaction between young and senior pets');
+        recommendations.push(
+          'Monitor interaction between young and senior pets'
+        );
       }
     }
 
     // Check special needs
-    const petsWithSpecialNeeds = pets.filter(p => p.specialNeeds && p.specialNeeds.length > 0);
+    const petsWithSpecialNeeds = pets.filter(
+      (p) => p.specialNeeds && p.specialNeeds.length > 0
+    );
     if (petsWithSpecialNeeds.length > 0) {
       warnings.push({
         message: 'Some pets have special needs',
-        affectedPets: petsWithSpecialNeeds.map(p => p.petName)
+        affectedPets: petsWithSpecialNeeds.map((p) => p.petName),
       });
       recommendations.push('Ensure staff is aware of special needs');
     }
@@ -324,12 +352,12 @@ export const multiPetService = {
       isCompatible: issues.length === 0,
       issues,
       warnings,
-      recommendations
+      recommendations,
     };
   },
 
   // ==================== Suite Occupancy ====================
-  
+
   /**
    * Get suite occupancy
    */
@@ -338,9 +366,12 @@ export const multiPetService = {
     startDate: string,
     endDate: string
   ): Promise<SuiteOccupancy> => {
-    const response = await customerApi.get(`/api/multi-pet/occupancy/${suiteId}`, {
-      params: { startDate, endDate }
-    });
+    const response = await customerApi.get(
+      `/api/multi-pet/occupancy/${suiteId}`,
+      {
+        params: { startDate, endDate },
+      }
+    );
     return response.data;
   },
 
@@ -352,7 +383,7 @@ export const multiPetService = {
     endDate: string
   ): Promise<SuiteOccupancy[]> => {
     const response = await customerApi.get('/api/multi-pet/occupancies', {
-      params: { startDate, endDate }
+      params: { startDate, endDate },
     });
     return response.data;
   },
@@ -366,32 +397,42 @@ export const multiPetService = {
     endDate: string,
     numberOfPets: number
   ): Promise<SuiteAvailability> => {
-    const response = await customerApi.post('/api/multi-pet/check-availability', {
-      suiteId,
-      startDate,
-      endDate,
-      numberOfPets
-    });
+    const response = await customerApi.post(
+      '/api/multi-pet/check-availability',
+      {
+        suiteId,
+        startDate,
+        endDate,
+        numberOfPets,
+      }
+    );
     return response.data;
   },
 
   // ==================== Multi-Pet Reservations ====================
-  
+
   /**
    * Create multi-pet reservation
    */
   createReservation: async (
     reservation: Partial<MultiPetReservation>
   ): Promise<MultiPetReservation> => {
-    const response = await customerApi.post('/api/multi-pet/reservations', reservation);
+    const response = await customerApi.post(
+      '/api/multi-pet/reservations',
+      reservation
+    );
     return response.data;
   },
 
   /**
    * Get multi-pet reservation
    */
-  getReservation: async (reservationId: string): Promise<MultiPetReservation> => {
-    const response = await customerApi.get(`/api/multi-pet/reservations/${reservationId}`);
+  getReservation: async (
+    reservationId: string
+  ): Promise<MultiPetReservation> => {
+    const response = await customerApi.get(
+      `/api/multi-pet/reservations/${reservationId}`
+    );
     return response.data;
   },
 
@@ -402,16 +443,22 @@ export const multiPetService = {
     reservationId: string,
     updates: Partial<MultiPetReservation>
   ): Promise<MultiPetReservation> => {
-    const response = await customerApi.put(`/api/multi-pet/reservations/${reservationId}`, updates);
+    const response = await customerApi.put(
+      `/api/multi-pet/reservations/${reservationId}`,
+      updates
+    );
     return response.data;
   },
 
   // ==================== Client-Side Helpers ====================
-  
+
   /**
    * Calculate occupancy percentage
    */
-  calculateOccupancyPercentage: (currentOccupancy: number, maxCapacity: number): number => {
+  calculateOccupancyPercentage: (
+    currentOccupancy: number,
+    maxCapacity: number
+  ): number => {
     if (maxCapacity === 0) return 0;
     return Math.round((currentOccupancy / maxCapacity) * 100);
   },
@@ -419,8 +466,12 @@ export const multiPetService = {
   /**
    * Check if suite can accept more pets
    */
-  canAcceptMorePets: (currentOccupancy: number, maxCapacity: number, requestedPets: number): boolean => {
-    return (currentOccupancy + requestedPets) <= maxCapacity;
+  canAcceptMorePets: (
+    currentOccupancy: number,
+    maxCapacity: number,
+    requestedPets: number
+  ): boolean => {
+    return currentOccupancy + requestedPets <= maxCapacity;
   },
 
   /**
@@ -454,7 +505,9 @@ export const multiPetService = {
   /**
    * Validate suite capacity configuration
    */
-  validateCapacity: (capacity: Partial<SuiteCapacity>): { isValid: boolean; errors: string[] } => {
+  validateCapacity: (
+    capacity: Partial<SuiteCapacity>
+  ): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
 
     if (!capacity.suiteType || capacity.suiteType.trim().length === 0) {
@@ -473,17 +526,23 @@ export const multiPetService = {
       errors.push('Additional pet price is required for per-pet pricing');
     }
 
-    if (capacity.pricingType === 'TIERED' && (!capacity.tieredPricing || capacity.tieredPricing.length === 0)) {
+    if (
+      capacity.pricingType === 'TIERED' &&
+      (!capacity.tieredPricing || capacity.tieredPricing.length === 0)
+    ) {
       errors.push('Tiered pricing configuration is required');
     }
 
-    if (capacity.pricingType === 'PERCENTAGE_OFF' && (!capacity.percentageOff || capacity.percentageOff <= 0)) {
+    if (
+      capacity.pricingType === 'PERCENTAGE_OFF' &&
+      (!capacity.percentageOff || capacity.percentageOff <= 0)
+    ) {
       errors.push('Percentage off is required for percentage-off pricing');
     }
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
-  }
+  },
 };

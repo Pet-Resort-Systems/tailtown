@@ -6,7 +6,9 @@
 // @ts-nocheck - Jest globals
 // Set test environment variables
 process.env.NODE_ENV = 'test';
-process.env.DATABASE_URL = process.env.TEST_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5434/reservation';
+process.env.DATABASE_URL =
+  process.env.TEST_DATABASE_URL ||
+  'postgresql://postgres:postgres@localhost:5434/reservation';
 process.env.PORT = '4099'; // Use different port for tests
 
 // Increase timeout for database operations

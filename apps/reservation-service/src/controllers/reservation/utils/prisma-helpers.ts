@@ -5,11 +5,11 @@
  * implementing the schema alignment strategy with defensive programming.
  */
 
-import { AppError } from "../../../utils/service";
-import { logger } from "../../../utils/logger";
+import { AppError } from '../../../utils/service';
+import { logger } from '../../../utils/logger';
 
 // Re-export centralized prisma client
-export { prisma } from "../../../config/prisma";
+export { prisma } from '../../../config/prisma';
 
 /**
  * Safely executes a Prisma query with error handling
@@ -23,15 +23,15 @@ export { prisma } from "../../../config/prisma";
 export async function safeExecutePrismaQuery<T>(
   queryFn: () => Promise<T>,
   fallbackValue: T | null = null,
-  errorMessage = "Error executing database query",
+  errorMessage = 'Error executing database query',
   throwError = false
 ): Promise<T | null> {
   try {
     return await queryFn();
   } catch (error: any) {
     // Extract Prisma error code if available
-    const prismaError = error?.code || "";
-    const target = error?.meta?.target || "";
+    const prismaError = error?.code || '';
+    const target = error?.meta?.target || '';
 
     // Log the error with context
     logger.error(`${errorMessage}: ${error.message}`, {
@@ -43,9 +43,9 @@ export async function safeExecutePrismaQuery<T>(
 
     // If throwError is true, convert to appropriate AppError
     if (throwError) {
-      if (prismaError === "P2025") {
+      if (prismaError === 'P2025') {
         throw AppError.notFoundError(`Record not found: ${target}`);
-      } else if (prismaError === "P2002") {
+      } else if (prismaError === 'P2002') {
         throw AppError.conflictError(
           `Duplicate entry for unique field: ${target}`
         );

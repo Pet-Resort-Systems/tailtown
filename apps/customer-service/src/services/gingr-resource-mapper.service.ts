@@ -40,11 +40,11 @@ function extractSuiteNumberFromResourceName(
  */
 export function extractGingrLodging(reservation: any): string | null {
   // Check for nested structures first (lodging/room as objects)
-  if (reservation.lodging && typeof reservation.lodging === "object") {
+  if (reservation.lodging && typeof reservation.lodging === 'object') {
     return reservation.lodging.label || reservation.lodging.id || null;
   }
 
-  if (reservation.room && typeof reservation.room === "object") {
+  if (reservation.room && typeof reservation.room === 'object') {
     return reservation.room.label || reservation.room.id || null;
   }
 
@@ -52,10 +52,10 @@ export function extractGingrLodging(reservation: any): string | null {
   const lodging =
     reservation.lodging_label ||
     reservation.lodging_id ||
-    (typeof reservation.lodging === "string" ? reservation.lodging : null) ||
+    (typeof reservation.lodging === 'string' ? reservation.lodging : null) ||
     reservation.room_label ||
     reservation.room_id ||
-    (typeof reservation.room === "string" ? reservation.room : null) ||
+    (typeof reservation.room === 'string' ? reservation.room : null) ||
     reservation.kennel_label ||
     reservation.kennel_id ||
     reservation.kennel ||
@@ -74,22 +74,22 @@ export function extractGingrLodging(reservation: any): string | null {
  *   "Suite A02" → "A02"
  */
 function normalizeLodgingName(gingrLodging: string): string {
-  if (!gingrLodging) return "";
+  if (!gingrLodging) return '';
 
   // Remove common prefixes and extra spaces
   let normalized = gingrLodging
-    .replace(/^(Suite|Room|Kennel|Lodging)\s+/i, "")
-    .replace(/^[A-Z]\.\s*\w+\s*-\s*/i, "") // Remove "A. Indoor - "
+    .replace(/^(Suite|Room|Kennel|Lodging)\s+/i, '')
+    .replace(/^[A-Z]\.\s*\w+\s*-\s*/i, '') // Remove "A. Indoor - "
     .trim();
 
   // Remove spaces between letter and number: "A 02" → "A02"
-  normalized = normalized.replace(/^([A-Z])\s+(\d+)$/, "$1$2");
+  normalized = normalized.replace(/^([A-Z])\s+(\d+)$/, '$1$2');
 
   // Ensure two-digit format: "A2" → "A02"
   const match = normalized.match(/^([A-Z])(\d+)$/);
   if (match) {
     const letter = match[1];
-    const number = match[2].padStart(2, "0");
+    const number = match[2].padStart(2, '0');
     normalized = `${letter}${number}`;
   }
 
@@ -101,17 +101,17 @@ function normalizeLodgingName(gingrLodging: string): string {
  * Matches frontend/src/config/resource-service-mapping.ts
  */
 const RESOURCE_SERVICE_MAP: Record<string, string> = {
-  JUNIOR_KENNEL: "Boarding | Indoor Suite",
-  QUEEN_KENNEL: "Boarding | Indoor Suite",
-  KING_KENNEL: "Boarding | King Suite",
-  VIP_ROOM: "Boarding | VIP Suite",
-  CAT_CONDO: "Boarding | Cat Cabana",
-  DAY_CAMP_FULL: "Day Camp | Full Day",
-  DAY_CAMP_HALF: "Day Camp | Half Day",
+  JUNIOR_KENNEL: 'Boarding | Indoor Suite',
+  QUEEN_KENNEL: 'Boarding | Indoor Suite',
+  KING_KENNEL: 'Boarding | King Suite',
+  VIP_ROOM: 'Boarding | VIP Suite',
+  CAT_CONDO: 'Boarding | Cat Cabana',
+  DAY_CAMP_FULL: 'Day Camp | Full Day',
+  DAY_CAMP_HALF: 'Day Camp | Half Day',
   // Legacy types (fallback)
-  STANDARD_SUITE: "Boarding | Indoor Suite",
-  STANDARD_PLUS_SUITE: "Boarding | Indoor Suite",
-  VIP_SUITE: "Boarding | VIP Suite",
+  STANDARD_SUITE: 'Boarding | Indoor Suite',
+  STANDARD_PLUS_SUITE: 'Boarding | Indoor Suite',
+  VIP_SUITE: 'Boarding | VIP Suite',
 };
 
 /**
@@ -123,47 +123,47 @@ function determineResourceType(lodgingName: string): string {
 
   // Check for VIP indicators
   if (
-    name.includes("VIP") ||
-    name.startsWith("V") ||
-    name.includes("PREMIUM")
+    name.includes('VIP') ||
+    name.startsWith('V') ||
+    name.includes('PREMIUM')
   ) {
-    return "VIP_ROOM";
+    return 'VIP_ROOM';
   }
 
   // Check for Cat indicators
   if (
-    name.includes("CAT") ||
-    name.includes("FELINE") ||
-    name.includes("CONDO")
+    name.includes('CAT') ||
+    name.includes('FELINE') ||
+    name.includes('CONDO')
   ) {
-    return "CAT_CONDO";
+    return 'CAT_CONDO';
   }
 
   // Check for Day Camp indicators
-  if (name.includes("DAY") || name.includes("CAMP")) {
-    if (name.includes("HALF")) {
-      return "DAY_CAMP_HALF";
+  if (name.includes('DAY') || name.includes('CAMP')) {
+    if (name.includes('HALF')) {
+      return 'DAY_CAMP_HALF';
     }
-    return "DAY_CAMP_FULL";
+    return 'DAY_CAMP_FULL';
   }
 
   // Check for King indicators (suffix K or contains KING)
-  if (name.endsWith("K") || name.includes("KING") || name.includes("LARGE")) {
-    return "KING_KENNEL";
+  if (name.endsWith('K') || name.includes('KING') || name.includes('LARGE')) {
+    return 'KING_KENNEL';
   }
 
   // Check for Queen indicators (suffix Q or contains QUEEN)
-  if (name.endsWith("Q") || name.includes("QUEEN") || name.includes("MEDIUM")) {
-    return "QUEEN_KENNEL";
+  if (name.endsWith('Q') || name.includes('QUEEN') || name.includes('MEDIUM')) {
+    return 'QUEEN_KENNEL';
   }
 
   // Check for Junior indicators (suffix R or contains JUNIOR/SMALL)
-  if (name.endsWith("R") || name.includes("JUNIOR") || name.includes("SMALL")) {
-    return "JUNIOR_KENNEL";
+  if (name.endsWith('R') || name.includes('JUNIOR') || name.includes('SMALL')) {
+    return 'JUNIOR_KENNEL';
   }
 
   // Default to Junior kennel for standard boarding
-  return "JUNIOR_KENNEL";
+  return 'JUNIOR_KENNEL';
 }
 
 /**
@@ -171,7 +171,7 @@ function determineResourceType(lodgingName: string): string {
  * Used to auto-select the correct service when syncing reservations
  */
 export function getServiceNameForResourceType(resourceType: string): string {
-  return RESOURCE_SERVICE_MAP[resourceType] || "Boarding | Indoor Suite";
+  return RESOURCE_SERVICE_MAP[resourceType] || 'Boarding | Indoor Suite';
 }
 
 /**
@@ -179,10 +179,10 @@ export function getServiceNameForResourceType(resourceType: string): string {
  */
 export async function findOrCreateResource(
   gingrLodging: string,
-  reservationServiceUrl: string = "http://localhost:4003"
+  reservationServiceUrl: string = 'http://localhost:4003'
 ): Promise<{ id: string; name: string }> {
   if (!gingrLodging) {
-    throw new Error("No lodging specified");
+    throw new Error('No lodging specified');
   }
 
   // Normalize the lodging name
@@ -204,7 +204,7 @@ export async function findOrCreateResource(
     // Try to find existing resource by name
     const searchResponse = await fetch(
       `${reservationServiceUrl}/api/resources?limit=1000`,
-      { headers: { "x-tenant-id": "dev" } }
+      { headers: { 'x-tenant-id': 'dev' } }
     );
 
     const searchData = (await searchResponse.json()) as any;
@@ -230,10 +230,10 @@ export async function findOrCreateResource(
           const updateResponse = await fetch(
             `${reservationServiceUrl}/api/resources/${existingResource.id}`,
             {
-              method: "PATCH",
+              method: 'PATCH',
               headers: {
-                "Content-Type": "application/json",
-                "x-tenant-id": "dev",
+                'Content-Type': 'application/json',
+                'x-tenant-id': 'dev',
               },
               body: JSON.stringify({ suiteNumber: extractedSuiteNumber }),
             }
@@ -265,17 +265,17 @@ export async function findOrCreateResource(
     const createResponse = await fetch(
       `${reservationServiceUrl}/api/resources`,
       {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": "dev",
+          'Content-Type': 'application/json',
+          'x-tenant-id': 'dev',
         },
         body: JSON.stringify({
           name: normalizedName,
           type: determineResourceType(normalizedName),
           capacity: 1,
           isActive: true,
-          tenantId: "dev",
+          tenantId: 'dev',
           description: `Imported from Gingr: ${gingrLodging}`,
           suiteNumber: extractSuiteNumberFromResourceName(normalizedName),
         }),

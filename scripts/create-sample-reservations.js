@@ -7,7 +7,8 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
-const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+const randomInt = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
 
 function getRandomDate(daysAhead) {
   const date = new Date();
@@ -17,11 +18,13 @@ function getRandomDate(daysAhead) {
 
 async function createSampleReservations(tenantSubdomain, count = 10) {
   try {
-    console.log(`\n📅 Creating ${count} sample reservations for ${tenantSubdomain}...\n`);
+    console.log(
+      `\n📅 Creating ${count} sample reservations for ${tenantSubdomain}...\n`
+    );
 
     // Get tenant UUID
     const tenant = await prisma.tenant.findUnique({
-      where: { subdomain: tenantSubdomain }
+      where: { subdomain: tenantSubdomain },
     });
 
     if (!tenant) {
@@ -31,21 +34,23 @@ async function createSampleReservations(tenantSubdomain, count = 10) {
 
     // Get customers, pets, and resources from customer service
     // Note: We'll need to pass these as IDs since they're in different databases
-    const customerServicePrisma = new (require('@prisma/client')).PrismaClient({
+    const customerServicePrisma = new (require('@prisma/client').PrismaClient)({
       datasources: {
         db: {
-          url: process.env.DATABASE_URL || 'postgresql://tailtown_user:tailtown_password@localhost:5432/tailtown_customer'
-        }
-      }
+          url:
+            process.env.DATABASE_URL ||
+            'postgresql://tailtown_user:tailtown_password@localhost:5432/tailtown_customer',
+        },
+      },
     });
 
     const customers = await customerServicePrisma.customer.findMany({
       where: { tenantId: tenant.id },
-      include: { pets: true }
+      include: { pets: true },
     });
 
     const resources = await customerServicePrisma.resource.findMany({
-      where: { tenantId: tenant.id, type: 'SUITE' }
+      where: { tenantId: tenant.id, type: 'SUITE' },
     });
 
     await customerServicePrisma.$disconnect();
@@ -60,9 +65,17 @@ async function createSampleReservations(tenantSubdomain, count = 10) {
       process.exit(1);
     }
 
-    console.log(`Found ${customers.length} customers and ${resources.length} resources\n`);
+    console.log(
+      `Found ${customers.length} customers and ${resources.length} resources\n`
+    );
 
-    const statuses = ['CONFIRMED', 'CONFIRMED', 'CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT'];
+    const statuses = [
+      'CONFIRMED',
+      'CONFIRMED',
+      'CONFIRMED',
+      'CHECKED_IN',
+      'CHECKED_OUT',
+    ];
     const created = [];
 
     for (let i = 0; i < count; i++) {
@@ -70,10 +83,10 @@ async function createSampleReservations(tenantSubdomain, count = 10) {
       const pet = customer.pets.length > 0 ? randomItem(customer.pets) : null;
       const resource = randomItem(resources);
       const status = randomItem(statuses);
-      
+
       const startDay = randomInt(-5, 14); // Some past, mostly future
       const duration = randomInt(2, 7);
-      
+
       const checkInDate = getRandomDate(startDay);
       const checkOutDate = getRandomDate(startDay + duration);
 
@@ -86,14 +99,15 @@ async function createSampleReservations(tenantSubdomain, count = 10) {
           status: status,
           checkInDate: checkInDate,
           checkOutDate: checkOutDate,
-          notes: `Sample reservation ${i + 1}`
-        }
+          notes: `Sample reservation ${i + 1}`,
+        },
       });
 
-      const emoji = status === 'CONFIRMED' ? '📅' : status === 'CHECKED_IN' ? '🏠' : '✅';
+      const emoji =
+        status === 'CONFIRMED' ? '📅' : status === 'CHECKED_IN' ? '🏠' : '✅';
       console.log(
         `${emoji} ${customer.name} - ${pet?.name || 'No pet'} - ${resource.name} - ` +
-        `${checkInDate.toLocaleDateString()} to ${checkOutDate.toLocaleDateString()} - ${status}`
+          `${checkInDate.toLocaleDateString()} to ${checkOutDate.toLocaleDateString()} - ${status}`
       );
 
       created.push(reservation);
@@ -109,7 +123,6 @@ async function createSampleReservations(tenantSubdomain, count = 10) {
     Object.entries(statusCounts).forEach(([status, count]) => {
       console.log(`   ${status}: ${count}`);
     });
-
   } catch (error) {
     console.error('❌ Error:', error);
     process.exit(1);
@@ -121,11 +134,15 @@ async function createSampleReservations(tenantSubdomain, count = 10) {
 const args = process.argv.slice(2);
 
 if (args.length < 1 || args.length > 2) {
-  console.log('Usage: node create-sample-reservations.js <tenant-subdomain> [count]');
+  console.log(
+    'Usage: node create-sample-reservations.js <tenant-subdomain> [count]'
+  );
   console.log('Example: node create-sample-reservations.js rainy 10');
   console.log('Default: 10 reservations');
   console.log('\nIMPORTANT: Run from reservation-service directory:');
-  console.log('cd /opt/tailtown/apps/reservation-service && node ../../scripts/create-sample-reservations.js rainy');
+  console.log(
+    'cd /opt/tailtown/apps/reservation-service && node ../../scripts/create-sample-reservations.js rainy'
+  );
   process.exit(1);
 }
 

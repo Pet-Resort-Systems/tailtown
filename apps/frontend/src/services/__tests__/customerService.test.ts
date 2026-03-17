@@ -12,8 +12,8 @@ jest.mock('../api', () => ({
     get: jest.fn(),
     post: jest.fn(),
     put: jest.fn(),
-    delete: jest.fn()
-  }
+    delete: jest.fn(),
+  },
 }));
 
 const mockApi = api as jest.Mocked<typeof api>;
@@ -28,12 +28,22 @@ describe('customerService', () => {
       const mockResponse = {
         data: {
           data: [
-            { id: '1', firstName: 'John', lastName: 'Doe', email: 'john@example.com' },
-            { id: '2', firstName: 'Jane', lastName: 'Smith', email: 'jane@example.com' }
+            {
+              id: '1',
+              firstName: 'John',
+              lastName: 'Doe',
+              email: 'john@example.com',
+            },
+            {
+              id: '2',
+              firstName: 'Jane',
+              lastName: 'Smith',
+              email: 'jane@example.com',
+            },
           ],
           totalPages: 5,
-          currentPage: 1
-        }
+          currentPage: 1,
+        },
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
@@ -41,27 +51,31 @@ describe('customerService', () => {
       const result = await customerService.getAllCustomers(1, 10);
 
       expect(mockApi.get).toHaveBeenCalledWith('/api/customers', {
-        params: { page: 1, limit: 10 }
+        params: { page: 1, limit: 10 },
       });
       expect(result.data).toHaveLength(2);
       expect(result.totalPages).toBe(5);
     });
 
     it('should use default pagination values', async () => {
-      const mockResponse = { data: { data: [], totalPages: 0, currentPage: 1 } };
+      const mockResponse = {
+        data: { data: [], totalPages: 0, currentPage: 1 },
+      };
       mockApi.get.mockResolvedValue(mockResponse);
 
       await customerService.getAllCustomers();
 
       expect(mockApi.get).toHaveBeenCalledWith('/api/customers', {
-        params: { page: 1, limit: 10 }
+        params: { page: 1, limit: 10 },
       });
     });
 
     it('should handle API errors', async () => {
       mockApi.get.mockRejectedValue(new Error('Network error'));
 
-      await expect(customerService.getAllCustomers()).rejects.toThrow('Network error');
+      await expect(customerService.getAllCustomers()).rejects.toThrow(
+        'Network error'
+      );
     });
   });
 
@@ -72,7 +86,7 @@ describe('customerService', () => {
         firstName: 'John',
         lastName: 'Doe',
         email: 'john@example.com',
-        phone: '555-1234'
+        phone: '555-1234',
       };
 
       mockApi.get.mockResolvedValue({ data: mockCustomer });
@@ -86,7 +100,9 @@ describe('customerService', () => {
     it('should handle not found errors', async () => {
       mockApi.get.mockRejectedValue(new Error('Customer not found'));
 
-      await expect(customerService.getCustomerById('999')).rejects.toThrow('Customer not found');
+      await expect(customerService.getCustomerById('999')).rejects.toThrow(
+        'Customer not found'
+      );
     });
   });
 
@@ -96,11 +112,11 @@ describe('customerService', () => {
         firstName: 'John',
         lastName: 'Doe',
         email: 'john@example.com',
-        phone: '555-1234'
+        phone: '555-1234',
       };
 
       const mockResponse = {
-        data: { id: '123', ...newCustomer }
+        data: { id: '123', ...newCustomer },
       };
 
       mockApi.post.mockResolvedValue(mockResponse);
@@ -117,8 +133,9 @@ describe('customerService', () => {
 
       mockApi.post.mockRejectedValue(new Error('Validation failed'));
 
-      await expect(customerService.createCustomer(invalidCustomer as any))
-        .rejects.toThrow('Validation failed');
+      await expect(
+        customerService.createCustomer(invalidCustomer as any)
+      ).rejects.toThrow('Validation failed');
     });
   });
 
@@ -126,11 +143,16 @@ describe('customerService', () => {
     it('should update an existing customer', async () => {
       const updates = {
         firstName: 'Jane',
-        phone: '555-5678'
+        phone: '555-5678',
       };
 
       const mockResponse = {
-        data: { id: '123', ...updates, lastName: 'Doe', email: 'jane@example.com' }
+        data: {
+          id: '123',
+          ...updates,
+          lastName: 'Doe',
+          email: 'jane@example.com',
+        },
       };
 
       mockApi.put.mockResolvedValue(mockResponse);
@@ -153,10 +175,13 @@ describe('customerService', () => {
     });
 
     it('should handle delete errors', async () => {
-      mockApi.delete.mockRejectedValue(new Error('Cannot delete customer with active reservations'));
+      mockApi.delete.mockRejectedValue(
+        new Error('Cannot delete customer with active reservations')
+      );
 
-      await expect(customerService.deleteCustomer('123'))
-        .rejects.toThrow('Cannot delete customer with active reservations');
+      await expect(customerService.deleteCustomer('123')).rejects.toThrow(
+        'Cannot delete customer with active reservations'
+      );
     });
   });
 
@@ -165,11 +190,16 @@ describe('customerService', () => {
       const mockResponse = {
         data: {
           data: [
-            { id: '1', firstName: 'John', lastName: 'Doe', email: 'john@example.com' }
+            {
+              id: '1',
+              firstName: 'John',
+              lastName: 'Doe',
+              email: 'john@example.com',
+            },
           ],
           totalPages: 1,
-          currentPage: 1
-        }
+          currentPage: 1,
+        },
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
@@ -177,7 +207,7 @@ describe('customerService', () => {
       const result = await customerService.searchCustomers('john', 1, 10);
 
       expect(mockApi.get).toHaveBeenCalledWith('/api/customers/search', {
-        params: { q: 'john', page: 1, limit: 10 }
+        params: { q: 'john', page: 1, limit: 10 },
       });
       expect(result.data).toHaveLength(1);
       expect(result.data[0].firstName).toBe('John');
@@ -185,7 +215,7 @@ describe('customerService', () => {
 
     it('should return empty results for no matches', async () => {
       const mockResponse = {
-        data: { data: [], totalPages: 0, currentPage: 1 }
+        data: { data: [], totalPages: 0, currentPage: 1 },
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
@@ -195,6 +225,4 @@ describe('customerService', () => {
       expect(result.data).toHaveLength(0);
     });
   });
-
 });
-

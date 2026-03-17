@@ -132,24 +132,25 @@ const analyticsService = {
   ): Promise<SalesByServiceData> => {
     try {
       let url = `/api/analytics/sales/services?period=${period}`;
-      
+
       if (period === 'custom' && startDate && endDate) {
         url += `&startDate=${startDate}&endDate=${endDate}`;
       }
-      
-      const response = await api.get<AnalyticsResponse<SalesByServiceData>>(url);
-      
+
+      const response =
+        await api.get<AnalyticsResponse<SalesByServiceData>>(url);
+
       if (response.data && response.data.status === 'success') {
         return response.data.data;
       }
-      
+
       throw new Error('Failed to get sales by service data');
     } catch (error) {
       console.error('Error getting sales by service:', error);
       throw error;
     }
   },
-  
+
   /**
    * Get sales data by add-on type
    * @param period - time period (day, week, month, year, all, custom)
@@ -163,24 +164,24 @@ const analyticsService = {
   ): Promise<SalesByAddOnData> => {
     try {
       let url = `/api/analytics/sales/addons?period=${period}`;
-      
+
       if (period === 'custom' && startDate && endDate) {
         url += `&startDate=${startDate}&endDate=${endDate}`;
       }
-      
+
       const response = await api.get<AnalyticsResponse<SalesByAddOnData>>(url);
-      
+
       if (response.data && response.data.status === 'success') {
         return response.data.data;
       }
-      
+
       throw new Error('Failed to get sales by add-on data');
     } catch (error) {
       console.error('Error getting sales by add-on:', error);
       throw error;
     }
   },
-  
+
   /**
    * Get customer value data (total spend, breakdown by service type)
    * @param period - time period (day, week, month, year, all, custom)
@@ -194,24 +195,25 @@ const analyticsService = {
   ): Promise<CustomerValueData[]> => {
     try {
       let url = `/api/analytics/customers/value?period=${period}`;
-      
+
       if (period === 'custom' && startDate && endDate) {
         url += `&startDate=${startDate}&endDate=${endDate}`;
       }
-      
-      const response = await api.get<AnalyticsResponse<CustomerValueData[]>>(url);
-      
+
+      const response =
+        await api.get<AnalyticsResponse<CustomerValueData[]>>(url);
+
       if (response.data && response.data.status === 'success') {
         return response.data.data;
       }
-      
+
       throw new Error('Failed to get customer value data');
     } catch (error) {
       console.error('Error getting customer value:', error);
       throw error;
     }
   },
-  
+
   /**
    * Get summary analytics data for dashboard
    * @param period - time period (day, week, month, year, all, custom)
@@ -225,24 +227,25 @@ const analyticsService = {
   ): Promise<DashboardSummaryData> => {
     try {
       let url = `/api/analytics/dashboard?period=${period}`;
-      
+
       if (period === 'custom' && startDate && endDate) {
         url += `&startDate=${startDate}&endDate=${endDate}`;
       }
-      
-      const response = await api.get<AnalyticsResponse<DashboardSummaryData>>(url);
-      
+
+      const response =
+        await api.get<AnalyticsResponse<DashboardSummaryData>>(url);
+
       if (response.data && response.data.status === 'success') {
         return response.data.data;
       }
-      
+
       throw new Error('Failed to get dashboard summary data');
     } catch (error) {
       console.error('Error getting dashboard summary:', error);
       throw error;
     }
   },
-  
+
   /**
    * Get detailed customer report for a specific customer
    * @param customerId - ID of the customer
@@ -258,23 +261,24 @@ const analyticsService = {
   ): Promise<CustomerReportData> => {
     try {
       let url = `/api/analytics/customers/${customerId}?period=${period}`;
-      
+
       if (period === 'custom' && startDate && endDate) {
         url += `&startDate=${startDate}&endDate=${endDate}`;
       }
-      
-      const response = await api.get<AnalyticsResponse<CustomerReportData>>(url);
-      
+
+      const response =
+        await api.get<AnalyticsResponse<CustomerReportData>>(url);
+
       if (response.data && response.data.status === 'success') {
         return response.data.data;
       }
-      
+
       throw new Error('Failed to get customer report data');
     } catch (error) {
       console.error('Error getting customer report:', error);
       throw error;
     }
-  }
+  },
 };
 
 export default analyticsService;

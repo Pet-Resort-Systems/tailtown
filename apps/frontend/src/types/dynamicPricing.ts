@@ -1,6 +1,6 @@
 /**
  * Dynamic Pricing Types
- * 
+ *
  * Types for peak demand pricing including:
  * - Seasonal pricing rules
  * - Peak time surcharges
@@ -9,7 +9,7 @@
  * - Automated price adjustments
  */
 
-export type PricingRuleType = 
+export type PricingRuleType =
   | 'SEASONAL'
   | 'PEAK_TIME'
   | 'CAPACITY_BASED'
@@ -22,7 +22,14 @@ export type PricingAdjustmentType = 'PERCENTAGE' | 'FIXED_AMOUNT';
 
 export type Season = 'SPRING' | 'SUMMER' | 'FALL' | 'WINTER';
 
-export type DayOfWeek = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY';
+export type DayOfWeek =
+  | 'MONDAY'
+  | 'TUESDAY'
+  | 'WEDNESDAY'
+  | 'THURSDAY'
+  | 'FRIDAY'
+  | 'SATURDAY'
+  | 'SUNDAY';
 
 export interface PricingRule {
   id: string;
@@ -31,19 +38,19 @@ export interface PricingRule {
   type: PricingRuleType;
   isActive: boolean;
   priority: number; // Higher priority rules apply first
-  
+
   // Adjustment
   adjustmentType: PricingAdjustmentType;
   adjustmentValue: number; // Percentage (0-100) or dollar amount
-  
+
   // Applicability
   serviceIds?: string[]; // If specified, only applies to these services
   suiteTypes?: string[]; // If specified, only applies to these suite types
-  
+
   // Date/Time restrictions
   validFrom?: Date | string;
   validUntil?: Date | string;
-  
+
   // Metadata
   createdAt: Date | string;
   updatedAt: Date | string;
@@ -95,7 +102,7 @@ export interface LastMinutePricingRule extends PricingRule {
   isDiscount: boolean; // Usually a discount to fill capacity
 }
 
-export type AnyPricingRule = 
+export type AnyPricingRule =
   | SeasonalPricingRule
   | PeakTimePricingRule
   | CapacityBasedPricingRule

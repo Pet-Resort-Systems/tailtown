@@ -2,7 +2,7 @@
  * Policies Step - Cancellation, vaccinations, restrictions
  */
 
-import React from "react";
+import React from 'react';
 import {
   Box,
   Typography,
@@ -15,11 +15,11 @@ import {
   Chip,
   Slider,
   InputAdornment,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
-import { ArrowForward, ArrowBack } from "@mui/icons-material";
-import { useSetupWizard } from "../SetupWizardContext";
-import { DEFAULT_VACCINATIONS } from "../types";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
+import { ArrowForward, ArrowBack } from '@mui/icons-material';
+import { useSetupWizard } from '../SetupWizardContext';
+import { DEFAULT_VACCINATIONS } from '../types';
 
 export default function PoliciesStep() {
   const { state, setPolicies, completeStep, nextStep, prevStep } =
@@ -34,7 +34,7 @@ export default function PoliciesStep() {
   };
 
   const handleNext = () => {
-    completeStep("policies");
+    completeStep('policies');
     nextStep();
   };
 
@@ -127,7 +127,7 @@ export default function PoliciesStep() {
           <Typography variant="h6" gutterBottom>
             Vaccination Requirements
           </Typography>
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
             {DEFAULT_VACCINATIONS.map((vax) => (
               <Chip
                 key={vax}
@@ -135,13 +135,13 @@ export default function PoliciesStep() {
                 onClick={() => toggleVaccination(vax)}
                 color={
                   policies.vaccinations.required.includes(vax)
-                    ? "primary"
-                    : "default"
+                    ? 'primary'
+                    : 'default'
                 }
                 variant={
                   policies.vaccinations.required.includes(vax)
-                    ? "filled"
-                    : "outlined"
+                    ? 'filled'
+                    : 'outlined'
                 }
               />
             ))}
@@ -167,7 +167,7 @@ export default function PoliciesStep() {
             </Grid>
             <Grid item xs={12} md={6}>
               <Typography variant="body2" gutterBottom>
-                Warn when expiring within{" "}
+                Warn when expiring within{' '}
                 {policies.vaccinations.expirationWarningDays} days
               </Typography>
               <Slider
@@ -183,9 +183,9 @@ export default function PoliciesStep() {
                 min={7}
                 max={90}
                 marks={[
-                  { value: 7, label: "7" },
-                  { value: 30, label: "30" },
-                  { value: 90, label: "90" },
+                  { value: 7, label: '7' },
+                  { value: 30, label: '30' },
+                  { value: 90, label: '90' },
                 ]}
                 sx={{ maxWidth: 300 }}
               />
@@ -252,7 +252,7 @@ export default function PoliciesStep() {
         </CardContent>
       </Card>
 
-      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button startIcon={<ArrowBack />} onClick={prevStep}>
           Back
         </Button>

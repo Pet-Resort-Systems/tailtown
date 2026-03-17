@@ -3,7 +3,7 @@
  * Mobile-friendly page for staff to access feeding and medication tracking
  */
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   Container,
@@ -12,15 +12,15 @@ import {
   Paper,
   useTheme,
   useMediaQuery,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Restaurant as FeedingIcon,
   Medication as MedicationIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import {
   FeedingTracker,
   MedicationTracker,
-} from "../../components/care-tracking";
+} from '../../components/care-tracking';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -46,7 +46,7 @@ function TabPanel(props: TabPanelProps) {
 const CareTrackingPage: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
     <Container maxWidth="md" sx={{ py: isMobile ? 1 : 3 }}>

@@ -1,9 +1,9 @@
 /**
  * Database Connection Health Tests
- * 
+ *
  * These tests validate that the database connection is properly configured
  * and that we can connect successfully.
- * 
+ *
  * These would have caught:
  * - Database user 'root' does not exist
  * - Connection string issues
@@ -30,12 +30,14 @@ describe('Database Connection Health', () => {
     });
 
     it('should have correct database name', async () => {
-      const result = await prisma.$queryRaw<Array<{ current_database: string }>>`
+      const result = await prisma.$queryRaw<
+        Array<{ current_database: string }>
+      >`
         SELECT current_database();
       `;
-      
+
       expect(result[0].current_database).toBeDefined();
-      
+
       // In CI, should be 'customer' database
       if (process.env.CI) {
         expect(result[0].current_database).toBe('customer');
@@ -46,12 +48,12 @@ describe('Database Connection Health', () => {
       const result = await prisma.$queryRaw<Array<{ current_user: string }>>`
         SELECT current_user;
       `;
-      
+
       expect(result[0].current_user).toBeDefined();
-      
+
       // Should NOT be 'root' (common error in CI)
       expect(result[0].current_user).not.toBe('root');
-      
+
       // In CI, should be 'postgres'
       if (process.env.CI) {
         expect(result[0].current_user).toBe('postgres');
@@ -62,7 +64,7 @@ describe('Database Connection Health', () => {
       const result = await prisma.$queryRaw<Array<{ current_schema: string }>>`
         SELECT current_schema();
       `;
-      
+
       expect(result[0].current_schema).toBe('public');
     });
   });
@@ -74,7 +76,7 @@ describe('Database Connection Health', () => {
 
     it('should have valid PostgreSQL connection string', () => {
       const dbUrl = process.env.DATABASE_URL || '';
-      
+
       expect(dbUrl).toMatch(/^postgresql:\/\//);
       expect(dbUrl).toContain('@');
       expect(dbUrl).toContain('/');
@@ -82,13 +84,13 @@ describe('Database Connection Health', () => {
 
     it('should connect to correct port', async () => {
       const dbUrl = process.env.DATABASE_URL || '';
-      
+
       // Extract port from connection string
       const portMatch = dbUrl.match(/:(\d+)\//);
-      
+
       if (portMatch) {
         const port = parseInt(portMatch[1]);
-        
+
         // In CI, should be 5432 (default PostgreSQL port)
         // In dev, might be 5433
         expect([5432, 5433]).toContain(port);
@@ -107,7 +109,7 @@ describe('Database Connection Health', () => {
           );
         `
       ).resolves.not.toThrow();
-      
+
       // Clean up
       await prisma.$executeRaw`DROP TABLE IF EXISTS _test_permissions;`;
     });
@@ -120,14 +122,14 @@ describe('Database Connection Health', () => {
           test_data TEXT
         );
       `;
-      
+
       // Try to insert
       await expect(
         prisma.$executeRaw`
           INSERT INTO _test_insert (test_data) VALUES ('test');
         `
       ).resolves.not.toThrow();
-      
+
       // Clean up
       await prisma.$executeRaw`DROP TABLE IF EXISTS _test_insert;`;
     });
@@ -139,7 +141,7 @@ describe('Database Connection Health', () => {
         WHERE schemaname = 'public'
         LIMIT 1;
       `;
-      
+
       expect(result).toBeDefined();
     });
   });
@@ -151,28 +153,32 @@ describe('Database Connection Health', () => {
         FROM pg_tables 
         WHERE schemaname = 'public' AND tablename = '_prisma_migrations';
       `;
-      
+
       expect(tables.length).toBeGreaterThan(0);
     });
 
     it('should have applied migrations', async () => {
-      const migrations = await prisma.$queryRaw<Array<{ migration_name: string }>>`
+      const migrations = await prisma.$queryRaw<
+        Array<{ migration_name: string }>
+      >`
         SELECT migration_name 
         FROM _prisma_migrations 
         WHERE finished_at IS NOT NULL
         ORDER BY finished_at DESC;
       `;
-      
+
       expect(migrations.length).toBeGreaterThan(0);
     });
 
     it('should not have failed migrations', async () => {
-      const failedMigrations = await prisma.$queryRaw<Array<{ migration_name: string }>>`
+      const failedMigrations = await prisma.$queryRaw<
+        Array<{ migration_name: string }>
+      >`
         SELECT migration_name 
         FROM _prisma_migrations 
         WHERE finished_at IS NULL OR rolled_back_at IS NOT NULL;
       `;
-      
+
       expect(failedMigrations.length).toBe(0);
     });
   });
@@ -180,20 +186,20 @@ describe('Database Connection Health', () => {
   describe('Performance Checks', () => {
     it('should respond to queries quickly', async () => {
       const start = Date.now();
-      
+
       await prisma.$queryRaw`SELECT 1`;
-      
+
       const duration = Date.now() - start;
-      
+
       // Should respond in less than 1 second
       expect(duration).toBeLessThan(1000);
     });
 
     it('should handle concurrent connections', async () => {
-      const queries = Array(5).fill(null).map(() => 
-        prisma.$queryRaw`SELECT 1`
-      );
-      
+      const queries = Array(5)
+        .fill(null)
+        .map(() => prisma.$queryRaw`SELECT 1`);
+
       await expect(Promise.all(queries)).resolves.not.toThrow();
     });
   });

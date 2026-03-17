@@ -4,8 +4,11 @@
 
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'your-refresh-secret-key-change-in-production';
+const JWT_SECRET =
+  process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const JWT_REFRESH_SECRET =
+  process.env.JWT_REFRESH_SECRET ||
+  'your-refresh-secret-key-change-in-production';
 const JWT_EXPIRES_IN = '8h'; // 8 hour access tokens
 const JWT_REFRESH_EXPIRES_IN = '7d'; // 7 day refresh tokens
 
@@ -20,7 +23,7 @@ export const generateToken = (payload: JWTPayload): string => {
   return jwt.sign(payload, JWT_SECRET, {
     expiresIn: JWT_EXPIRES_IN,
     issuer: 'tailtown-staff',
-    audience: 'tailtown-platform'
+    audience: 'tailtown-platform',
   });
 };
 
@@ -28,7 +31,7 @@ export const verifyToken = (token: string): JWTPayload => {
   try {
     const decoded = jwt.verify(token, JWT_SECRET, {
       issuer: 'tailtown-staff',
-      audience: 'tailtown-platform'
+      audience: 'tailtown-platform',
     }) as JWTPayload;
     return decoded;
   } catch (error) {
@@ -49,7 +52,7 @@ export const generateRefreshToken = (payload: { id: string }): string => {
   return jwt.sign(payload, JWT_REFRESH_SECRET, {
     expiresIn: JWT_REFRESH_EXPIRES_IN,
     issuer: 'tailtown-staff',
-    audience: 'tailtown-platform'
+    audience: 'tailtown-platform',
   });
 };
 
@@ -60,7 +63,7 @@ export const verifyRefreshToken = (token: string): { id: string } => {
   try {
     const decoded = jwt.verify(token, JWT_REFRESH_SECRET, {
       issuer: 'tailtown-staff',
-      audience: 'tailtown-platform'
+      audience: 'tailtown-platform',
     }) as { id: string };
     return decoded;
   } catch (error) {

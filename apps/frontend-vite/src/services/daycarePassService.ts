@@ -8,7 +8,7 @@
  * - Balance checking
  */
 
-import { customerApi } from "./api";
+import { customerApi } from './api';
 
 // Types
 export interface DaycarePassPackage {
@@ -40,7 +40,7 @@ export interface CustomerDaycarePass {
   pricePerPass: number;
   purchasedAt: string;
   expiresAt: string;
-  status: "ACTIVE" | "EXHAUSTED" | "EXPIRED" | "CANCELLED";
+  status: 'ACTIVE' | 'EXHAUSTED' | 'EXPIRED' | 'CANCELLED';
   invoiceId?: string;
   paymentId?: string;
   notes?: string;
@@ -130,7 +130,7 @@ export const daycarePassService = {
   getPackages: async (
     includeInactive = false
   ): Promise<DaycarePassPackage[]> => {
-    const response = await customerApi.get("/api/daycare-passes/packages", {
+    const response = await customerApi.get('/api/daycare-passes/packages', {
       params: { includeInactive },
     });
     return response.data.data || [];
@@ -143,7 +143,7 @@ export const daycarePassService = {
     data: CreatePackageRequest
   ): Promise<DaycarePassPackage> => {
     const response = await customerApi.post(
-      "/api/daycare-passes/packages",
+      '/api/daycare-passes/packages',
       data
     );
     return response.data.data;
@@ -215,7 +215,7 @@ export const daycarePassService = {
     data: PurchasePassRequest
   ): Promise<CustomerDaycarePass> => {
     const response = await customerApi.post(
-      "/api/daycare-passes/purchase",
+      '/api/daycare-passes/purchase',
       data
     );
     return response.data.data;
@@ -253,7 +253,7 @@ export const daycarePassService = {
     } | null;
   }> => {
     const response = await customerApi.post(
-      "/api/daycare-passes/auto-redeem",
+      '/api/daycare-passes/auto-redeem',
       data
     );
     return response.data;
@@ -298,19 +298,19 @@ export const daycarePassService = {
    * Format pass status for display
    */
   formatStatus: (
-    status: CustomerDaycarePass["status"]
-  ): { label: string; color: "success" | "warning" | "error" | "default" } => {
+    status: CustomerDaycarePass['status']
+  ): { label: string; color: 'success' | 'warning' | 'error' | 'default' } => {
     switch (status) {
-      case "ACTIVE":
-        return { label: "Active", color: "success" };
-      case "EXHAUSTED":
-        return { label: "Used Up", color: "default" };
-      case "EXPIRED":
-        return { label: "Expired", color: "error" };
-      case "CANCELLED":
-        return { label: "Cancelled", color: "warning" };
+      case 'ACTIVE':
+        return { label: 'Active', color: 'success' };
+      case 'EXHAUSTED':
+        return { label: 'Used Up', color: 'default' };
+      case 'EXPIRED':
+        return { label: 'Expired', color: 'error' };
+      case 'CANCELLED':
+        return { label: 'Cancelled', color: 'warning' };
       default:
-        return { label: status, color: "default" };
+        return { label: status, color: 'default' };
     }
   },
 

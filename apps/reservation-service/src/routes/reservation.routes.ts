@@ -1,9 +1,9 @@
 /**
  * Reservation Routes
- * 
+ *
  * This file defines the API routes for reservation-related operations.
  * It's referenced by the main application index.ts file.
- * 
+ *
  * Implements the schema alignment strategy with defensive programming and
  * graceful error handling for potential schema mismatches between environments.
  */
@@ -18,7 +18,7 @@ import {
   deleteReservation,
   getCustomerReservations,
   getTodayRevenue,
-  addAddOnsToReservation
+  addAddOnsToReservation,
 } from '../controllers/reservation';
 
 const router = Router();

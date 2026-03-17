@@ -1,6 +1,6 @@
 /**
  * Real-Time Availability Types
- * 
+ *
  * Types for checking and displaying availability of:
  * - Suites/kennels
  * - Services
@@ -8,7 +8,11 @@
  * - Time slots
  */
 
-export type AvailabilityStatus = 'AVAILABLE' | 'PARTIALLY_AVAILABLE' | 'UNAVAILABLE' | 'WAITLIST';
+export type AvailabilityStatus =
+  | 'AVAILABLE'
+  | 'PARTIALLY_AVAILABLE'
+  | 'UNAVAILABLE'
+  | 'WAITLIST';
 
 export interface DateAvailability {
   date: string; // YYYY-MM-DD

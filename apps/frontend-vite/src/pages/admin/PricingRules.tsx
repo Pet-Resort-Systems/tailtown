@@ -1,6 +1,6 @@
 /**
  * Pricing Rules Management Page
- * 
+ *
  * Admin interface for managing dynamic pricing rules:
  * - View all pricing rules
  * - Create/edit/delete rules
@@ -34,7 +34,7 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemSecondaryAction
+  ListItemSecondaryAction,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -43,14 +43,14 @@ import {
   TrendingUp as SurchargeIcon,
   TrendingDown as DiscountIcon,
   CalendarToday as CalendarIcon,
-  Event as HolidayIcon
+  Event as HolidayIcon,
 } from '@mui/icons-material';
 import { dynamicPricingService } from '../../services/dynamicPricingService';
 import {
   AnyPricingRule,
   PricingRuleType,
   PricingAdjustmentType,
-  Holiday
+  Holiday,
 } from '../../types/dynamicPricing';
 import { formatCurrency } from '../../utils/formatters';
 
@@ -72,13 +72,13 @@ export const PricingRules: React.FC = () => {
     adjustmentType: 'PERCENTAGE',
     adjustmentValue: 0,
     priority: 1,
-    isActive: true
+    isActive: true,
   });
 
   const [holidayFormData, setHolidayFormData] = useState<Partial<Holiday>>({
     name: '',
     date: '',
-    isRecurring: false
+    isRecurring: false,
   });
 
   useEffect(() => {
@@ -91,7 +91,7 @@ export const PricingRules: React.FC = () => {
       setError(null);
       const [rulesData, holidaysData] = await Promise.all([
         dynamicPricingService.getAllPricingRules(),
-        dynamicPricingService.getHolidays()
+        dynamicPricingService.getHolidays(),
       ]);
       setRules(rulesData.data);
       setHolidays(holidaysData);
@@ -111,7 +111,7 @@ export const PricingRules: React.FC = () => {
       adjustmentType: 'PERCENTAGE',
       adjustmentValue: 0,
       priority: 1,
-      isActive: true
+      isActive: true,
     });
     setShowRuleDialog(true);
   };
@@ -125,7 +125,7 @@ export const PricingRules: React.FC = () => {
   const handleSaveRule = async () => {
     try {
       setError(null);
-      
+
       // Validate
       const validation = dynamicPricingService.validatePricingRule(formData);
       if (!validation.isValid) {
@@ -147,7 +147,8 @@ export const PricingRules: React.FC = () => {
   };
 
   const handleDeleteRule = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this pricing rule?')) return;
+    if (!window.confirm('Are you sure you want to delete this pricing rule?'))
+      return;
 
     try {
       await dynamicPricingService.deletePricingRule(id);
@@ -160,7 +161,7 @@ export const PricingRules: React.FC = () => {
   const handleToggleRule = async (rule: AnyPricingRule) => {
     try {
       await dynamicPricingService.updatePricingRule(rule.id, {
-        isActive: !rule.isActive
+        isActive: !rule.isActive,
       });
       loadData();
     } catch (err: any) {
@@ -180,7 +181,8 @@ export const PricingRules: React.FC = () => {
   };
 
   const handleDeleteHoliday = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this holiday?')) return;
+    if (!window.confirm('Are you sure you want to delete this holiday?'))
+      return;
 
     try {
       await dynamicPricingService.deleteHoliday(id);
@@ -190,7 +192,9 @@ export const PricingRules: React.FC = () => {
     }
   };
 
-  const getRuleTypeColor = (type: PricingRuleType): 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info' => {
+  const getRuleTypeColor = (
+    type: PricingRuleType
+  ): 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info' => {
     const colors: Record<PricingRuleType, any> = {
       SEASONAL: 'primary',
       PEAK_TIME: 'warning',
@@ -198,7 +202,7 @@ export const PricingRules: React.FC = () => {
       SPECIAL_EVENT: 'secondary',
       DAY_OF_WEEK: 'success',
       ADVANCE_BOOKING: 'info',
-      LAST_MINUTE: 'error'
+      LAST_MINUTE: 'error',
     };
     return colors[type] || 'default';
   };
@@ -207,7 +211,12 @@ export const PricingRules: React.FC = () => {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -216,7 +225,12 @@ export const PricingRules: React.FC = () => {
   return (
     <Box>
       {/* Header */}
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
         <Box>
           <Typography variant="h4" component="h1" gutterBottom>
             Dynamic Pricing Rules
@@ -256,7 +270,9 @@ export const PricingRules: React.FC = () => {
             <Card>
               <CardContent>
                 <Box textAlign="center" py={4}>
-                  <CalendarIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+                  <CalendarIcon
+                    sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }}
+                  />
                   <Typography variant="h6" gutterBottom>
                     No Pricing Rules
                   </Typography>
@@ -279,13 +295,20 @@ export const PricingRules: React.FC = () => {
             <Grid item xs={12} md={6} lg={4} key={rule.id}>
               <Card>
                 <CardContent>
-                  <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="flex-start"
+                    mb={2}
+                  >
                     <Box flex={1}>
                       <Typography variant="h6" gutterBottom>
                         {rule.name}
                       </Typography>
                       <Chip
-                        label={dynamicPricingService.getRuleTypeLabel(rule.type)}
+                        label={dynamicPricingService.getRuleTypeLabel(
+                          rule.type
+                        )}
                         color={getRuleTypeColor(rule.type)}
                         size="small"
                         sx={{ mr: 1 }}
@@ -328,7 +351,11 @@ export const PricingRules: React.FC = () => {
                   </Box>
 
                   {rule.serviceIds && rule.serviceIds.length > 0 && (
-                    <Typography variant="caption" color="text.secondary" display="block">
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      display="block"
+                    >
                       Applies to {rule.serviceIds.length} service(s)
                     </Typography>
                   )}
@@ -374,7 +401,9 @@ export const PricingRules: React.FC = () => {
                 fullWidth
                 label="Rule Name *"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
               />
             </Grid>
 
@@ -385,7 +414,9 @@ export const PricingRules: React.FC = () => {
                 rows={2}
                 label="Description"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
               />
             </Grid>
 
@@ -395,7 +426,9 @@ export const PricingRules: React.FC = () => {
                 select
                 label="Rule Type *"
                 value={formData.type}
-                onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
+                onChange={(e) =>
+                  setFormData({ ...formData, type: e.target.value as any })
+                }
               >
                 <MenuItem value="SEASONAL">Seasonal</MenuItem>
                 <MenuItem value="PEAK_TIME">Peak Time</MenuItem>
@@ -413,7 +446,12 @@ export const PricingRules: React.FC = () => {
                 type="number"
                 label="Priority *"
                 value={formData.priority}
-                onChange={(e) => setFormData({ ...formData, priority: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    priority: parseInt(e.target.value),
+                  })
+                }
                 helperText="Higher priority rules apply first"
               />
             </Grid>
@@ -424,7 +462,12 @@ export const PricingRules: React.FC = () => {
                 select
                 label="Adjustment Type *"
                 value={formData.adjustmentType}
-                onChange={(e) => setFormData({ ...formData, adjustmentType: e.target.value as PricingAdjustmentType })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    adjustmentType: e.target.value as PricingAdjustmentType,
+                  })
+                }
               >
                 <MenuItem value="PERCENTAGE">Percentage</MenuItem>
                 <MenuItem value="FIXED_AMOUNT">Fixed Amount</MenuItem>
@@ -437,7 +480,12 @@ export const PricingRules: React.FC = () => {
                 type="number"
                 label="Adjustment Value *"
                 value={formData.adjustmentValue}
-                onChange={(e) => setFormData({ ...formData, adjustmentValue: parseFloat(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    adjustmentValue: parseFloat(e.target.value),
+                  })
+                }
                 helperText={
                   formData.adjustmentType === 'PERCENTAGE'
                     ? 'Positive = surcharge, Negative = discount'
@@ -451,7 +499,9 @@ export const PricingRules: React.FC = () => {
                 control={
                   <Switch
                     checked={formData.isActive}
-                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, isActive: e.target.checked })
+                    }
                   />
                 }
                 label="Active"
@@ -479,10 +529,7 @@ export const PricingRules: React.FC = () => {
           <List>
             {holidays.map((holiday) => (
               <ListItem key={holiday.id}>
-                <ListItemText
-                  primary={holiday.name}
-                  secondary={holiday.date}
-                />
+                <ListItemText primary={holiday.name} secondary={holiday.date} />
                 <ListItemSecondaryAction>
                   <IconButton
                     edge="end"
@@ -506,7 +553,12 @@ export const PricingRules: React.FC = () => {
                 fullWidth
                 label="Holiday Name"
                 value={holidayFormData.name}
-                onChange={(e) => setHolidayFormData({ ...holidayFormData, name: e.target.value })}
+                onChange={(e) =>
+                  setHolidayFormData({
+                    ...holidayFormData,
+                    name: e.target.value,
+                  })
+                }
               />
             </Grid>
             <Grid item xs={12}>
@@ -515,7 +567,12 @@ export const PricingRules: React.FC = () => {
                 type="date"
                 label="Date"
                 value={holidayFormData.date}
-                onChange={(e) => setHolidayFormData({ ...holidayFormData, date: e.target.value })}
+                onChange={(e) =>
+                  setHolidayFormData({
+                    ...holidayFormData,
+                    date: e.target.value,
+                  })
+                }
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
@@ -524,7 +581,12 @@ export const PricingRules: React.FC = () => {
                 control={
                   <Switch
                     checked={holidayFormData.isRecurring}
-                    onChange={(e) => setHolidayFormData({ ...holidayFormData, isRecurring: e.target.checked })}
+                    onChange={(e) =>
+                      setHolidayFormData({
+                        ...holidayFormData,
+                        isRecurring: e.target.checked,
+                      })
+                    }
                   />
                 }
                 label="Recurring (same date every year)"

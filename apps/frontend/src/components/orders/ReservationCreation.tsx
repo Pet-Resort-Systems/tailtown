@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -11,16 +11,16 @@ import {
   MenuItem,
   CircularProgress,
   Alert,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { Customer } from "../../types/customer";
-import { Pet } from "../../types/pet";
-import { serviceManagement } from "../../services/serviceManagement";
-import { resourceService } from "../../services/resourceService";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { Customer } from '../../types/customer';
+import { Pet } from '../../types/pet';
+import { serviceManagement } from '../../services/serviceManagement';
+import { resourceService } from '../../services/resourceService';
 
 interface ReservationCreationProps {
   onContinue: (reservationData: any) => void;
@@ -56,10 +56,10 @@ const ReservationCreation: React.FC<ReservationCreationProps> = ({
     return tomorrow;
   });
   const [services, setServices] = useState<any[]>([]);
-  const [selectedService, setSelectedService] = useState<string>("");
+  const [selectedService, setSelectedService] = useState<string>('');
   const [availableResources, setAvailableResources] = useState<any[]>([]);
-  const [selectedResource, setSelectedResource] = useState<string>("");
-  const [notes, setNotes] = useState<string>(initialReservation.notes || "");
+  const [selectedResource, setSelectedResource] = useState<string>('');
+  const [notes, setNotes] = useState<string>(initialReservation.notes || '');
 
   // Loading and error states
   const [servicesLoading, setServicesLoading] = useState<boolean>(false);
@@ -95,8 +95,8 @@ const ReservationCreation: React.FC<ReservationCreationProps> = ({
           }
         }
       } catch (err) {
-        console.error("Error loading services:", err);
-        setError("Failed to load services. Please try again.");
+        console.error('Error loading services:', err);
+        setError('Failed to load services. Please try again.');
       } finally {
         setServicesLoading(false);
       }
@@ -118,8 +118,8 @@ const ReservationCreation: React.FC<ReservationCreationProps> = ({
         setError(null);
 
         // Format dates for API
-        const formattedStartDate = startDate.toISOString().split("T")[0];
-        const formattedEndDate = endDate.toISOString().split("T")[0];
+        const formattedStartDate = startDate.toISOString().split('T')[0];
+        const formattedEndDate = endDate.toISOString().split('T')[0];
 
         const response = await resourceService.getAvailableResourcesByDate(
           formattedStartDate,
@@ -138,16 +138,16 @@ const ReservationCreation: React.FC<ReservationCreationProps> = ({
                 (resource: { id: string }) => resource.id === selectedResource
               ))
           ) {
-            setSelectedResource("");
+            setSelectedResource('');
           }
         } else {
           // If no data is returned, clear resources and selection
           setAvailableResources([]);
-          setSelectedResource("");
+          setSelectedResource('');
         }
       } catch (err) {
-        console.error("Error loading resources:", err);
-        setError("Failed to load available resources. Please try again.");
+        console.error('Error loading resources:', err);
+        setError('Failed to load available resources. Please try again.');
       } finally {
         setResourcesLoading(false);
       }
@@ -190,13 +190,13 @@ const ReservationCreation: React.FC<ReservationCreationProps> = ({
   // Handle continue to next step
   const handleContinue = () => {
     if (!startDate || !endDate || !selectedService) {
-      setError("Please fill in all required fields");
+      setError('Please fill in all required fields');
       return;
     }
 
     // Validate that start date is before end date
     if (startDate >= endDate) {
-      setError("Start date must be before end date");
+      setError('Start date must be before end date');
       return;
     }
 
@@ -211,7 +211,7 @@ const ReservationCreation: React.FC<ReservationCreationProps> = ({
       serviceId: selectedService,
       resourceId: selectedResource || undefined,
       notes,
-      status: "CONFIRMED",
+      status: 'CONFIRMED',
       price: selectedServiceObj ? selectedServiceObj.price : 0, // Include the service price
     };
 
@@ -239,14 +239,14 @@ const ReservationCreation: React.FC<ReservationCreationProps> = ({
 
         <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
           <Typography variant="subtitle1" gutterBottom>
-            Customer:{" "}
+            Customer:{' '}
             {customer
               ? `${customer.firstName} ${customer.lastName}`
-              : "Not selected"}
+              : 'Not selected'}
           </Typography>
 
           <Typography variant="subtitle1" gutterBottom>
-            Pet: {pet ? pet.name : "Not selected"}
+            Pet: {pet ? pet.name : 'Not selected'}
           </Typography>
 
           <Grid container spacing={2} sx={{ mt: 2 }}>
@@ -286,7 +286,7 @@ const ReservationCreation: React.FC<ReservationCreationProps> = ({
                 slotProps={{
                   textField: {
                     fullWidth: true,
-                    size: "small",
+                    size: 'small',
                     disabled: !customer || !pet,
                   },
                 }}
@@ -323,7 +323,7 @@ const ReservationCreation: React.FC<ReservationCreationProps> = ({
                 slotProps={{
                   textField: {
                     fullWidth: true,
-                    size: "small",
+                    size: 'small',
                     disabled: !customer || !pet,
                   },
                 }}
@@ -338,7 +338,7 @@ const ReservationCreation: React.FC<ReservationCreationProps> = ({
                 slotProps={{
                   textField: {
                     fullWidth: true,
-                    size: "small",
+                    size: 'small',
                     disabled: !customer || !pet,
                   },
                 }}
@@ -363,7 +363,7 @@ const ReservationCreation: React.FC<ReservationCreationProps> = ({
                 slotProps={{
                   textField: {
                     fullWidth: true,
-                    size: "small",
+                    size: 'small',
                     disabled: !customer || !pet,
                   },
                 }}
@@ -400,7 +400,7 @@ const ReservationCreation: React.FC<ReservationCreationProps> = ({
                   </MenuItem>
                   {availableResources.map((resource) => (
                     <MenuItem key={resource.id} value={resource.id}>
-                      {resource.name} - {resource.type.replace("_", " ")}
+                      {resource.name} - {resource.type.replace('_', ' ')}
                     </MenuItem>
                   ))}
                 </Select>
@@ -422,7 +422,7 @@ const ReservationCreation: React.FC<ReservationCreationProps> = ({
           </Grid>
         </Paper>
 
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
           <Button
             variant="contained"
             color="primary"

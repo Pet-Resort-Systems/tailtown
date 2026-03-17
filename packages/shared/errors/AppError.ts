@@ -1,6 +1,6 @@
 /**
  * Shared AppError Class
- * 
+ *
  * This class extends the built-in Error class to provide a standardized
  * error handling mechanism across all services. It includes:
  * - HTTP status codes
@@ -21,16 +21,16 @@ export enum ErrorType {
   RESOURCE_CONFLICT = 'RESOURCE_CONFLICT',
   BAD_REQUEST = 'BAD_REQUEST',
   RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
-  
+
   // Server errors (5xx)
   SERVER_ERROR = 'SERVER_ERROR',
   DATABASE_ERROR = 'DATABASE_ERROR',
   EXTERNAL_SERVICE_ERROR = 'EXTERNAL_SERVICE_ERROR',
   SCHEMA_ERROR = 'SCHEMA_ERROR',
-  
+
   // Special cases
   SCHEMA_ALIGNMENT_ERROR = 'SCHEMA_ALIGNMENT_ERROR',
-  MULTI_TENANT_ERROR = 'MULTI_TENANT_ERROR'
+  MULTI_TENANT_ERROR = 'MULTI_TENANT_ERROR',
 }
 
 /**
@@ -50,10 +50,10 @@ export class AppError extends Error {
   type: ErrorType;
   details?: any;
   context?: ErrorContext;
-  
+
   /**
    * Create a new AppError
-   * 
+   *
    * @param message - Error message
    * @param statusCode - HTTP status code
    * @param type - Error type from ErrorType enum
@@ -76,19 +76,23 @@ export class AppError extends Error {
     this.type = type;
     this.details = details;
     this.context = context;
-    
+
     Error.captureStackTrace(this, this.constructor);
   }
-  
+
   /**
    * Create a validation error
-   * 
+   *
    * @param message - Error message
    * @param details - Validation error details
    * @param context - Additional context
    * @returns AppError instance
    */
-  static validationError(message: string, details?: any, context?: ErrorContext): AppError {
+  static validationError(
+    message: string,
+    details?: any,
+    context?: ErrorContext
+  ): AppError {
     return new AppError(
       message,
       400,
@@ -98,15 +102,18 @@ export class AppError extends Error {
       context
     );
   }
-  
+
   /**
    * Create an authentication error
-   * 
+   *
    * @param message - Error message
    * @param context - Additional context
    * @returns AppError instance
    */
-  static authenticationError(message: string = 'Authentication required', context?: ErrorContext): AppError {
+  static authenticationError(
+    message: string = 'Authentication required',
+    context?: ErrorContext
+  ): AppError {
     return new AppError(
       message,
       401,
@@ -116,15 +123,18 @@ export class AppError extends Error {
       context
     );
   }
-  
+
   /**
    * Create an authorization error
-   * 
+   *
    * @param message - Error message
    * @param context - Additional context
    * @returns AppError instance
    */
-  static authorizationError(message: string = 'Not authorized', context?: ErrorContext): AppError {
+  static authorizationError(
+    message: string = 'Not authorized',
+    context?: ErrorContext
+  ): AppError {
     return new AppError(
       message,
       403,
@@ -134,20 +144,24 @@ export class AppError extends Error {
       context
     );
   }
-  
+
   /**
    * Create a not found error
-   * 
+   *
    * @param resource - Resource type that wasn't found
    * @param id - ID of the resource
    * @param context - Additional context
    * @returns AppError instance
    */
-  static notFoundError(resource: string, id?: string | number, context?: ErrorContext): AppError {
-    const message = id 
+  static notFoundError(
+    resource: string,
+    id?: string | number,
+    context?: ErrorContext
+  ): AppError {
+    const message = id
       ? `${resource} with ID ${id} not found`
       : `${resource} not found`;
-      
+
     return new AppError(
       message,
       404,
@@ -157,16 +171,20 @@ export class AppError extends Error {
       context
     );
   }
-  
+
   /**
    * Create a conflict error
-   * 
+   *
    * @param message - Error message
    * @param details - Conflict details
    * @param context - Additional context
    * @returns AppError instance
    */
-  static conflictError(message: string, details?: any, context?: ErrorContext): AppError {
+  static conflictError(
+    message: string,
+    details?: any,
+    context?: ErrorContext
+  ): AppError {
     return new AppError(
       message,
       409,
@@ -176,17 +194,22 @@ export class AppError extends Error {
       context
     );
   }
-  
+
   /**
    * Create a database error
-   * 
+   *
    * @param message - Error message
    * @param details - Error details
    * @param isOperational - Whether this is an operational error
    * @param context - Additional context
    * @returns AppError instance
    */
-  static databaseError(message: string, details?: any, isOperational: boolean = true, context?: ErrorContext): AppError {
+  static databaseError(
+    message: string,
+    details?: any,
+    isOperational: boolean = true,
+    context?: ErrorContext
+  ): AppError {
     return new AppError(
       message,
       500,
@@ -196,16 +219,20 @@ export class AppError extends Error {
       context
     );
   }
-  
+
   /**
    * Create a schema alignment error
-   * 
+   *
    * @param message - Error message
    * @param details - Schema error details
    * @param context - Additional context
    * @returns AppError instance
    */
-  static schemaAlignmentError(message: string, details?: any, context?: ErrorContext): AppError {
+  static schemaAlignmentError(
+    message: string,
+    details?: any,
+    context?: ErrorContext
+  ): AppError {
     return new AppError(
       message,
       500,
@@ -215,16 +242,20 @@ export class AppError extends Error {
       context
     );
   }
-  
+
   /**
    * Create a server error
-   * 
+   *
    * @param message - Error message
    * @param details - Error details
    * @param context - Additional context
    * @returns AppError instance
    */
-  static serverError(message: string = 'Internal server error', details?: any, context?: ErrorContext): AppError {
+  static serverError(
+    message: string = 'Internal server error',
+    details?: any,
+    context?: ErrorContext
+  ): AppError {
     return new AppError(
       message,
       500,

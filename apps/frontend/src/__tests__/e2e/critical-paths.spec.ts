@@ -1,7 +1,7 @@
 /**
  * Critical Path E2E Tests
  * Tests the most important user workflows for each service type
- * 
+ *
  * These tests ensure that core business operations work end-to-end:
  * 1. Boarding Reservation
  * 2. Daycare Booking
@@ -73,8 +73,14 @@ test.describe('Critical Path: Boarding Reservation', () => {
     const nextWeek = new Date(today);
     nextWeek.setDate(nextWeek.getDate() + 7);
 
-    await page.fill('input[name="startDate"]', tomorrow.toISOString().split('T')[0]);
-    await page.fill('input[name="endDate"]', nextWeek.toISOString().split('T')[0]);
+    await page.fill(
+      'input[name="startDate"]',
+      tomorrow.toISOString().split('T')[0]
+    );
+    await page.fill(
+      'input[name="endDate"]',
+      nextWeek.toISOString().split('T')[0]
+    );
 
     // Step 7: Select suite
     await page.click('button:has-text("Select Suite")');
@@ -89,7 +95,7 @@ test.describe('Critical Path: Boarding Reservation', () => {
     // Step 9: Review and confirm
     await page.click('button:has-text("Review")');
     await expect(page.locator('text=Review Reservation')).toBeVisible();
-    
+
     // Verify details
     await expect(page.locator('text=Buddy')).toBeVisible();
     await expect(page.locator('text=Boarding')).toBeVisible();
@@ -99,7 +105,9 @@ test.describe('Critical Path: Boarding Reservation', () => {
     await page.click('button:has-text("Confirm Reservation")');
 
     // Step 11: Verify success
-    await expect(page.locator('text=Reservation Created Successfully')).toBeVisible();
+    await expect(
+      page.locator('text=Reservation Created Successfully')
+    ).toBeVisible();
     await expect(page.locator('text=Confirmation')).toBeVisible();
 
     // Step 12: Verify reservation appears in list
@@ -111,23 +119,29 @@ test.describe('Critical Path: Boarding Reservation', () => {
   test('should prevent double-booking of suite', async ({ page }) => {
     // Try to book the same suite for overlapping dates
     await page.goto(`${BASE_URL}/reservations/new`);
-    
+
     await selectCustomer(page, 'Test Customer');
     await selectPet(page, 'Max');
     await page.click('text=Boarding');
-    
+
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
     const nextWeek = new Date(today);
     nextWeek.setDate(nextWeek.getDate() + 7);
 
-    await page.fill('input[name="startDate"]', tomorrow.toISOString().split('T')[0]);
-    await page.fill('input[name="endDate"]', nextWeek.toISOString().split('T')[0]);
+    await page.fill(
+      'input[name="startDate"]',
+      tomorrow.toISOString().split('T')[0]
+    );
+    await page.fill(
+      'input[name="endDate"]',
+      nextWeek.toISOString().split('T')[0]
+    );
 
     // Try to select the same suite that's already booked
     await page.click('button:has-text("Select Suite")');
-    
+
     // Should show suite as unavailable or not in list
     const unavailableSuites = await page.locator('text=Unavailable').count();
     expect(unavailableSuites).toBeGreaterThan(0);
@@ -167,7 +181,9 @@ test.describe('Critical Path: Daycare Booking', () => {
     await page.click('button:has-text("Confirm")');
 
     // Step 8: Verify success
-    await expect(page.locator('text=Daycare Reservation Created')).toBeVisible();
+    await expect(
+      page.locator('text=Daycare Reservation Created')
+    ).toBeVisible();
 
     // Step 9: Verify appears on calendar
     await expect(page.locator('text=Buddy')).toBeVisible();
@@ -193,15 +209,15 @@ test.describe('Critical Path: Daycare Booking', () => {
     const today = new Date();
     await page.click(`[data-date="${today.toISOString().split('T')[0]}"]`);
     await page.click('button:has-text("New Reservation")');
-    
+
     await selectCustomer(page, 'Test Customer');
     await selectPet(page, 'Buddy');
     await page.click('text=Daycare');
-    
+
     // Should show option to use package
     await expect(page.locator('text=Use Package')).toBeVisible();
     await page.click('input[type="checkbox"][name="usePackage"]');
-    
+
     await page.click('button:has-text("Confirm")');
 
     // Step 5: Verify package balance decreased
@@ -267,7 +283,9 @@ test.describe('Critical Path: Training Class Enrollment', () => {
     await expect(page.locator('text=Class Full')).toBeVisible();
 
     // Should show "Join Waitlist" option
-    await expect(page.locator('button:has-text("Join Waitlist")')).toBeVisible();
+    await expect(
+      page.locator('button:has-text("Join Waitlist")')
+    ).toBeVisible();
 
     // Join waitlist
     await page.click('button:has-text("Join Waitlist")');
@@ -356,7 +374,9 @@ test.describe('Critical Path: Grooming Appointment', () => {
     await page.click('button:has-text("Select Groomer")');
 
     // Sarah Johnson should not be available or show as unavailable
-    const sarahAvailable = await page.locator('text=Sarah Johnson:not(.unavailable)').count();
+    const sarahAvailable = await page
+      .locator('text=Sarah Johnson:not(.unavailable)')
+      .count();
     expect(sarahAvailable).toBe(0);
   });
 });
@@ -369,10 +389,10 @@ test.describe('Critical Path: Check-In and Check-Out', () => {
   test('should check-in pet for boarding', async ({ page }) => {
     // Assume we have a reservation for today
     await page.goto(`${BASE_URL}/reservations`);
-    
+
     // Find reservation with status CONFIRMED
     await page.click('text=CONFIRMED');
-    
+
     // Click check-in button
     await page.click('button:has-text("Check In")');
 
@@ -436,8 +456,14 @@ test.describe('Critical Path: Multi-Service Booking', () => {
     const nextWeek = new Date(tomorrow);
     nextWeek.setDate(nextWeek.getDate() + 7);
 
-    await page.fill('input[name="startDate"]', tomorrow.toISOString().split('T')[0]);
-    await page.fill('input[name="endDate"]', nextWeek.toISOString().split('T')[0]);
+    await page.fill(
+      'input[name="startDate"]',
+      tomorrow.toISOString().split('T')[0]
+    );
+    await page.fill(
+      'input[name="endDate"]',
+      nextWeek.toISOString().split('T')[0]
+    );
     await page.click('button:has-text("Select Suite")');
     await page.click('text=Standard Suite');
     await page.click('button:has-text("Confirm Reservation")');
@@ -445,7 +471,7 @@ test.describe('Critical Path: Multi-Service Booking', () => {
     // Step 2: Add grooming during stay
     await page.click('button:has-text("Add Services")');
     await page.click('text=Grooming');
-    
+
     // Select date during boarding stay
     const midStay = new Date(tomorrow);
     midStay.setDate(midStay.getDate() + 3);

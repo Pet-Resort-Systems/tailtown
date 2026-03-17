@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { prisma } from "../config/prisma";
-import { logger } from "../utils/logger";
+import { Request, Response } from 'express';
+import { prisma } from '../config/prisma';
+import { logger } from '../utils/logger';
 
 // Use type intersection instead of interface extension to avoid TS2430
 type AuthenticatedRequest = Request & {
@@ -23,28 +23,28 @@ export const getAllTemplates = async (req: Request, res: Response) => {
     const { active } = req.query;
 
     const where: any = { tenantId };
-    if (active === "true") {
+    if (active === 'true') {
       where.isActive = true;
     }
 
     const templates = await prisma.serviceAgreementTemplate.findMany({
       where,
-      orderBy: { name: "asc" },
+      orderBy: { name: 'asc' },
     });
 
     res.json({
-      status: "success",
+      status: 'success',
       results: templates.length,
       data: templates,
     });
   } catch (error: any) {
-    logger.error("Error fetching service agreement templates", {
-      tenantId: req.headers["x-tenant-id"],
+    logger.error('Error fetching service agreement templates', {
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to fetch service agreement templates",
+      status: 'error',
+      message: 'Failed to fetch service agreement templates',
     });
   }
 };
@@ -64,24 +64,24 @@ export const getTemplateById = async (req: Request, res: Response) => {
 
     if (!template) {
       return res.status(404).json({
-        status: "error",
-        message: "Template not found",
+        status: 'error',
+        message: 'Template not found',
       });
     }
 
     res.json({
-      status: "success",
+      status: 'success',
       data: template,
     });
   } catch (error: any) {
-    logger.error("Error fetching service agreement template", {
+    logger.error('Error fetching service agreement template', {
       templateId: req.params.id,
-      tenantId: req.headers["x-tenant-id"],
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to fetch service agreement template",
+      status: 'error',
+      message: 'Failed to fetch service agreement template',
     });
   }
 };
@@ -119,7 +119,7 @@ export const getDefaultTemplate = async (req: Request, res: Response) => {
           where: { id: allTemplates[0].id },
           data: { isDefault: true },
         });
-        logger.info("Auto-set single template as default", {
+        logger.info('Auto-set single template as default', {
           tenantId,
           templateId: template.id,
         });
@@ -128,23 +128,23 @@ export const getDefaultTemplate = async (req: Request, res: Response) => {
 
     if (!template) {
       return res.status(404).json({
-        status: "error",
-        message: "No default template found",
+        status: 'error',
+        message: 'No default template found',
       });
     }
 
     res.json({
-      status: "success",
+      status: 'success',
       data: template,
     });
   } catch (error: any) {
-    logger.error("Error fetching default service agreement template", {
-      tenantId: req.headers["x-tenant-id"],
+    logger.error('Error fetching default service agreement template', {
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to fetch default service agreement template",
+      status: 'error',
+      message: 'Failed to fetch default service agreement template',
     });
   }
 };
@@ -200,23 +200,23 @@ export const createTemplate = async (req: Request, res: Response) => {
         templateId: template.id,
         version: 1,
         content,
-        changeNotes: "Initial version",
+        changeNotes: 'Initial version',
         createdBy: staffId,
       },
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: template,
     });
   } catch (error: any) {
-    logger.error("Error creating service agreement template", {
-      tenantId: req.headers["x-tenant-id"],
+    logger.error('Error creating service agreement template', {
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to create service agreement template",
+      status: 'error',
+      message: 'Failed to create service agreement template',
     });
   }
 };
@@ -250,8 +250,8 @@ export const updateTemplate = async (req: Request, res: Response) => {
 
     if (!existing) {
       return res.status(404).json({
-        status: "error",
-        message: "Template not found",
+        status: 'error',
+        message: 'Template not found',
       });
     }
 
@@ -299,18 +299,18 @@ export const updateTemplate = async (req: Request, res: Response) => {
     }
 
     res.json({
-      status: "success",
+      status: 'success',
       data: template,
     });
   } catch (error: any) {
-    logger.error("Error updating service agreement template", {
+    logger.error('Error updating service agreement template', {
       templateId: req.params.id,
-      tenantId: req.headers["x-tenant-id"],
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to update service agreement template",
+      status: 'error',
+      message: 'Failed to update service agreement template',
     });
   }
 };
@@ -331,8 +331,8 @@ export const deleteTemplate = async (req: Request, res: Response) => {
 
     if (!existing) {
       return res.status(404).json({
-        status: "error",
-        message: "Template not found",
+        status: 'error',
+        message: 'Template not found',
       });
     }
 
@@ -341,18 +341,18 @@ export const deleteTemplate = async (req: Request, res: Response) => {
     });
 
     res.json({
-      status: "success",
-      message: "Template deleted successfully",
+      status: 'success',
+      message: 'Template deleted successfully',
     });
   } catch (error: any) {
-    logger.error("Error deleting service agreement template", {
+    logger.error('Error deleting service agreement template', {
       templateId: req.params.id,
-      tenantId: req.headers["x-tenant-id"],
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to delete service agreement template",
+      status: 'error',
+      message: 'Failed to delete service agreement template',
     });
   }
 };
@@ -382,7 +382,7 @@ export const createAgreement = async (req: Request, res: Response) => {
 
     // Validate required fields
     if (!customerId || !agreementText || !signature || !signedBy) {
-      logger.warn("Service agreement validation failed", {
+      logger.warn('Service agreement validation failed', {
         hasCustomerId: !!customerId,
         hasAgreementText: !!agreementText,
         hasSignature: !!signature,
@@ -391,9 +391,9 @@ export const createAgreement = async (req: Request, res: Response) => {
         signedBy,
       });
       return res.status(400).json({
-        status: "error",
+        status: 'error',
         message:
-          "Customer ID, agreement text, signature, and signer name are required",
+          'Customer ID, agreement text, signature, and signer name are required',
       });
     }
 
@@ -405,8 +405,8 @@ export const createAgreement = async (req: Request, res: Response) => {
 
       if (!checkIn) {
         return res.status(404).json({
-          status: "error",
-          message: "Check-in not found",
+          status: 'error',
+          message: 'Check-in not found',
         });
       }
 
@@ -416,8 +416,8 @@ export const createAgreement = async (req: Request, res: Response) => {
 
       if (existingAgreement) {
         return res.status(400).json({
-          status: "error",
-          message: "Service agreement already exists for this check-in",
+          status: 'error',
+          message: 'Service agreement already exists for this check-in',
         });
       }
     }
@@ -446,7 +446,7 @@ export const createAgreement = async (req: Request, res: Response) => {
         signature,
         signedBy,
         questionResponses: questionResponses || [],
-        signatureMethod: signatureMethod || "device",
+        signatureMethod: signatureMethod || 'device',
         signedAt: new Date(),
         acknowledgedAt: new Date(),
         ipAddress,
@@ -456,7 +456,7 @@ export const createAgreement = async (req: Request, res: Response) => {
       },
     });
 
-    logger.info("Service agreement created", {
+    logger.info('Service agreement created', {
       agreementId: agreement.id,
       customerId,
       templateId,
@@ -464,18 +464,18 @@ export const createAgreement = async (req: Request, res: Response) => {
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: agreement,
     });
   } catch (error: any) {
-    logger.error("Error creating service agreement", {
+    logger.error('Error creating service agreement', {
       customerId: req.body.customerId,
-      tenantId: req.headers["x-tenant-id"],
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to create service agreement",
+      status: 'error',
+      message: 'Failed to create service agreement',
     });
   }
 };
@@ -506,24 +506,24 @@ export const getAgreementByCheckIn = async (req: Request, res: Response) => {
 
     if (!agreement) {
       return res.status(404).json({
-        status: "error",
-        message: "Service agreement not found",
+        status: 'error',
+        message: 'Service agreement not found',
       });
     }
 
     res.json({
-      status: "success",
+      status: 'success',
       data: agreement,
     });
   } catch (error: any) {
-    logger.error("Error fetching service agreement", {
+    logger.error('Error fetching service agreement', {
       checkInId: req.params.checkInId,
-      tenantId: req.headers["x-tenant-id"],
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to fetch service agreement",
+      status: 'error',
+      message: 'Failed to fetch service agreement',
     });
   }
 };
@@ -539,22 +539,22 @@ export const getAllAgreements = async (req: Request, res: Response) => {
 
     const where: any = { tenantId };
 
-    if (valid === "true") {
+    if (valid === 'true') {
       where.isValid = true;
-    } else if (valid === "false") {
+    } else if (valid === 'false') {
       where.isValid = false;
     }
 
     if (search) {
       where.OR = [
-        { signedBy: { contains: search as string, mode: "insensitive" } },
+        { signedBy: { contains: search as string, mode: 'insensitive' } },
       ];
     }
 
     const [agreements, total] = await Promise.all([
       prisma.serviceAgreement.findMany({
         where,
-        orderBy: { signedAt: "desc" },
+        orderBy: { signedAt: 'desc' },
         take: Number(limit),
         skip: Number(offset),
         include: {
@@ -570,19 +570,19 @@ export const getAllAgreements = async (req: Request, res: Response) => {
     ]);
 
     res.json({
-      status: "success",
+      status: 'success',
       results: agreements.length,
       total,
       data: agreements,
     });
   } catch (error: any) {
-    logger.error("Error fetching all agreements", {
-      tenantId: req.headers["x-tenant-id"],
+    logger.error('Error fetching all agreements', {
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to fetch agreements",
+      status: 'error',
+      message: 'Failed to fetch agreements',
     });
   }
 };
@@ -602,16 +602,16 @@ export const getAgreementsByCustomer = async (req: Request, res: Response) => {
       tenantId,
     };
 
-    if (valid === "true") {
+    if (valid === 'true') {
       where.isValid = true;
-    } else if (valid === "false") {
+    } else if (valid === 'false') {
       where.isValid = false;
     }
 
     const [agreements, total] = await Promise.all([
       prisma.serviceAgreement.findMany({
         where,
-        orderBy: { signedAt: "desc" },
+        orderBy: { signedAt: 'desc' },
         take: Number(limit),
         skip: Number(offset),
         include: {
@@ -627,20 +627,20 @@ export const getAgreementsByCustomer = async (req: Request, res: Response) => {
     ]);
 
     res.json({
-      status: "success",
+      status: 'success',
       results: agreements.length,
       total,
       data: agreements,
     });
   } catch (error: any) {
-    logger.error("Error fetching customer agreements", {
+    logger.error('Error fetching customer agreements', {
       customerId: req.params.customerId,
-      tenantId: req.headers["x-tenant-id"],
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to fetch customer agreements",
+      status: 'error',
+      message: 'Failed to fetch customer agreements',
     });
   }
 };
@@ -676,24 +676,24 @@ export const getAgreementById = async (req: Request, res: Response) => {
 
     if (!agreement) {
       return res.status(404).json({
-        status: "error",
-        message: "Agreement not found",
+        status: 'error',
+        message: 'Agreement not found',
       });
     }
 
     res.json({
-      status: "success",
+      status: 'success',
       data: agreement,
     });
   } catch (error: any) {
-    logger.error("Error fetching agreement", {
+    logger.error('Error fetching agreement', {
       agreementId: req.params.id,
-      tenantId: req.headers["x-tenant-id"],
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to fetch agreement",
+      status: 'error',
+      message: 'Failed to fetch agreement',
     });
   }
 };
@@ -715,15 +715,15 @@ export const invalidateAgreement = async (req: Request, res: Response) => {
 
     if (!existing) {
       return res.status(404).json({
-        status: "error",
-        message: "Agreement not found",
+        status: 'error',
+        message: 'Agreement not found',
       });
     }
 
     if (!existing.isValid) {
       return res.status(400).json({
-        status: "error",
-        message: "Agreement is already invalidated",
+        status: 'error',
+        message: 'Agreement is already invalidated',
       });
     }
 
@@ -737,7 +737,7 @@ export const invalidateAgreement = async (req: Request, res: Response) => {
       },
     });
 
-    logger.info("Service agreement invalidated", {
+    logger.info('Service agreement invalidated', {
       agreementId: id,
       invalidatedBy: staffId,
       reason,
@@ -745,18 +745,18 @@ export const invalidateAgreement = async (req: Request, res: Response) => {
     });
 
     res.json({
-      status: "success",
+      status: 'success',
       data: agreement,
     });
   } catch (error: any) {
-    logger.error("Error invalidating agreement", {
+    logger.error('Error invalidating agreement', {
       agreementId: req.params.id,
-      tenantId: req.headers["x-tenant-id"],
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to invalidate agreement",
+      status: 'error',
+      message: 'Failed to invalidate agreement',
     });
   }
 };
@@ -777,30 +777,30 @@ export const getTemplateVersions = async (req: Request, res: Response) => {
 
     if (!template) {
       return res.status(404).json({
-        status: "error",
-        message: "Template not found",
+        status: 'error',
+        message: 'Template not found',
       });
     }
 
     const versions = await prisma.serviceAgreementVersion.findMany({
       where: { templateId: id, tenantId },
-      orderBy: { version: "desc" },
+      orderBy: { version: 'desc' },
     });
 
     res.json({
-      status: "success",
+      status: 'success',
       results: versions.length,
       data: versions,
     });
   } catch (error: any) {
-    logger.error("Error fetching template versions", {
+    logger.error('Error fetching template versions', {
       templateId: req.params.id,
-      tenantId: req.headers["x-tenant-id"],
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to fetch template versions",
+      status: 'error',
+      message: 'Failed to fetch template versions',
     });
   }
 };
@@ -824,25 +824,25 @@ export const getTemplateVersion = async (req: Request, res: Response) => {
 
     if (!versionRecord) {
       return res.status(404).json({
-        status: "error",
-        message: "Version not found",
+        status: 'error',
+        message: 'Version not found',
       });
     }
 
     res.json({
-      status: "success",
+      status: 'success',
       data: versionRecord,
     });
   } catch (error: any) {
-    logger.error("Error fetching template version", {
+    logger.error('Error fetching template version', {
       templateId: req.params.id,
       version: req.params.version,
-      tenantId: req.headers["x-tenant-id"],
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to fetch template version",
+      status: 'error',
+      message: 'Failed to fetch template version',
     });
   }
 };
@@ -863,7 +863,7 @@ export const checkCustomerAgreement = async (req: Request, res: Response) => {
         isValid: true,
         OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
       },
-      orderBy: { signedAt: "desc" },
+      orderBy: { signedAt: 'desc' },
       include: {
         template: {
           select: {
@@ -876,21 +876,21 @@ export const checkCustomerAgreement = async (req: Request, res: Response) => {
     });
 
     res.json({
-      status: "success",
+      status: 'success',
       data: {
         hasValidAgreement: !!validAgreement,
         agreement: validAgreement,
       },
     });
   } catch (error: any) {
-    logger.error("Error checking customer agreement", {
+    logger.error('Error checking customer agreement', {
       customerId: req.params.customerId,
-      tenantId: req.headers["x-tenant-id"],
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to check customer agreement",
+      status: 'error',
+      message: 'Failed to check customer agreement',
     });
   }
 };

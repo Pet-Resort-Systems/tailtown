@@ -5,14 +5,14 @@
  * Displays tenant name, time remaining, and exit button.
  */
 
-import React, { useState, useEffect } from "react";
-import { getApiBaseUrl } from "../../services/api";
-import { Box, Button, Typography, Alert } from "@mui/material";
+import React, { useState, useEffect } from 'react';
+import { getApiBaseUrl } from '../../services/api';
+import { Box, Button, Typography, Alert } from '@mui/material';
 import {
   ExitToApp as ExitIcon,
   Warning as WarningIcon,
-} from "@mui/icons-material";
-import axios from "axios";
+} from '@mui/icons-material';
+import axios from 'axios';
 
 interface ImpersonationBannerProps {
   onExit: () => void;
@@ -28,7 +28,7 @@ const ImpersonationBanner: React.FC<ImpersonationBannerProps> = ({
   useEffect(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     // Load session from localStorage
-    const sessionData = localStorage.getItem("impersonationSession");
+    const sessionData = localStorage.getItem('impersonationSession');
     if (sessionData) {
       const parsedSession = JSON.parse(sessionData);
       setSession(parsedSession);
@@ -67,7 +67,7 @@ const ImpersonationBanner: React.FC<ImpersonationBannerProps> = ({
 
   const handleExit = async () => {
     try {
-      const token = localStorage.getItem("superAdminAccessToken");
+      const token = localStorage.getItem('superAdminAccessToken');
 
       if (session && token) {
         // End the impersonation session on backend
@@ -82,55 +82,55 @@ const ImpersonationBanner: React.FC<ImpersonationBannerProps> = ({
         );
       }
     } catch (error) {
-      console.error("Error ending impersonation:", error);
+      console.error('Error ending impersonation:', error);
     } finally {
       // Clear ONLY impersonation data (keep super admin tokens!)
-      localStorage.removeItem("impersonationToken");
-      localStorage.removeItem("impersonationSession");
+      localStorage.removeItem('impersonationToken');
+      localStorage.removeItem('impersonationSession');
 
       // Restore super admin access token as the active token for both auth systems
-      const superAdminToken = localStorage.getItem("superAdminAccessToken");
+      const superAdminToken = localStorage.getItem('superAdminAccessToken');
       if (superAdminToken) {
-        localStorage.setItem("accessToken", superAdminToken);
-        localStorage.setItem("token", superAdminToken); // For AuthContext
-        localStorage.setItem("tokenTimestamp", Date.now().toString()); // For AuthContext
+        localStorage.setItem('accessToken', superAdminToken);
+        localStorage.setItem('token', superAdminToken); // For AuthContext
+        localStorage.setItem('tokenTimestamp', Date.now().toString()); // For AuthContext
       } else {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("token");
-        localStorage.removeItem("tokenTimestamp");
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('token');
+        localStorage.removeItem('tokenTimestamp');
       }
 
       // Clear tenant ID to return to super admin context
-      localStorage.removeItem("tailtown_tenant_id");
-      localStorage.removeItem("tenantId");
+      localStorage.removeItem('tailtown_tenant_id');
+      localStorage.removeItem('tenantId');
 
       // Clear user data so it refreshes
-      localStorage.removeItem("user");
+      localStorage.removeItem('user');
 
       // Redirect back to tenant list
-      window.location.href = "/admin/tenants";
+      window.location.href = '/admin/tenants';
     }
   };
 
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${minutes}:${secs.toString().padStart(2, "0")}`;
+    return `${minutes}:${secs.toString().padStart(2, '0')}`;
   };
 
   if (!session) return null;
 
   return (
     <Alert
-      severity={showWarning ? "warning" : "info"}
+      severity={showWarning ? 'warning' : 'info'}
       icon={showWarning ? <WarningIcon /> : undefined}
       sx={{
         borderRadius: 0,
-        position: "sticky",
+        position: 'sticky',
         top: 0,
         zIndex: 1200,
-        "& .MuiAlert-message": {
-          width: "100%",
+        '& .MuiAlert-message': {
+          width: '100%',
         },
       }}
       action={
@@ -146,17 +146,17 @@ const ImpersonationBanner: React.FC<ImpersonationBannerProps> = ({
     >
       <Box
         sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "100%",
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          width: '100%',
         }}
       >
-        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
           🔐 Impersonating: {session.businessName} ({session.subdomain})
         </Typography>
         <Typography variant="body2" sx={{ ml: 2 }}>
-          {showWarning ? "⚠️ " : ""}Time Remaining: {formatTime(timeRemaining)}
+          {showWarning ? '⚠️ ' : ''}Time Remaining: {formatTime(timeRemaining)}
         </Typography>
       </Box>
     </Alert>

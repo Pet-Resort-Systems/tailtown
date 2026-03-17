@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Typography,
   Container,
@@ -16,13 +16,13 @@ import {
   CardContent,
   Collapse,
   IconButton,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
-import { useParams, useNavigate } from "react-router-dom";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   reservationService,
   Reservation,
-} from "../../services/reservationService";
+} from '../../services/reservationService';
 import {
   CalendarToday as CalendarIcon,
   Pets as PetsIcon,
@@ -35,8 +35,8 @@ import {
   CheckCircle as CheckInIcon,
   ExitToApp as CheckOutIcon,
   Visibility as ViewIcon,
-} from "@mui/icons-material";
-import { parseGingrDate } from "../../utils/dateUtils";
+} from '@mui/icons-material';
+import { parseGingrDate } from '../../utils/dateUtils';
 
 const ReservationDetailsRedesigned = () => {
   const { id } = useParams<{ id: string }>();
@@ -57,7 +57,7 @@ const ReservationDetailsRedesigned = () => {
       setError(null);
       setLoading(false);
     } catch (err) {
-      setError("Failed to load reservation");
+      setError('Failed to load reservation');
       setLoading(false);
     }
   }, [id]);
@@ -69,7 +69,7 @@ const ReservationDetailsRedesigned = () => {
   if (loading) {
     return (
       <Container maxWidth="lg">
-        <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
+        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
           <CircularProgress />
         </Box>
       </Container>
@@ -80,7 +80,7 @@ const ReservationDetailsRedesigned = () => {
     return (
       <Container maxWidth="lg">
         <Box sx={{ mt: 4 }}>
-          <Alert severity="error">{error || "Reservation not found"}</Alert>
+          <Alert severity="error">{error || 'Reservation not found'}</Alert>
         </Box>
       </Container>
     );
@@ -91,17 +91,17 @@ const ReservationDetailsRedesigned = () => {
   };
 
   const handleBack = () => {
-    navigate("/reservations");
+    navigate('/reservations');
   };
 
   const handleCancel = async () => {
     try {
       if (!id) return;
-      await reservationService.updateReservation(id, { status: "CANCELLED" });
+      await reservationService.updateReservation(id, { status: 'CANCELLED' });
       await fetchReservation();
     } catch (error) {
-      console.error("Error cancelling reservation:", error);
-      setError("Failed to cancel reservation");
+      console.error('Error cancelling reservation:', error);
+      setError('Failed to cancel reservation');
     }
   };
 
@@ -130,51 +130,51 @@ const ReservationDetailsRedesigned = () => {
 
   // Helper function to format dates
   const formatDate = (dateString: string | undefined) => {
-    if (!dateString) return "N/A";
+    if (!dateString) return 'N/A';
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
     });
   };
 
   // Helper function to format short date
   // Uses parseGingrDate to handle Gingr's local-time-with-Z-suffix format
   const formatShortDate = (dateString: string | undefined) => {
-    if (!dateString) return "N/A";
+    if (!dateString) return 'N/A';
     const date = parseGingrDate(dateString);
-    if (!date) return "N/A";
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
+    if (!date) return 'N/A';
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
     });
   };
 
   // Helper function to format currency
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
     }).format(amount);
   };
 
   // Calculate duration
   // Uses parseGingrDate to handle Gingr's local-time-with-Z-suffix format
   const calculateDuration = () => {
-    if (!startDate || !endDate) return "N/A";
+    if (!startDate || !endDate) return 'N/A';
     const start = parseGingrDate(startDate);
     const end = parseGingrDate(endDate);
-    if (!start || !end) return "N/A";
+    if (!start || !end) return 'N/A';
     const diffTime = Math.abs(end.getTime() - start.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return `${diffDays} ${diffDays === 1 ? "night" : "nights"}`;
+    return `${diffDays} ${diffDays === 1 ? 'night' : 'nights'}`;
   };
 
   // Calculate total price
@@ -195,44 +195,44 @@ const ReservationDetailsRedesigned = () => {
   // Helper function to get chip color based on status
   const getStatusChipColor = (
     status: string
-  ): "success" | "warning" | "info" | "default" | "error" | "secondary" => {
+  ): 'success' | 'warning' | 'info' | 'default' | 'error' | 'secondary' => {
     switch (status) {
-      case "CONFIRMED":
-        return "success";
-      case "PENDING":
-        return "warning";
-      case "CHECKED_IN":
-        return "info";
-      case "CHECKED_OUT":
-        return "secondary";
-      case "COMPLETED":
-        return "success";
-      case "CANCELLED":
-        return "error";
-      case "NO_SHOW":
-        return "error";
+      case 'CONFIRMED':
+        return 'success';
+      case 'PENDING':
+        return 'warning';
+      case 'CHECKED_IN':
+        return 'info';
+      case 'CHECKED_OUT':
+        return 'secondary';
+      case 'COMPLETED':
+        return 'success';
+      case 'CANCELLED':
+        return 'error';
+      case 'NO_SHOW':
+        return 'error';
       default:
-        return "default";
+        return 'default';
     }
   };
 
   // Available statuses for the dropdown
   const availableStatuses: Array<
-    | "PENDING"
-    | "CONFIRMED"
-    | "CHECKED_IN"
-    | "CHECKED_OUT"
-    | "COMPLETED"
-    | "CANCELLED"
-    | "NO_SHOW"
+    | 'PENDING'
+    | 'CONFIRMED'
+    | 'CHECKED_IN'
+    | 'CHECKED_OUT'
+    | 'COMPLETED'
+    | 'CANCELLED'
+    | 'NO_SHOW'
   > = [
-    "PENDING",
-    "CONFIRMED",
-    "CHECKED_IN",
-    "CHECKED_OUT",
-    "COMPLETED",
-    "CANCELLED",
-    "NO_SHOW",
+    'PENDING',
+    'CONFIRMED',
+    'CHECKED_IN',
+    'CHECKED_OUT',
+    'COMPLETED',
+    'CANCELLED',
+    'NO_SHOW',
   ];
 
   const handleStatusClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -245,13 +245,13 @@ const ReservationDetailsRedesigned = () => {
 
   const handleStatusChange = async (
     newStatus:
-      | "PENDING"
-      | "CONFIRMED"
-      | "CHECKED_IN"
-      | "CHECKED_OUT"
-      | "CANCELLED"
-      | "COMPLETED"
-      | "NO_SHOW"
+      | 'PENDING'
+      | 'CONFIRMED'
+      | 'CHECKED_IN'
+      | 'CHECKED_OUT'
+      | 'CANCELLED'
+      | 'COMPLETED'
+      | 'NO_SHOW'
   ) => {
     if (!id) return;
 
@@ -261,8 +261,8 @@ const ReservationDetailsRedesigned = () => {
       await fetchReservation();
       handleStatusMenuClose();
     } catch (err) {
-      console.error("Error updating reservation status:", err);
-      setError("Failed to update reservation status");
+      console.error('Error updating reservation status:', err);
+      setError('Failed to update reservation status');
     } finally {
       setStatusUpdateLoading(false);
     }
@@ -280,9 +280,9 @@ const ReservationDetailsRedesigned = () => {
         {/* Header with Status and Actions */}
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             mb: 3,
           }}
         >
@@ -291,14 +291,14 @@ const ReservationDetailsRedesigned = () => {
               Reservation Details
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Order #{reservation.orderNumber || "Not assigned"}
+              Order #{reservation.orderNumber || 'Not assigned'}
             </Typography>
           </Box>
-          <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
             <Chip
               label={reservation.status}
               color={getStatusChipColor(reservation.status as any)}
-              sx={{ cursor: "pointer", "&:hover": { opacity: 0.8 } }}
+              sx={{ cursor: 'pointer', '&:hover': { opacity: 0.8 } }}
               onClick={handleStatusClick}
             />
             <Button
@@ -315,14 +315,14 @@ const ReservationDetailsRedesigned = () => {
         <Card
           sx={{
             mb: 3,
-            bgcolor: "primary.light",
-            color: "primary.contrastText",
+            bgcolor: 'primary.light',
+            color: 'primary.contrastText',
           }}
         >
           <CardContent>
             <Grid container spacing={3}>
               <Grid item xs={12} md={3}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <CalendarIcon />
                   <Box>
                     <Typography variant="caption" sx={{ opacity: 0.8 }}>
@@ -335,7 +335,7 @@ const ReservationDetailsRedesigned = () => {
                 </Box>
               </Grid>
               <Grid item xs={12} md={3}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <CalendarIcon />
                   <Box>
                     <Typography variant="caption" sx={{ opacity: 0.8 }}>
@@ -348,7 +348,7 @@ const ReservationDetailsRedesigned = () => {
                 </Box>
               </Grid>
               <Grid item xs={12} md={3}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <HomeIcon />
                   <Box>
                     <Typography variant="caption" sx={{ opacity: 0.8 }}>
@@ -361,7 +361,7 @@ const ReservationDetailsRedesigned = () => {
                 </Box>
               </Grid>
               <Grid item xs={12} md={3}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <HomeIcon />
                   <Box>
                     <Typography variant="caption" sx={{ opacity: 0.8 }}>
@@ -370,7 +370,7 @@ const ReservationDetailsRedesigned = () => {
                     <Typography variant="body2" fontWeight="bold">
                       {(() => {
                         const resource: any = reservation.resource;
-                        if (!resource) return "Not assigned";
+                        if (!resource) return 'Not assigned';
                         const suiteNum =
                           resource.suiteNumber ||
                           (resource.attributes &&
@@ -389,9 +389,9 @@ const ReservationDetailsRedesigned = () => {
         <Grid container spacing={3}>
           {/* Left Column - Pet & Customer */}
           <Grid item xs={12} md={6}>
-            <Paper sx={{ p: 3, height: "100%" }}>
+            <Paper sx={{ p: 3, height: '100%' }}>
               <Box
-                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}
+                sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}
               >
                 <PetsIcon color="primary" />
                 <Typography variant="h6">Pet & Customer</Typography>
@@ -401,9 +401,9 @@ const ReservationDetailsRedesigned = () => {
                 <Typography variant="overline" color="text.secondary">
                   Pet
                 </Typography>
-                <Typography variant="h6">{pet?.name || "N/A"}</Typography>
+                <Typography variant="h6">{pet?.name || 'N/A'}</Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {pet?.type || "N/A"} • {pet?.breed || "N/A"}
+                  {pet?.type || 'N/A'} • {pet?.breed || 'N/A'}
                 </Typography>
               </Box>
 
@@ -414,20 +414,20 @@ const ReservationDetailsRedesigned = () => {
                   Owner
                 </Typography>
                 <Typography variant="h6">
-                  {customer?.firstName || "N/A"} {customer?.lastName || ""}
+                  {customer?.firstName || 'N/A'} {customer?.lastName || ''}
                 </Typography>
                 <Box sx={{ mt: 1 }}>
                   <Typography
                     variant="body2"
-                    sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
+                    sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
                   >
-                    📧 {customer?.email || "N/A"}
+                    📧 {customer?.email || 'N/A'}
                   </Typography>
                   <Typography
                     variant="body2"
-                    sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
+                    sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
                   >
-                    📱 {customer?.phone || "N/A"}
+                    📱 {customer?.phone || 'N/A'}
                   </Typography>
                 </Box>
               </Box>
@@ -436,9 +436,9 @@ const ReservationDetailsRedesigned = () => {
 
           {/* Right Column - Service Details */}
           <Grid item xs={12} md={6}>
-            <Paper sx={{ p: 3, height: "100%" }}>
+            <Paper sx={{ p: 3, height: '100%' }}>
               <Box
-                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}
+                sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}
               >
                 <HomeIcon color="primary" />
                 <Typography variant="h6">Service Details</Typography>
@@ -448,9 +448,9 @@ const ReservationDetailsRedesigned = () => {
                 <Typography variant="overline" color="text.secondary">
                   Service
                 </Typography>
-                <Typography variant="h6">{service?.name || "N/A"}</Typography>
+                <Typography variant="h6">{service?.name || 'N/A'}</Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {service?.description || ""}
+                  {service?.description || ''}
                 </Typography>
               </Box>
 
@@ -488,7 +488,7 @@ const ReservationDetailsRedesigned = () => {
           <Grid item xs={12}>
             <Paper sx={{ p: 3 }}>
               <Box
-                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}
+                sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}
               >
                 <MoneyIcon color="primary" />
                 <Typography variant="h6">Financial Summary</Typography>
@@ -497,17 +497,17 @@ const ReservationDetailsRedesigned = () => {
               <Grid container spacing={2}>
                 <Grid item xs={12} md={8}>
                   <Box
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                    sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}
                   >
                     <Box
                       sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
+                        display: 'flex',
+                        justifyContent: 'space-between',
                         py: 1,
                       }}
                     >
                       <Typography variant="body1">
-                        {service?.name || "Service"}
+                        {service?.name || 'Service'}
                       </Typography>
                       <Typography variant="body1">
                         {formatCurrency(service?.price || 0)}
@@ -525,8 +525,8 @@ const ReservationDetailsRedesigned = () => {
                             <Box
                               key={index}
                               sx={{
-                                display: "flex",
-                                justifyContent: "space-between",
+                                display: 'flex',
+                                justifyContent: 'space-between',
                                 py: 0.5,
                                 pl: 2,
                               }}
@@ -534,10 +534,10 @@ const ReservationDetailsRedesigned = () => {
                               <Typography variant="body2">
                                 {addOn.name ||
                                   addOn.addOn?.name ||
-                                  "Unnamed Add-on"}
+                                  'Unnamed Add-on'}
                                 {addOn.quantity && addOn.quantity > 1
                                   ? ` (×${addOn.quantity})`
-                                  : ""}
+                                  : ''}
                               </Typography>
                               <Typography variant="body2">
                                 {formatCurrency(
@@ -554,8 +554,8 @@ const ReservationDetailsRedesigned = () => {
                         <Divider />
                         <Box
                           sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
+                            display: 'flex',
+                            justifyContent: 'space-between',
                             py: 1,
                           }}
                         >
@@ -569,11 +569,11 @@ const ReservationDetailsRedesigned = () => {
                       </>
                     )}
 
-                    <Divider sx={{ borderStyle: "dashed", borderWidth: 2 }} />
+                    <Divider sx={{ borderStyle: 'dashed', borderWidth: 2 }} />
                     <Box
                       sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
+                        display: 'flex',
+                        justifyContent: 'space-between',
                         py: 1,
                       }}
                     >
@@ -588,10 +588,10 @@ const ReservationDetailsRedesigned = () => {
                 <Grid item xs={12} md={4}>
                   <Box
                     sx={{
-                      bgcolor: "grey.50",
+                      bgcolor: 'grey.50',
                       p: 2,
                       borderRadius: 1,
-                      height: "100%",
+                      height: '100%',
                     }}
                   >
                     <Typography variant="overline" color="text.secondary">
@@ -601,19 +601,19 @@ const ReservationDetailsRedesigned = () => {
                       <Box>
                         <Link
                           href={`/invoices/${reservation.invoice.id}`}
-                          sx={{ textDecoration: "none" }}
+                          sx={{ textDecoration: 'none' }}
                         >
                           <Typography variant="h6" color="primary">
                             #{reservation.invoice.invoiceNumber}
                           </Typography>
                         </Link>
                         <Chip
-                          label={reservation.invoice.status || "Pending"}
+                          label={reservation.invoice.status || 'Pending'}
                           size="small"
                           color={
-                            reservation.invoice.status === "PAID"
-                              ? "success"
-                              : "warning"
+                            reservation.invoice.status === 'PAID'
+                              ? 'success'
+                              : 'warning'
                           }
                           sx={{ mt: 1 }}
                         />
@@ -631,19 +631,19 @@ const ReservationDetailsRedesigned = () => {
 
           {/* Notes Section - Collapsible */}
           <Grid item xs={12}>
-            <Paper sx={{ overflow: "hidden" }}>
+            <Paper sx={{ overflow: 'hidden' }}>
               <Box
                 sx={{
                   p: 2,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  cursor: "pointer",
-                  "&:hover": { bgcolor: "action.hover" },
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  cursor: 'pointer',
+                  '&:hover': { bgcolor: 'action.hover' },
                 }}
                 onClick={() => setNotesExpanded(!notesExpanded)}
               >
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <NotesIcon color="primary" />
                   <Typography variant="h6">Notes</Typography>
                   {(notes || staffNotes) && (
@@ -654,9 +654,9 @@ const ReservationDetailsRedesigned = () => {
                   size="small"
                   sx={{
                     transform: notesExpanded
-                      ? "rotate(180deg)"
-                      : "rotate(0deg)",
-                    transition: "transform 0.3s",
+                      ? 'rotate(180deg)'
+                      : 'rotate(0deg)',
+                    transition: 'transform 0.3s',
                   }}
                 >
                   <ExpandMoreIcon />
@@ -671,7 +671,7 @@ const ReservationDetailsRedesigned = () => {
                         Customer Notes
                       </Typography>
                       <Typography variant="body2" sx={{ mt: 1 }}>
-                        {notes || "No notes provided"}
+                        {notes || 'No notes provided'}
                       </Typography>
                     </Grid>
                     <Grid item xs={12} md={6}>
@@ -679,7 +679,7 @@ const ReservationDetailsRedesigned = () => {
                         Staff Notes
                       </Typography>
                       <Typography variant="body2" sx={{ mt: 1 }}>
-                        {staffNotes || "No staff notes"}
+                        {staffNotes || 'No staff notes'}
                       </Typography>
                     </Grid>
                   </Grid>
@@ -690,8 +690,8 @@ const ReservationDetailsRedesigned = () => {
         </Grid>
 
         {/* Action Buttons */}
-        <Box sx={{ mt: 3, display: "flex", gap: 2, flexWrap: "wrap" }}>
-          {reservation.status === "CONFIRMED" && (
+        <Box sx={{ mt: 3, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+          {reservation.status === 'CONFIRMED' && (
             <Button
               variant="contained"
               color="info"
@@ -702,7 +702,7 @@ const ReservationDetailsRedesigned = () => {
               Check In
             </Button>
           )}
-          {reservation.status === "CHECKED_IN" && (
+          {reservation.status === 'CHECKED_IN' && (
             <>
               <Button
                 variant="outlined"
@@ -729,7 +729,7 @@ const ReservationDetailsRedesigned = () => {
             color="error"
             startIcon={<CancelIcon />}
             onClick={handleCancel}
-            disabled={reservation.status === "CANCELLED"}
+            disabled={reservation.status === 'CANCELLED'}
           >
             Cancel Reservation
           </Button>
@@ -739,7 +739,7 @@ const ReservationDetailsRedesigned = () => {
         </Box>
 
         {/* Metadata Footer */}
-        <Box sx={{ mt: 3, p: 2, bgcolor: "grey.50", borderRadius: 1 }}>
+        <Box sx={{ mt: 3, p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
           <Typography variant="caption" color="text.secondary">
             Reservation created on {formatDate(createdAt)}
           </Typography>
@@ -752,12 +752,12 @@ const ReservationDetailsRedesigned = () => {
         open={Boolean(statusMenuAnchorEl)}
         onClose={handleStatusMenuClose}
         anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
+          vertical: 'bottom',
+          horizontal: 'right',
         }}
         transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
+          vertical: 'top',
+          horizontal: 'right',
         }}
       >
         {availableStatuses.map((status) => (
@@ -769,13 +769,13 @@ const ReservationDetailsRedesigned = () => {
               (reservation && reservation.status === status)
             }
             sx={{
-              fontSize: "0.875rem",
+              fontSize: '0.875rem',
               py: 0.75,
-              minHeight: "auto",
+              minHeight: 'auto',
               color:
                 reservation && reservation.status === status
-                  ? "text.disabled"
-                  : "inherit",
+                  ? 'text.disabled'
+                  : 'inherit',
             }}
           >
             <Chip
@@ -784,8 +784,8 @@ const ReservationDetailsRedesigned = () => {
               color={getStatusChipColor(status as any)}
               sx={{
                 height: 20,
-                "& .MuiChip-label": { px: 1, fontSize: "0.7rem" },
-                minWidth: "80px",
+                '& .MuiChip-label': { px: 1, fontSize: '0.7rem' },
+                minWidth: '80px',
               }}
             />
           </MenuItem>

@@ -1,6 +1,6 @@
 /**
  * Deposit Service
- * 
+ *
  * Multi-tenant configurable deposit rules and calculations
  */
 
@@ -14,13 +14,13 @@ import {
   DepositRuleConditions,
   RefundTier,
   DepositAmountType,
-  RefundPolicyType
+  RefundPolicyType,
 } from '../types/deposit';
 import { parseLocalDate, daysBetween, getDayOfWeek } from '../utils/dateUtils';
 
 export const depositService = {
   // ==================== Configuration Management ====================
-  
+
   /**
    * Get deposit configuration for tenant
    */
@@ -32,7 +32,9 @@ export const depositService = {
   /**
    * Update deposit configuration
    */
-  updateConfig: async (config: Partial<DepositConfig>): Promise<DepositConfig> => {
+  updateConfig: async (
+    config: Partial<DepositConfig>
+  ): Promise<DepositConfig> => {
     const response = await customerApi.put('/api/deposits/config', config);
     return response.data;
   },
@@ -41,12 +43,14 @@ export const depositService = {
    * Enable/disable deposit system
    */
   toggleSystem: async (enabled: boolean): Promise<DepositConfig> => {
-    const response = await customerApi.patch('/api/deposits/config/toggle', { isEnabled: enabled });
+    const response = await customerApi.patch('/api/deposits/config/toggle', {
+      isEnabled: enabled,
+    });
     return response.data;
   },
 
   // ==================== Deposit Rules Management ====================
-  
+
   /**
    * Get all deposit rules
    */
@@ -66,8 +70,14 @@ export const depositService = {
   /**
    * Update deposit rule
    */
-  updateRule: async (id: string, updates: Partial<DepositRule>): Promise<DepositRule> => {
-    const response = await customerApi.put(`/api/deposits/rules/${id}`, updates);
+  updateRule: async (
+    id: string,
+    updates: Partial<DepositRule>
+  ): Promise<DepositRule> => {
+    const response = await customerApi.put(
+      `/api/deposits/rules/${id}`,
+      updates
+    );
     return response.data;
   },
 
@@ -82,12 +92,14 @@ export const depositService = {
    * Reorder rules (update priorities)
    */
   reorderRules: async (ruleIds: string[]): Promise<DepositRule[]> => {
-    const response = await customerApi.post('/api/deposits/rules/reorder', { ruleIds });
+    const response = await customerApi.post('/api/deposits/rules/reorder', {
+      ruleIds,
+    });
     return response.data;
   },
 
   // ==================== Deposit Calculation ====================
-  
+
   /**
    * Calculate deposit for reservation
    */
@@ -118,17 +130,17 @@ export const depositService = {
   ): DepositCalculation => {
     // Sort rules by priority
     const sortedRules = [...rules]
-      .filter(r => r.isActive)
+      .filter((r) => r.isActive)
       .sort((a, b) => a.priority - b.priority);
 
     // Find first matching rule
-    const matchedRule = sortedRules.find(rule => 
+    const matchedRule = sortedRules.find((rule) =>
       depositService.evaluateRuleConditions(rule.conditions, {
         totalCost,
         startDate,
         endDate,
         serviceId: options?.serviceId,
-        isFirstTimeCustomer: options?.isFirstTimeCustomer
+        isFirstTimeCustomer: options?.isFirstTimeCustomer,
       })
     );
 
@@ -150,23 +162,36 @@ export const depositService = {
         matchedRuleName: matchedRule.name,
         depositRequired: true,
         depositAmount,
-        depositPercentage: matchedRule.depositAmountType === 'PERCENTAGE' 
-          ? matchedRule.depositPercentage 
-          : undefined,
+        depositPercentage:
+          matchedRule.depositAmountType === 'PERCENTAGE'
+            ? matchedRule.depositPercentage
+            : undefined,
         depositDueDate: dueDate,
         refundPolicy: matchedRule.refundPolicy,
         refundTiers: matchedRule.refundTiers,
-        explanation: depositService.generateExplanation(matchedRule, depositAmount, totalCost)
+        explanation: depositService.generateExplanation(
+          matchedRule,
+          depositAmount,
+          totalCost
+        ),
       };
     }
 
     // No rule matched - use default
-    if (config.defaultDepositRequired && config.defaultDepositAmount && config.defaultDepositType) {
+    if (
+      config.defaultDepositRequired &&
+      config.defaultDepositAmount &&
+      config.defaultDepositType
+    ) {
       const depositAmount = depositService.calculateDepositAmount(
         totalCost,
         config.defaultDepositType,
-        config.defaultDepositType === 'PERCENTAGE' ? config.defaultDepositAmount : undefined,
-        config.defaultDepositType === 'FIXED' ? config.defaultDepositAmount : undefined
+        config.defaultDepositType === 'PERCENTAGE'
+          ? config.defaultDepositAmount
+          : undefined,
+        config.defaultDepositType === 'FIXED'
+          ? config.defaultDepositAmount
+          : undefined
       );
 
       return {
@@ -174,7 +199,7 @@ export const depositService = {
         depositRequired: true,
         depositAmount,
         refundPolicy: 'FULL_REFUND',
-        explanation: `Default deposit: ${depositService.formatDepositAmount(depositAmount, totalCost)}`
+        explanation: `Default deposit: ${depositService.formatDepositAmount(depositAmount, totalCost)}`,
       };
     }
 
@@ -184,7 +209,7 @@ export const depositService = {
       depositRequired: false,
       depositAmount: 0,
       refundPolicy: 'FULL_REFUND',
-      explanation: 'No deposit required'
+      explanation: 'No deposit required',
     };
   },
 
@@ -202,33 +227,54 @@ export const depositService = {
     }
   ): boolean => {
     // Cost threshold
-    if (conditions.minCost !== undefined && params.totalCost < conditions.minCost) {
+    if (
+      conditions.minCost !== undefined &&
+      params.totalCost < conditions.minCost
+    ) {
       return false;
     }
-    if (conditions.maxCost !== undefined && params.totalCost > conditions.maxCost) {
+    if (
+      conditions.maxCost !== undefined &&
+      params.totalCost > conditions.maxCost
+    ) {
       return false;
     }
 
     // Service type
     if (conditions.serviceIds && conditions.serviceIds.length > 0) {
-      if (!params.serviceId || !conditions.serviceIds.includes(params.serviceId)) {
+      if (
+        !params.serviceId ||
+        !conditions.serviceIds.includes(params.serviceId)
+      ) {
         return false;
       }
     }
 
     // Advance booking
-    const daysInAdvance = daysBetween(new Date().toISOString().split('T')[0], params.startDate);
-    if (conditions.minDaysInAdvance !== undefined && daysInAdvance < conditions.minDaysInAdvance) {
+    const daysInAdvance = daysBetween(
+      new Date().toISOString().split('T')[0],
+      params.startDate
+    );
+    if (
+      conditions.minDaysInAdvance !== undefined &&
+      daysInAdvance < conditions.minDaysInAdvance
+    ) {
       return false;
     }
-    if (conditions.maxDaysInAdvance !== undefined && daysInAdvance > conditions.maxDaysInAdvance) {
+    if (
+      conditions.maxDaysInAdvance !== undefined &&
+      daysInAdvance > conditions.maxDaysInAdvance
+    ) {
       return false;
     }
 
     // Date ranges (holidays, peak seasons)
     if (conditions.dateRanges && conditions.dateRanges.length > 0) {
-      const isInRange = conditions.dateRanges.some(range => {
-        return params.startDate >= range.startDate && params.startDate <= range.endDate;
+      const isInRange = conditions.dateRanges.some((range) => {
+        return (
+          params.startDate >= range.startDate &&
+          params.startDate <= range.endDate
+        );
       });
       if (!isInRange) {
         return false;
@@ -273,7 +319,7 @@ export const depositService = {
       return totalCost;
     }
     if (amountType === 'PERCENTAGE' && percentage) {
-      return Math.round((totalCost * percentage / 100) * 100) / 100;
+      return Math.round(((totalCost * percentage) / 100) * 100) / 100;
     }
     if (amountType === 'FIXED' && fixedAmount) {
       return Math.min(fixedAmount, totalCost);
@@ -293,9 +339,13 @@ export const depositService = {
   /**
    * Generate explanation text
    */
-  generateExplanation: (rule: DepositRule, depositAmount: number, totalCost: number): string => {
+  generateExplanation: (
+    rule: DepositRule,
+    depositAmount: number,
+    totalCost: number
+  ): string => {
     let explanation = `${rule.name}: `;
-    
+
     if (rule.depositAmountType === 'FULL') {
       explanation += 'Full payment required';
     } else if (rule.depositAmountType === 'PERCENTAGE') {
@@ -312,12 +362,14 @@ export const depositService = {
   },
 
   // ==================== Deposit Payments ====================
-  
+
   /**
    * Get deposit payment for reservation
    */
   getDepositPayment: async (reservationId: string): Promise<DepositPayment> => {
-    const response = await customerApi.get(`/api/deposits/payments/${reservationId}`);
+    const response = await customerApi.get(
+      `/api/deposits/payments/${reservationId}`
+    );
     return response.data;
   },
 
@@ -330,11 +382,14 @@ export const depositService = {
     paymentMethod: string,
     transactionId?: string
   ): Promise<DepositPayment> => {
-    const response = await customerApi.post(`/api/deposits/payments/${reservationId}/pay`, {
-      amount,
-      paymentMethod,
-      transactionId
-    });
+    const response = await customerApi.post(
+      `/api/deposits/payments/${reservationId}/pay`,
+      {
+        amount,
+        paymentMethod,
+        transactionId,
+      }
+    );
     return response.data;
   },
 
@@ -346,10 +401,13 @@ export const depositService = {
     reason: string,
     cancelDate?: string
   ): Promise<DepositPayment> => {
-    const response = await customerApi.post(`/api/deposits/payments/${reservationId}/refund`, {
-      reason,
-      cancelDate
-    });
+    const response = await customerApi.post(
+      `/api/deposits/payments/${reservationId}/refund`,
+      {
+        reason,
+        cancelDate,
+      }
+    );
     return response.data;
   },
 
@@ -373,13 +431,20 @@ export const depositService = {
 
     if (refundPolicy === 'TIERED_REFUND' && refundTiers) {
       const daysBeforeStart = daysBetween(cancelDate, startDate);
-      
+
       // Find applicable tier (sorted by daysBeforeStart descending)
-      const sortedTiers = [...refundTiers].sort((a, b) => b.daysBeforeStart - a.daysBeforeStart);
-      const tier = sortedTiers.find(t => daysBeforeStart >= t.daysBeforeStart);
-      
+      const sortedTiers = [...refundTiers].sort(
+        (a, b) => b.daysBeforeStart - a.daysBeforeStart
+      );
+      const tier = sortedTiers.find(
+        (t) => daysBeforeStart >= t.daysBeforeStart
+      );
+
       if (tier) {
-        return Math.round((depositAmount * tier.refundPercentage / 100) * 100) / 100;
+        return (
+          Math.round(((depositAmount * tier.refundPercentage) / 100) * 100) /
+          100
+        );
       }
     }
 
@@ -387,7 +452,7 @@ export const depositService = {
   },
 
   // ==================== Analytics & Reporting ====================
-  
+
   /**
    * Get deposit statistics
    */
@@ -405,7 +470,9 @@ export const depositService = {
   getUpcomingDeposits: async (params?: {
     daysAhead?: number;
   }): Promise<DepositPayment[]> => {
-    const response = await customerApi.get('/api/deposits/upcoming', { params });
+    const response = await customerApi.get('/api/deposits/upcoming', {
+      params,
+    });
     return response.data;
   },
 
@@ -418,7 +485,7 @@ export const depositService = {
   },
 
   // ==================== Client-Side Helpers ====================
-  
+
   /**
    * Format deposit amount for display
    */
@@ -438,7 +505,7 @@ export const depositService = {
       FULL_REFUND: 'Fully refundable',
       PARTIAL_REFUND: 'Partially refundable',
       NON_REFUNDABLE: 'Non-refundable',
-      TIERED_REFUND: 'Refund based on cancellation timing'
+      TIERED_REFUND: 'Refund based on cancellation timing',
     };
     return texts[policy];
   },
@@ -460,7 +527,7 @@ export const depositService = {
       PARTIAL: '#2196f3',
       PAID: '#4caf50',
       REFUNDED: '#9e9e9e',
-      FORFEITED: '#f44336'
+      FORFEITED: '#f44336',
     };
     return colors[status] || '#9e9e9e';
   },
@@ -468,7 +535,9 @@ export const depositService = {
   /**
    * Validate deposit rule
    */
-  validateRule: (rule: Partial<DepositRule>): { isValid: boolean; errors: string[] } => {
+  validateRule: (
+    rule: Partial<DepositRule>
+  ): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
 
     if (!rule.name || rule.name.trim().length === 0) {
@@ -483,21 +552,30 @@ export const depositService = {
       errors.push('Deposit amount type is required');
     }
 
-    if (rule.depositAmountType === 'PERCENTAGE' && (!rule.depositPercentage || rule.depositPercentage <= 0)) {
+    if (
+      rule.depositAmountType === 'PERCENTAGE' &&
+      (!rule.depositPercentage || rule.depositPercentage <= 0)
+    ) {
       errors.push('Deposit percentage must be greater than 0');
     }
 
-    if (rule.depositAmountType === 'FIXED' && (!rule.depositFixedAmount || rule.depositFixedAmount <= 0)) {
+    if (
+      rule.depositAmountType === 'FIXED' &&
+      (!rule.depositFixedAmount || rule.depositFixedAmount <= 0)
+    ) {
       errors.push('Deposit fixed amount must be greater than 0');
     }
 
-    if (rule.refundPolicy === 'TIERED_REFUND' && (!rule.refundTiers || rule.refundTiers.length === 0)) {
+    if (
+      rule.refundPolicy === 'TIERED_REFUND' &&
+      (!rule.refundTiers || rule.refundTiers.length === 0)
+    ) {
       errors.push('Refund tiers are required for tiered refund policy');
     }
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
-  }
+  },
 };

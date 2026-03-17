@@ -9,14 +9,14 @@
  * the reservation service schema. Run against customer service database if needed.
  */
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 async function seedOctoberReservations() {
-  console.log("Starting October reservations seeding...");
+  console.log('Starting October reservations seeding...');
 
-  const tenantId = "dev";
+  const tenantId = 'dev';
 
   try {
     // Get all customers with their pets
@@ -28,7 +28,7 @@ async function seedOctoberReservations() {
     });
 
     if (customers.length === 0) {
-      console.error("No customers found! Please seed customers first.");
+      console.error('No customers found! Please seed customers first.');
       return;
     }
 
@@ -39,15 +39,15 @@ async function seedOctoberReservations() {
       where: {
         tenantId,
         name: {
-          startsWith: "A",
+          startsWith: 'A',
         },
-        type: "STANDARD_SUITE",
+        type: 'STANDARD_SUITE',
       },
-      orderBy: { name: "asc" },
+      orderBy: { name: 'asc' },
     });
 
     if (roomAKennels.length === 0) {
-      console.error("No Room A kennels found! Please seed resources first.");
+      console.error('No Room A kennels found! Please seed resources first.');
       return;
     }
 
@@ -57,14 +57,14 @@ async function seedOctoberReservations() {
     const boardingService = await prisma.service.findFirst({
       where: {
         name: {
-          contains: "Boarding",
-          mode: "insensitive",
+          contains: 'Boarding',
+          mode: 'insensitive',
         },
       },
     });
 
     if (!boardingService) {
-      console.error("No boarding service found! Please seed services first.");
+      console.error('No boarding service found! Please seed services first.');
       return;
     }
 
@@ -111,18 +111,18 @@ async function seedOctoberReservations() {
       }
 
       // Generate order number
-      const orderNumber = `RES-${Date.now()}-${i.toString().padStart(3, "0")}`;
+      const orderNumber = `RES-${Date.now()}-${i.toString().padStart(3, '0')}`;
 
       // Random status (mostly confirmed, some pending)
-      const statuses: ("CONFIRMED" | "PENDING")[] = [
-        "CONFIRMED",
-        "CONFIRMED",
-        "CONFIRMED",
-        "PENDING",
+      const statuses: ('CONFIRMED' | 'PENDING')[] = [
+        'CONFIRMED',
+        'CONFIRMED',
+        'CONFIRMED',
+        'PENDING',
       ];
       const status = statuses[Math.floor(Math.random() * statuses.length)] as
-        | "CONFIRMED"
-        | "PENDING";
+        | 'CONFIRMED'
+        | 'PENDING';
 
       reservations.push({
         tenantId,
@@ -174,7 +174,7 @@ async function seedOctoberReservations() {
 
     // Show summary
     const summary = await prisma.reservation.groupBy({
-      by: ["status"],
+      by: ['status'],
       where: {
         tenantId,
         startDate: {
@@ -184,7 +184,7 @@ async function seedOctoberReservations() {
       _count: true,
     });
 
-    console.log("\nReservation summary:");
+    console.log('\nReservation summary:');
     summary.forEach((item) => {
       console.log(`  ${item.status}: ${item._count} reservations`);
     });
@@ -192,12 +192,12 @@ async function seedOctoberReservations() {
     // Show date range
     const firstRes = await prisma.reservation.findFirst({
       where: { tenantId },
-      orderBy: { startDate: "asc" },
+      orderBy: { startDate: 'asc' },
     });
 
     const lastRes = await prisma.reservation.findFirst({
       where: { tenantId },
-      orderBy: { endDate: "desc" },
+      orderBy: { endDate: 'desc' },
     });
 
     if (firstRes && lastRes) {
@@ -207,7 +207,7 @@ async function seedOctoberReservations() {
     }
 
     // Show sample reservations
-    console.log("\nSample reservations:");
+    console.log('\nSample reservations:');
     const samples = await prisma.reservation.findMany({
       where: { tenantId },
       include: {
@@ -216,7 +216,7 @@ async function seedOctoberReservations() {
         resource: true,
       },
       take: 5,
-      orderBy: { startDate: "asc" },
+      orderBy: { startDate: 'asc' },
     });
 
     samples.forEach((res) => {
@@ -230,7 +230,7 @@ async function seedOctoberReservations() {
       );
     });
   } catch (error) {
-    console.error("Error seeding reservations:", error);
+    console.error('Error seeding reservations:', error);
     throw error;
   } finally {
     await prisma.$disconnect();
@@ -239,8 +239,8 @@ async function seedOctoberReservations() {
 
 // Run the seeder
 seedOctoberReservations()
-  .then(() => console.log("\n🎉 October reservations seeding complete!"))
+  .then(() => console.log('\n🎉 October reservations seeding complete!'))
   .catch((e) => {
-    console.error("Error during reservation seeding:", e);
+    console.error('Error during reservation seeding:', e);
     process.exit(1);
   });

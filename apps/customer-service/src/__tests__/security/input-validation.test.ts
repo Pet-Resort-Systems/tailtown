@@ -1,6 +1,6 @@
 /**
  * Input Validation Security Tests
- * 
+ *
  * Tests to ensure proper input validation:
  * - Data type validation
  * - Range validation
@@ -32,24 +32,22 @@ describe('Input Validation Security Tests', () => {
         password: hashedPassword,
         role: 'ADMIN',
         tenantId: testTenantId,
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     // Get auth token
-    const loginResponse = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'input-validation-test@example.com',
-        password: 'TestPassword123!'
-      });
+    const loginResponse = await request(app).post('/api/auth/login').send({
+      email: 'input-validation-test@example.com',
+      password: 'TestPassword123!',
+    });
 
     authToken = loginResponse.body.token;
   });
 
   afterAll(async () => {
     await prisma.staff.deleteMany({
-      where: { tenantId: testTenantId }
+      where: { tenantId: testTenantId },
     });
     await prisma.$disconnect();
   });
@@ -63,7 +61,7 @@ describe('Input Validation Security Tests', () => {
           firstName: 'John',
           lastName: 'Doe',
           email: 'john@example.com',
-          phone: 123456 // Should be string
+          phone: 123456, // Should be string
         });
 
       expect([400, 422]).toContain(response.status);
@@ -77,7 +75,7 @@ describe('Input Validation Security Tests', () => {
           firstName: 12345, // Should be string
           lastName: 'Doe',
           email: 'john@example.com',
-          phone: '1234567890'
+          phone: '1234567890',
         });
 
       expect([400, 422]).toContain(response.status);
@@ -91,7 +89,7 @@ describe('Input Validation Security Tests', () => {
           firstName: true, // Should be string
           lastName: 'Doe',
           email: 'john@example.com',
-          phone: '1234567890'
+          phone: '1234567890',
         });
 
       expect([400, 422]).toContain(response.status);
@@ -114,7 +112,7 @@ describe('Input Validation Security Tests', () => {
           firstName: null,
           lastName: 'Doe',
           email: 'john@example.com',
-          phone: '1234567890'
+          phone: '1234567890',
         });
 
       expect([400, 422]).toContain(response.status);
@@ -128,7 +126,7 @@ describe('Input Validation Security Tests', () => {
           firstName: 'John',
           lastName: undefined,
           email: 'john@example.com',
-          phone: '1234567890'
+          phone: '1234567890',
         });
 
       expect([400, 422]).toContain(response.status);
@@ -144,7 +142,7 @@ describe('Input Validation Security Tests', () => {
           firstName: 'A'.repeat(256), // Too long
           lastName: 'Doe',
           email: 'john@example.com',
-          phone: '1234567890'
+          phone: '1234567890',
         });
 
       expect([400, 422]).toContain(response.status);
@@ -158,7 +156,7 @@ describe('Input Validation Security Tests', () => {
           firstName: 'J', // Too short (if min is 2)
           lastName: 'D',
           email: 'john@example.com',
-          phone: '123' // Too short for phone
+          phone: '123', // Too short for phone
         });
 
       expect([400, 422]).toContain(response.status);
@@ -172,7 +170,7 @@ describe('Input Validation Security Tests', () => {
           firstName: 'John',
           lastName: 'Doe',
           email: `valid-${Date.now()}@example.com`,
-          phone: '1234567890'
+          phone: '1234567890',
         });
 
       expect([200, 201]).toContain(response.status);
@@ -186,7 +184,7 @@ describe('Input Validation Security Tests', () => {
           firstName: '  John  ',
           lastName: '  Doe  ',
           email: `trim-${Date.now()}@example.com`,
-          phone: '1234567890'
+          phone: '1234567890',
         });
 
       expect([200, 201]).toContain(response.status);
@@ -207,7 +205,7 @@ describe('Input Validation Security Tests', () => {
         'user@example',
         'user..name@example.com',
         'user@.example.com',
-        'user@example..com'
+        'user@example..com',
       ];
 
       for (const email of invalidEmails) {
@@ -218,7 +216,7 @@ describe('Input Validation Security Tests', () => {
             firstName: 'John',
             lastName: 'Doe',
             email: email,
-            phone: '1234567890'
+            phone: '1234567890',
           });
 
         expect([400, 422]).toContain(response.status);
@@ -230,7 +228,7 @@ describe('Input Validation Security Tests', () => {
         `user-${Date.now()}@example.com`,
         `user.name-${Date.now()}@example.com`,
         `user+tag-${Date.now()}@example.co.uk`,
-        `123-${Date.now()}@example.com`
+        `123-${Date.now()}@example.com`,
       ];
 
       for (const email of validEmails) {
@@ -241,7 +239,7 @@ describe('Input Validation Security Tests', () => {
             firstName: 'John',
             lastName: 'Doe',
             email: email,
-            phone: '1234567890'
+            phone: '1234567890',
           });
 
         expect([200, 201]).toContain(response.status);
@@ -256,7 +254,7 @@ describe('Input Validation Security Tests', () => {
           firstName: 'John',
           lastName: 'Doe',
           email: `UPPERCASE-${Date.now()}@EXAMPLE.COM`,
-          phone: '1234567890'
+          phone: '1234567890',
         });
 
       if (response.status === 201 && response.body.data) {
@@ -272,7 +270,7 @@ describe('Input Validation Security Tests', () => {
         'abcdefghij', // Letters
         '123-456-789', // Invalid format
         '+1 (800) CALL-NOW', // Letters
-        '12345678901234567890' // Too long
+        '12345678901234567890', // Too long
       ];
 
       for (const phone of invalidPhones) {
@@ -283,7 +281,7 @@ describe('Input Validation Security Tests', () => {
             firstName: 'John',
             lastName: 'Doe',
             email: `phone-test-${Date.now()}@example.com`,
-            phone: phone
+            phone: phone,
           });
 
         expect([400, 422]).toContain(response.status);
@@ -295,7 +293,7 @@ describe('Input Validation Security Tests', () => {
         '1234567890',
         '+1234567890',
         '(123) 456-7890',
-        '123-456-7890'
+        '123-456-7890',
       ];
 
       for (const phone of validPhones) {
@@ -306,7 +304,7 @@ describe('Input Validation Security Tests', () => {
             firstName: 'John',
             lastName: 'Doe',
             email: `phone-valid-${Date.now()}@example.com`,
-            phone: phone
+            phone: phone,
           });
 
         expect([200, 201]).toContain(response.status);
@@ -322,7 +320,7 @@ describe('Input Validation Security Tests', () => {
         '2025/01/01', // Wrong separator
         '01-01-2025', // Wrong order
         'not-a-date',
-        '2025-02-30' // Invalid date
+        '2025-02-30', // Invalid date
       ];
 
       for (const date of invalidDates) {
@@ -333,7 +331,7 @@ describe('Input Validation Security Tests', () => {
             customerId: 'test-customer-id',
             startDate: date,
             endDate: '2025-12-05',
-            serviceId: 'test-service-id'
+            serviceId: 'test-service-id',
           });
 
         expect([400, 422]).toContain(response.status);
@@ -348,7 +346,7 @@ describe('Input Validation Security Tests', () => {
           customerId: 'test-customer-id',
           startDate: '2025-12-01',
           endDate: '2025-12-05',
-          serviceId: 'test-service-id'
+          serviceId: 'test-service-id',
         });
 
       // May fail for other reasons, but not date format
@@ -363,7 +361,7 @@ describe('Input Validation Security Tests', () => {
           customerId: 'test-customer-id',
           startDate: '2025-12-05',
           endDate: '2025-12-01', // Before start date
-          serviceId: 'test-service-id'
+          serviceId: 'test-service-id',
         });
 
       expect([400, 422]).toContain(response.status);
@@ -377,7 +375,7 @@ describe('Input Validation Security Tests', () => {
           customerId: 'test-customer-id',
           startDate: '2020-01-01', // Past date
           endDate: '2020-01-05',
-          serviceId: 'test-service-id'
+          serviceId: 'test-service-id',
         });
 
       expect([400, 422]).toContain(response.status);
@@ -393,7 +391,7 @@ describe('Input Validation Security Tests', () => {
           name: 'Test Service',
           price: -10, // Negative price
           duration: 60,
-          serviceCategory: 'BOARDING'
+          serviceCategory: 'BOARDING',
         });
 
       expect([400, 422]).toContain(response.status);
@@ -407,7 +405,7 @@ describe('Input Validation Security Tests', () => {
           name: 'Test Service',
           price: 999999999, // Unreasonably high
           duration: 60,
-          serviceCategory: 'BOARDING'
+          serviceCategory: 'BOARDING',
         });
 
       expect([400, 422]).toContain(response.status);
@@ -419,9 +417,9 @@ describe('Input Validation Security Tests', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .send({
           name: `Test Service ${Date.now()}`,
-          price: 50.00,
+          price: 50.0,
           duration: 60,
-          serviceCategory: 'BOARDING'
+          serviceCategory: 'BOARDING',
         });
 
       expect([200, 201]).toContain(response.status);
@@ -435,12 +433,12 @@ describe('Input Validation Security Tests', () => {
           name: `Test Service ${Date.now()}`,
           price: 50.999, // Too many decimal places
           duration: 60,
-          serviceCategory: 'BOARDING'
+          serviceCategory: 'BOARDING',
         });
 
       // Should either reject or round
       if (response.status === 201 && response.body.data) {
-        expect(response.body.data.price).toBeLessThanOrEqual(51.00);
+        expect(response.body.data.price).toBeLessThanOrEqual(51.0);
       }
     });
   });
@@ -454,7 +452,7 @@ describe('Input Validation Security Tests', () => {
           name: 'Test Service',
           price: 50,
           duration: 60,
-          serviceCategory: 'INVALID_CATEGORY'
+          serviceCategory: 'INVALID_CATEGORY',
         });
 
       expect([400, 422]).toContain(response.status);
@@ -471,7 +469,7 @@ describe('Input Validation Security Tests', () => {
             name: `Test Service ${Date.now()}`,
             price: 50,
             duration: 60,
-            serviceCategory: category
+            serviceCategory: category,
           });
 
         expect([200, 201]).toContain(response.status);
@@ -486,7 +484,7 @@ describe('Input Validation Security Tests', () => {
           name: 'Test Service',
           price: 50,
           duration: 60,
-          serviceCategory: 'boarding' // lowercase
+          serviceCategory: 'boarding', // lowercase
         });
 
       expect([400, 422]).toContain(response.status);
@@ -499,7 +497,7 @@ describe('Input Validation Security Tests', () => {
         .post('/api/customers')
         .set('Authorization', `Bearer ${authToken}`)
         .send({
-          firstName: 'John'
+          firstName: 'John',
           // Missing lastName, email, phone
         });
 
@@ -515,7 +513,7 @@ describe('Input Validation Security Tests', () => {
           firstName: 'John',
           lastName: 'Doe',
           email: `required-${Date.now()}@example.com`,
-          phone: '1234567890'
+          phone: '1234567890',
         });
 
       expect([200, 201]).toContain(response.status);
@@ -529,7 +527,7 @@ describe('Input Validation Security Tests', () => {
           firstName: 'John',
           lastName: 'Doe',
           email: `optional-${Date.now()}@example.com`,
-          phone: '1234567890'
+          phone: '1234567890',
           // Optional fields like address, notes omitted
         });
 
@@ -546,7 +544,7 @@ describe('Input Validation Security Tests', () => {
           firstName: 'José',
           lastName: 'Müller',
           email: `unicode-${Date.now()}@example.com`,
-          phone: '1234567890'
+          phone: '1234567890',
         });
 
       expect([200, 201]).toContain(response.status);
@@ -560,7 +558,7 @@ describe('Input Validation Security Tests', () => {
           firstName: 'John 😀',
           lastName: 'Doe',
           email: `emoji-${Date.now()}@example.com`,
-          phone: '1234567890'
+          phone: '1234567890',
         });
 
       // Should either accept or sanitize
@@ -575,7 +573,7 @@ describe('Input Validation Security Tests', () => {
           firstName: 'John\x00\x01\x02', // Null and control chars
           lastName: 'Doe',
           email: `control-${Date.now()}@example.com`,
-          phone: '1234567890'
+          phone: '1234567890',
         });
 
       if (response.status === 201 && response.body.data) {
@@ -592,7 +590,7 @@ describe('Input Validation Security Tests', () => {
         .post('/api/bulk-operation')
         .set('Authorization', `Bearer ${authToken}`)
         .send({
-          items: tooManyItems
+          items: tooManyItems,
         });
 
       expect([400, 413, 422]).toContain(response.status);
@@ -603,7 +601,7 @@ describe('Input Validation Security Tests', () => {
         .post('/api/bulk-operation')
         .set('Authorization', `Bearer ${authToken}`)
         .send({
-          items: ['string', 123, true, null] // Mixed types
+          items: ['string', 123, true, null], // Mixed types
         });
 
       expect([400, 422]).toContain(response.status);
@@ -614,7 +612,7 @@ describe('Input Validation Security Tests', () => {
         .post('/api/bulk-operation')
         .set('Authorization', `Bearer ${authToken}`)
         .send({
-          items: []
+          items: [],
         });
 
       expect([400, 422]).toContain(response.status);
@@ -630,7 +628,7 @@ describe('Input Validation Security Tests', () => {
           name: 'Test Service',
           price: Number.MAX_SAFE_INTEGER,
           duration: 60,
-          serviceCategory: 'BOARDING'
+          serviceCategory: 'BOARDING',
         });
 
       expect([400, 422]).toContain(response.status);
@@ -644,7 +642,7 @@ describe('Input Validation Security Tests', () => {
           name: 'Test Service',
           price: Number.MIN_SAFE_INTEGER,
           duration: 60,
-          serviceCategory: 'BOARDING'
+          serviceCategory: 'BOARDING',
         });
 
       expect([400, 422]).toContain(response.status);
@@ -658,7 +656,7 @@ describe('Input Validation Security Tests', () => {
           name: 'Test Service',
           price: 0,
           duration: 0,
-          serviceCategory: 'BOARDING'
+          serviceCategory: 'BOARDING',
         });
 
       // Should reject zero duration
@@ -673,7 +671,7 @@ describe('Input Validation Security Tests', () => {
           name: `Test Service ${Date.now()}`,
           price: 0.1 + 0.2, // 0.30000000000000004
           duration: 60,
-          serviceCategory: 'BOARDING'
+          serviceCategory: 'BOARDING',
         });
 
       if (response.status === 201 && response.body.data) {

@@ -35,7 +35,7 @@ export interface QuickAction {
   action: () => void;
 }
 
-export type HelpCategory = 
+export type HelpCategory =
   | 'getting-started'
   | 'reservations'
   | 'customers'

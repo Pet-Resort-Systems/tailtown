@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button
+  Button,
 } from '@mui/material';
 import {
   STATUS_ICONS,
@@ -22,13 +22,16 @@ import {
   COMMUNICATION_ICONS,
   SERVICE_ICONS,
   FLAG_ICONS,
-  ALL_CUSTOMER_ICONS
+  ALL_CUSTOMER_ICONS,
 } from '../../constants/customerIcons';
 
 interface CustomerIconSelectorNewProps {
   selectedIcons: string[];
   iconNotes?: Record<string, string>;
-  onChange: (selectedIcons: string[], iconNotes: Record<string, string>) => void;
+  onChange: (
+    selectedIcons: string[],
+    iconNotes: Record<string, string>
+  ) => void;
 }
 
 /**
@@ -38,7 +41,7 @@ interface CustomerIconSelectorNewProps {
 const CustomerIconSelectorNew: React.FC<CustomerIconSelectorNewProps> = ({
   selectedIcons,
   iconNotes = {},
-  onChange
+  onChange,
 }) => {
   const [activeTab, setActiveTab] = useState(0);
   const [noteDialogOpen, setNoteDialogOpen] = useState(false);
@@ -61,9 +64,9 @@ const CustomerIconSelectorNew: React.FC<CustomerIconSelectorNewProps> = ({
 
   const handleIconToggle = (iconId: string) => {
     let newSelectedIcons: string[];
-    
+
     if (selectedIcons.includes(iconId)) {
-      newSelectedIcons = selectedIcons.filter(id => id !== iconId);
+      newSelectedIcons = selectedIcons.filter((id) => id !== iconId);
       // Remove note if icon is deselected
       const newNotes = { ...iconNotes };
       delete newNotes[iconId];
@@ -104,7 +107,8 @@ const CustomerIconSelectorNew: React.FC<CustomerIconSelectorNewProps> = ({
           Customer Icons
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          Select icons that apply to this customer. These will be visible to staff as quick reference notes.
+          Select icons that apply to this customer. These will be visible to
+          staff as quick reference notes.
         </Typography>
 
         <Tabs
@@ -125,22 +129,32 @@ const CustomerIconSelectorNew: React.FC<CustomerIconSelectorNewProps> = ({
           {currentIcons.map((icon) => {
             const isSelected = selectedIcons.includes(icon.id);
             const hasNote = iconNotes[icon.id];
-            
+
             return (
               <Grid item key={icon.id}>
                 <Tooltip title={icon.description} arrow>
                   <Box sx={{ position: 'relative' }}>
                     <Chip
                       label={
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                          <span style={{ fontSize: '1.2rem' }}>{icon.icon}</span>
-                          <Typography variant="caption">{icon.label}</Typography>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 0.5,
+                          }}
+                        >
+                          <span style={{ fontSize: '1.2rem' }}>
+                            {icon.icon}
+                          </span>
+                          <Typography variant="caption">
+                            {icon.label}
+                          </Typography>
                         </Box>
                       }
                       onClick={() => handleIconToggle(icon.id)}
                       onDoubleClick={() => isSelected && handleAddNote(icon.id)}
-                      color={isSelected ? "primary" : "default"}
-                      variant={isSelected ? "filled" : "outlined"}
+                      color={isSelected ? 'primary' : 'default'}
+                      variant={isSelected ? 'filled' : 'outlined'}
                       sx={{
                         minWidth: '100px',
                         height: 'auto',
@@ -176,7 +190,9 @@ const CustomerIconSelectorNew: React.FC<CustomerIconSelectorNewProps> = ({
         </Grid>
 
         {selectedIcons.length > 0 && (
-          <Box sx={{ mt: 2, p: 2, bgcolor: 'background.default', borderRadius: 1 }}>
+          <Box
+            sx={{ mt: 2, p: 2, bgcolor: 'background.default', borderRadius: 1 }}
+          >
             <Typography variant="subtitle2" gutterBottom>
               Selected Icons ({selectedIcons.length})
             </Typography>
@@ -188,7 +204,12 @@ const CustomerIconSelectorNew: React.FC<CustomerIconSelectorNewProps> = ({
       </Paper>
 
       {/* Note Dialog */}
-      <Dialog open={noteDialogOpen} onClose={() => setNoteDialogOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={noteDialogOpen}
+        onClose={() => setNoteDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Add Note to Icon</DialogTitle>
         <DialogContent>
           <TextField
@@ -205,7 +226,9 @@ const CustomerIconSelectorNew: React.FC<CustomerIconSelectorNewProps> = ({
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setNoteDialogOpen(false)}>Cancel</Button>
-          <Button onClick={handleSaveNote} variant="contained">Save</Button>
+          <Button onClick={handleSaveNote} variant="contained">
+            Save
+          </Button>
         </DialogActions>
       </Dialog>
     </>

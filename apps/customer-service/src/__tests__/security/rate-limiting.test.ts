@@ -1,6 +1,6 @@
 /**
  * Rate Limiting Security Tests
- * 
+ *
  * Tests to ensure rate limiting is properly configured:
  * - Login endpoint has strict rate limits
  * - API endpoints have reasonable rate limits
@@ -30,24 +30,22 @@ describe('Rate Limiting Security Tests', () => {
         password: hashedPassword,
         role: 'ADMIN',
         tenantId: testTenantId,
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     // Get auth token
-    const loginResponse = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'ratelimit-test@example.com',
-        password: 'TestPassword123!'
-      });
+    const loginResponse = await request(app).post('/api/auth/login').send({
+      email: 'ratelimit-test@example.com',
+      password: 'TestPassword123!',
+    });
 
     authToken = loginResponse.body.token;
   });
 
   afterAll(async () => {
     await prisma.staff.deleteMany({
-      where: { tenantId: testTenantId }
+      where: { tenantId: testTenantId },
     });
     await prisma.$disconnect();
   });
@@ -63,7 +61,7 @@ describe('Rate Limiting Security Tests', () => {
           .post('/api/auth/login')
           .send({
             email: `test-${i}@example.com`,
-            password: 'WrongPassword'
+            password: 'WrongPassword',
           });
 
         responses.push(response);
@@ -76,12 +74,10 @@ describe('Rate Limiting Security Tests', () => {
     });
 
     it('should include rate limit headers', async () => {
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'test@example.com',
-          password: 'password'
-        });
+      const response = await request(app).post('/api/auth/login').send({
+        email: 'test@example.com',
+        password: 'password',
+      });
 
       // Should include rate limit headers
       expect(response.headers).toHaveProperty('x-ratelimit-limit');
@@ -98,23 +94,27 @@ describe('Rate Limiting Security Tests', () => {
     it('should track rate limits per IP address', async () => {
       // Multiple requests from same IP should share rate limit
       const responses = [];
-      
+
       for (let i = 0; i < 3; i++) {
         const response = await request(app)
           .post('/api/auth/login')
           .set('X-Forwarded-For', '192.168.1.100')
           .send({
             email: `test-${i}@example.com`,
-            password: 'password'
+            password: 'password',
           });
 
         responses.push(response);
       }
 
       // Verify rate limit is being tracked
-      const firstLimit = parseInt(responses[0].headers['x-ratelimit-remaining'] || '0');
-      const lastLimit = parseInt(responses[responses.length - 1].headers['x-ratelimit-remaining'] || '0');
-      
+      const firstLimit = parseInt(
+        responses[0].headers['x-ratelimit-remaining'] || '0'
+      );
+      const lastLimit = parseInt(
+        responses[responses.length - 1].headers['x-ratelimit-remaining'] || '0'
+      );
+
       expect(lastLimit).toBeLessThan(firstLimit);
     });
   });
@@ -139,25 +139,27 @@ describe('Rate Limiting Security Tests', () => {
       }
 
       // Should eventually hit rate limit
-      const rateLimitedResponse = responses.find(r => r.status === 429);
+      const rateLimitedResponse = responses.find((r) => r.status === 429);
       expect(rateLimitedResponse).toBeDefined();
     });
 
     it('should have different rate limits for different endpoints', async () => {
       // Critical endpoints should have stricter limits
-      const loginResponse = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'test@example.com',
-          password: 'password'
-        });
+      const loginResponse = await request(app).post('/api/auth/login').send({
+        email: 'test@example.com',
+        password: 'password',
+      });
 
       const apiResponse = await request(app)
         .get('/api/customers')
         .set('Authorization', `Bearer ${authToken}`);
 
-      const loginLimit = parseInt(loginResponse.headers['x-ratelimit-limit'] || '0');
-      const apiLimit = parseInt(apiResponse.headers['x-ratelimit-limit'] || '0');
+      const loginLimit = parseInt(
+        loginResponse.headers['x-ratelimit-limit'] || '0'
+      );
+      const apiLimit = parseInt(
+        apiResponse.headers['x-ratelimit-limit'] || '0'
+      );
 
       // Login should have stricter limit
       expect(loginLimit).toBeLessThan(apiLimit);
@@ -166,7 +168,7 @@ describe('Rate Limiting Security Tests', () => {
     it('should include Retry-After header when rate limited', async () => {
       // Make enough requests to trigger rate limit
       let rateLimitResponse;
-      
+
       for (let i = 0; i < 150; i++) {
         const response = await request(app)
           .get('/api/customers')
@@ -192,7 +194,7 @@ describe('Rate Limiting Security Tests', () => {
         'Mozilla/5.0',
         'Chrome/91.0',
         'Safari/14.0',
-        'Edge/91.0'
+        'Edge/91.0',
       ];
 
       const responses = [];
@@ -204,7 +206,7 @@ describe('Rate Limiting Security Tests', () => {
             .set('User-Agent', userAgent)
             .send({
               email: 'test@example.com',
-              password: 'password'
+              password: 'password',
             });
 
           responses.push(response);
@@ -212,7 +214,7 @@ describe('Rate Limiting Security Tests', () => {
       }
 
       // Should still be rate limited despite different user agents
-      const rateLimited = responses.filter(r => r.status === 429);
+      const rateLimited = responses.filter((r) => r.status === 429);
       expect(rateLimited.length).toBeGreaterThan(0);
     });
 
@@ -226,20 +228,19 @@ describe('Rate Limiting Security Tests', () => {
           .set('X-Forwarded-For', `192.168.1.${i}`)
           .send({
             email: 'test@example.com',
-            password: 'password'
+            password: 'password',
           });
 
         responses.push(response);
       }
 
       // Should still enforce rate limits
-      expect(responses.some(r => r.status === 429)).toBe(true);
+      expect(responses.some((r) => r.status === 429)).toBe(true);
     });
 
     it('should track authenticated users separately', async () => {
       // Authenticated requests should have separate rate limit
-      const unauthResponse = await request(app)
-        .get('/api/health');
+      const unauthResponse = await request(app).get('/api/health');
 
       const authResponse = await request(app)
         .get('/api/customers')
@@ -290,19 +291,16 @@ describe('Rate Limiting Security Tests', () => {
     it('should handle burst traffic', async () => {
       // Make many simultaneous requests
       const promises = [];
-      
+
       for (let i = 0; i < 50; i++) {
-        promises.push(
-          request(app)
-            .get('/api/health')
-        );
+        promises.push(request(app).get('/api/health'));
       }
 
       const responses = await Promise.all(promises);
 
       // Should handle burst but eventually rate limit
-      const successful = responses.filter(r => r.status === 200);
-      const rateLimited = responses.filter(r => r.status === 429);
+      const successful = responses.filter((r) => r.status === 200);
+      const rateLimited = responses.filter((r) => r.status === 429);
 
       expect(successful.length).toBeGreaterThan(0);
       expect(rateLimited.length).toBeGreaterThan(0);
@@ -324,12 +322,10 @@ describe('Rate Limiting Security Tests', () => {
   describe('Rate Limit Monitoring', () => {
     it('should log rate limit violations', async () => {
       // Rate limit hits should be logged for monitoring
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'test@example.com',
-          password: 'password'
-        });
+      const response = await request(app).post('/api/auth/login').send({
+        email: 'test@example.com',
+        password: 'password',
+      });
 
       // Verify logging happens (would check logs in real implementation)
       expect(response.status).toBeGreaterThanOrEqual(200);
@@ -357,14 +353,14 @@ describe('Rate Limiting Security Tests', () => {
         const response = await request(app)
           .post('/api/auth/forgot-password')
           .send({
-            email: 'test@example.com'
+            email: 'test@example.com',
           });
 
         responses.push(response);
       }
 
       // Should be rate limited quickly
-      const rateLimited = responses.filter(r => r.status === 429);
+      const rateLimited = responses.filter((r) => r.status === 429);
       expect(rateLimited.length).toBeGreaterThan(0);
     });
 
@@ -378,14 +374,14 @@ describe('Rate Limiting Security Tests', () => {
             email: `test-${i}@example.com`,
             password: 'TestPassword123!',
             firstName: 'Test',
-            lastName: 'User'
+            lastName: 'User',
           });
 
         responses.push(response);
       }
 
       // Should be rate limited
-      const rateLimited = responses.filter(r => r.status === 429);
+      const rateLimited = responses.filter((r) => r.status === 429);
       expect(rateLimited.length).toBeGreaterThan(0);
     });
 
@@ -403,7 +399,7 @@ describe('Rate Limiting Security Tests', () => {
       }
 
       // Should eventually rate limit
-      expect(responses.some(r => r.status === 429)).toBe(true);
+      expect(responses.some((r) => r.status === 429)).toBe(true);
     });
   });
 });

@@ -2,7 +2,7 @@
  * Staff Step - Add team members and assign roles
  */
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -21,36 +21,36 @@ import {
   MenuItem,
   Avatar,
   Chip,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   ArrowForward,
   ArrowBack,
   Add,
   Delete,
   Edit,
-} from "@mui/icons-material";
-import { useSetupWizard } from "../SetupWizardContext";
-import { StaffMember, StaffRole } from "../types";
-import { v4 as uuidv4 } from "uuid";
+} from '@mui/icons-material';
+import { useSetupWizard } from '../SetupWizardContext';
+import { StaffMember, StaffRole } from '../types';
+import { v4 as uuidv4 } from 'uuid';
 
 const ROLE_LABELS: Record<StaffRole, string> = {
-  ADMIN: "Administrator",
-  MANAGER: "Manager",
-  STAFF: "Staff",
-  GROOMER: "Groomer",
-  TRAINER: "Trainer",
+  ADMIN: 'Administrator',
+  MANAGER: 'Manager',
+  STAFF: 'Staff',
+  GROOMER: 'Groomer',
+  TRAINER: 'Trainer',
 };
 
 const ROLE_COLORS: Record<
   StaffRole,
-  "error" | "warning" | "info" | "success" | "secondary"
+  'error' | 'warning' | 'info' | 'success' | 'secondary'
 > = {
-  ADMIN: "error",
-  MANAGER: "warning",
-  STAFF: "info",
-  GROOMER: "success",
-  TRAINER: "secondary",
+  ADMIN: 'error',
+  MANAGER: 'warning',
+  STAFF: 'info',
+  GROOMER: 'success',
+  TRAINER: 'secondary',
 };
 
 export default function StaffStep() {
@@ -61,22 +61,22 @@ export default function StaffStep() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<StaffMember | null>(null);
   const [form, setForm] = useState<Partial<StaffMember>>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    role: "STAFF",
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    role: 'STAFF',
     isOwner: false,
   });
 
   const openAdd = () => {
     setEditingMember(null);
     setForm({
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      role: "STAFF",
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      role: 'STAFF',
       isOwner: false,
     });
     setDialogOpen(true);
@@ -111,7 +111,7 @@ export default function StaffStep() {
 
   const handleNext = () => {
     if (staff.members.length > 0) {
-      completeStep("staff");
+      completeStep('staff');
       nextStep();
     }
   };
@@ -130,8 +130,8 @@ export default function StaffStep() {
           <Grid item xs={12} sm={6} md={4} key={member.id}>
             <Card variant="outlined">
               <CardContent>
-                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                  <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                     <Avatar>
                       {member.firstName[0]}
                       {member.lastName[0]}
@@ -175,19 +175,19 @@ export default function StaffStep() {
           <Card
             variant="outlined"
             sx={{
-              height: "100%",
+              height: '100%',
               minHeight: 120,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              borderStyle: "dashed",
-              "&:hover": { bgcolor: "action.hover" },
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              borderStyle: 'dashed',
+              '&:hover': { bgcolor: 'action.hover' },
             }}
             onClick={openAdd}
           >
-            <Box sx={{ textAlign: "center" }}>
-              <Add sx={{ fontSize: 40, color: "text.secondary" }} />
+            <Box sx={{ textAlign: 'center' }}>
+              <Add sx={{ fontSize: 40, color: 'text.secondary' }} />
               <Typography color="text.secondary">Add Staff Member</Typography>
             </Box>
           </Card>
@@ -201,7 +201,7 @@ export default function StaffStep() {
         fullWidth
       >
         <DialogTitle>
-          {editingMember ? "Edit Staff Member" : "Add Staff Member"}
+          {editingMember ? 'Edit Staff Member' : 'Add Staff Member'}
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
@@ -275,7 +275,7 @@ export default function StaffStep() {
         </DialogActions>
       </Dialog>
 
-      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button startIcon={<ArrowBack />} onClick={prevStep}>
           Back
         </Button>

@@ -1,6 +1,6 @@
 /**
  * Capacity Service
- * 
+ *
  * Handles capacity checking and statistics
  */
 
@@ -61,7 +61,7 @@ export const getCapacityStats = async (
   if (serviceType) {
     params.serviceType = serviceType;
   }
-  
+
   const response = await api.get('/api/capacity/stats', { params });
   return response.data.data;
 };

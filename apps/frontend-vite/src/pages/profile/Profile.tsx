@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { getApiBaseUrl } from "../../services/api";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { getApiBaseUrl } from '../../services/api';
+import { useNavigate } from 'react-router-dom';
 import {
   Formik,
   Form,
@@ -8,8 +8,8 @@ import {
   FormikHelpers,
   FormikErrors,
   FormikTouched,
-} from "formik";
-import * as Yup from "yup";
+} from 'formik';
+import * as Yup from 'yup';
 import {
   Box,
   Typography,
@@ -24,7 +24,7 @@ import {
   CardContent,
   IconButton,
   InputAdornment,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Person as PersonIcon,
   Email as EmailIcon,
@@ -35,9 +35,9 @@ import {
   VisibilityOff,
   PhotoCamera as PhotoCameraIcon,
   Delete as DeleteIcon,
-} from "@mui/icons-material";
-import { useAuth } from "../../contexts/AuthContext";
-import api from "../../services/api";
+} from '@mui/icons-material';
+import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 interface ProfileFormValues {
   firstName: string;
@@ -53,27 +53,27 @@ interface PasswordFormValues {
 }
 
 const ProfileSchema = Yup.object().shape({
-  firstName: Yup.string().required("First name is required"),
-  lastName: Yup.string().required("Last name is required"),
-  email: Yup.string().email("Invalid email").required("Email is required"),
+  firstName: Yup.string().required('First name is required'),
+  lastName: Yup.string().required('Last name is required'),
+  email: Yup.string().email('Invalid email').required('Email is required'),
   phone: Yup.string(),
 });
 
 const PasswordSchema = Yup.object().shape({
-  currentPassword: Yup.string().required("Current password is required"),
+  currentPassword: Yup.string().required('Current password is required'),
   newPassword: Yup.string()
-    .min(8, "Password must be at least 8 characters")
-    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
-    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .matches(/[0-9]/, "Password must contain at least one number")
+    .min(8, 'Password must be at least 8 characters')
+    .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .matches(/[0-9]/, 'Password must contain at least one number')
     .matches(
       /[^a-zA-Z0-9]/,
-      "Password must contain at least one special character"
+      'Password must contain at least one special character'
     )
-    .required("New password is required"),
+    .required('New password is required'),
   confirmPassword: Yup.string()
-    .oneOf([Yup.ref("newPassword")], "Passwords must match")
-    .required("Please confirm your password"),
+    .oneOf([Yup.ref('newPassword')], 'Passwords must match')
+    .required('Please confirm your password'),
 });
 
 const Profile = () => {
@@ -93,10 +93,10 @@ const Profile = () => {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
   const [profileData, setProfileData] = useState<ProfileFormValues>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
   });
 
   /**
@@ -113,12 +113,12 @@ const Profile = () => {
       const baseUrl = getApiBaseUrl();
 
       // Ensure profilePhoto starts with /
-      const path = profilePhoto.startsWith("/")
+      const path = profilePhoto.startsWith('/')
         ? profilePhoto
         : `/${profilePhoto}`;
       return `${baseUrl}${path}`;
     } catch (error) {
-      console.error("Error constructing profile photo URL:", error);
+      console.error('Error constructing profile photo URL:', error);
       return undefined;
     }
   };
@@ -134,10 +134,10 @@ const Profile = () => {
 
           // Update local state
           setProfileData({
-            firstName: freshData.firstName || "",
-            lastName: freshData.lastName || "",
-            email: freshData.email || "",
-            phone: freshData.phone || "",
+            firstName: freshData.firstName || '',
+            lastName: freshData.lastName || '',
+            email: freshData.email || '',
+            phone: freshData.phone || '',
           });
 
           // Set profile photo if exists - construct full URL
@@ -159,14 +159,14 @@ const Profile = () => {
           }
         }
       } catch (error) {
-        console.error("Error fetching profile:", error);
+        console.error('Error fetching profile:', error);
         // Fallback to cached user data
         if (user) {
           setProfileData({
-            firstName: user.firstName || "",
-            lastName: user.lastName || "",
-            email: user.email || "",
-            phone: user.phone || "",
+            firstName: user.firstName || '',
+            lastName: user.lastName || '',
+            email: user.email || '',
+            phone: user.phone || '',
           });
         }
       } finally {
@@ -201,14 +201,14 @@ const Profile = () => {
         });
       }
 
-      setProfileSuccess("Profile updated successfully!");
+      setProfileSuccess('Profile updated successfully!');
     } catch (error: any) {
-      console.error("Profile update error:", error);
+      console.error('Profile update error:', error);
       const message =
         error.response?.data?.error ||
         error.response?.data?.message ||
         error.message ||
-        "Failed to update profile";
+        'Failed to update profile';
       setProfileError(message);
     } finally {
       setSubmitting(false);
@@ -219,14 +219,14 @@ const Profile = () => {
     const file = event.target.files?.[0];
     if (file) {
       // Validate file type
-      if (!file.type.startsWith("image/")) {
-        setProfileError("Please select an image file");
+      if (!file.type.startsWith('image/')) {
+        setProfileError('Please select an image file');
         return;
       }
 
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        setProfileError("Image size must be less than 5MB");
+        setProfileError('Image size must be less than 5MB');
         return;
       }
 
@@ -247,14 +247,14 @@ const Profile = () => {
     try {
       setProfileError(null);
       const formData = new FormData();
-      formData.append("photo", photoFile);
+      formData.append('photo', photoFile);
 
       const response = await api.post(
         `/api/staff/${user?.id}/photo`,
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
           },
         }
       );
@@ -265,15 +265,15 @@ const Profile = () => {
       setProfilePhoto(fullPhotoUrl || null);
       setPhotoPreview(null);
       setPhotoFile(null);
-      setProfileSuccess("Profile photo updated successfully!");
+      setProfileSuccess('Profile photo updated successfully!');
 
       // Update user context with the relative path (backend format)
       if (updateUser) {
         updateUser({ profilePhoto: photoPath });
       }
     } catch (error: any) {
-      console.error("Photo upload error:", error);
-      const message = error.response?.data?.message || "Failed to upload photo";
+      console.error('Photo upload error:', error);
+      const message = error.response?.data?.message || 'Failed to upload photo';
       setProfileError(message);
     }
   };
@@ -286,14 +286,14 @@ const Profile = () => {
       setProfilePhoto(null);
       setPhotoPreview(null);
       setPhotoFile(null);
-      setProfileSuccess("Profile photo removed successfully!");
+      setProfileSuccess('Profile photo removed successfully!');
 
       // Update user context
       if (updateUser) {
         updateUser({ profilePhoto: null });
       }
     } catch (error: any) {
-      const message = error.response?.data?.message || "Failed to remove photo";
+      const message = error.response?.data?.message || 'Failed to remove photo';
       setProfileError(message);
     }
   };
@@ -307,16 +307,16 @@ const Profile = () => {
       setPasswordSuccess(null);
 
       // Change password via API
-      await api.post("/staff/change-password", {
+      await api.post('/staff/change-password', {
         currentPassword: values.currentPassword,
         newPassword: values.newPassword,
       });
 
-      setPasswordSuccess("Password changed successfully!");
+      setPasswordSuccess('Password changed successfully!');
       resetForm();
     } catch (error: any) {
       const message =
-        error.response?.data?.message || "Failed to change password";
+        error.response?.data?.message || 'Failed to change password';
       setPasswordError(message);
     } finally {
       setSubmitting(false);
@@ -327,10 +327,10 @@ const Profile = () => {
     return (
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "400px",
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '400px',
         }}
       >
         <CircularProgress />
@@ -339,20 +339,20 @@ const Profile = () => {
   }
 
   return (
-    <Box sx={{ maxWidth: 1200, mx: "auto", p: 3 }}>
+    <Box sx={{ maxWidth: 1200, mx: 'auto', p: 3 }}>
       {/* Header with Photo */}
-      <Box sx={{ mb: 4, display: "flex", alignItems: "center", gap: 3 }}>
-        <Box sx={{ position: "relative" }}>
+      <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 3 }}>
+        <Box sx={{ position: 'relative' }}>
           <Avatar
-            key={profilePhoto || "no-photo"}
+            key={profilePhoto || 'no-photo'}
             src={photoPreview || profilePhoto || undefined}
             sx={{
               width: 120,
               height: 120,
-              bgcolor: "primary.main",
-              fontSize: "2.5rem",
-              border: "4px solid",
-              borderColor: "background.paper",
+              bgcolor: 'primary.main',
+              fontSize: '2.5rem',
+              border: '4px solid',
+              borderColor: 'background.paper',
               boxShadow: 3,
             }}
           >
@@ -365,7 +365,7 @@ const Profile = () => {
           </Avatar>
           <input
             accept="image/*"
-            style={{ display: "none" }}
+            style={{ display: 'none' }}
             id="profile-photo-upload"
             type="file"
             onChange={handlePhotoChange}
@@ -374,13 +374,13 @@ const Profile = () => {
             <IconButton
               component="span"
               sx={{
-                position: "absolute",
+                position: 'absolute',
                 bottom: 0,
                 right: 0,
-                bgcolor: "primary.main",
-                color: "white",
-                "&:hover": {
-                  bgcolor: "primary.dark",
+                bgcolor: 'primary.main',
+                color: 'white',
+                '&:hover': {
+                  bgcolor: 'primary.dark',
                 },
                 boxShadow: 2,
               }}
@@ -400,7 +400,7 @@ const Profile = () => {
             Manage your account settings and preferences
           </Typography>
           {photoPreview && (
-            <Box sx={{ mt: 2, display: "flex", gap: 1 }}>
+            <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
               <Button
                 size="small"
                 variant="contained"
@@ -442,7 +442,7 @@ const Profile = () => {
           <Card>
             <CardContent>
               <Box
-                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 3 }}
+                sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}
               >
                 <PersonIcon color="primary" />
                 <Typography variant="h6">Profile Information</Typography>
@@ -553,7 +553,7 @@ const Profile = () => {
                       }
                       sx={{ mt: 3 }}
                     >
-                      {isSubmitting ? "Saving..." : "Save Changes"}
+                      {isSubmitting ? 'Saving...' : 'Save Changes'}
                     </Button>
                   </Form>
                 )}
@@ -567,7 +567,7 @@ const Profile = () => {
           <Card>
             <CardContent>
               <Box
-                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 3 }}
+                sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}
               >
                 <LockIcon color="primary" />
                 <Typography variant="h6">Change Password</Typography>
@@ -587,9 +587,9 @@ const Profile = () => {
 
               <Formik
                 initialValues={{
-                  currentPassword: "",
-                  newPassword: "",
-                  confirmPassword: "",
+                  currentPassword: '',
+                  newPassword: '',
+                  confirmPassword: '',
                 }}
                 validationSchema={PasswordSchema}
                 onSubmit={handlePasswordSubmit}
@@ -608,7 +608,7 @@ const Profile = () => {
                       as={TextField}
                       name="currentPassword"
                       label="Current Password"
-                      type={showCurrentPassword ? "text" : "password"}
+                      type={showCurrentPassword ? 'text' : 'password'}
                       fullWidth
                       margin="normal"
                       variant="outlined"
@@ -644,7 +644,7 @@ const Profile = () => {
                       as={TextField}
                       name="newPassword"
                       label="New Password"
-                      type={showNewPassword ? "text" : "password"}
+                      type={showNewPassword ? 'text' : 'password'}
                       fullWidth
                       margin="normal"
                       variant="outlined"
@@ -675,7 +675,7 @@ const Profile = () => {
                       as={TextField}
                       name="confirmPassword"
                       label="Confirm New Password"
-                      type={showConfirmPassword ? "text" : "password"}
+                      type={showConfirmPassword ? 'text' : 'password'}
                       fullWidth
                       margin="normal"
                       variant="outlined"
@@ -755,8 +755,8 @@ const Profile = () => {
                       sx={{ mt: 3 }}
                     >
                       {isSubmitting
-                        ? "Changing Password..."
-                        : "Change Password"}
+                        ? 'Changing Password...'
+                        : 'Change Password'}
                     </Button>
                   </Form>
                 )}
@@ -779,7 +779,7 @@ const Profile = () => {
                     Account Type
                   </Typography>
                   <Typography variant="body1">
-                    {user?.role || "Staff"}
+                    {user?.role || 'Staff'}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} sm={4}>
@@ -789,11 +789,11 @@ const Profile = () => {
                   <Typography
                     variant="body1"
                     sx={{
-                      color: user?.isActive ? "success.main" : "error.main",
-                      fontWeight: "medium",
+                      color: user?.isActive ? 'success.main' : 'error.main',
+                      fontWeight: 'medium',
                     }}
                   >
-                    {user?.isActive ? "Active" : "Inactive"}
+                    {user?.isActive ? 'Active' : 'Inactive'}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} sm={4}>
@@ -803,7 +803,7 @@ const Profile = () => {
                   <Typography variant="body1">
                     {user?.lastLogin
                       ? new Date(user.lastLogin).toLocaleString()
-                      : "Just now"}
+                      : 'Just now'}
                   </Typography>
                 </Grid>
               </Grid>

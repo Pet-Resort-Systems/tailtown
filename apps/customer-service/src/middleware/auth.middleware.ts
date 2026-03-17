@@ -1,12 +1,12 @@
-import { Request, Response, NextFunction } from "express";
-import { verifyToken } from "../utils/jwt";
+import { Request, Response, NextFunction } from 'express';
+import { verifyToken } from '../utils/jwt';
 
 // Extended Request type to include user info
 export interface AuthRequest extends Request {
   user?: {
     id: string;
     email: string;
-    role: "SUPER_ADMIN" | "TENANT_ADMIN" | "ADMIN" | "MANAGER" | "STAFF";
+    role: 'SUPER_ADMIN' | 'TENANT_ADMIN' | 'ADMIN' | 'MANAGER' | 'STAFF';
     tenantId?: string;
   };
 }
@@ -21,11 +21,11 @@ export const authenticate = (
   res: Response,
   next: NextFunction
 ) => {
-  const apiKey = req.headers["x-api-key"] as string;
-  const authHeader = req.headers["authorization"] as string;
+  const apiKey = req.headers['x-api-key'] as string;
+  const authHeader = req.headers['authorization'] as string;
 
   // Prefer Bearer token auth when present
-  if (authHeader && authHeader.startsWith("Bearer ")) {
+  if (authHeader && authHeader.startsWith('Bearer ')) {
     const token = authHeader.substring(7);
 
     try {
@@ -35,19 +35,19 @@ export const authenticate = (
         id: decoded.id,
         email: decoded.email,
         role: decoded.role as
-          | "SUPER_ADMIN"
-          | "TENANT_ADMIN"
-          | "ADMIN"
-          | "MANAGER"
-          | "STAFF",
+          | 'SUPER_ADMIN'
+          | 'TENANT_ADMIN'
+          | 'ADMIN'
+          | 'MANAGER'
+          | 'STAFF',
         tenantId: decoded.tenantId,
       };
       return next();
     } catch (error) {
       return res.status(401).json({
         success: false,
-        error: "Unauthorized",
-        message: "Invalid or expired token",
+        error: 'Unauthorized',
+        message: 'Invalid or expired token',
       });
     }
   }
@@ -57,9 +57,9 @@ export const authenticate = (
   const superAdminApiKey = process.env.SUPER_ADMIN_API_KEY;
   if (apiKey && superAdminApiKey && apiKey === superAdminApiKey) {
     req.user = {
-      id: "super-admin",
-      email: "admin@tailtown.com",
-      role: "SUPER_ADMIN",
+      id: 'super-admin',
+      email: 'admin@tailtown.com',
+      role: 'SUPER_ADMIN',
     };
     return next();
   }
@@ -67,9 +67,9 @@ export const authenticate = (
   // No valid authentication found
   return res.status(401).json({
     success: false,
-    error: "Unauthorized",
+    error: 'Unauthorized',
     message:
-      "Authentication required. Provide X-API-Key header or Bearer token.",
+      'Authentication required. Provide X-API-Key header or Bearer token.',
   });
 };
 
@@ -85,16 +85,16 @@ export const requireSuperAdmin = (
   if (!req.user) {
     return res.status(401).json({
       success: false,
-      error: "Unauthorized",
-      message: "Authentication required",
+      error: 'Unauthorized',
+      message: 'Authentication required',
     });
   }
 
-  if (req.user.role !== "SUPER_ADMIN") {
+  if (req.user.role !== 'SUPER_ADMIN') {
     return res.status(403).json({
       success: false,
-      error: "Forbidden",
-      message: "Super admin access required",
+      error: 'Forbidden',
+      message: 'Super admin access required',
     });
   }
 
@@ -112,20 +112,20 @@ export const requireTenantAdmin = (
   if (!req.user) {
     return res.status(401).json({
       success: false,
-      error: "Unauthorized",
-      message: "Authentication required",
+      error: 'Unauthorized',
+      message: 'Authentication required',
     });
   }
 
   if (
-    !["SUPER_ADMIN", "TENANT_ADMIN", "ADMIN", "Administrator"].includes(
+    !['SUPER_ADMIN', 'TENANT_ADMIN', 'ADMIN', 'Administrator'].includes(
       req.user.role
     )
   ) {
     return res.status(403).json({
       success: false,
-      error: "Forbidden",
-      message: "Admin access required",
+      error: 'Forbidden',
+      message: 'Admin access required',
     });
   }
 
@@ -143,13 +143,13 @@ export const requireTenantAccess = (
   if (!req.user) {
     return res.status(401).json({
       success: false,
-      error: "Unauthorized",
-      message: "Authentication required",
+      error: 'Unauthorized',
+      message: 'Authentication required',
     });
   }
 
   // Super admins can access any tenant
-  if (req.user.role === "SUPER_ADMIN") {
+  if (req.user.role === 'SUPER_ADMIN') {
     return next();
   }
 
@@ -161,8 +161,8 @@ export const requireTenantAccess = (
   if (req.user.tenantId !== requestedTenantId) {
     return res.status(403).json({
       success: false,
-      error: "Forbidden",
-      message: "Access denied to this tenant",
+      error: 'Forbidden',
+      message: 'Access denied to this tenant',
     });
   }
 
@@ -179,10 +179,10 @@ export const optionalAuth = (
   res: Response,
   next: NextFunction
 ) => {
-  const authHeader = req.headers["authorization"] as string;
+  const authHeader = req.headers['authorization'] as string;
 
   // Check for Bearer token
-  if (authHeader && authHeader.startsWith("Bearer ")) {
+  if (authHeader && authHeader.startsWith('Bearer ')) {
     const token = authHeader.substring(7);
 
     try {
@@ -192,10 +192,10 @@ export const optionalAuth = (
         id: decoded.id,
         email: decoded.email,
         role: decoded.role as
-          | "SUPER_ADMIN"
-          | "TENANT_ADMIN"
-          | "MANAGER"
-          | "STAFF",
+          | 'SUPER_ADMIN'
+          | 'TENANT_ADMIN'
+          | 'MANAGER'
+          | 'STAFF',
         tenantId: decoded.tenantId,
       };
     } catch (error) {

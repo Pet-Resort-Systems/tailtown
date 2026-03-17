@@ -3,9 +3,9 @@
  * Handles API calls for recurring reservation templates
  */
 
-import api from "./api";
+import api from './api';
 
-export type RecurrenceFrequency = "DAILY" | "WEEKLY" | "BIWEEKLY" | "MONTHLY";
+export type RecurrenceFrequency = 'DAILY' | 'WEEKLY' | 'BIWEEKLY' | 'MONTHLY';
 
 export interface StandingReservation {
   id: string;
@@ -70,7 +70,7 @@ export interface StandingReservationInstance {
   standingReservationId: string;
   reservationId?: string;
   scheduledDate: string;
-  status: "PENDING" | "GENERATED" | "SKIPPED" | "CANCELLED";
+  status: 'PENDING' | 'GENERATED' | 'SKIPPED' | 'CANCELLED';
   skipReason?: string;
   createdAt: string;
 }
@@ -119,7 +119,7 @@ export const standingReservationService = {
     customerId?: string;
     isActive?: boolean;
   }): Promise<StandingReservation[]> => {
-    const response = await api.get("/api/standing-reservations", { params });
+    const response = await api.get('/api/standing-reservations', { params });
     return response.data?.data || [];
   },
 
@@ -147,7 +147,7 @@ export const standingReservationService = {
   create: async (
     data: CreateStandingReservationData
   ): Promise<StandingReservation> => {
-    const response = await api.post("/api/standing-reservations", data);
+    const response = await api.post('/api/standing-reservations', data);
     return response.data?.data;
   },
 
@@ -223,36 +223,36 @@ export const standingReservationService = {
     daysOfWeek?: number[],
     dayOfMonth?: number
   ): string => {
-    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     switch (frequency) {
-      case "DAILY":
-        return "Daily";
-      case "WEEKLY":
+      case 'DAILY':
+        return 'Daily';
+      case 'WEEKLY':
         if (daysOfWeek && daysOfWeek.length > 0) {
-          return `Weekly on ${daysOfWeek.map((d) => dayNames[d]).join(", ")}`;
+          return `Weekly on ${daysOfWeek.map((d) => dayNames[d]).join(', ')}`;
         }
-        return "Weekly";
-      case "BIWEEKLY":
+        return 'Weekly';
+      case 'BIWEEKLY':
         if (daysOfWeek && daysOfWeek.length > 0) {
           return `Every 2 weeks on ${daysOfWeek
             .map((d) => dayNames[d])
-            .join(", ")}`;
+            .join(', ')}`;
         }
-        return "Every 2 weeks";
-      case "MONTHLY":
+        return 'Every 2 weeks';
+      case 'MONTHLY':
         if (dayOfMonth) {
           const suffix =
             dayOfMonth === 1
-              ? "st"
+              ? 'st'
               : dayOfMonth === 2
-              ? "nd"
-              : dayOfMonth === 3
-              ? "rd"
-              : "th";
+                ? 'nd'
+                : dayOfMonth === 3
+                  ? 'rd'
+                  : 'th';
           return `Monthly on the ${dayOfMonth}${suffix}`;
         }
-        return "Monthly";
+        return 'Monthly';
       default:
         return frequency;
     }

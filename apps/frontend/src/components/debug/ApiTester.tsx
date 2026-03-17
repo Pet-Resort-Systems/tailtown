@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Button,
@@ -6,9 +6,9 @@ import {
   Paper,
   CircularProgress,
   Alert,
-} from "@mui/material";
-import { reservationApi } from "../../services/api";
-import { formatDateToYYYYMMDD } from "../../utils/dateUtils";
+} from '@mui/material';
+import { reservationApi } from '../../services/api';
+import { formatDateToYYYYMMDD } from '../../utils/dateUtils';
 
 /**
  * Debug component to test API connectivity
@@ -27,18 +27,18 @@ const ApiTester: React.FC = () => {
     setResult(null);
 
     try {
-      console.log("Testing API connectivity...");
-      console.log("API URL:", apiUrl);
+      console.log('Testing API connectivity...');
+      console.log('API URL:', apiUrl);
 
       // Test the API connection
-      const response = await reservationApi.get("/api/resources/availability", {
+      const response = await reservationApi.get('/api/resources/availability', {
         params: {
-          resourceType: "suite",
+          resourceType: 'suite',
           date: formatDateToYYYYMMDD(new Date()),
         },
       });
 
-      console.log("API response:", response);
+      console.log('API response:', response);
       setResult({
         status: response.status,
         data: response.data,
@@ -46,10 +46,10 @@ const ApiTester: React.FC = () => {
         resourceCount: response.data?.data?.length || 0,
       });
     } catch (err: any) {
-      console.error("API test failed:", err);
+      console.error('API test failed:', err);
       setError(
         `API test failed: ${err.message}. ${
-          err.response?.status ? `Status: ${err.response.status}` : ""
+          err.response?.status ? `Status: ${err.response.status}` : ''
         }`
       );
     } finally {
@@ -80,7 +80,7 @@ const ApiTester: React.FC = () => {
         disabled={loading}
         sx={{ mb: 2 }}
       >
-        {loading ? <CircularProgress size={24} /> : "Test API Connection"}
+        {loading ? <CircularProgress size={24} /> : 'Test API Connection'}
       </Button>
 
       {error && (
@@ -102,9 +102,9 @@ const ApiTester: React.FC = () => {
               component="pre"
               sx={{
                 p: 2,
-                bgcolor: "#f5f5f5",
+                bgcolor: '#f5f5f5',
                 borderRadius: 1,
-                overflow: "auto",
+                overflow: 'auto',
                 maxHeight: 400,
               }}
             >

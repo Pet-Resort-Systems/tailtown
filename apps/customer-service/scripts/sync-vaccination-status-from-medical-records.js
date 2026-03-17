@@ -9,11 +9,11 @@
  * This ensures both sources show the same data.
  */
 
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function syncVaccinationStatus() {
-  console.log("Starting vaccination status sync from medical records...\n");
+  console.log('Starting vaccination status sync from medical records...\n');
 
   // Get all pets with vaccination medical records
   const pets = await prisma.pet.findMany({
@@ -26,7 +26,7 @@ async function syncVaccinationStatus() {
       },
       medicalRecords: {
         where: {
-          recordType: "VACCINATION",
+          recordType: 'VACCINATION',
         },
       },
     },
@@ -53,12 +53,12 @@ async function syncVaccinationStatus() {
 
       // Map vaccine descriptions to field names
       const vaccineMap = {
-        "Rabies vaccination": "Rabies",
-        "DHPP vaccination": "DHPP",
-        "Bordetella vaccination": "Bordetella",
-        "FVRCP vaccination": "FVRCP",
-        "Canine Influenza vaccination": "Influenza",
-        "Feline Leukemia vaccination": "Lepto",
+        'Rabies vaccination': 'Rabies',
+        'DHPP vaccination': 'DHPP',
+        'Bordetella vaccination': 'Bordetella',
+        'FVRCP vaccination': 'FVRCP',
+        'Canine Influenza vaccination': 'Influenza',
+        'Feline Leukemia vaccination': 'Lepto',
       };
 
       let updated = false;
@@ -68,7 +68,7 @@ async function syncVaccinationStatus() {
         if (vaccineName && record.expirationDate) {
           const expDate = new Date(record.expirationDate);
           expDate.setHours(0, 0, 0, 0);
-          const status = expDate >= today ? "CURRENT" : "EXPIRED";
+          const status = expDate >= today ? 'CURRENT' : 'EXPIRED';
 
           // Update vaccinationStatus
           vaccinationStatus[vaccineName] = {
@@ -111,7 +111,7 @@ async function syncVaccinationStatus() {
     }
   }
 
-  console.log("\n=== Summary ===");
+  console.log('\n=== Summary ===');
   console.log(
     `Total pets with vaccination records: ${petsWithVaccinations.length}`
   );
@@ -123,6 +123,6 @@ async function syncVaccinationStatus() {
 }
 
 syncVaccinationStatus().catch((error) => {
-  console.error("Script failed:", error);
+  console.error('Script failed:', error);
   process.exit(1);
 });

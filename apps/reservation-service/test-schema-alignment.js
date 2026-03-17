@@ -1,6 +1,6 @@
 /**
  * Schema Alignment Strategy Test Script
- * 
+ *
  * This script tests the reservation service endpoints to verify that
  * our schema alignment strategy is working properly.
  */
@@ -21,22 +21,22 @@ async function apiRequest(method, endpoint, data = null) {
       data,
       headers: {
         'x-tenant-id': TENANT_ID,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      validateStatus: () => true // Accept all status codes to handle schema mismatches
+      validateStatus: () => true, // Accept all status codes to handle schema mismatches
     });
-    
-    return { 
-      success: response.status >= 200 && response.status < 300, 
-      data: response.data, 
-      status: response.status 
+
+    return {
+      success: response.status >= 200 && response.status < 300,
+      data: response.data,
+      status: response.status,
     };
   } catch (error) {
     console.error('Request error:', error.message);
-    return { 
-      success: false, 
+    return {
+      success: false,
       error: error.message,
-      status: 500
+      status: 500,
     };
   }
 }
@@ -57,39 +57,51 @@ function curlRequest(endpoint) {
 // Test functions
 async function testHealthCheck() {
   console.log('\n🔍 Testing Health Check...');
-  
+
   // First try with curl for debugging
   curlRequest('/resources/health');
-  
+
   const response = await apiRequest('get', '/resources/health');
-  
+
   if (response.success) {
     console.log('✅ Health check passed:', response.data);
   } else {
-    console.log('❌ Health check failed:', response.status, response.data || response.error);
+    console.log(
+      '❌ Health check failed:',
+      response.status,
+      response.data || response.error
+    );
   }
-  
+
   return response;
 }
 
 async function testResourceList() {
   console.log('\n🔍 Testing Resource List...');
-  
+
   // First try with curl for debugging
   curlRequest('/resources');
-  
+
   const response = await apiRequest('get', '/resources');
-  
+
   if (response.success) {
-    console.log('✅ Resource list endpoint working:', 
-      `Returned ${response.data.data?.length || 0} resources with fallback empty array`);
+    console.log(
+      '✅ Resource list endpoint working:',
+      `Returned ${response.data.data?.length || 0} resources with fallback empty array`
+    );
   } else if (response.status === 500) {
-    console.log('✅ Resource list failed as expected with schema mismatch:', 
-      response.data?.message || 'Schema alignment strategy working');
+    console.log(
+      '✅ Resource list failed as expected with schema mismatch:',
+      response.data?.message || 'Schema alignment strategy working'
+    );
   } else {
-    console.log('❌ Resource list failed unexpectedly:', response.status, response.data || response.error);
+    console.log(
+      '❌ Resource list failed unexpectedly:',
+      response.status,
+      response.data || response.error
+    );
   }
-  
+
   return response;
 }
 
@@ -99,9 +111,9 @@ async function testResourceCreate() {
     name: 'Test Kennel',
     type: 'KENNEL',
     status: 'AVAILABLE',
-    capacity: 1
+    capacity: 1,
   };
-  
+
   // First try with curl for debugging
   try {
     const command = `curl -s -X POST -H "x-tenant-id: ${TENANT_ID}" -H "Content-Type: application/json" -d '${JSON.stringify(newResource)}' ${API_BASE_URL}/resources`;
@@ -111,20 +123,26 @@ async function testResourceCreate() {
   } catch (error) {
     console.error('Curl error:', error.message);
   }
-  
+
   const response = await apiRequest('post', '/resources', newResource);
-  
+
   if (response.success) {
     console.log('✅ Resource creation endpoint working:', response.data);
   } else if (response.status === 500) {
     // We expect this to fail with a 500 error due to missing table,
     // but it should return a user-friendly error message
-    console.log('✅ Resource creation failed as expected with schema mismatch:', 
-      response.data?.message || 'Schema alignment strategy working');
+    console.log(
+      '✅ Resource creation failed as expected with schema mismatch:',
+      response.data?.message || 'Schema alignment strategy working'
+    );
   } else {
-    console.log('❌ Resource creation failed unexpectedly:', response.status, response.data || response.error);
+    console.log(
+      '❌ Resource creation failed unexpectedly:',
+      response.status,
+      response.data || response.error
+    );
   }
-  
+
   return response;
 }
 
@@ -134,47 +152,68 @@ async function testResourceAvailability() {
   const resourceId = 'non-existent-id';
   const startDate = '2023-06-01';
   const endDate = '2023-06-07';
-  
+
   // First try with curl for debugging
-  curlRequest(`/resources/${resourceId}/availability?startDate=${startDate}&endDate=${endDate}`);
-  
-  const response = await apiRequest(
-    'get', 
+  curlRequest(
     `/resources/${resourceId}/availability?startDate=${startDate}&endDate=${endDate}`
   );
-  
+
+  const response = await apiRequest(
+    'get',
+    `/resources/${resourceId}/availability?startDate=${startDate}&endDate=${endDate}`
+  );
+
   if (response.success) {
-    console.log('✅ Resource availability endpoint working with fallback:', response.data);
+    console.log(
+      '✅ Resource availability endpoint working with fallback:',
+      response.data
+    );
   } else if (response.status === 404) {
-    console.log('✅ Resource availability correctly returned 404 for non-existent resource');
+    console.log(
+      '✅ Resource availability correctly returned 404 for non-existent resource'
+    );
   } else if (response.status === 500) {
-    console.log('✅ Resource availability failed as expected with schema mismatch:', 
-      response.data?.message || 'Schema alignment strategy working');
+    console.log(
+      '✅ Resource availability failed as expected with schema mismatch:',
+      response.data?.message || 'Schema alignment strategy working'
+    );
   } else {
-    console.log('❌ Resource availability failed unexpectedly:', response.status, response.data || response.error);
+    console.log(
+      '❌ Resource availability failed unexpectedly:',
+      response.status,
+      response.data || response.error
+    );
   }
-  
+
   return response;
 }
 
 async function testReservationList() {
   console.log('\n🔍 Testing Reservation List...');
-  
+
   // First try with curl for debugging
   curlRequest('/reservations');
-  
+
   const response = await apiRequest('get', '/reservations');
-  
+
   if (response.success) {
-    console.log('✅ Reservation list endpoint working:', 
-      `Returned ${response.data.data?.length || 0} reservations with fallback empty array`);
+    console.log(
+      '✅ Reservation list endpoint working:',
+      `Returned ${response.data.data?.length || 0} reservations with fallback empty array`
+    );
   } else if (response.status === 500) {
-    console.log('✅ Reservation list failed as expected with schema mismatch:', 
-      response.data?.message || 'Schema alignment strategy working');
+    console.log(
+      '✅ Reservation list failed as expected with schema mismatch:',
+      response.data?.message || 'Schema alignment strategy working'
+    );
   } else {
-    console.log('❌ Reservation list failed unexpectedly:', response.status, response.data || response.error);
+    console.log(
+      '❌ Reservation list failed unexpectedly:',
+      response.status,
+      response.data || response.error
+    );
   }
-  
+
   return response;
 }
 
@@ -182,18 +221,18 @@ async function testReservationList() {
 async function runTests() {
   console.log('🧪 Starting Schema Alignment Strategy Tests 🧪');
   console.log('===========================================');
-  
+
   await testHealthCheck();
   await testResourceList();
   await testResourceCreate();
   await testResourceAvailability();
   await testReservationList();
-  
+
   console.log('\n===========================================');
   console.log('🧪 Schema Alignment Strategy Tests Complete 🧪');
 }
 
 // Run the tests
-runTests().catch(error => {
+runTests().catch((error) => {
   console.error('Error running tests:', error);
 });

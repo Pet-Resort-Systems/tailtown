@@ -1,6 +1,6 @@
 /**
  * Reservation Management Service
- * 
+ *
  * Customer-facing reservation management operations:
  * - View reservations
  * - Modify reservations
@@ -22,7 +22,7 @@ import {
   ReservationModification,
   ModificationConstraints,
   PriceAdjustment,
-  RefundRequest
+  RefundRequest,
 } from '../types/reservationManagement';
 import { Reservation } from './reservationService';
 
@@ -31,8 +31,12 @@ export const reservationManagementService = {
    * Get customer's reservation dashboard
    * Returns upcoming, past, and cancelled reservations
    */
-  getCustomerDashboard: async (customerId: string): Promise<CustomerReservationDashboard> => {
-    const response = await customerApi.get(`/api/customers/${customerId}/reservations/dashboard`);
+  getCustomerDashboard: async (
+    customerId: string
+  ): Promise<CustomerReservationDashboard> => {
+    const response = await customerApi.get(
+      `/api/customers/${customerId}/reservations/dashboard`
+    );
     return response.data;
   },
 
@@ -43,25 +47,36 @@ export const reservationManagementService = {
     customerId: string,
     filter: 'ALL' | 'UPCOMING' | 'PAST' | 'CANCELLED' = 'ALL'
   ): Promise<ReservationSummary[]> => {
-    const response = await customerApi.get(`/api/customers/${customerId}/reservations`, {
-      params: { filter }
-    });
+    const response = await customerApi.get(
+      `/api/customers/${customerId}/reservations`,
+      {
+        params: { filter },
+      }
+    );
     return response.data;
   },
 
   /**
    * Get detailed reservation information including modification history
    */
-  getReservationDetails: async (reservationId: string): Promise<ReservationDetails> => {
-    const response = await customerApi.get(`/api/reservations/${reservationId}/details`);
+  getReservationDetails: async (
+    reservationId: string
+  ): Promise<ReservationDetails> => {
+    const response = await customerApi.get(
+      `/api/reservations/${reservationId}/details`
+    );
     return response.data;
   },
 
   /**
    * Get modification history for a reservation
    */
-  getModificationHistory: async (reservationId: string): Promise<ReservationModification[]> => {
-    const response = await customerApi.get(`/api/reservations/${reservationId}/modifications`);
+  getModificationHistory: async (
+    reservationId: string
+  ): Promise<ReservationModification[]> => {
+    const response = await customerApi.get(
+      `/api/reservations/${reservationId}/modifications`
+    );
     return response.data;
   },
 
@@ -72,13 +87,15 @@ export const reservationManagementService = {
   checkModificationEligibility: async (
     reservationId: string
   ): Promise<ModificationConstraints> => {
-    const response = await customerApi.get(`/api/reservations/${reservationId}/can-modify`);
+    const response = await customerApi.get(
+      `/api/reservations/${reservationId}/can-modify`
+    );
     return response.data;
   },
 
   /**
    * Modify a reservation
-   * 
+   *
    * Business Logic:
    * 1. Validate modification is allowed (timing, status)
    * 2. Check availability for new dates/services
@@ -118,8 +135,12 @@ export const reservationManagementService = {
   /**
    * Get applicable cancellation policy
    */
-  getCancellationPolicy: async (reservationId: string): Promise<CancellationPolicy> => {
-    const response = await customerApi.get(`/api/reservations/${reservationId}/cancellation-policy`);
+  getCancellationPolicy: async (
+    reservationId: string
+  ): Promise<CancellationPolicy> => {
+    const response = await customerApi.get(
+      `/api/reservations/${reservationId}/cancellation-policy`
+    );
     return response.data;
   },
 
@@ -128,14 +149,20 @@ export const reservationManagementService = {
    */
   calculateRefund: async (
     reservationId: string
-  ): Promise<{ refundAmount: number; refundPercentage: number; policy: CancellationPolicy }> => {
-    const response = await customerApi.get(`/api/reservations/${reservationId}/calculate-refund`);
+  ): Promise<{
+    refundAmount: number;
+    refundPercentage: number;
+    policy: CancellationPolicy;
+  }> => {
+    const response = await customerApi.get(
+      `/api/reservations/${reservationId}/calculate-refund`
+    );
     return response.data;
   },
 
   /**
    * Cancel a reservation
-   * 
+   *
    * Business Logic:
    * 1. Validate cancellation is allowed
    * 2. Apply cancellation policy
@@ -144,8 +171,13 @@ export const reservationManagementService = {
    * 5. Create refund request
    * 6. Send notifications
    */
-  cancelReservation: async (request: CancellationRequest): Promise<CancellationResult> => {
-    const response = await customerApi.post('/api/reservations/cancel', request);
+  cancelReservation: async (
+    request: CancellationRequest
+  ): Promise<CancellationResult> => {
+    const response = await customerApi.post(
+      '/api/reservations/cancel',
+      request
+    );
     return response.data;
   },
 
@@ -153,7 +185,9 @@ export const reservationManagementService = {
    * Get refund requests for a customer
    */
   getCustomerRefunds: async (customerId: string): Promise<RefundRequest[]> => {
-    const response = await customerApi.get(`/api/customers/${customerId}/refunds`);
+    const response = await customerApi.get(
+      `/api/customers/${customerId}/refunds`
+    );
     return response.data;
   },
 
@@ -164,9 +198,12 @@ export const reservationManagementService = {
     reservationId: string,
     petId: string
   ): Promise<ModifyReservationResult> => {
-    const response = await customerApi.post(`/api/reservations/${reservationId}/add-pet`, {
-      petId
-    });
+    const response = await customerApi.post(
+      `/api/reservations/${reservationId}/add-pet`,
+      {
+        petId,
+      }
+    );
     return response.data;
   },
 
@@ -177,9 +214,12 @@ export const reservationManagementService = {
     reservationId: string,
     petId: string
   ): Promise<ModifyReservationResult> => {
-    const response = await customerApi.post(`/api/reservations/${reservationId}/remove-pet`, {
-      petId
-    });
+    const response = await customerApi.post(
+      `/api/reservations/${reservationId}/remove-pet`,
+      {
+        petId,
+      }
+    );
     return response.data;
   },
 
@@ -191,10 +231,13 @@ export const reservationManagementService = {
     addOnId: string,
     quantity: number = 1
   ): Promise<ModifyReservationResult> => {
-    const response = await customerApi.post(`/api/reservations/${reservationId}/add-addon`, {
-      addOnId,
-      quantity
-    });
+    const response = await customerApi.post(
+      `/api/reservations/${reservationId}/add-addon`,
+      {
+        addOnId,
+        quantity,
+      }
+    );
     return response.data;
   },
 
@@ -218,9 +261,12 @@ export const reservationManagementService = {
     reservationId: string,
     notes: string
   ): Promise<Reservation> => {
-    const response = await customerApi.patch(`/api/reservations/${reservationId}/notes`, {
-      notes
-    });
+    const response = await customerApi.patch(
+      `/api/reservations/${reservationId}/notes`,
+      {
+        notes,
+      }
+    );
     return response.data;
   },
 
@@ -232,10 +278,10 @@ export const reservationManagementService = {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
     checkIn.setHours(0, 0, 0, 0);
-    
+
     const diffTime = checkIn.getTime() - now.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     return diffDays;
   },
 
@@ -254,7 +300,9 @@ export const reservationManagementService = {
     }
 
     // Can't modify if check-in is within 24 hours
-    const daysUntil = reservationManagementService.getDaysUntilCheckIn(reservation.startDate);
+    const daysUntil = reservationManagementService.getDaysUntilCheckIn(
+      reservation.startDate
+    );
     if (daysUntil < 1) {
       return false;
     }
@@ -281,7 +329,7 @@ export const reservationManagementService = {
 
   /**
    * CLIENT-SIDE: Calculate refund percentage based on days until check-in
-   * Default policy: 
+   * Default policy:
    * - 7+ days: 100% refund
    * - 3-6 days: 50% refund
    * - 1-2 days: 25% refund
@@ -306,7 +354,7 @@ export const reservationManagementService = {
       ADDON_REMOVED: 'Add-on Removed',
       SERVICE_CHANGE: 'Service Changed',
       NOTES_UPDATED: 'Notes Updated',
-      CANCELLED: 'Cancelled'
+      CANCELLED: 'Cancelled',
     };
     return labels[type] || type;
   },
@@ -316,7 +364,14 @@ export const reservationManagementService = {
    */
   getStatusColor: (
     status: Reservation['status']
-  ): 'default' | 'primary' | 'secondary' | 'error' | 'warning' | 'info' | 'success' => {
+  ):
+    | 'default'
+    | 'primary'
+    | 'secondary'
+    | 'error'
+    | 'warning'
+    | 'info'
+    | 'success' => {
     const colors: Record<Reservation['status'], any> = {
       PENDING: 'warning',
       CONFIRMED: 'success',
@@ -324,7 +379,7 @@ export const reservationManagementService = {
       CHECKED_OUT: 'primary',
       CANCELLED: 'error',
       COMPLETED: 'default',
-      NO_SHOW: 'error'
+      NO_SHOW: 'error',
     };
     return colors[status] || 'default';
   },
@@ -340,8 +395,8 @@ export const reservationManagementService = {
       CHECKED_OUT: 'Checked Out',
       CANCELLED: 'Cancelled',
       COMPLETED: 'Completed',
-      NO_SHOW: 'No Show'
+      NO_SHOW: 'No Show',
     };
     return labels[status] || status;
-  }
+  },
 };

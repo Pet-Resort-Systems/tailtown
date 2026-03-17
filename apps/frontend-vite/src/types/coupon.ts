@@ -1,6 +1,6 @@
 /**
  * Coupon System Types
- * 
+ *
  * Defines types for the coupon/discount system including:
  * - Percentage and fixed amount coupons
  * - Service-specific restrictions
@@ -17,30 +17,30 @@ export interface Coupon {
   code: string;
   description: string;
   type: CouponType;
-  
+
   // Discount value
   discountValue: number; // Percentage (0-100) or fixed amount in dollars
-  
+
   // Restrictions
   minimumPurchase?: number; // Minimum purchase amount required
   serviceIds?: string[]; // If specified, only applies to these services
   firstTimeCustomersOnly?: boolean;
-  
+
   // Date restrictions
   validFrom: Date | string;
   validUntil: Date | string;
-  
+
   // Usage limits
   maxTotalUses?: number; // Total number of times coupon can be used
   maxUsesPerCustomer?: number; // Max uses per customer (default: 1)
   currentUses: number; // Current number of times used
-  
+
   // Metadata
   status: CouponStatus;
   createdAt: Date | string;
   updatedAt: Date | string;
   createdBy?: string; // Staff member who created it
-  
+
   // Tracking
   isReferralCoupon?: boolean;
   referralCustomerId?: string; // If this is a referral coupon

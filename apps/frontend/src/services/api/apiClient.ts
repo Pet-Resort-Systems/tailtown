@@ -44,7 +44,7 @@ export const createApiClient = (
     attachTenantId = config.api.includeTenantId,
     defaultHeaders = {},
     enableLogging = true,
-    timeout = config.api.timeout
+    timeout = config.api.timeout,
   } = options;
 
   // Create the API instance
@@ -53,9 +53,9 @@ export const createApiClient = (
     timeout,
     headers: {
       'Content-Type': 'application/json',
-      ...defaultHeaders
+      ...defaultHeaders,
     },
-    validateStatus: (status) => status < 500 // Don't reject on 4xx errors
+    validateStatus: (status) => status < 500, // Don't reject on 4xx errors
   });
 
   // Attach tenant ID if enabled
@@ -64,18 +64,23 @@ export const createApiClient = (
       (config) => {
         const tenantId = getTenantId();
         if (tenantId) {
-          config.headers = { 
-            ...(config.headers || {}), 
-            'x-tenant-id': tenantId 
+          config.headers = {
+            ...(config.headers || {}),
+            'x-tenant-id': tenantId,
           } as any;
         } else if (process.env.NODE_ENV === 'development') {
           console.warn('No tenant ID found; using default "dev" tenant');
-          config.headers = { 
-            ...(config.headers || {}), 
-            'x-tenant-id': (localStorage.getItem('tailtown_tenant_id') || localStorage.getItem('tenantId') || 'dev') 
+          config.headers = {
+            ...(config.headers || {}),
+            'x-tenant-id':
+              localStorage.getItem('tailtown_tenant_id') ||
+              localStorage.getItem('tenantId') ||
+              'dev',
           } as any;
         } else {
-          console.warn('Tenant ID not set; requests may be rejected by the server');
+          console.warn(
+            'Tenant ID not set; requests may be rejected by the server'
+          );
         }
         return config;
       },
@@ -89,10 +94,13 @@ export const createApiClient = (
     instance.interceptors.request.use(
       (config) => {
         if (process.env.NODE_ENV === 'development') {
-          console.log(`API Request: ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`, {
-            params: config.params,
-            data: config.data
-          });
+          console.log(
+            `API Request: ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`,
+            {
+              params: config.params,
+              data: config.data,
+            }
+          );
         }
         return config;
       },
@@ -106,7 +114,9 @@ export const createApiClient = (
     instance.interceptors.response.use(
       (response) => {
         if (process.env.NODE_ENV === 'development') {
-          console.log(`API Response: ${response.status} ${response.config.method?.toUpperCase()} ${response.config.url}`);
+          console.log(
+            `API Response: ${response.status} ${response.config.method?.toUpperCase()} ${response.config.url}`
+          );
         }
         return response;
       },
@@ -115,7 +125,7 @@ export const createApiClient = (
           message: error.message,
           status: error.response?.status,
           data: error.response?.data,
-          url: error.config?.url
+          url: error.config?.url,
         });
         return Promise.reject(error);
       }
@@ -130,7 +140,9 @@ export const createApiClient = (
  * @param apiCall - Promise that returns an AxiosResponse
  * @returns The data from the response, or null if there was an error
  */
-export const safeApiCall = async <T>(apiCall: Promise<AxiosResponse<T>>): Promise<T | null> => {
+export const safeApiCall = async <T>(
+  apiCall: Promise<AxiosResponse<T>>
+): Promise<T | null> => {
   try {
     const response = await apiCall;
     return response.data;
@@ -138,7 +150,7 @@ export const safeApiCall = async <T>(apiCall: Promise<AxiosResponse<T>>): Promis
     console.error('API call failed:', error.message);
     console.error('Error details:', {
       status: error.response?.status,
-      data: error.response?.data
+      data: error.response?.data,
     });
     return null;
   }
@@ -155,7 +167,7 @@ export const normalizeResponse = <T>(response: any): T => {
   // 2. { data: { ... } }
   // 3. { someEntity: { ... } }
   // 4. { ... } (direct data)
-  
+
   if (response?.data?.data) {
     return response.data.data as T;
   } else if (response?.data) {

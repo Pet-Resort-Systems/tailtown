@@ -4,8 +4,8 @@
  * Tracks key performance indicators and system health metrics
  */
 
-import { Request, Response, NextFunction } from "express";
-import { logger } from "./logger";
+import { Request, Response, NextFunction } from 'express';
+import { logger } from './logger';
 
 // Metrics storage
 interface Metrics {
@@ -84,7 +84,7 @@ class MonitoringService {
   requestTracker() {
     return (req: Request, res: Response, next: NextFunction) => {
       const startTime = Date.now();
-      const tenantId = (req as any).tenantId || "unknown";
+      const tenantId = (req as any).tenantId || 'unknown';
       const endpoint = `${req.method} ${req.path}`;
 
       // Track request
@@ -93,7 +93,7 @@ class MonitoringService {
       this.incrementMap(this.metrics.requests.byEndpoint, endpoint);
 
       // Track response
-      res.on("finish", () => {
+      res.on('finish', () => {
         const duration = Date.now() - startTime;
 
         // Track response time
@@ -264,7 +264,7 @@ class MonitoringService {
     }
 
     return {
-      status: issues.length === 0 ? "healthy" : "degraded",
+      status: issues.length === 0 ? 'healthy' : 'degraded',
       issues,
     };
   }
@@ -275,7 +275,7 @@ class MonitoringService {
   checkAlerts(): Array<{
     type: string;
     message: string;
-    severity: "warning" | "critical";
+    severity: 'warning' | 'critical';
   }> {
     const alerts = [];
 
@@ -284,28 +284,28 @@ class MonitoringService {
       this.metrics.errors.total / Math.max(this.metrics.requests.total, 1);
     if (errorRate > 0.1) {
       alerts.push({
-        type: "high_error_rate",
+        type: 'high_error_rate',
         message: `Error rate is ${(errorRate * 100).toFixed(
           2
         )}% (threshold: 10%)`,
-        severity: "critical" as const,
+        severity: 'critical' as const,
       });
     } else if (errorRate > 0.05) {
       alerts.push({
-        type: "elevated_error_rate",
+        type: 'elevated_error_rate',
         message: `Error rate is ${(errorRate * 100).toFixed(
           2
         )}% (threshold: 5%)`,
-        severity: "warning" as const,
+        severity: 'warning' as const,
       });
     }
 
     // Slow response times
     if (this.metrics.responseTimes.p95 > 1000) {
       alerts.push({
-        type: "slow_response_times",
+        type: 'slow_response_times',
         message: `P95 response time is ${this.metrics.responseTimes.p95}ms (threshold: 1000ms)`,
-        severity: "warning" as const,
+        severity: 'warning' as const,
       });
     }
 
@@ -314,11 +314,11 @@ class MonitoringService {
       this.metrics.rateLimits.hits / Math.max(this.metrics.requests.total, 1);
     if (rateLimitRate > 0.2) {
       alerts.push({
-        type: "high_rate_limit_hits",
+        type: 'high_rate_limit_hits',
         message: `${(rateLimitRate * 100).toFixed(
           2
         )}% of requests are rate limited`,
-        severity: "warning" as const,
+        severity: 'warning' as const,
       });
     }
 
@@ -328,11 +328,11 @@ class MonitoringService {
       Math.max(this.metrics.database.queries, 1);
     if (slowQueryRate > 0.1) {
       alerts.push({
-        type: "slow_queries",
+        type: 'slow_queries',
         message: `${(slowQueryRate * 100).toFixed(
           2
         )}% of queries are slow (>100ms)`,
-        severity: "warning" as const,
+        severity: 'warning' as const,
       });
     }
 

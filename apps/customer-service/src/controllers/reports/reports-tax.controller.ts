@@ -8,16 +8,16 @@
  * - getTaxBreakdownReport
  */
 
-import { Response, NextFunction } from "express";
-import { AppError } from "../../middleware/error.middleware";
-import { TenantRequest } from "../../middleware/tenant.middleware";
+import { Response, NextFunction } from 'express';
+import { AppError } from '../../middleware/error.middleware';
+import { TenantRequest } from '../../middleware/tenant.middleware';
 import {
   getMonthlyTaxReport,
   getQuarterlyTaxReport,
   getAnnualTaxReport,
   getTaxBreakdown,
-} from "../../services/taxReportService";
-import { logger } from "../../utils/logger";
+} from '../../services/taxReportService';
+import { logger } from '../../utils/logger';
 
 /**
  * GET /api/reports/tax/monthly
@@ -29,11 +29,11 @@ export const getMonthlyTax = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { year, month } = req.query;
 
     if (!year || !month) {
-      return next(new AppError("year and month parameters are required", 400));
+      return next(new AppError('year and month parameters are required', 400));
     }
 
     const report = await getMonthlyTaxReport(
@@ -49,9 +49,9 @@ export const getMonthlyTax = async (
         : 0;
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "tax_monthly",
+        reportType: 'tax_monthly',
         title: `Monthly Tax Report - ${report.monthName}`,
         generatedAt: new Date(),
         filters: { year, month },
@@ -64,8 +64,8 @@ export const getMonthlyTax = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating monthly tax report", { error });
-    return next(new AppError("Failed to generate monthly tax report", 500));
+    logger.error('Error generating monthly tax report', { error });
+    return next(new AppError('Failed to generate monthly tax report', 500));
   }
 };
 
@@ -79,12 +79,12 @@ export const getQuarterlyTax = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { year, quarter } = req.query;
 
     if (!year || !quarter) {
       return next(
-        new AppError("year and quarter parameters are required", 400)
+        new AppError('year and quarter parameters are required', 400)
       );
     }
 
@@ -95,9 +95,9 @@ export const getQuarterlyTax = async (
     );
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "tax_quarterly",
+        reportType: 'tax_quarterly',
         title: `Quarterly Tax Report - ${report.quarterName}`,
         generatedAt: new Date(),
         filters: { year, quarter },
@@ -110,8 +110,8 @@ export const getQuarterlyTax = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating quarterly tax report", { error });
-    return next(new AppError("Failed to generate quarterly tax report", 500));
+    logger.error('Error generating quarterly tax report', { error });
+    return next(new AppError('Failed to generate quarterly tax report', 500));
   }
 };
 
@@ -125,19 +125,19 @@ export const getAnnualTax = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { year } = req.query;
 
     if (!year) {
-      return next(new AppError("year parameter is required", 400));
+      return next(new AppError('year parameter is required', 400));
     }
 
     const report = await getAnnualTaxReport(tenantId, parseInt(year as string));
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "tax_annual",
+        reportType: 'tax_annual',
         title: `Annual Tax Report - ${year}`,
         generatedAt: new Date(),
         filters: { year },
@@ -150,8 +150,8 @@ export const getAnnualTax = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating annual tax report", { error });
-    return next(new AppError("Failed to generate annual tax report", 500));
+    logger.error('Error generating annual tax report', { error });
+    return next(new AppError('Failed to generate annual tax report', 500));
   }
 };
 
@@ -165,12 +165,12 @@ export const getTaxBreakdownReport = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
       return next(
-        new AppError("startDate and endDate parameters are required", 400)
+        new AppError('startDate and endDate parameters are required', 400)
       );
     }
 
@@ -187,9 +187,9 @@ export const getTaxBreakdownReport = async (
     const totalTax = report.reduce((sum, item) => sum + item.taxAmount, 0);
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "tax_breakdown",
+        reportType: 'tax_breakdown',
         title: `Tax Breakdown - ${startDate} to ${endDate}`,
         generatedAt: new Date(),
         filters: { startDate, endDate },
@@ -201,7 +201,7 @@ export const getTaxBreakdownReport = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating tax breakdown report", { error });
-    return next(new AppError("Failed to generate tax breakdown report", 500));
+    logger.error('Error generating tax breakdown report', { error });
+    return next(new AppError('Failed to generate tax breakdown report', 500));
   }
 };

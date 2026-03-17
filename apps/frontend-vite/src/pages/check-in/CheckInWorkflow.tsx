@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container,
   Box,
@@ -20,40 +20,40 @@ import {
   Divider,
   Link,
   Tooltip,
-} from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import WarningIcon from "@mui/icons-material/Warning";
-import InfoIcon from "@mui/icons-material/Info";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import RestaurantIcon from "@mui/icons-material/Restaurant";
-import GroupsIcon from "@mui/icons-material/Groups";
+} from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import WarningIcon from '@mui/icons-material/Warning';
+import InfoIcon from '@mui/icons-material/Info';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import RestaurantIcon from '@mui/icons-material/Restaurant';
+import GroupsIcon from '@mui/icons-material/Groups';
 import checkInService, {
   CheckInTemplate,
   CheckInResponse,
   CheckInMedication,
   CheckInBelonging,
-} from "../../services/checkInService";
-import { reservationService } from "../../services/reservationService";
-import MedicationForm from "../../components/check-in/MedicationForm";
-import BelongingsForm from "../../components/check-in/BelongingsForm";
-import SignatureCapture from "../../components/check-in/SignatureCapture";
-import PetSummaryCard from "../../components/check-in/PetSummaryCard";
-import MultiPetCheckIn from "../../components/check-in/MultiPetCheckIn";
-import { customerService } from "../../services/customerService";
+} from '../../services/checkInService';
+import { reservationService } from '../../services/reservationService';
+import MedicationForm from '../../components/check-in/MedicationForm';
+import BelongingsForm from '../../components/check-in/BelongingsForm';
+import SignatureCapture from '../../components/check-in/SignatureCapture';
+import PetSummaryCard from '../../components/check-in/PetSummaryCard';
+import MultiPetCheckIn from '../../components/check-in/MultiPetCheckIn';
+import { customerService } from '../../services/customerService';
 
 const STEPS = [
-  "Pet Summary",
-  "Questionnaire",
-  "Medications",
-  "Belongings",
-  "Service Agreement",
-  "Review & Complete",
+  'Pet Summary',
+  'Questionnaire',
+  'Medications',
+  'Belongings',
+  'Service Agreement',
+  'Review & Complete',
 ];
 
 // Local storage key for draft check-ins
-const DRAFT_STORAGE_KEY = "tailtown_checkin_draft_";
+const DRAFT_STORAGE_KEY = 'tailtown_checkin_draft_';
 
 const CheckInWorkflow: React.FC = () => {
   const { reservationId } = useParams<{ reservationId: string }>();
@@ -71,8 +71,8 @@ const CheckInWorkflow: React.FC = () => {
   const [responses, setResponses] = useState<{ [key: string]: any }>({});
   const [medications, setMedications] = useState<CheckInMedication[]>([]);
   const [belongings, setBelongings] = useState<CheckInBelonging[]>([]);
-  const [signature, setSignature] = useState("");
-  const [customerName, setCustomerName] = useState("");
+  const [signature, setSignature] = useState('');
+  const [customerName, setCustomerName] = useState('');
   const [initials, setInitials] = useState<{ [key: string]: string }>({});
   const [pet, setPet] = useState<any>(null);
   const [existingAgreement, setExistingAgreement] = useState<any>(null);
@@ -140,7 +140,7 @@ const CheckInWorkflow: React.FC = () => {
           const petData = await customerService.getPetById(resData.petId);
           setPet(petData);
         } catch (petErr) {
-          console.error("Error loading pet:", petErr);
+          console.error('Error loading pet:', petErr);
         }
       }
 
@@ -152,7 +152,7 @@ const CheckInWorkflow: React.FC = () => {
           );
           setCustomer(customerData);
         } catch (custErr) {
-          console.error("Error loading customer:", custErr);
+          console.error('Error loading customer:', custErr);
         }
       }
 
@@ -162,7 +162,7 @@ const CheckInWorkflow: React.FC = () => {
           reservationId!
         );
         const completedCheckIn = checkInsResponse.data?.find(
-          (c: any) => c.status === "COMPLETED"
+          (c: any) => c.status === 'COMPLETED'
         );
         if (completedCheckIn) {
           // Try to load the service agreement for this check-in
@@ -172,7 +172,7 @@ const CheckInWorkflow: React.FC = () => {
             if (agreementResponse?.data?.signature) {
               setExistingAgreement(agreementResponse.data);
               setSignature(agreementResponse.data.signature);
-              setCustomerName(agreementResponse.data.signedBy || "");
+              setCustomerName(agreementResponse.data.signedBy || '');
             }
           } catch (agreementErr) {
             // No agreement found, that's ok
@@ -182,8 +182,8 @@ const CheckInWorkflow: React.FC = () => {
         // No check-ins found, that's ok
       }
     } catch (err: any) {
-      console.error("Error loading check-in data:", err);
-      setError(err.response?.data?.message || "Failed to load check-in data");
+      console.error('Error loading check-in data:', err);
+      setError(err.response?.data?.message || 'Failed to load check-in data');
     } finally {
       setLoading(false);
     }
@@ -192,11 +192,11 @@ const CheckInWorkflow: React.FC = () => {
   const handleNext = () => {
     // Validate current step
     if (activeStep === 1 && !validateQuestionnaire()) {
-      setError("Please answer all required questions");
+      setError('Please answer all required questions');
       return;
     }
     if (activeStep === 4 && !validateAgreement()) {
-      setError("Please complete the service agreement");
+      setError('Please complete the service agreement');
       return;
     }
 
@@ -253,7 +253,7 @@ const CheckInWorkflow: React.FC = () => {
       };
       localStorage.setItem(getDraftKey(), JSON.stringify(draft));
     } catch (err) {
-      console.error("Error saving draft to server:", err);
+      console.error('Error saving draft to server:', err);
       // Fall back to localStorage only
       const draft = {
         activeStep,
@@ -317,7 +317,7 @@ const CheckInWorkflow: React.FC = () => {
               setCustomerName(localDraft.customerName);
             if (localDraft.initials) setInitials(localDraft.initials);
           } catch (e) {
-            console.error("Error loading signature from localStorage:", e);
+            console.error('Error loading signature from localStorage:', e);
           }
         }
       } else {
@@ -325,7 +325,7 @@ const CheckInWorkflow: React.FC = () => {
         checkForLocalDraft();
       }
     } catch (err) {
-      console.error("Error loading server draft:", err);
+      console.error('Error loading server draft:', err);
       checkForLocalDraft();
     }
   };
@@ -359,7 +359,7 @@ const CheckInWorkflow: React.FC = () => {
         if (draft.customerName) setCustomerName(draft.customerName);
         setHasDraft(false);
       } catch (e) {
-        console.error("Error loading draft:", e);
+        console.error('Error loading draft:', e);
       }
     }
   };
@@ -376,7 +376,7 @@ const CheckInWorkflow: React.FC = () => {
       await customerService.updatePet(pet.id, updates);
       setPet({ ...pet, ...updates });
     } catch (err) {
-      console.error("Error updating pet:", err);
+      console.error('Error updating pet:', err);
     }
   };
 
@@ -389,7 +389,7 @@ const CheckInWorkflow: React.FC = () => {
       await customerService.updateCustomer(customer.id, updates);
       setCustomer({ ...customer, ...updates });
     } catch (err) {
-      console.error("Error updating customer:", err);
+      console.error('Error updating customer:', err);
     }
   };
 
@@ -413,8 +413,8 @@ const CheckInWorkflow: React.FC = () => {
   // Get validation status for each step
   const getStepStatus = (
     stepIndex: number
-  ): "complete" | "error" | "warning" | "pending" => {
-    if (stepCompletion[stepIndex]) return "complete";
+  ): 'complete' | 'error' | 'warning' | 'pending' => {
+    if (stepCompletion[stepIndex]) return 'complete';
 
     switch (stepIndex) {
       case 0: // Pet Summary - check for expired vaccines
@@ -423,27 +423,27 @@ const CheckInWorkflow: React.FC = () => {
           const hasExpired = Object.values(pet.vaccineExpirations).some(
             (expDate: any) => new Date(expDate) < today
           );
-          if (hasExpired) return "error";
+          if (hasExpired) return 'error';
         }
-        return "pending";
+        return 'pending';
       case 1: // Questionnaire
         if (Object.keys(responses).length > 0 && !validateQuestionnaire()) {
-          return "warning"; // Partially filled
+          return 'warning'; // Partially filled
         }
-        return Object.keys(responses).length > 0 ? "complete" : "pending";
+        return Object.keys(responses).length > 0 ? 'complete' : 'pending';
       case 2: // Medications
-        return medications.length > 0 ? "complete" : "pending";
+        return medications.length > 0 ? 'complete' : 'pending';
       case 3: // Belongings
-        return belongings.length > 0 ? "complete" : "pending";
+        return belongings.length > 0 ? 'complete' : 'pending';
       case 4: // Service Agreement
-        if (existingAgreement) return "complete";
-        if (signature && customerName) return "complete";
-        if (signature || customerName) return "warning";
-        return "pending";
+        if (existingAgreement) return 'complete';
+        if (signature && customerName) return 'complete';
+        if (signature || customerName) return 'warning';
+        return 'pending';
       case 5: // Review
-        return "pending";
+        return 'pending';
       default:
-        return "pending";
+        return 'pending';
     }
   };
 
@@ -452,7 +452,7 @@ const CheckInWorkflow: React.FC = () => {
     if (!template || Object.keys(responses).length === 0) return null;
 
     const feedingSection = template.sections.find((s) =>
-      s.title.toLowerCase().includes("feeding")
+      s.title.toLowerCase().includes('feeding')
     );
     if (!feedingSection) return null;
 
@@ -464,16 +464,16 @@ const CheckInWorkflow: React.FC = () => {
 
       const qText = question.questionText.toLowerCase();
 
-      if (qText.includes("when") && qText.includes("fed")) {
+      if (qText.includes('when') && qText.includes('fed')) {
         parts.push(response);
-      } else if (qText.includes("how much") || qText.includes("per meal")) {
+      } else if (qText.includes('how much') || qText.includes('per meal')) {
         parts.push(response);
-      } else if (qText.includes("meals per day")) {
+      } else if (qText.includes('meals per day')) {
         parts.push(`${response} meals/day`);
       }
     }
 
-    return parts.length > 0 ? parts.join(", ") : null;
+    return parts.length > 0 ? parts.join(', ') : null;
   };
 
   // Check if all required steps are complete for final submission
@@ -510,7 +510,7 @@ const CheckInWorkflow: React.FC = () => {
 
         const sharedData = {
           templateId: template?.id,
-          checkInBy: "staff",
+          checkInBy: 'staff',
           medications,
           belongings,
         };
@@ -549,7 +549,7 @@ const CheckInWorkflow: React.FC = () => {
           customerId: reservation.customerId,
           reservationId: reservation.id,
           templateId: template?.id,
-          checkInBy: "staff",
+          checkInBy: 'staff',
           responses: responseArray,
           medications,
           belongings,
@@ -575,7 +575,7 @@ const CheckInWorkflow: React.FC = () => {
 
         // Update reservation status to CHECKED_IN
         await reservationService.updateReservation(reservationId!, {
-          status: "CHECKED_IN",
+          status: 'CHECKED_IN',
         });
 
         // Success! Navigate to confirmation
@@ -585,8 +585,8 @@ const CheckInWorkflow: React.FC = () => {
       // Don't clear draft immediately - keep signature visible if user navigates back
       // Draft will be overwritten on next check-in for this reservation
     } catch (err: any) {
-      console.error("Error creating check-in:", err);
-      setError(err.response?.data?.message || "Failed to create check-in");
+      console.error('Error creating check-in:', err);
+      setError(err.response?.data?.message || 'Failed to create check-in');
     } finally {
       setSubmitting(false);
     }
@@ -622,10 +622,10 @@ const CheckInWorkflow: React.FC = () => {
   };
 
   const renderQuestion = (question: any) => {
-    const value = responses[question.id] || "";
+    const value = responses[question.id] || '';
 
     switch (question.questionType) {
-      case "TEXT":
+      case 'TEXT':
         return (
           <TextField
             fullWidth
@@ -640,7 +640,7 @@ const CheckInWorkflow: React.FC = () => {
           />
         );
 
-      case "LONG_TEXT":
+      case 'LONG_TEXT':
         return (
           <TextField
             fullWidth
@@ -657,7 +657,7 @@ const CheckInWorkflow: React.FC = () => {
           />
         );
 
-      case "NUMBER":
+      case 'NUMBER':
         return (
           <TextField
             fullWidth
@@ -673,7 +673,7 @@ const CheckInWorkflow: React.FC = () => {
           />
         );
 
-      case "YES_NO":
+      case 'YES_NO':
         return (
           <FormControl fullWidth required={question.isRequired}>
             <InputLabel>{question.questionText}</InputLabel>
@@ -699,7 +699,7 @@ const CheckInWorkflow: React.FC = () => {
           </FormControl>
         );
 
-      case "MULTIPLE_CHOICE":
+      case 'MULTIPLE_CHOICE':
         return (
           <FormControl fullWidth required={question.isRequired}>
             <InputLabel>{question.questionText}</InputLabel>
@@ -728,7 +728,7 @@ const CheckInWorkflow: React.FC = () => {
           </FormControl>
         );
 
-      case "TIME":
+      case 'TIME':
         return (
           <TextField
             fullWidth
@@ -744,7 +744,7 @@ const CheckInWorkflow: React.FC = () => {
           />
         );
 
-      case "DATE":
+      case 'DATE':
         return (
           <TextField
             fullWidth
@@ -770,11 +770,11 @@ const CheckInWorkflow: React.FC = () => {
 
     return (
       <Box>
-        <Paper sx={{ p: 3, mb: 3, maxHeight: "400px", overflow: "auto" }}>
-          <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
+        <Paper sx={{ p: 3, mb: 3, maxHeight: '400px', overflow: 'auto' }}>
+          <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
             {agreementTemplate.content
               .replace(/{{CUSTOMER_NAME}}/g, customerName)
-              .replace(/{{PET_NAME}}/g, reservation?.pet?.name || "")
+              .replace(/{{PET_NAME}}/g, reservation?.pet?.name || '')
               .replace(/{{DATE}}/g, new Date().toLocaleDateString())
               .replace(
                 /{{CHECKIN_DATE}}/g,
@@ -784,8 +784,8 @@ const CheckInWorkflow: React.FC = () => {
                 /{{CHECKOUT_DATE}}/g,
                 new Date(reservation?.endDate).toLocaleDateString()
               )
-              .replace(/{{INITIAL_\d+}}/g, "[_____]")
-              .replace(/{{SIGNATURE}}/g, "")}
+              .replace(/{{INITIAL_\d+}}/g, '[_____]')
+              .replace(/{{SIGNATURE}}/g, '')}
           </Typography>
         </Paper>
 
@@ -813,19 +813,19 @@ const CheckInWorkflow: React.FC = () => {
                 variant="outlined"
                 sx={{
                   p: 2,
-                  backgroundColor: "grey.50",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
+                  backgroundColor: 'grey.50',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
                 }}
               >
                 <img
                   src={existingAgreement.signature}
                   alt="Signature"
                   style={{
-                    maxWidth: "100%",
-                    maxHeight: "150px",
-                    objectFit: "contain",
+                    maxWidth: '100%',
+                    maxHeight: '150px',
+                    objectFit: 'contain',
                   }}
                 />
                 <Typography
@@ -833,7 +833,7 @@ const CheckInWorkflow: React.FC = () => {
                   color="text.secondary"
                   sx={{ mt: 1 }}
                 >
-                  Signed by {existingAgreement.signedBy} on{" "}
+                  Signed by {existingAgreement.signedBy} on{' '}
                   {new Date(existingAgreement.signedAt).toLocaleString()}
                 </Typography>
               </Paper>
@@ -921,7 +921,7 @@ const CheckInWorkflow: React.FC = () => {
             Signed by: {customerName}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Signature: {signature ? "✓ Captured" : "✗ Missing"}
+            Signature: {signature ? '✓ Captured' : '✗ Missing'}
           </Typography>
         </Paper>
       </Box>
@@ -933,10 +933,10 @@ const CheckInWorkflow: React.FC = () => {
       <Container>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            minHeight: "400px",
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '400px',
           }}
         >
           <CircularProgress />
@@ -989,18 +989,18 @@ const CheckInWorkflow: React.FC = () => {
               return (
                 <Step
                   key={label}
-                  completed={status === "complete"}
-                  sx={{ cursor: "pointer" }}
+                  completed={status === 'complete'}
+                  sx={{ cursor: 'pointer' }}
                   onClick={() => setActiveStep(index)}
                 >
                   <StepLabel
-                    error={status === "error"}
+                    error={status === 'error'}
                     optional={
-                      status === "warning" ? (
+                      status === 'warning' ? (
                         <Typography variant="caption" color="warning.main">
                           Incomplete
                         </Typography>
-                      ) : status === "error" ? (
+                      ) : status === 'error' ? (
                         <Typography variant="caption" color="error">
                           Action Required
                         </Typography>
@@ -1009,18 +1009,18 @@ const CheckInWorkflow: React.FC = () => {
                     StepIconProps={{
                       sx: {
                         color:
-                          status === "error"
-                            ? "error.main"
-                            : status === "warning"
-                            ? "warning.main"
-                            : undefined,
-                        cursor: "pointer",
+                          status === 'error'
+                            ? 'error.main'
+                            : status === 'warning'
+                              ? 'warning.main'
+                              : undefined,
+                        cursor: 'pointer',
                       },
                     }}
                     sx={{
-                      cursor: "pointer",
-                      "& .MuiStepLabel-label": {
-                        cursor: "pointer",
+                      cursor: 'pointer',
+                      '& .MuiStepLabel-label': {
+                        cursor: 'pointer',
                       },
                     }}
                   >
@@ -1042,7 +1042,7 @@ const CheckInWorkflow: React.FC = () => {
         {activeStep === 0 && (
           <>
             {/* Integration Points - Quick Links */}
-            <Paper sx={{ p: 2, mb: 3, bgcolor: "grey.50" }}>
+            <Paper sx={{ p: 2, mb: 3, bgcolor: 'grey.50' }}>
               <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} sm={6} md={3}>
                   <Typography variant="subtitle2" color="text.secondary">
@@ -1051,7 +1051,7 @@ const CheckInWorkflow: React.FC = () => {
                   <Link
                     href={`/reservations/${reservationId}`}
                     target="_blank"
-                    sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
+                    sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
                   >
                     #{reservationId?.slice(0, 8)}...
                     <OpenInNewIcon fontSize="small" />
@@ -1064,7 +1064,7 @@ const CheckInWorkflow: React.FC = () => {
                   <Link
                     href={`/customers/${reservation?.customerId}`}
                     target="_blank"
-                    sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
+                    sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
                   >
                     {customerName}
                     <OpenInNewIcon fontSize="small" />
@@ -1075,7 +1075,7 @@ const CheckInWorkflow: React.FC = () => {
                     Stay Dates
                   </Typography>
                   <Typography variant="body2">
-                    {new Date(reservation?.startDate).toLocaleDateString()} -{" "}
+                    {new Date(reservation?.startDate).toLocaleDateString()} -{' '}
                     {new Date(reservation?.endDate).toLocaleDateString()}
                   </Typography>
                 </Grid>
@@ -1084,7 +1084,7 @@ const CheckInWorkflow: React.FC = () => {
                     Assigned Room
                   </Typography>
                   <Typography variant="body2">
-                    {reservation?.resource?.name || "Not assigned"}
+                    {reservation?.resource?.name || 'Not assigned'}
                   </Typography>
                 </Grid>
               </Grid>
@@ -1095,7 +1095,7 @@ const CheckInWorkflow: React.FC = () => {
               <Paper sx={{ p: 2, mb: 3 }}>
                 <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
                   <InfoIcon
-                    sx={{ mr: 1, verticalAlign: "middle", fontSize: 20 }}
+                    sx={{ mr: 1, verticalAlign: 'middle', fontSize: 20 }}
                   />
                   Pet Profile (Auto-populated)
                 </Typography>
@@ -1104,7 +1104,7 @@ const CheckInWorkflow: React.FC = () => {
                   {(pet.playgroupCompatibility || pet.idealPlayGroup) && (
                     <Grid item xs={12} sm={6} md={4}>
                       <Box
-                        sx={{ p: 1.5, bgcolor: "primary.50", borderRadius: 1 }}
+                        sx={{ p: 1.5, bgcolor: 'primary.50', borderRadius: 1 }}
                       >
                         <Typography
                           variant="caption"
@@ -1114,14 +1114,14 @@ const CheckInWorkflow: React.FC = () => {
                           <GroupsIcon
                             sx={{
                               fontSize: 14,
-                              verticalAlign: "middle",
+                              verticalAlign: 'middle',
                               mr: 0.5,
                             }}
                           />
                           Play Group
                         </Typography>
                         <Typography variant="body2" fontWeight="medium">
-                          {pet.playgroupCompatibility?.replace(/_/g, " ") ||
+                          {pet.playgroupCompatibility?.replace(/_/g, ' ') ||
                             pet.idealPlayGroup}
                         </Typography>
                       </Box>
@@ -1131,7 +1131,7 @@ const CheckInWorkflow: React.FC = () => {
                   {/* Feeding - prioritize questionnaire responses over stale pet data */}
                   {(getFeedingScheduleSummary() || pet.foodNotes) && (
                     <Grid item xs={12} sm={6} md={4}>
-                      <Box sx={{ p: 1.5, bgcolor: "info.50", borderRadius: 1 }}>
+                      <Box sx={{ p: 1.5, bgcolor: 'info.50', borderRadius: 1 }}>
                         <Typography
                           variant="caption"
                           color="text.secondary"
@@ -1140,13 +1140,13 @@ const CheckInWorkflow: React.FC = () => {
                           <RestaurantIcon
                             sx={{
                               fontSize: 14,
-                              verticalAlign: "middle",
+                              verticalAlign: 'middle',
                               mr: 0.5,
                             }}
                           />
                           {getFeedingScheduleSummary()
-                            ? "Feeding Schedule"
-                            : "Feeding Notes (from profile)"}
+                            ? 'Feeding Schedule'
+                            : 'Feeding Notes (from profile)'}
                         </Typography>
                         <Typography variant="body2" fontWeight="medium">
                           {getFeedingScheduleSummary() || pet.foodNotes}
@@ -1159,7 +1159,7 @@ const CheckInWorkflow: React.FC = () => {
                   {pet.allergies && (
                     <Grid item xs={12} sm={6} md={4}>
                       <Box
-                        sx={{ p: 1.5, bgcolor: "error.50", borderRadius: 1 }}
+                        sx={{ p: 1.5, bgcolor: 'error.50', borderRadius: 1 }}
                       >
                         <Typography
                           variant="caption"
@@ -1169,7 +1169,7 @@ const CheckInWorkflow: React.FC = () => {
                           <WarningIcon
                             sx={{
                               fontSize: 14,
-                              verticalAlign: "middle",
+                              verticalAlign: 'middle',
                               mr: 0.5,
                             }}
                           />
@@ -1190,7 +1190,7 @@ const CheckInWorkflow: React.FC = () => {
                   {pet.medicationNotes && (
                     <Grid item xs={12} sm={6} md={4}>
                       <Box
-                        sx={{ p: 1.5, bgcolor: "warning.50", borderRadius: 1 }}
+                        sx={{ p: 1.5, bgcolor: 'warning.50', borderRadius: 1 }}
                       >
                         <Typography
                           variant="caption"
@@ -1210,7 +1210,7 @@ const CheckInWorkflow: React.FC = () => {
                   {pet.behaviorNotes && (
                     <Grid item xs={12} sm={6} md={4}>
                       <Box
-                        sx={{ p: 1.5, bgcolor: "warning.50", borderRadius: 1 }}
+                        sx={{ p: 1.5, bgcolor: 'warning.50', borderRadius: 1 }}
                       >
                         <Typography
                           variant="caption"
@@ -1230,7 +1230,7 @@ const CheckInWorkflow: React.FC = () => {
                   {pet.specialNeeds && (
                     <Grid item xs={12} sm={6} md={4}>
                       <Box
-                        sx={{ p: 1.5, bgcolor: "warning.50", borderRadius: 1 }}
+                        sx={{ p: 1.5, bgcolor: 'warning.50', borderRadius: 1 }}
                       >
                         <Typography
                           variant="caption"
@@ -1322,7 +1322,7 @@ const CheckInWorkflow: React.FC = () => {
         {activeStep === 4 && renderAgreementStep()}
         {activeStep === 5 && renderReviewStep()}
 
-        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
           <Button
             disabled={activeStep === 0}
             onClick={handleBack}
@@ -1343,8 +1343,8 @@ const CheckInWorkflow: React.FC = () => {
             <Tooltip
               title={
                 !canSubmit()
-                  ? "Please complete all required fields (questionnaire and service agreement)"
-                  : ""
+                  ? 'Please complete all required fields (questionnaire and service agreement)'
+                  : ''
               }
             >
               <span>
@@ -1361,7 +1361,7 @@ const CheckInWorkflow: React.FC = () => {
                     )
                   }
                 >
-                  {submitting ? "Completing..." : "Complete Check-In"}
+                  {submitting ? 'Completing...' : 'Complete Check-In'}
                 </Button>
               </span>
             </Tooltip>

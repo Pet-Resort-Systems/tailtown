@@ -3,18 +3,18 @@
  * Shows a banner when the app goes offline
  */
 
-import React from "react";
+import React from 'react';
 import {
   Alert,
   Snackbar,
   Box,
   Typography,
   LinearProgress,
-} from "@mui/material";
-import { WifiOff as OfflineIcon, Sync as SyncIcon } from "@mui/icons-material";
+} from '@mui/material';
+import { WifiOff as OfflineIcon, Sync as SyncIcon } from '@mui/icons-material';
 import useOnlineStatus, {
   getPendingActions,
-} from "../../hooks/useOnlineStatus";
+} from '../../hooks/useOnlineStatus';
 
 interface OfflineIndicatorProps {
   showPendingCount?: boolean;
@@ -43,22 +43,22 @@ const OfflineIndicator: React.FC<OfflineIndicatorProps> = ({
       {!isOnline && (
         <Box
           sx={{
-            position: "fixed",
+            position: 'fixed',
             top: 0,
             left: 0,
             right: 0,
             zIndex: 9999,
-            bgcolor: "error.main",
-            color: "white",
+            bgcolor: 'error.main',
+            color: 'white',
             py: 1,
             px: 2,
           }}
         >
           <Box
             sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               gap: 1,
             }}
           >
@@ -81,9 +81,9 @@ const OfflineIndicator: React.FC<OfflineIndicatorProps> = ({
         open={showReconnected}
         autoHideDuration={3000}
         onClose={() => setShowReconnected(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert severity="success" icon={<SyncIcon />} sx={{ width: "100%" }}>
+        <Alert severity="success" icon={<SyncIcon />} sx={{ width: '100%' }}>
           Connection restored
           {pendingActions.length > 0 &&
             ` - Syncing ${pendingActions.length} pending actions...`}

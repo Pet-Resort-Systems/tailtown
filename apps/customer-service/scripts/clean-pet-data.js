@@ -9,21 +9,21 @@
  * 5. Re-imports photos using correct Gingr ID matching
  */
 
-const { PrismaClient } = require("@prisma/client");
-const { execSync } = require("child_process");
+const { PrismaClient } = require('@prisma/client');
+const { execSync } = require('child_process');
 
 const prisma = new PrismaClient();
 
-const TENANT_ID = "b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05";
+const TENANT_ID = 'b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05';
 const SQL_BACKUP_PATH =
-  "/opt/tailtown/db-backup-tailtownpetresort-2025-12-16T12_54_19-07_00.sql.gz";
+  '/opt/tailtown/db-backup-tailtownpetresort-2025-12-16T12_54_19-07_00.sql.gz';
 
 async function cleanPetData() {
-  console.log("🧹 Starting comprehensive pet data cleanup...\n");
+  console.log('🧹 Starting comprehensive pet data cleanup...\n');
 
   try {
     // Step 1: Find and remove duplicates
-    console.log("📋 Step 1: Finding duplicate pets...");
+    console.log('📋 Step 1: Finding duplicate pets...');
 
     const duplicates = await prisma.$queryRaw`
       SELECT name, "customerId", COUNT(*) as count
@@ -47,7 +47,7 @@ async function cleanPetData() {
           customerId: dup.customerId,
         },
         orderBy: [
-          { updatedAt: "desc" }, // Most recently updated first
+          { updatedAt: 'desc' }, // Most recently updated first
         ],
       });
 
@@ -73,12 +73,12 @@ async function cleanPetData() {
     console.log(`   ✅ Removed ${removedCount} duplicate pet records\n`);
 
     // Step 2: Normalize externalId format
-    console.log("📋 Step 2: Normalizing externalId format...");
+    console.log('📋 Step 2: Normalizing externalId format...');
 
     const normalized = await prisma.pet.updateMany({
       where: {
         tenantId: TENANT_ID,
-        externalId: { endsWith: "-tailtown" },
+        externalId: { endsWith: '-tailtown' },
       },
       data: {
         // Can't do string manipulation in updateMany, need raw query
@@ -96,7 +96,7 @@ async function cleanPetData() {
     const afterNormalize = await prisma.pet.count({
       where: {
         tenantId: TENANT_ID,
-        externalId: { endsWith: "-tailtown" },
+        externalId: { endsWith: '-tailtown' },
       },
     });
 
@@ -105,7 +105,7 @@ async function cleanPetData() {
     );
 
     // Step 3: Clear all photos for clean re-import
-    console.log("📋 Step 3: Clearing photos for clean re-import...");
+    console.log('📋 Step 3: Clearing photos for clean re-import...');
 
     await prisma.pet.updateMany({
       where: {
@@ -116,10 +116,10 @@ async function cleanPetData() {
       },
     });
 
-    console.log("   ✅ Cleared all photos\n");
+    console.log('   ✅ Cleared all photos\n');
 
     // Step 4: Clear aggression flags
-    console.log("📋 Step 4: Clearing aggression flags...");
+    console.log('📋 Step 4: Clearing aggression flags...');
 
     await prisma.pet.updateMany({
       where: {
@@ -131,15 +131,15 @@ async function cleanPetData() {
       },
     });
 
-    console.log("   ✅ Cleared aggression flags\n");
+    console.log('   ✅ Cleared aggression flags\n');
 
     // Step 5: Re-import photos using Gingr ID
-    console.log("📋 Step 5: Re-importing photos from Gingr backup...");
+    console.log('📋 Step 5: Re-importing photos from Gingr backup...');
 
     const sqlData = execSync(
       `gunzip -c "${SQL_BACKUP_PATH}" | grep "INSERT INTO \\\`animals\\\`"`,
       {
-        encoding: "utf8",
+        encoding: 'utf8',
         maxBuffer: 50 * 1024 * 1024,
       }
     );
@@ -154,17 +154,17 @@ async function cleanPetData() {
       const parts = parseCSVLine(values);
 
       if (parts.length > 20) {
-        const gingrId = parts[0]?.replace(/^'|'$/g, "");
+        const gingrId = parts[0]?.replace(/^'|'$/g, '');
 
         // Find photo URL
         let photoUrl = null;
         for (let i = 15; i < Math.min(parts.length, 25); i++) {
-          const field = parts[i]?.replace(/^'|'$/g, "");
-          if (field && field.includes("storage.googleapis.com")) {
+          const field = parts[i]?.replace(/^'|'$/g, '');
+          if (field && field.includes('storage.googleapis.com')) {
             // Skip placeholder images
             if (
-              field.includes("c2ed8720-96f2-11ea-a7d5-ef010b7ec138") ||
-              field.includes("Screen Shot 2020-05-15")
+              field.includes('c2ed8720-96f2-11ea-a7d5-ef010b7ec138') ||
+              field.includes('Screen Shot 2020-05-15')
             ) {
               continue;
             }
@@ -208,7 +208,7 @@ async function cleanPetData() {
     console.log(`   ✅ Updated ${photosUpdated} pets with photos\n`);
 
     // Final stats
-    console.log("📊 Final Statistics:");
+    console.log('📊 Final Statistics:');
     const stats = await prisma.pet.aggregate({
       where: { tenantId: TENANT_ID },
       _count: true,
@@ -224,7 +224,7 @@ async function cleanPetData() {
     console.log(`   With photos: ${withPhotos}`);
     console.log(`   With playgroup: ${withPlaygroup}`);
   } catch (error) {
-    console.error("❌ Error:", error.message);
+    console.error('❌ Error:', error.message);
     console.error(error.stack);
   } finally {
     await prisma.$disconnect();
@@ -234,7 +234,7 @@ async function cleanPetData() {
 // Helper to parse CSV values with proper quote handling
 function parseCSVLine(line) {
   const parts = [];
-  let current = "";
+  let current = '';
   let inString = false;
   let escapeNext = false;
 
@@ -247,7 +247,7 @@ function parseCSVLine(line) {
       continue;
     }
 
-    if (char === "\\") {
+    if (char === '\\') {
       escapeNext = true;
       current += char;
       continue;
@@ -259,9 +259,9 @@ function parseCSVLine(line) {
       continue;
     }
 
-    if (char === "," && !inString) {
+    if (char === ',' && !inString) {
       parts.push(current.trim());
-      current = "";
+      current = '';
       continue;
     }
 

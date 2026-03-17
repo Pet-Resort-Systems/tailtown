@@ -15,15 +15,23 @@ const NotFound = () => {
           textAlign: 'center',
         }}
       >
-        <Typography variant="h1" color="primary" sx={{ fontWeight: 'bold', fontSize: { xs: '5rem', md: '8rem' } }}>
+        <Typography
+          variant="h1"
+          color="primary"
+          sx={{ fontWeight: 'bold', fontSize: { xs: '5rem', md: '8rem' } }}
+        >
           404
         </Typography>
         <Typography variant="h4" gutterBottom sx={{ mb: 4 }}>
           Page Not Found
         </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 4, maxWidth: 500 }}>
-          The page you are looking for might have been removed, had its name changed, 
-          or is temporarily unavailable.
+        <Typography
+          variant="body1"
+          color="text.secondary"
+          sx={{ mb: 4, maxWidth: 500 }}
+        >
+          The page you are looking for might have been removed, had its name
+          changed, or is temporarily unavailable.
         </Typography>
         <Button
           component={Link}

@@ -118,8 +118,14 @@ const Login: React.FC = () => {
                 Sign In
               </Button>
 
-              <Box sx={{ mt: 3, p: 2, bgcolor: 'info.lighter', borderRadius: 1 }}>
-                <Typography variant="caption" color="text.secondary" display="block">
+              <Box
+                sx={{ mt: 3, p: 2, bgcolor: 'info.lighter', borderRadius: 1 }}
+              >
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  display="block"
+                >
                   <strong>Development Mode</strong>
                 </Typography>
                 <Typography variant="caption" color="text.secondary">

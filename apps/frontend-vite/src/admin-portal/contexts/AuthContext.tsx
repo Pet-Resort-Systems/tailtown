@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import axios from 'axios';
 
 interface SuperAdmin {
   id: string;
@@ -28,15 +28,15 @@ const getApiUrl = () => {
 
 const SUPER_ADMIN_API = `${getApiUrl()}/api/super-admin`;
 
-export const AdminPortalAuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const AdminPortalAuthProvider: React.FC<{
+  children: React.ReactNode;
+}> = ({ children }) => {
   const [admin, setAdmin] = useState<SuperAdmin | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadAdmin = async () => {
-      const accessToken = localStorage.getItem("superAdminAccessToken");
+      const accessToken = localStorage.getItem('superAdminAccessToken');
 
       if (accessToken) {
         try {
@@ -48,8 +48,8 @@ export const AdminPortalAuthProvider: React.FC<{ children: React.ReactNode }> = 
             setAdmin(response.data.data);
           }
         } catch (error) {
-          localStorage.removeItem("superAdminAccessToken");
-          localStorage.removeItem("superAdminRefreshToken");
+          localStorage.removeItem('superAdminAccessToken');
+          localStorage.removeItem('superAdminRefreshToken');
         }
       }
 
@@ -67,27 +67,27 @@ export const AdminPortalAuthProvider: React.FC<{ children: React.ReactNode }> = 
       });
 
       if (!response.data.success) {
-        throw new Error(response.data.message || "Login failed");
+        throw new Error(response.data.message || 'Login failed');
       }
 
       const { user, accessToken, refreshToken } = response.data.data;
 
-      localStorage.setItem("superAdminAccessToken", accessToken);
-      localStorage.setItem("superAdminRefreshToken", refreshToken);
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("token", accessToken);
-      localStorage.setItem("tokenTimestamp", Date.now().toString());
-      localStorage.removeItem("tailtown_tenant_id");
-      localStorage.removeItem("tenantId");
+      localStorage.setItem('superAdminAccessToken', accessToken);
+      localStorage.setItem('superAdminRefreshToken', refreshToken);
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('token', accessToken);
+      localStorage.setItem('tokenTimestamp', Date.now().toString());
+      localStorage.removeItem('tailtown_tenant_id');
+      localStorage.removeItem('tenantId');
 
       setAdmin(user);
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || "Login failed");
+      throw new Error(error.response?.data?.message || 'Login failed');
     }
   };
 
   const logout = async () => {
-    const accessToken = localStorage.getItem("superAdminAccessToken");
+    const accessToken = localStorage.getItem('superAdminAccessToken');
 
     try {
       if (accessToken) {
@@ -100,13 +100,13 @@ export const AdminPortalAuthProvider: React.FC<{ children: React.ReactNode }> = 
         );
       }
     } finally {
-      localStorage.removeItem("superAdminAccessToken");
-      localStorage.removeItem("superAdminRefreshToken");
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("token");
-      localStorage.removeItem("tokenTimestamp");
-      localStorage.removeItem("tailtown_tenant_id");
-      localStorage.removeItem("tenantId");
+      localStorage.removeItem('superAdminAccessToken');
+      localStorage.removeItem('superAdminRefreshToken');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('token');
+      localStorage.removeItem('tokenTimestamp');
+      localStorage.removeItem('tailtown_tenant_id');
+      localStorage.removeItem('tenantId');
       setAdmin(null);
     }
   };
@@ -129,7 +129,9 @@ export const AdminPortalAuthProvider: React.FC<{ children: React.ReactNode }> = 
 export const useAdminPortalAuth = () => {
   const context = useContext(AdminPortalAuthContext);
   if (context === undefined) {
-    throw new Error("useAdminPortalAuth must be used within an AdminPortalAuthProvider");
+    throw new Error(
+      'useAdminPortalAuth must be used within an AdminPortalAuthProvider'
+    );
   }
   return context;
 };

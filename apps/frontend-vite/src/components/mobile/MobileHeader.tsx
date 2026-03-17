@@ -82,20 +82,12 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
       >
         {/* Left side - Back button or Menu */}
         {showBack && (
-          <IconButton
-            edge="start"
-            onClick={handleBack}
-            sx={{ mr: 1 }}
-          >
+          <IconButton edge="start" onClick={handleBack} sx={{ mr: 1 }}>
             <BackIcon />
           </IconButton>
         )}
         {showMenu && (
-          <IconButton
-            edge="start"
-            onClick={onMenuClick}
-            sx={{ mr: 1 }}
-          >
+          <IconButton edge="start" onClick={onMenuClick} sx={{ mr: 1 }}>
             <MenuIcon />
           </IconButton>
         )}
@@ -122,12 +114,9 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
               </Badge>
             </IconButton>
           )}
-          
+
           {userAvatar || userName ? (
-            <IconButton 
-              onClick={handleProfileClick}
-              sx={{ p: 0.5 }}
-            >
+            <IconButton onClick={handleProfileClick} sx={{ p: 0.5 }}>
               <Avatar
                 src={userAvatar}
                 alt={userName}
@@ -138,7 +127,9 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
                   cursor: 'pointer',
                 }}
               >
-                {!userAvatar && userName ? userName.charAt(0).toUpperCase() : null}
+                {!userAvatar && userName
+                  ? userName.charAt(0).toUpperCase()
+                  : null}
               </Avatar>
             </IconButton>
           ) : null}

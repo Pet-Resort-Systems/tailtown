@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -8,10 +8,10 @@ import {
   InputAdornment,
   Avatar,
   Chip,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
-import GroupsIcon from "@mui/icons-material/Groups";
-import ContentCutIcon from "@mui/icons-material/ContentCut";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
+import GroupsIcon from '@mui/icons-material/Groups';
+import ContentCutIcon from '@mui/icons-material/ContentCut';
 
 interface TipSelectionProps {
   subtotal: number;
@@ -49,43 +49,43 @@ const TipSelection: React.FC<TipSelectionProps> = ({
   const [groomerTipPercentage, setGroomerTipPercentage] = useState<
     number | null
   >(null);
-  const [groomerTipCustom, setGroomerTipCustom] = useState<string>("");
+  const [groomerTipCustom, setGroomerTipCustom] = useState<string>('');
   const [groomerTipMode, setGroomerTipMode] = useState<
-    "percentage" | "custom" | "none"
-  >("none");
+    'percentage' | 'custom' | 'none'
+  >('none');
 
   // General tip state
   const [generalTipPercentage, setGeneralTipPercentage] = useState<
     number | null
   >(null);
-  const [generalTipCustom, setGeneralTipCustom] = useState<string>("");
+  const [generalTipCustom, setGeneralTipCustom] = useState<string>('');
   const [generalTipMode, setGeneralTipMode] = useState<
-    "percentage" | "custom" | "none"
-  >("none");
+    'percentage' | 'custom' | 'none'
+  >('none');
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
     }).format(amount);
   };
 
   // Calculate tip amounts
   const calculateGroomerTip = (): number => {
-    if (groomerTipMode === "percentage" && groomerTipPercentage) {
+    if (groomerTipMode === 'percentage' && groomerTipPercentage) {
       return Math.round(subtotal * (groomerTipPercentage / 100) * 100) / 100;
     }
-    if (groomerTipMode === "custom" && groomerTipCustom) {
+    if (groomerTipMode === 'custom' && groomerTipCustom) {
       return parseFloat(groomerTipCustom) || 0;
     }
     return 0;
   };
 
   const calculateGeneralTip = (): number => {
-    if (generalTipMode === "percentage" && generalTipPercentage) {
+    if (generalTipMode === 'percentage' && generalTipPercentage) {
       return Math.round(subtotal * (generalTipPercentage / 100) * 100) / 100;
     }
-    if (generalTipMode === "custom" && generalTipCustom) {
+    if (generalTipMode === 'custom' && generalTipCustom) {
       return parseFloat(generalTipCustom) || 0;
     }
     return 0;
@@ -97,51 +97,51 @@ const TipSelection: React.FC<TipSelectionProps> = ({
 
   const handleGroomerPercentageClick = (percentage: number) => {
     if (
-      groomerTipMode === "percentage" &&
+      groomerTipMode === 'percentage' &&
       groomerTipPercentage === percentage
     ) {
       // Deselect
-      setGroomerTipMode("none");
+      setGroomerTipMode('none');
       setGroomerTipPercentage(null);
     } else {
-      setGroomerTipMode("percentage");
+      setGroomerTipMode('percentage');
       setGroomerTipPercentage(percentage);
-      setGroomerTipCustom("");
+      setGroomerTipCustom('');
     }
   };
 
   const handleGeneralPercentageClick = (percentage: number) => {
     if (
-      generalTipMode === "percentage" &&
+      generalTipMode === 'percentage' &&
       generalTipPercentage === percentage
     ) {
       // Deselect
-      setGeneralTipMode("none");
+      setGeneralTipMode('none');
       setGeneralTipPercentage(null);
     } else {
-      setGeneralTipMode("percentage");
+      setGeneralTipMode('percentage');
       setGeneralTipPercentage(percentage);
-      setGeneralTipCustom("");
+      setGeneralTipCustom('');
     }
   };
 
   const handleGroomerCustomChange = (value: string) => {
     setGroomerTipCustom(value);
     if (value) {
-      setGroomerTipMode("custom");
+      setGroomerTipMode('custom');
       setGroomerTipPercentage(null);
     } else {
-      setGroomerTipMode("none");
+      setGroomerTipMode('none');
     }
   };
 
   const handleGeneralCustomChange = (value: string) => {
     setGeneralTipCustom(value);
     if (value) {
-      setGeneralTipMode("custom");
+      setGeneralTipMode('custom');
       setGeneralTipPercentage(null);
     } else {
-      setGeneralTipMode("none");
+      setGeneralTipMode('none');
     }
   };
 
@@ -149,11 +149,11 @@ const TipSelection: React.FC<TipSelectionProps> = ({
     const tipData: TipData = {
       groomerTip: groomerTipAmount > 0 ? groomerTipAmount : null,
       groomerTipPercentage:
-        groomerTipMode === "percentage" ? groomerTipPercentage : null,
+        groomerTipMode === 'percentage' ? groomerTipPercentage : null,
       groomerId: groomerTipAmount > 0 && groomer ? groomer.id : null,
       generalTip: generalTipAmount > 0 ? generalTipAmount : null,
       generalTipPercentage:
-        generalTipMode === "percentage" ? generalTipPercentage : null,
+        generalTipMode === 'percentage' ? generalTipPercentage : null,
       totalTips,
     };
     onTipsSelected(tipData);
@@ -177,13 +177,13 @@ const TipSelection: React.FC<TipSelectionProps> = ({
           sx={{
             p: 3,
             mt: 3,
-            bgcolor: "primary.50",
-            border: "1px solid",
-            borderColor: "primary.200",
+            bgcolor: 'primary.50',
+            border: '1px solid',
+            borderColor: 'primary.200',
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <Avatar sx={{ bgcolor: "primary.main", mr: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <Avatar sx={{ bgcolor: 'primary.main', mr: 2 }}>
               <ContentCutIcon />
             </Avatar>
             <Box>
@@ -202,15 +202,15 @@ const TipSelection: React.FC<TipSelectionProps> = ({
                 <Button
                   fullWidth
                   variant={
-                    groomerTipMode === "percentage" &&
+                    groomerTipMode === 'percentage' &&
                     groomerTipPercentage === pct
-                      ? "contained"
-                      : "outlined"
+                      ? 'contained'
+                      : 'outlined'
                   }
                   onClick={() => handleGroomerPercentageClick(pct)}
                   sx={{
                     py: 1.5,
-                    flexDirection: "column",
+                    flexDirection: 'column',
                   }}
                 >
                   <Typography variant="h6" component="span">
@@ -241,7 +241,7 @@ const TipSelection: React.FC<TipSelectionProps> = ({
           />
 
           {groomerTipAmount > 0 && (
-            <Box sx={{ mt: 2, textAlign: "right" }}>
+            <Box sx={{ mt: 2, textAlign: 'right' }}>
               <Chip
                 label={`Groomer tip: ${formatCurrency(groomerTipAmount)}`}
                 color="primary"
@@ -258,13 +258,13 @@ const TipSelection: React.FC<TipSelectionProps> = ({
         sx={{
           p: 3,
           mt: 3,
-          bgcolor: "grey.50",
-          border: "1px solid",
-          borderColor: "grey.300",
+          bgcolor: 'grey.50',
+          border: '1px solid',
+          borderColor: 'grey.300',
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-          <Avatar sx={{ bgcolor: "secondary.main", mr: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <Avatar sx={{ bgcolor: 'secondary.main', mr: 2 }}>
             <GroupsIcon />
           </Avatar>
           <Box>
@@ -283,16 +283,16 @@ const TipSelection: React.FC<TipSelectionProps> = ({
               <Button
                 fullWidth
                 variant={
-                  generalTipMode === "percentage" &&
+                  generalTipMode === 'percentage' &&
                   generalTipPercentage === pct
-                    ? "contained"
-                    : "outlined"
+                    ? 'contained'
+                    : 'outlined'
                 }
                 color="secondary"
                 onClick={() => handleGeneralPercentageClick(pct)}
                 sx={{
                   py: 1.5,
-                  flexDirection: "column",
+                  flexDirection: 'column',
                 }}
               >
                 <Typography variant="h6" component="span">
@@ -321,7 +321,7 @@ const TipSelection: React.FC<TipSelectionProps> = ({
         />
 
         {generalTipAmount > 0 && (
-          <Box sx={{ mt: 2, textAlign: "right" }}>
+          <Box sx={{ mt: 2, textAlign: 'right' }}>
             <Chip
               label={`Team tip: ${formatCurrency(generalTipAmount)}`}
               color="secondary"
@@ -338,16 +338,16 @@ const TipSelection: React.FC<TipSelectionProps> = ({
           sx={{
             p: 2,
             mt: 3,
-            bgcolor: "success.50",
-            border: "1px solid",
-            borderColor: "success.200",
+            bgcolor: 'success.50',
+            border: '1px solid',
+            borderColor: 'success.200',
           }}
         >
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
             }}
           >
             <Typography variant="subtitle1">Total Tips:</Typography>
@@ -359,9 +359,9 @@ const TipSelection: React.FC<TipSelectionProps> = ({
       )}
 
       {/* Actions */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
         {onBack && <Button onClick={onBack}>Back</Button>}
-        <Box sx={{ display: "flex", gap: 1, ml: "auto" }}>
+        <Box sx={{ display: 'flex', gap: 1, ml: 'auto' }}>
           {onSkip && (
             <Button variant="text" onClick={onSkip} color="inherit">
               Skip Tips
@@ -370,7 +370,7 @@ const TipSelection: React.FC<TipSelectionProps> = ({
           <Button variant="contained" onClick={handleContinue}>
             {totalTips > 0
               ? `Continue with ${formatCurrency(totalTips)} Tip`
-              : "Continue Without Tip"}
+              : 'Continue Without Tip'}
           </Button>
         </Box>
       </Box>

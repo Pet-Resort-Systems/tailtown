@@ -5,12 +5,12 @@
  * emails and SMS messages for reservation events.
  */
 
-import axios, { AxiosInstance } from "axios";
-import { logger } from "../utils/logger";
+import axios, { AxiosInstance } from 'axios';
+import { logger } from '../utils/logger';
 
 const CUSTOMER_SERVICE_URL =
-  process.env.CUSTOMER_SERVICE_URL || "http://localhost:4004";
-const SERVICE_TIMEOUT = parseInt(process.env.SERVICE_TIMEOUT || "10000", 10);
+  process.env.CUSTOMER_SERVICE_URL || 'http://localhost:4004';
+const SERVICE_TIMEOUT = parseInt(process.env.SERVICE_TIMEOUT || '10000', 10);
 
 interface NotificationResult {
   success: boolean;
@@ -31,7 +31,7 @@ class NotificationClient {
       baseURL: CUSTOMER_SERVICE_URL,
       timeout: SERVICE_TIMEOUT,
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     });
   }
@@ -52,7 +52,7 @@ class NotificationClient {
       const smsResponse = await this.client.post(
         `/api/sms/reservation-confirmation/${data.reservationId}`,
         {},
-        { headers: { "x-tenant-id": data.tenantId } }
+        { headers: { 'x-tenant-id': data.tenantId } }
       );
       results.sms = smsResponse.data?.data || { success: true };
       logger.info(
@@ -68,7 +68,7 @@ class NotificationClient {
       const emailResponse = await this.client.post(
         `/api/notifications/reservation-confirmation/${data.reservationId}`,
         {},
-        { headers: { "x-tenant-id": data.tenantId } }
+        { headers: { 'x-tenant-id': data.tenantId } }
       );
       results.email = emailResponse.data?.data || { success: true };
       logger.info(
@@ -97,7 +97,7 @@ class NotificationClient {
       const smsResponse = await this.client.post(
         `/api/sms/check-in/${data.reservationId}`,
         {},
-        { headers: { "x-tenant-id": data.tenantId } }
+        { headers: { 'x-tenant-id': data.tenantId } }
       );
       results.sms = smsResponse.data?.data || { success: true };
       logger.info(`Check-in SMS sent for reservation ${data.reservationId}`);
@@ -110,7 +110,7 @@ class NotificationClient {
       const emailResponse = await this.client.post(
         `/api/notifications/check-in/${data.reservationId}`,
         {},
-        { headers: { "x-tenant-id": data.tenantId } }
+        { headers: { 'x-tenant-id': data.tenantId } }
       );
       results.email = emailResponse.data?.data || { success: true };
       logger.info(`Check-in email sent for reservation ${data.reservationId}`);
@@ -137,7 +137,7 @@ class NotificationClient {
       const smsResponse = await this.client.post(
         `/api/sms/check-out/${data.reservationId}`,
         {},
-        { headers: { "x-tenant-id": data.tenantId } }
+        { headers: { 'x-tenant-id': data.tenantId } }
       );
       results.sms = smsResponse.data?.data || { success: true };
       logger.info(`Check-out SMS sent for reservation ${data.reservationId}`);
@@ -150,7 +150,7 @@ class NotificationClient {
       const emailResponse = await this.client.post(
         `/api/notifications/check-out/${data.reservationId}`,
         {},
-        { headers: { "x-tenant-id": data.tenantId } }
+        { headers: { 'x-tenant-id': data.tenantId } }
       );
       results.email = emailResponse.data?.data || { success: true };
       logger.info(`Check-out email sent for reservation ${data.reservationId}`);
@@ -174,7 +174,7 @@ class NotificationClient {
       const emailResponse = await this.client.post(
         `/api/notifications/status-change/${data.reservationId}`,
         { oldStatus: data.oldStatus, newStatus: data.newStatus },
-        { headers: { "x-tenant-id": data.tenantId } }
+        { headers: { 'x-tenant-id': data.tenantId } }
       );
       results.email = emailResponse.data?.data || { success: true };
       logger.info(

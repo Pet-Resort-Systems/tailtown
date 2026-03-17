@@ -5,32 +5,32 @@
  * and updates the Tailtown database.
  */
 
-const { PrismaClient } = require("@prisma/client");
-const { execSync } = require("child_process");
-const fs = require("fs");
+const { PrismaClient } = require('@prisma/client');
+const { execSync } = require('child_process');
+const fs = require('fs');
 
 const prisma = new PrismaClient();
 
-const TENANT_ID = "b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05";
+const TENANT_ID = 'b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05';
 const SQL_BACKUP_PATH =
-  "/Users/robweinstein/CascadeProjects/tailtown/db-backup-tailtownpetresort-2025-12-16T12_54_19-07_00.sql.gz";
+  '/Users/robweinstein/CascadeProjects/tailtown/db-backup-tailtownpetresort-2025-12-16T12_54_19-07_00.sql.gz';
 
 async function extractPhotosFromSQLBackup() {
-  console.log("🔍 Extracting pet photos from SQL backup...\n");
+  console.log('🔍 Extracting pet photos from SQL backup...\n');
 
   try {
     // Extract the animals INSERT statements
-    console.log("📦 Decompressing and parsing SQL backup...");
+    console.log('📦 Decompressing and parsing SQL backup...');
     const sqlData = execSync(
       `gunzip -c "${SQL_BACKUP_PATH}" | grep "INSERT INTO \\\`animals\\\`"`,
       {
-        encoding: "utf8",
+        encoding: 'utf8',
         maxBuffer: 50 * 1024 * 1024, // 50MB buffer
       }
     );
 
     // Parse the INSERT statements to extract pet data
-    console.log("🔍 Parsing pet data...");
+    console.log('🔍 Parsing pet data...');
 
     // Match all VALUES entries
     const valuesRegex = /\(([^)]+)\)/g;
@@ -47,7 +47,7 @@ async function extractPhotosFromSQLBackup() {
 
       // Split by comma, but be careful with commas inside strings
       const parts = [];
-      let current = "";
+      let current = '';
       let inString = false;
       let escapeNext = false;
 
@@ -60,7 +60,7 @@ async function extractPhotosFromSQLBackup() {
           continue;
         }
 
-        if (char === "\\") {
+        if (char === '\\') {
           escapeNext = true;
           current += char;
           continue;
@@ -72,9 +72,9 @@ async function extractPhotosFromSQLBackup() {
           continue;
         }
 
-        if (char === "," && !inString) {
+        if (char === ',' && !inString) {
           parts.push(current.trim());
-          current = "";
+          current = '';
           continue;
         }
 
@@ -84,13 +84,13 @@ async function extractPhotosFromSQLBackup() {
 
       // Extract pet name (3rd field) and photo URL (typically around field 20-21)
       if (parts.length > 20) {
-        const name = parts[2]?.replace(/^'|'$/g, "").replace(/\\'/g, "'");
+        const name = parts[2]?.replace(/^'|'$/g, '').replace(/\\'/g, "'");
 
         // Find the photo URL field - it contains 'storage.googleapis.com'
         let photoUrl = null;
         for (let i = 15; i < Math.min(parts.length, 25); i++) {
-          const field = parts[i]?.replace(/^'|'$/g, "");
-          if (field && field.includes("storage.googleapis.com")) {
+          const field = parts[i]?.replace(/^'|'$/g, '');
+          if (field && field.includes('storage.googleapis.com')) {
             photoUrl = field;
             break;
           }
@@ -99,8 +99,8 @@ async function extractPhotosFromSQLBackup() {
         if (name && photoUrl) {
           // Skip placeholder images
           if (
-            photoUrl.includes("c2ed8720-96f2-11ea-a7d5-ef010b7ec138") ||
-            photoUrl.includes("Screen Shot 2020-05-15")
+            photoUrl.includes('c2ed8720-96f2-11ea-a7d5-ef010b7ec138') ||
+            photoUrl.includes('Screen Shot 2020-05-15')
           ) {
             skippedPlaceholders++;
             continue;
@@ -118,18 +118,18 @@ async function extractPhotosFromSQLBackup() {
     console.log(`⏭️  Skipped ${skippedNoPhoto} pets without photos\n`);
 
     // Show sample
-    console.log("Sample pets with photos:");
+    console.log('Sample pets with photos:');
     petPhotos.slice(0, 10).forEach((pet) => {
       const shortUrl = pet.photoUrl.substring(
-        pet.photoUrl.lastIndexOf("/") + 1,
-        pet.photoUrl.lastIndexOf("/") + 40
+        pet.photoUrl.lastIndexOf('/') + 1,
+        pet.photoUrl.lastIndexOf('/') + 40
       );
       console.log(`  - ${pet.name}: ${shortUrl}...`);
     });
-    console.log("");
+    console.log('');
 
     // Update database
-    console.log("💾 Updating database...\n");
+    console.log('💾 Updating database...\n');
 
     let updated = 0;
     let notFound = 0;
@@ -141,7 +141,7 @@ async function extractPhotosFromSQLBackup() {
         where: {
           tenantId: TENANT_ID,
           isActive: true,
-          name: { equals: name, mode: "insensitive" },
+          name: { equals: name, mode: 'insensitive' },
         },
         select: {
           id: true,
@@ -165,9 +165,9 @@ async function extractPhotosFromSQLBackup() {
         // Skip if already has a real photo
         if (
           pet.profilePhoto &&
-          !pet.profilePhoto.includes("ajax-loader") &&
-          (pet.profilePhoto.includes("googleapis.com") ||
-            pet.profilePhoto.includes("amazonaws.com"))
+          !pet.profilePhoto.includes('ajax-loader') &&
+          (pet.profilePhoto.includes('googleapis.com') ||
+            pet.profilePhoto.includes('amazonaws.com'))
         ) {
           alreadyHasPhoto++;
           continue;
@@ -185,7 +185,7 @@ async function extractPhotosFromSQLBackup() {
       }
     }
 
-    console.log("\n📊 Summary:");
+    console.log('\n📊 Summary:');
     console.log(`   📸 Pets with photos in backup: ${petPhotos.length}`);
     console.log(`   ✅ Database records updated: ${updated}`);
     console.log(`   ⏭️  Already had photos: ${alreadyHasPhoto}`);
@@ -210,7 +210,7 @@ async function extractPhotosFromSQLBackup() {
       },
     });
 
-    console.log("\n📈 Final Database Statistics:");
+    console.log('\n📈 Final Database Statistics:');
     console.log(`   Total active pets: ${totalPets}`);
     console.log(`   Pets with photos: ${stats._count}`);
     console.log(`   Pets without photos: ${totalPets - stats._count}`);
@@ -218,7 +218,7 @@ async function extractPhotosFromSQLBackup() {
       `   Photo coverage: ${((stats._count / totalPets) * 100).toFixed(1)}%`
     );
   } catch (error) {
-    console.error("❌ Error:", error.message);
+    console.error('❌ Error:', error.message);
     throw error;
   } finally {
     await prisma.$disconnect();
@@ -228,10 +228,10 @@ async function extractPhotosFromSQLBackup() {
 // Run the import
 extractPhotosFromSQLBackup()
   .then(() => {
-    console.log("\n✅ Script completed successfully");
+    console.log('\n✅ Script completed successfully');
     process.exit(0);
   })
   .catch((error) => {
-    console.error("\n❌ Script failed:", error);
+    console.error('\n❌ Script failed:', error);
     process.exit(1);
   });

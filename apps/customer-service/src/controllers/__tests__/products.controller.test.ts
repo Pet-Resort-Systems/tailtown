@@ -4,9 +4,9 @@
  * Comprehensive tests for product management, inventory tracking, and categories
  */
 
-import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
-import { TenantRequest } from "../../middleware/tenant.middleware";
+import { Request, Response } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { TenantRequest } from '../../middleware/tenant.middleware';
 import {
   getAllProducts,
   getProductById,
@@ -18,10 +18,10 @@ import {
   getLowStockProducts,
   getAllCategories,
   createCategory,
-} from "../products.controller";
+} from '../products.controller';
 
 // Mock Prisma
-jest.mock("@prisma/client", () => {
+jest.mock('@prisma/client', () => {
   const mockPrismaClient = {
     product: {
       findMany: jest.fn(),
@@ -44,7 +44,7 @@ jest.mock("@prisma/client", () => {
   };
 });
 
-describe("Products Controller", () => {
+describe('Products Controller', () => {
   let mockRequest: Partial<TenantRequest>;
   let mockResponse: Partial<Response>;
   let mockPrisma: any;
@@ -58,8 +58,8 @@ describe("Products Controller", () => {
       query: {},
       params: {},
       body: {},
-      headers: { "x-tenant-id": "dev" },
-      tenantId: "dev",
+      headers: { 'x-tenant-id': 'dev' },
+      tenantId: 'dev',
     };
 
     // Setup mock response
@@ -73,25 +73,25 @@ describe("Products Controller", () => {
     mockPrisma = new PrismaClient();
   });
 
-  describe("getAllProducts", () => {
-    it("should return all products for a tenant", async () => {
+  describe('getAllProducts', () => {
+    it('should return all products for a tenant', async () => {
       const mockProducts = [
         {
-          id: "prod-1",
-          tenantId: "dev",
-          name: "Dog Food",
+          id: 'prod-1',
+          tenantId: 'dev',
+          name: 'Dog Food',
           price: 49.99,
           currentStock: 50,
-          category: { id: "cat-1", name: "Food & Treats" },
+          category: { id: 'cat-1', name: 'Food & Treats' },
           packageContents: [],
         },
         {
-          id: "prod-2",
-          tenantId: "dev",
-          name: "Dog Toy",
+          id: 'prod-2',
+          tenantId: 'dev',
+          name: 'Dog Toy',
           price: 12.99,
           currentStock: 100,
-          category: { id: "cat-2", name: "Toys" },
+          category: { id: 'cat-2', name: 'Toys' },
           packageContents: [],
         },
       ];
@@ -101,7 +101,7 @@ describe("Products Controller", () => {
       await getAllProducts(mockRequest as Request, mockResponse as Response);
 
       expect(mockPrisma.product.findMany).toHaveBeenCalledWith({
-        where: { tenantId: "dev" },
+        where: { tenantId: 'dev' },
         include: {
           category: true,
           packageContents: {
@@ -110,48 +110,48 @@ describe("Products Controller", () => {
             },
           },
         },
-        orderBy: [{ isFeatured: "desc" }, { name: "asc" }],
+        orderBy: [{ isFeatured: 'desc' }, { name: 'asc' }],
       });
 
       expect(mockResponse.json).toHaveBeenCalledWith({
-        status: "success",
+        status: 'success',
         data: mockProducts,
         cached: false,
       });
     });
 
-    it("should filter products by category", async () => {
-      mockRequest.query = { categoryId: "cat-1" };
+    it('should filter products by category', async () => {
+      mockRequest.query = { categoryId: 'cat-1' };
 
       await getAllProducts(mockRequest as Request, mockResponse as Response);
 
       expect(mockPrisma.product.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            tenantId: "dev",
-            categoryId: "cat-1",
+            tenantId: 'dev',
+            categoryId: 'cat-1',
           }),
         })
       );
     });
 
-    it("should filter products by active status", async () => {
-      mockRequest.query = { isActive: "true" };
+    it('should filter products by active status', async () => {
+      mockRequest.query = { isActive: 'true' };
 
       await getAllProducts(mockRequest as Request, mockResponse as Response);
 
       expect(mockPrisma.product.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            tenantId: "dev",
+            tenantId: 'dev',
             isActive: true,
           }),
         })
       );
     });
 
-    it("should search products by name, SKU, or description", async () => {
-      mockRequest.query = { search: "dog" };
+    it('should search products by name, SKU, or description', async () => {
+      mockRequest.query = { search: 'dog' };
 
       await getAllProducts(mockRequest as Request, mockResponse as Response);
 
@@ -159,49 +159,49 @@ describe("Products Controller", () => {
         expect.objectContaining({
           where: expect.objectContaining({
             OR: [
-              { name: { contains: "dog", mode: "insensitive" } },
-              { sku: { contains: "dog", mode: "insensitive" } },
-              { description: { contains: "dog", mode: "insensitive" } },
+              { name: { contains: 'dog', mode: 'insensitive' } },
+              { sku: { contains: 'dog', mode: 'insensitive' } },
+              { description: { contains: 'dog', mode: 'insensitive' } },
             ],
           }),
         })
       );
     });
 
-    it("should handle errors gracefully", async () => {
+    it('should handle errors gracefully', async () => {
       mockPrisma.product.findMany.mockRejectedValue(
-        new Error("Database error")
+        new Error('Database error')
       );
 
       await getAllProducts(mockRequest as Request, mockResponse as Response);
 
       expect(mockResponse.status).toHaveBeenCalledWith(500);
       expect(mockResponse.json).toHaveBeenCalledWith({
-        status: "error",
-        message: "Failed to fetch products",
+        status: 'error',
+        message: 'Failed to fetch products',
       });
     });
   });
 
-  describe("getProductById", () => {
-    it("should return a single product with details", async () => {
+  describe('getProductById', () => {
+    it('should return a single product with details', async () => {
       const mockProduct = {
-        id: "prod-1",
-        tenantId: "dev",
-        name: "Dog Food",
+        id: 'prod-1',
+        tenantId: 'dev',
+        name: 'Dog Food',
         price: 49.99,
-        category: { id: "cat-1", name: "Food & Treats" },
+        category: { id: 'cat-1', name: 'Food & Treats' },
         packageContents: [],
         inventoryLogs: [],
       };
 
-      mockRequest.params = { id: "prod-1" };
+      mockRequest.params = { id: 'prod-1' };
       mockPrisma.product.findFirst.mockResolvedValue(mockProduct);
 
       await getProductById(mockRequest as Request, mockResponse as Response);
 
       expect(mockPrisma.product.findFirst).toHaveBeenCalledWith({
-        where: { id: "prod-1", tenantId: "dev" },
+        where: { id: 'prod-1', tenantId: 'dev' },
         include: {
           category: true,
           packageContents: {
@@ -211,36 +211,36 @@ describe("Products Controller", () => {
           },
           inventoryLogs: {
             take: 10,
-            orderBy: { createdAt: "desc" },
+            orderBy: { createdAt: 'desc' },
           },
         },
       });
 
       expect(mockResponse.json).toHaveBeenCalledWith({
-        status: "success",
+        status: 'success',
         data: mockProduct,
       });
     });
 
-    it("should return 404 if product not found", async () => {
-      mockRequest.params = { id: "non-existent" };
+    it('should return 404 if product not found', async () => {
+      mockRequest.params = { id: 'non-existent' };
       mockPrisma.product.findFirst.mockResolvedValue(null);
 
       await getProductById(mockRequest as Request, mockResponse as Response);
 
       expect(mockResponse.status).toHaveBeenCalledWith(404);
       expect(mockResponse.json).toHaveBeenCalledWith({
-        status: "error",
-        message: "Product not found",
+        status: 'error',
+        message: 'Product not found',
       });
     });
   });
 
-  describe("createProduct", () => {
-    it("should create a new product successfully", async () => {
+  describe('createProduct', () => {
+    it('should create a new product successfully', async () => {
       const newProduct = {
-        name: "New Dog Toy",
-        sku: "DOG-TOY-001",
+        name: 'New Dog Toy',
+        sku: 'DOG-TOY-001',
         price: 15.99,
         cost: 8.0,
         taxable: true,
@@ -251,8 +251,8 @@ describe("Products Controller", () => {
       };
 
       const createdProduct = {
-        id: "prod-new",
-        tenantId: "dev",
+        id: 'prod-new',
+        tenantId: 'dev',
         ...newProduct,
         category: null,
         packageContents: [],
@@ -266,7 +266,7 @@ describe("Products Controller", () => {
 
       expect(mockPrisma.product.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
-          tenantId: "dev",
+          tenantId: 'dev',
           name: newProduct.name,
           sku: newProduct.sku,
           price: newProduct.price,
@@ -276,57 +276,57 @@ describe("Products Controller", () => {
 
       expect(mockResponse.status).toHaveBeenCalledWith(201);
       expect(mockResponse.json).toHaveBeenCalledWith({
-        status: "success",
+        status: 'success',
         data: createdProduct,
       });
     });
 
-    it("should reject duplicate SKU", async () => {
+    it('should reject duplicate SKU', async () => {
       mockRequest.body = {
-        name: "Product",
-        sku: "DUPLICATE-SKU",
+        name: 'Product',
+        sku: 'DUPLICATE-SKU',
         price: 10.0,
       };
 
       mockPrisma.product.findFirst.mockResolvedValue({
-        id: "existing",
-        sku: "DUPLICATE-SKU",
+        id: 'existing',
+        sku: 'DUPLICATE-SKU',
       });
 
       await createProduct(mockRequest as Request, mockResponse as Response);
 
       expect(mockResponse.status).toHaveBeenCalledWith(400);
       expect(mockResponse.json).toHaveBeenCalledWith({
-        status: "error",
-        message: "A product with this SKU already exists",
+        status: 'error',
+        message: 'A product with this SKU already exists',
       });
     });
 
-    it("should require name and price", async () => {
-      mockRequest.body = { sku: "TEST" };
+    it('should require name and price', async () => {
+      mockRequest.body = { sku: 'TEST' };
 
       await createProduct(mockRequest as Request, mockResponse as Response);
 
       expect(mockResponse.status).toHaveBeenCalledWith(400);
       expect(mockResponse.json).toHaveBeenCalledWith({
-        status: "error",
-        message: "Name and price are required",
+        status: 'error',
+        message: 'Name and price are required',
       });
     });
   });
 
-  describe("updateProduct", () => {
-    it("should update an existing product", async () => {
+  describe('updateProduct', () => {
+    it('should update an existing product', async () => {
       const existingProduct = {
-        id: "prod-1",
-        tenantId: "dev",
-        name: "Old Name",
-        sku: "OLD-SKU",
+        id: 'prod-1',
+        tenantId: 'dev',
+        name: 'Old Name',
+        sku: 'OLD-SKU',
         price: 10.0,
       };
 
       const updates = {
-        name: "New Name",
+        name: 'New Name',
         price: 15.0,
       };
 
@@ -335,7 +335,7 @@ describe("Products Controller", () => {
         ...updates,
       };
 
-      mockRequest.params = { id: "prod-1" };
+      mockRequest.params = { id: 'prod-1' };
       mockRequest.body = updates;
       mockPrisma.product.findFirst.mockResolvedValue(existingProduct);
       mockPrisma.product.update.mockResolvedValue(updatedProduct);
@@ -343,72 +343,72 @@ describe("Products Controller", () => {
       await updateProduct(mockRequest as Request, mockResponse as Response);
 
       expect(mockPrisma.product.update).toHaveBeenCalledWith({
-        where: { id: "prod-1" },
+        where: { id: 'prod-1' },
         data: expect.objectContaining(updates),
         include: expect.any(Object),
       });
 
       expect(mockResponse.json).toHaveBeenCalledWith({
-        status: "success",
+        status: 'success',
         data: updatedProduct,
       });
     });
 
-    it("should return 404 if product not found", async () => {
-      mockRequest.params = { id: "non-existent" };
-      mockRequest.body = { name: "Test" };
+    it('should return 404 if product not found', async () => {
+      mockRequest.params = { id: 'non-existent' };
+      mockRequest.body = { name: 'Test' };
       mockPrisma.product.findFirst.mockResolvedValue(null);
 
       await updateProduct(mockRequest as Request, mockResponse as Response);
 
       expect(mockResponse.status).toHaveBeenCalledWith(404);
       expect(mockResponse.json).toHaveBeenCalledWith({
-        status: "error",
-        message: "Product not found",
+        status: 'error',
+        message: 'Product not found',
       });
     });
 
-    it("should prevent duplicate SKU when updating", async () => {
-      mockRequest.params = { id: "prod-1" };
-      mockRequest.body = { sku: "DUPLICATE" };
+    it('should prevent duplicate SKU when updating', async () => {
+      mockRequest.params = { id: 'prod-1' };
+      mockRequest.body = { sku: 'DUPLICATE' };
 
       mockPrisma.product.findFirst
-        .mockResolvedValueOnce({ id: "prod-1", sku: "ORIGINAL" }) // Existing product
-        .mockResolvedValueOnce({ id: "prod-2", sku: "DUPLICATE" }); // Duplicate check
+        .mockResolvedValueOnce({ id: 'prod-1', sku: 'ORIGINAL' }) // Existing product
+        .mockResolvedValueOnce({ id: 'prod-2', sku: 'DUPLICATE' }); // Duplicate check
 
       await updateProduct(mockRequest as Request, mockResponse as Response);
 
       expect(mockResponse.status).toHaveBeenCalledWith(400);
       expect(mockResponse.json).toHaveBeenCalledWith({
-        status: "error",
-        message: "A product with this SKU already exists",
+        status: 'error',
+        message: 'A product with this SKU already exists',
       });
     });
   });
 
-  describe("deleteProduct", () => {
-    it("should delete a product", async () => {
-      mockRequest.params = { id: "prod-1" };
+  describe('deleteProduct', () => {
+    it('should delete a product', async () => {
+      mockRequest.params = { id: 'prod-1' };
       mockPrisma.product.findFirst.mockResolvedValue({
-        id: "prod-1",
-        tenantId: "dev",
+        id: 'prod-1',
+        tenantId: 'dev',
       });
-      mockPrisma.product.delete.mockResolvedValue({ id: "prod-1" });
+      mockPrisma.product.delete.mockResolvedValue({ id: 'prod-1' });
 
       await deleteProduct(mockRequest as Request, mockResponse as Response);
 
       expect(mockPrisma.product.delete).toHaveBeenCalledWith({
-        where: { id: "prod-1" },
+        where: { id: 'prod-1' },
       });
 
       expect(mockResponse.json).toHaveBeenCalledWith({
-        status: "success",
-        message: "Product deleted successfully",
+        status: 'success',
+        message: 'Product deleted successfully',
       });
     });
 
-    it("should return 404 if product not found", async () => {
-      mockRequest.params = { id: "non-existent" };
+    it('should return 404 if product not found', async () => {
+      mockRequest.params = { id: 'non-existent' };
       mockPrisma.product.findFirst.mockResolvedValue(null);
 
       await deleteProduct(mockRequest as Request, mockResponse as Response);
@@ -417,20 +417,20 @@ describe("Products Controller", () => {
     });
   });
 
-  describe("adjustInventory", () => {
-    it("should increase inventory correctly", async () => {
+  describe('adjustInventory', () => {
+    it('should increase inventory correctly', async () => {
       const product = {
-        id: "prod-1",
-        tenantId: "dev",
+        id: 'prod-1',
+        tenantId: 'dev',
         currentStock: 50,
         trackInventory: true,
       };
 
-      mockRequest.params = { id: "prod-1" };
+      mockRequest.params = { id: 'prod-1' };
       mockRequest.body = {
         quantity: 20,
-        changeType: "PURCHASE",
-        reason: "New stock received",
+        changeType: 'PURCHASE',
+        reason: 'New stock received',
       };
 
       mockPrisma.product.findFirst.mockResolvedValue(product);
@@ -443,36 +443,36 @@ describe("Products Controller", () => {
       await adjustInventory(mockRequest as Request, mockResponse as Response);
 
       expect(mockPrisma.product.update).toHaveBeenCalledWith({
-        where: { id: "prod-1" },
+        where: { id: 'prod-1' },
         data: { currentStock: 70 },
       });
 
       expect(mockPrisma.inventoryLog.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
-          tenantId: "dev",
-          productId: "prod-1",
-          changeType: "PURCHASE",
+          tenantId: 'dev',
+          productId: 'prod-1',
+          changeType: 'PURCHASE',
           quantity: 20,
           previousStock: 50,
           newStock: 70,
-          reason: "New stock received",
+          reason: 'New stock received',
         }),
       });
     });
 
-    it("should decrease inventory correctly", async () => {
+    it('should decrease inventory correctly', async () => {
       const product = {
-        id: "prod-1",
-        tenantId: "dev",
+        id: 'prod-1',
+        tenantId: 'dev',
         currentStock: 50,
         trackInventory: true,
       };
 
-      mockRequest.params = { id: "prod-1" };
+      mockRequest.params = { id: 'prod-1' };
       mockRequest.body = {
         quantity: -10,
-        changeType: "SALE",
-        reason: "Sold to customer",
+        changeType: 'SALE',
+        reason: 'Sold to customer',
       };
 
       mockPrisma.product.findFirst.mockResolvedValue(product);
@@ -485,23 +485,23 @@ describe("Products Controller", () => {
       await adjustInventory(mockRequest as Request, mockResponse as Response);
 
       expect(mockPrisma.product.update).toHaveBeenCalledWith({
-        where: { id: "prod-1" },
+        where: { id: 'prod-1' },
         data: { currentStock: 40 },
       });
     });
 
-    it("should prevent negative inventory", async () => {
+    it('should prevent negative inventory', async () => {
       const product = {
-        id: "prod-1",
-        tenantId: "dev",
+        id: 'prod-1',
+        tenantId: 'dev',
         currentStock: 5,
         trackInventory: true,
       };
 
-      mockRequest.params = { id: "prod-1" };
+      mockRequest.params = { id: 'prod-1' };
       mockRequest.body = {
         quantity: -10,
-        changeType: "SALE",
+        changeType: 'SALE',
       };
 
       mockPrisma.product.findFirst.mockResolvedValue(product);
@@ -510,20 +510,20 @@ describe("Products Controller", () => {
 
       expect(mockResponse.status).toHaveBeenCalledWith(400);
       expect(mockResponse.json).toHaveBeenCalledWith({
-        status: "error",
-        message: "Insufficient inventory",
+        status: 'error',
+        message: 'Insufficient inventory',
       });
     });
 
-    it("should reject adjustment for non-inventory products", async () => {
+    it('should reject adjustment for non-inventory products', async () => {
       const product = {
-        id: "prod-1",
-        tenantId: "dev",
+        id: 'prod-1',
+        tenantId: 'dev',
         trackInventory: false,
       };
 
-      mockRequest.params = { id: "prod-1" };
-      mockRequest.body = { quantity: 10, changeType: "ADJUSTMENT" };
+      mockRequest.params = { id: 'prod-1' };
+      mockRequest.body = { quantity: 10, changeType: 'ADJUSTMENT' };
 
       mockPrisma.product.findFirst.mockResolvedValue(product);
 
@@ -531,41 +531,41 @@ describe("Products Controller", () => {
 
       expect(mockResponse.status).toHaveBeenCalledWith(400);
       expect(mockResponse.json).toHaveBeenCalledWith({
-        status: "error",
-        message: "This product does not track inventory",
+        status: 'error',
+        message: 'This product does not track inventory',
       });
     });
 
-    it("should require quantity and changeType", async () => {
-      mockRequest.params = { id: "prod-1" };
+    it('should require quantity and changeType', async () => {
+      mockRequest.params = { id: 'prod-1' };
       mockRequest.body = {};
 
       await adjustInventory(mockRequest as Request, mockResponse as Response);
 
       expect(mockResponse.status).toHaveBeenCalledWith(400);
       expect(mockResponse.json).toHaveBeenCalledWith({
-        status: "error",
-        message: "Quantity and change type are required",
+        status: 'error',
+        message: 'Quantity and change type are required',
       });
     });
   });
 
-  describe("getInventoryLogs", () => {
-    it("should return inventory logs for a product", async () => {
+  describe('getInventoryLogs', () => {
+    it('should return inventory logs for a product', async () => {
       const mockLogs = [
         {
-          id: "log-1",
-          productId: "prod-1",
-          changeType: "SALE",
+          id: 'log-1',
+          productId: 'prod-1',
+          changeType: 'SALE',
           quantity: -5,
           previousStock: 50,
           newStock: 45,
           createdAt: new Date(),
         },
         {
-          id: "log-2",
-          productId: "prod-1",
-          changeType: "PURCHASE",
+          id: 'log-2',
+          productId: 'prod-1',
+          changeType: 'PURCHASE',
           quantity: 20,
           previousStock: 45,
           newStock: 65,
@@ -573,33 +573,33 @@ describe("Products Controller", () => {
         },
       ];
 
-      mockRequest.params = { id: "prod-1" };
+      mockRequest.params = { id: 'prod-1' };
       mockPrisma.inventoryLog.findMany.mockResolvedValue(mockLogs);
 
       await getInventoryLogs(mockRequest as Request, mockResponse as Response);
 
       expect(mockPrisma.inventoryLog.findMany).toHaveBeenCalledWith({
         where: {
-          tenantId: "dev",
-          productId: "prod-1",
+          tenantId: 'dev',
+          productId: 'prod-1',
         },
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: 'desc' },
         take: 50,
       });
 
       expect(mockResponse.json).toHaveBeenCalledWith({
-        status: "success",
+        status: 'success',
         data: mockLogs,
       });
     });
   });
 
-  describe("getLowStockProducts", () => {
-    it("should return products with low stock", async () => {
+  describe('getLowStockProducts', () => {
+    it('should return products with low stock', async () => {
       const mockProducts = [
         {
-          id: "prod-1",
-          name: "Low Stock Item",
+          id: 'prod-1',
+          name: 'Low Stock Item',
           currentStock: 5,
           lowStockAlert: 10,
           trackInventory: true,
@@ -617,7 +617,7 @@ describe("Products Controller", () => {
       expect(mockPrisma.product.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            tenantId: "dev",
+            tenantId: 'dev',
             isActive: true,
             trackInventory: true,
           }),
@@ -625,17 +625,17 @@ describe("Products Controller", () => {
       );
 
       expect(mockResponse.json).toHaveBeenCalledWith({
-        status: "success",
+        status: 'success',
         data: mockProducts,
       });
     });
   });
 
-  describe("getAllCategories", () => {
-    it("should return all active categories", async () => {
+  describe('getAllCategories', () => {
+    it('should return all active categories', async () => {
       const mockCategories = [
-        { id: "cat-1", name: "Food & Treats", _count: { products: 5 } },
-        { id: "cat-2", name: "Toys", _count: { products: 10 } },
+        { id: 'cat-1', name: 'Food & Treats', _count: { products: 5 } },
+        { id: 'cat-2', name: 'Toys', _count: { products: 10 } },
       ];
 
       mockPrisma.productCategory.findMany.mockResolvedValue(mockCategories);
@@ -644,7 +644,7 @@ describe("Products Controller", () => {
 
       expect(mockPrisma.productCategory.findMany).toHaveBeenCalledWith({
         where: {
-          tenantId: "dev",
+          tenantId: 'dev',
           isActive: true,
         },
         include: {
@@ -652,27 +652,27 @@ describe("Products Controller", () => {
             select: { products: true },
           },
         },
-        orderBy: { displayOrder: "asc" },
+        orderBy: { displayOrder: 'asc' },
       });
 
       expect(mockResponse.json).toHaveBeenCalledWith({
-        status: "success",
+        status: 'success',
         data: mockCategories,
       });
     });
   });
 
-  describe("createCategory", () => {
-    it("should create a new category", async () => {
+  describe('createCategory', () => {
+    it('should create a new category', async () => {
       const newCategory = {
-        name: "Training Equipment",
-        description: "Equipment for training classes",
+        name: 'Training Equipment',
+        description: 'Equipment for training classes',
         displayOrder: 10,
       };
 
       const createdCategory = {
-        id: "cat-new",
-        tenantId: "dev",
+        id: 'cat-new',
+        tenantId: 'dev',
         ...newCategory,
         isActive: true,
       };
@@ -684,7 +684,7 @@ describe("Products Controller", () => {
 
       expect(mockPrisma.productCategory.create).toHaveBeenCalledWith({
         data: {
-          tenantId: "dev",
+          tenantId: 'dev',
           name: newCategory.name,
           description: newCategory.description,
           displayOrder: newCategory.displayOrder,
@@ -693,20 +693,20 @@ describe("Products Controller", () => {
 
       expect(mockResponse.status).toHaveBeenCalledWith(201);
       expect(mockResponse.json).toHaveBeenCalledWith({
-        status: "success",
+        status: 'success',
         data: createdCategory,
       });
     });
 
-    it("should require category name", async () => {
-      mockRequest.body = { description: "Test" };
+    it('should require category name', async () => {
+      mockRequest.body = { description: 'Test' };
 
       await createCategory(mockRequest as Request, mockResponse as Response);
 
       expect(mockResponse.status).toHaveBeenCalledWith(400);
       expect(mockResponse.json).toHaveBeenCalledWith({
-        status: "error",
-        message: "Name is required",
+        status: 'error',
+        message: 'Name is required',
       });
     });
   });

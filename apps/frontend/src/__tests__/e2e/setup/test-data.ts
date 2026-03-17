@@ -46,11 +46,11 @@ export async function setupTestData() {
 
   // 1. Create test customer
   const testCustomer = await prisma.customer.upsert({
-    where: { 
-      tenantId_email: { 
-        tenantId, 
-        email: 'test.customer@example.com' 
-      } 
+    where: {
+      tenantId_email: {
+        tenantId,
+        email: 'test.customer@example.com',
+      },
     },
     update: {},
     create: {
@@ -113,7 +113,7 @@ export async function setupTestData() {
       tenantId,
       name: 'Standard Boarding',
       serviceCategory: 'BOARDING',
-      price: 50.00,
+      price: 50.0,
       duration: 1440, // 24 hours
       isActive: true,
     },
@@ -127,7 +127,7 @@ export async function setupTestData() {
       tenantId,
       name: 'Full Day Daycare',
       serviceCategory: 'DAYCARE',
-      price: 30.00,
+      price: 30.0,
       duration: 480, // 8 hours
       isActive: true,
     },
@@ -141,7 +141,7 @@ export async function setupTestData() {
       tenantId,
       name: 'Full Groom',
       serviceCategory: 'GROOMING',
-      price: 75.00,
+      price: 75.0,
       duration: 120, // 2 hours
       isActive: true,
     },
@@ -176,11 +176,11 @@ export async function setupTestData() {
 
   // 5. Create test staff (groomer)
   const groomer = await prisma.staff.upsert({
-    where: { 
-      tenantId_email: { 
-        tenantId, 
-        email: 'sarah.johnson@tailtown.com' 
-      } 
+    where: {
+      tenantId_email: {
+        tenantId,
+        email: 'sarah.johnson@tailtown.com',
+      },
     },
     update: {},
     create: {
@@ -206,7 +206,7 @@ export async function setupTestData() {
       description: 'Learn basic commands and good behavior',
       instructorId: groomer.id,
       maxCapacity: 8,
-      pricePerSession: 25.00,
+      pricePerSession: 25.0,
       totalSessions: 6,
       sessionDuration: 60,
       startDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
@@ -217,7 +217,9 @@ export async function setupTestData() {
   });
 
   console.log('✅ Test data setup complete');
-  console.log(`Customer: ${testCustomer.firstName} ${testCustomer.lastName} (${testCustomer.id})`);
+  console.log(
+    `Customer: ${testCustomer.firstName} ${testCustomer.lastName} (${testCustomer.id})`
+  );
   console.log(`Pets: Buddy (${buddy.id}), Max (${max.id})`);
   console.log(`Services: Boarding, Daycare, Grooming`);
   console.log(`Resources: 2 test suites`);
@@ -227,7 +229,11 @@ export async function setupTestData() {
   return {
     customer: testCustomer,
     pets: { buddy, max },
-    services: { boarding: boardingService, daycare: daycareService, grooming: groomingService },
+    services: {
+      boarding: boardingService,
+      daycare: daycareService,
+      grooming: groomingService,
+    },
     resources: { suite1: standardSuite, suite2: standardSuite2 },
     staff: { groomer },
     trainingClass,
@@ -242,52 +248,58 @@ export async function cleanupTestData() {
 
   // Delete in reverse order of dependencies
   await prisma.reservation.deleteMany({
-    where: { 
+    where: {
       tenantId,
-      customer: { email: 'test.customer@example.com' }
-    }
+      customer: { email: 'test.customer@example.com' },
+    },
   });
 
   await prisma.enrollment.deleteMany({
     where: {
       tenantId,
-      customer: { email: 'test.customer@example.com' }
-    }
+      customer: { email: 'test.customer@example.com' },
+    },
   });
 
   await prisma.pet.deleteMany({
     where: {
       tenantId,
-      customer: { email: 'test.customer@example.com' }
-    }
+      customer: { email: 'test.customer@example.com' },
+    },
   });
 
   await prisma.customer.deleteMany({
     where: {
       tenantId,
-      email: 'test.customer@example.com'
-    }
+      email: 'test.customer@example.com',
+    },
   });
 
   // Clean up test resources
   await prisma.resource.deleteMany({
     where: {
-      id: { in: ['test-resource-suite-1', 'test-resource-suite-2'] }
-    }
+      id: { in: ['test-resource-suite-1', 'test-resource-suite-2'] },
+    },
   });
 
   // Clean up test services
   await prisma.service.deleteMany({
     where: {
-      id: { in: ['test-service-boarding', 'test-service-daycare', 'test-service-grooming'] }
-    }
+      id: {
+        in: [
+          'test-service-boarding',
+          'test-service-daycare',
+          'test-service-grooming',
+        ],
+      },
+    },
   });
 
   // Clean up test training class
   await prisma.trainingClass.deleteMany({
     where: {
-      id: 'test-training-class-1'
-    }
+      id: 'test-training-class-1',
+    },
   });
 
   console.log('✅ Test data cleanup complete');

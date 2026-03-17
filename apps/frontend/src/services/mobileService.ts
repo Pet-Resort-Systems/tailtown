@@ -45,32 +45,41 @@ class MobileService {
   async getDashboardData(): Promise<DashboardData> {
     // Try to fetch from dedicated mobile endpoint first
     try {
-      const response = await api.get<DashboardData>('/api/staff/mobile/dashboard');
+      const response = await api.get<DashboardData>(
+        '/api/staff/mobile/dashboard'
+      );
       console.log('Mobile dashboard endpoint returned data:', response.data);
       return response.data;
     } catch (mobileError: any) {
       // Expected 404 - fallback to aggregating from individual endpoints
       if (mobileError?.response?.status === 404) {
-        console.log('Mobile dashboard endpoint not found (404), aggregating from individual endpoints...');
+        console.log(
+          'Mobile dashboard endpoint not found (404), aggregating from individual endpoints...'
+        );
       } else {
         console.warn('Mobile dashboard endpoint error:', mobileError?.message);
       }
-      
+
       try {
         const [stats, schedule, tasks, unreadCount] = await Promise.all([
           this.getQuickStats(),
           this.getTodaySchedule(),
           this.getPendingTasks(),
-          this.getUnreadMessageCount()
+          this.getUnreadMessageCount(),
         ]);
-        
-        console.log('Aggregated dashboard data:', { stats, schedule: schedule.length, tasks: tasks.length, unreadCount });
-        
+
+        console.log('Aggregated dashboard data:', {
+          stats,
+          schedule: schedule.length,
+          tasks: tasks.length,
+          unreadCount,
+        });
+
         return {
           stats,
           todaySchedule: schedule,
           pendingTasks: tasks,
-          unreadMessages: unreadCount
+          unreadMessages: unreadCount,
         };
       } catch (aggregateError) {
         console.error('Error aggregating dashboard data:', aggregateError);
@@ -87,17 +96,20 @@ class MobileService {
   async getTodaySchedule(): Promise<TodaySchedule[]> {
     try {
       const today = new Date().toISOString().split('T')[0];
-      
+
       // Try multiple endpoint patterns
       try {
         const response = await api.get(`/api/schedules/my-schedule`, {
-          params: { date: today }
+          params: { date: today },
         });
-        
+
         if (response.data) {
-          const schedules = Array.isArray(response.data) ? response.data : 
-                          response.data.data ? response.data.data : [];
-          
+          const schedules = Array.isArray(response.data)
+            ? response.data
+            : response.data.data
+              ? response.data.data
+              : [];
+
           return schedules.map((s: any) => ({
             id: s.id,
             time: s.startTime,
@@ -106,13 +118,13 @@ class MobileService {
             startTime: s.startTime,
             endTime: s.endTime,
             role: s.role,
-            status: s.status
+            status: s.status,
           }));
         }
       } catch (err) {
         console.log('My-schedule endpoint not available, trying fallback');
       }
-      
+
       return this.getMockSchedule();
     } catch (error) {
       console.error('Error fetching today schedule:', error);
@@ -125,7 +137,9 @@ class MobileService {
    */
   async getPendingTasks(): Promise<PendingTask[]> {
     try {
-      const response = await api.get<PendingTask[]>('/api/staff/mobile/tasks/pending');
+      const response = await api.get<PendingTask[]>(
+        '/api/staff/mobile/tasks/pending'
+      );
       return response.data;
     } catch (error) {
       console.error('Error fetching pending tasks:', error);
@@ -140,7 +154,9 @@ class MobileService {
     try {
       // Try mobile stats endpoint
       try {
-        const response = await api.get<DashboardStats>('/api/staff/mobile/stats');
+        const response = await api.get<DashboardStats>(
+          '/api/staff/mobile/stats'
+        );
         return response.data;
       } catch (err) {
         // Fallback: calculate from reservations
@@ -149,31 +165,37 @@ class MobileService {
           params: {
             startDate: today,
             endDate: today,
-            status: 'CONFIRMED,CHECKED_IN'
-          }
+            status: 'CONFIRMED,CHECKED_IN',
+          },
         });
-        
+
         const reservations = response.data.data || [];
         const petsInFacility = reservations.length;
-        
+
         // Get checklists for task stats
         try {
           const checklistResponse = await api.get('/api/checklists');
           const checklists = checklistResponse.data.data || [];
-          const totalTasks = checklists.reduce((sum: number, c: any) => sum + (c.items?.length || 0), 0);
-          const completedTasks = checklists.reduce((sum: number, c: any) => 
-            sum + (c.items?.filter((i: any) => i.completed).length || 0), 0);
-          
+          const totalTasks = checklists.reduce(
+            (sum: number, c: any) => sum + (c.items?.length || 0),
+            0
+          );
+          const completedTasks = checklists.reduce(
+            (sum: number, c: any) =>
+              sum + (c.items?.filter((i: any) => i.completed).length || 0),
+            0
+          );
+
           return {
             petsInFacility,
             tasksCompleted: completedTasks,
-            totalTasks
+            totalTasks,
           };
         } catch (checklistErr) {
           return {
             petsInFacility,
             tasksCompleted: 0,
-            totalTasks: 0
+            totalTasks: 0,
           };
         }
       }
@@ -188,7 +210,9 @@ class MobileService {
    */
   async getUnreadMessageCount(): Promise<number> {
     try {
-      const response = await api.get<{ unreadCount: number }>('/api/messaging/unread-count');
+      const response = await api.get<{ unreadCount: number }>(
+        '/api/messaging/unread-count'
+      );
       return response.data.unreadCount;
     } catch (error) {
       console.error('Error fetching unread message count:', error);

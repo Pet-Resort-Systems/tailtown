@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Typography,
   Container,
@@ -25,24 +25,24 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-} from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
-import VaccinationStatus from "../../components/VaccinationStatus";
-import EmojiPetIconSelector from "../../components/pets/EmojiPetIconSelector";
-import VaccineComplianceBadge from "../../components/pets/VaccineComplianceBadge";
+} from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
+import VaccinationStatus from '../../components/VaccinationStatus';
+import EmojiPetIconSelector from '../../components/pets/EmojiPetIconSelector';
+import VaccineComplianceBadge from '../../components/pets/VaccineComplianceBadge';
 import {
   PlaygroupBadge,
   CompatibilityFlags,
-} from "../../components/compatibility";
-import { SelectChangeEvent } from "@mui/material/Select";
-import { Pet, petService } from "../../services/petService";
-import { customerService } from "../../services/customerService";
-import { getApiBaseUrl } from "../../services/api";
+} from '../../components/compatibility';
+import { SelectChangeEvent } from '@mui/material/Select';
+import { Pet, petService } from '../../services/petService';
+import { customerService } from '../../services/customerService';
+import { getApiBaseUrl } from '../../services/api';
 import referenceDataService, {
   Breed,
   Veterinarian,
   TemperamentType,
-} from "../../services/referenceDataService";
+} from '../../services/referenceDataService';
 
 /**
  * Map vaccination data from lowercase keys to component-expected capitalized keys
@@ -52,12 +52,12 @@ export const mapVaccinationData = (vaccinationStatus: any) => {
 
   const mapped: any = {};
   const keyMap: { [key: string]: string } = {
-    rabies: "Rabies",
-    dhpp: "DHPP",
-    bordetella: "Bordetella",
-    fvrcp: "FVRCP",
-    canine_influenza: "Influenza",
-    feline_leukemia: "Lepto", // Map to existing Lepto field
+    rabies: 'Rabies',
+    dhpp: 'DHPP',
+    bordetella: 'Bordetella',
+    fvrcp: 'FVRCP',
+    canine_influenza: 'Influenza',
+    feline_leukemia: 'Lepto', // Map to existing Lepto field
   };
 
   Object.entries(vaccinationStatus).forEach(([key, value]) => {
@@ -76,12 +76,12 @@ export const mapVaccinationExpirations = (vaccineExpirations: any) => {
 
   const mapped: any = {};
   const keyMap: { [key: string]: string } = {
-    rabies: "Rabies",
-    dhpp: "DHPP",
-    bordetella: "Bordetella",
-    fvrcp: "FVRCP",
-    canine_influenza: "Influenza",
-    feline_leukemia: "Lepto", // Map to existing Lepto field
+    rabies: 'Rabies',
+    dhpp: 'DHPP',
+    bordetella: 'Bordetella',
+    fvrcp: 'FVRCP',
+    canine_influenza: 'Influenza',
+    feline_leukemia: 'Lepto', // Map to existing Lepto field
   };
 
   Object.entries(vaccineExpirations).forEach(([key, value]) => {
@@ -99,7 +99,7 @@ export const mapVaccinationExpirations = (vaccineExpirations: any) => {
 const PetDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const isNewPet = id === "new";
+  const isNewPet = id === 'new';
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -116,22 +116,22 @@ const PetDetails = () => {
   );
   const [snackbar, setSnackbar] = useState({
     open: false,
-    message: "",
-    severity: "success" as "success" | "error",
+    message: '',
+    severity: 'success' as 'success' | 'error',
   });
 
   const [photoTimestamp, setPhotoTimestamp] = useState<number>(Date.now());
   const [deactivateDialogOpen, setDeactivateDialogOpen] = useState(false);
-  const [deactivationReason, setDeactivationReason] = useState("");
+  const [deactivationReason, setDeactivationReason] = useState('');
   const [deactivationDate, setDeactivationDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split('T')[0]
   );
 
   const [pet, setPet] = useState<
-    Omit<Pet, "id" | "createdAt" | "updatedAt" | "medicalRecords">
+    Omit<Pet, 'id' | 'createdAt' | 'updatedAt' | 'medicalRecords'>
   >({
-    name: "",
-    type: "DOG",
+    name: '',
+    type: 'DOG',
     breed: null,
     color: null,
     birthdate: null,
@@ -152,7 +152,7 @@ const PetDetails = () => {
     emergencyContactName: null,
     emergencyContactPhone: null,
     emergencyContactRelation: null,
-    customerId: "",
+    customerId: '',
     isActive: true,
     deactivatedAt: null,
     deactivationReason: null,
@@ -183,7 +183,7 @@ const PetDetails = () => {
         if (petData.birthdate) {
           petData.birthdate = new Date(petData.birthdate)
             .toISOString()
-            .split("T")[0];
+            .split('T')[0];
         }
 
         // Process medical records to populate vaccination status
@@ -194,16 +194,16 @@ const PetDetails = () => {
           today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
 
           petData.medicalRecords.forEach((record: any) => {
-            if (record.recordType === "VACCINATION" && record.description) {
+            if (record.recordType === 'VACCINATION' && record.description) {
               // Map vaccine descriptions to field names (use lowercase to match backend)
               const vaccineMap: { [key: string]: string } = {
-                "Rabies vaccination": "rabies",
-                "DHPP vaccination": "dhpp",
-                "Bordetella vaccination": "bordetella",
-                "FVRCP vaccination": "fvrcp",
-                "Canine Influenza vaccination": "influenza",
-                "Lepto vaccination": "lepto",
-                "Leptospirosis vaccination": "lepto",
+                'Rabies vaccination': 'rabies',
+                'DHPP vaccination': 'dhpp',
+                'Bordetella vaccination': 'bordetella',
+                'FVRCP vaccination': 'fvrcp',
+                'Canine Influenza vaccination': 'influenza',
+                'Lepto vaccination': 'lepto',
+                'Leptospirosis vaccination': 'lepto',
               };
 
               const vaccineName = vaccineMap[record.description];
@@ -216,19 +216,19 @@ const PetDetails = () => {
                   // Set status based on whether vaccine is expired
                   // VaccinationStatus component expects uppercase status values
                   if (expirationDate >= today) {
-                    vaccinationStatus[vaccineName] = { status: "CURRENT" };
+                    vaccinationStatus[vaccineName] = { status: 'CURRENT' };
                   } else {
-                    vaccinationStatus[vaccineName] = { status: "EXPIRED" };
+                    vaccinationStatus[vaccineName] = { status: 'EXPIRED' };
                   }
 
                   vaccineExpirations[vaccineName] = new Date(
                     record.expirationDate
                   )
                     .toISOString()
-                    .split("T")[0];
+                    .split('T')[0];
                 } else {
                   // No expiration date, mark as current
-                  vaccinationStatus[vaccineName] = { status: "CURRENT" };
+                  vaccinationStatus[vaccineName] = { status: 'CURRENT' };
                 }
               }
             }
@@ -284,8 +284,8 @@ const PetDetails = () => {
         setCustomers(customersData.data || []);
       }
     } catch (err) {
-      console.error("Error loading data:", err);
-      setError("Failed to load data");
+      console.error('Error loading data:', err);
+      setError('Failed to load data');
     } finally {
       setLoading(false);
     }
@@ -296,8 +296,8 @@ const PetDetails = () => {
 
     // Ensure proper scrolling behavior
     const enableScrolling = () => {
-      document.body.style.overflow = "auto";
-      document.body.style.height = "auto";
+      document.body.style.overflow = 'auto';
+      document.body.style.height = 'auto';
     };
 
     // Enable scrolling when component mounts
@@ -318,20 +318,20 @@ const PetDetails = () => {
   ) => {
     const { name, value } = e.target;
     if (name) {
-      if (name === "birthdate") {
+      if (name === 'birthdate') {
       }
       setPet((prev) => {
         const newValue =
-          name === "weight"
+          name === 'weight'
             ? value
               ? parseFloat(value)
               : null
-            : name === "birthdate"
-            ? value
+            : name === 'birthdate'
               ? value
-              : null
-            : value;
-        if (name === "birthdate") {
+                ? value
+                : null
+              : value;
+        if (name === 'birthdate') {
         }
         return {
           ...prev,
@@ -366,15 +366,15 @@ const PetDetails = () => {
       if (!pet.name || !pet.customerId) {
         setSnackbar({
           open: true,
-          message: "Please fill in all required fields",
-          severity: "error",
+          message: 'Please fill in all required fields',
+          severity: 'error',
         });
         return;
       }
 
       // Clean up the data before sending
       const formattedDate = pet.birthdate
-        ? new Date(pet.birthdate).toISOString().split("T")[0]
+        ? new Date(pet.birthdate).toISOString().split('T')[0]
         : null;
 
       const cleanPetData = {
@@ -410,7 +410,7 @@ const PetDetails = () => {
 
       if (isNewPet) {
         const newPet = await petService.createPet(
-          cleanPetData as Omit<Pet, "id">
+          cleanPetData as Omit<Pet, 'id'>
         );
         savedPetId = newPet.id;
       } else {
@@ -425,24 +425,24 @@ const PetDetails = () => {
             selectedTemperaments
           );
         } catch (err) {
-          console.error("Error saving temperaments:", err);
+          console.error('Error saving temperaments:', err);
         }
       }
 
       setSnackbar({
         open: true,
-        message: `Pet ${isNewPet ? "created" : "updated"} successfully`,
-        severity: "success",
+        message: `Pet ${isNewPet ? 'created' : 'updated'} successfully`,
+        severity: 'success',
       });
 
       // Navigate back to pets list after successful save
-      navigate("/pets");
+      navigate('/pets');
     } catch (err) {
-      console.error("Error saving pet:", err);
+      console.error('Error saving pet:', err);
       setSnackbar({
         open: true,
-        message: `Error ${isNewPet ? "creating" : "updating"} pet`,
-        severity: "error",
+        message: `Error ${isNewPet ? 'creating' : 'updating'} pet`,
+        severity: 'error',
       });
     } finally {
       setSaving(false);
@@ -457,17 +457,17 @@ const PetDetails = () => {
       setSnackbar({
         open: true,
         message:
-          "Pet has been deactivated. History preserved, communications stopped.",
-        severity: "success",
+          'Pet has been deactivated. History preserved, communications stopped.',
+        severity: 'success',
       });
       // Reload pet data to show updated status
       loadData();
     } catch (err) {
-      console.error("Error deactivating pet:", err);
+      console.error('Error deactivating pet:', err);
       setSnackbar({
         open: true,
-        message: "Error deactivating pet",
-        severity: "error",
+        message: 'Error deactivating pet',
+        severity: 'error',
       });
     } finally {
       setSaving(false);
@@ -480,17 +480,17 @@ const PetDetails = () => {
       await petService.reactivatePet(id!);
       setSnackbar({
         open: true,
-        message: "Pet has been reactivated",
-        severity: "success",
+        message: 'Pet has been reactivated',
+        severity: 'success',
       });
       // Reload pet data to show updated status
       loadData();
     } catch (err) {
-      console.error("Error reactivating pet:", err);
+      console.error('Error reactivating pet:', err);
       setSnackbar({
         open: true,
-        message: "Error reactivating pet",
-        severity: "error",
+        message: 'Error reactivating pet',
+        severity: 'error',
       });
     } finally {
       setSaving(false);
@@ -502,10 +502,10 @@ const PetDetails = () => {
       <Container maxWidth="lg">
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "50vh",
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '50vh',
           }}
         >
           <CircularProgress />
@@ -527,16 +527,16 @@ const PetDetails = () => {
   return (
     <Container maxWidth="lg">
       <Box sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
           <Typography variant="h4">
-            {isNewPet ? "New Pet" : pet.name}
+            {isNewPet ? 'New Pet' : pet.name}
           </Typography>
           {!isNewPet && !pet.isActive && (
             <Chip
               label={`Deactivated${
                 pet.deactivatedAt
                   ? ` on ${new Date(pet.deactivatedAt).toLocaleDateString()}`
-                  : ""
+                  : ''
               }`}
               color="error"
               size="small"
@@ -564,54 +564,54 @@ const PetDetails = () => {
             }
           >
             This pet has been deactivated
-            {pet.deactivationReason ? `: ${pet.deactivationReason}` : ""}.
+            {pet.deactivationReason ? `: ${pet.deactivationReason}` : ''}.
             Communications have been stopped and the pet will not appear in
             active lists.
           </Alert>
         )}
 
         <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
             <Avatar
               src={
                 pet.profilePhoto
-                  ? pet.profilePhoto.startsWith("http")
+                  ? pet.profilePhoto.startsWith('http')
                     ? `${pet.profilePhoto}?t=${photoTimestamp}`
                     : `${getApiBaseUrl()}${
                         pet.profilePhoto
                       }?t=${photoTimestamp}`
                   : undefined
               }
-              alt={pet.name || "Pet"}
+              alt={pet.name || 'Pet'}
               onError={(e) => {
                 // Reset image source on error and try a direct path without query parameters
                 const imgElement = e.target as HTMLImageElement;
                 const originalSrc = imgElement.src;
 
                 // Only try the fallback once to avoid infinite loops
-                if (originalSrc.includes("?")) {
-                  const baseUrl = originalSrc.split("?")[0];
+                if (originalSrc.includes('?')) {
+                  const baseUrl = originalSrc.split('?')[0];
                   imgElement.src = baseUrl;
                 } else {
                   // If fallback failed too, clear the src
-                  imgElement.src = "";
+                  imgElement.src = '';
                 }
               }}
               sx={{
                 width: 150,
                 height: 150,
-                border: "2px solid #e0e0e0",
-                "& img": {
-                  objectFit: "cover",
-                  width: "100%",
-                  height: "100%",
+                border: '2px solid #e0e0e0',
+                '& img': {
+                  objectFit: 'cover',
+                  width: '100%',
+                  height: '100%',
                 },
               }}
             />
             <Box>
               <input
                 accept="image/*"
-                style={{ display: "none" }}
+                style={{ display: 'none' }}
                 id="photo-upload"
                 type="file"
                 onChange={async (e) => {
@@ -622,8 +622,8 @@ const PetDetails = () => {
                       setSnackbar({
                         open: true,
                         message:
-                          "File size too large. Please upload an image under 5MB.",
-                        severity: "error",
+                          'File size too large. Please upload an image under 5MB.',
+                        severity: 'error',
                       });
                       return;
                     }
@@ -638,7 +638,7 @@ const PetDetails = () => {
                       // Create a local cached URL to display immediately
                       if (updatedPet.profilePhoto) {
                         const imageUrl = updatedPet.profilePhoto.startsWith(
-                          "http"
+                          'http'
                         )
                           ? updatedPet.profilePhoto
                           : `${getApiBaseUrl()}${updatedPet.profilePhoto}`;
@@ -657,15 +657,15 @@ const PetDetails = () => {
                       setPhotoTimestamp(Date.now());
                       setSnackbar({
                         open: true,
-                        message: "Photo uploaded successfully",
-                        severity: "success",
+                        message: 'Photo uploaded successfully',
+                        severity: 'success',
                       });
                     } catch (error) {
-                      console.error("Error uploading photo:", error);
+                      console.error('Error uploading photo:', error);
                       setSnackbar({
                         open: true,
-                        message: "Error uploading photo",
-                        severity: "error",
+                        message: 'Error uploading photo',
+                        severity: 'error',
                       });
                     } finally {
                       setSaving(false);
@@ -679,14 +679,14 @@ const PetDetails = () => {
                   component="span"
                   disabled={saving || isNewPet}
                 >
-                  {pet.profilePhoto ? "Change Photo" : "Add Photo"}
+                  {pet.profilePhoto ? 'Change Photo' : 'Add Photo'}
                 </Button>
               </label>
               {isNewPet && (
                 <Typography
                   variant="caption"
                   color="textSecondary"
-                  sx={{ display: "block", mt: 1 }}
+                  sx={{ display: 'block', mt: 1 }}
                 >
                   You can add a photo after creating the pet
                 </Typography>
@@ -696,8 +696,8 @@ const PetDetails = () => {
 
           <Box
             sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" },
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
               gap: 2,
             }}
           >
@@ -705,7 +705,7 @@ const PetDetails = () => {
               <TextField
                 label="Name"
                 name="name"
-                value={pet.name || ""}
+                value={pet.name || ''}
                 onChange={handleTextChange}
                 required
               />
@@ -715,7 +715,7 @@ const PetDetails = () => {
               <InputLabel>Type</InputLabel>
               <Select
                 name="type"
-                value={pet.type || "DOG"}
+                value={pet.type || 'DOG'}
                 label="Type"
                 onChange={handleSelectChange}
               >
@@ -729,11 +729,11 @@ const PetDetails = () => {
               <Autocomplete<Breed, false, false, true>
                 options={breeds.filter((b) => b.species === pet.type)}
                 getOptionLabel={(option) =>
-                  typeof option === "string" ? option : option.name
+                  typeof option === 'string' ? option : option.name
                 }
                 value={breeds.find((b) => b.name === pet.breed) || null}
                 onChange={(_, newValue) => {
-                  if (typeof newValue === "string") {
+                  if (typeof newValue === 'string') {
                     setPet((prev) => ({ ...prev, breed: newValue }));
                   } else {
                     setPet((prev) => ({
@@ -765,7 +765,7 @@ const PetDetails = () => {
               <TextField
                 label="Color"
                 name="color"
-                value={pet.color || ""}
+                value={pet.color || ''}
                 onChange={handleTextChange}
               />
             </FormControl>
@@ -775,7 +775,7 @@ const PetDetails = () => {
                 label="Weight (lbs)"
                 name="weight"
                 type="number"
-                value={pet.weight || ""}
+                value={pet.weight || ''}
                 onChange={handleTextChange}
               />
             </FormControl>
@@ -785,7 +785,7 @@ const PetDetails = () => {
                 label="Birthdate"
                 name="birthdate"
                 type="date"
-                value={pet.birthdate || ""}
+                value={pet.birthdate || ''}
                 onChange={handleTextChange}
                 InputLabelProps={{ shrink: true }}
               />
@@ -795,7 +795,7 @@ const PetDetails = () => {
               <InputLabel>Gender</InputLabel>
               <Select
                 name="gender"
-                value={pet.gender || ""}
+                value={pet.gender || ''}
                 label="Gender"
                 onChange={handleSelectChange}
               >
@@ -805,13 +805,13 @@ const PetDetails = () => {
             </FormControl>
 
             <Box
-              sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}
+              sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}
             >
               <FormControl fullWidth>
                 <TextField
                   label="Microchip Number"
                   name="microchipNumber"
-                  value={pet.microchipNumber || ""}
+                  value={pet.microchipNumber || ''}
                   onChange={handleTextChange}
                 />
               </FormControl>
@@ -820,7 +820,7 @@ const PetDetails = () => {
                 <TextField
                   label="Rabies Tag Number"
                   name="rabiesTagNumber"
-                  value={pet.rabiesTagNumber || ""}
+                  value={pet.rabiesTagNumber || ''}
                   onChange={handleTextChange}
                 />
               </FormControl>
@@ -849,14 +849,14 @@ const PetDetails = () => {
                 options={customers}
                 getOptionLabel={(option) =>
                   `${option.firstName} ${option.lastName}${
-                    option.email ? ` (${option.email})` : ""
+                    option.email ? ` (${option.email})` : ''
                   }`
                 }
                 value={customers.find((c) => c.id === pet.customerId) || null}
                 onChange={(_, newValue) => {
                   setPet((prev) => ({
                     ...prev,
-                    customerId: newValue?.id || "",
+                    customerId: newValue?.id || '',
                   }));
                 }}
                 renderInput={(params) => (
@@ -874,11 +874,11 @@ const PetDetails = () => {
                 <Typography variant="body2" color="text.secondary" gutterBottom>
                   Owner
                 </Typography>
-                <Paper sx={{ p: 2, bgcolor: "grey.50" }}>
+                <Paper sx={{ p: 2, bgcolor: 'grey.50' }}>
                   <Typography variant="body1">
                     {petOwner
                       ? `${petOwner.firstName} ${petOwner.lastName}`
-                      : "Loading owner information..."}
+                      : 'Loading owner information...'}
                   </Typography>
                   {petOwner?.email && (
                     <Typography
@@ -898,7 +898,7 @@ const PetDetails = () => {
                 <Typography
                   variant="caption"
                   color="text.secondary"
-                  sx={{ mt: 1, display: "block" }}
+                  sx={{ mt: 1, display: 'block' }}
                 >
                   Owner cannot be changed after pet creation. To transfer
                   ownership, please contact support.
@@ -919,15 +919,15 @@ const PetDetails = () => {
             onChange={(icons) => setPet({ ...pet, petIcons: icons })}
           />
 
-          <Box sx={{ display: "grid", gap: 2 }}>
+          <Box sx={{ display: 'grid', gap: 2 }}>
             {/* Medical Information */}
             <Typography variant="h6" gutterBottom>
               Medical Information
             </Typography>
             <Box
               sx={{
-                display: "grid",
-                gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" },
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
                 gap: 2,
               }}
             >
@@ -936,8 +936,8 @@ const PetDetails = () => {
                   options={vets}
                   loading={vets.length === 0}
                   getOptionLabel={(option) => {
-                    if (typeof option === "string") return option;
-                    return option.name || "";
+                    if (typeof option === 'string') return option;
+                    return option.name || '';
                   }}
                   value={(() => {
                     // First try to find by veterinarianId (linked)
@@ -957,7 +957,7 @@ const PetDetails = () => {
                     return null;
                   })()}
                   onChange={(_, newValue) => {
-                    if (typeof newValue === "string") {
+                    if (typeof newValue === 'string') {
                       // Free text entry - no veterinarian link
                       setPet((prev) => ({
                         ...prev,
@@ -991,7 +991,7 @@ const PetDetails = () => {
                       helperText={
                         vets.length > 0
                           ? `${vets.length} veterinarians available`
-                          : "Loading veterinarians..."
+                          : 'Loading veterinarians...'
                       }
                     />
                   )}
@@ -1021,7 +1021,7 @@ const PetDetails = () => {
                     return filtered.slice(0, 100);
                   }}
                   isOptionEqualToValue={(option, value) => {
-                    if (typeof value === "string") return option.name === value;
+                    if (typeof value === 'string') return option.name === value;
                     return option.id === value.id;
                   }}
                 />
@@ -1031,7 +1031,7 @@ const PetDetails = () => {
                 <TextField
                   label="Veterinarian Phone"
                   name="vetPhone"
-                  value={pet.vetPhone || ""}
+                  value={pet.vetPhone || ''}
                   onChange={handleTextChange}
                   helperText="Auto-filled when selecting from list"
                 />
@@ -1053,22 +1053,22 @@ const PetDetails = () => {
               </Typography>
               <Box
                 sx={{
-                  display: "grid",
-                  gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr 1fr" },
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' },
                   gap: 2,
                 }}
               >
                 <TextField
                   label="Contact Name"
                   name="emergencyContactName"
-                  value={pet.emergencyContactName || ""}
+                  value={pet.emergencyContactName || ''}
                   onChange={handleTextChange}
                   placeholder="John Smith"
                 />
                 <TextField
                   label="Contact Phone"
                   name="emergencyContactPhone"
-                  value={pet.emergencyContactPhone || ""}
+                  value={pet.emergencyContactPhone || ''}
                   onChange={handleTextChange}
                   placeholder="(555) 123-4567"
                 />
@@ -1076,7 +1076,7 @@ const PetDetails = () => {
                   <InputLabel>Relationship</InputLabel>
                   <Select
                     name="emergencyContactRelation"
-                    value={pet.emergencyContactRelation || ""}
+                    value={pet.emergencyContactRelation || ''}
                     label="Relationship"
                     onChange={(e: SelectChangeEvent) =>
                       setPet((prev) => ({
@@ -1101,7 +1101,7 @@ const PetDetails = () => {
             {/* Vaccination Status */}
             <Box sx={{ mt: 2 }}>
               <VaccinationStatus
-                petType={pet.type || "DOG"}
+                petType={pet.type || 'DOG'}
                 vaccinationStatus={mapVaccinationData(pet.vaccinationStatus)}
                 vaccineExpirations={mapVaccinationExpirations(
                   pet.vaccineExpirations
@@ -1117,7 +1117,7 @@ const PetDetails = () => {
                           ...(prev.vaccinationStatus || {}),
                           [lowercaseKey]: value,
                         },
-                      } as any)
+                      }) as any
                   );
                 }}
                 onVaccineExpirationChange={(key, value) => {
@@ -1164,12 +1164,12 @@ const PetDetails = () => {
               </FormGroup>
             </Box>
 
-            <Box sx={{ display: "grid", gap: 2 }}>
+            <Box sx={{ display: 'grid', gap: 2 }}>
               <FormControl fullWidth>
                 <TextField
                   label="Allergies"
                   name="allergies"
-                  value={pet.allergies || ""}
+                  value={pet.allergies || ''}
                   onChange={handleTextChange}
                   multiline
                   rows={2}
@@ -1180,7 +1180,7 @@ const PetDetails = () => {
                 <TextField
                   label="Medication Notes"
                   name="medicationNotes"
-                  value={pet.medicationNotes || ""}
+                  value={pet.medicationNotes || ''}
                   onChange={handleTextChange}
                   multiline
                   rows={2}
@@ -1191,7 +1191,7 @@ const PetDetails = () => {
                 <TextField
                   label="Food Notes"
                   name="foodNotes"
-                  value={pet.foodNotes || ""}
+                  value={pet.foodNotes || ''}
                   onChange={handleTextChange}
                   multiline
                   rows={2}
@@ -1202,7 +1202,7 @@ const PetDetails = () => {
                 <TextField
                   label="Special Needs"
                   name="specialNeeds"
-                  value={pet.specialNeeds || ""}
+                  value={pet.specialNeeds || ''}
                   onChange={handleTextChange}
                   multiline
                   rows={2}
@@ -1213,7 +1213,7 @@ const PetDetails = () => {
                 <TextField
                   label="Behavior Notes"
                   name="behaviorNotes"
-                  value={pet.behaviorNotes || ""}
+                  value={pet.behaviorNotes || ''}
                   onChange={handleTextChange}
                   multiline
                   rows={2}
@@ -1226,7 +1226,7 @@ const PetDetails = () => {
         {/* Compatibility Information from Gingr */}
         {!isNewPet && (pet as any).playgroupCompatibility && (
           <Paper sx={{ p: 3, mt: 3 }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
               <Typography variant="h6">
                 Compatibility & Special Requirements
               </Typography>
@@ -1262,7 +1262,7 @@ const PetDetails = () => {
                   sx={{
                     mt: 2,
                     p: 2,
-                    bgcolor: "warning.light",
+                    bgcolor: 'warning.light',
                     borderRadius: 1,
                   }}
                 >
@@ -1291,12 +1291,12 @@ const PetDetails = () => {
         <Box
           sx={{
             mt: 3,
-            display: "flex",
+            display: 'flex',
             gap: 2,
-            justifyContent: "space-between",
+            justifyContent: 'space-between',
           }}
         >
-          <Box sx={{ display: "flex", gap: 2 }}>
+          <Box sx={{ display: 'flex', gap: 2 }}>
             <Button
               variant="contained"
               color="primary"
@@ -1306,15 +1306,15 @@ const PetDetails = () => {
               {saving ? (
                 <CircularProgress size={24} />
               ) : isNewPet ? (
-                "Create Pet"
+                'Create Pet'
               ) : (
-                "Save Changes"
+                'Save Changes'
               )}
             </Button>
             <Button
               variant="outlined"
               color="secondary"
-              onClick={() => navigate("/pets")}
+              onClick={() => navigate('/pets')}
               disabled={saving}
             >
               Cancel
@@ -1370,7 +1370,7 @@ const PetDetails = () => {
               Cancel
             </Button>
             <Button onClick={handleDeactivate} color="error" disabled={saving}>
-              {saving ? <CircularProgress size={20} /> : "Deactivate"}
+              {saving ? <CircularProgress size={20} /> : 'Deactivate'}
             </Button>
           </DialogActions>
         </Dialog>
@@ -1383,7 +1383,7 @@ const PetDetails = () => {
           <Alert
             onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
             severity={snackbar.severity}
-            sx={{ width: "100%" }}
+            sx={{ width: '100%' }}
           >
             {snackbar.message}
           </Alert>

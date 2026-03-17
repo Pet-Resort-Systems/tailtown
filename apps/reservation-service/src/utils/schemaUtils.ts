@@ -6,8 +6,8 @@
  * and fallback values to ensure API stability even when schemas differ between environments.
  */
 
-import { PrismaClient } from "@prisma/client";
-import { logger } from "./logger";
+import { PrismaClient } from '@prisma/client';
+import { logger } from './logger';
 
 /**
  * Safely execute a Prisma query with error handling and fallback value
@@ -15,14 +15,13 @@ import { logger } from "./logger";
 export async function safeExecutePrismaQuery<T>(
   queryFn: () => Promise<T>,
   fallbackValue: T | null = null,
-  errorMessage = "Error executing database query",
+  errorMessage = 'Error executing database query',
   throwError = false
 ): Promise<T | null> {
   try {
     return await queryFn();
   } catch (error: any) {
-    const prismaError =
-      error?.code?.startsWith?.("P") ? error.code : null;
+    const prismaError = error?.code?.startsWith?.('P') ? error.code : null;
 
     const errorDetails = {
       prismaError,
@@ -31,7 +30,9 @@ export async function safeExecutePrismaQuery<T>(
     };
 
     logger.error(`[SCHEMA] ${errorMessage}: ${errorDetails.message}`);
-    logger.debug("[SCHEMA] This error might be due to schema mismatches between environments");
+    logger.debug(
+      '[SCHEMA] This error might be due to schema mismatches between environments'
+    );
 
     if (throwError) {
       throw error;
@@ -58,7 +59,9 @@ export async function tableExists(
     `;
     return result[0].exists;
   } catch (error) {
-    logger.error(`[SCHEMA] Error checking if table ${tableName} exists: ${error instanceof Error ? error.message : String(error)}`);
+    logger.error(
+      `[SCHEMA] Error checking if table ${tableName} exists: ${error instanceof Error ? error.message : String(error)}`
+    );
     return false;
   }
 }
@@ -82,7 +85,9 @@ export async function columnExists(
     `;
     return result[0].exists;
   } catch (error) {
-    logger.error(`[SCHEMA] Error checking if column ${columnName} in table ${tableName} exists: ${error instanceof Error ? error.message : String(error)}`);
+    logger.error(
+      `[SCHEMA] Error checking if column ${columnName} in table ${tableName} exists: ${error instanceof Error ? error.message : String(error)}`
+    );
     return false;
   }
 }

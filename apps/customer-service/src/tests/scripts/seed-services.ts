@@ -20,12 +20,12 @@ async function seedServices() {
       // Map string category to enum value
       const serviceData = {
         ...service,
-        serviceCategory: service.serviceCategory as ServiceCategory
+        serviceCategory: service.serviceCategory as ServiceCategory,
       };
 
       console.log(`Creating service: ${service.name}`);
       const createdService = await prisma.service.create({
-        data: serviceData
+        data: serviceData,
       });
 
       // Store mapping for add-ons
@@ -38,18 +38,22 @@ async function seedServices() {
 
       for (const serviceName of applicableServiceIds) {
         const serviceId = serviceNameToId[serviceName];
-        
+
         if (serviceId) {
-          console.log(`Creating add-on "${addOn.name}" for service: ${serviceName}`);
-          
+          console.log(
+            `Creating add-on "${addOn.name}" for service: ${serviceName}`
+          );
+
           await prisma.addOnService.create({
             data: {
               ...addOnData,
-              serviceId
-            }
+              serviceId,
+            },
           });
         } else {
-          console.warn(`Warning: Service "${serviceName}" not found for add-on "${addOn.name}"`);
+          console.warn(
+            `Warning: Service "${serviceName}" not found for add-on "${addOn.name}"`
+          );
         }
       }
     }

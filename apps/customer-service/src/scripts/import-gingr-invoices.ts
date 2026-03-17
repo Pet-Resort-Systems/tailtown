@@ -5,9 +5,9 @@
  * Run with: npx ts-node src/scripts/import-gingr-invoices.ts
  */
 
-import { PrismaClient } from "@prisma/client";
-import GingrApiClient from "../services/gingr-api.service";
-import dotenv from "dotenv";
+import { PrismaClient } from '@prisma/client';
+import GingrApiClient from '../services/gingr-api.service';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -35,15 +35,15 @@ async function importInvoices(
 
   console.log(`\n🔍 Importing invoices for tenant: ${tenantId}`);
   console.log(
-    `📅 Date range: ${fromDate.toISOString().split("T")[0]} to ${
-      toDate.toISOString().split("T")[0]
+    `📅 Date range: ${fromDate.toISOString().split('T')[0]} to ${
+      toDate.toISOString().split('T')[0]
     }`
   );
   console.log(
     `${
       dryRun
-        ? "🧪 DRY RUN MODE - No data will be saved"
-        : "💾 LIVE MODE - Data will be saved"
+        ? '🧪 DRY RUN MODE - No data will be saved'
+        : '💾 LIVE MODE - Data will be saved'
     }\n`
   );
 
@@ -53,7 +53,7 @@ async function importInvoices(
 
   if (!gingrSubdomain || !gingrApiKey) {
     throw new Error(
-      "Missing GINGR_SUBDOMAIN or GINGR_API_KEY in environment variables"
+      'Missing GINGR_SUBDOMAIN or GINGR_API_KEY in environment variables'
     );
   }
 
@@ -64,16 +64,16 @@ async function importInvoices(
 
   try {
     // Fetch invoices from Gingr
-    console.log("📥 Fetching invoices from Gingr...");
+    console.log('📥 Fetching invoices from Gingr...');
     const gingrInvoices = await gingrApi.fetchAllInvoices(fromDate, toDate);
     stats.total = gingrInvoices.length;
     console.log(`✅ Found ${stats.total} invoices\n`);
 
     // Debug: Show first invoice structure
     if (gingrInvoices.length > 0) {
-      console.log("🔍 Sample invoice data:");
+      console.log('🔍 Sample invoice data:');
       console.log(JSON.stringify(gingrInvoices[0], null, 2));
-      console.log("");
+      console.log('');
     }
 
     // Process each invoice
@@ -142,7 +142,7 @@ async function importInvoices(
         const total = parseFloat(gingrInvoice.total);
 
         // All imported invoices are considered PAID (they're completed transactions)
-        const status: "PAID" = "PAID";
+        const status: 'PAID' = 'PAID';
 
         const invoiceData = {
           tenantId,
@@ -157,7 +157,7 @@ async function importInvoices(
           discount: 0,
           total: total,
           externalId: gingrInvoice.id,
-          notes: "Imported from Gingr",
+          notes: 'Imported from Gingr',
         };
 
         if (dryRun) {
@@ -165,7 +165,7 @@ async function importInvoices(
           console.log(
             `   Customer: ${customer.firstName} ${customer.lastName}`
           );
-          console.log(`   Date: ${invoiceDate.toISOString().split("T")[0]}`);
+          console.log(`   Date: ${invoiceDate.toISOString().split('T')[0]}`);
           console.log(`   Total: $${total.toFixed(2)}`);
           console.log(`   Status: ${status}`);
           stats.imported++;
@@ -178,8 +178,8 @@ async function importInvoices(
                 create: [
                   {
                     tenantId,
-                    type: "SERVICE",
-                    description: "Services (imported from Gingr)",
+                    type: 'SERVICE',
+                    description: 'Services (imported from Gingr)',
                     quantity: 1,
                     unitPrice: subtotal,
                     amount: subtotal,
@@ -191,17 +191,17 @@ async function importInvoices(
           });
 
           // If invoice is paid, create a payment record
-          if (status === "PAID") {
+          if (status === 'PAID') {
             await prisma.payment.create({
               data: {
                 tenantId,
                 invoiceId: invoice.id,
                 customerId: customer.id,
                 amount: total,
-                method: "CASH", // Default to CASH for imported payments
+                method: 'CASH', // Default to CASH for imported payments
                 paymentDate: invoiceDate,
-                status: "PAID",
-                notes: "Payment imported from Gingr",
+                status: 'PAID',
+                notes: 'Payment imported from Gingr',
               },
             });
           }
@@ -220,7 +220,7 @@ async function importInvoices(
     }
 
     // Print summary
-    console.log("\n📊 Import Summary:");
+    console.log('\n📊 Import Summary:');
     console.log(`   Total invoices: ${stats.total}`);
     console.log(`   ✅ Imported: ${stats.imported}`);
     console.log(`   ⏭️  Skipped: ${stats.skipped}`);
@@ -245,7 +245,7 @@ async function importInvoices(
       );
     }
   } catch (error) {
-    console.error("❌ Fatal error during import:", error);
+    console.error('❌ Fatal error during import:', error);
     throw error;
   }
 
@@ -257,15 +257,15 @@ async function main() {
 
   // Parse arguments
   // Default to tailtown production tenant ID
-  const TAILTOWN_TENANT_ID = "b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05";
+  const TAILTOWN_TENANT_ID = 'b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05';
   const tenantId =
-    args.find((arg) => arg.startsWith("--tenant="))?.split("=")[1] ||
+    args.find((arg) => arg.startsWith('--tenant='))?.split('=')[1] ||
     TAILTOWN_TENANT_ID;
   const fromDateStr = args
-    .find((arg) => arg.startsWith("--from="))
-    ?.split("=")[1];
-  const toDateStr = args.find((arg) => arg.startsWith("--to="))?.split("=")[1];
-  const dryRun = args.includes("--dry-run");
+    .find((arg) => arg.startsWith('--from='))
+    ?.split('=')[1];
+  const toDateStr = args.find((arg) => arg.startsWith('--to='))?.split('=')[1];
+  const dryRun = args.includes('--dry-run');
 
   // Default to last 12 months if no dates provided
   const toDate = toDateStr ? new Date(toDateStr) : new Date();
@@ -273,14 +273,14 @@ async function main() {
     ? new Date(fromDateStr)
     : new Date(toDate.getTime() - 365 * 24 * 60 * 60 * 1000);
 
-  console.log("🚀 Gingr Invoice Import Script");
-  console.log("================================\n");
+  console.log('🚀 Gingr Invoice Import Script');
+  console.log('================================\n');
 
   try {
     await importInvoices(tenantId, fromDate, toDate, dryRun);
-    console.log("\n✅ Import completed successfully!");
+    console.log('\n✅ Import completed successfully!');
   } catch (error) {
-    console.error("\n❌ Import failed:", error);
+    console.error('\n❌ Import failed:', error);
     process.exit(1);
   } finally {
     await prisma.$disconnect();

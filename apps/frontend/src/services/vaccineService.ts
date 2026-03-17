@@ -3,21 +3,21 @@
  * API service for vaccine requirement management
  */
 
-import { getApiBaseUrl } from "./api";
+import { getApiBaseUrl } from './api';
 import {
   VaccineRequirement,
   PetVaccineCompliance,
   CreateVaccineRequirementRequest,
   UpdateVaccineRequirementRequest,
   VaccineRequirementFilters,
-} from "../types/vaccine";
+} from '../types/vaccine';
 
 // Helper to get tenant ID from localStorage
 const getTenantId = () => {
   return (
-    localStorage.getItem("tailtown_tenant_id") ||
-    localStorage.getItem("tenantId") ||
-    "dev"
+    localStorage.getItem('tailtown_tenant_id') ||
+    localStorage.getItem('tenantId') ||
+    'dev'
   );
 };
 
@@ -32,22 +32,22 @@ export const vaccineService = {
     filters?: VaccineRequirementFilters
   ): Promise<VaccineRequirement[]> {
     const params = new URLSearchParams();
-    if (filters?.petType) params.append("petType", filters.petType);
-    if (filters?.serviceType) params.append("serviceType", filters.serviceType);
+    if (filters?.petType) params.append('petType', filters.petType);
+    if (filters?.serviceType) params.append('serviceType', filters.serviceType);
     if (filters?.isActive !== undefined)
-      params.append("isActive", filters.isActive.toString());
+      params.append('isActive', filters.isActive.toString());
 
     const response = await fetch(
       `${API_BASE_URL}/api/vaccine-requirements?${params.toString()}`,
       {
         headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
+          'Content-Type': 'application/json',
+          'x-tenant-id': getTenantId(),
         },
       }
     );
 
-    if (!response.ok) throw new Error("Failed to fetch vaccine requirements");
+    if (!response.ok) throw new Error('Failed to fetch vaccine requirements');
     const data = await response.json();
     return data.data;
   },
@@ -60,13 +60,13 @@ export const vaccineService = {
       `${API_BASE_URL}/api/vaccine-requirements/${id}`,
       {
         headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
+          'Content-Type': 'application/json',
+          'x-tenant-id': getTenantId(),
         },
       }
     );
 
-    if (!response.ok) throw new Error("Failed to fetch vaccine requirement");
+    if (!response.ok) throw new Error('Failed to fetch vaccine requirement');
     const data = await response.json();
     return data.data;
   },
@@ -78,17 +78,17 @@ export const vaccineService = {
     requirement: CreateVaccineRequirementRequest
   ): Promise<VaccineRequirement> {
     const response = await fetch(`${API_BASE_URL}/api/vaccine-requirements`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "x-tenant-id": getTenantId(),
+        'Content-Type': 'application/json',
+        'x-tenant-id': getTenantId(),
       },
       body: JSON.stringify(requirement),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "Failed to create vaccine requirement");
+      throw new Error(error.message || 'Failed to create vaccine requirement');
     }
     const data = await response.json();
     return data.data;
@@ -104,10 +104,10 @@ export const vaccineService = {
     const response = await fetch(
       `${API_BASE_URL}/api/vaccine-requirements/${id}`,
       {
-        method: "PUT",
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
+          'Content-Type': 'application/json',
+          'x-tenant-id': getTenantId(),
         },
         body: JSON.stringify(updates),
       }
@@ -115,7 +115,7 @@ export const vaccineService = {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "Failed to update vaccine requirement");
+      throw new Error(error.message || 'Failed to update vaccine requirement');
     }
     const data = await response.json();
     return data.data;
@@ -128,15 +128,15 @@ export const vaccineService = {
     const response = await fetch(
       `${API_BASE_URL}/api/vaccine-requirements/${id}`,
       {
-        method: "DELETE",
+        method: 'DELETE',
         headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
+          'Content-Type': 'application/json',
+          'x-tenant-id': getTenantId(),
         },
       }
     );
 
-    if (!response.ok) throw new Error("Failed to delete vaccine requirement");
+    if (!response.ok) throw new Error('Failed to delete vaccine requirement');
   },
 
   /**
@@ -148,16 +148,16 @@ export const vaccineService = {
     const response = await fetch(
       `${API_BASE_URL}/api/vaccine-requirements/display-order`,
       {
-        method: "PUT",
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
+          'Content-Type': 'application/json',
+          'x-tenant-id': getTenantId(),
         },
         body: JSON.stringify({ requirements }),
       }
     );
 
-    if (!response.ok) throw new Error("Failed to update display order");
+    if (!response.ok) throw new Error('Failed to update display order');
   },
 
   /**
@@ -167,19 +167,19 @@ export const vaccineService = {
     petId: string,
     serviceType?: string
   ): Promise<VaccineRequirement[]> {
-    const params = serviceType ? `?serviceType=${serviceType}` : "";
+    const params = serviceType ? `?serviceType=${serviceType}` : '';
     const response = await fetch(
       `${API_BASE_URL}/api/pets/${petId}/vaccine-requirements${params}`,
       {
         headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
+          'Content-Type': 'application/json',
+          'x-tenant-id': getTenantId(),
         },
       }
     );
 
     if (!response.ok)
-      throw new Error("Failed to fetch applicable vaccine requirements");
+      throw new Error('Failed to fetch applicable vaccine requirements');
     const data = await response.json();
     return data.data;
   },
@@ -191,18 +191,18 @@ export const vaccineService = {
     petId: string,
     serviceType?: string
   ): Promise<PetVaccineCompliance> {
-    const params = serviceType ? `?serviceType=${serviceType}` : "";
+    const params = serviceType ? `?serviceType=${serviceType}` : '';
     const response = await fetch(
       `${API_BASE_URL}/api/pets/${petId}/vaccine-compliance${params}`,
       {
         headers: {
-          "Content-Type": "application/json",
-          "x-tenant-id": getTenantId(),
+          'Content-Type': 'application/json',
+          'x-tenant-id': getTenantId(),
         },
       }
     );
 
-    if (!response.ok) throw new Error("Failed to check vaccine compliance");
+    if (!response.ok) throw new Error('Failed to check vaccine compliance');
     const data = await response.json();
     return data.data;
   },

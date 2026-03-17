@@ -4,7 +4,7 @@ import {
   getAvailabilityCalendar,
   getSuiteAvailability,
   getAlternativeDates,
-  batchCheckAvailability
+  batchCheckAvailability,
 } from '../controllers/availability.controller';
 
 const router = express.Router();

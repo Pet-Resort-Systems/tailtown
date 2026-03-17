@@ -3,7 +3,7 @@
  * Manage recurring schedule templates for a staff member
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -33,7 +33,7 @@ import {
   Tooltip,
   Collapse,
   Grid,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -43,12 +43,12 @@ import {
   ExpandLess as CollapseIcon,
   Schedule as ScheduleIcon,
   Event as EventIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import scheduleTemplateService, {
   ScheduleTemplate,
   ScheduleTemplateEntry,
   ScheduleRotationType,
-} from "../../services/scheduleTemplateService";
+} from '../../services/scheduleTemplateService';
 
 interface ScheduleTemplatesProps {
   staffId: string;
@@ -56,13 +56,13 @@ interface ScheduleTemplatesProps {
 }
 
 const DAYS_OF_WEEK = [
-  { value: 0, label: "Sunday", short: "Sun" },
-  { value: 1, label: "Monday", short: "Mon" },
-  { value: 2, label: "Tuesday", short: "Tue" },
-  { value: 3, label: "Wednesday", short: "Wed" },
-  { value: 4, label: "Thursday", short: "Thu" },
-  { value: 5, label: "Friday", short: "Fri" },
-  { value: 6, label: "Saturday", short: "Sat" },
+  { value: 0, label: 'Sunday', short: 'Sun' },
+  { value: 1, label: 'Monday', short: 'Mon' },
+  { value: 2, label: 'Tuesday', short: 'Tue' },
+  { value: 3, label: 'Wednesday', short: 'Wed' },
+  { value: 4, label: 'Thursday', short: 'Thu' },
+  { value: 5, label: 'Friday', short: 'Fri' },
+  { value: 6, label: 'Saturday', short: 'Sat' },
 ];
 
 const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
@@ -81,14 +81,14 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
   const [editingTemplate, setEditingTemplate] =
     useState<ScheduleTemplate | null>(null);
   const [templateForm, setTemplateForm] = useState({
-    name: "",
-    rotationType: "WEEKLY" as ScheduleRotationType,
+    name: '',
+    rotationType: 'WEEKLY' as ScheduleRotationType,
     rotationWeeks: 1,
-    effectiveFrom: new Date().toISOString().split("T")[0],
-    effectiveUntil: "",
+    effectiveFrom: new Date().toISOString().split('T')[0],
+    effectiveUntil: '',
     generateAheadDays: 14,
     skipHolidays: true,
-    notes: "",
+    notes: '',
   });
 
   // Entry dialog state
@@ -99,11 +99,11 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
   const [entryForm, setEntryForm] = useState({
     dayOfWeek: 1,
     rotationWeek: 0,
-    startTime: "09:00",
-    endTime: "17:00",
-    location: "",
-    role: "",
-    notes: "",
+    startTime: '09:00',
+    endTime: '17:00',
+    location: '',
+    role: '',
+    notes: '',
   });
 
   // Load templates
@@ -115,8 +115,8 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
         const data = await scheduleTemplateService.getStaffTemplates(staffId);
         setTemplates(data);
       } catch (err: any) {
-        console.error("Error loading templates:", err);
-        setError("Failed to load schedule templates");
+        console.error('Error loading templates:', err);
+        setError('Failed to load schedule templates');
       } finally {
         setLoading(false);
       }
@@ -132,23 +132,23 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
         name: template.name,
         rotationType: template.rotationType,
         rotationWeeks: template.rotationWeeks,
-        effectiveFrom: template.effectiveFrom.split("T")[0],
-        effectiveUntil: template.effectiveUntil?.split("T")[0] || "",
+        effectiveFrom: template.effectiveFrom.split('T')[0],
+        effectiveUntil: template.effectiveUntil?.split('T')[0] || '',
         generateAheadDays: template.generateAheadDays,
         skipHolidays: template.skipHolidays,
-        notes: template.notes || "",
+        notes: template.notes || '',
       });
     } else {
       setEditingTemplate(null);
       setTemplateForm({
-        name: "",
-        rotationType: "WEEKLY",
+        name: '',
+        rotationType: 'WEEKLY',
         rotationWeeks: 1,
-        effectiveFrom: new Date().toISOString().split("T")[0],
-        effectiveUntil: "",
+        effectiveFrom: new Date().toISOString().split('T')[0],
+        effectiveUntil: '',
         generateAheadDays: 14,
         skipHolidays: true,
-        notes: "",
+        notes: '',
       });
     }
     setTemplateDialogOpen(true);
@@ -164,38 +164,38 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
           ...templateForm,
           effectiveUntil: templateForm.effectiveUntil || undefined,
         });
-        setSuccess("Template updated successfully");
+        setSuccess('Template updated successfully');
       } else {
         await scheduleTemplateService.createTemplate(staffId, {
           ...templateForm,
           effectiveUntil: templateForm.effectiveUntil || undefined,
         });
-        setSuccess("Template created successfully");
+        setSuccess('Template created successfully');
       }
 
       const data = await scheduleTemplateService.getStaffTemplates(staffId);
       setTemplates(data);
       setTemplateDialogOpen(false);
     } catch (err: any) {
-      console.error("Error saving template:", err);
-      setError("Failed to save template");
+      console.error('Error saving template:', err);
+      setError('Failed to save template');
     } finally {
       setSaving(false);
     }
   };
 
   const handleDeleteTemplate = async (templateId: string) => {
-    if (!window.confirm("Are you sure you want to delete this template?"))
+    if (!window.confirm('Are you sure you want to delete this template?'))
       return;
 
     try {
       setSaving(true);
       await scheduleTemplateService.deleteTemplate(templateId);
       setTemplates((prev) => prev.filter((t) => t.id !== templateId));
-      setSuccess("Template deleted successfully");
+      setSuccess('Template deleted successfully');
     } catch (err: any) {
-      console.error("Error deleting template:", err);
-      setError("Failed to delete template");
+      console.error('Error deleting template:', err);
+      setError('Failed to delete template');
     } finally {
       setSaving(false);
     }
@@ -205,9 +205,8 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
     try {
       setSaving(true);
       setError(null);
-      const result = await scheduleTemplateService.generateSchedules(
-        templateId
-      );
+      const result =
+        await scheduleTemplateService.generateSchedules(templateId);
       setSuccess(
         `Generated ${result.created} schedules (${result.skipped} skipped)`
       );
@@ -216,8 +215,8 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
       const data = await scheduleTemplateService.getStaffTemplates(staffId);
       setTemplates(data);
     } catch (err: any) {
-      console.error("Error generating schedules:", err);
-      setError("Failed to generate schedules");
+      console.error('Error generating schedules:', err);
+      setError('Failed to generate schedules');
     } finally {
       setSaving(false);
     }
@@ -236,20 +235,20 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
         rotationWeek: entry.rotationWeek,
         startTime: entry.startTime,
         endTime: entry.endTime,
-        location: entry.location || "",
-        role: entry.role || "",
-        notes: entry.notes || "",
+        location: entry.location || '',
+        role: entry.role || '',
+        notes: entry.notes || '',
       });
     } else {
       setEditingEntry(null);
       setEntryForm({
         dayOfWeek: 1,
         rotationWeek: 0,
-        startTime: "09:00",
-        endTime: "17:00",
-        location: "",
-        role: "",
-        notes: "",
+        startTime: '09:00',
+        endTime: '17:00',
+        location: '',
+        role: '',
+        notes: '',
       });
     }
     setEntryDialogOpen(true);
@@ -264,35 +263,35 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
 
       if (editingEntry) {
         await scheduleTemplateService.updateEntry(editingEntry.id, entryForm);
-        setSuccess("Entry updated successfully");
+        setSuccess('Entry updated successfully');
       } else {
         await scheduleTemplateService.addEntry(entryTemplateId, entryForm);
-        setSuccess("Entry added successfully");
+        setSuccess('Entry added successfully');
       }
 
       const data = await scheduleTemplateService.getStaffTemplates(staffId);
       setTemplates(data);
       setEntryDialogOpen(false);
     } catch (err: any) {
-      console.error("Error saving entry:", err);
-      setError("Failed to save entry");
+      console.error('Error saving entry:', err);
+      setError('Failed to save entry');
     } finally {
       setSaving(false);
     }
   };
 
   const handleDeleteEntry = async (entryId: string) => {
-    if (!window.confirm("Are you sure you want to delete this entry?")) return;
+    if (!window.confirm('Are you sure you want to delete this entry?')) return;
 
     try {
       setSaving(true);
       await scheduleTemplateService.deleteEntry(entryId);
       const data = await scheduleTemplateService.getStaffTemplates(staffId);
       setTemplates(data);
-      setSuccess("Entry deleted successfully");
+      setSuccess('Entry deleted successfully');
     } catch (err: any) {
-      console.error("Error deleting entry:", err);
-      setError("Failed to delete entry");
+      console.error('Error deleting entry:', err);
+      setError('Failed to delete entry');
     } finally {
       setSaving(false);
     }
@@ -300,7 +299,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -311,13 +310,13 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
       {/* Header */}
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           mb: 2,
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <ScheduleIcon color="primary" />
           <Typography variant="h6">
             Schedule Templates for {staffName}
@@ -350,8 +349,8 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
 
       {/* Templates List */}
       {templates.length === 0 ? (
-        <Paper sx={{ p: 4, textAlign: "center" }}>
-          <EventIcon sx={{ fontSize: 48, color: "text.secondary", mb: 1 }} />
+        <Paper sx={{ p: 4, textAlign: 'center' }}>
+          <EventIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 1 }} />
           <Typography color="text.secondary">
             No schedule templates yet
           </Typography>
@@ -360,7 +359,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
           </Typography>
         </Paper>
       ) : (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {templates.map((template) => {
             const isExpanded = expandedTemplate === template.id;
 
@@ -370,30 +369,30 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
                 <Box
                   sx={{
                     p: 2,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    cursor: "pointer",
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    cursor: 'pointer',
                   }}
                   onClick={() =>
                     setExpandedTemplate(isExpanded ? null : template.id)
                   }
                 >
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <IconButton size="small">
                       {isExpanded ? <CollapseIcon /> : <ExpandIcon />}
                     </IconButton>
                     <Box>
                       <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
                       >
                         <Typography variant="subtitle1" fontWeight="bold">
                           {template.name}
                         </Typography>
                         <Chip
-                          label={template.isActive ? "Active" : "Inactive"}
+                          label={template.isActive ? 'Active' : 'Inactive'}
                           size="small"
-                          color={template.isActive ? "success" : "default"}
+                          color={template.isActive ? 'success' : 'default'}
                         />
                         <Chip
                           label={scheduleTemplateService.formatRotationType(
@@ -404,17 +403,17 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
                         />
                       </Box>
                       <Typography variant="body2" color="text.secondary">
-                        {template.entries.length} entries •{" "}
+                        {template.entries.length} entries •{' '}
                         {template.lastGeneratedDate
                           ? `Last generated: ${new Date(
                               template.lastGeneratedDate
                             ).toLocaleDateString()}`
-                          : "Never generated"}
+                          : 'Never generated'}
                       </Typography>
                     </Box>
                   </Box>
                   <Box
-                    sx={{ display: "flex", gap: 1 }}
+                    sx={{ display: 'flex', gap: 1 }}
                     onClick={(e) => e.stopPropagation()}
                   >
                     <Tooltip title="Generate Schedules">
@@ -450,9 +449,9 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
                   <Box sx={{ px: 2, pb: 2 }}>
                     <Box
                       sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
                         mb: 1,
                       }}
                     >
@@ -472,7 +471,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
                       <Typography
                         variant="body2"
                         color="text.secondary"
-                        sx={{ py: 2, textAlign: "center" }}
+                        sx={{ py: 2, textAlign: 'center' }}
                       >
                         No entries yet. Add entries to define the schedule
                         pattern.
@@ -508,8 +507,8 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
                                 )}
                                 <TableCell>{entry.startTime}</TableCell>
                                 <TableCell>{entry.endTime}</TableCell>
-                                <TableCell>{entry.location || "-"}</TableCell>
-                                <TableCell>{entry.role || "-"}</TableCell>
+                                <TableCell>{entry.location || '-'}</TableCell>
+                                <TableCell>{entry.role || '-'}</TableCell>
                                 <TableCell align="right">
                                   <IconButton
                                     size="small"
@@ -549,7 +548,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
         fullWidth
       >
         <DialogTitle>
-          {editingTemplate ? "Edit Template" : "Create Template"}
+          {editingTemplate ? 'Edit Template' : 'Create Template'}
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
@@ -575,7 +574,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
                     setTemplateForm({
                       ...templateForm,
                       rotationType: e.target.value as ScheduleRotationType,
-                      rotationWeeks: e.target.value === "BIWEEKLY" ? 2 : 1,
+                      rotationWeeks: e.target.value === 'BIWEEKLY' ? 2 : 1,
                     })
                   }
                 >
@@ -599,7 +598,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
                 }
                 fullWidth
                 inputProps={{ min: 1, max: 8 }}
-                disabled={templateForm.rotationType === "WEEKLY"}
+                disabled={templateForm.rotationType === 'WEEKLY'}
               />
             </Grid>
             <Grid item xs={6}>
@@ -690,9 +689,9 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
             {saving ? (
               <CircularProgress size={20} />
             ) : editingTemplate ? (
-              "Update"
+              'Update'
             ) : (
-              "Create"
+              'Create'
             )}
           </Button>
         </DialogActions>
@@ -705,7 +704,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>{editingEntry ? "Edit Entry" : "Add Entry"}</DialogTitle>
+        <DialogTitle>{editingEntry ? 'Edit Entry' : 'Add Entry'}</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
             <Grid item xs={6}>
@@ -815,9 +814,9 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
             {saving ? (
               <CircularProgress size={20} />
             ) : editingEntry ? (
-              "Update"
+              'Update'
             ) : (
-              "Add"
+              'Add'
             )}
           </Button>
         </DialogActions>

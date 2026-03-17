@@ -7,22 +7,22 @@ async function createStaff() {
   const email = 'rob@tailtownpetresort.com';
   const password = 'Tailtown2015!';
   const tenantId = 'b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05'; // Tailtown tenant
-  
+
   try {
     // Check if staff already exists
     const existing = await prisma.staff.findFirst({
-      where: { 
+      where: {
         email,
-        tenantId 
-      }
+        tenantId,
+      },
     });
-    
+
     if (existing) {
       // Update password
       const passwordHash = await bcrypt.hash(password, 10);
       await prisma.staff.update({
         where: { id: existing.id },
-        data: { password: passwordHash }
+        data: { password: passwordHash },
       });
       console.log('Staff password updated successfully');
     } else {
@@ -36,8 +36,8 @@ async function createStaff() {
           lastName: 'Weinstein',
           role: 'ADMIN',
           tenantId,
-          isActive: true
-        }
+          isActive: true,
+        },
       });
       console.log('Staff created successfully:');
       console.log(`Email: ${staff.email}`);

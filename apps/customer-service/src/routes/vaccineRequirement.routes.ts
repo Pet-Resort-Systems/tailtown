@@ -9,27 +9,51 @@ const router = Router();
  */
 
 // Get all vaccine requirements (with filters)
-router.get('/vaccine-requirements', vaccineRequirementController.getAllVaccineRequirements);
+router.get(
+  '/vaccine-requirements',
+  vaccineRequirementController.getAllVaccineRequirements
+);
 
 // Get vaccine requirement by ID
-router.get('/vaccine-requirements/:id', vaccineRequirementController.getVaccineRequirementById);
+router.get(
+  '/vaccine-requirements/:id',
+  vaccineRequirementController.getVaccineRequirementById
+);
 
 // Create vaccine requirement
-router.post('/vaccine-requirements', vaccineRequirementController.createVaccineRequirement);
+router.post(
+  '/vaccine-requirements',
+  vaccineRequirementController.createVaccineRequirement
+);
 
 // Update vaccine requirement
-router.put('/vaccine-requirements/:id', vaccineRequirementController.updateVaccineRequirement);
+router.put(
+  '/vaccine-requirements/:id',
+  vaccineRequirementController.updateVaccineRequirement
+);
 
 // Delete vaccine requirement
-router.delete('/vaccine-requirements/:id', vaccineRequirementController.deleteVaccineRequirement);
+router.delete(
+  '/vaccine-requirements/:id',
+  vaccineRequirementController.deleteVaccineRequirement
+);
 
 // Bulk update display order
-router.put('/vaccine-requirements/display-order', vaccineRequirementController.updateDisplayOrder);
+router.put(
+  '/vaccine-requirements/display-order',
+  vaccineRequirementController.updateDisplayOrder
+);
 
 // Get applicable requirements for a pet
-router.get('/pets/:petId/vaccine-requirements', vaccineRequirementController.getApplicableRequirements);
+router.get(
+  '/pets/:petId/vaccine-requirements',
+  vaccineRequirementController.getApplicableRequirements
+);
 
 // Check pet's vaccine compliance
-router.get('/pets/:petId/vaccine-compliance', vaccineRequirementController.checkPetCompliance);
+router.get(
+  '/pets/:petId/vaccine-compliance',
+  vaccineRequirementController.checkPetCompliance
+);
 
 export default router;

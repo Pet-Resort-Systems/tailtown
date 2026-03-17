@@ -5,8 +5,8 @@
  * It provides a form interface for managing all price rule properties
  * including rule type, discount settings, and conditional parameters.
  */
-import React, { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -28,44 +28,44 @@ import {
   Chip,
   Breadcrumbs,
   Link as MuiLink,
-} from "@mui/material";
-import { ArrowBack as ArrowBackIcon } from "@mui/icons-material";
-import { Link } from "react-router-dom";
-import priceRuleService from "../../services/priceRuleService";
+} from '@mui/material';
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
+import priceRuleService from '../../services/priceRuleService';
 import {
   PriceRule,
   PriceRuleType,
   DiscountType,
   PriceAdjustmentType,
-} from "../../types/priceRule";
+} from '../../types/priceRule';
 
 const PriceRuleDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   // Check if this is a new price rule (either id is 'new' or we're on the new route)
   const isNew =
-    id === "new" || window.location.pathname.includes("/price-rules/new");
+    id === 'new' || window.location.pathname.includes('/price-rules/new');
   const [, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   // Check if we're on the new price rule page
 
   // Form state
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [ruleType, setRuleType] = useState<PriceRuleType | "">("");
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [ruleType, setRuleType] = useState<PriceRuleType | ''>('');
   const [adjustmentType, setAdjustmentType] =
-    useState<PriceAdjustmentType>("DISCOUNT"); // Default to discount
-  const [discountType, setDiscountType] = useState<DiscountType>("PERCENTAGE"); // Default to percentage discount
+    useState<PriceAdjustmentType>('DISCOUNT'); // Default to discount
+  const [discountType, setDiscountType] = useState<DiscountType>('PERCENTAGE'); // Default to percentage discount
   const [discountValue, setDiscountValue] = useState<number>(0);
-  const [minQuantity, setMinQuantity] = useState<number | "">("");
-  const [maxQuantity, setMaxQuantity] = useState<number | "">("");
+  const [minQuantity, setMinQuantity] = useState<number | ''>('');
+  const [maxQuantity, setMaxQuantity] = useState<number | ''>('');
   const [isActive, setIsActive] = useState<boolean>(true);
   const [priority, setPriority] = useState<number>(10);
   const [daysOfWeek, setDaysOfWeek] = useState<number[]>([]);
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
 
   const loadPriceRule = useCallback(async () => {
     try {
@@ -75,13 +75,13 @@ const PriceRuleDetailsPage: React.FC = () => {
 
       // Set form fields
       setName(priceRule.name);
-      setDescription(priceRule.description || "");
+      setDescription(priceRule.description || '');
       setRuleType(priceRule.ruleType);
-      setAdjustmentType(priceRule.adjustmentType || "DISCOUNT");
+      setAdjustmentType(priceRule.adjustmentType || 'DISCOUNT');
       setDiscountType(priceRule.discountType);
       setDiscountValue(priceRule.discountValue);
-      setMinQuantity(priceRule.minQuantity || "");
-      setMaxQuantity(priceRule.maxQuantity || "");
+      setMinQuantity(priceRule.minQuantity || '');
+      setMaxQuantity(priceRule.maxQuantity || '');
       setIsActive(priceRule.isActive);
       setPriority(priceRule.priority);
 
@@ -89,22 +89,22 @@ const PriceRuleDetailsPage: React.FC = () => {
         try {
           setDaysOfWeek(JSON.parse(priceRule.daysOfWeek));
         } catch (e) {
-          console.error("Error parsing days of week:", e);
+          console.error('Error parsing days of week:', e);
         }
       }
 
       if (priceRule.startDate) {
-        setStartDate(priceRule.startDate.split("T")[0]);
+        setStartDate(priceRule.startDate.split('T')[0]);
       }
 
       if (priceRule.endDate) {
-        setEndDate(priceRule.endDate.split("T")[0]);
+        setEndDate(priceRule.endDate.split('T')[0]);
       }
 
-      setError("");
+      setError('');
     } catch (err: any) {
-      console.error("Error loading price rule:", err);
-      setError(err.response?.data?.message || "Failed to load price rule");
+      console.error('Error loading price rule:', err);
+      setError(err.response?.data?.message || 'Failed to load price rule');
     } finally {
       setLoading(false);
     }
@@ -112,7 +112,7 @@ const PriceRuleDetailsPage: React.FC = () => {
 
   useEffect(() => {
     // Only load price rule data if this is an edit (not a new rule)
-    if (id && id !== "new") {
+    if (id && id !== 'new') {
       loadPriceRule();
     }
   }, [id, loadPriceRule]);
@@ -122,20 +122,20 @@ const PriceRuleDetailsPage: React.FC = () => {
 
     // Simple validation
     if (!name || !ruleType || !discountType || discountValue === undefined) {
-      setError("Please fill in all required fields");
+      setError('Please fill in all required fields');
       return;
     }
 
     if (
-      discountType === "PERCENTAGE" &&
+      discountType === 'PERCENTAGE' &&
       (discountValue < 0 || discountValue > 100)
     ) {
-      setError("Percentage discount must be between 0 and 100");
+      setError('Percentage discount must be between 0 and 100');
       return;
     }
 
-    if (ruleType === "DAY_OF_WEEK" && daysOfWeek.length === 0) {
-      setError("Please select at least one day of the week");
+    if (ruleType === 'DAY_OF_WEEK' && daysOfWeek.length === 0) {
+      setError('Please select at least one day of the week');
       return;
     }
 
@@ -148,8 +148,8 @@ const PriceRuleDetailsPage: React.FC = () => {
         adjustmentType,
         discountType,
         discountValue,
-        minQuantity: minQuantity === "" ? undefined : Number(minQuantity),
-        maxQuantity: maxQuantity === "" ? undefined : Number(maxQuantity),
+        minQuantity: minQuantity === '' ? undefined : Number(minQuantity),
+        maxQuantity: maxQuantity === '' ? undefined : Number(maxQuantity),
         isActive,
         priority,
         daysOfWeek:
@@ -168,10 +168,10 @@ const PriceRuleDetailsPage: React.FC = () => {
         await priceRuleService.updatePriceRule(id!, priceRuleData);
       }
 
-      navigate("/settings/price-rules");
+      navigate('/settings/price-rules');
     } catch (err: any) {
-      console.error("Error saving price rule:", err);
-      setError(err.response?.data?.message || "Failed to save price rule");
+      console.error('Error saving price rule:', err);
+      setError(err.response?.data?.message || 'Failed to save price rule');
     } finally {
       setSaving(false);
     }
@@ -186,17 +186,17 @@ const PriceRuleDetailsPage: React.FC = () => {
   };
 
   const getDiscountTypeLabel = () => {
-    if (discountType === "PERCENTAGE") {
-      return "%";
-    } else if (discountType === "FIXED_AMOUNT") {
-      return "$";
+    if (discountType === 'PERCENTAGE') {
+      return '%';
+    } else if (discountType === 'FIXED_AMOUNT') {
+      return '$';
     } else {
-      return "";
+      return '';
     }
   };
 
   const getDayName = (day: number) => {
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     return days[day];
   };
 
@@ -205,7 +205,7 @@ const PriceRuleDetailsPage: React.FC = () => {
   return (
     <Container maxWidth="md">
       <Box sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
           <Button
             component={Link}
             to="/settings/price-rules"
@@ -227,11 +227,11 @@ const PriceRuleDetailsPage: React.FC = () => {
                 Price Rules
               </MuiLink>
               <Typography color="text.primary">
-                {isNew ? "Create New Rule" : "Edit Rule"}
+                {isNew ? 'Create New Rule' : 'Edit Rule'}
               </Typography>
             </Breadcrumbs>
             <Typography variant="h4" component="h1">
-              {isNew ? "Create New Price Rule" : "Edit Price Rule"}
+              {isNew ? 'Create New Price Rule' : 'Edit Price Rule'}
             </Typography>
           </Box>
         </Box>
@@ -303,9 +303,9 @@ const PriceRuleDetailsPage: React.FC = () => {
                       </MenuItem>
                     </Select>
                     <FormHelperText>
-                      {adjustmentType === "DISCOUNT"
-                        ? "Reduces the price"
-                        : "Increases the price"}
+                      {adjustmentType === 'DISCOUNT'
+                        ? 'Reduces the price'
+                        : 'Increases the price'}
                     </FormHelperText>
                   </FormControl>
                 </Grid>
@@ -327,7 +327,7 @@ const PriceRuleDetailsPage: React.FC = () => {
                 <Grid item xs={12} sm={6}>
                   <TextField
                     label={`${
-                      adjustmentType === "DISCOUNT" ? "Discount" : "Surcharge"
+                      adjustmentType === 'DISCOUNT' ? 'Discount' : 'Surcharge'
                     } Value (${getDiscountTypeLabel()})`}
                     fullWidth
                     required
@@ -337,20 +337,20 @@ const PriceRuleDetailsPage: React.FC = () => {
                     InputProps={{
                       inputProps: {
                         min: 0,
-                        max: discountType === "PERCENTAGE" ? 100 : undefined,
-                        step: discountType === "PERCENTAGE" ? 1 : 0.01,
+                        max: discountType === 'PERCENTAGE' ? 100 : undefined,
+                        step: discountType === 'PERCENTAGE' ? 1 : 0.01,
                       },
                     }}
                     size="small"
                     error={
-                      discountType === "PERCENTAGE" &&
+                      discountType === 'PERCENTAGE' &&
                       (discountValue < 0 || discountValue > 100)
                     }
                     helperText={
-                      discountType === "PERCENTAGE" &&
+                      discountType === 'PERCENTAGE' &&
                       (discountValue < 0 || discountValue > 100)
-                        ? "Percentage must be between 0 and 100"
-                        : ""
+                        ? 'Percentage must be between 0 and 100'
+                        : ''
                     }
                   />
                 </Grid>
@@ -373,19 +373,19 @@ const PriceRuleDetailsPage: React.FC = () => {
                   />
                 </Grid>
 
-                {(ruleType === "MULTI_DAY" || ruleType === "MULTI_PET") && (
+                {(ruleType === 'MULTI_DAY' || ruleType === 'MULTI_PET') && (
                   <>
                     <Grid item xs={12} sm={6}>
                       <TextField
                         label={`Minimum ${
-                          ruleType === "MULTI_DAY" ? "Days" : "Pets"
+                          ruleType === 'MULTI_DAY' ? 'Days' : 'Pets'
                         }`}
                         fullWidth
                         type="number"
                         value={minQuantity}
                         onChange={(e) =>
                           setMinQuantity(
-                            e.target.value === "" ? "" : Number(e.target.value)
+                            e.target.value === '' ? '' : Number(e.target.value)
                           )
                         }
                         InputProps={{
@@ -401,14 +401,14 @@ const PriceRuleDetailsPage: React.FC = () => {
                     <Grid item xs={12} sm={6}>
                       <TextField
                         label={`Maximum ${
-                          ruleType === "MULTI_DAY" ? "Days" : "Pets"
+                          ruleType === 'MULTI_DAY' ? 'Days' : 'Pets'
                         }`}
                         fullWidth
                         type="number"
                         value={maxQuantity}
                         onChange={(e) =>
                           setMaxQuantity(
-                            e.target.value === "" ? "" : Number(e.target.value)
+                            e.target.value === '' ? '' : Number(e.target.value)
                           )
                         }
                         InputProps={{
@@ -423,7 +423,7 @@ const PriceRuleDetailsPage: React.FC = () => {
                   </>
                 )}
 
-                {ruleType === "DAY_OF_WEEK" && (
+                {ruleType === 'DAY_OF_WEEK' && (
                   <Grid item xs={12}>
                     <Typography variant="subtitle2" gutterBottom>
                       Days of Week
@@ -435,16 +435,16 @@ const PriceRuleDetailsPage: React.FC = () => {
                           label={getDayName(day)}
                           onClick={() => handleDayToggle(day)}
                           color={
-                            daysOfWeek.includes(day) ? "primary" : "default"
+                            daysOfWeek.includes(day) ? 'primary' : 'default'
                           }
                           variant={
-                            daysOfWeek.includes(day) ? "filled" : "outlined"
+                            daysOfWeek.includes(day) ? 'filled' : 'outlined'
                           }
                           sx={{ mb: 1 }}
                         />
                       ))}
                     </Box>
-                    {ruleType === "DAY_OF_WEEK" && daysOfWeek.length === 0 && (
+                    {ruleType === 'DAY_OF_WEEK' && daysOfWeek.length === 0 && (
                       <FormHelperText error>
                         Please select at least one day
                       </FormHelperText>
@@ -452,7 +452,7 @@ const PriceRuleDetailsPage: React.FC = () => {
                   </Grid>
                 )}
 
-                {(ruleType === "SEASONAL" || ruleType === "PROMOTIONAL") && (
+                {(ruleType === 'SEASONAL' || ruleType === 'PROMOTIONAL') && (
                   <>
                     <Grid item xs={12} sm={6}>
                       <TextField
@@ -498,7 +498,7 @@ const PriceRuleDetailsPage: React.FC = () => {
           <Box display="flex" justifyContent="flex-end" mt={3}>
             <Button
               variant="outlined"
-              onClick={() => navigate("/settings/price-rules")}
+              onClick={() => navigate('/settings/price-rules')}
               sx={{ mr: 2 }}
             >
               Cancel
@@ -512,9 +512,9 @@ const PriceRuleDetailsPage: React.FC = () => {
               {saving ? (
                 <CircularProgress size={24} />
               ) : isNew ? (
-                "Create Rule"
+                'Create Rule'
               ) : (
-                "Update Rule"
+                'Update Rule'
               )}
             </Button>
           </Box>

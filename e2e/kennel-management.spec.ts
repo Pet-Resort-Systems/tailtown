@@ -27,7 +27,7 @@ test.describe('Kennel Management', () => {
     await test.step('Verify kennel board displays', async () => {
       // Wait for kennel board to load
       await page.waitForSelector('text=Kennel Board', { timeout: 5000 });
-      
+
       // Verify summary cards are visible
       await expect(page.locator('text=Total Suites')).toBeVisible();
       await expect(page.locator('text=Available')).toBeVisible();
@@ -39,7 +39,7 @@ test.describe('Kennel Management', () => {
       // Look for kennel cards with alphanumeric identifiers (A01, A02, etc.)
       const kennelCard = page.locator('text=/A\\d+|B\\d+|C\\d+/').first();
       await expect(kennelCard).toBeVisible();
-      
+
       // Verify kennel number is not just "0"
       const kennelNumber = await kennelCard.textContent();
       expect(kennelNumber).not.toBe('0');
@@ -64,13 +64,13 @@ test.describe('Kennel Management', () => {
     await test.step('Filter by suite type', async () => {
       // Click on suite type filter
       await page.click('text=All Types');
-      
+
       // Select STANDARD_SUITE
       await page.click('text=STANDARD_SUITE');
-      
+
       // Wait for filter to apply
       await page.waitForTimeout(1000);
-      
+
       // Verify only standard suites are shown
       const suiteTypes = page.locator('text=STANDARD_SUITE');
       const count = await suiteTypes.count();
@@ -88,13 +88,13 @@ test.describe('Kennel Management', () => {
     await test.step('Filter by available status', async () => {
       // Click on status filter
       await page.click('text=All Status');
-      
+
       // Select Available
       await page.click('text=Available');
-      
+
       // Wait for filter to apply
       await page.waitForTimeout(1000);
-      
+
       // Verify "Available" text is visible on cards
       const availableCards = page.locator('text=Available');
       const count = await availableCards.count();
@@ -113,10 +113,10 @@ test.describe('Kennel Management', () => {
       // Find search input
       const searchInput = page.locator('input[placeholder*="Search"]');
       await searchInput.fill('A01');
-      
+
       // Wait for search to filter
       await page.waitForTimeout(1000);
-      
+
       // Verify A01 is visible
       await expect(page.locator('text=A01')).toBeVisible();
     });
@@ -132,10 +132,10 @@ test.describe('Kennel Management', () => {
     await test.step('Refresh kennel data', async () => {
       const refreshButton = page.locator('button:has-text("REFRESH")');
       await refreshButton.click();
-      
+
       // Wait for refresh to complete
       await page.waitForTimeout(2000);
-      
+
       // Verify board still displays
       await expect(page.locator('text=Kennel Board')).toBeVisible();
     });
@@ -156,7 +156,9 @@ test.describe('Kennel Management', () => {
     });
   });
 
-  test('should display kennel cards with full identifiers for printing', async ({ page }) => {
+  test('should display kennel cards with full identifiers for printing', async ({
+    page,
+  }) => {
     test.setTimeout(TEST_TIMEOUT);
 
     // Navigate to print kennel cards
@@ -172,10 +174,10 @@ test.describe('Kennel Management', () => {
     await test.step('Verify full kennel identifiers', async () => {
       // Look for kennel cards with "Kennel #A01" format (not just "Kennel #3")
       const kennelHeader = page.locator('text=/Kennel #[A-Z]\\d+/').first();
-      
+
       if (await kennelHeader.isVisible()) {
         const headerText = await kennelHeader.textContent();
-        
+
         // Verify it's not just a number
         expect(headerText).toMatch(/Kennel #[A-Z]\d+/);
         expect(headerText).not.toMatch(/Kennel #\d+$/); // Should not be just "Kennel #3"
@@ -202,15 +204,15 @@ test.describe('Kennel Management', () => {
     await test.step('Change filter date', async () => {
       // Find date picker
       const datePicker = page.locator('input[type="date"]');
-      
+
       if (await datePicker.isVisible()) {
         // Set to tomorrow
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         const dateStr = tomorrow.toISOString().split('T')[0];
-        
+
         await datePicker.fill(dateStr);
-        
+
         // Wait for cards to update
         await page.waitForTimeout(2000);
       }
@@ -227,7 +229,7 @@ test.describe('Kennel Management', () => {
     // Click print button
     await test.step('Trigger print', async () => {
       // Set up listener for print dialog
-      page.on('dialog', async dialog => {
+      page.on('dialog', async (dialog) => {
         expect(dialog.type()).toBe('beforeprint');
         await dialog.accept();
       });
@@ -240,7 +242,9 @@ test.describe('Kennel Management', () => {
     });
   });
 
-  test('should display kennel with pet and owner information', async ({ page }) => {
+  test('should display kennel with pet and owner information', async ({
+    page,
+  }) => {
     test.setTimeout(TEST_TIMEOUT);
 
     await page.click('text=Kennels');
@@ -250,18 +254,20 @@ test.describe('Kennel Management', () => {
     await test.step('Find occupied kennel', async () => {
       // Look for kennel with pet information
       const occupiedKennel = page.locator('text=Occupied').first();
-      
+
       if (await occupiedKennel.isVisible()) {
         // Click on the kennel card to see details
         await occupiedKennel.click();
-        
+
         // Verify pet and owner info displays
         await page.waitForTimeout(1000);
       }
     });
   });
 
-  test('should show color-coded availability on kennel board', async ({ page }) => {
+  test('should show color-coded availability on kennel board', async ({
+    page,
+  }) => {
     test.setTimeout(TEST_TIMEOUT);
 
     await page.click('text=Kennels');

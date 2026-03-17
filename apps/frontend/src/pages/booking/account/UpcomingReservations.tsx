@@ -2,7 +2,7 @@
  * UpcomingReservations - View and manage upcoming reservations
  */
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Card,
@@ -18,34 +18,34 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   CalendarMonth as CalendarIcon,
   Pets as PetsIcon,
   Hotel as HotelIcon,
   Cancel as CancelIcon,
-} from "@mui/icons-material";
-import { format, parseISO, isAfter, addDays } from "date-fns";
-import { useCustomerAuth } from "../../../contexts/CustomerAuthContext";
+} from '@mui/icons-material';
+import { format, parseISO, isAfter, addDays } from 'date-fns';
+import { useCustomerAuth } from '../../../contexts/CustomerAuthContext';
 import customerAccountService, {
   CustomerReservation,
-} from "../../../services/customerAccountService";
+} from '../../../services/customerAccountService';
 
 const getStatusColor = (
   status: string
-): "default" | "primary" | "success" | "warning" | "error" => {
+): 'default' | 'primary' | 'success' | 'warning' | 'error' => {
   switch (status?.toUpperCase()) {
-    case "CONFIRMED":
-      return "success";
-    case "PENDING":
-      return "warning";
-    case "CHECKED_IN":
-      return "primary";
-    case "CANCELLED":
-      return "error";
+    case 'CONFIRMED':
+      return 'success';
+    case 'PENDING':
+      return 'warning';
+    case 'CHECKED_IN':
+      return 'primary';
+    case 'CANCELLED':
+      return 'error';
     default:
-      return "default";
+      return 'default';
   }
 };
 
@@ -53,25 +53,25 @@ const UpcomingReservations: React.FC = () => {
   const { customer } = useCustomerAuth();
   const [reservations, setReservations] = useState<CustomerReservation[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [selectedReservation, setSelectedReservation] =
     useState<CustomerReservation | null>(null);
-  const [cancelReason, setCancelReason] = useState("");
+  const [cancelReason, setCancelReason] = useState('');
   const [cancelling, setCancelling] = useState(false);
 
   const loadReservations = useCallback(async () => {
     if (!customer?.id) return;
     try {
       setLoading(true);
-      setError("");
+      setError('');
       const data = await customerAccountService.getUpcomingReservations(
         customer.id
       );
       setReservations(data);
     } catch (err: any) {
-      console.error("Error loading reservations:", err);
-      setError("Unable to load reservations. Please try again.");
+      console.error('Error loading reservations:', err);
+      setError('Unable to load reservations. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -96,12 +96,12 @@ const UpcomingReservations: React.FC = () => {
         cancelReason
       );
       setCancelDialogOpen(false);
-      setCancelReason("");
+      setCancelReason('');
       setSelectedReservation(null);
       loadReservations(); // Refresh list
     } catch (err: any) {
       setError(
-        "Unable to cancel reservation. Please contact us for assistance."
+        'Unable to cancel reservation. Please contact us for assistance.'
       );
     } finally {
       setCancelling(false);
@@ -116,7 +116,7 @@ const UpcomingReservations: React.FC = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -132,8 +132,8 @@ const UpcomingReservations: React.FC = () => {
 
   if (reservations.length === 0) {
     return (
-      <Box sx={{ textAlign: "center", py: 6 }}>
-        <CalendarIcon sx={{ fontSize: 64, color: "text.disabled", mb: 2 }} />
+      <Box sx={{ textAlign: 'center', py: 6 }}>
+        <CalendarIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
         <Typography variant="h6" color="text.secondary" gutterBottom>
           No Upcoming Reservations
         </Typography>
@@ -160,15 +160,15 @@ const UpcomingReservations: React.FC = () => {
               <CardContent>
                 <Box
                   sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
                     mb: 2,
                   }}
                 >
                   <Box>
                     <Typography variant="h6" fontWeight={600}>
-                      {reservation.service?.name || "Reservation"}
+                      {reservation.service?.name || 'Reservation'}
                     </Typography>
                     {reservation.orderNumber && (
                       <Typography variant="caption" color="text.secondary">
@@ -187,23 +187,23 @@ const UpcomingReservations: React.FC = () => {
 
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
-                    <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <CalendarIcon
-                        sx={{ mr: 1, color: "text.secondary", fontSize: 20 }}
+                        sx={{ mr: 1, color: 'text.secondary', fontSize: 20 }}
                       />
                       <Typography variant="body2">
                         {format(
                           parseISO(reservation.startDate),
-                          "EEE, MMM d, yyyy"
+                          'EEE, MMM d, yyyy'
                         )}
                         {reservation.endDate &&
                           reservation.endDate !== reservation.startDate && (
                             <>
-                              {" "}
-                              -{" "}
+                              {' '}
+                              -{' '}
                               {format(
                                 parseISO(reservation.endDate),
-                                "EEE, MMM d, yyyy"
+                                'EEE, MMM d, yyyy'
                               )}
                             </>
                           )}
@@ -212,10 +212,10 @@ const UpcomingReservations: React.FC = () => {
 
                     {reservation.pet && (
                       <Box
-                        sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                        sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
                       >
                         <PetsIcon
-                          sx={{ mr: 1, color: "text.secondary", fontSize: 20 }}
+                          sx={{ mr: 1, color: 'text.secondary', fontSize: 20 }}
                         />
                         <Typography variant="body2">
                           {reservation.pet.name}
@@ -229,10 +229,10 @@ const UpcomingReservations: React.FC = () => {
                   <Grid item xs={12} sm={6}>
                     {reservation.resource && (
                       <Box
-                        sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                        sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
                       >
                         <HotelIcon
-                          sx={{ mr: 1, color: "text.secondary", fontSize: 20 }}
+                          sx={{ mr: 1, color: 'text.secondary', fontSize: 20 }}
                         />
                         <Typography variant="body2">
                           {reservation.resource.name}
@@ -240,13 +240,13 @@ const UpcomingReservations: React.FC = () => {
                       </Box>
                     )}
 
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <Typography
                         variant="body2"
                         fontWeight={600}
                         color="primary"
                       >
-                        ${reservation.totalPrice?.toFixed(2) || "0.00"}
+                        ${reservation.totalPrice?.toFixed(2) || '0.00'}
                       </Typography>
                     </Box>
                   </Grid>
@@ -254,7 +254,7 @@ const UpcomingReservations: React.FC = () => {
 
                 {reservation.notes && (
                   <Box
-                    sx={{ mt: 2, p: 1.5, bgcolor: "grey.50", borderRadius: 1 }}
+                    sx={{ mt: 2, p: 1.5, bgcolor: 'grey.50', borderRadius: 1 }}
                   >
                     <Typography variant="caption" color="text.secondary">
                       Notes: {reservation.notes}
@@ -263,12 +263,12 @@ const UpcomingReservations: React.FC = () => {
                 )}
 
                 {canCancel(reservation) &&
-                  reservation.status !== "CANCELLED" && (
+                  reservation.status !== 'CANCELLED' && (
                     <Box
                       sx={{
                         mt: 2,
-                        display: "flex",
-                        justifyContent: "flex-end",
+                        display: 'flex',
+                        justifyContent: 'flex-end',
                       }}
                     >
                       <Button
@@ -323,7 +323,7 @@ const UpcomingReservations: React.FC = () => {
             variant="contained"
             disabled={cancelling}
           >
-            {cancelling ? "Cancelling..." : "Cancel Reservation"}
+            {cancelling ? 'Cancelling...' : 'Cancel Reservation'}
           </Button>
         </DialogActions>
       </Dialog>

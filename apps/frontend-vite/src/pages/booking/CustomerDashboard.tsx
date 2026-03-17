@@ -9,7 +9,7 @@
  * - View account balance
  */
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   Container,
@@ -28,7 +28,7 @@ import {
   Divider,
   useTheme,
   useMediaQuery,
-} from "@mui/material";
+} from '@mui/material';
 import {
   CalendarMonth as CalendarIcon,
   History as HistoryIcon,
@@ -38,21 +38,21 @@ import {
   Logout as LogoutIcon,
   Add as AddIcon,
   Home as HomeIcon,
-} from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+} from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import {
   CustomerAuthProvider,
   useCustomerAuth,
-} from "../../contexts/CustomerAuthContext";
-import CustomerAuth from "./CustomerAuth";
+} from '../../contexts/CustomerAuthContext';
+import CustomerAuth from './CustomerAuth';
 
 // Tab components
-import UpcomingReservations from "./account/UpcomingReservations";
-import PastReservations from "./account/PastReservations";
-import MyPets from "./account/MyPets";
-import DaycarePasses from "./account/DaycarePasses";
-import AccountBalance from "./account/AccountBalance";
+import UpcomingReservations from './account/UpcomingReservations';
+import PastReservations from './account/PastReservations';
+import MyPets from './account/MyPets';
+import DaycarePasses from './account/DaycarePasses';
+import AccountBalance from './account/AccountBalance';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -79,7 +79,7 @@ function TabPanel(props: TabPanelProps) {
 const CustomerDashboardContent: React.FC = () => {
   const navigate = useNavigate();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { customer, isAuthenticated, isLoading, logout } = useCustomerAuth();
 
   const [activeTab, setActiveTab] = useState(0);
@@ -100,11 +100,11 @@ const CustomerDashboardContent: React.FC = () => {
   const handleLogout = () => {
     logout();
     handleMenuClose();
-    navigate("/book");
+    navigate('/book');
   };
 
   const handleNewBooking = () => {
-    navigate("/book");
+    navigate('/book');
   };
 
   // Show loading
@@ -112,10 +112,10 @@ const CustomerDashboardContent: React.FC = () => {
     return (
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
         }}
       >
         <CircularProgress />
@@ -137,18 +137,18 @@ const CustomerDashboardContent: React.FC = () => {
 
   const tabs = [
     {
-      label: "Upcoming",
+      label: 'Upcoming',
       icon: <CalendarIcon />,
       component: <UpcomingReservations />,
     },
     {
-      label: "History",
+      label: 'History',
       icon: <HistoryIcon />,
       component: <PastReservations />,
     },
-    { label: "My Pets", icon: <PetsIcon />, component: <MyPets /> },
-    { label: "Passes", icon: <PassIcon />, component: <DaycarePasses /> },
-    { label: "Balance", icon: <BalanceIcon />, component: <AccountBalance /> },
+    { label: 'My Pets', icon: <PetsIcon />, component: <MyPets /> },
+    { label: 'Passes', icon: <PassIcon />, component: <DaycarePasses /> },
+    { label: 'Balance', icon: <BalanceIcon />, component: <AccountBalance /> },
   ];
 
   return (
@@ -167,7 +167,7 @@ const CustomerDashboardContent: React.FC = () => {
           <IconButton
             edge="start"
             color="inherit"
-            onClick={() => navigate("/book")}
+            onClick={() => navigate('/book')}
             sx={{ mr: 2 }}
           >
             <HomeIcon />
@@ -181,14 +181,14 @@ const CustomerDashboardContent: React.FC = () => {
             variant="contained"
             startIcon={<AddIcon />}
             onClick={handleNewBooking}
-            sx={{ mr: 2, display: { xs: "none", sm: "flex" } }}
+            sx={{ mr: 2, display: { xs: 'none', sm: 'flex' } }}
           >
             New Booking
           </Button>
 
           <IconButton onClick={handleMenuOpen} color="inherit">
-            <Avatar sx={{ bgcolor: "primary.main", width: 36, height: 36 }}>
-              {customer?.firstName?.charAt(0) || "U"}
+            <Avatar sx={{ bgcolor: 'primary.main', width: 36, height: 36 }}>
+              {customer?.firstName?.charAt(0) || 'U'}
             </Avatar>
           </IconButton>
 
@@ -196,8 +196,8 @@ const CustomerDashboardContent: React.FC = () => {
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={handleMenuClose}
-            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-            transformOrigin={{ vertical: "top", horizontal: "right" }}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
           >
             <Box sx={{ px: 2, py: 1 }}>
               <Typography variant="subtitle1" fontWeight={600}>
@@ -211,7 +211,7 @@ const CustomerDashboardContent: React.FC = () => {
             <MenuItem
               onClick={() => {
                 handleMenuClose();
-                navigate("/book");
+                navigate('/book');
               }}
             >
               <AddIcon sx={{ mr: 1 }} /> New Booking
@@ -239,15 +239,15 @@ const CustomerDashboardContent: React.FC = () => {
           <Tabs
             value={activeTab}
             onChange={handleTabChange}
-            variant={isMobile ? "scrollable" : "fullWidth"}
-            scrollButtons={isMobile ? "auto" : false}
+            variant={isMobile ? 'scrollable' : 'fullWidth'}
+            scrollButtons={isMobile ? 'auto' : false}
             sx={{
               borderBottom: 1,
-              borderColor: "divider",
-              "& .MuiTab-root": {
+              borderColor: 'divider',
+              '& .MuiTab-root': {
                 minHeight: 64,
-                textTransform: "none",
-                fontSize: "0.9rem",
+                textTransform: 'none',
+                fontSize: '0.9rem',
               },
             }}
           >
@@ -273,7 +273,7 @@ const CustomerDashboardContent: React.FC = () => {
         </Paper>
 
         {/* Mobile New Booking Button */}
-        <Box sx={{ display: { xs: "block", sm: "none" }, mt: 3 }}>
+        <Box sx={{ display: { xs: 'block', sm: 'none' }, mt: 3 }}>
           <Button
             variant="contained"
             fullWidth

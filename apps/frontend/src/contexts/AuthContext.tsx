@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
 // Define types
 type User = {
@@ -31,7 +31,7 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };
@@ -43,15 +43,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
 
   const clearSession = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("tokenTimestamp");
-    localStorage.removeItem("user");
+    localStorage.removeItem('token');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('tokenTimestamp');
+    localStorage.removeItem('user');
   };
 
   const isJwtExpired = (token: string): boolean => {
     try {
-      const parts = token.split(".");
+      const parts = token.split('.');
       if (parts.length !== 3) return true;
       const payloadJson = atob(parts[1]);
       const payload = JSON.parse(payloadJson) as { exp?: number };
@@ -68,9 +68,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const checkAuthStatus = async () => {
       try {
         const token =
-          localStorage.getItem("accessToken") || localStorage.getItem("token");
-        const tokenTimestamp = localStorage.getItem("tokenTimestamp");
-        const userJson = localStorage.getItem("user");
+          localStorage.getItem('accessToken') || localStorage.getItem('token');
+        const tokenTimestamp = localStorage.getItem('tokenTimestamp');
+        const userJson = localStorage.getItem('user');
 
         if (token && tokenTimestamp && userJson) {
           const expiredByJwt = isJwtExpired(token);
@@ -87,7 +87,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }
         }
       } catch (err) {
-        console.error("Auth check failed:", err);
+        console.error('Auth check failed:', err);
         // On error, clear everything to be safe
         clearSession();
         setUser(null);
@@ -118,7 +118,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       // Validate inputs
       if (!email || !password) {
-        throw new Error("Email and password are required");
+        throw new Error('Email and password are required');
       }
 
       // Real API call to login endpoint - uses dynamic URL for multi-tenant support
@@ -128,24 +128,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       // Extract tenant subdomain from hostname
       const hostname = window.location.hostname;
-      const parts = hostname.split(".");
+      const parts = hostname.split('.');
       const subdomain =
         parts.length >= 3
           ? parts[0]
-          : localStorage.getItem("tailtown_tenant_id") || "dev";
+          : localStorage.getItem('tailtown_tenant_id') || 'dev';
 
       const response = await fetch(`${apiUrl}/api/staff/login`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "X-Tenant-Subdomain": subdomain,
+          'Content-Type': 'application/json',
+          'X-Tenant-Subdomain': subdomain,
         },
         body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Login failed");
+        throw new Error(errorData.message || 'Login failed');
       }
 
       const data = await response.json();
@@ -165,14 +165,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const token = data.token || data.accessToken;
 
       // Store in localStorage with timestamp (store as both 'token' and 'accessToken' for compatibility)
-      localStorage.setItem("token", token);
-      localStorage.setItem("accessToken", token);
-      localStorage.setItem("tokenTimestamp", Date.now().toString());
-      localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem('token', token);
+      localStorage.setItem('accessToken', token);
+      localStorage.setItem('tokenTimestamp', Date.now().toString());
+      localStorage.setItem('user', JSON.stringify(userData));
 
       setUser(userData);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Login failed";
+      const errorMessage = err instanceof Error ? err.message : 'Login failed';
       setError(errorMessage);
       throw err;
     } finally {
@@ -182,10 +182,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Logout function
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("tokenTimestamp");
-    localStorage.removeItem("user");
+    localStorage.removeItem('token');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('tokenTimestamp');
+    localStorage.removeItem('user');
     setUser(null);
   };
 
@@ -194,7 +194,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (user) {
       const updatedUser = { ...user, ...userData };
       setUser(updatedUser);
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+      localStorage.setItem('user', JSON.stringify(updatedUser));
     }
   };
 

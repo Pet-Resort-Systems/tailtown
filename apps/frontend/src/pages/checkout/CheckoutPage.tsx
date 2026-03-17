@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
-import {
-  getApiBaseUrl } from "../../services/api";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { getApiBaseUrl } from '../../services/api';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Container,
@@ -13,19 +12,19 @@ import {
   Alert,
   FormControlLabel,
   Checkbox,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import PaymentIcon from "@mui/icons-material/Payment";
-import { useShoppingCart, CartItem } from "../../contexts/ShoppingCartContext";
-import OrderSummary from "../../components/cart/OrderSummary";
-import PaymentStep from "./steps/PaymentStep";
-import { reservationService } from "../../services/reservationService";
-import { invoiceService, InvoiceLineItem } from "../../services/invoiceService";
-import { paymentService } from "../../services/paymentService";
-import { couponService } from "../../services/couponService";
-import { Coupon } from "../../types/coupon";
-import CouponInput from "../../components/coupons/CouponInput";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import PaymentIcon from '@mui/icons-material/Payment';
+import { useShoppingCart, CartItem } from '../../contexts/ShoppingCartContext';
+import OrderSummary from '../../components/cart/OrderSummary';
+import PaymentStep from './steps/PaymentStep';
+import { reservationService } from '../../services/reservationService';
+import { invoiceService, InvoiceLineItem } from '../../services/invoiceService';
+import { paymentService } from '../../services/paymentService';
+import { couponService } from '../../services/couponService';
+import { Coupon } from '../../types/coupon';
+import CouponInput from '../../components/coupons/CouponInput';
 
 interface AddOn {
   id: string;
@@ -53,7 +52,7 @@ const CheckoutPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [paymentMethod, setPaymentMethod] = useState('cash');
   const [paymentAmount, setPaymentAmount] = useState(0);
   const [savePaymentInfo, setSavePaymentInfo] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
@@ -65,7 +64,7 @@ const CheckoutPage: React.FC = () => {
   useEffect(() => {
     // If cart is empty and not after a successful checkout, redirect to calendar
     if (cartItems.length === 0 && !success) {
-      navigate("/calendar");
+      navigate('/calendar');
     }
   }, [cartItems, navigate, success]);
 
@@ -109,7 +108,7 @@ const CheckoutPage: React.FC = () => {
     e.preventDefault();
 
     // Validate form based on selected payment method
-    if (paymentMethod === "credit_card") {
+    if (paymentMethod === 'credit_card') {
       const form = e.target as HTMLFormElement;
       const cardNameInput = form.querySelector(
         '[name="cardName"]'
@@ -128,18 +127,18 @@ const CheckoutPage: React.FC = () => {
         !expiryInput?.value ||
         !cvvInput?.value
       ) {
-        setError("Please fill in all credit card details");
+        setError('Please fill in all credit card details');
         return;
       }
     }
 
     if (paymentAmount <= 0) {
-      setError("Payment amount must be greater than zero");
+      setError('Payment amount must be greater than zero');
       return;
     }
 
     if (cartItems.length === 0) {
-      setError("Your cart is empty");
+      setError('Your cart is empty');
       return;
     }
 
@@ -154,12 +153,12 @@ const CheckoutPage: React.FC = () => {
         let isExistingReservation = false;
 
         // Check if this is an existing reservation (from grooming/training calendar)
-        if (item.id && item.id.startsWith("reservation-")) {
-          const existingReservationId = item.id.replace("reservation-", "");
+        if (item.id && item.id.startsWith('reservation-')) {
+          const existingReservationId = item.id.replace('reservation-', '');
 
           // Only try to fetch if the ID looks like a UUID (not a timestamp)
           if (
-            existingReservationId.includes("-") &&
+            existingReservationId.includes('-') &&
             existingReservationId.length > 20
           ) {
             try {
@@ -177,7 +176,7 @@ const CheckoutPage: React.FC = () => {
 
               isExistingReservation = true;
             } catch (error) {
-              console.error("Error fetching existing reservation:", error);
+              console.error('Error fetching existing reservation:', error);
               // If we can't find the existing reservation, create a new one
               reservation = null;
             }
@@ -195,7 +194,7 @@ const CheckoutPage: React.FC = () => {
             !item.startDate ||
             !item.endDate
           ) {
-            throw new Error("Missing required reservation data");
+            throw new Error('Missing required reservation data');
           }
 
           const reservationData = {
@@ -205,20 +204,19 @@ const CheckoutPage: React.FC = () => {
             startDate: item.startDate.toISOString(),
             endDate: item.endDate.toISOString(),
             resourceId: item.resourceId || undefined,
-            status: "CONFIRMED" as
-              | "CONFIRMED"
-              | "PENDING"
-              | "CHECKED_IN"
-              | "CHECKED_OUT"
-              | "CANCELLED"
-              | "COMPLETED"
-              | "NO_SHOW",
-            notes: item.notes || "",
+            status: 'CONFIRMED' as
+              | 'CONFIRMED'
+              | 'PENDING'
+              | 'CHECKED_IN'
+              | 'CHECKED_OUT'
+              | 'CANCELLED'
+              | 'COMPLETED'
+              | 'NO_SHOW',
+            notes: item.notes || '',
           };
 
-          const response: any = await reservationService.createReservation(
-            reservationData
-          );
+          const response: any =
+            await reservationService.createReservation(reservationData);
 
           // Handle different response formats
           if (response?.data) {
@@ -239,7 +237,7 @@ const CheckoutPage: React.FC = () => {
       const firstItem = cartItems[0];
       const invoiceLineItems: InvoiceLineItem[] = cartItems.map(
         (item): InvoiceLineItem => ({
-          type: "SERVICE",
+          type: 'SERVICE',
           description: `${item.serviceName} for ${item.petName}`,
           quantity: 1,
           unitPrice: item.price,
@@ -254,7 +252,7 @@ const CheckoutPage: React.FC = () => {
         if (item.addOns && item.addOns.length > 0) {
           item.addOns.forEach((addOn) => {
             invoiceLineItems.push({
-              type: "ADD_ON",
+              type: 'ADD_ON',
               description: `${addOn.name} (Add-on)`,
               quantity: addOn.quantity,
               unitPrice: addOn.price,
@@ -269,7 +267,7 @@ const CheckoutPage: React.FC = () => {
         if (item.products && item.products.length > 0) {
           item.products.forEach((product) => {
             invoiceLineItems.push({
-              type: "PRODUCT",
+              type: 'PRODUCT',
               description: product.name,
               quantity: product.quantity,
               unitPrice: product.price,
@@ -290,16 +288,16 @@ const CheckoutPage: React.FC = () => {
         taxAmount: discountedTax,
         discount: couponDiscount,
         total: total,
-        status: "DRAFT" as
-          | "DRAFT"
-          | "SENT"
-          | "PAID"
-          | "OVERDUE"
-          | "CANCELLED"
-          | "REFUNDED",
+        status: 'DRAFT' as
+          | 'DRAFT'
+          | 'SENT'
+          | 'PAID'
+          | 'OVERDUE'
+          | 'CANCELLED'
+          | 'REFUNDED',
         notes: appliedCoupon
           ? `Reservation checkout payment - Coupon ${appliedCoupon.code} applied`
-          : "Reservation checkout payment",
+          : 'Reservation checkout payment',
         lineItems: invoiceLineItems,
       };
 
@@ -312,19 +310,19 @@ const CheckoutPage: React.FC = () => {
           customerId: firstItem.customerId!,
           amount: paymentAmount,
           method: paymentMethod.toUpperCase() as
-            | "CREDIT_CARD"
-            | "DEBIT_CARD"
-            | "CASH"
-            | "CHECK"
-            | "BANK_TRANSFER"
-            | "STORE_CREDIT"
-            | "GIFT_CARD",
-          status: "PAID" as
-            | "PENDING"
-            | "PAID"
-            | "FAILED"
-            | "REFUNDED"
-            | "PARTIALLY_REFUNDED",
+            | 'CREDIT_CARD'
+            | 'DEBIT_CARD'
+            | 'CASH'
+            | 'CHECK'
+            | 'BANK_TRANSFER'
+            | 'STORE_CREDIT'
+            | 'GIFT_CARD',
+          status: 'PAID' as
+            | 'PENDING'
+            | 'PAID'
+            | 'FAILED'
+            | 'REFUNDED'
+            | 'PARTIALLY_REFUNDED',
           transactionId: `TXID-${Date.now()}`,
           notes: `Payment processed via ${paymentMethod}`,
         };
@@ -333,13 +331,13 @@ const CheckoutPage: React.FC = () => {
 
         // Step 4: Update invoice status to PAID
         await invoiceService.updateInvoice(invoice.id, {
-          status: "PAID" as
-            | "DRAFT"
-            | "SENT"
-            | "PAID"
-            | "OVERDUE"
-            | "CANCELLED"
-            | "REFUNDED",
+          status: 'PAID' as
+            | 'DRAFT'
+            | 'SENT'
+            | 'PAID'
+            | 'OVERDUE'
+            | 'CANCELLED'
+            | 'REFUNDED',
         });
 
         // Step 5: Record coupon redemption if coupon was applied
@@ -348,11 +346,11 @@ const CheckoutPage: React.FC = () => {
             await couponService.applyCoupon(
               appliedCoupon.code,
               firstItem.customerId!,
-              createdReservations[0]?.reservation?.id || "",
+              createdReservations[0]?.reservation?.id || '',
               subtotal
             );
           } catch (error) {
-            console.error("Error recording coupon redemption:", error);
+            console.error('Error recording coupon redemption:', error);
             // Don't fail the checkout if coupon recording fails
           }
         }
@@ -365,17 +363,17 @@ const CheckoutPage: React.FC = () => {
           if (isExistingReservation && reservation?.id) {
             try {
               await reservationService.updateReservation(reservation.id, {
-                status: "CONFIRMED" as
-                  | "CONFIRMED"
-                  | "PENDING"
-                  | "CHECKED_IN"
-                  | "CHECKED_OUT"
-                  | "CANCELLED"
-                  | "COMPLETED"
-                  | "NO_SHOW",
+                status: 'CONFIRMED' as
+                  | 'CONFIRMED'
+                  | 'PENDING'
+                  | 'CHECKED_IN'
+                  | 'CHECKED_OUT'
+                  | 'CANCELLED'
+                  | 'COMPLETED'
+                  | 'NO_SHOW',
               });
             } catch (error) {
-              console.error("Error updating reservation status:", error);
+              console.error('Error updating reservation status:', error);
               // Don't fail the checkout if status update fails
             }
           }
@@ -391,17 +389,17 @@ const CheckoutPage: React.FC = () => {
               await fetch(
                 `${apiUrl}/api/products/${product.id}/inventory/adjust`,
                 {
-                  method: "POST",
+                  method: 'POST',
                   headers: {
-                    "Content-Type": "application/json",
-                    "x-tenant-id":
-                      localStorage.getItem("tailtown_tenant_id") ||
-                      localStorage.getItem("tenantId") ||
-                      "dev",
+                    'Content-Type': 'application/json',
+                    'x-tenant-id':
+                      localStorage.getItem('tailtown_tenant_id') ||
+                      localStorage.getItem('tenantId') ||
+                      'dev',
                   },
                   body: JSON.stringify({
                     quantity: -product.quantity, // Negative to deduct
-                    changeType: "SALE",
+                    changeType: 'SALE',
                     reason: `Sold to customer - Invoice #${
                       invoice.invoiceNumber || invoice.id
                     }`,
@@ -428,7 +426,7 @@ const CheckoutPage: React.FC = () => {
 
       // Trigger a calendar refresh event
       window.dispatchEvent(
-        new CustomEvent("reservation-created", {
+        new CustomEvent('reservation-created', {
           detail: {
             reservationIds: createdReservations.map((r) => r.reservation.id),
             refreshCalendar: true,
@@ -437,11 +435,11 @@ const CheckoutPage: React.FC = () => {
       );
 
       // Store flag in sessionStorage to trigger refresh when calendar loads
-      sessionStorage.setItem("refreshCalendar", "true");
+      sessionStorage.setItem('refreshCalendar', 'true');
     } catch (err: any) {
-      console.error("Checkout error:", err);
+      console.error('Checkout error:', err);
 
-      let errorMessage = "Payment processing failed. Please try again.";
+      let errorMessage = 'Payment processing failed. Please try again.';
 
       // Extract more specific error messages
       if (err.response?.data?.message) {
@@ -478,7 +476,7 @@ const CheckoutPage: React.FC = () => {
   if (success) {
     return (
       <Container maxWidth="md" sx={{ py: 4 }}>
-        <Paper elevation={3} sx={{ p: 4, textAlign: "center" }}>
+        <Paper elevation={3} sx={{ p: 4, textAlign: 'center' }}>
           <Typography variant="h4" color="primary" gutterBottom>
             Payment Successful!
           </Typography>
@@ -499,7 +497,7 @@ const CheckoutPage: React.FC = () => {
           <Button
             variant="outlined"
             color="primary"
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate('/dashboard')}
             sx={{ mt: 2 }}
           >
             Go to Dashboard
@@ -511,7 +509,7 @@ const CheckoutPage: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ mb: 4, display: "flex", alignItems: "center" }}>
+      <Box sx={{ mb: 4, display: 'flex', alignItems: 'center' }}>
         <Button
           startIcon={<ArrowBackIcon />}
           onClick={handleContinueShopping}
@@ -545,7 +543,7 @@ const CheckoutPage: React.FC = () => {
             {/* Show discount breakdown if coupon is applied */}
             {appliedCoupon && couponDiscount > 0 && (
               <Box
-                sx={{ mt: 2, p: 2, bgcolor: "success.light", borderRadius: 1 }}
+                sx={{ mt: 2, p: 2, bgcolor: 'success.light', borderRadius: 1 }}
               >
                 <Typography variant="body2" color="success.dark">
                   <strong>Coupon Discount ({appliedCoupon.code}):</strong> -$
@@ -579,7 +577,7 @@ const CheckoutPage: React.FC = () => {
             <Divider sx={{ mb: 2 }} />
 
             <CouponInput
-              customerId={cartItems[0]?.customerId || ""}
+              customerId={cartItems[0]?.customerId || ''}
               subtotal={subtotal}
               serviceIds={
                 cartItems

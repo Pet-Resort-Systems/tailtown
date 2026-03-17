@@ -11,27 +11,27 @@
  * - lookupCustomerByEmail
  */
 
-import { Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-import { AppError } from "../../middleware/error.middleware";
-import { TenantRequest } from "../../middleware/tenant.middleware";
-import { logger } from "../../utils/logger";
+import { Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { AppError } from '../../middleware/error.middleware';
+import { TenantRequest } from '../../middleware/tenant.middleware';
+import { logger } from '../../utils/logger';
 import {
   getCache,
   setCache,
   deleteCache,
   getCacheKey,
-} from "../../utils/redis";
+} from '../../utils/redis';
 import {
   tenantAuditLog,
   AuditAction,
   AuditCategory,
-} from "../../services/tenant-audit-log.service";
+} from '../../services/tenant-audit-log.service';
 import {
   customerSelectFull,
   petSelectMinimal,
   petSelectFull,
-} from "../../utils/prisma-optimized";
+} from '../../utils/prisma-optimized';
 
 const prisma = new PrismaClient();
 
@@ -49,13 +49,13 @@ export const getAllCustomers = async (
     const skip = (page - 1) * limit;
     const search = req.query.search as string;
     const isActive =
-      req.query.isActive === "true"
+      req.query.isActive === 'true'
         ? true
-        : req.query.isActive === "false"
-        ? false
-        : undefined;
+        : req.query.isActive === 'false'
+          ? false
+          : undefined;
     const tags = req.query.tags
-      ? (req.query.tags as string).split(",")
+      ? (req.query.tags as string).split(',')
       : undefined;
 
     const tenantId = req.tenantId!;
@@ -82,41 +82,41 @@ export const getAllCustomers = async (
           // First word in firstName, second in lastName
           {
             AND: [
-              { firstName: { contains: searchWords[0], mode: "insensitive" } },
+              { firstName: { contains: searchWords[0], mode: 'insensitive' } },
               {
                 lastName: {
-                  contains: searchWords.slice(1).join(" "),
-                  mode: "insensitive",
+                  contains: searchWords.slice(1).join(' '),
+                  mode: 'insensitive',
                 },
               },
             ],
           },
           // Also try each word individually
           ...searchWords.flatMap((word) => [
-            { firstName: { contains: word, mode: "insensitive" } },
-            { lastName: { contains: word, mode: "insensitive" } },
+            { firstName: { contains: word, mode: 'insensitive' } },
+            { lastName: { contains: word, mode: 'insensitive' } },
           ]),
-          { email: { contains: search, mode: "insensitive" } },
+          { email: { contains: search, mode: 'insensitive' } },
           { phone: { contains: search } },
           {
-            pets: { some: { name: { contains: search, mode: "insensitive" } } },
+            pets: { some: { name: { contains: search, mode: 'insensitive' } } },
           },
         ];
       } else {
         // Single word search
         where.OR = [
-          { firstName: { contains: search, mode: "insensitive" } },
-          { lastName: { contains: search, mode: "insensitive" } },
-          { email: { contains: search, mode: "insensitive" } },
+          { firstName: { contains: search, mode: 'insensitive' } },
+          { lastName: { contains: search, mode: 'insensitive' } },
+          { email: { contains: search, mode: 'insensitive' } },
           { phone: { contains: search } },
           {
-            pets: { some: { name: { contains: search, mode: "insensitive" } } },
+            pets: { some: { name: { contains: search, mode: 'insensitive' } } },
           },
         ];
       }
 
       // Phone number format matching
-      const digitsOnly = search.replace(/\D/g, "");
+      const digitsOnly = search.replace(/\D/g, '');
       if (digitsOnly.length >= 3) {
         if (digitsOnly.length === 7) {
           const formatted = `${digitsOnly.slice(0, 3)}-${digitsOnly.slice(3)}`;
@@ -144,7 +144,7 @@ export const getAllCustomers = async (
         ...customerSelectFull,
         pets: { select: petSelectMinimal },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
 
     // Sort results to prioritize exact matches when searching
@@ -153,10 +153,10 @@ export const getAllCustomers = async (
       const searchWords = searchLower.split(/\s+/).filter((w) => w.length > 0);
 
       customers = customers.sort((a, b) => {
-        const aFirst = (a.firstName || "").toLowerCase();
-        const aLast = (a.lastName || "").toLowerCase();
-        const bFirst = (b.firstName || "").toLowerCase();
-        const bLast = (b.lastName || "").toLowerCase();
+        const aFirst = (a.firstName || '').toLowerCase();
+        const aLast = (a.lastName || '').toLowerCase();
+        const bFirst = (b.firstName || '').toLowerCase();
+        const bLast = (b.lastName || '').toLowerCase();
         const aFull = `${aFirst} ${aLast}`;
         const bFull = `${bFirst} ${bLast}`;
 
@@ -191,7 +191,7 @@ export const getAllCustomers = async (
     const total = await prisma.customer.count({ where });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: customers.length,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
@@ -215,7 +215,7 @@ export const getCustomerById = async (
     const tenantId = req.tenantId!;
 
     // Try cache first
-    const cacheKey = getCacheKey(tenantId, "customer", id);
+    const cacheKey = getCacheKey(tenantId, 'customer', id);
     let customer = await getCache<any>(cacheKey);
 
     if (!customer) {
@@ -230,18 +230,18 @@ export const getCustomerById = async (
 
       if (customer) {
         await setCache(cacheKey, customer, 300);
-        logger.debug("Customer cached", { tenantId, customerId: id });
+        logger.debug('Customer cached', { tenantId, customerId: id });
       }
     } else {
-      logger.debug("Customer cache hit", { tenantId, customerId: id });
+      logger.debug('Customer cache hit', { tenantId, customerId: id });
     }
 
     if (!customer) {
-      return next(new AppError("Customer not found", 404));
+      return next(new AppError('Customer not found', 404));
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: customer,
     });
   } catch (error) {
@@ -266,7 +266,7 @@ export const getCustomerPets = async (
     });
 
     if (!customerExists) {
-      return next(new AppError("Customer not found", 404));
+      return next(new AppError('Customer not found', 404));
     }
 
     const pets = await prisma.pet.findMany({
@@ -274,7 +274,7 @@ export const getCustomerPets = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: pets.length,
       data: pets,
     });
@@ -294,7 +294,7 @@ export const createCustomer = async (
   try {
     const customerData = req.body;
     const tenantId = req.tenantId!;
-    logger.debug("Creating customer", {
+    logger.debug('Creating customer', {
       tenantId,
       customerEmail: customerData.email,
     });
@@ -308,7 +308,7 @@ export const createCustomer = async (
         if (
           sanitizedCustomerData[key] === null ||
           sanitizedCustomerData[key] === undefined ||
-          sanitizedCustomerData[key] === ""
+          sanitizedCustomerData[key] === ''
         ) {
           delete sanitizedCustomerData[key];
         }
@@ -342,7 +342,7 @@ export const createCustomer = async (
       });
     });
 
-    logger.info("Customer created successfully", {
+    logger.info('Customer created successfully', {
       tenantId,
       customerId: newCustomer?.id,
     });
@@ -350,29 +350,29 @@ export const createCustomer = async (
     await tenantAuditLog.logCustomer(
       req,
       AuditAction.CREATE,
-      newCustomer?.id || "",
+      newCustomer?.id || '',
       `${newCustomer?.firstName} ${newCustomer?.lastName}`,
       { newValue: newCustomer }
     );
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: newCustomer,
     });
   } catch (error: any) {
-    logger.error("Error creating customer", {
+    logger.error('Error creating customer', {
       tenantId: req.tenantId,
       error: error.message,
       code: error.code,
     });
 
-    if (error.code === "P2002") {
+    if (error.code === 'P2002') {
       return next(
-        new AppError("A customer with this email already exists", 400)
+        new AppError('A customer with this email already exists', 400)
       );
-    } else if (error.code === "P2000") {
+    } else if (error.code === 'P2000') {
       return next(
-        new AppError("Input value is too long for one or more fields", 400)
+        new AppError('Input value is too long for one or more fields', 400)
       );
     }
 
@@ -398,7 +398,7 @@ export const updateCustomer = async (
     });
 
     if (!customerExists) {
-      return next(new AppError("Customer not found", 404));
+      return next(new AppError('Customer not found', 404));
     }
 
     const updatedCustomer = await prisma.$transaction(async (prismaClient) => {
@@ -431,7 +431,7 @@ export const updateCustomer = async (
     });
 
     // Invalidate cache
-    const cacheKey = getCacheKey(req.tenantId!, "customer", id);
+    const cacheKey = getCacheKey(req.tenantId!, 'customer', id);
     await deleteCache(cacheKey);
 
     await tenantAuditLog.logCustomer(
@@ -443,11 +443,11 @@ export const updateCustomer = async (
     );
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: updatedCustomer,
     });
   } catch (error: any) {
-    logger.error("Error updating customer", {
+    logger.error('Error updating customer', {
       tenantId: req.tenantId,
       customerId: req.params.id,
       error: error.message,
@@ -473,10 +473,10 @@ export const deleteCustomer = async (
     });
 
     if (!customerExists) {
-      return next(new AppError("Customer not found", 404));
+      return next(new AppError('Customer not found', 404));
     }
 
-    if (permanent === "true") {
+    if (permanent === 'true') {
       await prisma.$transaction(async (prismaClient) => {
         await prismaClient.pet.deleteMany({ where: { customerId: id } });
         await prismaClient.customer.delete({ where: { id } });
@@ -486,25 +486,25 @@ export const deleteCustomer = async (
         req,
         AuditAction.DELETE,
         AuditCategory.CUSTOMER,
-        "customer",
+        'customer',
         id,
         `${customerExists.firstName} ${customerExists.lastName}`,
-        { previousValue: customerExists, severity: "CRITICAL" as any }
+        { previousValue: customerExists, severity: 'CRITICAL' as any }
       );
 
-      res.status(204).json({ status: "success", data: null });
+      res.status(204).json({ status: 'success', data: null });
     } else {
       await tenantAuditLog.logCustomer(
         req,
         AuditAction.UPDATE,
         id,
         `${customerExists.firstName} ${customerExists.lastName}`,
-        { metadata: { action: "deactivated" } }
+        { metadata: { action: 'deactivated' } }
       );
 
       res.status(200).json({
-        status: "success",
-        data: { message: "Customer has been deactivated" },
+        status: 'success',
+        data: { message: 'Customer has been deactivated' },
       });
     }
   } catch (error) {
@@ -524,8 +524,8 @@ export const lookupCustomerByEmail = async (
     const { email } = req.body;
     const tenantId = req.tenantId!;
 
-    if (!email || typeof email !== "string") {
-      return next(new AppError("Email is required", 400));
+    if (!email || typeof email !== 'string') {
+      return next(new AppError('Email is required', 400));
     }
 
     const normalizedEmail = email.toLowerCase().trim();
@@ -533,7 +533,7 @@ export const lookupCustomerByEmail = async (
     const customer = await prisma.customer.findFirst({
       where: {
         tenantId,
-        email: { equals: normalizedEmail, mode: "insensitive" },
+        email: { equals: normalizedEmail, mode: 'insensitive' },
         isActive: true,
       },
       select: {
@@ -549,17 +549,17 @@ export const lookupCustomerByEmail = async (
     if (!customer) {
       return res.status(404).json({
         success: false,
-        error: "Customer not found",
-        message: "No customer found with this email address",
+        error: 'Customer not found',
+        message: 'No customer found with this email address',
       });
     }
 
     if (customer.portalEnabled === false) {
       return res.status(403).json({
         success: false,
-        error: "Portal access disabled",
+        error: 'Portal access disabled',
         message:
-          "Your account does not have portal access. Please contact the business.",
+          'Your account does not have portal access. Please contact the business.',
       });
     }
 
@@ -574,7 +574,7 @@ export const lookupCustomerByEmail = async (
       },
     });
   } catch (error) {
-    logger.error("Customer lookup error", { error });
+    logger.error('Customer lookup error', { error });
     next(error);
   }
 };

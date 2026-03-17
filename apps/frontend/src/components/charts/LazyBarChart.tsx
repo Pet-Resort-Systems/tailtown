@@ -18,7 +18,7 @@ const LazyBarChart: React.FC<BarChartProps> = (props) => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            minHeight: 300
+            minHeight: 300,
           }}
         >
           <CircularProgress size={30} />

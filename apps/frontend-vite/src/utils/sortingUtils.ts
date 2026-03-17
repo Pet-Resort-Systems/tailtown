@@ -14,8 +14,8 @@ export function sortByRoomAndNumber<T extends { name?: string }>(
   items: T[]
 ): T[] {
   return [...items].sort((a, b) => {
-    const nameA = a.name || "";
-    const nameB = b.name || "";
+    const nameA = a.name || '';
+    const nameB = b.name || '';
 
     // Extract room letter (A, B, C, etc.) and number
     // Handles formats: A01, A06R, B08Q, C20K (letter + digits + optional suffix)
@@ -60,11 +60,11 @@ export function sortByRoomAndNumber<T extends { name?: string }>(
  * @returns Sorted array
  */
 export function sortBySuiteNumber<
-  T extends { suiteNumber?: string | number; name?: string }
+  T extends { suiteNumber?: string | number; name?: string },
 >(items: T[]): T[] {
   return [...items].sort((a, b) => {
-    const numA = a.suiteNumber || a.name?.replace(/\D/g, "") || "0";
-    const numB = b.suiteNumber || b.name?.replace(/\D/g, "") || "0";
+    const numA = a.suiteNumber || a.name?.replace(/\D/g, '') || '0';
+    const numB = b.suiteNumber || b.name?.replace(/\D/g, '') || '0';
     return Number(numA) - Number(numB);
   });
 }
@@ -77,8 +77,8 @@ export function sortBySuiteNumber<
  */
 export function sortByName<T extends { name?: string }>(items: T[]): T[] {
   return [...items].sort((a, b) => {
-    const nameA = a.name || "";
-    const nameB = b.name || "";
+    const nameA = a.name || '';
+    const nameB = b.name || '';
     return nameA.localeCompare(nameB);
   });
 }

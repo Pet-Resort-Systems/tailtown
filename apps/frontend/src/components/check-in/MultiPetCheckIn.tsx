@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Paper,
@@ -14,15 +14,15 @@ import {
   Card,
   CardContent,
   CardActions,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   CheckCircle as CheckCircleIcon,
   Pets as PetsIcon,
   Group as GroupIcon,
-} from "@mui/icons-material";
-import checkInService from "../../services/checkInService";
-import { customerService } from "../../services/customerService";
+} from '@mui/icons-material';
+import checkInService from '../../services/checkInService';
+import { customerService } from '../../services/customerService';
 
 interface RoomPet {
   id: string;
@@ -103,8 +103,8 @@ const MultiPetCheckIn: React.FC<MultiPetCheckInProps> = ({
       }
       setSelectedPets(uncheckedPets);
     } catch (err: any) {
-      console.error("Error loading room pets:", err);
-      setError(err.message || "Failed to load room pets");
+      console.error('Error loading room pets:', err);
+      setError(err.message || 'Failed to load room pets');
     } finally {
       setLoading(false);
     }
@@ -140,7 +140,7 @@ const MultiPetCheckIn: React.FC<MultiPetCheckInProps> = ({
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -164,8 +164,8 @@ const MultiPetCheckIn: React.FC<MultiPetCheckInProps> = ({
 
   return (
     <Paper sx={{ p: 3, mb: 3 }}>
-      <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-        <GroupIcon sx={{ mr: 1, color: "primary.main" }} />
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+        <GroupIcon sx={{ mr: 1, color: 'primary.main' }} />
         <Typography variant="h6">Multiple Pets in Room</Typography>
         <Chip
           label={`${totalPets} pets`}
@@ -200,16 +200,16 @@ const MultiPetCheckIn: React.FC<MultiPetCheckInProps> = ({
                 variant="outlined"
                 sx={{
                   opacity: isCheckedIn ? 0.7 : 1,
-                  border: isSelected ? "2px solid" : "1px solid",
-                  borderColor: isSelected ? "primary.main" : "divider",
-                  cursor: isCheckedIn ? "default" : "pointer",
+                  border: isSelected ? '2px solid' : '1px solid',
+                  borderColor: isSelected ? 'primary.main' : 'divider',
+                  cursor: isCheckedIn ? 'default' : 'pointer',
                 }}
                 onClick={() =>
                   !isCheckedIn && handleTogglePet(reservation.petId)
                 }
               >
                 <CardContent sx={{ pb: 1 }}>
-                  <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                     <Avatar
                       src={pet?.profilePhoto}
                       sx={{ width: 48, height: 48, mr: 2 }}
@@ -218,10 +218,10 @@ const MultiPetCheckIn: React.FC<MultiPetCheckInProps> = ({
                     </Avatar>
                     <Box sx={{ flex: 1 }}>
                       <Typography variant="subtitle1" fontWeight="bold">
-                        {pet?.name || "Unknown Pet"}
+                        {pet?.name || 'Unknown Pet'}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {pet?.breed || ""}
+                        {pet?.breed || ''}
                       </Typography>
                     </Box>
                     {isCheckedIn && <CheckCircleIcon color="success" />}
@@ -258,9 +258,9 @@ const MultiPetCheckIn: React.FC<MultiPetCheckInProps> = ({
 
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
         }}
       >
         <Box>
@@ -284,7 +284,7 @@ const MultiPetCheckIn: React.FC<MultiPetCheckInProps> = ({
             onClick={handleProceed}
             disabled={selectedPets.size === 0}
           >
-            Check In {selectedPets.size} Pet{selectedPets.size !== 1 ? "s" : ""}
+            Check In {selectedPets.size} Pet{selectedPets.size !== 1 ? 's' : ''}
           </Button>
         </Box>
       </Box>

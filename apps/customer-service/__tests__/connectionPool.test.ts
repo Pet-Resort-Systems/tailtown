@@ -1,6 +1,6 @@
 /**
  * Connection Pool Tests
- * 
+ *
  * Tests for database connection pooling functionality
  */
 
@@ -32,7 +32,7 @@ describe('Connection Pool', () => {
     it('should not create multiple instances in development', () => {
       // The global object should store the instance
       const globalForPrisma = global as unknown as { prisma: PrismaClient };
-      
+
       if (process.env.NODE_ENV !== 'production') {
         expect(globalForPrisma.prisma).toBeDefined();
       }
@@ -52,11 +52,9 @@ describe('Connection Pool', () => {
     it('should handle multiple sequential queries', async () => {
       // Simulate multiple queries that would reuse connections
       const queries = [];
-      
+
       for (let i = 0; i < 10; i++) {
-        queries.push(
-          prisma.$queryRaw`SELECT 1 as result`
-        );
+        queries.push(prisma.$queryRaw`SELECT 1 as result`);
       }
 
       const results = await Promise.all(queries);
@@ -65,8 +63,9 @@ describe('Connection Pool', () => {
 
     it('should handle concurrent queries', async () => {
       // Test connection pool under concurrent load
-      const concurrentQueries = Array.from({ length: 20 }, () =>
-        prisma.$queryRaw`SELECT 1 as result`
+      const concurrentQueries = Array.from(
+        { length: 20 },
+        () => prisma.$queryRaw`SELECT 1 as result`
       );
 
       const results = await Promise.all(concurrentQueries);
@@ -78,22 +77,22 @@ describe('Connection Pool', () => {
     it('should have connection limit configured', () => {
       // Check if DATABASE_URL has connection_limit parameter
       const databaseUrl = process.env.DATABASE_URL || '';
-      
+
       // Connection limit should be in URL or using default
       // Example: postgresql://user:pass@host:5432/db?connection_limit=10
       const hasConnectionLimit = databaseUrl.includes('connection_limit');
-      
+
       // Either explicitly set or using Prisma's default
       expect(typeof hasConnectionLimit).toBe('boolean');
     });
 
     it('should have pool timeout configured', () => {
       const databaseUrl = process.env.DATABASE_URL || '';
-      
+
       // Pool timeout should be configured for production
       // Example: ?pool_timeout=20
       const hasPoolTimeout = databaseUrl.includes('pool_timeout');
-      
+
       expect(typeof hasPoolTimeout).toBe('boolean');
     });
   });
@@ -110,9 +109,7 @@ describe('Connection Pool', () => {
       });
 
       // Should throw connection error, not crash
-      await expect(
-        badPrisma.$queryRaw`SELECT 1`
-      ).rejects.toThrow();
+      await expect(badPrisma.$queryRaw`SELECT 1`).rejects.toThrow();
 
       await badPrisma.$disconnect();
     });
@@ -134,27 +131,28 @@ describe('Connection Pool', () => {
   describe('Performance', () => {
     it('should execute queries within acceptable time', async () => {
       const startTime = Date.now();
-      
+
       await prisma.$queryRaw`SELECT 1 as result`;
-      
+
       const duration = Date.now() - startTime;
-      
+
       // Query should complete in under 100ms
       expect(duration).toBeLessThan(100);
     });
 
     it('should handle burst of queries efficiently', async () => {
       const startTime = Date.now();
-      
+
       // Execute 50 queries
-      const queries = Array.from({ length: 50 }, () =>
-        prisma.$queryRaw`SELECT 1 as result`
+      const queries = Array.from(
+        { length: 50 },
+        () => prisma.$queryRaw`SELECT 1 as result`
       );
-      
+
       await Promise.all(queries);
-      
+
       const duration = Date.now() - startTime;
-      
+
       // Should complete in under 1 second with connection pooling
       expect(duration).toBeLessThan(1000);
     });
@@ -163,20 +161,20 @@ describe('Connection Pool', () => {
   describe('Graceful Shutdown', () => {
     it('should disconnect on process exit', async () => {
       const testPrisma = new PrismaClient();
-      
+
       // Connect
       await testPrisma.$connect();
-      
+
       // Simulate graceful shutdown
       await testPrisma.$disconnect();
-      
+
       // Should not throw
       expect(true).toBe(true);
     });
 
     it('should handle disconnect when already disconnected', async () => {
       await prisma.$disconnect();
-      
+
       // Calling disconnect again should not throw
       await expect(prisma.$disconnect()).resolves.not.toThrow();
     });
@@ -190,7 +188,7 @@ describe('Connection Pool', () => {
 
       // In development, logging should be enabled
       expect(devPrisma).toBeDefined();
-      
+
       devPrisma.$disconnect();
     });
 
@@ -201,7 +199,7 @@ describe('Connection Pool', () => {
 
       // In production, only errors should be logged
       expect(prodPrisma).toBeDefined();
-      
+
       prodPrisma.$disconnect();
     });
   });
@@ -220,8 +218,9 @@ describe('Connection Pool', () => {
 
     it('should not exhaust connection pool under load', async () => {
       // Simulate high load
-      const heavyLoad = Array.from({ length: 100 }, (_, i) =>
-        prisma.$queryRaw`SELECT ${i} as num`
+      const heavyLoad = Array.from(
+        { length: 100 },
+        (_, i) => prisma.$queryRaw`SELECT ${i} as num`
       );
 
       // Should complete without connection pool exhaustion

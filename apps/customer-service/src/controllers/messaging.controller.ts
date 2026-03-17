@@ -14,11 +14,18 @@ export const getChannels = async (
   next: NextFunction
 ) => {
   try {
-    const tenantId = req.user?.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+    const tenantId =
+      req.user?.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const staffId = req.user?.id;
 
     if (!staffId) {
-      return next(new AppError('Staff ID is required', 401, ErrorType.AUTHENTICATION_ERROR));
+      return next(
+        new AppError(
+          'Staff ID is required',
+          401,
+          ErrorType.AUTHENTICATION_ERROR
+        )
+      );
     }
 
     // Get channels where user is a member
@@ -29,21 +36,21 @@ export const getChannels = async (
         members: {
           some: {
             staffId,
-            leftAt: null
-          }
-        }
+            leftAt: null,
+          },
+        },
       },
       include: {
         members: {
           where: {
             staffId,
-            leftAt: null
+            leftAt: null,
           },
           select: {
             lastReadAt: true,
             lastReadMessageId: true,
-            isMuted: true
-          }
+            isMuted: true,
+          },
         },
         messages: {
           orderBy: { createdAt: 'desc' },
@@ -52,19 +59,16 @@ export const getChannels = async (
             id: true,
             content: true,
             createdAt: true,
-            senderId: true
-          }
+            senderId: true,
+          },
         },
         _count: {
           select: {
-            messages: true
-          }
-        }
+            messages: true,
+          },
+        },
       },
-      orderBy: [
-        { isDefault: 'desc' },
-        { createdAt: 'asc' }
-      ]
+      orderBy: [{ isDefault: 'desc' }, { createdAt: 'asc' }],
     });
 
     // Calculate unread count for each channel
@@ -72,23 +76,23 @@ export const getChannels = async (
       channels.map(async (channel) => {
         const member = channel.members[0];
         const lastMessage = channel.messages[0];
-        
+
         let unreadCount = 0;
         if (member?.lastReadAt && lastMessage) {
           unreadCount = await prisma.channelMessage.count({
             where: {
               channelId: channel.id,
               createdAt: { gt: member.lastReadAt },
-              senderId: { not: staffId } // Don't count own messages
-            }
+              senderId: { not: staffId }, // Don't count own messages
+            },
           });
         } else if (!member?.lastReadAt && channel._count.messages > 0) {
           // Never read, count all messages except own
           unreadCount = await prisma.channelMessage.count({
             where: {
               channelId: channel.id,
-              senderId: { not: staffId }
-            }
+              senderId: { not: staffId },
+            },
           });
         }
 
@@ -103,12 +107,14 @@ export const getChannels = async (
           isDefault: channel.isDefault,
           isMuted: member?.isMuted || false,
           unreadCount,
-          lastMessage: lastMessage ? {
-            content: lastMessage.content,
-            createdAt: lastMessage.createdAt,
-            senderId: lastMessage.senderId
-          } : null,
-          messageCount: channel._count.messages
+          lastMessage: lastMessage
+            ? {
+                content: lastMessage.content,
+                createdAt: lastMessage.createdAt,
+                senderId: lastMessage.senderId,
+              }
+            : null,
+          messageCount: channel._count.messages,
         };
       })
     );
@@ -128,13 +134,20 @@ export const getChannelMessages = async (
   next: NextFunction
 ) => {
   try {
-    const tenantId = req.user?.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+    const tenantId =
+      req.user?.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const staffId = req.user?.id;
     const { channelId } = req.params;
     const { limit = 50, before } = req.query;
 
     if (!staffId) {
-      return next(new AppError('Staff ID is required', 401, ErrorType.AUTHENTICATION_ERROR));
+      return next(
+        new AppError(
+          'Staff ID is required',
+          401,
+          ErrorType.AUTHENTICATION_ERROR
+        )
+      );
     }
 
     // Verify user is a member of the channel
@@ -142,19 +155,25 @@ export const getChannelMessages = async (
       where: {
         channelId,
         staffId,
-        leftAt: null
-      }
+        leftAt: null,
+      },
     });
 
     if (!membership) {
-      return next(new AppError('Not a member of this channel', 403, ErrorType.AUTHORIZATION_ERROR));
+      return next(
+        new AppError(
+          'Not a member of this channel',
+          403,
+          ErrorType.AUTHORIZATION_ERROR
+        )
+      );
     }
 
     // Get messages
     const messages = await prisma.channelMessage.findMany({
       where: {
         channelId,
-        ...(before && { createdAt: { lt: new Date(before as string) } })
+        ...(before && { createdAt: { lt: new Date(before as string) } }),
       },
       include: {
         sender: {
@@ -162,8 +181,8 @@ export const getChannelMessages = async (
             id: true,
             firstName: true,
             lastName: true,
-            email: true
-          }
+            email: true,
+          },
         },
         reactions: {
           include: {
@@ -171,16 +190,16 @@ export const getChannelMessages = async (
               select: {
                 id: true,
                 firstName: true,
-                lastName: true
-              }
-            }
-          }
+                lastName: true,
+              },
+            },
+          },
         },
         mentions: true,
-        attachments: true
+        attachments: true,
       },
       orderBy: { createdAt: 'desc' },
-      take: Number(limit)
+      take: Number(limit),
     });
 
     res.json(messages.reverse()); // Return in chronological order
@@ -198,17 +217,30 @@ export const sendChannelMessage = async (
   next: NextFunction
 ) => {
   try {
-    const tenantId = req.user?.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+    const tenantId =
+      req.user?.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const staffId = req.user?.id;
     const { channelId } = req.params;
     const { content, mentions } = req.body;
 
     if (!staffId) {
-      return next(new AppError('Staff ID is required', 401, ErrorType.AUTHENTICATION_ERROR));
+      return next(
+        new AppError(
+          'Staff ID is required',
+          401,
+          ErrorType.AUTHENTICATION_ERROR
+        )
+      );
     }
 
     if (!content || content.trim().length === 0) {
-      return next(new AppError('Message content is required', 400, ErrorType.VALIDATION_ERROR));
+      return next(
+        new AppError(
+          'Message content is required',
+          400,
+          ErrorType.VALIDATION_ERROR
+        )
+      );
     }
 
     // Verify user is a member of the channel
@@ -216,12 +248,18 @@ export const sendChannelMessage = async (
       where: {
         channelId,
         staffId,
-        leftAt: null
-      }
+        leftAt: null,
+      },
     });
 
     if (!membership) {
-      return next(new AppError('Not a member of this channel', 403, ErrorType.AUTHORIZATION_ERROR));
+      return next(
+        new AppError(
+          'Not a member of this channel',
+          403,
+          ErrorType.AUTHORIZATION_ERROR
+        )
+      );
     }
 
     // Create message
@@ -230,11 +268,14 @@ export const sendChannelMessage = async (
         channelId,
         senderId: staffId,
         content: content.trim(),
-        mentions: mentions && mentions.length > 0 ? {
-          create: mentions.map((mentionedStaffId: string) => ({
-            staffId: mentionedStaffId
-          }))
-        } : undefined
+        mentions:
+          mentions && mentions.length > 0
+            ? {
+                create: mentions.map((mentionedStaffId: string) => ({
+                  staffId: mentionedStaffId,
+                })),
+              }
+            : undefined,
       },
       include: {
         sender: {
@@ -242,11 +283,11 @@ export const sendChannelMessage = async (
             id: true,
             firstName: true,
             lastName: true,
-            email: true
-          }
+            email: true,
+          },
         },
-        mentions: true
-      }
+        mentions: true,
+      },
     });
 
     res.status(201).json(message);
@@ -268,14 +309,20 @@ export const markChannelAsRead = async (
     const { channelId } = req.params;
 
     if (!staffId) {
-      return next(new AppError('Staff ID is required', 401, ErrorType.AUTHENTICATION_ERROR));
+      return next(
+        new AppError(
+          'Staff ID is required',
+          401,
+          ErrorType.AUTHENTICATION_ERROR
+        )
+      );
     }
 
     // Get the latest message in the channel
     const latestMessage = await prisma.channelMessage.findFirst({
       where: { channelId },
       orderBy: { createdAt: 'desc' },
-      select: { id: true }
+      select: { id: true },
     });
 
     // Update member's last read time
@@ -283,12 +330,12 @@ export const markChannelAsRead = async (
       where: {
         channelId,
         staffId,
-        leftAt: null
+        leftAt: null,
       },
       data: {
         lastReadAt: new Date(),
-        lastReadMessageId: latestMessage?.id
-      }
+        lastReadMessageId: latestMessage?.id,
+      },
     });
 
     res.json({ success: true });
@@ -306,11 +353,18 @@ export const getUnreadCount = async (
   next: NextFunction
 ) => {
   try {
-    const tenantId = req.user?.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+    const tenantId =
+      req.user?.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const staffId = req.user?.id;
 
     if (!staffId) {
-      return next(new AppError('Staff ID is required', 401, ErrorType.AUTHENTICATION_ERROR));
+      return next(
+        new AppError(
+          'Staff ID is required',
+          401,
+          ErrorType.AUTHENTICATION_ERROR
+        )
+      );
     }
 
     // Get all channels user is a member of
@@ -320,13 +374,13 @@ export const getUnreadCount = async (
         leftAt: null,
         channel: {
           tenantId,
-          isArchived: false
-        }
+          isArchived: false,
+        },
       },
       select: {
         channelId: true,
-        lastReadAt: true
-      }
+        lastReadAt: true,
+      },
     });
 
     let totalUnread = 0;
@@ -337,8 +391,8 @@ export const getUnreadCount = async (
           where: {
             channelId: membership.channelId,
             createdAt: { gt: membership.lastReadAt },
-            senderId: { not: staffId }
-          }
+            senderId: { not: staffId },
+          },
         });
         totalUnread += unread;
       } else {
@@ -346,8 +400,8 @@ export const getUnreadCount = async (
         const unread = await prisma.channelMessage.count({
           where: {
             channelId: membership.channelId,
-            senderId: { not: staffId }
-          }
+            senderId: { not: staffId },
+          },
         });
         totalUnread += unread;
       }

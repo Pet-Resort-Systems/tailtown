@@ -26,16 +26,18 @@ describe('Reports Routes Integration', () => {
       const response = await request(app)
         .get('/api/reports/sales/daily?date=2025-10-25')
         .set('x-tenant-id', 'test-tenant');
-      
+
       // Should not be 404 (route exists)
       expect(response.status).not.toBe(404);
     });
 
     it('should have /api/reports/sales/weekly endpoint', async () => {
       const response = await request(app)
-        .get('/api/reports/sales/weekly?startDate=2025-10-01&endDate=2025-10-07')
+        .get(
+          '/api/reports/sales/weekly?startDate=2025-10-01&endDate=2025-10-07'
+        )
         .set('x-tenant-id', 'test-tenant');
-      
+
       expect(response.status).not.toBe(404);
     });
 
@@ -43,7 +45,7 @@ describe('Reports Routes Integration', () => {
       const response = await request(app)
         .get('/api/reports/sales/monthly?year=2025&month=10')
         .set('x-tenant-id', 'test-tenant');
-      
+
       expect(response.status).not.toBe(404);
     });
 
@@ -51,15 +53,17 @@ describe('Reports Routes Integration', () => {
       const response = await request(app)
         .get('/api/reports/sales/ytd?year=2025')
         .set('x-tenant-id', 'test-tenant');
-      
+
       expect(response.status).not.toBe(404);
     });
 
     it('should have /api/reports/sales/top-customers endpoint', async () => {
       const response = await request(app)
-        .get('/api/reports/sales/top-customers?startDate=2025-10-01&endDate=2025-10-31')
+        .get(
+          '/api/reports/sales/top-customers?startDate=2025-10-01&endDate=2025-10-31'
+        )
         .set('x-tenant-id', 'test-tenant');
-      
+
       expect(response.status).not.toBe(404);
     });
   });
@@ -69,7 +73,7 @@ describe('Reports Routes Integration', () => {
       const response = await request(app)
         .get('/api/reports/tax/monthly?year=2025&month=10')
         .set('x-tenant-id', 'test-tenant');
-      
+
       expect(response.status).not.toBe(404);
     });
 
@@ -77,7 +81,7 @@ describe('Reports Routes Integration', () => {
       const response = await request(app)
         .get('/api/reports/tax/quarterly?year=2025&quarter=4')
         .set('x-tenant-id', 'test-tenant');
-      
+
       expect(response.status).not.toBe(404);
     });
 
@@ -85,15 +89,17 @@ describe('Reports Routes Integration', () => {
       const response = await request(app)
         .get('/api/reports/tax/annual?year=2025')
         .set('x-tenant-id', 'test-tenant');
-      
+
       expect(response.status).not.toBe(404);
     });
 
     it('should have /api/reports/tax/breakdown endpoint', async () => {
       const response = await request(app)
-        .get('/api/reports/tax/breakdown?startDate=2025-10-01&endDate=2025-10-31')
+        .get(
+          '/api/reports/tax/breakdown?startDate=2025-10-01&endDate=2025-10-31'
+        )
         .set('x-tenant-id', 'test-tenant');
-      
+
       expect(response.status).not.toBe(404);
     });
   });
@@ -101,17 +107,21 @@ describe('Reports Routes Integration', () => {
   describe('Financial Report Endpoints', () => {
     it('should have /api/reports/financial/revenue endpoint', async () => {
       const response = await request(app)
-        .get('/api/reports/financial/revenue?startDate=2025-10-01&endDate=2025-10-31')
+        .get(
+          '/api/reports/financial/revenue?startDate=2025-10-01&endDate=2025-10-31'
+        )
         .set('x-tenant-id', 'test-tenant');
-      
+
       expect(response.status).not.toBe(404);
     });
 
     it('should have /api/reports/financial/profit-loss endpoint', async () => {
       const response = await request(app)
-        .get('/api/reports/financial/profit-loss?startDate=2025-10-01&endDate=2025-10-31')
+        .get(
+          '/api/reports/financial/profit-loss?startDate=2025-10-01&endDate=2025-10-31'
+        )
         .set('x-tenant-id', 'test-tenant');
-      
+
       expect(response.status).not.toBe(404);
     });
 
@@ -119,15 +129,17 @@ describe('Reports Routes Integration', () => {
       const response = await request(app)
         .get('/api/reports/financial/outstanding')
         .set('x-tenant-id', 'test-tenant');
-      
+
       expect(response.status).not.toBe(404);
     });
 
     it('should have /api/reports/financial/refunds endpoint', async () => {
       const response = await request(app)
-        .get('/api/reports/financial/refunds?startDate=2025-10-01&endDate=2025-10-31')
+        .get(
+          '/api/reports/financial/refunds?startDate=2025-10-01&endDate=2025-10-31'
+        )
         .set('x-tenant-id', 'test-tenant');
-      
+
       expect(response.status).not.toBe(404);
     });
   });
@@ -137,7 +149,7 @@ describe('Reports Routes Integration', () => {
       const response = await request(app)
         .get('/api/reports/nonexistent')
         .set('x-tenant-id', 'test-tenant');
-      
+
       expect(response.status).toBe(404);
     });
 
@@ -145,7 +157,7 @@ describe('Reports Routes Integration', () => {
       const response = await request(app)
         .get('/api/reports/sales/monthly')
         .set('x-tenant-id', 'test-tenant');
-      
+
       // Should fail validation (missing year/month)
       expect([400, 500]).toContain(response.status);
     });
@@ -166,18 +178,21 @@ describe('Reports Routes Integration', () => {
       '/api/reports/financial/revenue',
       '/api/reports/financial/profit-loss',
       '/api/reports/financial/outstanding',
-      '/api/reports/financial/refunds'
+      '/api/reports/financial/refunds',
     ];
 
-    frontendPaths.forEach(path => {
+    frontendPaths.forEach((path) => {
       it(`should have backend route for frontend path: ${path}`, async () => {
         // Extract the path without query params
         const basePath = path.split('?')[0];
-        
+
         const response = await request(app)
-          .get(basePath + '?year=2025&month=10&startDate=2025-10-01&endDate=2025-10-31')
+          .get(
+            basePath +
+              '?year=2025&month=10&startDate=2025-10-01&endDate=2025-10-31'
+          )
           .set('x-tenant-id', 'test-tenant');
-        
+
         // Route should exist (not 404)
         expect(response.status).not.toBe(404);
       });
@@ -190,7 +205,7 @@ describe('Reports Routes Integration', () => {
       const response = await request(app)
         .get('/reports/sales/monthly?year=2025&month=10')
         .set('x-tenant-id', 'test-tenant');
-      
+
       // Should be 404 because route is registered at /api/reports
       expect(response.status).toBe(404);
     });
@@ -199,7 +214,7 @@ describe('Reports Routes Integration', () => {
       const response = await request(app)
         .get('/api/reports/sales/monthly?year=2025&month=10')
         .set('x-tenant-id', 'test-tenant');
-      
+
       // Should NOT be 404
       expect(response.status).not.toBe(404);
     });

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState } from 'react';
 import {
   Box,
   TextField,
@@ -15,16 +15,16 @@ import {
   CircularProgress,
   Tooltip,
   Collapse,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
-import CloseIcon from "@mui/icons-material/Close";
-import HistoryIcon from "@mui/icons-material/History";
-import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import checkInService from "../../services/checkInService";
-import type { CheckInBelonging } from "../../services/checkInService";
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import CloseIcon from '@mui/icons-material/Close';
+import HistoryIcon from '@mui/icons-material/History';
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import checkInService from '../../services/checkInService';
+import type { CheckInBelonging } from '../../services/checkInService';
 
 // Extended belonging type with photos
 interface BelongingWithPhotos extends CheckInBelonging {
@@ -39,27 +39,27 @@ interface BelongingsFormProps {
 }
 
 const COMMON_COLORS = [
-  { name: "Red", color: "#ef5350" },
-  { name: "Blue", color: "#42a5f5" },
-  { name: "Green", color: "#66bb6a" },
-  { name: "Black", color: "#424242" },
-  { name: "Brown", color: "#8d6e63" },
-  { name: "Pink", color: "#f48fb1" },
-  { name: "Purple", color: "#ab47bc" },
-  { name: "Orange", color: "#ff9800" },
-  { name: "Yellow", color: "#ffee58" },
-  { name: "Gray", color: "#9e9e9e" },
+  { name: 'Red', color: '#ef5350' },
+  { name: 'Blue', color: '#42a5f5' },
+  { name: 'Green', color: '#66bb6a' },
+  { name: 'Black', color: '#424242' },
+  { name: 'Brown', color: '#8d6e63' },
+  { name: 'Pink', color: '#f48fb1' },
+  { name: 'Purple', color: '#ab47bc' },
+  { name: 'Orange', color: '#ff9800' },
+  { name: 'Yellow', color: '#ffee58' },
+  { name: 'Gray', color: '#9e9e9e' },
 ];
 
 const COMMON_ITEMS = [
-  { type: "Collar", icon: "🔗" },
-  { type: "Leash", icon: "🦮" },
-  { type: "Toy", icon: "🎾" },
-  { type: "Bedding", icon: "🛏️" },
-  { type: "Food", icon: "🍖" },
-  { type: "Bowl", icon: "🥣" },
-  { type: "Medication", icon: "💊" },
-  { type: "Treats", icon: "🦴" },
+  { type: 'Collar', icon: '🔗' },
+  { type: 'Leash', icon: '🦮' },
+  { type: 'Toy', icon: '🎾' },
+  { type: 'Bedding', icon: '🛏️' },
+  { type: 'Food', icon: '🍖' },
+  { type: 'Bowl', icon: '🥣' },
+  { type: 'Medication', icon: '💊' },
+  { type: 'Treats', icon: '🦴' },
 ];
 
 const BelongingsForm: React.FC<BelongingsFormProps> = ({
@@ -79,7 +79,7 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
   const handleQuickAdd = (itemType: string) => {
     const newBelonging: BelongingWithPhotos = {
       itemType,
-      description: "",
+      description: '',
       quantity: 1,
       photos: [],
     };
@@ -88,8 +88,8 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
 
   const handleAddCustom = () => {
     const newBelonging: BelongingWithPhotos = {
-      itemType: "Other",
-      description: "",
+      itemType: 'Other',
+      description: '',
       quantity: 1,
       photos: [],
     };
@@ -131,18 +131,18 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
     reader.onloadend = () => {
       const base64 = reader.result as string;
       const currentPhotos = belongings[index].photos || [];
-      handleUpdateBelonging(index, "photos", [...currentPhotos, base64]);
+      handleUpdateBelonging(index, 'photos', [...currentPhotos, base64]);
     };
 
     reader.readAsDataURL(file);
     // Reset input so same file can be selected again
-    event.target.value = "";
+    event.target.value = '';
   };
 
   const handleRemovePhoto = (belongingIndex: number, photoIndex: number) => {
     const currentPhotos = belongings[belongingIndex].photos || [];
     const updatedPhotos = currentPhotos.filter((_, i) => i !== photoIndex);
-    handleUpdateBelonging(belongingIndex, "photos", updatedPhotos);
+    handleUpdateBelonging(belongingIndex, 'photos', updatedPhotos);
   };
 
   // Load belongings from pet's last check-in
@@ -153,9 +153,8 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
     setPreviousError(null);
 
     try {
-      const previousBelongings = await checkInService.getPreviousBelongings(
-        petId
-      );
+      const previousBelongings =
+        await checkInService.getPreviousBelongings(petId);
       if (previousBelongings.length > 0) {
         // Add photos array to each belonging
         const withPhotos = previousBelongings.map((b) => ({
@@ -164,11 +163,11 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
         }));
         onChange(withPhotos);
       } else {
-        setPreviousError("No previous belongings found for this pet.");
+        setPreviousError('No previous belongings found for this pet.');
       }
     } catch (err) {
-      console.error("Error loading previous belongings:", err);
-      setPreviousError("Failed to load previous belongings.");
+      console.error('Error loading previous belongings:', err);
+      setPreviousError('Failed to load previous belongings.');
     } finally {
       setLoadingPrevious(false);
     }
@@ -197,32 +196,32 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
     };
 
     reader.readAsDataURL(file);
-    event.target.value = "";
+    event.target.value = '';
   };
 
   // Select color for a belonging
   const handleColorSelect = (index: number, colorName: string) => {
-    handleUpdateBelonging(index, "color", colorName);
+    handleUpdateBelonging(index, 'color', colorName);
   };
 
   return (
     <Box>
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           mb: 2,
         }}
       >
         <Typography variant="h6">Belongings Inventory</Typography>
-        <Box sx={{ display: "flex", gap: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1 }}>
           {/* Bulk Photo Button */}
           <input
             type="file"
             accept="image/*"
             capture="environment"
-            style={{ display: "none" }}
+            style={{ display: 'none' }}
             ref={bulkPhotoInputRef}
             onChange={handleBulkFileChange}
           />
@@ -272,12 +271,12 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
 
       {/* Bulk Photo Preview */}
       <Collapse in={showBulkPhoto && !!bulkPhoto}>
-        <Paper sx={{ p: 2, mb: 3, bgcolor: "grey.100" }}>
+        <Paper sx={{ p: 2, mb: 3, bgcolor: 'grey.100' }}>
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
               mb: 1,
             }}
           >
@@ -292,25 +291,25 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
             </IconButton>
           </Box>
           {bulkPhoto && (
-            <Box sx={{ position: "relative" }}>
+            <Box sx={{ position: 'relative' }}>
               <img
                 src={bulkPhoto}
                 alt="All belongings"
                 style={{
-                  maxWidth: "100%",
+                  maxWidth: '100%',
                   maxHeight: 200,
-                  objectFit: "contain",
+                  objectFit: 'contain',
                   borderRadius: 8,
                 }}
               />
               <IconButton
                 size="small"
                 sx={{
-                  position: "absolute",
+                  position: 'absolute',
                   top: 4,
                   right: 4,
-                  bgcolor: "rgba(0,0,0,0.5)",
-                  color: "white",
+                  bgcolor: 'rgba(0,0,0,0.5)',
+                  color: 'white',
                 }}
                 onClick={() => {
                   setBulkPhoto(null);
@@ -324,11 +323,11 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
         </Paper>
       </Collapse>
 
-      <Paper sx={{ p: 2, mb: 3, bgcolor: "grey.50" }}>
+      <Paper sx={{ p: 2, mb: 3, bgcolor: 'grey.50' }}>
         <Typography variant="subtitle2" gutterBottom>
           Quick Add Common Items:
         </Typography>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
           {COMMON_ITEMS.map((item) => (
             <Chip
               key={item.type}
@@ -350,7 +349,7 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
       </Paper>
 
       {belongings.length === 0 && (
-        <Paper sx={{ p: 3, textAlign: "center", bgcolor: "grey.50" }}>
+        <Paper sx={{ p: 3, textAlign: 'center', bgcolor: 'grey.50' }}>
           <Typography color="text.secondary">
             No belongings added. Click a quick-add button above or add a custom
             item.
@@ -362,9 +361,9 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
         <Paper key={index} sx={{ p: 2, mb: 2 }}>
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
               mb: 2,
             }}
           >
@@ -388,7 +387,7 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
                 label="Item Type *"
                 value={belonging.itemType}
                 onChange={(e) =>
-                  handleUpdateBelonging(index, "itemType", e.target.value)
+                  handleUpdateBelonging(index, 'itemType', e.target.value)
                 }
                 placeholder="e.g., Collar, Toy, Bedding"
                 required
@@ -401,7 +400,7 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
                 label="Description *"
                 value={belonging.description}
                 onChange={(e) =>
-                  handleUpdateBelonging(index, "description", e.target.value)
+                  handleUpdateBelonging(index, 'description', e.target.value)
                 }
                 placeholder="e.g., Blue nylon collar with tags, Red squeaky ball"
                 required
@@ -417,7 +416,7 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
                 onChange={(e) =>
                   handleUpdateBelonging(
                     index,
-                    "quantity",
+                    'quantity',
                     parseInt(e.target.value) || 1
                   )
                 }
@@ -430,11 +429,11 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
               <Typography
                 variant="caption"
                 color="text.secondary"
-                sx={{ mb: 0.5, display: "block" }}
+                sx={{ mb: 0.5, display: 'block' }}
               >
                 Color
               </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                 {COMMON_COLORS.map((c) => (
                   <Tooltip key={c.name} title={c.name}>
                     <Box
@@ -442,14 +441,14 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
                       sx={{
                         width: 24,
                         height: 24,
-                        borderRadius: "50%",
+                        borderRadius: '50%',
                         bgcolor: c.color,
-                        cursor: "pointer",
+                        cursor: 'pointer',
                         border:
                           belonging.color === c.name
-                            ? "3px solid #1976d2"
-                            : "2px solid #ddd",
-                        "&:hover": { transform: "scale(1.1)" },
+                            ? '3px solid #1976d2'
+                            : '2px solid #ddd',
+                        '&:hover': { transform: 'scale(1.1)' },
                       }}
                     />
                   </Tooltip>
@@ -459,7 +458,7 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
                 <Chip
                   label={belonging.color}
                   size="small"
-                  onDelete={() => handleUpdateBelonging(index, "color", "")}
+                  onDelete={() => handleUpdateBelonging(index, 'color', '')}
                   sx={{ mt: 0.5 }}
                 />
               )}
@@ -469,9 +468,9 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
               <TextField
                 fullWidth
                 label="Notes"
-                value={belonging.notes || ""}
+                value={belonging.notes || ''}
                 onChange={(e) =>
-                  handleUpdateBelonging(index, "notes", e.target.value)
+                  handleUpdateBelonging(index, 'notes', e.target.value)
                 }
                 placeholder="Any additional notes"
               />
@@ -484,7 +483,7 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
                   type="file"
                   accept="image/*"
                   capture="environment"
-                  style={{ display: "none" }}
+                  style={{ display: 'none' }}
                   ref={(el) => (fileInputRefs.current[index] = el)}
                   onChange={(e) => handleFileChange(index, e)}
                 />
@@ -506,16 +505,16 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
                           src={photo}
                           alt={`${belonging.itemType} photo ${photoIndex + 1}`}
                           loading="lazy"
-                          style={{ objectFit: "cover", height: "100%" }}
+                          style={{ objectFit: 'cover', height: '100%' }}
                         />
                         <ImageListItemBar
-                          sx={{ background: "transparent" }}
+                          sx={{ background: 'transparent' }}
                           position="top"
                           actionIcon={
                             <IconButton
                               sx={{
-                                color: "white",
-                                bgcolor: "rgba(0,0,0,0.5)",
+                                color: 'white',
+                                bgcolor: 'rgba(0,0,0,0.5)',
                                 m: 0.5,
                               }}
                               size="small"
@@ -539,10 +538,10 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
       ))}
 
       {belongings.length > 0 && (
-        <Box sx={{ mt: 2, p: 2, bgcolor: "info.light", borderRadius: 1 }}>
+        <Box sx={{ mt: 2, p: 2, bgcolor: 'info.light', borderRadius: 1 }}>
           <Typography variant="body2" color="info.dark">
-            <strong>Total Items:</strong>{" "}
-            {belongings.reduce((sum, b) => sum + b.quantity, 0)} items across{" "}
+            <strong>Total Items:</strong>{' '}
+            {belongings.reduce((sum, b) => sum + b.quantity, 0)} items across{' '}
             {belongings.length} categories
           </Typography>
         </Box>

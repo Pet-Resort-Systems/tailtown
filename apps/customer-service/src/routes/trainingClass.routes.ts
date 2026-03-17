@@ -12,22 +12,37 @@ const router = Router();
 router.get('/training-classes', trainingClassController.getAllTrainingClasses);
 
 // Get training class by ID
-router.get('/training-classes/:id', trainingClassController.getTrainingClassById);
+router.get(
+  '/training-classes/:id',
+  trainingClassController.getTrainingClassById
+);
 
 // Create training class
 router.post('/training-classes', trainingClassController.createTrainingClass);
 
 // Update training class
-router.put('/training-classes/:id', trainingClassController.updateTrainingClass);
+router.put(
+  '/training-classes/:id',
+  trainingClassController.updateTrainingClass
+);
 
 // Delete training class
-router.delete('/training-classes/:id', trainingClassController.deleteTrainingClass);
+router.delete(
+  '/training-classes/:id',
+  trainingClassController.deleteTrainingClass
+);
 
 // Duplicate training class for next session
-router.post('/training-classes/:id/duplicate', trainingClassController.duplicateTrainingClass);
+router.post(
+  '/training-classes/:id/duplicate',
+  trainingClassController.duplicateTrainingClass
+);
 
 // Get class sessions
-router.get('/training-classes/:classId/sessions', trainingClassController.getClassSessions);
+router.get(
+  '/training-classes/:classId/sessions',
+  trainingClassController.getClassSessions
+);
 
 // Update class session
 router.put('/sessions/:id', trainingClassController.updateClassSession);
@@ -36,6 +51,9 @@ router.put('/sessions/:id', trainingClassController.updateClassSession);
 router.post('/sessions/:id/start', trainingClassController.startClassSession);
 
 // Complete class session
-router.post('/sessions/:id/complete', trainingClassController.completeClassSession);
+router.post(
+  '/sessions/:id/complete',
+  trainingClassController.completeClassSession
+);
 
 export default router;

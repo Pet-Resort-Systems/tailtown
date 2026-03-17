@@ -1,6 +1,6 @@
 /**
  * Business Settings Controller
- * 
+ *
  * Handles business customization settings like logo upload
  */
 
@@ -28,17 +28,19 @@ const storage = multer.diskStorage({
     const tenantId = (req as any).tenantId;
     const ext = path.extname(file.originalname);
     cb(null, `logo-${tenantId}-${Date.now()}${ext}`);
-  }
+  },
 });
 
 const upload = multer({
   storage,
   limits: {
-    fileSize: 2 * 1024 * 1024 // 2MB
+    fileSize: 2 * 1024 * 1024, // 2MB
   },
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|gif|webp/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const extname = allowedTypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
     const mimetype = allowedTypes.test(file.mimetype);
 
     if (extname && mimetype) {
@@ -46,7 +48,7 @@ const upload = multer({
     } else {
       cb(new Error('Only image files are allowed'));
     }
-  }
+  },
 });
 
 export const uploadMiddleware = upload.single('logo');
@@ -54,7 +56,11 @@ export const uploadMiddleware = upload.single('logo');
 /**
  * Get business settings for the current tenant
  */
-export const getBusinessSettings = async (req: Request, res: Response, next: NextFunction) => {
+export const getBusinessSettings = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const tenantId = (req as any).tenantId;
 
@@ -67,8 +73,8 @@ export const getBusinessSettings = async (req: Request, res: Response, next: Nex
       select: {
         id: true,
         businessName: true,
-        logoUrl: true
-      }
+        logoUrl: true,
+      },
     });
 
     if (!tenant) {
@@ -76,7 +82,7 @@ export const getBusinessSettings = async (req: Request, res: Response, next: Nex
     }
 
     res.status(200).json({
-      logoUrl: tenant.logoUrl
+      logoUrl: tenant.logoUrl,
     });
   } catch (error) {
     console.error('Error getting business settings:', error);
@@ -87,7 +93,11 @@ export const getBusinessSettings = async (req: Request, res: Response, next: Nex
 /**
  * Upload business logo
  */
-export const uploadLogo = async (req: Request, res: Response, next: NextFunction) => {
+export const uploadLogo = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const tenantId = (req as any).tenantId;
 
@@ -102,7 +112,7 @@ export const uploadLogo = async (req: Request, res: Response, next: NextFunction
     // Get the old logo URL to delete it
     const tenant = await prisma.tenant.findUnique({
       where: { id: tenantId },
-      select: { logoUrl: true }
+      select: { logoUrl: true },
     });
 
     // Delete old logo file if it exists
@@ -122,12 +132,12 @@ export const uploadLogo = async (req: Request, res: Response, next: NextFunction
     // Update tenant with new logo URL
     await prisma.tenant.update({
       where: { id: tenantId },
-      data: { logoUrl }
+      data: { logoUrl },
     });
 
     res.status(200).json({
       success: true,
-      logoUrl
+      logoUrl,
     });
   } catch (error) {
     console.error('Error uploading logo:', error);
@@ -138,7 +148,11 @@ export const uploadLogo = async (req: Request, res: Response, next: NextFunction
 /**
  * Delete business logo
  */
-export const deleteLogo = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteLogo = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const tenantId = (req as any).tenantId;
 
@@ -148,7 +162,7 @@ export const deleteLogo = async (req: Request, res: Response, next: NextFunction
 
     const tenant = await prisma.tenant.findUnique({
       where: { id: tenantId },
-      select: { logoUrl: true }
+      select: { logoUrl: true },
     });
 
     if (!tenant) {
@@ -169,12 +183,12 @@ export const deleteLogo = async (req: Request, res: Response, next: NextFunction
     // Remove logo URL from tenant
     await prisma.tenant.update({
       where: { id: tenantId },
-      data: { logoUrl: null }
+      data: { logoUrl: null },
     });
 
     res.status(200).json({
       success: true,
-      message: 'Logo deleted successfully'
+      message: 'Logo deleted successfully',
     });
   } catch (error) {
     console.error('Error deleting logo:', error);

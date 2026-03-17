@@ -5,11 +5,11 @@
  * Tests the resource CRUD operations with mocked Prisma.
  */
 
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient, ResourceType } from "@prisma/client";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient, ResourceType } from '@prisma/client';
 
 // Mock the Prisma client
-jest.mock("@prisma/client", () => {
+jest.mock('@prisma/client', () => {
   const mockPrismaClient = {
     resource: {
       findMany: jest.fn(),
@@ -30,13 +30,13 @@ jest.mock("@prisma/client", () => {
   return {
     PrismaClient: jest.fn(() => mockPrismaClient),
     ResourceType: {
-      JUNIOR_KENNEL: "JUNIOR_KENNEL",
-      STANDARD_KENNEL: "STANDARD_KENNEL",
-      LARGE_KENNEL: "LARGE_KENNEL",
-      SUITE: "SUITE",
-      STANDARD_SUITE: "STANDARD_SUITE",
-      STANDARD_PLUS_SUITE: "STANDARD_PLUS_SUITE",
-      VIP_SUITE: "VIP_SUITE",
+      JUNIOR_KENNEL: 'JUNIOR_KENNEL',
+      STANDARD_KENNEL: 'STANDARD_KENNEL',
+      LARGE_KENNEL: 'LARGE_KENNEL',
+      SUITE: 'SUITE',
+      STANDARD_SUITE: 'STANDARD_SUITE',
+      STANDARD_PLUS_SUITE: 'STANDARD_PLUS_SUITE',
+      VIP_SUITE: 'VIP_SUITE',
     },
   };
 });
@@ -45,12 +45,12 @@ jest.mock("@prisma/client", () => {
 const prisma = new PrismaClient();
 
 // Mock the catchAsync middleware
-jest.mock("../../middleware/errorHandler", () => ({
+jest.mock('../../middleware/errorHandler', () => ({
   catchAsync: (fn: any) => fn,
 }));
 
 // Mock logger
-jest.mock("../../utils/logger", () => ({
+jest.mock('../../utils/logger', () => ({
   logger: {
     error: jest.fn(),
     info: jest.fn(),
@@ -78,12 +78,12 @@ class MockAppError extends Error {
   }
 }
 
-jest.mock("../../utils/appError", () => ({
+jest.mock('../../utils/appError', () => ({
   AppError: MockAppError,
 }));
 
 // Mock prisma-helpers
-jest.mock("../../controllers/reservation/utils/prisma-helpers", () => ({
+jest.mock('../../controllers/reservation/utils/prisma-helpers', () => ({
   prisma: prisma,
   safeExecutePrismaQuery: jest.fn().mockImplementation(async (fn, fallback) => {
     try {
@@ -101,9 +101,9 @@ import {
   createResource,
   updateResource,
   deleteResource,
-} from "../../controllers/resource/resource.controller";
+} from '../../controllers/resource/resource.controller';
 
-describe("Resource Controller - Integration", () => {
+describe('Resource Controller - Integration', () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
   let mockNext: jest.MockedFunction<NextFunction>;
@@ -115,9 +115,9 @@ describe("Resource Controller - Integration", () => {
       params: {},
       body: {},
       query: {},
-      headers: { "x-tenant-id": "tenant-1" },
+      headers: { 'x-tenant-id': 'tenant-1' },
     };
-    (mockRequest as any).tenantId = "tenant-1";
+    (mockRequest as any).tenantId = 'tenant-1';
 
     mockResponse = {
       status: jest.fn().mockReturnThis(),
@@ -127,22 +127,22 @@ describe("Resource Controller - Integration", () => {
     mockNext = jest.fn();
   });
 
-  describe("getAllResources", () => {
-    it("should return all resources for tenant", async () => {
+  describe('getAllResources', () => {
+    it('should return all resources for tenant', async () => {
       const mockResources = [
         {
-          id: "resource-1",
-          name: "Kennel 1",
-          type: "JUNIOR_KENNEL",
-          tenantId: "tenant-1",
+          id: 'resource-1',
+          name: 'Kennel 1',
+          type: 'JUNIOR_KENNEL',
+          tenantId: 'tenant-1',
           capacity: 1,
           isActive: true,
         },
         {
-          id: "resource-2",
-          name: "Kennel 2",
-          type: "STANDARD_KENNEL",
-          tenantId: "tenant-1",
+          id: 'resource-2',
+          name: 'Kennel 2',
+          type: 'STANDARD_KENNEL',
+          tenantId: 'tenant-1',
           capacity: 1,
           isActive: true,
         },
@@ -159,21 +159,21 @@ describe("Resource Controller - Integration", () => {
 
       expect(mockResponse.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           results: 2,
         })
       );
     });
 
-    it("should filter by resource type", async () => {
-      mockRequest.query = { type: "JUNIOR_KENNEL" };
+    it('should filter by resource type', async () => {
+      mockRequest.query = { type: 'JUNIOR_KENNEL' };
 
       const mockResources = [
         {
-          id: "resource-1",
-          name: "Kennel 1",
-          type: "JUNIOR_KENNEL",
-          tenantId: "tenant-1",
+          id: 'resource-1',
+          name: 'Kennel 1',
+          type: 'JUNIOR_KENNEL',
+          tenantId: 'tenant-1',
         },
       ];
 
@@ -189,14 +189,14 @@ describe("Resource Controller - Integration", () => {
       expect(prisma.resource.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            type: "JUNIOR_KENNEL",
+            type: 'JUNIOR_KENNEL',
           }),
         })
       );
     });
 
-    it("should handle pagination", async () => {
-      mockRequest.query = { page: "2", limit: "10" };
+    it('should handle pagination', async () => {
+      mockRequest.query = { page: '2', limit: '10' };
 
       (prisma.resource.count as jest.Mock).mockResolvedValue(25);
       (prisma.resource.findMany as jest.Mock).mockResolvedValue([]);
@@ -215,8 +215,8 @@ describe("Resource Controller - Integration", () => {
       );
     });
 
-    it("should search by name", async () => {
-      mockRequest.query = { search: "VIP" };
+    it('should search by name', async () => {
+      mockRequest.query = { search: 'VIP' };
 
       (prisma.resource.count as jest.Mock).mockResolvedValue(1);
       (prisma.resource.findMany as jest.Mock).mockResolvedValue([]);
@@ -231,16 +231,16 @@ describe("Resource Controller - Integration", () => {
         expect.objectContaining({
           where: expect.objectContaining({
             name: expect.objectContaining({
-              contains: "VIP",
+              contains: 'VIP',
             }),
           }),
         })
       );
     });
 
-    it("should require tenant ID", async () => {
+    it('should require tenant ID', async () => {
       (mockRequest as any).tenantId = undefined;
-      process.env.NODE_ENV = "production";
+      process.env.NODE_ENV = 'production';
 
       await expect(
         getAllResources(
@@ -248,21 +248,21 @@ describe("Resource Controller - Integration", () => {
           mockResponse as Response,
           mockNext
         )
-      ).rejects.toThrow("Tenant ID is required");
+      ).rejects.toThrow('Tenant ID is required');
 
-      process.env.NODE_ENV = "test";
+      process.env.NODE_ENV = 'test';
     });
   });
 
-  describe("getResourceById", () => {
-    it("should return a resource when found", async () => {
-      mockRequest.params = { id: "resource-1" };
+  describe('getResourceById', () => {
+    it('should return a resource when found', async () => {
+      mockRequest.params = { id: 'resource-1' };
 
       const mockResource = {
-        id: "resource-1",
-        name: "Kennel 1",
-        type: "JUNIOR_KENNEL",
-        tenantId: "tenant-1",
+        id: 'resource-1',
+        name: 'Kennel 1',
+        type: 'JUNIOR_KENNEL',
+        tenantId: 'tenant-1',
         capacity: 1,
         isActive: true,
       };
@@ -278,20 +278,20 @@ describe("Resource Controller - Integration", () => {
       expect(prisma.resource.findFirst).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            id: "resource-1",
-            tenantId: "tenant-1",
+            id: 'resource-1',
+            tenantId: 'tenant-1',
           }),
         })
       );
       expect(mockResponse.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
         })
       );
     });
 
-    it("should return 404 when resource not found", async () => {
-      mockRequest.params = { id: "non-existent" };
+    it('should return 404 when resource not found', async () => {
+      mockRequest.params = { id: 'non-existent' };
 
       (prisma.resource.findFirst as jest.Mock).mockResolvedValue(null);
 
@@ -305,22 +305,22 @@ describe("Resource Controller - Integration", () => {
     });
   });
 
-  describe("createResource", () => {
-    it("should create a new resource", async () => {
+  describe('createResource', () => {
+    it('should create a new resource', async () => {
       mockRequest.body = {
-        name: "New Kennel",
-        type: "JUNIOR_KENNEL",
+        name: 'New Kennel',
+        type: 'JUNIOR_KENNEL',
         capacity: 1,
-        location: "Building A",
+        location: 'Building A',
       };
 
       const mockCreatedResource = {
-        id: "resource-new",
-        name: "New Kennel",
-        type: "JUNIOR_KENNEL",
-        tenantId: "tenant-1",
+        id: 'resource-new',
+        name: 'New Kennel',
+        type: 'JUNIOR_KENNEL',
+        tenantId: 'tenant-1',
         capacity: 1,
-        location: "Building A",
+        location: 'Building A',
         isActive: true,
       };
 
@@ -337,28 +337,28 @@ describe("Resource Controller - Integration", () => {
       expect(prisma.resource.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
-            name: "New Kennel",
-            type: "JUNIOR_KENNEL",
-            tenantId: "tenant-1",
+            name: 'New Kennel',
+            type: 'JUNIOR_KENNEL',
+            tenantId: 'tenant-1',
           }),
         })
       );
       expect(mockResponse.status).toHaveBeenCalledWith(201);
     });
 
-    it("should persist suiteNumber when provided", async () => {
+    it('should persist suiteNumber when provided', async () => {
       mockRequest.body = {
-        name: "A02",
-        type: "JUNIOR_KENNEL",
+        name: 'A02',
+        type: 'JUNIOR_KENNEL',
         capacity: 1,
         suiteNumber: 2,
       };
 
       const mockCreatedResource = {
-        id: "resource-new",
-        name: "A02",
-        type: "JUNIOR_KENNEL",
-        tenantId: "tenant-1",
+        id: 'resource-new',
+        name: 'A02',
+        type: 'JUNIOR_KENNEL',
+        tenantId: 'tenant-1',
         capacity: 1,
         suiteNumber: 2,
         isActive: true,
@@ -383,9 +383,9 @@ describe("Resource Controller - Integration", () => {
       );
     });
 
-    it("should require name field", async () => {
+    it('should require name field', async () => {
       mockRequest.body = {
-        type: "JUNIOR_KENNEL",
+        type: 'JUNIOR_KENNEL',
       };
 
       await expect(
@@ -394,12 +394,12 @@ describe("Resource Controller - Integration", () => {
           mockResponse as Response,
           mockNext
         )
-      ).rejects.toThrow("Name is required");
+      ).rejects.toThrow('Name is required');
     });
 
-    it("should require type field", async () => {
+    it('should require type field', async () => {
       mockRequest.body = {
-        name: "New Kennel",
+        name: 'New Kennel',
       };
 
       await expect(
@@ -408,28 +408,28 @@ describe("Resource Controller - Integration", () => {
           mockResponse as Response,
           mockNext
         )
-      ).rejects.toThrow("Type is required");
+      ).rejects.toThrow('Type is required');
     });
   });
 
-  describe("updateResource", () => {
-    it("should update an existing resource", async () => {
-      mockRequest.params = { id: "resource-1" };
+  describe('updateResource', () => {
+    it('should update an existing resource', async () => {
+      mockRequest.params = { id: 'resource-1' };
       mockRequest.body = {
-        name: "Updated Kennel",
+        name: 'Updated Kennel',
         capacity: 2,
       };
 
       const mockExistingResource = {
-        id: "resource-1",
-        name: "Kennel 1",
-        type: "JUNIOR_KENNEL",
-        tenantId: "tenant-1",
+        id: 'resource-1',
+        name: 'Kennel 1',
+        type: 'JUNIOR_KENNEL',
+        tenantId: 'tenant-1',
       };
 
       const mockUpdatedResource = {
         ...mockExistingResource,
-        name: "Updated Kennel",
+        name: 'Updated Kennel',
         capacity: 2,
       };
 
@@ -448,26 +448,26 @@ describe("Resource Controller - Integration", () => {
 
       expect(prisma.resource.update).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { id: "resource-1" },
+          where: { id: 'resource-1' },
           data: expect.objectContaining({
-            name: "Updated Kennel",
+            name: 'Updated Kennel',
             capacity: 2,
           }),
         })
       );
     });
 
-    it("should update suiteNumber when provided", async () => {
-      mockRequest.params = { id: "resource-1" };
+    it('should update suiteNumber when provided', async () => {
+      mockRequest.params = { id: 'resource-1' };
       mockRequest.body = {
         suiteNumber: 11,
       };
 
       const mockExistingResource = {
-        id: "resource-1",
-        name: "B11K",
-        type: "KING_KENNEL",
-        tenantId: "tenant-1",
+        id: 'resource-1',
+        name: 'B11K',
+        type: 'KING_KENNEL',
+        tenantId: 'tenant-1',
         suiteNumber: null,
       };
 
@@ -491,7 +491,7 @@ describe("Resource Controller - Integration", () => {
 
       expect(prisma.resource.update).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { id: "resource-1" },
+          where: { id: 'resource-1' },
           data: expect.objectContaining({
             suiteNumber: 11,
           }),
@@ -499,9 +499,9 @@ describe("Resource Controller - Integration", () => {
       );
     });
 
-    it("should return 404 when resource to update not found", async () => {
-      mockRequest.params = { id: "non-existent" };
-      mockRequest.body = { name: "Updated" };
+    it('should return 404 when resource to update not found', async () => {
+      mockRequest.params = { id: 'non-existent' };
+      mockRequest.body = { name: 'Updated' };
 
       (prisma.resource.findFirst as jest.Mock).mockResolvedValue(null);
 
@@ -515,15 +515,15 @@ describe("Resource Controller - Integration", () => {
     });
   });
 
-  describe("deleteResource", () => {
-    it("should delete a resource", async () => {
-      mockRequest.params = { id: "resource-1" };
+  describe('deleteResource', () => {
+    it('should delete a resource', async () => {
+      mockRequest.params = { id: 'resource-1' };
 
       const mockResource = {
-        id: "resource-1",
-        name: "Kennel 1",
-        type: "JUNIOR_KENNEL",
-        tenantId: "tenant-1",
+        id: 'resource-1',
+        name: 'Kennel 1',
+        type: 'JUNIOR_KENNEL',
+        tenantId: 'tenant-1',
       };
 
       (prisma.resource.findFirst as jest.Mock).mockResolvedValue(mockResource);
@@ -540,8 +540,8 @@ describe("Resource Controller - Integration", () => {
       expect(prisma.resource.deleteMany).toHaveBeenCalled();
     });
 
-    it("should return 404 when resource to delete not found", async () => {
-      mockRequest.params = { id: "non-existent" };
+    it('should return 404 when resource to delete not found', async () => {
+      mockRequest.params = { id: 'non-existent' };
 
       (prisma.resource.findFirst as jest.Mock).mockResolvedValue(null);
 
@@ -555,9 +555,9 @@ describe("Resource Controller - Integration", () => {
     });
   });
 
-  describe("Tenant Isolation", () => {
-    it("should scope all queries to tenant", async () => {
-      (mockRequest as any).tenantId = "specific-tenant";
+  describe('Tenant Isolation', () => {
+    it('should scope all queries to tenant', async () => {
+      (mockRequest as any).tenantId = 'specific-tenant';
 
       (prisma.resource.count as jest.Mock).mockResolvedValue(0);
       (prisma.resource.findMany as jest.Mock).mockResolvedValue([]);
@@ -571,7 +571,7 @@ describe("Resource Controller - Integration", () => {
       expect(prisma.resource.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            tenantId: "specific-tenant",
+            tenantId: 'specific-tenant',
           }),
         })
       );

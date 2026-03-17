@@ -1,26 +1,30 @@
 /**
  * ResponsiveContainer Component
- * 
+ *
  * A flexible container component that adapts its layout and spacing
  * based on screen size. Provides consistent responsive behavior across the app.
  */
 
 import React from 'react';
 import { Container, ContainerProps } from '@mui/material';
-import { useResponsive, getResponsiveSpacing, getResponsiveMaxWidth } from '../../utils/responsive';
+import {
+  useResponsive,
+  getResponsiveSpacing,
+  getResponsiveMaxWidth,
+} from '../../utils/responsive';
 
 interface ResponsiveContainerProps extends Omit<ContainerProps, 'maxWidth'> {
   /**
    * Children to render inside the container
    */
   children: React.ReactNode;
-  
+
   /**
    * Whether to add padding
    * @default true
    */
   padding?: boolean;
-  
+
   /**
    * Custom padding values for different breakpoints
    */
@@ -29,18 +33,18 @@ interface ResponsiveContainerProps extends Omit<ContainerProps, 'maxWidth'> {
     tablet?: number;
     desktop?: number;
   };
-  
+
   /**
    * Whether to center content
    * @default false
    */
   center?: boolean;
-  
+
   /**
    * Background color
    */
   backgroundColor?: string;
-  
+
   /**
    * Whether to use full width
    * @default false
@@ -59,15 +63,17 @@ const ResponsiveContainer: React.FC<ResponsiveContainerProps> = ({
   ...props
 }) => {
   const { isMobile, isTablet } = useResponsive();
-  
+
   const defaultPadding = {
     mobile: customPadding?.mobile ?? 2,
     tablet: customPadding?.tablet ?? 3,
     desktop: customPadding?.desktop ?? 4,
   };
-  
-  const maxWidth = fullWidth ? false : getResponsiveMaxWidth(isMobile, isTablet);
-  
+
+  const maxWidth = fullWidth
+    ? false
+    : getResponsiveMaxWidth(isMobile, isTablet);
+
   return (
     <Container
       maxWidth={fullWidth ? false : 'lg'}

@@ -1,6 +1,11 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider, CssBaseline, CircularProgress, Box } from '@mui/material';
+import {
+  ThemeProvider,
+  CssBaseline,
+  CircularProgress,
+  Box,
+} from '@mui/material';
 import theme from './theme';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -39,7 +44,7 @@ function App() {
             <Routes>
               {/* Login Route (Public) */}
               <Route path="/login" element={<Login />} />
-              
+
               {/* Protected Routes */}
               <Route
                 path="/"
@@ -51,7 +56,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              
+
               <Route
                 path="/tenants"
                 element={
@@ -62,7 +67,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              
+
               <Route
                 path="/tenants/new"
                 element={
@@ -73,7 +78,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              
+
               <Route
                 path="/tenants/:id"
                 element={
@@ -84,7 +89,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              
+
               <Route
                 path="/tenants/:id/edit"
                 element={
@@ -95,7 +100,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              
+
               <Route
                 path="/analytics"
                 element={
@@ -106,7 +111,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              
+
               {/* Redirect unknown routes to dashboard */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

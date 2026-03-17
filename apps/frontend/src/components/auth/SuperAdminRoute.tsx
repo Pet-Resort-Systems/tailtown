@@ -1,6 +1,6 @@
 /**
  * Super Admin Protected Route
- * 
+ *
  * Wrapper component that requires super admin authentication.
  * Redirects to login if not authenticated.
  */
@@ -25,7 +25,7 @@ const SuperAdminRoute: React.FC<SuperAdminRouteProps> = ({ children }) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          minHeight: '100vh'
+          minHeight: '100vh',
         }}
       >
         <CircularProgress />

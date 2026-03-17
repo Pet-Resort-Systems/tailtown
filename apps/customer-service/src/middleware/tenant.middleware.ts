@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
-import { prisma } from "../config/prisma";
-import { logger } from "../utils/logger";
-import { getCache, setCache, getCacheKey } from "../utils/redis";
+import { Request, Response, NextFunction } from 'express';
+import { prisma } from '../config/prisma';
+import { logger } from '../utils/logger';
+import { getCache, setCache, getCacheKey } from '../utils/redis';
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -41,10 +41,10 @@ export const extractTenantContext = async (
 
     // Method 1: Extract from subdomain (production)
     // Check X-Forwarded-Host first (from reverse proxy), then fall back to hostname
-    const forwardedHost = req.headers["x-forwarded-host"] as string;
+    const forwardedHost = req.headers['x-forwarded-host'] as string;
     const hostname = forwardedHost || req.hostname;
 
-    logger.debug("Tenant middleware - hostname detection", {
+    logger.debug('Tenant middleware - hostname detection', {
       hostname,
       forwardedHost,
       original: req.hostname,
@@ -52,30 +52,30 @@ export const extractTenantContext = async (
 
     // Check if it's a subdomain (not localhost, not main domain, not IP)
     if (
-      hostname !== "localhost" &&
-      hostname !== "127.0.0.1" &&
-      !hostname.startsWith("192.168") &&
+      hostname !== 'localhost' &&
+      hostname !== '127.0.0.1' &&
+      !hostname.startsWith('192.168') &&
       !hostname.match(/^\d+\.\d+\.\d+\.\d+$/)
     ) {
-      const parts = hostname.split(".");
+      const parts = hostname.split('.');
 
       // If we have at least 3 parts (subdomain.domain.tld), extract subdomain
       if (parts.length >= 3) {
         subdomain = parts[0];
-        logger.debug("Extracted subdomain from hostname", { subdomain });
+        logger.debug('Extracted subdomain from hostname', { subdomain });
       }
     }
 
     // Method 2: Development - Check X-Tenant-Subdomain header
-    if (!subdomain && req.headers["x-tenant-subdomain"]) {
-      subdomain = req.headers["x-tenant-subdomain"] as string;
-      logger.debug("Using X-Tenant-Subdomain header", { subdomain });
+    if (!subdomain && req.headers['x-tenant-subdomain']) {
+      subdomain = req.headers['x-tenant-subdomain'] as string;
+      logger.debug('Using X-Tenant-Subdomain header', { subdomain });
     }
 
     // Method 2b: Check X-Tenant-ID header (for impersonation)
-    if (!subdomain && req.headers["x-tenant-id"]) {
-      tenantIdHeader = req.headers["x-tenant-id"] as string;
-      logger.debug("Using X-Tenant-ID header", { tenantIdHeader });
+    if (!subdomain && req.headers['x-tenant-id']) {
+      tenantIdHeader = req.headers['x-tenant-id'] as string;
+      logger.debug('Using X-Tenant-ID header', { tenantIdHeader });
 
       // If the header is a UUID, treat it as the tenant UUID directly.
       // Otherwise fall back to legacy behavior where it is treated as a subdomain.
@@ -89,18 +89,18 @@ export const extractTenantContext = async (
     // Method 3: Development - Check query parameter
     if (!subdomain && req.query.subdomain) {
       subdomain = req.query.subdomain as string;
-      logger.debug("Using query parameter", { subdomain });
+      logger.debug('Using query parameter', { subdomain });
     }
 
     // Method 4: Default to dev tenant in non-production
     if (
       !subdomain &&
       !tenantIdHeader &&
-      process.env.NODE_ENV !== "production" &&
-      process.env.NODE_ENV !== "test"
+      process.env.NODE_ENV !== 'production' &&
+      process.env.NODE_ENV !== 'test'
     ) {
-      subdomain = "dev";
-      logger.debug("No tenant provided; defaulting to dev tenant", {
+      subdomain = 'dev';
+      logger.debug('No tenant provided; defaulting to dev tenant', {
         hostname,
         path: req.path,
       });
@@ -108,18 +108,18 @@ export const extractTenantContext = async (
 
     // Method 5: Fail if no tenant context found
     if (!subdomain && !tenantIdHeader) {
-      logger.error("No tenant context found", { hostname, path: req.path });
+      logger.error('No tenant context found', { hostname, path: req.path });
       return res.status(400).json({
         success: false,
-        error: "Tenant required",
+        error: 'Tenant required',
         message:
-          "No tenant context found. Please access via subdomain or provide tenant ID.",
+          'No tenant context found. Please access via subdomain or provide tenant ID.',
       });
     }
 
     // If we have a UUID tenant id header, resolve tenant by id
     if (tenantIdHeader && UUID_REGEX.test(tenantIdHeader)) {
-      const cacheKey = getCacheKey("global", "tenant", tenantIdHeader);
+      const cacheKey = getCacheKey('global', 'tenant', tenantIdHeader);
       let tenant = await getCache<{
         id: string;
         subdomain: string;
@@ -150,7 +150,7 @@ export const extractTenantContext = async (
       if (!tenant) {
         return res.status(404).json({
           success: false,
-          error: "Tenant not found",
+          error: 'Tenant not found',
           message: `No tenant found for id: ${tenantIdHeader}`,
         });
       }
@@ -158,8 +158,8 @@ export const extractTenantContext = async (
       if (!tenant.isActive || tenant.isPaused) {
         return res.status(403).json({
           success: false,
-          error: "Tenant inactive",
-          message: "This tenant account is currently inactive or paused",
+          error: 'Tenant inactive',
+          message: 'This tenant account is currently inactive or paused',
         });
       }
 
@@ -172,7 +172,7 @@ export const extractTenantContext = async (
         isActive: tenant.isActive,
       };
 
-      logger.debug("Tenant context set", {
+      logger.debug('Tenant context set', {
         businessName: tenant.businessName,
         subdomain: tenant.subdomain,
         tenantId: tenant.id,
@@ -182,7 +182,7 @@ export const extractTenantContext = async (
     }
 
     // Try to get tenant from cache first
-    const cacheKey = getCacheKey("global", "tenant", subdomain);
+    const cacheKey = getCacheKey('global', 'tenant', subdomain);
     let tenant = await getCache<{
       id: string;
       subdomain: string;
@@ -210,20 +210,20 @@ export const extractTenantContext = async (
         // Cache the tenant for 5 minutes if found
         if (tenant) {
           await setCache(cacheKey, tenant, 300); // 5 min TTL
-          logger.debug("Tenant cached", { subdomain, tenantId: tenant.id });
+          logger.debug('Tenant cached', { subdomain, tenantId: tenant.id });
         }
       } catch (error: any) {
         // In development, if tenants table doesn't exist, create a mock tenant
-        if (process.env.NODE_ENV !== "production" && error.code === "P2021") {
+        if (process.env.NODE_ENV !== 'production' && error.code === 'P2021') {
           logger.warn(
-            "Tenants table does not exist - using mock tenant for development",
+            'Tenants table does not exist - using mock tenant for development',
             { subdomain }
           );
           tenant = {
-            id: "dev",
+            id: 'dev',
             subdomain: subdomain,
-            businessName: "Development Tenant",
-            status: "ACTIVE",
+            businessName: 'Development Tenant',
+            status: 'ACTIVE',
             isActive: true,
             isPaused: false,
           };
@@ -232,13 +232,13 @@ export const extractTenantContext = async (
         }
       }
     } else {
-      logger.debug("Tenant cache hit", { subdomain, tenantId: tenant.id });
+      logger.debug('Tenant cache hit', { subdomain, tenantId: tenant.id });
     }
 
     if (!tenant) {
       return res.status(404).json({
         success: false,
-        error: "Tenant not found",
+        error: 'Tenant not found',
         message: `No tenant found for subdomain: ${subdomain}`,
       });
     }
@@ -247,8 +247,8 @@ export const extractTenantContext = async (
     if (!tenant.isActive || tenant.isPaused) {
       return res.status(403).json({
         success: false,
-        error: "Tenant inactive",
-        message: "This tenant account is currently inactive or paused",
+        error: 'Tenant inactive',
+        message: 'This tenant account is currently inactive or paused',
       });
     }
 
@@ -263,7 +263,7 @@ export const extractTenantContext = async (
       isActive: tenant.isActive,
     };
 
-    logger.debug("Tenant context set", {
+    logger.debug('Tenant context set', {
       businessName: tenant.businessName,
       subdomain: tenant.subdomain,
       tenantId: tenant.id,
@@ -271,17 +271,17 @@ export const extractTenantContext = async (
 
     next();
   } catch (error: any) {
-    logger.error("Tenant middleware error", {
+    logger.error('Tenant middleware error', {
       error: error.message,
       stack: error.stack,
     });
     return res.status(500).json({
       success: false,
-      error: "Internal server error",
-      message: "Failed to resolve tenant context",
+      error: 'Internal server error',
+      message: 'Failed to resolve tenant context',
       errorMessage: error.message,
       errorStack:
-        process.env.NODE_ENV === "production" ? undefined : error.stack,
+        process.env.NODE_ENV === 'production' ? undefined : error.stack,
     });
   }
 };
@@ -298,8 +298,8 @@ export const requireTenant = (
   if (!req.tenantId || !req.tenant) {
     return res.status(400).json({
       success: false,
-      error: "Tenant required",
-      message: "This endpoint requires tenant context",
+      error: 'Tenant required',
+      message: 'This endpoint requires tenant context',
     });
   }
   next();

@@ -2,7 +2,7 @@
  * Notifications Step - SendGrid & Twilio setup
  */
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -16,8 +16,8 @@ import {
   InputAdornment,
   IconButton,
   Slider,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   ArrowForward,
   ArrowBack,
@@ -25,8 +25,8 @@ import {
   VisibilityOff,
   Email,
   Sms,
-} from "@mui/icons-material";
-import { useSetupWizard } from "../SetupWizardContext";
+} from '@mui/icons-material';
+import { useSetupWizard } from '../SetupWizardContext';
 
 export default function NotificationsStep() {
   const { state, setNotifications, completeStep, nextStep, prevStep } =
@@ -36,7 +36,7 @@ export default function NotificationsStep() {
   const [showTwilioToken, setShowTwilioToken] = useState(false);
 
   const handleNext = () => {
-    completeStep("notifications");
+    completeStep('notifications');
     nextStep();
   };
 
@@ -53,7 +53,7 @@ export default function NotificationsStep() {
       {/* SendGrid */}
       <Card variant="outlined" sx={{ mb: 3 }}>
         <CardContent>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
             <Email color="primary" />
             <Typography variant="h6">Email (SendGrid)</Typography>
           </Box>
@@ -77,15 +77,15 @@ export default function NotificationsStep() {
                 <TextField
                   fullWidth
                   label="SendGrid API Key"
-                  type={showSendGridKey ? "text" : "password"}
-                  value={notifications.sendGrid?.apiKey || ""}
+                  type={showSendGridKey ? 'text' : 'password'}
+                  value={notifications.sendGrid?.apiKey || ''}
                   onChange={(e) =>
                     setNotifications({
                       sendGrid: {
                         ...notifications.sendGrid,
                         apiKey: e.target.value,
-                        fromEmail: notifications.sendGrid?.fromEmail || "",
-                        fromName: notifications.sendGrid?.fromName || "",
+                        fromEmail: notifications.sendGrid?.fromEmail || '',
+                        fromName: notifications.sendGrid?.fromName || '',
                       },
                     })
                   }
@@ -107,14 +107,14 @@ export default function NotificationsStep() {
                 <TextField
                   fullWidth
                   label="From Email"
-                  value={notifications.sendGrid?.fromEmail || ""}
+                  value={notifications.sendGrid?.fromEmail || ''}
                   onChange={(e) =>
                     setNotifications({
                       sendGrid: {
                         ...notifications.sendGrid,
                         fromEmail: e.target.value,
-                        apiKey: notifications.sendGrid?.apiKey || "",
-                        fromName: notifications.sendGrid?.fromName || "",
+                        apiKey: notifications.sendGrid?.apiKey || '',
+                        fromName: notifications.sendGrid?.fromName || '',
                       },
                     })
                   }
@@ -125,14 +125,14 @@ export default function NotificationsStep() {
                 <TextField
                   fullWidth
                   label="From Name"
-                  value={notifications.sendGrid?.fromName || ""}
+                  value={notifications.sendGrid?.fromName || ''}
                   onChange={(e) =>
                     setNotifications({
                       sendGrid: {
                         ...notifications.sendGrid,
                         fromName: e.target.value,
-                        apiKey: notifications.sendGrid?.apiKey || "",
-                        fromEmail: notifications.sendGrid?.fromEmail || "",
+                        apiKey: notifications.sendGrid?.apiKey || '',
+                        fromEmail: notifications.sendGrid?.fromEmail || '',
                       },
                     })
                   }
@@ -147,7 +147,7 @@ export default function NotificationsStep() {
       {/* Twilio */}
       <Card variant="outlined" sx={{ mb: 3 }}>
         <CardContent>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
             <Sms color="primary" />
             <Typography variant="h6">SMS (Twilio)</Typography>
           </Box>
@@ -169,14 +169,14 @@ export default function NotificationsStep() {
                 <TextField
                   fullWidth
                   label="Twilio Account SID"
-                  value={notifications.twilio?.accountSid || ""}
+                  value={notifications.twilio?.accountSid || ''}
                   onChange={(e) =>
                     setNotifications({
                       twilio: {
                         ...notifications.twilio,
                         accountSid: e.target.value,
-                        authToken: notifications.twilio?.authToken || "",
-                        phoneNumber: notifications.twilio?.phoneNumber || "",
+                        authToken: notifications.twilio?.authToken || '',
+                        phoneNumber: notifications.twilio?.phoneNumber || '',
                       },
                     })
                   }
@@ -186,15 +186,15 @@ export default function NotificationsStep() {
                 <TextField
                   fullWidth
                   label="Auth Token"
-                  type={showTwilioToken ? "text" : "password"}
-                  value={notifications.twilio?.authToken || ""}
+                  type={showTwilioToken ? 'text' : 'password'}
+                  value={notifications.twilio?.authToken || ''}
                   onChange={(e) =>
                     setNotifications({
                       twilio: {
                         ...notifications.twilio,
                         authToken: e.target.value,
-                        accountSid: notifications.twilio?.accountSid || "",
-                        phoneNumber: notifications.twilio?.phoneNumber || "",
+                        accountSid: notifications.twilio?.accountSid || '',
+                        phoneNumber: notifications.twilio?.phoneNumber || '',
                       },
                     })
                   }
@@ -216,14 +216,14 @@ export default function NotificationsStep() {
                 <TextField
                   fullWidth
                   label="Twilio Phone Number"
-                  value={notifications.twilio?.phoneNumber || ""}
+                  value={notifications.twilio?.phoneNumber || ''}
                   onChange={(e) =>
                     setNotifications({
                       twilio: {
                         ...notifications.twilio,
                         phoneNumber: e.target.value,
-                        accountSid: notifications.twilio?.accountSid || "",
-                        authToken: notifications.twilio?.authToken || "",
+                        accountSid: notifications.twilio?.accountSid || '',
+                        authToken: notifications.twilio?.authToken || '',
                       },
                     })
                   }
@@ -253,9 +253,9 @@ export default function NotificationsStep() {
             min={1}
             max={7}
             marks={[
-              { value: 1, label: "1 day" },
-              { value: 3, label: "3 days" },
-              { value: 7, label: "7 days" },
+              { value: 1, label: '1 day' },
+              { value: 3, label: '3 days' },
+              { value: 7, label: '7 days' },
             ]}
             sx={{ maxWidth: 400 }}
           />
@@ -267,7 +267,7 @@ export default function NotificationsStep() {
         have your API keys ready.
       </Alert>
 
-      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button startIcon={<ArrowBack />} onClick={prevStep}>
           Back
         </Button>

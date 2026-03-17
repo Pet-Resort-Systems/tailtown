@@ -1,19 +1,19 @@
-import { Router } from "express";
-import * as announcementController from "../controllers/announcement.controller";
+import { Router } from 'express';
+import * as announcementController from '../controllers/announcement.controller';
 import {
   authenticate,
   requireTenantAdmin,
-} from "../middleware/auth.middleware";
+} from '../middleware/auth.middleware';
 
 const router = Router();
 
 // Get active announcements for current user (excludes dismissed)
 // No auth required - announcements should be visible to all
-router.get("/", announcementController.getActiveAnnouncements);
+router.get('/', announcementController.getActiveAnnouncements);
 
 // Get all announcements (admin view) - requires admin auth
 router.get(
-  "/all",
+  '/all',
   authenticate,
   requireTenantAdmin,
   announcementController.getAllAnnouncements
@@ -21,7 +21,7 @@ router.get(
 
 // Create new announcement - requires admin auth
 router.post(
-  "/",
+  '/',
   authenticate,
   requireTenantAdmin,
   announcementController.createAnnouncement
@@ -29,7 +29,7 @@ router.post(
 
 // Update announcement - requires admin auth
 router.put(
-  "/:id",
+  '/:id',
   authenticate,
   requireTenantAdmin,
   announcementController.updateAnnouncement
@@ -37,7 +37,7 @@ router.put(
 
 // Delete announcement - requires admin auth
 router.delete(
-  "/:id",
+  '/:id',
   authenticate,
   requireTenantAdmin,
   announcementController.deleteAnnouncement
@@ -45,7 +45,7 @@ router.delete(
 
 // Dismiss announcement for current user - requires auth
 router.post(
-  "/:id/dismiss",
+  '/:id/dismiss',
   authenticate,
   announcementController.dismissAnnouncement
 );

@@ -9,13 +9,13 @@ import {
   getTestPrismaClient,
   resetTestDatabase,
   disconnectTestDatabase,
-} from "./setup-test-db";
+} from './setup-test-db';
 
 /**
  * Setup function to call in beforeAll
  */
 export async function setupIntegrationTests(): Promise<void> {
-  console.log("🔧 Setting up test database...");
+  console.log('🔧 Setting up test database...');
 
   // Ensure we're connected
   const prisma = getTestPrismaClient();
@@ -24,14 +24,14 @@ export async function setupIntegrationTests(): Promise<void> {
   // Reset database to clean state
   await resetTestDatabase();
 
-  console.log("✅ Test database ready");
+  console.log('✅ Test database ready');
 }
 
 /**
  * Teardown function to call in afterAll
  */
 export async function teardownIntegrationTests(): Promise<void> {
-  console.log("🧹 Cleaning up test database...");
+  console.log('🧹 Cleaning up test database...');
   await disconnectTestDatabase();
-  console.log("✅ Test database disconnected");
+  console.log('✅ Test database disconnected');
 }

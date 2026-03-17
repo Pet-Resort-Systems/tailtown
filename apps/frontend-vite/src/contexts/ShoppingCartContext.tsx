@@ -61,33 +61,38 @@ const defaultContextValue: ShoppingCartContextType = {
   removeItem: () => {},
   updateItem: () => {},
   clearCart: () => {},
-  getTotalPrice: () => 0
+  getTotalPrice: () => 0,
 };
 
 // Create context
-const ShoppingCartContext = createContext<ShoppingCartContextType>(defaultContextValue);
+const ShoppingCartContext =
+  createContext<ShoppingCartContextType>(defaultContextValue);
 
 // Provider component
-export function ShoppingCartProvider({ children }: { children: React.ReactNode }) {
+export function ShoppingCartProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [state, setState] = useState<CartState>({ items: [] });
 
   const addItem = (item: CartItem) => {
-    setState(prevState => ({
-      items: [...prevState.items, item]
+    setState((prevState) => ({
+      items: [...prevState.items, item],
     }));
   };
 
   const removeItem = (itemId: string) => {
-    setState(prevState => ({
-      items: prevState.items.filter(item => item.id !== itemId)
+    setState((prevState) => ({
+      items: prevState.items.filter((item) => item.id !== itemId),
     }));
   };
 
   const updateItem = (itemId: string, updates: Partial<CartItem>) => {
-    setState(prevState => ({
-      items: prevState.items.map(item => 
+    setState((prevState) => ({
+      items: prevState.items.map((item) =>
         item.id === itemId ? { ...item, ...updates } : item
-      )
+      ),
     }));
   };
 
@@ -98,13 +103,15 @@ export function ShoppingCartProvider({ children }: { children: React.ReactNode }
   const getTotalPrice = () => {
     return state.items.reduce((total, item) => {
       let itemTotal = item.price || 0;
-      
+
       // Add add-ons price
       if (item.addOns && item.addOns.length > 0) {
-        itemTotal += item.addOns.reduce((addOnTotal, addOn) => 
-          addOnTotal + (addOn.price * addOn.quantity), 0);
+        itemTotal += item.addOns.reduce(
+          (addOnTotal, addOn) => addOnTotal + addOn.price * addOn.quantity,
+          0
+        );
       }
-      
+
       return total + itemTotal;
     }, 0);
   };
@@ -117,7 +124,7 @@ export function ShoppingCartProvider({ children }: { children: React.ReactNode }
         removeItem,
         updateItem,
         clearCart,
-        getTotalPrice
+        getTotalPrice,
       }}
     >
       {children}

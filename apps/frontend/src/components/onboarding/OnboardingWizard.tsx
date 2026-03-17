@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -17,7 +17,7 @@ import {
   ListItemText,
   Divider,
   IconButton,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Close as CloseIcon,
   CalendarMonth as CalendarIcon,
@@ -28,19 +28,19 @@ import {
   ArrowBack as ArrowBackIcon,
   School as SchoolIcon,
   Dashboard as DashboardIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import {
   useOnboarding,
   OnboardingStep,
-} from "../../contexts/OnboardingContext";
+} from '../../contexts/OnboardingContext';
 
 const STEPS: { key: OnboardingStep; label: string }[] = [
-  { key: "welcome", label: "Welcome" },
-  { key: "dashboard", label: "Dashboard" },
-  { key: "create-reservation", label: "Reservations" },
-  { key: "check-in", label: "Check-In" },
-  { key: "check-out", label: "Check-Out" },
-  { key: "complete", label: "Complete" },
+  { key: 'welcome', label: 'Welcome' },
+  { key: 'dashboard', label: 'Dashboard' },
+  { key: 'create-reservation', label: 'Reservations' },
+  { key: 'check-in', label: 'Check-In' },
+  { key: 'check-out', label: 'Check-Out' },
+  { key: 'complete', label: 'Complete' },
 ];
 
 const OnboardingWizard: React.FC = () => {
@@ -54,10 +54,10 @@ const OnboardingWizard: React.FC = () => {
 
   const renderStepContent = () => {
     switch (state.currentStep) {
-      case "welcome":
+      case 'welcome':
         return (
-          <Box sx={{ textAlign: "center", py: 2 }}>
-            <SchoolIcon sx={{ fontSize: 80, color: "primary.main", mb: 2 }} />
+          <Box sx={{ textAlign: 'center', py: 2 }}>
+            <SchoolIcon sx={{ fontSize: 80, color: 'primary.main', mb: 2 }} />
             <Typography variant="h5" gutterBottom>
               Welcome to Tailtown!
             </Typography>
@@ -68,7 +68,7 @@ const OnboardingWizard: React.FC = () => {
             <Typography variant="body2" color="text.secondary">
               This tutorial will cover:
             </Typography>
-            <List dense sx={{ maxWidth: 300, mx: "auto", mt: 2 }}>
+            <List dense sx={{ maxWidth: 300, mx: 'auto', mt: 2 }}>
               <ListItem>
                 <ListItemIcon>
                   <DashboardIcon color="primary" />
@@ -97,14 +97,14 @@ const OnboardingWizard: React.FC = () => {
             <Typography
               variant="caption"
               color="text.secondary"
-              sx={{ mt: 2, display: "block" }}
+              sx={{ mt: 2, display: 'block' }}
             >
               Estimated time: 3-5 minutes
             </Typography>
           </Box>
         );
 
-      case "dashboard":
+      case 'dashboard':
         return (
           <Box>
             <Typography variant="h6" gutterBottom>
@@ -113,7 +113,7 @@ const OnboardingWizard: React.FC = () => {
             <Typography variant="body1" paragraph>
               The Dashboard is your home base. Here you'll see:
             </Typography>
-            <Paper variant="outlined" sx={{ p: 2, mb: 2, bgcolor: "grey.50" }}>
+            <Paper variant="outlined" sx={{ p: 2, mb: 2, bgcolor: 'grey.50' }}>
               <List dense>
                 <ListItem>
                   <ListItemIcon>
@@ -147,7 +147,7 @@ const OnboardingWizard: React.FC = () => {
           </Box>
         );
 
-      case "create-reservation":
+      case 'create-reservation':
         return (
           <Box>
             <Typography variant="h6" gutterBottom>
@@ -156,7 +156,7 @@ const OnboardingWizard: React.FC = () => {
             <Typography variant="body1" paragraph>
               To book a pet for boarding, daycare, or grooming:
             </Typography>
-            <Paper variant="outlined" sx={{ p: 2, mb: 2, bgcolor: "grey.50" }}>
+            <Paper variant="outlined" sx={{ p: 2, mb: 2, bgcolor: 'grey.50' }}>
               <List dense>
                 <ListItem>
                   <ListItemText
@@ -197,7 +197,7 @@ const OnboardingWizard: React.FC = () => {
           </Box>
         );
 
-      case "check-in":
+      case 'check-in':
         return (
           <Box>
             <Typography variant="h6" gutterBottom>
@@ -206,7 +206,7 @@ const OnboardingWizard: React.FC = () => {
             <Typography variant="body1" paragraph>
               When a pet arrives for their stay:
             </Typography>
-            <Paper variant="outlined" sx={{ p: 2, mb: 2, bgcolor: "grey.50" }}>
+            <Paper variant="outlined" sx={{ p: 2, mb: 2, bgcolor: 'grey.50' }}>
               <List dense>
                 <ListItem>
                   <ListItemText
@@ -251,7 +251,7 @@ const OnboardingWizard: React.FC = () => {
           </Box>
         );
 
-      case "check-out":
+      case 'check-out':
         return (
           <Box>
             <Typography variant="h6" gutterBottom>
@@ -260,7 +260,7 @@ const OnboardingWizard: React.FC = () => {
             <Typography variant="body1" paragraph>
               When a pet is ready to go home:
             </Typography>
-            <Paper variant="outlined" sx={{ p: 2, mb: 2, bgcolor: "grey.50" }}>
+            <Paper variant="outlined" sx={{ p: 2, mb: 2, bgcolor: 'grey.50' }}>
               <List dense>
                 <ListItem>
                   <ListItemText
@@ -304,11 +304,11 @@ const OnboardingWizard: React.FC = () => {
           </Box>
         );
 
-      case "complete":
+      case 'complete':
         return (
-          <Box sx={{ textAlign: "center", py: 2 }}>
+          <Box sx={{ textAlign: 'center', py: 2 }}>
             <CheckCircleIcon
-              sx={{ fontSize: 80, color: "success.main", mb: 2 }}
+              sx={{ fontSize: 80, color: 'success.main', mb: 2 }}
             />
             <Typography variant="h5" gutterBottom>
               You're All Set! 🎉
@@ -319,7 +319,7 @@ const OnboardingWizard: React.FC = () => {
             </Typography>
             <Paper
               variant="outlined"
-              sx={{ p: 2, mb: 2, bgcolor: "grey.50", textAlign: "left" }}
+              sx={{ p: 2, mb: 2, bgcolor: 'grey.50', textAlign: 'left' }}
             >
               <List dense>
                 <ListItem>
@@ -365,9 +365,9 @@ const OnboardingWizard: React.FC = () => {
     >
       <DialogTitle
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
         }}
       >
         <Typography variant="h6">Staff Onboarding</Typography>
@@ -393,12 +393,12 @@ const OnboardingWizard: React.FC = () => {
         {renderStepContent()}
       </DialogContent>
 
-      <DialogActions sx={{ justifyContent: "space-between", px: 3, py: 2 }}>
+      <DialogActions sx={{ justifyContent: 'space-between', px: 3, py: 2 }}>
         <Button onClick={skipOnboarding} color="inherit">
           Skip Tutorial
         </Button>
         <Box>
-          {currentStepIndex > 0 && state.currentStep !== "complete" && (
+          {currentStepIndex > 0 && state.currentStep !== 'complete' && (
             <Button
               onClick={previousStep}
               startIcon={<ArrowBackIcon />}
@@ -407,7 +407,7 @@ const OnboardingWizard: React.FC = () => {
               Back
             </Button>
           )}
-          {state.currentStep === "complete" ? (
+          {state.currentStep === 'complete' ? (
             <Button
               variant="contained"
               color="success"
@@ -421,7 +421,7 @@ const OnboardingWizard: React.FC = () => {
               onClick={nextStep}
               endIcon={<ArrowForwardIcon />}
             >
-              {state.currentStep === "welcome" ? "Start Tour" : "Next"}
+              {state.currentStep === 'welcome' ? 'Start Tour' : 'Next'}
             </Button>
           )}
         </Box>

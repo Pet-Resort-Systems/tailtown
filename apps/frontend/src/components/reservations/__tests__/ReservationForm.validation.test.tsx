@@ -3,44 +3,44 @@
  * Tests for mandatory kennel assignment and multi-pet validation
  */
 
-import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import ReservationForm from "../ReservationForm";
-import { ShoppingCartProvider } from "../../../contexts/ShoppingCartContext";
+import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import ReservationForm from '../ReservationForm';
+import { ShoppingCartProvider } from '../../../contexts/ShoppingCartContext';
 
 // Mock the services
-jest.mock("../../../services/customerService", () => ({
+jest.mock('../../../services/customerService', () => ({
   getAllCustomers: jest.fn(() =>
-    Promise.resolve({ status: "success", data: [] })
+    Promise.resolve({ status: 'success', data: [] })
   ),
   getCustomerById: jest.fn(() =>
-    Promise.resolve({ status: "success", data: {} })
+    Promise.resolve({ status: 'success', data: {} })
   ),
 }));
 
-jest.mock("../../../services/petService", () => ({
+jest.mock('../../../services/petService', () => ({
   getPetsByCustomerId: jest.fn(() =>
-    Promise.resolve({ status: "success", data: [] })
+    Promise.resolve({ status: 'success', data: [] })
   ),
-  getPetById: jest.fn(() => Promise.resolve({ status: "success", data: {} })),
+  getPetById: jest.fn(() => Promise.resolve({ status: 'success', data: {} })),
 }));
 
-jest.mock("../../../services/serviceManagement", () => ({
+jest.mock('../../../services/serviceManagement', () => ({
   getAllServices: jest.fn(() =>
-    Promise.resolve({ status: "success", data: [] })
+    Promise.resolve({ status: 'success', data: [] })
   ),
 }));
 
-jest.mock("../../../services/resourceService", () => ({
+jest.mock('../../../services/resourceService', () => ({
   getResourcesByType: jest.fn(() =>
-    Promise.resolve({ status: "success", data: [] })
+    Promise.resolve({ status: 'success', data: [] })
   ),
   batchCheckResourceAvailability: jest.fn(() =>
     Promise.resolve({
-      status: "success",
+      status: 'success',
       data: { resources: [] },
     })
   ),
@@ -57,15 +57,15 @@ const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   </BrowserRouter>
 );
 
-describe("ReservationForm - Validation Logic", () => {
+describe('ReservationForm - Validation Logic', () => {
   const mockOnSubmit = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe("Component Rendering", () => {
-    it("should render the reservation form", async () => {
+  describe('Component Rendering', () => {
+    it('should render the reservation form', async () => {
       render(
         <TestWrapper>
           <ReservationForm onSubmit={mockOnSubmit} />
@@ -78,7 +78,7 @@ describe("ReservationForm - Validation Logic", () => {
       });
     });
 
-    it("should have required form fields", async () => {
+    it('should have required form fields', async () => {
       render(
         <TestWrapper>
           <ReservationForm onSubmit={mockOnSubmit} />
@@ -93,50 +93,50 @@ describe("ReservationForm - Validation Logic", () => {
     });
   });
 
-  describe("Kennel Assignment Validation Logic", () => {
-    it("should have validation code for boarding/daycare services", () => {
+  describe('Kennel Assignment Validation Logic', () => {
+    it('should have validation code for boarding/daycare services', () => {
       // This test verifies the validation logic exists in the code
       const formCode = ReservationForm.toString();
 
       // Check for boarding/daycare validation
-      expect(formCode).toContain("BOARDING");
-      expect(formCode).toContain("DAYCARE");
+      expect(formCode).toContain('BOARDING');
+      expect(formCode).toContain('DAYCARE');
 
       // Check for kennel assignment validation
-      expect(formCode).toContain("requiresSuiteType");
+      expect(formCode).toContain('requiresSuiteType');
     });
 
-    it("should have multi-pet validation logic", () => {
+    it('should have multi-pet validation logic', () => {
       const formCode = ReservationForm.toString();
 
       // Check for multi-pet handling
-      expect(formCode).toContain("selectedPets");
-      expect(formCode).toContain("petSuiteAssignments");
+      expect(formCode).toContain('selectedPets');
+      expect(formCode).toContain('petSuiteAssignments');
 
       // Check for unassigned pets validation
-      expect(formCode).toContain("unassignedPets");
+      expect(formCode).toContain('unassignedPets');
     });
 
-    it("should have availability checking logic", () => {
+    it('should have availability checking logic', () => {
       const formCode = ReservationForm.toString();
 
       // Check for availability checking
-      expect(formCode).toContain("batchCheckResourceAvailability");
-      expect(formCode).toContain("occupiedSuiteIds");
-      expect(formCode).toContain("conflictingReservations");
+      expect(formCode).toContain('batchCheckResourceAvailability');
+      expect(formCode).toContain('occupiedSuiteIds');
+      expect(formCode).toContain('conflictingReservations');
     });
 
-    it("should have edit mode exclusion logic", () => {
+    it('should have edit mode exclusion logic', () => {
       const formCode = ReservationForm.toString();
 
       // Check for edit mode handling
-      expect(formCode).toContain("initialData");
-      expect(formCode).toContain("isCurrentReservation");
+      expect(formCode).toContain('initialData');
+      expect(formCode).toContain('isCurrentReservation');
     });
   });
 
-  describe("Form State Management", () => {
-    it("should initialize with empty state", async () => {
+  describe('Form State Management', () => {
+    it('should initialize with empty state', async () => {
       const { container } = render(
         <TestWrapper>
           <ReservationForm onSubmit={mockOnSubmit} />
@@ -151,12 +151,12 @@ describe("ReservationForm - Validation Logic", () => {
       expect(mockOnSubmit).not.toHaveBeenCalled();
     });
 
-    it("should accept initialData prop for editing", async () => {
+    it('should accept initialData prop for editing', async () => {
       const initialData = {
-        id: "test-reservation",
-        customerId: "customer-1",
-        petId: "pet-1",
-        serviceId: "service-1",
+        id: 'test-reservation',
+        customerId: 'customer-1',
+        petId: 'pet-1',
+        serviceId: 'service-1',
         startDate: new Date(),
         endDate: new Date(),
       };
@@ -176,27 +176,27 @@ describe("ReservationForm - Validation Logic", () => {
     });
   });
 
-  describe("Error Handling", () => {
-    it("should have error state management", () => {
+  describe('Error Handling', () => {
+    it('should have error state management', () => {
       const formCode = ReservationForm.toString();
 
       // Check for error handling
-      expect(formCode).toContain("setError");
-      expect(formCode).toContain("Please fill in all required fields");
-      expect(formCode).toContain("Please assign kennels");
+      expect(formCode).toContain('setError');
+      expect(formCode).toContain('Please fill in all required fields');
+      expect(formCode).toContain('Please assign kennels');
     });
 
-    it("should have loading state management", () => {
+    it('should have loading state management', () => {
       const formCode = ReservationForm.toString();
 
       // Check for loading state
-      expect(formCode).toContain("setLoading");
-      expect(formCode).toContain("loading");
+      expect(formCode).toContain('setLoading');
+      expect(formCode).toContain('loading');
     });
   });
 
-  describe("Integration Points", () => {
-    it("should call onSubmit when form is valid", async () => {
+  describe('Integration Points', () => {
+    it('should call onSubmit when form is valid', async () => {
       render(
         <TestWrapper>
           <ReservationForm onSubmit={mockOnSubmit} />
@@ -211,7 +211,7 @@ describe("ReservationForm - Validation Logic", () => {
       expect(mockOnSubmit).not.toHaveBeenCalled();
     });
 
-    it("should call onCancel when cancel button is clicked", async () => {
+    it('should call onCancel when cancel button is clicked', async () => {
       render(
         <TestWrapper>
           <ReservationForm onSubmit={mockOnSubmit} />
@@ -219,7 +219,7 @@ describe("ReservationForm - Validation Logic", () => {
       );
 
       await waitFor(() => {
-        const cancelButton = screen.queryByRole("button", { name: /cancel/i });
+        const cancelButton = screen.queryByRole('button', { name: /cancel/i });
         if (cancelButton) {
           expect(cancelButton).toBeInTheDocument();
         }
@@ -228,8 +228,8 @@ describe("ReservationForm - Validation Logic", () => {
   });
 });
 
-describe("ReservationForm - Validation Rules Documentation", () => {
-  it("documents mandatory kennel assignment rule", () => {
+describe('ReservationForm - Validation Rules Documentation', () => {
+  it('documents mandatory kennel assignment rule', () => {
     /**
      * VALIDATION RULE: Mandatory Kennel Assignment
      *
@@ -244,7 +244,7 @@ describe("ReservationForm - Validation Rules Documentation", () => {
     expect(true).toBe(true);
   });
 
-  it("documents availability checking rule", () => {
+  it('documents availability checking rule', () => {
     /**
      * VALIDATION RULE: Availability Checking
      *
@@ -259,7 +259,7 @@ describe("ReservationForm - Validation Rules Documentation", () => {
     expect(true).toBe(true);
   });
 
-  it("documents double-booking prevention rule", () => {
+  it('documents double-booking prevention rule', () => {
     /**
      * VALIDATION RULE: Double-Booking Prevention
      *
@@ -271,7 +271,7 @@ describe("ReservationForm - Validation Rules Documentation", () => {
     expect(true).toBe(true);
   });
 
-  it("documents service-specific requirements", () => {
+  it('documents service-specific requirements', () => {
     /**
      * VALIDATION RULE: Service-Specific Requirements
      *

@@ -4,16 +4,10 @@
  */
 
 import React, { useState, useRef } from 'react';
-import {
-  Box,
-  Button,
-  Typography,
-  Grid,
-  Paper
-} from '@mui/material';
+import { Box, Button, Typography, Grid, Paper } from '@mui/material';
 import {
   ArrowBack as ArrowBackIcon,
-  ArrowForward as ArrowForwardIcon
+  ArrowForward as ArrowForwardIcon,
 } from '@mui/icons-material';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -30,7 +24,7 @@ const DateTimeSelection: React.FC<DateTimeSelectionProps> = ({
   bookingData,
   onNext,
   onBack,
-  onUpdate
+  onUpdate,
 }) => {
   const [startDate, setStartDate] = useState<Date | null>(
     bookingData.startDate ? new Date(bookingData.startDate) : null
@@ -43,9 +37,9 @@ const DateTimeSelection: React.FC<DateTimeSelectionProps> = ({
   const startDatePickerRef = useRef<any>(null);
 
   const handleContinue = () => {
-    onUpdate({ 
+    onUpdate({
       startDate: startDate?.toISOString().split('T')[0],
-      endDate: endDate?.toISOString().split('T')[0]
+      endDate: endDate?.toISOString().split('T')[0],
     });
     onNext();
   };
@@ -74,7 +68,11 @@ const DateTimeSelection: React.FC<DateTimeSelectionProps> = ({
 
   return (
     <Box>
-      <Typography variant="h5" gutterBottom sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
+      <Typography
+        variant="h5"
+        gutterBottom
+        sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}
+      >
         When would you like to book?
       </Typography>
 
@@ -82,10 +80,19 @@ const DateTimeSelection: React.FC<DateTimeSelectionProps> = ({
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <Box>
-              <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600, mb: 1 }}>
+              <Typography
+                variant="subtitle2"
+                gutterBottom
+                sx={{ fontWeight: 600, mb: 1 }}
+              >
                 Start Date
               </Typography>
-              <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 2 }}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                display="block"
+                sx={{ mb: 2 }}
+              >
                 Select your check-in date
               </Typography>
               <Box className="inline-date-picker">
@@ -104,13 +111,25 @@ const DateTimeSelection: React.FC<DateTimeSelectionProps> = ({
           </Grid>
           <Grid item xs={12} md={6}>
             <Box>
-              <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600, mb: 1 }}>
+              <Typography
+                variant="subtitle2"
+                gutterBottom
+                sx={{ fontWeight: 600, mb: 1 }}
+              >
                 End Date
               </Typography>
-              <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 2 }}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                display="block"
+                sx={{ mb: 2 }}
+              >
                 Select your check-out date
               </Typography>
-              <Box className="inline-date-picker" sx={{ opacity: !startDate ? 0.5 : 1 }}>
+              <Box
+                className="inline-date-picker"
+                sx={{ opacity: !startDate ? 0.5 : 1 }}
+              >
                 <DatePicker
                   selected={endDate}
                   onChange={handleEndDateChange}
@@ -123,7 +142,11 @@ const DateTimeSelection: React.FC<DateTimeSelectionProps> = ({
                 />
               </Box>
               {!startDate && (
-                <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block', fontStyle: 'italic' }}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ mt: 1, display: 'block', fontStyle: 'italic' }}
+                >
                   Please select a start date first
                 </Typography>
               )}

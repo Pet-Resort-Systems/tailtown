@@ -14,7 +14,10 @@ export class EmailController {
       const { to, subject, message } = req.body;
 
       if (!to || !subject || !message) {
-        throw new AppError('Missing required fields: to, subject, message', 400);
+        throw new AppError(
+          'Missing required fields: to, subject, message',
+          400
+        );
       }
 
       const html = `
@@ -60,7 +63,11 @@ export class EmailController {
    * POST /api/emails/reservation-confirmation/:reservationId
    * Send reservation confirmation email
    */
-  async sendReservationConfirmation(req: TenantRequest, res: Response, next: NextFunction) {
+  async sendReservationConfirmation(
+    req: TenantRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { reservationId } = req.params;
       const tenantId = req.tenantId!;
@@ -128,7 +135,11 @@ export class EmailController {
    * POST /api/emails/reservation-reminder/:reservationId
    * Send reservation reminder email
    */
-  async sendReservationReminder(req: TenantRequest, res: Response, next: NextFunction) {
+  async sendReservationReminder(
+    req: TenantRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { reservationId } = req.params;
       const tenantId = req.tenantId!;
@@ -196,7 +207,11 @@ export class EmailController {
    * POST /api/emails/welcome/:customerId
    * Send welcome email to new customer
    */
-  async sendWelcomeEmail(req: TenantRequest, res: Response, next: NextFunction) {
+  async sendWelcomeEmail(
+    req: TenantRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { customerId } = req.params;
       const tenantId = req.tenantId!;
@@ -241,7 +256,7 @@ export class EmailController {
   async getEmailConfig(req: TenantRequest, res: Response, next: NextFunction) {
     try {
       const isConfigured = !!process.env.SENDGRID_API_KEY;
-      
+
       res.json({
         success: true,
         data: {

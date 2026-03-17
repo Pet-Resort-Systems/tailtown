@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import { 
-  Login as InIcon, 
-  Logout as OutIcon, 
-  Hotel as OvernightIcon
+import {
+  Login as InIcon,
+  Logout as OutIcon,
+  Hotel as OvernightIcon,
 } from '@mui/icons-material';
 import MetricCard from './MetricCard';
 
@@ -24,30 +24,30 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
   outCount,
   overnightCount,
   appointmentFilter,
-  onFilterChange
+  onFilterChange,
 }) => {
   const metrics = [
-    { 
-      title: 'In', 
-      value: inCount, 
+    {
+      title: 'In',
+      value: inCount,
       icon: <InIcon sx={{ fontSize: 40, color: 'primary.main' }} />,
       onClick: () => onFilterChange('in'),
-      isActive: appointmentFilter === 'in'
+      isActive: appointmentFilter === 'in',
     },
-    { 
-      title: 'Out', 
-      value: outCount, 
+    {
+      title: 'Out',
+      value: outCount,
       icon: <OutIcon sx={{ fontSize: 40, color: 'secondary.main' }} />,
       onClick: () => onFilterChange('out'),
-      isActive: appointmentFilter === 'out'
+      isActive: appointmentFilter === 'out',
     },
-    { 
-      title: 'Overnight', 
-      value: overnightCount, 
+    {
+      title: 'Overnight',
+      value: overnightCount,
       icon: <OvernightIcon sx={{ fontSize: 40, color: 'success.main' }} />,
       onClick: undefined,
-      isActive: false
-    }
+      isActive: false,
+    },
   ];
 
   return (
@@ -55,7 +55,7 @@ const DashboardMetrics: React.FC<DashboardMetricsProps> = ({
       sx={{
         display: 'grid',
         gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(3, 1fr)' },
-        gap: 2
+        gap: 2,
       }}
     >
       {metrics.map((metric, index) => (

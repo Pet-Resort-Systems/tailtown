@@ -11,11 +11,11 @@
  * This ensures the vaccination data displays correctly in the UI.
  */
 
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function fixVaccineKeyCapitalization() {
-  console.log("Starting vaccine key capitalization fix...\n");
+  console.log('Starting vaccine key capitalization fix...\n');
 
   // Get all pets with vaccination data
   const allPets = await prisma.pet.findMany({
@@ -61,10 +61,10 @@ async function fixVaccineKeyCapitalization() {
 
       // Map lowercase keys to capitalized keys
       const keyMap = {
-        rabies: "Rabies",
-        dhpp: "DHPP",
-        bordetella: "Bordetella",
-        fvrcp: "FVRCP",
+        rabies: 'Rabies',
+        dhpp: 'DHPP',
+        bordetella: 'Bordetella',
+        fvrcp: 'FVRCP',
       };
 
       // Fix vaccinationStatus keys
@@ -109,7 +109,7 @@ async function fixVaccineKeyCapitalization() {
     }
   }
 
-  console.log("\n=== Summary ===");
+  console.log('\n=== Summary ===');
   console.log(
     `Total pets with lowercase keys: ${petsWithLowercaseKeys.length}`
   );
@@ -120,6 +120,6 @@ async function fixVaccineKeyCapitalization() {
 }
 
 fixVaccineKeyCapitalization().catch((error) => {
-  console.error("Script failed:", error);
+  console.error('Script failed:', error);
   process.exit(1);
 });

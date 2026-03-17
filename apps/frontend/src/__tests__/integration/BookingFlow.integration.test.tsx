@@ -1,6 +1,6 @@
 /**
  * Booking Flow Integration Tests
- * 
+ *
  * These tests define what "working" means for the customer booking portal.
  * They test the complete end-to-end flow from service selection to payment.
  */
@@ -22,7 +22,9 @@ jest.mock('../../services/petService');
 jest.mock('../../services/paymentService');
 jest.mock('../../services/reservationService');
 
-const mockServiceManagement = serviceManagement as jest.Mocked<typeof serviceManagement>;
+const mockServiceManagement = serviceManagement as jest.Mocked<
+  typeof serviceManagement
+>;
 const mockPetService = petService as jest.Mocked<typeof petService>;
 const mockPaymentService = paymentService as jest.Mocked<typeof paymentService>;
 
@@ -35,10 +37,10 @@ jest.mock('../../contexts/CustomerAuthContext', () => ({
       firstName: 'John',
       lastName: 'Doe',
       email: 'john@example.com',
-      phone: '555-1234'
+      phone: '555-1234',
     },
-    isAuthenticated: true
-  })
+    isAuthenticated: true,
+  }),
 }));
 
 describe('Booking Flow Integration Tests', () => {
@@ -51,7 +53,7 @@ describe('Booking Flow Integration Tests', () => {
       serviceCategory: 'BOARDING',
       duration: 1440,
       requiresStaff: true,
-      isActive: true
+      isActive: true,
     },
     {
       id: 'service-2',
@@ -61,8 +63,8 @@ describe('Booking Flow Integration Tests', () => {
       serviceCategory: 'DAYCARE',
       duration: 480,
       requiresStaff: true,
-      isActive: true
-    }
+      isActive: true,
+    },
   ];
 
   const mockPets = [
@@ -72,32 +74,32 @@ describe('Booking Flow Integration Tests', () => {
       species: 'Dog',
       breed: 'Golden Retriever',
       customerId: 'customer-123',
-      isActive: true
-    }
+      isActive: true,
+    },
   ];
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Setup default mocks
     mockServiceManagement.getAllServices.mockResolvedValue({
-      data: mockServices
+      data: mockServices,
     });
 
     mockPetService.getPetsByCustomer.mockResolvedValue({
-      data: mockPets
+      data: mockPets,
     });
 
     mockPaymentService.processPayment.mockResolvedValue({
       success: true,
       transactionId: 'txn-123',
-      message: 'Payment successful'
+      message: 'Payment successful',
     });
   });
 
   /**
    * INTEGRATION TEST 1: Complete Booking Flow
-   * 
+   *
    * Defines "working" as:
    * - User can select a service
    * - User can select dates
@@ -123,9 +125,11 @@ describe('Booking Flow Integration Tests', () => {
         expect(screen.getByText('Standard Boarding')).toBeInTheDocument();
       });
 
-      const boardingService = screen.getByText('Standard Boarding').closest('button');
+      const boardingService = screen
+        .getByText('Standard Boarding')
+        .closest('button');
       expect(boardingService).toBeInTheDocument();
-      
+
       if (boardingService) {
         await user.click(boardingService);
       }
@@ -139,7 +143,7 @@ describe('Booking Flow Integration Tests', () => {
       // User should be able to select check-in and check-out dates
       const checkInInput = screen.getByLabelText(/check-in/i);
       const checkOutInput = screen.getByLabelText(/check-out/i);
-      
+
       expect(checkInInput).toBeInTheDocument();
       expect(checkOutInput).toBeInTheDocument();
 
@@ -160,13 +164,15 @@ describe('Booking Flow Integration Tests', () => {
       // STEP 4: Verify booking flow completes
       // This integration test verifies the entire flow is connected properly
       expect(mockServiceManagement.getAllServices).toHaveBeenCalled();
-      expect(mockPetService.getPetsByCustomer).toHaveBeenCalledWith('customer-123');
+      expect(mockPetService.getPetsByCustomer).toHaveBeenCalledWith(
+        'customer-123'
+      );
     });
   });
 
   /**
    * INTEGRATION TEST 2: Service Selection with Multiple Options
-   * 
+   *
    * Defines "working" as:
    * - All active services are displayed
    * - User can see service details
@@ -231,7 +237,7 @@ describe('Booking Flow Integration Tests', () => {
 
   /**
    * INTEGRATION TEST 3: Pet Selection with Auto-Select
-   * 
+   *
    * Defines "working" as:
    * - Single pet is auto-selected
    * - Multiple pets require manual selection
@@ -257,7 +263,9 @@ describe('Booking Flow Integration Tests', () => {
 
       // Wait for pet selection step
       await waitFor(() => {
-        expect(mockPetService.getPetsByCustomer).toHaveBeenCalledWith('customer-123');
+        expect(mockPetService.getPetsByCustomer).toHaveBeenCalledWith(
+          'customer-123'
+        );
       });
 
       // Single pet should be auto-selected
@@ -269,11 +277,11 @@ describe('Booking Flow Integration Tests', () => {
     it('should not auto-select when customer has multiple pets', async () => {
       const multiplePets = [
         { ...mockPets[0], id: 'pet-1', name: 'Max' },
-        { ...mockPets[0], id: 'pet-2', name: 'Bella' }
+        { ...mockPets[0], id: 'pet-2', name: 'Bella' },
       ];
 
       mockPetService.getPetsByCustomer.mockResolvedValue({
-        data: multiplePets
+        data: multiplePets,
       });
 
       render(
@@ -306,7 +314,7 @@ describe('Booking Flow Integration Tests', () => {
 
   /**
    * INTEGRATION TEST 4: Error Handling
-   * 
+   *
    * Defines "working" as:
    * - API errors are caught and displayed
    * - User can retry failed operations
@@ -352,7 +360,7 @@ describe('Booking Flow Integration Tests', () => {
 
   /**
    * INTEGRATION TEST 5: Data Flow
-   * 
+   *
    * Defines "working" as:
    * - Data flows correctly between steps
    * - User selections are preserved

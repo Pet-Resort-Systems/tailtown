@@ -1,12 +1,12 @@
 /**
  * Availability Service
- * 
+ *
  * Real-time availability checking for:
  * - Suites/kennels
  * - Services
  * - Staff
  * - Time slots
- * 
+ *
  * Prevents double-bookings and provides instant feedback
  */
 
@@ -23,7 +23,7 @@ import {
   WaitlistRequest,
   CapacityInfo,
   TimeSlotAvailability,
-  AvailabilityStatus
+  AvailabilityStatus,
 } from '../types/availability';
 
 export const availabilityService = {
@@ -48,7 +48,7 @@ export const availabilityService = {
     serviceId?: string
   ): Promise<AvailabilityCalendar> => {
     const response = await customerApi.get('/api/availability/calendar', {
-      params: { year, month, serviceId }
+      params: { year, month, serviceId },
     });
     return response.data;
   },
@@ -61,7 +61,7 @@ export const availabilityService = {
     serviceId?: string
   ): Promise<DateAvailability> => {
     const response = await customerApi.get('/api/availability/date', {
-      params: { date, serviceId }
+      params: { date, serviceId },
     });
     return response.data;
   },
@@ -75,7 +75,7 @@ export const availabilityService = {
     suiteType?: string
   ): Promise<SuiteAvailability[]> => {
     const response = await customerApi.get('/api/availability/suites', {
-      params: { startDate, endDate, suiteType }
+      params: { startDate, endDate, suiteType },
     });
     return response.data;
   },
@@ -88,9 +88,12 @@ export const availabilityService = {
     startDate: string,
     endDate: string
   ): Promise<ServiceAvailability> => {
-    const response = await customerApi.get(`/api/availability/services/${serviceId}`, {
-      params: { startDate, endDate }
-    });
+    const response = await customerApi.get(
+      `/api/availability/services/${serviceId}`,
+      {
+        params: { startDate, endDate },
+      }
+    );
     return response.data;
   },
 
@@ -104,7 +107,7 @@ export const availabilityService = {
   ): Promise<AlternativeDateSuggestion[]> => {
     const response = await customerApi.post('/api/availability/alternatives', {
       ...request,
-      maxSuggestions
+      maxSuggestions,
     });
     return response.data;
   },
@@ -117,7 +120,7 @@ export const availabilityService = {
     endDate: string
   ): Promise<CapacityInfo[]> => {
     const response = await customerApi.get('/api/availability/capacity', {
-      params: { startDate, endDate }
+      params: { startDate, endDate },
     });
     return response.data;
   },
@@ -130,7 +133,7 @@ export const availabilityService = {
     serviceId: string
   ): Promise<TimeSlotAvailability[]> => {
     const response = await customerApi.get('/api/availability/timeslots', {
-      params: { date, serviceId }
+      params: { date, serviceId },
     });
     return response.data;
   },
@@ -151,7 +154,9 @@ export const availabilityService = {
    * Get customer's waitlist entries
    */
   getCustomerWaitlist: async (customerId: string): Promise<WaitlistEntry[]> => {
-    const response = await customerApi.get(`/api/customers/${customerId}/waitlist`);
+    const response = await customerApi.get(
+      `/api/customers/${customerId}/waitlist`
+    );
     return response.data;
   },
 
@@ -184,7 +189,7 @@ export const availabilityService = {
       AVAILABLE: 'success',
       PARTIALLY_AVAILABLE: 'warning',
       UNAVAILABLE: 'error',
-      WAITLIST: 'info'
+      WAITLIST: 'info',
     };
     return colors[status] || 'default';
   },
@@ -197,7 +202,7 @@ export const availabilityService = {
       AVAILABLE: 'Available',
       PARTIALLY_AVAILABLE: 'Limited Availability',
       UNAVAILABLE: 'Fully Booked',
-      WAITLIST: 'Waitlist Available'
+      WAITLIST: 'Waitlist Available',
     };
     return labels[status] || status;
   },
@@ -232,7 +237,7 @@ export const availabilityService = {
    */
   getNextAvailableDate: (calendar: AvailabilityCalendar): string | null => {
     const availableDate = calendar.dates.find(
-      d => d.status === 'AVAILABLE' && !availabilityService.isPastDate(d.date)
+      (d) => d.status === 'AVAILABLE' && !availabilityService.isPastDate(d.date)
     );
     return availableDate?.date || null;
   },
@@ -245,7 +250,9 @@ export const availabilityService = {
     minAvailable: number = 1
   ): DateAvailability[] => {
     return dates.filter(
-      d => d.availableCount >= minAvailable && !availabilityService.isPastDate(d.date)
+      (d) =>
+        d.availableCount >= minAvailable &&
+        !availabilityService.isPastDate(d.date)
     );
   },
 
@@ -257,19 +264,23 @@ export const availabilityService = {
     requestedStart: string
   ): AlternativeDateSuggestion[] => {
     const requested = new Date(requestedStart);
-    
+
     return [...alternatives].sort((a, b) => {
       // Prioritize by proximity to requested date
-      const diffA = Math.abs(new Date(a.startDate).getTime() - requested.getTime());
-      const diffB = Math.abs(new Date(b.startDate).getTime() - requested.getTime());
-      
+      const diffA = Math.abs(
+        new Date(a.startDate).getTime() - requested.getTime()
+      );
+      const diffB = Math.abs(
+        new Date(b.startDate).getTime() - requested.getTime()
+      );
+
       if (diffA !== diffB) return diffA - diffB;
-      
+
       // Then by availability
       if (a.availableCount !== b.availableCount) {
         return b.availableCount - a.availableCount;
       }
-      
+
       // Then by price (lower is better)
       return a.price - b.price;
     });
@@ -281,20 +292,20 @@ export const availabilityService = {
   formatDateRange: (startDate: string, endDate: string): string => {
     const start = new Date(startDate);
     const end = new Date(endDate);
-    
-    const options: Intl.DateTimeFormatOptions = { 
-      month: 'short', 
-      day: 'numeric' 
+
+    const options: Intl.DateTimeFormatOptions = {
+      month: 'short',
+      day: 'numeric',
     };
-    
+
     if (start.getFullYear() !== end.getFullYear()) {
       return `${start.toLocaleDateString('en-US', { ...options, year: 'numeric' })} - ${end.toLocaleDateString('en-US', { ...options, year: 'numeric' })}`;
     }
-    
+
     if (start.getMonth() !== end.getMonth()) {
       return `${start.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', options)}`;
     }
-    
+
     return `${start.toLocaleDateString('en-US', { month: 'short' })} ${start.getDate()}-${end.getDate()}`;
   },
 
@@ -335,5 +346,5 @@ export const availabilityService = {
     }
 
     return { isValid: true };
-  }
+  },
 };

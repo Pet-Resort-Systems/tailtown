@@ -11,12 +11,12 @@ import {
   Grid,
   Alert,
   Card,
-  CardContent
+  CardContent,
 } from '@mui/material';
 import {
   ArrowBack as ArrowBackIcon,
   ArrowForward as ArrowForwardIcon,
-  CheckCircle as CheckCircleIcon
+  CheckCircle as CheckCircleIcon,
 } from '@mui/icons-material';
 import { useCustomerAuth } from '../../../contexts/CustomerAuthContext';
 
@@ -31,7 +31,7 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
   bookingData,
   onNext,
   onBack,
-  onUpdate
+  onUpdate,
 }) => {
   const { customer } = useCustomerAuth();
   const [error, setError] = useState('');
@@ -43,14 +43,14 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
 
   return (
     <Box>
-      <Typography 
-        variant="h5" 
+      <Typography
+        variant="h5"
         component="h2"
         gutterBottom
         sx={{
           fontSize: { xs: '1.25rem', sm: '1.5rem' },
           fontWeight: 600,
-          mb: 3
+          mb: 3,
         }}
       >
         Your Information
@@ -64,7 +64,14 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
 
       {/* Customer Information Display */}
       {customer && (
-        <Card sx={{ mb: 3, bgcolor: 'success.50', borderLeft: '4px solid', borderColor: 'success.main' }}>
+        <Card
+          sx={{
+            mb: 3,
+            bgcolor: 'success.50',
+            borderLeft: '4px solid',
+            borderColor: 'success.main',
+          }}
+        >
           <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <CheckCircleIcon color="success" sx={{ mr: 1 }} />
@@ -89,14 +96,19 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
                 </Typography>
               </Grid>
 
-              {(customer.address || customer.city || customer.state || customer.zipCode) && (
+              {(customer.address ||
+                customer.city ||
+                customer.state ||
+                customer.zipCode) && (
                 <Grid item xs={12}>
-                  <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2 }}>
+                  <Typography
+                    variant="subtitle2"
+                    color="text.secondary"
+                    sx={{ mt: 2 }}
+                  >
                     Address
                   </Typography>
-                  <Typography variant="body2">
-                    {customer.address}
-                  </Typography>
+                  <Typography variant="body2">{customer.address}</Typography>
                   <Typography variant="body2">
                     {customer.city}, {customer.state} {customer.zipCode}
                   </Typography>
@@ -105,7 +117,11 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
 
               {(customer.emergencyContact || customer.emergencyPhone) && (
                 <Grid item xs={12}>
-                  <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2 }}>
+                  <Typography
+                    variant="subtitle2"
+                    color="text.secondary"
+                    sx={{ mt: 2 }}
+                  >
                     Emergency Contact
                   </Typography>
                   <Typography variant="body2">
@@ -119,7 +135,8 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
             </Grid>
 
             <Alert severity="info" sx={{ mt: 3 }}>
-              Need to update your information? Please contact us or update your account settings.
+              Need to update your information? Please contact us or update your
+              account settings.
             </Alert>
           </CardContent>
         </Card>
@@ -138,7 +155,7 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
           boxShadow: { xs: '0 -2px 10px rgba(0,0,0,0.1)', sm: 'none' },
           zIndex: { xs: 1000, sm: 'auto' },
           display: 'flex',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
         }}
       >
         <Button

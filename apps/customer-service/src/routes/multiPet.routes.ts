@@ -9,7 +9,7 @@ import {
   calculateMultiPetPricing,
   checkPetCompatibility,
   getSuiteOccupancy,
-  checkSuiteAvailability
+  checkSuiteAvailability,
 } from '../controllers/multiPet.controller';
 
 const router = express.Router();

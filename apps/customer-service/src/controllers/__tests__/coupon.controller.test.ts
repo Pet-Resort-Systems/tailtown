@@ -5,7 +5,7 @@
  * Per roadmap: "Loyalty/Coupons Testing"
  */
 
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
 // Mock Prisma
 const mockFindMany = jest.fn();
@@ -15,7 +15,7 @@ const mockCreate = jest.fn();
 const mockUpdate = jest.fn();
 const mockCount = jest.fn();
 
-jest.mock("@prisma/client", () => ({
+jest.mock('@prisma/client', () => ({
   PrismaClient: jest.fn().mockImplementation(() => ({
     coupon: {
       findMany: mockFindMany,
@@ -31,18 +31,18 @@ jest.mock("@prisma/client", () => ({
     },
   })),
   CouponType: {
-    PERCENTAGE: "PERCENTAGE",
-    FIXED_AMOUNT: "FIXED_AMOUNT",
-    FREE_SERVICE: "FREE_SERVICE",
+    PERCENTAGE: 'PERCENTAGE',
+    FIXED_AMOUNT: 'FIXED_AMOUNT',
+    FREE_SERVICE: 'FREE_SERVICE',
   },
   CouponStatus: {
-    ACTIVE: "ACTIVE",
-    INACTIVE: "INACTIVE",
-    EXPIRED: "EXPIRED",
+    ACTIVE: 'ACTIVE',
+    INACTIVE: 'INACTIVE',
+    EXPIRED: 'EXPIRED',
   },
 }));
 
-describe("Coupon Controller", () => {
+describe('Coupon Controller', () => {
   let mockReq: Partial<Request>;
   let mockRes: Partial<Response>;
   let mockNext: NextFunction;
@@ -57,18 +57,18 @@ describe("Coupon Controller", () => {
     jest.clearAllMocks();
   });
 
-  describe("Coupon Validation", () => {
-    it("should validate coupon code exists", () => {
-      const coupon = { code: "SAVE20", status: "ACTIVE" };
+  describe('Coupon Validation', () => {
+    it('should validate coupon code exists', () => {
+      const coupon = { code: 'SAVE20', status: 'ACTIVE' };
       expect(coupon.code).toBeTruthy();
-      expect(coupon.status).toBe("ACTIVE");
+      expect(coupon.status).toBe('ACTIVE');
     });
 
-    it("should reject expired coupons", () => {
+    it('should reject expired coupons', () => {
       const coupon = {
-        code: "EXPIRED10",
-        status: "ACTIVE",
-        validUntil: new Date("2024-01-01"),
+        code: 'EXPIRED10',
+        status: 'ACTIVE',
+        validUntil: new Date('2024-01-01'),
       };
 
       const now = new Date();
@@ -76,11 +76,11 @@ describe("Coupon Controller", () => {
       expect(isExpired).toBe(true);
     });
 
-    it("should reject coupons not yet valid", () => {
+    it('should reject coupons not yet valid', () => {
       const coupon = {
-        code: "FUTURE20",
-        status: "ACTIVE",
-        validFrom: new Date("2026-01-01"),
+        code: 'FUTURE20',
+        status: 'ACTIVE',
+        validFrom: new Date('2026-01-01'),
       };
 
       const now = new Date();
@@ -88,24 +88,24 @@ describe("Coupon Controller", () => {
       expect(isNotYetValid).toBe(true);
     });
 
-    it("should validate coupon is within date range", () => {
+    it('should validate coupon is within date range', () => {
       const coupon = {
-        code: "VALID20",
-        validFrom: new Date("2025-01-01"),
-        validUntil: new Date("2025-12-31"),
+        code: 'VALID20',
+        validFrom: new Date('2025-01-01'),
+        validUntil: new Date('2025-12-31'),
       };
 
-      const checkDate = new Date("2025-06-15");
+      const checkDate = new Date('2025-06-15');
       const isValid =
         checkDate >= coupon.validFrom && checkDate <= coupon.validUntil;
       expect(isValid).toBe(true);
     });
   });
 
-  describe("Discount Calculations", () => {
-    it("should calculate percentage discount correctly", () => {
+  describe('Discount Calculations', () => {
+    it('should calculate percentage discount correctly', () => {
       const coupon = {
-        type: "PERCENTAGE",
+        type: 'PERCENTAGE',
         discountValue: 20,
       };
       const orderTotal = 100;
@@ -114,9 +114,9 @@ describe("Coupon Controller", () => {
       expect(discount).toBe(20);
     });
 
-    it("should calculate fixed amount discount correctly", () => {
+    it('should calculate fixed amount discount correctly', () => {
       const coupon = {
-        type: "FIXED_AMOUNT",
+        type: 'FIXED_AMOUNT',
         discountValue: 25,
       };
       const orderTotal = 100;
@@ -125,7 +125,7 @@ describe("Coupon Controller", () => {
       expect(discount).toBe(25);
     });
 
-    it("should calculate discount value from points", () => {
+    it('should calculate discount value from points', () => {
       const pointsToRedeem = 500;
       const pointsPerDollar = 100; // 100 points = $1
 
@@ -133,9 +133,9 @@ describe("Coupon Controller", () => {
       expect(discountValue).toBeGreaterThan(0);
     });
 
-    it("should not exceed order total for fixed discount", () => {
+    it('should not exceed order total for fixed discount', () => {
       const coupon = {
-        type: "FIXED_AMOUNT",
+        type: 'FIXED_AMOUNT',
         discountValue: 150,
       };
       const orderTotal = 100;
@@ -144,9 +144,9 @@ describe("Coupon Controller", () => {
       expect(discount).toBe(100);
     });
 
-    it("should enforce minimum purchase requirement", () => {
+    it('should enforce minimum purchase requirement', () => {
       const coupon = {
-        code: "MIN50",
+        code: 'MIN50',
         discountValue: 10,
         minimumPurchase: 50,
       };
@@ -156,10 +156,10 @@ describe("Coupon Controller", () => {
       expect(meetsMinimum).toBe(false);
     });
 
-    it("should apply discount when minimum is met", () => {
+    it('should apply discount when minimum is met', () => {
       const coupon = {
-        code: "MIN50",
-        type: "PERCENTAGE",
+        code: 'MIN50',
+        type: 'PERCENTAGE',
         discountValue: 10,
         minimumPurchase: 50,
       };
@@ -173,12 +173,12 @@ describe("Coupon Controller", () => {
     });
   });
 
-  describe("Usage Limits", () => {
-    it("should track total usage count", () => {
+  describe('Usage Limits', () => {
+    it('should track total usage count', () => {
       const coupon = {
-        code: "LIMITED",
+        code: 'LIMITED',
         maxTotalUses: 100,
-        usages: Array(50).fill({ id: "usage" }),
+        usages: Array(50).fill({ id: 'usage' }),
       };
 
       const currentUsage = coupon.usages.length;
@@ -186,20 +186,20 @@ describe("Coupon Controller", () => {
       expect(remainingUses).toBe(50);
     });
 
-    it("should reject coupon when max uses reached", () => {
+    it('should reject coupon when max uses reached', () => {
       const coupon = {
-        code: "MAXED",
+        code: 'MAXED',
         maxTotalUses: 10,
-        usages: Array(10).fill({ id: "usage" }),
+        usages: Array(10).fill({ id: 'usage' }),
       };
 
       const isMaxedOut = coupon.usages.length >= coupon.maxTotalUses;
       expect(isMaxedOut).toBe(true);
     });
 
-    it("should enforce per-customer usage limit", () => {
+    it('should enforce per-customer usage limit', () => {
       const coupon = {
-        code: "ONCE",
+        code: 'ONCE',
         maxUsesPerCustomer: 1,
       };
       const customerUsageCount = 1;
@@ -208,9 +208,9 @@ describe("Coupon Controller", () => {
       expect(canUse).toBe(false);
     });
 
-    it("should allow usage when under per-customer limit", () => {
+    it('should allow usage when under per-customer limit', () => {
       const coupon = {
-        code: "TWICE",
+        code: 'TWICE',
         maxUsesPerCustomer: 2,
       };
       const customerUsageCount = 1;
@@ -219,9 +219,9 @@ describe("Coupon Controller", () => {
       expect(canUse).toBe(true);
     });
 
-    it("should handle unlimited usage coupons", () => {
+    it('should handle unlimited usage coupons', () => {
       const coupon = {
-        code: "UNLIMITED",
+        code: 'UNLIMITED',
         maxTotalUses: null,
         maxUsesPerCustomer: null,
       };
@@ -231,10 +231,10 @@ describe("Coupon Controller", () => {
     });
   });
 
-  describe("First-Time Customer Coupons", () => {
-    it("should validate first-time customer restriction", () => {
+  describe('First-Time Customer Coupons', () => {
+    it('should validate first-time customer restriction', () => {
       const coupon = {
-        code: "WELCOME",
+        code: 'WELCOME',
         firstTimeCustomersOnly: true,
       };
       const customerReservationCount = 0;
@@ -244,9 +244,9 @@ describe("Coupon Controller", () => {
       expect(canUse).toBe(true);
     });
 
-    it("should reject returning customer for first-time coupon", () => {
+    it('should reject returning customer for first-time coupon', () => {
       const coupon = {
-        code: "WELCOME",
+        code: 'WELCOME',
         firstTimeCustomersOnly: true,
       };
       const customerReservationCount = 5;
@@ -257,36 +257,36 @@ describe("Coupon Controller", () => {
     });
   });
 
-  describe("Service-Specific Coupons", () => {
-    it("should validate coupon applies to service", () => {
+  describe('Service-Specific Coupons', () => {
+    it('should validate coupon applies to service', () => {
       const coupon = {
-        code: "GROOM20",
-        serviceIds: ["service-grooming-1", "service-grooming-2"] as string[],
+        code: 'GROOM20',
+        serviceIds: ['service-grooming-1', 'service-grooming-2'] as string[],
       };
-      const serviceId = "service-grooming-1";
+      const serviceId = 'service-grooming-1';
 
       const appliesToService =
         !coupon.serviceIds.length || coupon.serviceIds.includes(serviceId);
       expect(appliesToService).toBe(true);
     });
 
-    it("should reject coupon for non-applicable service", () => {
+    it('should reject coupon for non-applicable service', () => {
       const coupon = {
-        code: "GROOM20",
-        serviceIds: ["service-grooming-1", "service-grooming-2"] as string[],
+        code: 'GROOM20',
+        serviceIds: ['service-grooming-1', 'service-grooming-2'] as string[],
       };
-      const serviceId = "service-boarding-1";
+      const serviceId = 'service-boarding-1';
 
       const appliesToService = coupon.serviceIds.includes(serviceId);
       expect(appliesToService).toBe(false);
     });
 
-    it("should allow coupon with no service restrictions", () => {
+    it('should allow coupon with no service restrictions', () => {
       const coupon = {
-        code: "ANYSERVICE",
+        code: 'ANYSERVICE',
         serviceIds: [],
       };
-      const serviceId = "service-boarding-1";
+      const serviceId = 'service-boarding-1';
 
       const appliesToService =
         !coupon.serviceIds.length || coupon.serviceIds.includes(serviceId);
@@ -294,19 +294,19 @@ describe("Coupon Controller", () => {
     });
   });
 
-  describe("Coupon Code Format", () => {
-    it("should be case-insensitive for code lookup", () => {
-      const storedCode = "SAVE20";
-      const inputCode = "save20";
+  describe('Coupon Code Format', () => {
+    it('should be case-insensitive for code lookup', () => {
+      const storedCode = 'SAVE20';
+      const inputCode = 'save20';
 
       const matches = storedCode.toLowerCase() === inputCode.toLowerCase();
       expect(matches).toBe(true);
     });
 
-    it("should trim whitespace from code", () => {
-      const inputCode = "  SAVE20  ";
+    it('should trim whitespace from code', () => {
+      const inputCode = '  SAVE20  ';
       const cleanedCode = inputCode.trim();
-      expect(cleanedCode).toBe("SAVE20");
+      expect(cleanedCode).toBe('SAVE20');
     });
   });
 });

@@ -4,23 +4,23 @@
  * Tests that actually call controller functions against the test database.
  */
 
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 import {
   getTestPrismaClient,
   createTestTenant,
   deleteTestData,
   disconnectTestDatabase,
-} from "../../test/setup-test-db";
+} from '../../test/setup-test-db';
 import {
   getCustomerInvoices,
   getInvoiceById,
   createInvoice,
   updateInvoice,
-} from "../invoice.controller";
-import { TenantRequest } from "../../middleware/tenant.middleware";
-import { InvoiceStatus } from "@prisma/client";
+} from '../invoice.controller';
+import { TenantRequest } from '../../middleware/tenant.middleware';
+import { InvoiceStatus } from '@prisma/client';
 
-describe("Invoice Controller Integration Tests", () => {
+describe('Invoice Controller Integration Tests', () => {
   const prisma = getTestPrismaClient();
   let testTenantId: string;
   let testCustomerId: string;
@@ -43,10 +43,10 @@ describe("Invoice Controller Integration Tests", () => {
     const customer = await prisma.customer.create({
       data: {
         tenantId: testTenantId,
-        firstName: "Invoice",
-        lastName: "Test",
+        firstName: 'Invoice',
+        lastName: 'Test',
         email: `invoice-test-${Date.now()}@example.com`,
-        phone: "555-0200",
+        phone: '555-0200',
       },
     });
     testCustomerId = customer.id;
@@ -56,9 +56,9 @@ describe("Invoice Controller Integration Tests", () => {
       data: {
         tenantId: testTenantId,
         customerId: testCustomerId,
-        name: "InvoiceTestPet",
-        type: "DOG",
-        breed: "Test Breed",
+        name: 'InvoiceTestPet',
+        type: 'DOG',
+        breed: 'Test Breed',
       },
     });
 
@@ -66,8 +66,8 @@ describe("Invoice Controller Integration Tests", () => {
     const service = await prisma.service.create({
       data: {
         tenantId: testTenantId,
-        name: "Invoice Test Service",
-        serviceCategory: "BOARDING",
+        name: 'Invoice Test Service',
+        serviceCategory: 'BOARDING',
         price: 50,
         duration: 1440,
         isActive: true,
@@ -78,8 +78,8 @@ describe("Invoice Controller Integration Tests", () => {
     const resource = await prisma.resource.create({
       data: {
         tenantId: testTenantId,
-        name: "Invoice Test Suite",
-        type: "STANDARD_SUITE",
+        name: 'Invoice Test Suite',
+        type: 'STANDARD_SUITE',
         isActive: true,
       },
     });
@@ -94,7 +94,7 @@ describe("Invoice Controller Integration Tests", () => {
         resourceId: resource.id,
         startDate: new Date(),
         endDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
-        status: "CONFIRMED",
+        status: 'CONFIRMED',
       },
     });
     testReservationId = reservation.id;
@@ -116,7 +116,7 @@ describe("Invoice Controller Integration Tests", () => {
     jest.clearAllMocks();
   });
 
-  describe("getCustomerInvoices", () => {
+  describe('getCustomerInvoices', () => {
     beforeAll(async () => {
       // Create test invoice
       const invoice = await prisma.invoice.create({
@@ -133,7 +133,7 @@ describe("Invoice Controller Integration Tests", () => {
       testInvoiceIds.push(invoice.id);
     });
 
-    it("should return invoices for a valid customer", async () => {
+    it('should return invoices for a valid customer', async () => {
       const req = {
         params: { customerId: testCustomerId },
         tenantId: testTenantId,
@@ -145,14 +145,14 @@ describe("Invoice Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           results: expect.any(Number),
           data: expect.any(Array),
         })
       );
     });
 
-    it("should call next with error for missing customerId", async () => {
+    it('should call next with error for missing customerId', async () => {
       const req = {
         params: {},
         tenantId: testTenantId,
@@ -163,11 +163,11 @@ describe("Invoice Controller Integration Tests", () => {
 
       expect(mockNext).toHaveBeenCalled();
       const error = (mockNext as jest.Mock).mock.calls[0][0];
-      expect(error.message).toBe("Customer ID is required");
+      expect(error.message).toBe('Customer ID is required');
     });
   });
 
-  describe("getInvoiceById", () => {
+  describe('getInvoiceById', () => {
     let testInvoiceId: string;
 
     beforeAll(async () => {
@@ -186,7 +186,7 @@ describe("Invoice Controller Integration Tests", () => {
       testInvoiceIds.push(testInvoiceId);
     });
 
-    it("should return invoice by ID with relations", async () => {
+    it('should return invoice by ID with relations', async () => {
       const req = {
         params: { id: testInvoiceId },
       } as unknown as Request;
@@ -197,7 +197,7 @@ describe("Invoice Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           data: expect.objectContaining({
             id: testInvoiceId,
             total: 150,
@@ -206,9 +206,9 @@ describe("Invoice Controller Integration Tests", () => {
       );
     });
 
-    it("should call next with 404 for non-existent invoice", async () => {
+    it('should call next with 404 for non-existent invoice', async () => {
       const req = {
-        params: { id: "00000000-0000-0000-0000-000000000000" },
+        params: { id: '00000000-0000-0000-0000-000000000000' },
       } as unknown as Request;
       const res = createMockResponse();
 
@@ -216,13 +216,13 @@ describe("Invoice Controller Integration Tests", () => {
 
       expect(mockNext).toHaveBeenCalled();
       const error = (mockNext as jest.Mock).mock.calls[0][0];
-      expect(error.message).toBe("Invoice not found");
+      expect(error.message).toBe('Invoice not found');
       expect(error.statusCode).toBe(404);
     });
   });
 
-  describe("createInvoice", () => {
-    it("should create invoice with line items", async () => {
+  describe('createInvoice', () => {
+    it('should create invoice with line items', async () => {
       const req = {
         body: {
           customerId: testCustomerId,
@@ -232,7 +232,7 @@ describe("Invoice Controller Integration Tests", () => {
           total: 100,
           lineItems: [
             {
-              description: "Boarding - 2 nights",
+              description: 'Boarding - 2 nights',
               quantity: 2,
               unitPrice: 50,
               amount: 100,
@@ -248,7 +248,7 @@ describe("Invoice Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           data: expect.objectContaining({
             customerId: testCustomerId,
             total: 100,
@@ -261,16 +261,16 @@ describe("Invoice Controller Integration Tests", () => {
       testInvoiceIds.push(createdInvoice.id);
     });
 
-    it("should reject invoice with invalid reservation", async () => {
+    it('should reject invoice with invalid reservation', async () => {
       const req = {
         body: {
           customerId: testCustomerId,
-          reservationId: "00000000-0000-0000-0000-000000000000",
+          reservationId: '00000000-0000-0000-0000-000000000000',
           dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
           subtotal: 100,
           total: 100,
           lineItems: [
-            { description: "Test", quantity: 1, unitPrice: 100, amount: 100 },
+            { description: 'Test', quantity: 1, unitPrice: 100, amount: 100 },
           ],
         },
         tenantId: testTenantId,
@@ -281,10 +281,10 @@ describe("Invoice Controller Integration Tests", () => {
 
       expect(mockNext).toHaveBeenCalled();
       const error = (mockNext as jest.Mock).mock.calls[0][0];
-      expect(error.message).toContain("Reservation not found");
+      expect(error.message).toContain('Reservation not found');
     });
 
-    it("should reject invoice without line items", async () => {
+    it('should reject invoice without line items', async () => {
       const req = {
         body: {
           customerId: testCustomerId,
@@ -301,17 +301,17 @@ describe("Invoice Controller Integration Tests", () => {
 
       expect(mockNext).toHaveBeenCalled();
       const error = (mockNext as jest.Mock).mock.calls[0][0];
-      expect(error.message).toContain("line item");
+      expect(error.message).toContain('line item');
     });
 
-    it("should reject invoice without customerId", async () => {
+    it('should reject invoice without customerId', async () => {
       const req = {
         body: {
           dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
           subtotal: 100,
           total: 100,
           lineItems: [
-            { description: "Test", quantity: 1, unitPrice: 100, amount: 100 },
+            { description: 'Test', quantity: 1, unitPrice: 100, amount: 100 },
           ],
         },
         tenantId: testTenantId,
@@ -322,11 +322,11 @@ describe("Invoice Controller Integration Tests", () => {
 
       expect(mockNext).toHaveBeenCalled();
       const error = (mockNext as jest.Mock).mock.calls[0][0];
-      expect(error.message).toContain("Customer ID is required");
+      expect(error.message).toContain('Customer ID is required');
     });
   });
 
-  describe("updateInvoice", () => {
+  describe('updateInvoice', () => {
     let updateTestInvoiceId: string;
 
     beforeAll(async () => {
@@ -345,10 +345,10 @@ describe("Invoice Controller Integration Tests", () => {
       testInvoiceIds.push(updateTestInvoiceId);
     });
 
-    it("should update invoice status", async () => {
+    it('should update invoice status', async () => {
       const req = {
         params: { id: updateTestInvoiceId },
-        body: { status: "SENT" },
+        body: { status: 'SENT' },
       } as unknown as Request;
       const res = createMockResponse();
 
@@ -357,19 +357,19 @@ describe("Invoice Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           data: expect.objectContaining({
             id: updateTestInvoiceId,
-            status: "SENT",
+            status: 'SENT',
           }),
         })
       );
     });
 
-    it("should call next with 404 for non-existent invoice", async () => {
+    it('should call next with 404 for non-existent invoice', async () => {
       const req = {
-        params: { id: "00000000-0000-0000-0000-000000000000" },
-        body: { status: "SENT" },
+        params: { id: '00000000-0000-0000-0000-000000000000' },
+        body: { status: 'SENT' },
       } as unknown as Request;
       const res = createMockResponse();
 
@@ -377,7 +377,7 @@ describe("Invoice Controller Integration Tests", () => {
 
       expect(mockNext).toHaveBeenCalled();
       const error = (mockNext as jest.Mock).mock.calls[0][0];
-      expect(error.message).toBe("Invoice not found");
+      expect(error.message).toBe('Invoice not found');
     });
   });
 });

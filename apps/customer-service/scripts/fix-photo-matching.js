@@ -10,31 +10,31 @@
  * 3. Updates only the correct pet with the correct photo
  */
 
-const { PrismaClient } = require("@prisma/client");
-const { execSync } = require("child_process");
+const { PrismaClient } = require('@prisma/client');
+const { execSync } = require('child_process');
 
 const prisma = new PrismaClient();
 
-const TENANT_ID = "b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05";
+const TENANT_ID = 'b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05';
 const SQL_BACKUP_PATH =
-  "/opt/tailtown/db-backup-tailtownpetresort-2025-12-16T12_54_19-07_00.sql.gz";
+  '/opt/tailtown/db-backup-tailtownpetresort-2025-12-16T12_54_19-07_00.sql.gz';
 
 async function fixPhotoMatching() {
-  console.log("🔧 Fixing photo matching - using Gingr animal ID...\n");
+  console.log('🔧 Fixing photo matching - using Gingr animal ID...\n');
 
   try {
     // Extract the animals INSERT statements
-    console.log("📦 Decompressing and parsing SQL backup...");
+    console.log('📦 Decompressing and parsing SQL backup...');
     const sqlData = execSync(
       `gunzip -c "${SQL_BACKUP_PATH}" | grep "INSERT INTO \\\`animals\\\`"`,
       {
-        encoding: "utf8",
+        encoding: 'utf8',
         maxBuffer: 50 * 1024 * 1024, // 50MB buffer
       }
     );
 
     // Parse the INSERT statements to extract pet data
-    console.log("🔍 Parsing pet data...");
+    console.log('🔍 Parsing pet data...');
 
     // Match all VALUES entries
     const valuesRegex = /\(([^)]+)\)/g;
@@ -52,7 +52,7 @@ async function fixPhotoMatching() {
 
       // Split by comma, but be careful with commas inside strings
       const parts = [];
-      let current = "";
+      let current = '';
       let inString = false;
       let escapeNext = false;
 
@@ -65,7 +65,7 @@ async function fixPhotoMatching() {
           continue;
         }
 
-        if (char === "\\") {
+        if (char === '\\') {
           escapeNext = true;
           current += char;
           continue;
@@ -77,9 +77,9 @@ async function fixPhotoMatching() {
           continue;
         }
 
-        if (char === "," && !inString) {
+        if (char === ',' && !inString) {
           parts.push(current.trim());
-          current = "";
+          current = '';
           continue;
         }
 
@@ -89,15 +89,15 @@ async function fixPhotoMatching() {
 
       // Extract animal ID (1st field) and photo URL
       if (parts.length > 20) {
-        const gingrId = parts[0]?.replace(/^'|'$/g, "");
-        const name = parts[2]?.replace(/^'|'$/g, "").replace(/\\'/g, "'");
+        const gingrId = parts[0]?.replace(/^'|'$/g, '');
+        const name = parts[2]?.replace(/^'|'$/g, '').replace(/\\'/g, "'");
 
         // Find the photo URL field - it contains 'storage.googleapis.com'
         // Search ALL fields since commas in text fields can throw off column positions
         let photoUrl = null;
         for (let i = 0; i < parts.length; i++) {
-          const field = parts[i]?.replace(/^'|'$/g, "");
-          if (field && field.includes("storage.googleapis.com")) {
+          const field = parts[i]?.replace(/^'|'$/g, '');
+          if (field && field.includes('storage.googleapis.com')) {
             photoUrl = field;
             break;
           }
@@ -106,8 +106,8 @@ async function fixPhotoMatching() {
         if (gingrId && photoUrl) {
           // Skip placeholder images
           if (
-            photoUrl.includes("c2ed8720-96f2-11ea-a7d5-ef010b7ec138") ||
-            photoUrl.includes("Screen Shot 2020-05-15")
+            photoUrl.includes('c2ed8720-96f2-11ea-a7d5-ef010b7ec138') ||
+            photoUrl.includes('Screen Shot 2020-05-15')
           ) {
             skippedPlaceholders++;
             continue;
@@ -125,7 +125,7 @@ async function fixPhotoMatching() {
     console.log(`⏭️  Skipped ${skippedNoPhoto} pets without photos\n`);
 
     // Get all Tailtown pets with externalId
-    console.log("📋 Loading Tailtown pets...");
+    console.log('📋 Loading Tailtown pets...');
     const tailtownPets = await prisma.pet.findMany({
       where: {
         tenantId: TENANT_ID,
@@ -149,7 +149,7 @@ async function fixPhotoMatching() {
     console.log(`Found ${tailtownPets.length} Tailtown pets with externalId\n`);
 
     // Update photos by matching externalId
-    console.log("💾 Updating photos by Gingr ID match...\n");
+    console.log('💾 Updating photos by Gingr ID match...\n');
 
     let updated = 0;
     let noMatch = 0;
@@ -182,7 +182,7 @@ async function fixPhotoMatching() {
       if (pet.profilePhoto && pet.profilePhoto !== photoUrl) {
         console.log(
           `🔄 Changed: ${pet.name} (${
-            pet.owner?.lastName || "Unknown"
+            pet.owner?.lastName || 'Unknown'
           }) - was wrong photo`
         );
         changed++;
@@ -191,7 +191,7 @@ async function fixPhotoMatching() {
       updated++;
     }
 
-    console.log("\n📊 Summary:");
+    console.log('\n📊 Summary:');
     console.log(`   📸 Photos in Gingr backup: ${photoMap.size}`);
     console.log(`   🐕 Tailtown pets with externalId: ${tailtownPets.length}`);
     console.log(`   ✅ Photos updated: ${updated}`);
@@ -204,7 +204,7 @@ async function fixPhotoMatching() {
     const abbeyPets = await prisma.pet.findMany({
       where: {
         tenantId: TENANT_ID,
-        name: "Abbey",
+        name: 'Abbey',
         isActive: true,
       },
       select: {
@@ -222,12 +222,12 @@ async function fixPhotoMatching() {
     console.log(`   Unique photos: ${uniquePhotos.size}`);
 
     if (uniquePhotos.size > 1 || uniquePhotos.size === abbeyPets.length) {
-      console.log("   ✅ Photos are now unique per pet!");
+      console.log('   ✅ Photos are now unique per pet!');
     } else {
-      console.log("   ⚠️  Some pets may still share photos");
+      console.log('   ⚠️  Some pets may still share photos');
     }
   } catch (error) {
-    console.error("❌ Error:", error.message);
+    console.error('❌ Error:', error.message);
     console.error(error.stack);
   } finally {
     await prisma.$disconnect();

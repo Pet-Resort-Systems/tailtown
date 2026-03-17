@@ -1,6 +1,6 @@
 /**
  * Capacity Full Dialog
- * 
+ *
  * Shows when a service is at full capacity and offers to join waitlist
  */
 
@@ -14,9 +14,12 @@ import {
   Typography,
   Alert,
   Box,
-  CircularProgress
+  CircularProgress,
 } from '@mui/material';
-import { EventBusy as FullIcon, NotificationsActive as WaitlistIcon } from '@mui/icons-material';
+import {
+  EventBusy as FullIcon,
+  NotificationsActive as WaitlistIcon,
+} from '@mui/icons-material';
 import waitlistService from '../../services/waitlistService';
 
 interface CapacityFullDialogProps {
@@ -42,7 +45,7 @@ const CapacityFullDialog: React.FC<CapacityFullDialogProps> = ({
   petId,
   availableSpots,
   requestedSpots,
-  onWaitlistJoined
+  onWaitlistJoined,
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -62,11 +65,11 @@ const CapacityFullDialog: React.FC<CapacityFullDialogProps> = ({
         flexibleDates: true,
         dateFlexibilityDays: 3,
         preferences: {},
-        customerNotes: `Requested ${requestedSpots} spot(s), but only ${availableSpots} available`
+        customerNotes: `Requested ${requestedSpots} spot(s), but only ${availableSpots} available`,
       });
 
       setSuccess(true);
-      
+
       if (onWaitlistJoined) {
         onWaitlistJoined();
       }
@@ -88,7 +91,7 @@ const CapacityFullDialog: React.FC<CapacityFullDialogProps> = ({
       weekday: 'short',
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
@@ -104,13 +107,15 @@ const CapacityFullDialog: React.FC<CapacityFullDialogProps> = ({
       <DialogContent>
         {success ? (
           <Alert severity="success" sx={{ mb: 2 }}>
-            Successfully joined the waitlist! We'll notify you when a spot opens up.
+            Successfully joined the waitlist! We'll notify you when a spot opens
+            up.
           </Alert>
         ) : (
           <>
             <Alert severity="warning" sx={{ mb: 2 }}>
               <Typography variant="body2">
-                <strong>{serviceType}</strong> is currently at full capacity for your requested dates.
+                <strong>{serviceType}</strong> is currently at full capacity for
+                your requested dates.
               </Typography>
             </Alert>
 
@@ -129,7 +134,8 @@ const CapacityFullDialog: React.FC<CapacityFullDialogProps> = ({
                 <strong>Capacity Status:</strong>
               </Typography>
               <Typography variant="body2">
-                Only <strong>{availableSpots}</strong> spot(s) available, but you requested <strong>{requestedSpots}</strong>
+                Only <strong>{availableSpots}</strong> spot(s) available, but
+                you requested <strong>{requestedSpots}</strong>
               </Typography>
             </Box>
 
@@ -139,7 +145,7 @@ const CapacityFullDialog: React.FC<CapacityFullDialogProps> = ({
                 bgcolor: 'primary.50',
                 borderRadius: 1,
                 border: '1px solid',
-                borderColor: 'primary.200'
+                borderColor: 'primary.200',
               }}
             >
               <Box display="flex" alignItems="center" gap={1} mb={1}>
@@ -149,8 +155,8 @@ const CapacityFullDialog: React.FC<CapacityFullDialogProps> = ({
                 </Typography>
               </Box>
               <Typography variant="body2" color="text.secondary">
-                We'll automatically notify you via email when a spot becomes available. 
-                You'll have 24 hours to confirm your booking.
+                We'll automatically notify you via email when a spot becomes
+                available. You'll have 24 hours to confirm your booking.
               </Typography>
             </Box>
 
@@ -172,7 +178,9 @@ const CapacityFullDialog: React.FC<CapacityFullDialogProps> = ({
             variant="contained"
             onClick={handleJoinWaitlist}
             disabled={loading}
-            startIcon={loading ? <CircularProgress size={20} /> : <WaitlistIcon />}
+            startIcon={
+              loading ? <CircularProgress size={20} /> : <WaitlistIcon />
+            }
           >
             {loading ? 'Joining...' : 'Join Waitlist'}
           </Button>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container,
   Box,
@@ -11,25 +11,25 @@ import {
   Typography,
   CircularProgress,
   Alert,
-} from "@mui/material";
-import { reservationService } from "../../services/reservationService";
-import checkInService from "../../services/checkInService";
-import tipService, { TipCollectionMethod } from "../../services/tipService";
-import { couponService } from "../../services/couponService";
-import FinalInvoiceReview from "../../components/checkout/FinalInvoiceReview";
-import ReturnBelongings from "../../components/checkout/ReturnBelongings";
-import ReturnMedications from "../../components/checkout/ReturnMedications";
-import TipSelection, { TipData } from "../../components/checkout/TipSelection";
-import FinalPayment from "../../components/checkout/FinalPayment";
-import CheckoutComplete from "../../components/checkout/CheckoutComplete";
+} from '@mui/material';
+import { reservationService } from '../../services/reservationService';
+import checkInService from '../../services/checkInService';
+import tipService, { TipCollectionMethod } from '../../services/tipService';
+import { couponService } from '../../services/couponService';
+import FinalInvoiceReview from '../../components/checkout/FinalInvoiceReview';
+import ReturnBelongings from '../../components/checkout/ReturnBelongings';
+import ReturnMedications from '../../components/checkout/ReturnMedications';
+import TipSelection, { TipData } from '../../components/checkout/TipSelection';
+import FinalPayment from '../../components/checkout/FinalPayment';
+import CheckoutComplete from '../../components/checkout/CheckoutComplete';
 
 const steps = [
-  "Review Invoice",
-  "Return Belongings",
-  "Return Medications",
-  "Add Tip",
-  "Final Payment",
-  "Complete",
+  'Review Invoice',
+  'Return Belongings',
+  'Return Medications',
+  'Add Tip',
+  'Final Payment',
+  'Complete',
 ];
 
 interface CheckoutData {
@@ -56,7 +56,7 @@ const CheckoutWorkflow: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [checkoutData, setCheckoutData] = useState<CheckoutData>({
-    reservationId: reservationId || "",
+    reservationId: reservationId || '',
     checkInId: null,
     invoice: null,
     belongings: [],
@@ -75,32 +75,30 @@ const CheckoutWorkflow: React.FC = () => {
     const loadData = async () => {
       try {
         if (!reservationId) {
-          setError("No reservation ID provided");
+          setError('No reservation ID provided');
           setLoading(false);
           return;
         }
 
         // Load reservation with invoice
-        const reservation = await reservationService.getReservationById(
-          reservationId
-        );
+        const reservation =
+          await reservationService.getReservationById(reservationId);
 
         // Load check-in data if exists
         let checkInData = null;
         try {
-          const checkIns = await checkInService.getCheckInsByReservation(
-            reservationId
-          );
+          const checkIns =
+            await checkInService.getCheckInsByReservation(reservationId);
           checkInData = checkIns && checkIns.length > 0 ? checkIns[0] : null;
         } catch (err) {
-          console.log("No check-in data found, continuing without it");
+          console.log('No check-in data found, continuing without it');
         }
 
         // Check if this is a grooming service and get groomer info
         const serviceData = reservation.service as any;
         const hasGroomingService =
-          serviceData?.category === "GROOMING" ||
-          serviceData?.name?.toLowerCase().includes("groom") ||
+          serviceData?.category === 'GROOMING' ||
+          serviceData?.name?.toLowerCase().includes('groom') ||
           false;
 
         // Get groomer from reservation if assigned
@@ -114,11 +112,10 @@ const CheckoutWorkflow: React.FC = () => {
           reservationData.customerId || reservationData.customer?.id;
         if (customerId) {
           try {
-            permanentCoupon = await couponService.getCustomerPermanentCoupon(
-              customerId
-            );
+            permanentCoupon =
+              await couponService.getCustomerPermanentCoupon(customerId);
           } catch (err) {
-            console.log("No permanent coupon found for customer");
+            console.log('No permanent coupon found for customer');
           }
         }
 
@@ -141,8 +138,8 @@ const CheckoutWorkflow: React.FC = () => {
 
         setLoading(false);
       } catch (err: any) {
-        console.error("Error loading checkout data:", err);
-        setError(err.message || "Failed to load checkout data");
+        console.error('Error loading checkout data:', err);
+        setError(err.message || 'Failed to load checkout data');
         setLoading(false);
       }
     };
@@ -198,10 +195,10 @@ const CheckoutWorkflow: React.FC = () => {
 
       if (tipData.groomerTip && tipData.groomerId && customerId) {
         tipsToCreate.push({
-          type: "GROOMER" as const,
+          type: 'GROOMER' as const,
           amount: tipData.groomerTip,
           percentage: tipData.groomerTipPercentage,
-          collectionMethod: "TERMINAL" as TipCollectionMethod,
+          collectionMethod: 'TERMINAL' as TipCollectionMethod,
           customerId,
           reservationId: checkoutData.reservationId,
           groomerId: tipData.groomerId,
@@ -210,10 +207,10 @@ const CheckoutWorkflow: React.FC = () => {
 
       if (tipData.generalTip && customerId) {
         tipsToCreate.push({
-          type: "GENERAL" as const,
+          type: 'GENERAL' as const,
           amount: tipData.generalTip,
           percentage: tipData.generalTipPercentage,
-          collectionMethod: "TERMINAL" as TipCollectionMethod,
+          collectionMethod: 'TERMINAL' as TipCollectionMethod,
           customerId,
           reservationId: checkoutData.reservationId,
         });
@@ -223,7 +220,7 @@ const CheckoutWorkflow: React.FC = () => {
         await tipService.createTips(tipsToCreate);
       }
     } catch (err) {
-      console.error("Error saving tips:", err);
+      console.error('Error saving tips:', err);
       // Continue anyway - tips are optional
     }
 
@@ -239,13 +236,13 @@ const CheckoutWorkflow: React.FC = () => {
     try {
       // Update reservation status to CHECKED_OUT
       await reservationService.updateReservation(reservationId!, {
-        status: "CHECKED_OUT",
+        status: 'CHECKED_OUT',
       });
 
       handleNext();
     } catch (err: any) {
-      console.error("Error completing checkout:", err);
-      setError(err.message || "Failed to complete checkout");
+      console.error('Error completing checkout:', err);
+      setError(err.message || 'Failed to complete checkout');
     }
   };
 
@@ -324,10 +321,10 @@ const CheckoutWorkflow: React.FC = () => {
       <Container maxWidth="md">
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            minHeight: "400px",
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '400px',
           }}
         >
           <CircularProgress />
@@ -341,7 +338,7 @@ const CheckoutWorkflow: React.FC = () => {
       <Container maxWidth="md">
         <Box sx={{ mt: 4 }}>
           <Alert severity="error">{error}</Alert>
-          <Button sx={{ mt: 2 }} onClick={() => navigate("/reservations")}>
+          <Button sx={{ mt: 2 }} onClick={() => navigate('/reservations')}>
             Back to Reservations
           </Button>
         </Box>

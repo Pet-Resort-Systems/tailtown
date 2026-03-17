@@ -7,7 +7,7 @@ async function createTestAccount() {
   try {
     // Check if test account already exists
     const existingStaff = await prisma.staff.findUnique({
-      where: { email: 'test@tailtown.com' }
+      where: { email: 'test@tailtown.com' },
     });
 
     if (existingStaff) {
@@ -17,7 +17,7 @@ async function createTestAccount() {
 
     // Create a test staff account with a known password
     const hashedPassword = await bcrypt.hash('password123', 10);
-    
+
     const staff = await prisma.staff.create({
       data: {
         email: 'test@tailtown.com',
@@ -27,12 +27,12 @@ async function createTestAccount() {
         role: 'ADMIN',
         isActive: true,
         password: hashedPassword,
-      } as any
+      } as any,
     });
 
     console.log('Test account created successfully:', {
       email: staff.email,
-      password: 'password123' // Only showing this for testing purposes
+      password: 'password123', // Only showing this for testing purposes
     });
   } catch (error) {
     console.error('Error creating test account:', error);

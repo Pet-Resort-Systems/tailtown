@@ -33,7 +33,11 @@ const storage = multer.diskStorage({
 });
 
 // File filter to accept only images and PDFs
-const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+const fileFilter = (
+  req: Request,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback
+) => {
   const allowedMimeTypes = [
     'image/jpeg',
     'image/jpg',
@@ -48,7 +52,11 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilt
   if (allowedMimeTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Invalid file type. Only JPEG, PNG, GIF, WebP, HEIC, and PDF files are allowed.'));
+    cb(
+      new Error(
+        'Invalid file type. Only JPEG, PNG, GIF, WebP, HEIC, and PDF files are allowed.'
+      )
+    );
   }
 };
 

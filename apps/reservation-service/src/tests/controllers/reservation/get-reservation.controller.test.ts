@@ -5,10 +5,10 @@
  * Tests the reservation retrieval controller endpoints.
  */
 
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 
 // Mock dependencies
-jest.mock("../../../controllers/reservation/utils/prisma-helpers", () => ({
+jest.mock('../../../controllers/reservation/utils/prisma-helpers', () => ({
   prisma: {
     reservation: {
       findMany: jest.fn(),
@@ -19,7 +19,7 @@ jest.mock("../../../controllers/reservation/utils/prisma-helpers", () => ({
   safeExecutePrismaQuery: jest.fn((fn) => fn()),
 }));
 
-jest.mock("../../../utils/logger", () => ({
+jest.mock('../../../utils/logger', () => ({
   logger: {
     error: jest.fn(),
     info: jest.fn(),
@@ -31,16 +31,16 @@ jest.mock("../../../utils/logger", () => ({
 import {
   prisma,
   safeExecutePrismaQuery,
-} from "../../../controllers/reservation/utils/prisma-helpers";
-import { logger } from "../../../utils/logger";
+} from '../../../controllers/reservation/utils/prisma-helpers';
+import { logger } from '../../../utils/logger';
 
 // Helper to create mock request
 const createMockRequest = (overrides: any = {}): Request => {
   return {
-    tenantId: "test-tenant",
+    tenantId: 'test-tenant',
     query: {},
     params: {},
-    headers: { "x-tenant-id": "test-tenant" },
+    headers: { 'x-tenant-id': 'test-tenant' },
     ...overrides,
   } as unknown as Request;
 };
@@ -54,13 +54,13 @@ const createMockResponse = (): Response => {
   return res as Response;
 };
 
-describe("Get Reservation Controller", () => {
+describe('Get Reservation Controller', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe("Pagination logic", () => {
-    it("should use default pagination values", () => {
+  describe('Pagination logic', () => {
+    it('should use default pagination values', () => {
       const req = createMockRequest({ query: {} });
 
       const page = parseInt(req.query.page as string) || 1;
@@ -70,8 +70,8 @@ describe("Get Reservation Controller", () => {
       expect(limit).toBe(10);
     });
 
-    it("should parse custom pagination values", () => {
-      const req = createMockRequest({ query: { page: "3", limit: "25" } });
+    it('should parse custom pagination values', () => {
+      const req = createMockRequest({ query: { page: '3', limit: '25' } });
 
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
@@ -82,8 +82,8 @@ describe("Get Reservation Controller", () => {
       expect(skip).toBe(50);
     });
 
-    it("should handle invalid page parameter", () => {
-      const req = createMockRequest({ query: { page: "invalid" } });
+    it('should handle invalid page parameter', () => {
+      const req = createMockRequest({ query: { page: 'invalid' } });
 
       const parsedPage = parseInt(req.query.page as string);
       const page = !isNaN(parsedPage) && parsedPage > 0 ? parsedPage : 1;
@@ -91,8 +91,8 @@ describe("Get Reservation Controller", () => {
       expect(page).toBe(1);
     });
 
-    it("should handle negative page parameter", () => {
-      const req = createMockRequest({ query: { page: "-5" } });
+    it('should handle negative page parameter', () => {
+      const req = createMockRequest({ query: { page: '-5' } });
 
       const parsedPage = parseInt(req.query.page as string);
       const page = !isNaN(parsedPage) && parsedPage > 0 ? parsedPage : 1;
@@ -100,8 +100,8 @@ describe("Get Reservation Controller", () => {
       expect(page).toBe(1);
     });
 
-    it("should cap limit at 500", () => {
-      const req = createMockRequest({ query: { limit: "1000" } });
+    it('should cap limit at 500', () => {
+      const req = createMockRequest({ query: { limit: '1000' } });
 
       const parsedLimit = parseInt(req.query.limit as string);
       const limit =
@@ -113,33 +113,33 @@ describe("Get Reservation Controller", () => {
     });
   });
 
-  describe("Filter building", () => {
-    it("should build filter with tenant ID", () => {
-      const tenantId = "test-tenant";
+  describe('Filter building', () => {
+    it('should build filter with tenant ID', () => {
+      const tenantId = 'test-tenant';
       const filter: any = { tenantId };
 
-      expect(filter.tenantId).toBe("test-tenant");
+      expect(filter.tenantId).toBe('test-tenant');
     });
 
-    it("should add status filter", () => {
-      const req = createMockRequest({ query: { status: "CONFIRMED" } });
+    it('should add status filter', () => {
+      const req = createMockRequest({ query: { status: 'CONFIRMED' } });
       const filter: any = {};
 
       if (req.query.status) {
         filter.status = req.query.status;
       }
 
-      expect(filter.status).toBe("CONFIRMED");
+      expect(filter.status).toBe('CONFIRMED');
     });
 
-    it("should handle multiple status values", () => {
+    it('should handle multiple status values', () => {
       const req = createMockRequest({
-        query: { status: "CONFIRMED,PENDING,CHECKED_IN" },
+        query: { status: 'CONFIRMED,PENDING,CHECKED_IN' },
       });
       const filter: any = {};
 
       if (req.query.status) {
-        const statusValues = (req.query.status as string).split(",");
+        const statusValues = (req.query.status as string).split(',');
         if (statusValues.length > 1) {
           filter.status = { in: statusValues };
         } else {
@@ -148,84 +148,84 @@ describe("Get Reservation Controller", () => {
       }
 
       expect(filter.status).toEqual({
-        in: ["CONFIRMED", "PENDING", "CHECKED_IN"],
+        in: ['CONFIRMED', 'PENDING', 'CHECKED_IN'],
       });
     });
 
-    it("should add customerId filter", () => {
-      const req = createMockRequest({ query: { customerId: "cust-123" } });
+    it('should add customerId filter', () => {
+      const req = createMockRequest({ query: { customerId: 'cust-123' } });
       const filter: any = {};
 
       if (req.query.customerId) {
         filter.customerId = req.query.customerId;
       }
 
-      expect(filter.customerId).toBe("cust-123");
+      expect(filter.customerId).toBe('cust-123');
     });
 
-    it("should add petId filter", () => {
-      const req = createMockRequest({ query: { petId: "pet-456" } });
+    it('should add petId filter', () => {
+      const req = createMockRequest({ query: { petId: 'pet-456' } });
       const filter: any = {};
 
       if (req.query.petId) {
         filter.petId = req.query.petId;
       }
 
-      expect(filter.petId).toBe("pet-456");
+      expect(filter.petId).toBe('pet-456');
     });
 
-    it("should add resourceId filter", () => {
-      const req = createMockRequest({ query: { resourceId: "res-789" } });
+    it('should add resourceId filter', () => {
+      const req = createMockRequest({ query: { resourceId: 'res-789' } });
       const filter: any = {};
 
       if (req.query.resourceId) {
         filter.resourceId = req.query.resourceId;
       }
 
-      expect(filter.resourceId).toBe("res-789");
+      expect(filter.resourceId).toBe('res-789');
     });
 
-    it("should add suiteType filter", () => {
-      const req = createMockRequest({ query: { suiteType: "VIP_SUITE" } });
+    it('should add suiteType filter', () => {
+      const req = createMockRequest({ query: { suiteType: 'VIP_SUITE' } });
       const filter: any = {};
 
       if (req.query.suiteType) {
         filter.suiteType = req.query.suiteType;
       }
 
-      expect(filter.suiteType).toBe("VIP_SUITE");
+      expect(filter.suiteType).toBe('VIP_SUITE');
     });
 
-    it("should combine multiple filters", () => {
+    it('should combine multiple filters', () => {
       const req = createMockRequest({
         query: {
-          status: "CONFIRMED",
-          customerId: "cust-123",
-          resourceId: "res-456",
+          status: 'CONFIRMED',
+          customerId: 'cust-123',
+          resourceId: 'res-456',
         },
       });
-      const filter: any = { tenantId: "test-tenant" };
+      const filter: any = { tenantId: 'test-tenant' };
 
       if (req.query.status) filter.status = req.query.status;
       if (req.query.customerId) filter.customerId = req.query.customerId;
       if (req.query.resourceId) filter.resourceId = req.query.resourceId;
 
       expect(filter).toEqual({
-        tenantId: "test-tenant",
-        status: "CONFIRMED",
-        customerId: "cust-123",
-        resourceId: "res-456",
+        tenantId: 'test-tenant',
+        status: 'CONFIRMED',
+        customerId: 'cust-123',
+        resourceId: 'res-456',
       });
     });
   });
 
-  describe("Date filtering", () => {
-    it("should parse checkInDate filter", () => {
-      const req = createMockRequest({ query: { checkInDate: "2024-06-15" } });
+  describe('Date filtering', () => {
+    it('should parse checkInDate filter', () => {
+      const req = createMockRequest({ query: { checkInDate: '2024-06-15' } });
 
       const dateStr = req.query.checkInDate as string;
       const [year, month, day] = dateStr
-        .split("-")
+        .split('-')
         .map((num) => parseInt(num, 10));
 
       expect(year).toBe(2024);
@@ -233,32 +233,32 @@ describe("Get Reservation Controller", () => {
       expect(day).toBe(15);
     });
 
-    it("should handle timezone parameter", () => {
+    it('should handle timezone parameter', () => {
       const req = createMockRequest({
         query: {
-          checkInDate: "2024-06-15",
-          timezone: "America/Los_Angeles",
+          checkInDate: '2024-06-15',
+          timezone: 'America/Los_Angeles',
         },
       });
 
-      const timezone = (req.query.timezone as string) || "America/New_York";
+      const timezone = (req.query.timezone as string) || 'America/New_York';
 
-      expect(timezone).toBe("America/Los_Angeles");
+      expect(timezone).toBe('America/Los_Angeles');
     });
 
-    it("should default to America/New_York timezone", () => {
-      const req = createMockRequest({ query: { checkInDate: "2024-06-15" } });
+    it('should default to America/New_York timezone', () => {
+      const req = createMockRequest({ query: { checkInDate: '2024-06-15' } });
 
-      const timezone = (req.query.timezone as string) || "America/New_York";
+      const timezone = (req.query.timezone as string) || 'America/New_York';
 
-      expect(timezone).toBe("America/New_York");
+      expect(timezone).toBe('America/New_York');
     });
 
-    it("should parse startDate and endDate range", () => {
+    it('should parse startDate and endDate range', () => {
       const req = createMockRequest({
         query: {
-          startDate: "2024-06-15",
-          endDate: "2024-06-20",
+          startDate: '2024-06-15',
+          endDate: '2024-06-20',
         },
       });
 
@@ -271,23 +271,23 @@ describe("Get Reservation Controller", () => {
     });
   });
 
-  describe("Tenant isolation", () => {
-    it("should require tenant ID", () => {
+  describe('Tenant isolation', () => {
+    it('should require tenant ID', () => {
       const req = createMockRequest({ tenantId: null });
 
       expect(req.tenantId).toBeNull();
     });
 
-    it("should include tenant ID in filter", () => {
-      const tenantId = "specific-tenant";
+    it('should include tenant ID in filter', () => {
+      const tenantId = 'specific-tenant';
       const filter: any = { tenantId };
 
-      expect(filter.tenantId).toBe("specific-tenant");
+      expect(filter.tenantId).toBe('specific-tenant');
     });
   });
 
-  describe("Response structure", () => {
-    it("should include pagination metadata", () => {
+  describe('Response structure', () => {
+    it('should include pagination metadata', () => {
       const page = 2;
       const limit = 10;
       const total = 45;
@@ -304,7 +304,7 @@ describe("Get Reservation Controller", () => {
       expect(pagination.hasMore).toBe(true);
     });
 
-    it("should calculate hasMore correctly for last page", () => {
+    it('should calculate hasMore correctly for last page', () => {
       const page = 5;
       const limit = 10;
       const total = 45;

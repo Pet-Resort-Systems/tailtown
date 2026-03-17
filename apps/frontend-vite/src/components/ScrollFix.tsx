@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react';
 
 /**
  * ScrollFix component addresses scrolling issues in the application
@@ -17,8 +17,8 @@ const ScrollFix: React.FC = () => {
     // Function to ensure scrolling is enabled
     const ensureScrollingEnabled = () => {
       // Remove any overflow:hidden that might be blocking scrolling
-      if (document.body.style.overflow === "hidden") {
-        document.body.style.overflow = "auto";
+      if (document.body.style.overflow === 'hidden') {
+        document.body.style.overflow = 'auto';
       }
 
       // Check for any elements with position:fixed that cover the viewport
@@ -31,15 +31,15 @@ const ScrollFix: React.FC = () => {
         const isLarge =
           rect.width > window.innerWidth * 0.9 &&
           rect.height > window.innerHeight * 0.9;
-        const isDialog = el.getAttribute("role") === "dialog";
+        const isDialog = el.getAttribute('role') === 'dialog';
 
         if (isLarge && !isDialog) {
           // Add a data attribute so we don't modify it again
-          if (!el.hasAttribute("data-scroll-fix-applied")) {
-            el.setAttribute("data-scroll-fix-applied", "true");
+          if (!el.hasAttribute('data-scroll-fix-applied')) {
+            el.setAttribute('data-scroll-fix-applied', 'true');
             // Modify the element to allow scrolling
-            (el as HTMLElement).style.overflow = "auto";
-            (el as HTMLElement).style.maxHeight = "100vh";
+            (el as HTMLElement).style.overflow = 'auto';
+            (el as HTMLElement).style.maxHeight = '100vh';
           }
         }
       });
@@ -66,12 +66,12 @@ const ScrollFix: React.FC = () => {
       }
     };
 
-    window.addEventListener("scroll", scrollHandler, { passive: true });
+    window.addEventListener('scroll', scrollHandler, { passive: true });
 
     // Cleanup function
     return () => {
       clearInterval(intervalId);
-      window.removeEventListener("scroll", scrollHandler);
+      window.removeEventListener('scroll', scrollHandler);
       document.body.style.overflow = originalOverflow;
     };
   }, []);

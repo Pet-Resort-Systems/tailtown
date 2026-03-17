@@ -8,7 +8,7 @@ import {
   StaffPerformance,
   ResourceUtilization,
   BookingPattern,
-  CapacityAnalysis
+  CapacityAnalysis,
 } from '../types/reports.types';
 
 const prisma = new PrismaClient();
@@ -24,14 +24,14 @@ export const getStaffPerformanceReport = async (
   const start = new Date(startDate);
   const end = new Date(endDate);
   end.setHours(23, 59, 59, 999);
-  
+
   // Get all staff members
   const staff = await prisma.staff.findMany({
-    where: { tenantId }
+    where: { tenantId },
   });
-  
+
   const staffPerformance: StaffPerformance[] = [];
-  
+
   for (const member of staff) {
     // For now, return basic staff info
     // In a full implementation, this would include:
@@ -39,7 +39,7 @@ export const getStaffPerformanceReport = async (
     // - Revenue generated
     // - Average service time
     // - Customer ratings
-    
+
     staffPerformance.push({
       staffId: member.id,
       staffName: `${member.firstName} ${member.lastName}`,
@@ -48,10 +48,10 @@ export const getStaffPerformanceReport = async (
       revenue: 0,
       averageServiceTime: 0,
       customerRating: 0,
-      efficiency: 0
+      efficiency: 0,
     });
   }
-  
+
   return staffPerformance;
 };
 
@@ -66,10 +66,10 @@ export const getResourceUtilizationReport = async (
   const start = new Date(startDate);
   const end = new Date(endDate);
   end.setHours(23, 59, 59, 999);
-  
+
   // This would require reservation service data
   // Placeholder implementation
-  
+
   return [];
 };
 
@@ -84,37 +84,43 @@ export const getBookingPatternsReport = async (
   const start = new Date(startDate);
   const end = new Date(endDate);
   end.setHours(23, 59, 59, 999);
-  
+
   // Get all reservations in date range
   const reservations = await prisma.reservation.findMany({
     where: {
       tenantId,
       startDate: {
         gte: start,
-        lte: end
-      }
+        lte: end,
+      },
     },
     include: {
-      invoice: true
-    }
+      invoice: true,
+    },
   });
-  
+
   // Aggregate by day of week and hour
-  const patternMap = new Map<string, {
-    count: number;
-    revenue: number;
-  }>();
-  
+  const patternMap = new Map<
+    string,
+    {
+      count: number;
+      revenue: number;
+    }
+  >();
+
   for (const reservation of reservations) {
-    const dayOfWeek = reservation.startDate.toLocaleDateString('en-US', { weekday: 'long' });
+    const dayOfWeek = reservation.startDate.toLocaleDateString('en-US', {
+      weekday: 'long',
+    });
     const hour = reservation.startDate.getHours();
     const key = `${dayOfWeek}-${hour}`;
-    
+
     // Calculate revenue from invoice if it exists and is paid
-    const revenue = (reservation.invoice && reservation.invoice.status === 'PAID') 
-      ? reservation.invoice.total 
-      : 0;
-    
+    const revenue =
+      reservation.invoice && reservation.invoice.status === 'PAID'
+        ? reservation.invoice.total
+        : 0;
+
     const existing = patternMap.get(key);
     if (existing) {
       existing.count += 1;
@@ -122,30 +128,39 @@ export const getBookingPatternsReport = async (
     } else {
       patternMap.set(key, {
         count: 1,
-        revenue
+        revenue,
       });
     }
   }
-  
+
   // Convert to array
   const patterns: BookingPattern[] = [];
   for (const [key, data] of patternMap.entries()) {
     const [dayOfWeek, hourStr] = key.split('-');
     const hour = parseInt(hourStr);
-    
+
     patterns.push({
       dayOfWeek,
       hour,
       bookingCount: data.count,
       revenue: data.revenue,
-      averageBookingValue: data.count > 0 ? data.revenue / data.count : 0
+      averageBookingValue: data.count > 0 ? data.revenue / data.count : 0,
     });
   }
-  
+
   return patterns.sort((a, b) => {
     // Sort by day of week, then hour
-    const dayOrder = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const dayCompare = dayOrder.indexOf(a.dayOfWeek) - dayOrder.indexOf(b.dayOfWeek);
+    const dayOrder = [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+    ];
+    const dayCompare =
+      dayOrder.indexOf(a.dayOfWeek) - dayOrder.indexOf(b.dayOfWeek);
     if (dayCompare !== 0) return dayCompare;
     return a.hour - b.hour;
   });
@@ -162,39 +177,40 @@ export const getCapacityAnalysisReport = async (
   const start = new Date(startDate);
   const end = new Date(endDate);
   end.setHours(23, 59, 59, 999);
-  
+
   // This would require resource and reservation data from reservation service
   // Placeholder implementation
-  
+
   const capacityData: CapacityAnalysis[] = [];
-  
+
   // Generate daily capacity analysis
   const currentDate = new Date(start);
   while (currentDate <= end) {
     const dateStr = currentDate.toISOString().split('T')[0];
-    
+
     // Get reservations for this date
     const dayStart = new Date(currentDate);
     dayStart.setHours(0, 0, 0, 0);
     const dayEnd = new Date(currentDate);
     dayEnd.setHours(23, 59, 59, 999);
-    
+
     const reservations = await prisma.reservation.count({
       where: {
         tenantId,
         startDate: {
           gte: dayStart,
-          lte: dayEnd
-        }
-      }
+          lte: dayEnd,
+        },
+      },
     });
-    
+
     // Placeholder capacity (would come from resource service)
     const totalCapacity = 166; // Total kennels
     const bookedCapacity = reservations;
     const availableCapacity = totalCapacity - bookedCapacity;
-    const utilizationRate = totalCapacity > 0 ? (bookedCapacity / totalCapacity) * 100 : 0;
-    
+    const utilizationRate =
+      totalCapacity > 0 ? (bookedCapacity / totalCapacity) * 100 : 0;
+
     capacityData.push({
       date: dateStr,
       totalCapacity,
@@ -202,11 +218,11 @@ export const getCapacityAnalysisReport = async (
       availableCapacity,
       utilizationRate,
       revenue: 0, // Would calculate from invoices
-      potentialRevenue: 0 // Would calculate based on average rates
+      potentialRevenue: 0, // Would calculate based on average rates
     });
-    
+
     currentDate.setDate(currentDate.getDate() + 1);
   }
-  
+
   return capacityData;
 };

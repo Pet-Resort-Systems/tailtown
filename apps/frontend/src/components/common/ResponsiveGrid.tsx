@@ -60,7 +60,7 @@ const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
     mobileColumns,
     tabletColumns,
     desktopColumns,
-    largeDesktopColumns,
+    largeDesktopColumns
   );
 
   return (

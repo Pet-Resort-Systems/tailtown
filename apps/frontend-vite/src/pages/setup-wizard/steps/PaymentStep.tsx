@@ -2,7 +2,7 @@
  * Payment Step - CardConnect merchant setup
  */
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -18,15 +18,15 @@ import {
   Alert,
   InputAdornment,
   IconButton,
-} from "@mui/material";
+} from '@mui/material';
 import {
   ArrowForward,
   ArrowBack,
   Visibility,
   VisibilityOff,
   CreditCard,
-} from "@mui/icons-material";
-import { useSetupWizard } from "../SetupWizardContext";
+} from '@mui/icons-material';
+import { useSetupWizard } from '../SetupWizardContext';
 
 export default function PaymentStep() {
   const { state, setPayment, completeStep, nextStep, prevStep } =
@@ -39,10 +39,10 @@ export default function PaymentStep() {
     setPayment({
       cardConnect: { ...payment.cardConnect, [field]: value },
     });
-    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: '' }));
   };
 
-  const toggleCard = (card: "visa" | "mastercard" | "amex" | "discover") => {
+  const toggleCard = (card: 'visa' | 'mastercard' | 'amex' | 'discover') => {
     const cards = payment.acceptedCards.includes(card)
       ? payment.acceptedCards.filter((c) => c !== card)
       : [...payment.acceptedCards, card];
@@ -52,18 +52,18 @@ export default function PaymentStep() {
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
     if (!payment.cardConnect.merchantId)
-      newErrors.merchantId = "Merchant ID is required";
+      newErrors.merchantId = 'Merchant ID is required';
     if (!payment.cardConnect.apiUsername)
-      newErrors.apiUsername = "API Username is required";
+      newErrors.apiUsername = 'API Username is required';
     if (!payment.cardConnect.apiPassword)
-      newErrors.apiPassword = "API Password is required";
+      newErrors.apiPassword = 'API Password is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleNext = () => {
     if (validate()) {
-      completeStep("payment");
+      completeStep('payment');
       nextStep();
     }
   };
@@ -86,7 +86,7 @@ export default function PaymentStep() {
 
       <Card variant="outlined" sx={{ mb: 4 }}>
         <CardContent>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
             <CreditCard color="primary" />
             <Typography variant="h6">CardConnect Credentials</Typography>
           </Box>
@@ -98,7 +98,7 @@ export default function PaymentStep() {
                 label="Merchant ID"
                 value={payment.cardConnect.merchantId}
                 onChange={(e) =>
-                  updateCardConnect("merchantId", e.target.value)
+                  updateCardConnect('merchantId', e.target.value)
                 }
                 error={!!errors.merchantId}
                 helperText={errors.merchantId}
@@ -111,7 +111,7 @@ export default function PaymentStep() {
                 label="API Username"
                 value={payment.cardConnect.apiUsername}
                 onChange={(e) =>
-                  updateCardConnect("apiUsername", e.target.value)
+                  updateCardConnect('apiUsername', e.target.value)
                 }
                 error={!!errors.apiUsername}
                 helperText={errors.apiUsername}
@@ -122,10 +122,10 @@ export default function PaymentStep() {
               <TextField
                 fullWidth
                 label="API Password"
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 value={payment.cardConnect.apiPassword}
                 onChange={(e) =>
-                  updateCardConnect("apiPassword", e.target.value)
+                  updateCardConnect('apiPassword', e.target.value)
                 }
                 error={!!errors.apiPassword}
                 helperText={errors.apiPassword}
@@ -150,7 +150,7 @@ export default function PaymentStep() {
                   <Switch
                     checked={payment.cardConnect.testMode}
                     onChange={(e) =>
-                      updateCardConnect("testMode", e.target.checked)
+                      updateCardConnect('testMode', e.target.checked)
                     }
                   />
                 }
@@ -167,7 +167,7 @@ export default function PaymentStep() {
             Accepted Cards
           </Typography>
           <FormGroup row>
-            {(["visa", "mastercard", "amex", "discover"] as const).map(
+            {(['visa', 'mastercard', 'amex', 'discover'] as const).map(
               (card) => (
                 <FormControlLabel
                   key={card}
@@ -213,7 +213,7 @@ export default function PaymentStep() {
         </CardContent>
       </Card>
 
-      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button startIcon={<ArrowBack />} onClick={prevStep}>
           Back
         </Button>

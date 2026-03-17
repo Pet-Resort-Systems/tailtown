@@ -2,7 +2,11 @@ import api from './api';
 import { PriceRule, DiscountType } from '../types/priceRule';
 
 // Re-export the types from priceRule.ts
-export type { PriceRule, PriceRuleType, DiscountType } from '../types/priceRule';
+export type {
+  PriceRule,
+  PriceRuleType,
+  DiscountType,
+} from '../types/priceRule';
 
 // Define additional server response types
 export type PriceRuleResponse = PriceRule & {
@@ -75,7 +79,7 @@ const priceRuleService = {
   calculatePrice: async (request: PriceCalculationRequest) => {
     const response = await api.post('/api/price-rules/calculate', request);
     return response.data;
-  }
+  },
 };
 
 export default priceRuleService;

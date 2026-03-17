@@ -4,7 +4,7 @@
  * Configure facility layout: rooms, kennels, sizes, naming conventions.
  */
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   TextField,
@@ -26,7 +26,7 @@ import {
   Slider,
   ToggleButton,
   ToggleButtonGroup,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Add,
   Delete,
@@ -34,30 +34,30 @@ import {
   ArrowBack,
   MeetingRoom,
   Edit,
-} from "@mui/icons-material";
-import { useSetupWizard } from "../SetupWizardContext";
+} from '@mui/icons-material';
+import { useSetupWizard } from '../SetupWizardContext';
 import {
   RoomConfig,
   KennelConfig,
   KennelSize,
   DEFAULT_KENNEL_SIZES,
-} from "../types";
-import { v4 as uuidv4 } from "uuid";
+} from '../types';
+import { v4 as uuidv4 } from 'uuid';
 
 const SIZE_LABELS: Record<KennelSize, string> = {
-  SMALL: "S",
-  MEDIUM: "M",
-  LARGE: "L",
-  XLARGE: "XL",
-  SUITE: "Suite",
+  SMALL: 'S',
+  MEDIUM: 'M',
+  LARGE: 'L',
+  XLARGE: 'XL',
+  SUITE: 'Suite',
 };
 
 const SIZE_COLORS: Record<KennelSize, string> = {
-  SMALL: "#4caf50",
-  MEDIUM: "#2196f3",
-  LARGE: "#ff9800",
-  XLARGE: "#f44336",
-  SUITE: "#9c27b0",
+  SMALL: '#4caf50',
+  MEDIUM: '#2196f3',
+  LARGE: '#ff9800',
+  XLARGE: '#f44336',
+  SUITE: '#9c27b0',
 };
 
 export default function RoomsKennelsStep() {
@@ -67,14 +67,14 @@ export default function RoomsKennelsStep() {
 
   const [roomDialogOpen, setRoomDialogOpen] = useState(false);
   const [editingRoom, setEditingRoom] = useState<RoomConfig | null>(null);
-  const [roomName, setRoomName] = useState("");
+  const [roomName, setRoomName] = useState('');
   const [kennelCount, setKennelCount] = useState(10);
-  const [kennelSize, setKennelSize] = useState<KennelSize>("MEDIUM");
-  const [namingPrefix, setNamingPrefix] = useState("");
+  const [kennelSize, setKennelSize] = useState<KennelSize>('MEDIUM');
+  const [namingPrefix, setNamingPrefix] = useState('');
 
   const handleNamingConventionChange = (
     _: React.MouseEvent<HTMLElement>,
-    newValue: "numeric" | "alpha" | "custom" | null
+    newValue: 'numeric' | 'alpha' | 'custom' | null
   ) => {
     if (newValue) {
       setRoomsKennels({ namingConvention: newValue });
@@ -84,11 +84,11 @@ export default function RoomsKennelsStep() {
   const generateKennelName = (roomName: string, index: number): string => {
     const prefix = namingPrefix || roomName.charAt(0).toUpperCase();
     switch (roomsKennels.namingConvention) {
-      case "numeric":
-        return `${prefix}${String(index + 1).padStart(2, "0")}`;
-      case "alpha":
+      case 'numeric':
+        return `${prefix}${String(index + 1).padStart(2, '0')}`;
+      case 'alpha':
         return `${prefix}${String.fromCharCode(65 + index)}`;
-      case "custom":
+      case 'custom':
         return `${prefix}-${index + 1}`;
       default:
         return `${prefix}${index + 1}`;
@@ -97,10 +97,10 @@ export default function RoomsKennelsStep() {
 
   const openAddRoom = () => {
     setEditingRoom(null);
-    setRoomName("");
+    setRoomName('');
     setKennelCount(10);
-    setKennelSize("MEDIUM");
-    setNamingPrefix("");
+    setKennelSize('MEDIUM');
+    setNamingPrefix('');
     setRoomDialogOpen(true);
   };
 
@@ -108,7 +108,7 @@ export default function RoomsKennelsStep() {
     setEditingRoom(room);
     setRoomName(room.name);
     setKennelCount(room.kennels.length);
-    setKennelSize(room.kennels[0]?.size || "MEDIUM");
+    setKennelSize(room.kennels[0]?.size || 'MEDIUM');
     setNamingPrefix(room.name.charAt(0));
     setRoomDialogOpen(true);
   };
@@ -158,7 +158,7 @@ export default function RoomsKennelsStep() {
 
   const handleNext = () => {
     if (roomsKennels.rooms.length > 0) {
-      completeStep("rooms-kennels");
+      completeStep('rooms-kennels');
       nextStep();
     }
   };
@@ -198,12 +198,12 @@ export default function RoomsKennelsStep() {
               <CardContent>
                 <Box
                   sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
                   }}
                 >
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <MeetingRoom color="primary" />
                     <Typography variant="h6">{room.name}</Typography>
                   </Box>
@@ -228,13 +228,16 @@ export default function RoomsKennelsStep() {
                   {room.kennels.length} kennels
                 </Typography>
                 <Box
-                  sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 1 }}
+                  sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 1 }}
                 >
                   {Object.entries(
-                    room.kennels.reduce((acc, k) => {
-                      acc[k.size] = (acc[k.size] || 0) + 1;
-                      return acc;
-                    }, {} as Record<string, number>)
+                    room.kennels.reduce(
+                      (acc, k) => {
+                        acc[k.size] = (acc[k.size] || 0) + 1;
+                        return acc;
+                      },
+                      {} as Record<string, number>
+                    )
                   ).map(([size, count]) => (
                     <Chip
                       key={size}
@@ -242,7 +245,7 @@ export default function RoomsKennelsStep() {
                       size="small"
                       sx={{
                         bgcolor: SIZE_COLORS[size as KennelSize],
-                        color: "white",
+                        color: 'white',
                       }}
                     />
                   ))}
@@ -250,12 +253,12 @@ export default function RoomsKennelsStep() {
                 <Typography
                   variant="caption"
                   color="text.secondary"
-                  sx={{ display: "block", mt: 1 }}
+                  sx={{ display: 'block', mt: 1 }}
                 >
                   {room.kennels
                     .slice(0, 3)
                     .map((k) => k.name)
-                    .join(", ")}
+                    .join(', ')}
                   {room.kennels.length > 3 &&
                     `, +${room.kennels.length - 3} more`}
                 </Typography>
@@ -269,19 +272,19 @@ export default function RoomsKennelsStep() {
           <Card
             variant="outlined"
             sx={{
-              height: "100%",
+              height: '100%',
               minHeight: 150,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              borderStyle: "dashed",
-              "&:hover": { bgcolor: "action.hover" },
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              borderStyle: 'dashed',
+              '&:hover': { bgcolor: 'action.hover' },
             }}
             onClick={openAddRoom}
           >
-            <Box sx={{ textAlign: "center" }}>
-              <Add sx={{ fontSize: 40, color: "text.secondary" }} />
+            <Box sx={{ textAlign: 'center' }}>
+              <Add sx={{ fontSize: 40, color: 'text.secondary' }} />
               <Typography color="text.secondary">Add Room</Typography>
             </Box>
           </Card>
@@ -290,9 +293,9 @@ export default function RoomsKennelsStep() {
 
       {/* Summary */}
       {roomsKennels.rooms.length > 0 && (
-        <Box sx={{ p: 2, bgcolor: "grey.100", borderRadius: 1, mb: 3 }}>
+        <Box sx={{ p: 2, bgcolor: 'grey.100', borderRadius: 1, mb: 3 }}>
           <Typography variant="subtitle2">
-            Total: {roomsKennels.rooms.length} rooms, {getTotalKennels()}{" "}
+            Total: {roomsKennels.rooms.length} rooms, {getTotalKennels()}{' '}
             kennels
           </Typography>
         </Box>
@@ -305,7 +308,7 @@ export default function RoomsKennelsStep() {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>{editingRoom ? "Edit Room" : "Add Room"}</DialogTitle>
+        <DialogTitle>{editingRoom ? 'Edit Room' : 'Add Room'}</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
             <Grid item xs={12}>
@@ -327,10 +330,10 @@ export default function RoomsKennelsStep() {
                 min={1}
                 max={50}
                 marks={[
-                  { value: 1, label: "1" },
-                  { value: 10, label: "10" },
-                  { value: 25, label: "25" },
-                  { value: 50, label: "50" },
+                  { value: 1, label: '1' },
+                  { value: 10, label: '10' },
+                  { value: 25, label: '25' },
+                  { value: 50, label: '50' },
                 ]}
               />
             </Grid>
@@ -356,14 +359,14 @@ export default function RoomsKennelsStep() {
                 label="Naming Prefix"
                 value={namingPrefix}
                 onChange={(e) => setNamingPrefix(e.target.value.toUpperCase())}
-                placeholder={roomName.charAt(0).toUpperCase() || "A"}
+                placeholder={roomName.charAt(0).toUpperCase() || 'A'}
                 helperText={`Preview: ${generateKennelName(
-                  roomName || "Room",
+                  roomName || 'Room',
                   0
                 )}, ${generateKennelName(
-                  roomName || "Room",
+                  roomName || 'Room',
                   1
-                )}, ${generateKennelName(roomName || "Room", 2)}...`}
+                )}, ${generateKennelName(roomName || 'Room', 2)}...`}
               />
             </Grid>
           </Grid>
@@ -375,13 +378,13 @@ export default function RoomsKennelsStep() {
             onClick={handleSaveRoom}
             disabled={!roomName.trim()}
           >
-            {editingRoom ? "Save Changes" : "Add Room"}
+            {editingRoom ? 'Save Changes' : 'Add Room'}
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Navigation */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button startIcon={<ArrowBack />} onClick={prevStep}>
           Back
         </Button>

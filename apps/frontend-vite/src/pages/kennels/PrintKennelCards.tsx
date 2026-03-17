@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import "./PrintKennelCards.css";
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import './PrintKennelCards.css';
 import {
   Container,
   Typography,
@@ -15,19 +15,19 @@ import {
   Divider,
   Alert,
   SelectChangeEvent,
-} from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+} from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import {
   Print as PrintIcon,
   FilterList as FilterIcon,
-} from "@mui/icons-material";
-import KennelCard from "../../components/kennels/KennelCard";
-import { reservationService } from "../../services/reservationService";
-import { tenantService } from "../../services/tenantService";
-import { format } from "date-fns";
-import { parseGingrDate } from "../../utils/dateUtils";
+} from '@mui/icons-material';
+import KennelCard from '../../components/kennels/KennelCard';
+import { reservationService } from '../../services/reservationService';
+import { tenantService } from '../../services/tenantService';
+import { format } from 'date-fns';
+import { parseGingrDate } from '../../utils/dateUtils';
 
 /**
  * PrintKennelCards component allows staff to print kennel cards for active reservations
@@ -40,7 +40,7 @@ const PrintKennelCards: React.FC = () => {
     const today = new Date();
     return today;
   });
-  const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
+  const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
   const [loading, setLoading] = useState<boolean>(true); // Start with loading state
   const [error, setError] = useState<string | null>(null);
   const [initialized, setInitialized] = useState<boolean>(false); // Track initialization
@@ -57,7 +57,7 @@ const PrintKennelCards: React.FC = () => {
 
   // State for tenant timezone
   const [tenantTimezone, setTenantTimezone] =
-    useState<string>("America/Denver");
+    useState<string>('America/Denver');
 
   // Load reservations when filters change (but not on initial mount)
   useEffect(() => {
@@ -85,7 +85,7 @@ const PrintKennelCards: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        const formattedDate = format(today, "yyyy-MM-dd");
+        const formattedDate = format(today, 'yyyy-MM-dd');
 
         console.log(
           `Initial load: Loading kennel cards for check-in date: ${formattedDate}`
@@ -99,9 +99,9 @@ const PrintKennelCards: React.FC = () => {
         const response = await reservationService.getAllReservations(
           1,
           500,
-          "startDate",
-          "asc",
-          "",
+          'startDate',
+          'asc',
+          '',
           undefined,
           formattedDate,
           timezone
@@ -112,14 +112,14 @@ const PrintKennelCards: React.FC = () => {
           if (Array.isArray(response.data)) {
             reservationsData = response.data;
           } else if (
-            typeof response.data === "object" &&
-            "items" in response.data &&
+            typeof response.data === 'object' &&
+            'items' in response.data &&
             Array.isArray((response.data as any).items)
           ) {
             reservationsData = (response.data as any).items;
           } else if (
-            typeof response.data === "object" &&
-            "reservations" in response.data &&
+            typeof response.data === 'object' &&
+            'reservations' in response.data &&
             Array.isArray((response.data as any).reservations)
           ) {
             reservationsData = (response.data as any).reservations;
@@ -139,8 +139,8 @@ const PrintKennelCards: React.FC = () => {
           setFilteredReservations([]);
         }
       } catch (err: any) {
-        console.error("Error in initial load:", err);
-        setError("Failed to load reservations. " + (err.message || ""));
+        console.error('Error in initial load:', err);
+        setError('Failed to load reservations. ' + (err.message || ''));
       } finally {
         setLoading(false);
         setIsInitializing(false);
@@ -166,7 +166,7 @@ const PrintKennelCards: React.FC = () => {
       setError(null);
 
       // Format date for API
-      const formattedDate = format(selectedDate, "yyyy-MM-dd");
+      const formattedDate = format(selectedDate, 'yyyy-MM-dd');
 
       console.log(`Loading kennel cards for check-in date: ${formattedDate}`);
       console.log(`Using tenant timezone: ${tenantTimezone}`);
@@ -176,9 +176,9 @@ const PrintKennelCards: React.FC = () => {
       const response = await reservationService.getAllReservations(
         1, // page
         500, // limit - increased to get more reservations
-        "startDate", // sortBy
-        "asc", // sortOrder
-        selectedStatus === "ALL" ? "" : selectedStatus, // If ALL, don't filter by status
+        'startDate', // sortBy
+        'asc', // sortOrder
+        selectedStatus === 'ALL' ? '' : selectedStatus, // If ALL, don't filter by status
         undefined, // date (not used when checkInDate is provided)
         formattedDate, // checkInDate - filter for exact check-in date
         tenantTimezone // timezone - tenant's local timezone
@@ -190,19 +190,19 @@ const PrintKennelCards: React.FC = () => {
         if (Array.isArray(response.data)) {
           reservationsData = response.data;
         } else if (
-          typeof response.data === "object" &&
-          "items" in response.data &&
+          typeof response.data === 'object' &&
+          'items' in response.data &&
           Array.isArray((response.data as any).items)
         ) {
           reservationsData = (response.data as any).items;
         } else if (
-          typeof response.data === "object" &&
-          "reservations" in response.data &&
+          typeof response.data === 'object' &&
+          'reservations' in response.data &&
           Array.isArray((response.data as any).reservations)
         ) {
           reservationsData = (response.data as any).reservations;
         } else {
-          console.warn("Unexpected response structure:", response.data);
+          console.warn('Unexpected response structure:', response.data);
           reservationsData = [];
         }
       }
@@ -219,8 +219,8 @@ const PrintKennelCards: React.FC = () => {
       // Apply filters immediately with the extracted data
       filterReservations(reservationsData, extracted.pets, extracted.customers);
     } catch (err: any) {
-      console.error("Error loading reservations:", err);
-      setError("Failed to load reservations. " + (err.message || ""));
+      console.error('Error loading reservations:', err);
+      setError('Failed to load reservations. ' + (err.message || ''));
     } finally {
       setLoading(false);
     }
@@ -259,7 +259,7 @@ const PrintKennelCards: React.FC = () => {
       // Return the extracted data so we can use it immediately
       return { pets: petsTemp, customers: customersTemp };
     } catch (err) {
-      console.error("Error extracting additional data:", err);
+      console.error('Error extracting additional data:', err);
       return { pets: {}, customers: {} };
     }
   }, []);
@@ -277,7 +277,7 @@ const PrintKennelCards: React.FC = () => {
 
       // Ensure we have an array
       if (!Array.isArray(reservationsData)) {
-        console.error("reservationsData is not an array:", reservationsData);
+        console.error('reservationsData is not an array:', reservationsData);
         setFilteredReservations([]);
         return;
       }
@@ -351,7 +351,7 @@ const PrintKennelCards: React.FC = () => {
     if (pet.vaccinationStatus) {
       Object.entries(pet.vaccinationStatus).forEach(
         ([vaccine, status]: [string, any]) => {
-          if (status.status === "EXPIRED") {
+          if (status.status === 'EXPIRED') {
             alerts.push(`${vaccine} vaccination expired`);
           }
         }
@@ -366,9 +366,9 @@ const PrintKennelCards: React.FC = () => {
     // Check for behavior notes that might be alerts
     if (
       pet.behaviorNotes &&
-      (pet.behaviorNotes.toLowerCase().includes("caution") ||
-        pet.behaviorNotes.toLowerCase().includes("warning") ||
-        pet.behaviorNotes.toLowerCase().includes("alert"))
+      (pet.behaviorNotes.toLowerCase().includes('caution') ||
+        pet.behaviorNotes.toLowerCase().includes('warning') ||
+        pet.behaviorNotes.toLowerCase().includes('alert'))
     ) {
       alerts.push(pet.behaviorNotes);
     }
@@ -410,8 +410,8 @@ const PrintKennelCards: React.FC = () => {
           </Paper>
 
           {/* Filters - hidden when printing */}
-          <Paper sx={{ p: 3, mb: 4, "@media print": { display: "none" } }}>
-            <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+          <Paper sx={{ p: 3, mb: 4, '@media print': { display: 'none' } }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <FilterIcon sx={{ mr: 1 }} />
               <Typography variant="h6">Filters</Typography>
             </Box>
@@ -425,8 +425,8 @@ const PrintKennelCards: React.FC = () => {
                   slotProps={{
                     textField: {
                       fullWidth: true,
-                      size: "small",
-                      helperText: "Select date to filter reservations",
+                      size: 'small',
+                      helperText: 'Select date to filter reservations',
                     },
                   }}
                 />
@@ -464,7 +464,7 @@ const PrintKennelCards: React.FC = () => {
                   fullWidth
                   size="large"
                   disabled={filteredReservations.length === 0}
-                  sx={{ py: 1.5, fontSize: "1.1rem" }}
+                  sx={{ py: 1.5, fontSize: '1.1rem' }}
                 >
                   Print Kennel Cards
                 </Button>
@@ -476,10 +476,10 @@ const PrintKennelCards: React.FC = () => {
           {loading && (
             <Box
               sx={{
-                display: "flex",
-                justifyContent: "center",
+                display: 'flex',
+                justifyContent: 'center',
                 my: 4,
-                "@media print": { display: "none" },
+                '@media print': { display: 'none' },
               }}
             >
               <CircularProgress />
@@ -489,7 +489,7 @@ const PrintKennelCards: React.FC = () => {
           {error && (
             <Alert
               severity="error"
-              sx={{ mb: 4, "@media print": { display: "none" } }}
+              sx={{ mb: 4, '@media print': { display: 'none' } }}
             >
               {error}
             </Alert>
@@ -499,7 +499,7 @@ const PrintKennelCards: React.FC = () => {
           {!loading && filteredReservations.length === 0 && (
             <Alert
               severity="info"
-              sx={{ mb: 4, "@media print": { display: "none" } }}
+              sx={{ mb: 4, '@media print': { display: 'none' } }}
             >
               No reservations found with the selected filters.
             </Alert>
@@ -508,31 +508,31 @@ const PrintKennelCards: React.FC = () => {
           {/* Print header - only visible when printing */}
           <Box
             sx={{
-              display: "none",
-              "@media print": { display: "block", mb: 2 },
+              display: 'none',
+              '@media print': { display: 'block', mb: 2 },
             }}
           >
             <Typography variant="h5" align="center">
-              Kennel Cards -{" "}
-              {selectedDate ? format(selectedDate, "MMMM d, yyyy") : ""}
+              Kennel Cards -{' '}
+              {selectedDate ? format(selectedDate, 'MMMM d, yyyy') : ''}
             </Typography>
             <Typography variant="subtitle1" align="center" gutterBottom>
-              Status:{" "}
-              {selectedStatus === "ALL"
-                ? "All Statuses"
-                : selectedStatus === "CHECKED_IN"
-                ? "Checked In"
-                : selectedStatus === "CONFIRMED"
-                ? "Confirmed"
-                : selectedStatus === "CHECKED_OUT"
-                ? "Checked Out"
-                : selectedStatus === "COMPLETED"
-                ? "Completed"
-                : selectedStatus === "CANCELLED"
-                ? "Cancelled"
-                : selectedStatus === "NO_SHOW"
-                ? "No Show"
-                : "Pending"}
+              Status:{' '}
+              {selectedStatus === 'ALL'
+                ? 'All Statuses'
+                : selectedStatus === 'CHECKED_IN'
+                  ? 'Checked In'
+                  : selectedStatus === 'CONFIRMED'
+                    ? 'Confirmed'
+                    : selectedStatus === 'CHECKED_OUT'
+                      ? 'Checked Out'
+                      : selectedStatus === 'COMPLETED'
+                        ? 'Completed'
+                        : selectedStatus === 'CANCELLED'
+                          ? 'Cancelled'
+                          : selectedStatus === 'NO_SHOW'
+                            ? 'No Show'
+                            : 'Pending'}
             </Typography>
             <Divider sx={{ my: 2 }} />
           </Box>
@@ -541,14 +541,14 @@ const PrintKennelCards: React.FC = () => {
           <Box
             className="kennel-card-container"
             sx={{
-              display: "flex",
-              flexDirection: "column",
+              display: 'flex',
+              flexDirection: 'column',
               gap: 4,
-              "@media print": {
+              '@media print': {
                 gap: 0,
-                "& > *": {
-                  pageBreakAfter: "always",
-                  marginBottom: "0.5in",
+                '& > *': {
+                  pageBreakAfter: 'always',
+                  marginBottom: '0.5in',
                 },
               },
             }}
@@ -561,7 +561,7 @@ const PrintKennelCards: React.FC = () => {
               // Extract kennel number from resource attributes
               // Default to a placeholder if not found
               let kennelNumber: string | number = 0;
-              let suiteType = "STANDARD_SUITE";
+              let suiteType = 'STANDARD_SUITE';
 
               if (resource) {
                 // Use the suite.type directly from the database, or fall back to attributes.suiteType, or default to STANDARD_SUITE
@@ -586,12 +586,12 @@ const PrintKennelCards: React.FC = () => {
               // For service types that don't require kennels (like grooming)
               // we'll use a placeholder
               if (!kennelNumber && reservation.serviceType) {
-                if (reservation.serviceType === "GROOMING") {
-                  kennelNumber = "G".charCodeAt(0); // Use ASCII code as number
-                  suiteType = "GROOMING";
-                } else if (reservation.serviceType === "TRAINING") {
-                  kennelNumber = "T".charCodeAt(0); // Use ASCII code as number
-                  suiteType = "TRAINING";
+                if (reservation.serviceType === 'GROOMING') {
+                  kennelNumber = 'G'.charCodeAt(0); // Use ASCII code as number
+                  suiteType = 'GROOMING';
+                } else if (reservation.serviceType === 'TRAINING') {
+                  kennelNumber = 'T'.charCodeAt(0); // Use ASCII code as number
+                  suiteType = 'TRAINING';
                 } else {
                   kennelNumber = 1; // Default
                 }
@@ -600,7 +600,7 @@ const PrintKennelCards: React.FC = () => {
               // Ensure all reservations have a kennel number
               if (kennelNumber === 0) {
                 // Try to use the last two digits of the reservation ID as a unique number
-                const idDigits = reservation.id.replace(/[^0-9]/g, "");
+                const idDigits = reservation.id.replace(/[^0-9]/g, '');
                 if (idDigits.length > 0) {
                   kennelNumber = parseInt(idDigits.slice(-2)) || 1;
                 } else {
@@ -608,7 +608,7 @@ const PrintKennelCards: React.FC = () => {
                   kennelNumber =
                     (Math.abs(
                       reservation.id
-                        .split("")
+                        .split('')
                         .reduce((a: number, b: string) => {
                           return a + b.charCodeAt(0);
                         }, 0)
@@ -633,14 +633,14 @@ const PrintKennelCards: React.FC = () => {
                 pet.petIcons.length > 0
               ) {
                 petIconIds = [...pet.petIcons];
-              } else if (pet.name.toLowerCase() === "vader") {
+              } else if (pet.name.toLowerCase() === 'vader') {
                 // Special case for Vader based on user requirements
                 petIconIds = [
-                  "small-size",
-                  "medium-group",
-                  "resource-guarder",
-                  "medication-required",
-                  "advanced-handling",
+                  'small-size',
+                  'medium-group',
+                  'resource-guarder',
+                  'medication-required',
+                  'advanced-handling',
                 ];
               } else {
                 // Generate unique icons based on pet characteristics
@@ -648,97 +648,97 @@ const PrintKennelCards: React.FC = () => {
                 // Add size icon based on weight
                 if (pet.weight) {
                   if (pet.weight < 20) {
-                    petIconIds.push("small-size");
+                    petIconIds.push('small-size');
                   } else if (pet.weight >= 20 && pet.weight <= 50) {
-                    petIconIds.push("medium-size");
+                    petIconIds.push('medium-size');
                   } else {
-                    petIconIds.push("large-size");
+                    petIconIds.push('large-size');
                   }
-                } else if (pet.type === "DOG") {
+                } else if (pet.type === 'DOG') {
                   // Default size for dogs without weight
-                  petIconIds.push("medium-size");
-                } else if (pet.type === "CAT") {
+                  petIconIds.push('medium-size');
+                } else if (pet.type === 'CAT') {
                   // Default size for cats without weight
-                  petIconIds.push("small-size");
+                  petIconIds.push('small-size');
                 }
 
                 // Add group icon based on pet name (just to make them unique)
                 // This is just for demonstration - in a real app, you'd use actual pet data
                 const petNameHash = pet.name.length % 4;
                 if (petNameHash === 0) {
-                  petIconIds.push("small-group");
+                  petIconIds.push('small-group');
                 } else if (petNameHash === 1) {
-                  petIconIds.push("medium-group");
+                  petIconIds.push('medium-group');
                 } else if (petNameHash === 2) {
-                  petIconIds.push("large-group");
+                  petIconIds.push('large-group');
                 } else {
-                  petIconIds.push("solo-only");
+                  petIconIds.push('solo-only');
                 }
 
                 // Add behavior icons based on notes or pet name
                 if (pet.behaviorNotes) {
                   const notes = pet.behaviorNotes.toLowerCase();
-                  if (notes.includes("bark") || notes.includes("vocal")) {
-                    petIconIds.push("barker");
+                  if (notes.includes('bark') || notes.includes('vocal')) {
+                    petIconIds.push('barker');
                   }
                   if (
-                    notes.includes("chew") ||
-                    notes.includes("destroy") ||
-                    notes.includes("bed")
+                    notes.includes('chew') ||
+                    notes.includes('destroy') ||
+                    notes.includes('bed')
                   ) {
-                    petIconIds.push("no-bedding");
+                    petIconIds.push('no-bedding');
                   }
-                  if (notes.includes("jump") || notes.includes("escape")) {
-                    petIconIds.push("escape-artist");
+                  if (notes.includes('jump') || notes.includes('escape')) {
+                    petIconIds.push('escape-artist');
                   }
                   if (
-                    notes.includes("resource") ||
-                    notes.includes("guard") ||
-                    notes.includes("food aggression")
+                    notes.includes('resource') ||
+                    notes.includes('guard') ||
+                    notes.includes('food aggression')
                   ) {
-                    petIconIds.push("resource-guarder");
+                    petIconIds.push('resource-guarder');
                   }
                 } else {
                   // Add some behavior icons based on pet name (just to make them unique)
                   // This is just for demonstration - in a real app, you'd use actual pet data
                   const behaviorHash = (pet.name.charCodeAt(0) || 0) % 4;
                   if (behaviorHash === 0) {
-                    petIconIds.push("barker");
+                    petIconIds.push('barker');
                   } else if (behaviorHash === 1) {
-                    petIconIds.push("digger");
+                    petIconIds.push('digger');
                   } else if (behaviorHash === 2) {
-                    petIconIds.push("mouthy");
+                    petIconIds.push('mouthy');
                   } else {
-                    petIconIds.push("fence-fighter");
+                    petIconIds.push('fence-fighter');
                   }
                 }
 
                 // Add medical icons based on notes
                 if (pet.medicationNotes) {
-                  petIconIds.push("medication-required");
+                  petIconIds.push('medication-required');
                 }
                 if (pet.specialNeeds) {
-                  petIconIds.push("medical-monitoring");
+                  petIconIds.push('medical-monitoring');
                 }
                 if (pet.allergies) {
-                  petIconIds.push("special-diet");
+                  petIconIds.push('special-diet');
                 }
 
                 // Add handling icon based on pet ID (just to make them unique)
                 // This is just for demonstration - in a real app, you'd use actual pet data
                 const handlingHash = pet.id.charCodeAt(0) % 3;
                 if (handlingHash === 0) {
-                  petIconIds.push("advanced-handling");
+                  petIconIds.push('advanced-handling');
                 } else if (handlingHash === 1) {
-                  petIconIds.push("approach-slowly");
+                  petIconIds.push('approach-slowly');
                 } else {
-                  petIconIds.push("harness-only");
+                  petIconIds.push('harness-only');
                 }
               }
 
               // Reduced logging: only log if there are issues
               if (petIconIds.length === 0) {
-                console.warn("No pet icons generated for:", pet.name);
+                console.warn('No pet icons generated for:', pet.name);
               }
 
               // Extract alerts
@@ -757,9 +757,9 @@ const PrintKennelCards: React.FC = () => {
                     petBreed={pet.breed}
                     petWeight={pet.weight}
                     petIconIds={petIconIds}
-                    petType={pet.type || "DOG"}
+                    petType={pet.type || 'DOG'}
                     customNotes={pet.iconNotes || {}}
-                    petNotes={pet.behaviorNotes || ""}
+                    petNotes={pet.behaviorNotes || ''}
                     ownerName={`${customer.firstName} ${customer.lastName}`}
                     ownerPhone={customer.phone}
                     startDate={

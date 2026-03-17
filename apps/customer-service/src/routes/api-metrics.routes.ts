@@ -5,17 +5,17 @@
  * Requires super admin or tenant admin authentication.
  */
 
-import { Router, Request, Response } from "express";
+import { Router, Request, Response } from 'express';
 import {
   getApiMetrics,
   getGlobalApiMetrics,
-} from "../middleware/apiGateway.middleware";
+} from '../middleware/apiGateway.middleware';
 import {
   authenticate,
   requireTenantAdmin,
   requireSuperAdmin,
-} from "../middleware/auth.middleware";
-import { requireTenant } from "../middleware/tenant.middleware";
+} from '../middleware/auth.middleware';
+import { requireTenant } from '../middleware/tenant.middleware';
 
 const router = Router();
 
@@ -25,7 +25,7 @@ const router = Router();
  * Requires tenant admin authentication
  */
 router.get(
-  "/",
+  '/',
   requireTenant,
   authenticate,
   requireTenantAdmin,
@@ -37,14 +37,14 @@ router.get(
       const metrics = await getApiMetrics(tenantId, date);
 
       res.json({
-        status: "success",
+        status: 'success',
         data: metrics,
       });
     } catch (error: any) {
-      console.error("[API Metrics] Error:", error);
+      console.error('[API Metrics] Error:', error);
       res.status(500).json({
-        status: "error",
-        message: "Failed to retrieve API metrics",
+        status: 'error',
+        message: 'Failed to retrieve API metrics',
       });
     }
   }
@@ -56,7 +56,7 @@ router.get(
  * Requires super admin authentication
  */
 router.get(
-  "/global",
+  '/global',
   requireSuperAdmin,
   async (req: Request, res: Response) => {
     try {
@@ -65,14 +65,14 @@ router.get(
       const metrics = await getGlobalApiMetrics(date);
 
       res.json({
-        status: "success",
+        status: 'success',
         data: metrics,
       });
     } catch (error: any) {
-      console.error("[API Metrics] Error:", error);
+      console.error('[API Metrics] Error:', error);
       res.status(500).json({
-        status: "error",
-        message: "Failed to retrieve global API metrics",
+        status: 'error',
+        message: 'Failed to retrieve global API metrics',
       });
     }
   }
@@ -82,10 +82,10 @@ router.get(
  * GET /api/metrics/health
  * Get API health status (public endpoint for monitoring)
  */
-router.get("/health", async (req: Request, res: Response) => {
+router.get('/health', async (req: Request, res: Response) => {
   res.json({
-    status: "healthy",
-    version: "v1",
+    status: 'healthy',
+    version: 'v1',
     timestamp: new Date().toISOString(),
   });
 });

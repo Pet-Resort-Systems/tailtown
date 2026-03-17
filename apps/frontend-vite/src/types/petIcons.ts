@@ -3,15 +3,15 @@
  */
 
 export type IconCategory =
-  | "group"
-  | "size"
-  | "behavior"
-  | "medical"
-  | "handling"
-  | "kennel"
-  | "notes"
-  | "account"
-  | "flag";
+  | 'group'
+  | 'size'
+  | 'behavior'
+  | 'medical'
+  | 'handling'
+  | 'kennel'
+  | 'notes'
+  | 'account'
+  | 'flag';
 
 export interface PetIcon {
   id: string;

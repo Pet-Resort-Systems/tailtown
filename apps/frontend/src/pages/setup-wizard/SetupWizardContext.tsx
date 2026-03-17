@@ -10,7 +10,7 @@ import React, {
   useReducer,
   useEffect,
   ReactNode,
-} from "react";
+} from 'react';
 import {
   SetupWizardData,
   WizardStep,
@@ -30,7 +30,7 @@ import {
   DEFAULT_HOURS,
   DEFAULT_HOLIDAYS,
   DEFAULT_VACCINATIONS,
-} from "./types";
+} from './types';
 
 // ============================================================================
 // Initial State
@@ -38,18 +38,18 @@ import {
 
 const getInitialState = (): SetupWizardData => ({
   businessInfo: {
-    name: "",
-    address: "",
-    city: "",
-    state: "",
-    zipCode: "",
-    phone: "",
-    email: "",
-    timezone: "America/Denver",
+    name: '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    phone: '',
+    email: '',
+    timezone: 'America/Denver',
   },
   roomsKennels: {
     rooms: [],
-    namingConvention: "numeric",
+    namingConvention: 'numeric',
     kennelSizes: DEFAULT_KENNEL_SIZES,
   },
   services: {
@@ -60,16 +60,16 @@ const getInitialState = (): SetupWizardData => ({
   },
   pricing: {
     tiers: [
-      { kennelSize: "SMALL", dailyRate: 35, halfDayRate: 20 },
-      { kennelSize: "MEDIUM", dailyRate: 40, halfDayRate: 25 },
-      { kennelSize: "LARGE", dailyRate: 45, halfDayRate: 28 },
-      { kennelSize: "XLARGE", dailyRate: 50, halfDayRate: 30 },
-      { kennelSize: "SUITE", dailyRate: 65, halfDayRate: 40 },
+      { kennelSize: 'SMALL', dailyRate: 35, halfDayRate: 20 },
+      { kennelSize: 'MEDIUM', dailyRate: 40, halfDayRate: 25 },
+      { kennelSize: 'LARGE', dailyRate: 45, halfDayRate: 28 },
+      { kennelSize: 'XLARGE', dailyRate: 50, halfDayRate: 30 },
+      { kennelSize: 'SUITE', dailyRate: 65, halfDayRate: 40 },
     ],
     holidaySurcharge: 15,
     multiPetDiscount: 10,
     depositRequired: true,
-    depositType: "first_night",
+    depositType: 'first_night',
   },
   operatingHours: {
     hours: {
@@ -78,11 +78,11 @@ const getInitialState = (): SetupWizardData => ({
       wednesday: { ...DEFAULT_HOURS },
       thursday: { ...DEFAULT_HOURS },
       friday: { ...DEFAULT_HOURS },
-      saturday: { open: "08:00", close: "17:00", closed: false },
-      sunday: { open: "08:00", close: "17:00", closed: false },
+      saturday: { open: '08:00', close: '17:00', closed: false },
+      sunday: { open: '08:00', close: '17:00', closed: false },
     },
-    checkInWindow: { start: "14:00", end: "18:00" },
-    checkOutWindow: { start: "07:00", end: "12:00" },
+    checkInWindow: { start: '14:00', end: '18:00' },
+    checkOutWindow: { start: '07:00', end: '12:00' },
     holidays: DEFAULT_HOLIDAYS,
   },
   staff: {
@@ -90,12 +90,12 @@ const getInitialState = (): SetupWizardData => ({
   },
   payment: {
     cardConnect: {
-      merchantId: "",
-      apiUsername: "",
-      apiPassword: "",
+      merchantId: '',
+      apiUsername: '',
+      apiPassword: '',
       testMode: true,
     },
-    acceptedCards: ["visa", "mastercard", "amex", "discover"],
+    acceptedCards: ['visa', 'mastercard', 'amex', 'discover'],
     requireCvv: true,
     storeCards: true,
   },
@@ -105,8 +105,8 @@ const getInitialState = (): SetupWizardData => ({
     reminderDaysBefore: 1,
   },
   branding: {
-    primaryColor: "#1976d2",
-    secondaryColor: "#dc004e",
+    primaryColor: '#1976d2',
+    secondaryColor: '#dc004e',
   },
   policies: {
     cancellation: {
@@ -130,7 +130,7 @@ const getInitialState = (): SetupWizardData => ({
     temperamentTestRequired: true,
   },
   completedSteps: [],
-  currentStep: "business-info",
+  currentStep: 'business-info',
 });
 
 // ============================================================================
@@ -138,83 +138,83 @@ const getInitialState = (): SetupWizardData => ({
 // ============================================================================
 
 type Action =
-  | { type: "SET_BUSINESS_INFO"; payload: Partial<BusinessInfo> }
-  | { type: "SET_ROOMS_KENNELS"; payload: Partial<RoomsKennelsData> }
-  | { type: "SET_SERVICES"; payload: Partial<ServicesData> }
-  | { type: "SET_PRICING"; payload: Partial<PricingData> }
-  | { type: "SET_OPERATING_HOURS"; payload: Partial<OperatingHoursData> }
-  | { type: "SET_STAFF"; payload: Partial<StaffData> }
-  | { type: "SET_PAYMENT"; payload: Partial<PaymentData> }
-  | { type: "SET_NOTIFICATIONS"; payload: Partial<NotificationsData> }
-  | { type: "SET_BRANDING"; payload: Partial<BrandingData> }
-  | { type: "SET_POLICIES"; payload: Partial<PoliciesData> }
-  | { type: "COMPLETE_STEP"; payload: WizardStep }
-  | { type: "GO_TO_STEP"; payload: WizardStep }
-  | { type: "NEXT_STEP" }
-  | { type: "PREV_STEP" }
-  | { type: "RESET" }
-  | { type: "LOAD_STATE"; payload: SetupWizardData };
+  | { type: 'SET_BUSINESS_INFO'; payload: Partial<BusinessInfo> }
+  | { type: 'SET_ROOMS_KENNELS'; payload: Partial<RoomsKennelsData> }
+  | { type: 'SET_SERVICES'; payload: Partial<ServicesData> }
+  | { type: 'SET_PRICING'; payload: Partial<PricingData> }
+  | { type: 'SET_OPERATING_HOURS'; payload: Partial<OperatingHoursData> }
+  | { type: 'SET_STAFF'; payload: Partial<StaffData> }
+  | { type: 'SET_PAYMENT'; payload: Partial<PaymentData> }
+  | { type: 'SET_NOTIFICATIONS'; payload: Partial<NotificationsData> }
+  | { type: 'SET_BRANDING'; payload: Partial<BrandingData> }
+  | { type: 'SET_POLICIES'; payload: Partial<PoliciesData> }
+  | { type: 'COMPLETE_STEP'; payload: WizardStep }
+  | { type: 'GO_TO_STEP'; payload: WizardStep }
+  | { type: 'NEXT_STEP' }
+  | { type: 'PREV_STEP' }
+  | { type: 'RESET' }
+  | { type: 'LOAD_STATE'; payload: SetupWizardData };
 
 function reducer(state: SetupWizardData, action: Action): SetupWizardData {
   switch (action.type) {
-    case "SET_BUSINESS_INFO":
+    case 'SET_BUSINESS_INFO':
       return {
         ...state,
         businessInfo: { ...state.businessInfo, ...action.payload },
       };
-    case "SET_ROOMS_KENNELS":
+    case 'SET_ROOMS_KENNELS':
       return {
         ...state,
         roomsKennels: { ...state.roomsKennels, ...action.payload },
       };
-    case "SET_SERVICES":
+    case 'SET_SERVICES':
       return { ...state, services: { ...state.services, ...action.payload } };
-    case "SET_PRICING":
+    case 'SET_PRICING':
       return { ...state, pricing: { ...state.pricing, ...action.payload } };
-    case "SET_OPERATING_HOURS":
+    case 'SET_OPERATING_HOURS':
       return {
         ...state,
         operatingHours: { ...state.operatingHours, ...action.payload },
       };
-    case "SET_STAFF":
+    case 'SET_STAFF':
       return { ...state, staff: { ...state.staff, ...action.payload } };
-    case "SET_PAYMENT":
+    case 'SET_PAYMENT':
       return { ...state, payment: { ...state.payment, ...action.payload } };
-    case "SET_NOTIFICATIONS":
+    case 'SET_NOTIFICATIONS':
       return {
         ...state,
         notifications: { ...state.notifications, ...action.payload },
       };
-    case "SET_BRANDING":
+    case 'SET_BRANDING':
       return { ...state, branding: { ...state.branding, ...action.payload } };
-    case "SET_POLICIES":
+    case 'SET_POLICIES':
       return { ...state, policies: { ...state.policies, ...action.payload } };
-    case "COMPLETE_STEP":
+    case 'COMPLETE_STEP':
       return {
         ...state,
         completedSteps: state.completedSteps.includes(action.payload)
           ? state.completedSteps
           : [...state.completedSteps, action.payload],
       };
-    case "GO_TO_STEP":
+    case 'GO_TO_STEP':
       return { ...state, currentStep: action.payload };
-    case "NEXT_STEP": {
+    case 'NEXT_STEP': {
       const currentIndex = WIZARD_STEPS.findIndex(
         (s) => s.id === state.currentStep
       );
       const nextStep = WIZARD_STEPS[currentIndex + 1];
       return nextStep ? { ...state, currentStep: nextStep.id } : state;
     }
-    case "PREV_STEP": {
+    case 'PREV_STEP': {
       const currentIndex = WIZARD_STEPS.findIndex(
         (s) => s.id === state.currentStep
       );
       const prevStep = WIZARD_STEPS[currentIndex - 1];
       return prevStep ? { ...state, currentStep: prevStep.id } : state;
     }
-    case "RESET":
+    case 'RESET':
       return getInitialState();
-    case "LOAD_STATE":
+    case 'LOAD_STATE':
       return action.payload;
     default:
       return state;
@@ -251,7 +251,7 @@ interface SetupWizardContextType {
 
 const SetupWizardContext = createContext<SetupWizardContextType | null>(null);
 
-const STORAGE_KEY = "tailtown_setup_wizard";
+const STORAGE_KEY = 'tailtown_setup_wizard';
 
 // ============================================================================
 // Provider
@@ -272,9 +272,9 @@ export default function SetupWizardProvider({
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        dispatch({ type: "LOAD_STATE", payload: parsed });
+        dispatch({ type: 'LOAD_STATE', payload: parsed });
       } catch (e) {
-        console.error("Failed to load setup wizard state:", e);
+        console.error('Failed to load setup wizard state:', e);
       }
     }
   }, []);
@@ -288,26 +288,26 @@ export default function SetupWizardProvider({
     state,
     dispatch,
     setBusinessInfo: (data) =>
-      dispatch({ type: "SET_BUSINESS_INFO", payload: data }),
+      dispatch({ type: 'SET_BUSINESS_INFO', payload: data }),
     setRoomsKennels: (data) =>
-      dispatch({ type: "SET_ROOMS_KENNELS", payload: data }),
-    setServices: (data) => dispatch({ type: "SET_SERVICES", payload: data }),
-    setPricing: (data) => dispatch({ type: "SET_PRICING", payload: data }),
+      dispatch({ type: 'SET_ROOMS_KENNELS', payload: data }),
+    setServices: (data) => dispatch({ type: 'SET_SERVICES', payload: data }),
+    setPricing: (data) => dispatch({ type: 'SET_PRICING', payload: data }),
     setOperatingHours: (data) =>
-      dispatch({ type: "SET_OPERATING_HOURS", payload: data }),
-    setStaff: (data) => dispatch({ type: "SET_STAFF", payload: data }),
-    setPayment: (data) => dispatch({ type: "SET_PAYMENT", payload: data }),
+      dispatch({ type: 'SET_OPERATING_HOURS', payload: data }),
+    setStaff: (data) => dispatch({ type: 'SET_STAFF', payload: data }),
+    setPayment: (data) => dispatch({ type: 'SET_PAYMENT', payload: data }),
     setNotifications: (data) =>
-      dispatch({ type: "SET_NOTIFICATIONS", payload: data }),
-    setBranding: (data) => dispatch({ type: "SET_BRANDING", payload: data }),
-    setPolicies: (data) => dispatch({ type: "SET_POLICIES", payload: data }),
-    completeStep: (step) => dispatch({ type: "COMPLETE_STEP", payload: step }),
-    goToStep: (step) => dispatch({ type: "GO_TO_STEP", payload: step }),
-    nextStep: () => dispatch({ type: "NEXT_STEP" }),
-    prevStep: () => dispatch({ type: "PREV_STEP" }),
+      dispatch({ type: 'SET_NOTIFICATIONS', payload: data }),
+    setBranding: (data) => dispatch({ type: 'SET_BRANDING', payload: data }),
+    setPolicies: (data) => dispatch({ type: 'SET_POLICIES', payload: data }),
+    completeStep: (step) => dispatch({ type: 'COMPLETE_STEP', payload: step }),
+    goToStep: (step) => dispatch({ type: 'GO_TO_STEP', payload: step }),
+    nextStep: () => dispatch({ type: 'NEXT_STEP' }),
+    prevStep: () => dispatch({ type: 'PREV_STEP' }),
     reset: () => {
       localStorage.removeItem(STORAGE_KEY);
-      dispatch({ type: "RESET" });
+      dispatch({ type: 'RESET' });
     },
     isStepComplete: (step) => state.completedSteps.includes(step),
     canProceed: () => {
@@ -342,7 +342,7 @@ export default function SetupWizardProvider({
 export function useSetupWizard() {
   const context = useContext(SetupWizardContext);
   if (!context) {
-    throw new Error("useSetupWizard must be used within SetupWizardProvider");
+    throw new Error('useSetupWizard must be used within SetupWizardProvider');
   }
   return context;
 }

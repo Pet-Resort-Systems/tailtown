@@ -7,7 +7,7 @@ import {
   LoyaltyTier,
   PointEarningRule,
   RedemptionOption,
-  DEFAULT_TIERS
+  DEFAULT_TIERS,
 } from '../../types/loyalty';
 
 describe('Loyalty Service', () => {
@@ -15,7 +15,7 @@ describe('Loyalty Service', () => {
     it('should calculate points for purchase amount', () => {
       expect(loyaltyService.calculatePointsForPurchase(100, 1, 1)).toBe(100);
       expect(loyaltyService.calculatePointsForPurchase(50, 2, 1)).toBe(100);
-      expect(loyaltyService.calculatePointsForPurchase(75.50, 1, 1)).toBe(75);
+      expect(loyaltyService.calculatePointsForPurchase(75.5, 1, 1)).toBe(75);
     });
 
     it('should apply tier multiplier', () => {
@@ -134,7 +134,7 @@ describe('Loyalty Service', () => {
         description: 'Get $10 off',
         pointsCost: 1000,
         discountAmount: 10,
-        isActive: true
+        isActive: true,
       };
 
       expect(loyaltyService.calculateRedemptionValue(option)).toBe(10);
@@ -148,7 +148,7 @@ describe('Loyalty Service', () => {
         description: 'Get 10% off',
         pointsCost: 750,
         discountPercentage: 10,
-        isActive: true
+        isActive: true,
       };
 
       expect(loyaltyService.calculateRedemptionValue(option, 100)).toBe(10);
@@ -163,7 +163,7 @@ describe('Loyalty Service', () => {
         description: 'Get 10% off',
         pointsCost: 750,
         discountPercentage: 10,
-        isActive: true
+        isActive: true,
       };
 
       expect(loyaltyService.calculateRedemptionValue(option)).toBe(0);
@@ -176,7 +176,7 @@ describe('Loyalty Service', () => {
         name: 'Free Grooming',
         description: 'Get free grooming',
         pointsCost: 2000,
-        isActive: true
+        isActive: true,
       };
 
       expect(loyaltyService.calculateRedemptionValue(option)).toBe(0);
@@ -188,7 +188,7 @@ describe('Loyalty Service', () => {
       const validRule: Partial<PointEarningRule> = {
         type: 'DOLLARS_SPENT',
         pointsPerDollar: 1,
-        isActive: true
+        isActive: true,
       };
 
       const result = loyaltyService.validateEarningRule(validRule);
@@ -199,7 +199,7 @@ describe('Loyalty Service', () => {
     it('should require pointsPerDollar for DOLLARS_SPENT', () => {
       const invalidRule: Partial<PointEarningRule> = {
         type: 'DOLLARS_SPENT',
-        isActive: true
+        isActive: true,
       };
 
       const result = loyaltyService.validateEarningRule(invalidRule);
@@ -211,7 +211,7 @@ describe('Loyalty Service', () => {
       const validRule: Partial<PointEarningRule> = {
         type: 'VISIT',
         pointsPerVisit: 10,
-        isActive: true
+        isActive: true,
       };
 
       const result = loyaltyService.validateEarningRule(validRule);
@@ -221,7 +221,7 @@ describe('Loyalty Service', () => {
     it('should require pointsPerVisit for VISIT', () => {
       const invalidRule: Partial<PointEarningRule> = {
         type: 'VISIT',
-        isActive: true
+        isActive: true,
       };
 
       const result = loyaltyService.validateEarningRule(invalidRule);
@@ -234,7 +234,7 @@ describe('Loyalty Service', () => {
         type: 'REFERRAL',
         pointsForReferrer: 500,
         pointsForReferee: 100,
-        isActive: true
+        isActive: true,
       };
 
       const result = loyaltyService.validateEarningRule(validRule);
@@ -245,7 +245,7 @@ describe('Loyalty Service', () => {
       const invalidRule: Partial<PointEarningRule> = {
         type: 'REFERRAL',
         pointsForReferrer: 500,
-        isActive: true
+        isActive: true,
       };
 
       const result = loyaltyService.validateEarningRule(invalidRule);
@@ -262,7 +262,7 @@ describe('Loyalty Service', () => {
         type: 'DISCOUNT_FIXED',
         pointsCost: 1000,
         discountAmount: 10,
-        isActive: true
+        isActive: true,
       };
 
       const result = loyaltyService.validateRedemptionOption(validOption);
@@ -274,7 +274,7 @@ describe('Loyalty Service', () => {
       const invalidOption: Partial<RedemptionOption> = {
         type: 'DISCOUNT_FIXED',
         pointsCost: 1000,
-        discountAmount: 10
+        discountAmount: 10,
       };
 
       const result = loyaltyService.validateRedemptionOption(invalidOption);
@@ -286,7 +286,7 @@ describe('Loyalty Service', () => {
       const invalidOption: Partial<RedemptionOption> = {
         name: '$10 Off',
         type: 'DISCOUNT_FIXED',
-        discountAmount: 10
+        discountAmount: 10,
       };
 
       const result = loyaltyService.validateRedemptionOption(invalidOption);
@@ -298,7 +298,7 @@ describe('Loyalty Service', () => {
       const invalidOption: Partial<RedemptionOption> = {
         name: '10% Off',
         type: 'DISCOUNT_PERCENTAGE',
-        pointsCost: 750
+        pointsCost: 750,
       };
 
       const result = loyaltyService.validateRedemptionOption(invalidOption);
@@ -310,7 +310,7 @@ describe('Loyalty Service', () => {
       const invalidOption: Partial<RedemptionOption> = {
         name: '$10 Off',
         type: 'DISCOUNT_FIXED',
-        pointsCost: 1000
+        pointsCost: 1000,
       };
 
       const result = loyaltyService.validateRedemptionOption(invalidOption);

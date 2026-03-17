@@ -3,7 +3,7 @@
  * Shows daily payment summary for cash drawer reconciliation
  */
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Typography,
@@ -23,7 +23,7 @@ import {
   Alert,
   Divider,
   Chip,
-} from "@mui/material";
+} from '@mui/material';
 import {
   PointOfSale as POSIcon,
   Print as PrintIcon,
@@ -31,15 +31,15 @@ import {
   AttachMoney as CashIcon,
   CreditCard as CardIcon,
   Receipt as ReceiptIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import {
   formatCurrency,
   getReconciliationReport,
   exportReportCSV,
-} from "../../services/reportService";
+} from '../../services/reportService';
 
 const ReconciliationReport: React.FC = () => {
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reportData, setReportData] = useState<any>(null);
@@ -51,9 +51,9 @@ const ReconciliationReport: React.FC = () => {
       const response = await getReconciliationReport(date);
       setReportData(response?.data || response);
     } catch (err: any) {
-      console.error("Error loading reconciliation report:", err);
+      console.error('Error loading reconciliation report:', err);
       setError(
-        err.response?.data?.message || "Failed to load reconciliation report"
+        err.response?.data?.message || 'Failed to load reconciliation report'
       );
     } finally {
       setLoading(false);
@@ -68,7 +68,7 @@ const ReconciliationReport: React.FC = () => {
     if (reportData) {
       exportReportCSV({
         ...reportData,
-        reportType: "reconciliation",
+        reportType: 'reconciliation',
         data: reportData.transactions || [],
       });
     }
@@ -80,14 +80,14 @@ const ReconciliationReport: React.FC = () => {
 
   const getPaymentMethodColor = (method: string) => {
     switch (method.toUpperCase()) {
-      case "CASH":
-        return "success";
-      case "CARD":
-      case "CREDIT_CARD":
-      case "DEBIT_CARD":
-        return "primary";
+      case 'CASH':
+        return 'success';
+      case 'CARD':
+      case 'CREDIT_CARD':
+      case 'DEBIT_CARD':
+        return 'primary';
       default:
-        return "default";
+        return 'default';
     }
   };
 
@@ -97,13 +97,13 @@ const ReconciliationReport: React.FC = () => {
       <Box
         sx={{
           mb: 3,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
         }}
       >
         <Typography variant="h5">
-          <POSIcon sx={{ mr: 1, verticalAlign: "middle" }} />
+          <POSIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
           End-of-Day Reconciliation
         </Typography>
         <Box>
@@ -163,7 +163,7 @@ const ReconciliationReport: React.FC = () => {
 
       {/* Loading */}
       {loading && (
-        <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
           <CircularProgress />
         </Box>
       )}
@@ -174,9 +174,9 @@ const ReconciliationReport: React.FC = () => {
           {/* Summary Cards */}
           <Grid container spacing={2} sx={{ mb: 3 }}>
             <Grid item xs={12} sm={6} md={3}>
-              <Card sx={{ bgcolor: "success.light" }}>
+              <Card sx={{ bgcolor: 'success.light' }}>
                 <CardContent>
-                  <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                     <CashIcon sx={{ mr: 1 }} />
                     <Typography variant="subtitle2">Cash Sales</Typography>
                   </Box>
@@ -187,9 +187,9 @@ const ReconciliationReport: React.FC = () => {
               </Card>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Card sx={{ bgcolor: "primary.light" }}>
+              <Card sx={{ bgcolor: 'primary.light' }}>
                 <CardContent>
-                  <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                     <CardIcon sx={{ mr: 1 }} />
                     <Typography variant="subtitle2">Card Sales</Typography>
                   </Box>
@@ -212,7 +212,7 @@ const ReconciliationReport: React.FC = () => {
               </Card>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Card sx={{ bgcolor: "error.light" }}>
+              <Card sx={{ bgcolor: 'error.light' }}>
                 <CardContent>
                   <Typography variant="subtitle2">Refunds Issued</Typography>
                   <Typography variant="h4">
@@ -226,7 +226,7 @@ const ReconciliationReport: React.FC = () => {
           {/* Totals Summary */}
           <Paper sx={{ p: 3, mb: 3 }}>
             <Typography variant="h6" gutterBottom>
-              <ReceiptIcon sx={{ mr: 1, verticalAlign: "middle" }} />
+              <ReceiptIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
               Daily Summary
             </Typography>
             <Divider sx={{ mb: 2 }} />
@@ -252,13 +252,13 @@ const ReconciliationReport: React.FC = () => {
                     </TableRow>
                     <TableRow>
                       <TableCell>- Refunds Issued</TableCell>
-                      <TableCell align="right" sx={{ color: "error.main" }}>
+                      <TableCell align="right" sx={{ color: 'error.main' }}>
                         (
                         {formatCurrency(reportData.summary?.refundsIssued || 0)}
                         )
                       </TableCell>
                     </TableRow>
-                    <TableRow sx={{ bgcolor: "action.hover" }}>
+                    <TableRow sx={{ bgcolor: 'action.hover' }}>
                       <TableCell>
                         <strong>Net Revenue</strong>
                       </TableCell>
@@ -289,7 +289,7 @@ const ReconciliationReport: React.FC = () => {
                         {formatCurrency(reportData.summary?.cashSales || 0)}
                       </TableCell>
                     </TableRow>
-                    <TableRow sx={{ bgcolor: "success.light" }}>
+                    <TableRow sx={{ bgcolor: 'success.light' }}>
                       <TableCell>
                         <strong>Expected Drawer</strong>
                       </TableCell>
@@ -347,7 +347,7 @@ const ReconciliationReport: React.FC = () => {
           {/* Transaction List */}
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
-              Transaction Details ({reportData.summary?.transactionCount || 0}{" "}
+              Transaction Details ({reportData.summary?.transactionCount || 0}{' '}
               transactions)
             </Typography>
             <Divider sx={{ mb: 2 }} />
@@ -387,7 +387,7 @@ const ReconciliationReport: React.FC = () => {
                           {formatCurrency(tx.amount)}
                         </TableCell>
                         <TableCell align="right">
-                          {tx.tip > 0 ? formatCurrency(tx.tip) : "-"}
+                          {tx.tip > 0 ? formatCurrency(tx.tip) : '-'}
                         </TableCell>
                         <TableCell align="right">
                           <strong>{formatCurrency(tx.total)}</strong>
@@ -412,8 +412,8 @@ const ReconciliationReport: React.FC = () => {
 
       {/* Instructions */}
       {!loading && !reportData && !error && (
-        <Paper sx={{ p: 4, textAlign: "center" }}>
-          <POSIcon sx={{ fontSize: 48, color: "text.secondary", mb: 2 }} />
+        <Paper sx={{ p: 4, textAlign: 'center' }}>
+          <POSIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
           <Typography variant="h6" gutterBottom>
             End-of-Day Reconciliation
           </Typography>

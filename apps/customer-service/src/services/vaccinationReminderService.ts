@@ -3,9 +3,9 @@
  * Sends automated email reminders for expiring vaccinations
  */
 
-import { PrismaClient } from "@prisma/client";
-import { EmailService } from "./email.service";
-import { logger } from "../utils/logger";
+import { PrismaClient } from '@prisma/client';
+import { EmailService } from './email.service';
+import { logger } from '../utils/logger';
 
 const prisma = new PrismaClient();
 const emailService = new EmailService();
@@ -123,12 +123,12 @@ export async function sendVaccinationReminders(tenantId: string): Promise<{
                 v.daysUntilExpiration
               } days (${v.expirationDate.toLocaleDateString()})</li>`
           )
-          .join("\n");
+          .join('\n');
 
         await emailService.sendEmail({
           to: firstVaccine.customerEmail,
           subject: `Vaccination Reminder for Your Pet${
-            vaccines.length > 1 ? "s" : ""
+            vaccines.length > 1 ? 's' : ''
           }`,
           html: `
             <h2>Vaccination Reminder</h2>

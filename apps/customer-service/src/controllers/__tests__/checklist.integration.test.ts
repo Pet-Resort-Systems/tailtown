@@ -2,13 +2,13 @@
  * Checklist Controller Integration Tests
  */
 
-import { Response, NextFunction } from "express";
+import { Response, NextFunction } from 'express';
 import {
   getTestPrismaClient,
   createTestTenant,
   deleteTestData,
   disconnectTestDatabase,
-} from "../../test/setup-test-db";
+} from '../../test/setup-test-db';
 import {
   getAllTemplates,
   getTemplateById,
@@ -16,10 +16,10 @@ import {
   updateTemplate,
   deleteTemplate,
   getChecklistStats,
-} from "../checklist.controller";
-import { TenantRequest } from "../../middleware/tenant.middleware";
+} from '../checklist.controller';
+import { TenantRequest } from '../../middleware/tenant.middleware';
 
-describe("Checklist Controller Integration Tests", () => {
+describe('Checklist Controller Integration Tests', () => {
   const prisma = getTestPrismaClient();
   let testTenantId: string;
   let testTemplateIds: string[] = [];
@@ -40,12 +40,12 @@ describe("Checklist Controller Integration Tests", () => {
     const template1 = await prisma.checklistTemplate.create({
       data: {
         tenantId: testTenantId,
-        name: "Kennel Check-in",
-        description: "Standard kennel check-in checklist",
-        area: "KENNEL_CHECKIN",
+        name: 'Kennel Check-in',
+        description: 'Standard kennel check-in checklist',
+        area: 'KENNEL_CHECKIN',
         items: JSON.stringify([
-          { id: "1", label: "Verify pet info", required: true },
-          { id: "2", label: "Check vaccination", required: true },
+          { id: '1', label: 'Verify pet info', required: true },
+          { id: '2', label: 'Check vaccination', required: true },
         ]),
         estimatedMinutes: 10,
         isActive: true,
@@ -56,11 +56,11 @@ describe("Checklist Controller Integration Tests", () => {
     const template2 = await prisma.checklistTemplate.create({
       data: {
         tenantId: testTenantId,
-        name: "Grooming Prep",
-        description: "Pre-grooming checklist",
-        area: "GROOMING",
+        name: 'Grooming Prep',
+        description: 'Pre-grooming checklist',
+        area: 'GROOMING',
         items: JSON.stringify([
-          { id: "1", label: "Check coat condition", required: true },
+          { id: '1', label: 'Check coat condition', required: true },
         ]),
         estimatedMinutes: 5,
         isActive: true,
@@ -83,8 +83,8 @@ describe("Checklist Controller Integration Tests", () => {
     jest.clearAllMocks();
   });
 
-  describe("getAllTemplates", () => {
-    it("should return all templates for tenant", async () => {
+  describe('getAllTemplates', () => {
+    it('should return all templates for tenant', async () => {
       const req = {
         tenantId: testTenantId,
         query: {},
@@ -100,10 +100,10 @@ describe("Checklist Controller Integration Tests", () => {
       expect(responseData.data.length).toBeGreaterThanOrEqual(2);
     });
 
-    it("should filter by area", async () => {
+    it('should filter by area', async () => {
       const req = {
         tenantId: testTenantId,
-        query: { area: "GROOMING" },
+        query: { area: 'GROOMING' },
         params: {},
         body: {},
       } as unknown as TenantRequest;
@@ -115,8 +115,8 @@ describe("Checklist Controller Integration Tests", () => {
     });
   });
 
-  describe("getTemplateById", () => {
-    it("should return template by ID", async () => {
+  describe('getTemplateById', () => {
+    it('should return template by ID', async () => {
       const req = {
         tenantId: testTenantId,
         params: { id: testTemplateIds[0] },
@@ -132,10 +132,10 @@ describe("Checklist Controller Integration Tests", () => {
       expect(responseData.data.id).toBe(testTemplateIds[0]);
     });
 
-    it("should return 404 for non-existent template", async () => {
+    it('should return 404 for non-existent template', async () => {
       const req = {
         tenantId: testTenantId,
-        params: { id: "00000000-0000-0000-0000-000000000000" },
+        params: { id: '00000000-0000-0000-0000-000000000000' },
         query: {},
         body: {},
       } as unknown as TenantRequest;
@@ -147,17 +147,17 @@ describe("Checklist Controller Integration Tests", () => {
     });
   });
 
-  describe("createTemplate", () => {
-    it("should create a new template", async () => {
+  describe('createTemplate', () => {
+    it('should create a new template', async () => {
       const req = {
         tenantId: testTenantId,
         params: {},
         query: {},
         body: {
           name: `New Template ${Date.now()}`,
-          description: "Test template",
-          area: "CHECKOUT",
-          items: [{ id: "1", label: "Final check", required: true }],
+          description: 'Test template',
+          area: 'CHECKOUT',
+          items: [{ id: '1', label: 'Final check', required: true }],
           estimatedMinutes: 15,
         },
       } as unknown as TenantRequest;
@@ -167,18 +167,18 @@ describe("Checklist Controller Integration Tests", () => {
 
       expect(res.status).toHaveBeenCalledWith(201);
       const responseData = (res.json as jest.Mock).mock.calls[0][0];
-      expect(responseData.data.area).toBe("CHECKOUT");
+      expect(responseData.data.area).toBe('CHECKOUT');
       testTemplateIds.push(responseData.data.id);
     });
 
-    it("should reject template without name", async () => {
+    it('should reject template without name', async () => {
       const req = {
         tenantId: testTenantId,
         params: {},
         query: {},
         body: {
-          description: "Test",
-          area: "CHECKOUT",
+          description: 'Test',
+          area: 'CHECKOUT',
         },
       } as unknown as TenantRequest;
       const res = createMockResponse();
@@ -189,16 +189,16 @@ describe("Checklist Controller Integration Tests", () => {
     });
   });
 
-  describe("updateTemplate", () => {
+  describe('updateTemplate', () => {
     let updateTemplateId: string;
 
     beforeAll(async () => {
       const template = await prisma.checklistTemplate.create({
         data: {
           tenantId: testTenantId,
-          name: "Update Test Template",
-          description: "Original description",
-          area: "DAILY",
+          name: 'Update Test Template',
+          description: 'Original description',
+          area: 'DAILY',
           items: JSON.stringify([]),
           estimatedMinutes: 20,
           isActive: true,
@@ -208,13 +208,13 @@ describe("Checklist Controller Integration Tests", () => {
       testTemplateIds.push(updateTemplateId);
     });
 
-    it("should update template fields", async () => {
+    it('should update template fields', async () => {
       const req = {
         tenantId: testTenantId,
         params: { id: updateTemplateId },
         query: {},
         body: {
-          name: "Updated Template Name",
+          name: 'Updated Template Name',
           estimatedMinutes: 30,
         },
       } as unknown as TenantRequest;
@@ -224,15 +224,15 @@ describe("Checklist Controller Integration Tests", () => {
 
       expect(res.status).toHaveBeenCalledWith(200);
       const responseData = (res.json as jest.Mock).mock.calls[0][0];
-      expect(responseData.data.name).toBe("Updated Template Name");
+      expect(responseData.data.name).toBe('Updated Template Name');
     });
 
-    it("should return 404 for non-existent template", async () => {
+    it('should return 404 for non-existent template', async () => {
       const req = {
         tenantId: testTenantId,
-        params: { id: "00000000-0000-0000-0000-000000000000" },
+        params: { id: '00000000-0000-0000-0000-000000000000' },
         query: {},
-        body: { name: "Test" },
+        body: { name: 'Test' },
       } as unknown as TenantRequest;
       const res = createMockResponse();
 
@@ -242,16 +242,16 @@ describe("Checklist Controller Integration Tests", () => {
     });
   });
 
-  describe("deleteTemplate", () => {
+  describe('deleteTemplate', () => {
     let deleteTemplateId: string;
 
     beforeAll(async () => {
       const template = await prisma.checklistTemplate.create({
         data: {
           tenantId: testTenantId,
-          name: "Delete Test Template",
-          description: "To be deleted",
-          area: "CLEANUP",
+          name: 'Delete Test Template',
+          description: 'To be deleted',
+          area: 'CLEANUP',
           items: JSON.stringify([]),
           estimatedMinutes: 10,
           isActive: true,
@@ -261,7 +261,7 @@ describe("Checklist Controller Integration Tests", () => {
       testTemplateIds.push(deleteTemplateId);
     });
 
-    it("should delete template", async () => {
+    it('should delete template', async () => {
       const req = {
         tenantId: testTenantId,
         params: { id: deleteTemplateId },
@@ -276,8 +276,8 @@ describe("Checklist Controller Integration Tests", () => {
     });
   });
 
-  describe("getChecklistStats", () => {
-    it("should return checklist stats", async () => {
+  describe('getChecklistStats', () => {
+    it('should return checklist stats', async () => {
       const req = {
         tenantId: testTenantId,
         query: {},

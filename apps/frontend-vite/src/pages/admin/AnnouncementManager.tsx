@@ -24,7 +24,7 @@ import {
   MenuItem,
   Switch,
   FormControlLabel,
-  Alert
+  Alert,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -35,7 +35,8 @@ import announcementService from '../../services/announcementService';
 const AnnouncementManager: React.FC = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null);
+  const [editingAnnouncement, setEditingAnnouncement] =
+    useState<Announcement | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -55,7 +56,7 @@ const AnnouncementManager: React.FC = () => {
     type: 'INFO',
     startDate: new Date().toISOString().split('T')[0],
     endDate: '',
-    isActive: true
+    isActive: true,
   });
 
   const loadAnnouncements = async () => {
@@ -86,7 +87,7 @@ const AnnouncementManager: React.FC = () => {
         type: announcement.type,
         startDate: announcement.startDate.split('T')[0],
         endDate: announcement.endDate ? announcement.endDate.split('T')[0] : '',
-        isActive: announcement.isActive
+        isActive: announcement.isActive,
       });
     } else {
       setEditingAnnouncement(null);
@@ -97,7 +98,7 @@ const AnnouncementManager: React.FC = () => {
         type: 'INFO',
         startDate: new Date().toISOString().split('T')[0],
         endDate: '',
-        isActive: true
+        isActive: true,
       });
     }
     setDialogOpen(true);
@@ -120,11 +121,14 @@ const AnnouncementManager: React.FC = () => {
 
     try {
       if (editingAnnouncement) {
-        await announcementService.updateAnnouncement(editingAnnouncement.id, formData);
+        await announcementService.updateAnnouncement(
+          editingAnnouncement.id,
+          formData
+        );
       } else {
         await announcementService.createAnnouncement(formData);
       }
-      
+
       handleCloseDialog();
       await loadAnnouncements();
     } catch (err) {
@@ -180,7 +184,14 @@ const AnnouncementManager: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+        }}
+      >
         <Typography variant="h4" component="h1">
           Announcement Manager
         </Typography>
@@ -218,7 +229,8 @@ const AnnouncementManager: React.FC = () => {
                 <TableRow>
                   <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
                     <Typography variant="body2" color="text.secondary">
-                      No announcements yet. Create your first announcement to get started.
+                      No announcements yet. Create your first announcement to
+                      get started.
                     </Typography>
                   </TableCell>
                 </TableRow>
@@ -229,7 +241,11 @@ const AnnouncementManager: React.FC = () => {
                       <Typography variant="body2" sx={{ fontWeight: 500 }}>
                         {announcement.title}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ display: 'block', mt: 0.5 }}
+                      >
                         {announcement.message.substring(0, 60)}
                         {announcement.message.length > 60 && '...'}
                       </Typography>
@@ -289,7 +305,12 @@ const AnnouncementManager: React.FC = () => {
       </Paper>
 
       {/* Create/Edit Dialog */}
-      <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+      <Dialog
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>
           {editingAnnouncement ? 'Edit Announcement' : 'New Announcement'}
         </DialogTitle>
@@ -298,7 +319,9 @@ const AnnouncementManager: React.FC = () => {
             <TextField
               label="Title"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
               fullWidth
               required
             />
@@ -306,7 +329,9 @@ const AnnouncementManager: React.FC = () => {
             <TextField
               label="Message"
               value={formData.message}
-              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, message: e.target.value })
+              }
               fullWidth
               required
               multiline
@@ -319,7 +344,16 @@ const AnnouncementManager: React.FC = () => {
                 <Select
                   value={formData.priority}
                   label="Priority"
-                  onChange={(e) => setFormData({ ...formData, priority: e.target.value as 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT' })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      priority: e.target.value as
+                        | 'LOW'
+                        | 'NORMAL'
+                        | 'HIGH'
+                        | 'URGENT',
+                    })
+                  }
                 >
                   <MenuItem value="LOW">Low</MenuItem>
                   <MenuItem value="NORMAL">Normal</MenuItem>
@@ -333,7 +367,16 @@ const AnnouncementManager: React.FC = () => {
                 <Select
                   value={formData.type}
                   label="Type"
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value as 'INFO' | 'WARNING' | 'SUCCESS' | 'ERROR' })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      type: e.target.value as
+                        | 'INFO'
+                        | 'WARNING'
+                        | 'SUCCESS'
+                        | 'ERROR',
+                    })
+                  }
                 >
                   <MenuItem value="INFO">Info</MenuItem>
                   <MenuItem value="WARNING">Warning</MenuItem>
@@ -348,7 +391,9 @@ const AnnouncementManager: React.FC = () => {
                 label="Start Date"
                 type="date"
                 value={formData.startDate}
-                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, startDate: e.target.value })
+                }
                 fullWidth
                 InputLabelProps={{ shrink: true }}
               />
@@ -357,7 +402,9 @@ const AnnouncementManager: React.FC = () => {
                 label="End Date (Optional)"
                 type="date"
                 value={formData.endDate}
-                onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, endDate: e.target.value })
+                }
                 fullWidth
                 InputLabelProps={{ shrink: true }}
                 helperText="Leave empty for no expiration"
@@ -368,7 +415,9 @@ const AnnouncementManager: React.FC = () => {
               control={
                 <Switch
                   checked={formData.isActive}
-                  onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, isActive: e.target.checked })
+                  }
                 />
               }
               label="Active"

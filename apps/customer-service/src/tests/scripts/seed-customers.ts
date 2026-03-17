@@ -10,10 +10,12 @@ async function main() {
     const createdCustomer = await prisma.customer.create({
       data: {
         ...customer,
-        preferredContact: customer.preferredContact as ContactMethod
-      }
+        preferredContact: customer.preferredContact as ContactMethod,
+      },
     });
-    console.log(`Created customer: ${createdCustomer.firstName} ${createdCustomer.lastName} (${createdCustomer.id})`);
+    console.log(
+      `Created customer: ${createdCustomer.firstName} ${createdCustomer.lastName} (${createdCustomer.id})`
+    );
   }
 
   console.log('Seeding customers completed.');

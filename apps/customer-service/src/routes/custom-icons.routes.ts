@@ -7,7 +7,7 @@ import {
   getCustomIconById,
   createCustomIcon,
   updateCustomIcon,
-  deleteCustomIcon
+  deleteCustomIcon,
 } from '../controllers/custom-icons.controller';
 
 const router = Router();
@@ -24,13 +24,17 @@ const storage = multer.diskStorage({
     cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     const ext = path.extname(file.originalname);
     cb(null, `icon-${uniqueSuffix}${ext}`);
-  }
+  },
 });
 
-const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+const fileFilter = (
+  req: any,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback
+) => {
   // Accept images only
   if (file.mimetype.startsWith('image/')) {
     cb(null, true);
@@ -43,8 +47,8 @@ const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 1024 * 1024 // 1MB max
-  }
+    fileSize: 1024 * 1024, // 1MB max
+  },
 });
 
 // Routes

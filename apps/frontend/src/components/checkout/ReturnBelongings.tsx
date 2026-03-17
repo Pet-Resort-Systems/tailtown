@@ -27,7 +27,7 @@ const ReturnBelongings: React.FC<ReturnBelongingsProps> = ({
   onBack,
 }) => {
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>(
-    {},
+    {}
   );
 
   const handleToggle = (itemId: string) => {

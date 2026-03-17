@@ -1,6 +1,6 @@
 /**
  * Loyalty Rewards Service
- * 
+ *
  * Multi-tenant configurable loyalty program service
  */
 
@@ -15,12 +15,12 @@ import {
   PointEarningRule,
   RedemptionOption,
   LoyaltyTier,
-  TierLevel
+  TierLevel,
 } from '../types/loyalty';
 
 export const loyaltyService = {
   // ==================== Configuration Management ====================
-  
+
   /**
    * Get loyalty program configuration for tenant
    */
@@ -32,7 +32,9 @@ export const loyaltyService = {
   /**
    * Update loyalty program configuration
    */
-  updateConfig: async (config: Partial<LoyaltyConfig>): Promise<LoyaltyConfig> => {
+  updateConfig: async (
+    config: Partial<LoyaltyConfig>
+  ): Promise<LoyaltyConfig> => {
     const response = await customerApi.put('/api/loyalty/config', config);
     return response.data;
   },
@@ -41,12 +43,14 @@ export const loyaltyService = {
    * Enable/disable loyalty program
    */
   toggleProgram: async (enabled: boolean): Promise<LoyaltyConfig> => {
-    const response = await customerApi.patch('/api/loyalty/config/toggle', { isEnabled: enabled });
+    const response = await customerApi.patch('/api/loyalty/config/toggle', {
+      isEnabled: enabled,
+    });
     return response.data;
   },
 
   // ==================== Earning Rules Management ====================
-  
+
   /**
    * Get all earning rules
    */
@@ -58,7 +62,9 @@ export const loyaltyService = {
   /**
    * Create earning rule
    */
-  createEarningRule: async (rule: Partial<PointEarningRule>): Promise<PointEarningRule> => {
+  createEarningRule: async (
+    rule: Partial<PointEarningRule>
+  ): Promise<PointEarningRule> => {
     const response = await customerApi.post('/api/loyalty/earning-rules', rule);
     return response.data;
   },
@@ -66,8 +72,14 @@ export const loyaltyService = {
   /**
    * Update earning rule
    */
-  updateEarningRule: async (id: string, updates: Partial<PointEarningRule>): Promise<PointEarningRule> => {
-    const response = await customerApi.put(`/api/loyalty/earning-rules/${id}`, updates);
+  updateEarningRule: async (
+    id: string,
+    updates: Partial<PointEarningRule>
+  ): Promise<PointEarningRule> => {
+    const response = await customerApi.put(
+      `/api/loyalty/earning-rules/${id}`,
+      updates
+    );
     return response.data;
   },
 
@@ -79,7 +91,7 @@ export const loyaltyService = {
   },
 
   // ==================== Tier Management ====================
-  
+
   /**
    * Get all tiers
    */
@@ -91,13 +103,19 @@ export const loyaltyService = {
   /**
    * Update tier configuration
    */
-  updateTier: async (level: TierLevel, updates: Partial<LoyaltyTier>): Promise<LoyaltyTier> => {
-    const response = await customerApi.put(`/api/loyalty/tiers/${level}`, updates);
+  updateTier: async (
+    level: TierLevel,
+    updates: Partial<LoyaltyTier>
+  ): Promise<LoyaltyTier> => {
+    const response = await customerApi.put(
+      `/api/loyalty/tiers/${level}`,
+      updates
+    );
     return response.data;
   },
 
   // ==================== Redemption Options Management ====================
-  
+
   /**
    * Get all redemption options
    */
@@ -109,16 +127,27 @@ export const loyaltyService = {
   /**
    * Create redemption option
    */
-  createRedemptionOption: async (option: Partial<RedemptionOption>): Promise<RedemptionOption> => {
-    const response = await customerApi.post('/api/loyalty/redemption-options', option);
+  createRedemptionOption: async (
+    option: Partial<RedemptionOption>
+  ): Promise<RedemptionOption> => {
+    const response = await customerApi.post(
+      '/api/loyalty/redemption-options',
+      option
+    );
     return response.data;
   },
 
   /**
    * Update redemption option
    */
-  updateRedemptionOption: async (id: string, updates: Partial<RedemptionOption>): Promise<RedemptionOption> => {
-    const response = await customerApi.put(`/api/loyalty/redemption-options/${id}`, updates);
+  updateRedemptionOption: async (
+    id: string,
+    updates: Partial<RedemptionOption>
+  ): Promise<RedemptionOption> => {
+    const response = await customerApi.put(
+      `/api/loyalty/redemption-options/${id}`,
+      updates
+    );
     return response.data;
   },
 
@@ -130,12 +159,14 @@ export const loyaltyService = {
   },
 
   // ==================== Customer Loyalty ====================
-  
+
   /**
    * Get customer loyalty account
    */
   getCustomerLoyalty: async (customerId: string): Promise<CustomerLoyalty> => {
-    const response = await customerApi.get(`/api/loyalty/customers/${customerId}`);
+    const response = await customerApi.get(
+      `/api/loyalty/customers/${customerId}`
+    );
     return response.data;
   },
 
@@ -147,8 +178,14 @@ export const loyaltyService = {
     minPoints?: number;
     page?: number;
     limit?: number;
-  }): Promise<{ data: CustomerLoyalty[]; totalPages: number; currentPage: number }> => {
-    const response = await customerApi.get('/api/loyalty/customers', { params });
+  }): Promise<{
+    data: CustomerLoyalty[];
+    totalPages: number;
+    currentPage: number;
+  }> => {
+    const response = await customerApi.get('/api/loyalty/customers', {
+      params,
+    });
     return response.data;
   },
 
@@ -162,12 +199,15 @@ export const loyaltyService = {
     description: string,
     referenceId?: string
   ): Promise<PointTransaction> => {
-    const response = await customerApi.post(`/api/loyalty/customers/${customerId}/award`, {
-      points,
-      earningType,
-      description,
-      referenceId
-    });
+    const response = await customerApi.post(
+      `/api/loyalty/customers/${customerId}/award`,
+      {
+        points,
+        earningType,
+        description,
+        referenceId,
+      }
+    );
     return response.data;
   },
 
@@ -179,15 +219,18 @@ export const loyaltyService = {
     points: number,
     reason: string
   ): Promise<PointTransaction> => {
-    const response = await customerApi.post(`/api/loyalty/customers/${customerId}/adjust`, {
-      points,
-      reason
-    });
+    const response = await customerApi.post(
+      `/api/loyalty/customers/${customerId}/adjust`,
+      {
+        points,
+        reason,
+      }
+    );
     return response.data;
   },
 
   // ==================== Point Transactions ====================
-  
+
   /**
    * Get customer point transaction history
    */
@@ -200,13 +243,20 @@ export const loyaltyService = {
       page?: number;
       limit?: number;
     }
-  ): Promise<{ data: PointTransaction[]; totalPages: number; currentPage: number }> => {
-    const response = await customerApi.get(`/api/loyalty/customers/${customerId}/transactions`, { params });
+  ): Promise<{
+    data: PointTransaction[];
+    totalPages: number;
+    currentPage: number;
+  }> => {
+    const response = await customerApi.get(
+      `/api/loyalty/customers/${customerId}/transactions`,
+      { params }
+    );
     return response.data;
   },
 
   // ==================== Redemptions ====================
-  
+
   /**
    * Redeem points
    */
@@ -214,9 +264,12 @@ export const loyaltyService = {
     customerId: string,
     redemptionOptionId: string
   ): Promise<PointRedemption> => {
-    const response = await customerApi.post(`/api/loyalty/customers/${customerId}/redeem`, {
-      redemptionOptionId
-    });
+    const response = await customerApi.post(
+      `/api/loyalty/customers/${customerId}/redeem`,
+      {
+        redemptionOptionId,
+      }
+    );
     return response.data;
   },
 
@@ -228,10 +281,13 @@ export const loyaltyService = {
     referenceId: string,
     referenceType: 'RESERVATION' | 'INVOICE'
   ): Promise<PointRedemption> => {
-    const response = await customerApi.post(`/api/loyalty/redemptions/${redemptionId}/apply`, {
-      referenceId,
-      referenceType
-    });
+    const response = await customerApi.post(
+      `/api/loyalty/redemptions/${redemptionId}/apply`,
+      {
+        referenceId,
+        referenceType,
+      }
+    );
     return response.data;
   },
 
@@ -239,7 +295,9 @@ export const loyaltyService = {
    * Cancel redemption
    */
   cancelRedemption: async (redemptionId: string): Promise<PointRedemption> => {
-    const response = await customerApi.post(`/api/loyalty/redemptions/${redemptionId}/cancel`);
+    const response = await customerApi.post(
+      `/api/loyalty/redemptions/${redemptionId}/cancel`
+    );
     return response.data;
   },
 
@@ -253,13 +311,20 @@ export const loyaltyService = {
       page?: number;
       limit?: number;
     }
-  ): Promise<{ data: PointRedemption[]; totalPages: number; currentPage: number }> => {
-    const response = await customerApi.get(`/api/loyalty/customers/${customerId}/redemptions`, { params });
+  ): Promise<{
+    data: PointRedemption[];
+    totalPages: number;
+    currentPage: number;
+  }> => {
+    const response = await customerApi.get(
+      `/api/loyalty/customers/${customerId}/redemptions`,
+      { params }
+    );
     return response.data;
   },
 
   // ==================== Analytics & Reporting ====================
-  
+
   /**
    * Get loyalty program statistics
    */
@@ -273,17 +338,21 @@ export const loyaltyService = {
    */
   getRecentActivity: async (limit: number = 20): Promise<LoyaltyActivity[]> => {
     const response = await customerApi.get('/api/loyalty/activity', {
-      params: { limit }
+      params: { limit },
     });
     return response.data;
   },
 
   // ==================== Client-Side Helpers ====================
-  
+
   /**
    * Calculate points for dollar amount
    */
-  calculatePointsForPurchase: (amount: number, pointsPerDollar: number, tierMultiplier: number = 1): number => {
+  calculatePointsForPurchase: (
+    amount: number,
+    pointsPerDollar: number,
+    tierMultiplier: number = 1
+  ): number => {
     return Math.floor(amount * pointsPerDollar * tierMultiplier);
   },
 
@@ -292,15 +361,18 @@ export const loyaltyService = {
    */
   calculateTier: (points: number, tiers: LoyaltyTier[]): LoyaltyTier => {
     const sortedTiers = [...tiers].sort((a, b) => b.minPoints - a.minPoints);
-    return sortedTiers.find(tier => points >= tier.minPoints) || tiers[0];
+    return sortedTiers.find((tier) => points >= tier.minPoints) || tiers[0];
   },
 
   /**
    * Calculate points to next tier
    */
-  calculatePointsToNextTier: (currentPoints: number, tiers: LoyaltyTier[]): number => {
+  calculatePointsToNextTier: (
+    currentPoints: number,
+    tiers: LoyaltyTier[]
+  ): number => {
     const sortedTiers = [...tiers].sort((a, b) => a.minPoints - b.minPoints);
-    const nextTier = sortedTiers.find(tier => currentPoints < tier.minPoints);
+    const nextTier = sortedTiers.find((tier) => currentPoints < tier.minPoints);
     return nextTier ? nextTier.minPoints - currentPoints : 0;
   },
 
@@ -320,7 +392,7 @@ export const loyaltyService = {
       SILVER: '#C0C0C0',
       GOLD: '#FFD700',
       PLATINUM: '#E5E4E2',
-      DIAMOND: '#B9F2FF'
+      DIAMOND: '#B9F2FF',
     };
     return colors[tier];
   },
@@ -334,7 +406,7 @@ export const loyaltyService = {
       SILVER: 'Silver',
       GOLD: 'Gold',
       PLATINUM: 'Platinum',
-      DIAMOND: 'Diamond'
+      DIAMOND: 'Diamond',
     };
     return names[tier];
   },
@@ -342,14 +414,21 @@ export const loyaltyService = {
   /**
    * Check if customer can redeem
    */
-  canRedeem: (currentPoints: number, redemptionCost: number, minimumPoints: number): boolean => {
+  canRedeem: (
+    currentPoints: number,
+    redemptionCost: number,
+    minimumPoints: number
+  ): boolean => {
     return currentPoints >= redemptionCost && currentPoints >= minimumPoints;
   },
 
   /**
    * Calculate redemption value
    */
-  calculateRedemptionValue: (option: RedemptionOption, purchaseAmount?: number): number => {
+  calculateRedemptionValue: (
+    option: RedemptionOption,
+    purchaseAmount?: number
+  ): number => {
     if (option.type === 'DISCOUNT_FIXED') {
       return option.discountAmount || 0;
     }
@@ -362,7 +441,9 @@ export const loyaltyService = {
   /**
    * Validate earning rule
    */
-  validateEarningRule: (rule: Partial<PointEarningRule>): { isValid: boolean; errors: string[] } => {
+  validateEarningRule: (
+    rule: Partial<PointEarningRule>
+  ): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
 
     if (!rule.type) {
@@ -377,20 +458,25 @@ export const loyaltyService = {
       errors.push('Points per visit is required');
     }
 
-    if (rule.type === 'REFERRAL' && (!rule.pointsForReferrer || !rule.pointsForReferee)) {
+    if (
+      rule.type === 'REFERRAL' &&
+      (!rule.pointsForReferrer || !rule.pointsForReferee)
+    ) {
       errors.push('Referral points are required');
     }
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   },
 
   /**
    * Validate redemption option
    */
-  validateRedemptionOption: (option: Partial<RedemptionOption>): { isValid: boolean; errors: string[] } => {
+  validateRedemptionOption: (
+    option: Partial<RedemptionOption>
+  ): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
 
     if (!option.name || option.name.trim().length === 0) {
@@ -401,17 +487,23 @@ export const loyaltyService = {
       errors.push('Points cost must be greater than 0');
     }
 
-    if (option.type === 'DISCOUNT_PERCENTAGE' && (!option.discountPercentage || option.discountPercentage <= 0)) {
+    if (
+      option.type === 'DISCOUNT_PERCENTAGE' &&
+      (!option.discountPercentage || option.discountPercentage <= 0)
+    ) {
       errors.push('Discount percentage is required');
     }
 
-    if (option.type === 'DISCOUNT_FIXED' && (!option.discountAmount || option.discountAmount <= 0)) {
+    if (
+      option.type === 'DISCOUNT_FIXED' &&
+      (!option.discountAmount || option.discountAmount <= 0)
+    ) {
       errors.push('Discount amount is required');
     }
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
-  }
+  },
 };

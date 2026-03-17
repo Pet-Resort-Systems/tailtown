@@ -12,14 +12,14 @@ import {
   CardContent,
   Grid,
   Divider,
-  Alert
+  Alert,
 } from '@mui/material';
 import {
   CheckCircle as CheckCircleIcon,
   Email as EmailIcon,
   CalendarToday as CalendarIcon,
   Print as PrintIcon,
-  Home as HomeIcon
+  Home as HomeIcon,
 } from '@mui/icons-material';
 import { useCustomerAuth } from '../../../contexts/CustomerAuthContext';
 
@@ -27,7 +27,9 @@ interface BookingConfirmationProps {
   bookingData: any;
 }
 
-const BookingConfirmation: React.FC<BookingConfirmationProps> = ({ bookingData }) => {
+const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
+  bookingData,
+}) => {
   const { customer } = useCustomerAuth();
 
   const handlePrint = () => {
@@ -38,28 +40,28 @@ const BookingConfirmation: React.FC<BookingConfirmationProps> = ({ bookingData }
     <Box sx={{ maxWidth: 800, mx: 'auto' }}>
       {/* Success Header */}
       <Box sx={{ textAlign: 'center', mb: 4 }}>
-        <CheckCircleIcon 
-          sx={{ 
-            fontSize: { xs: 80, sm: 100 }, 
-            color: 'success.main', 
-            mb: 2 
-          }} 
+        <CheckCircleIcon
+          sx={{
+            fontSize: { xs: 80, sm: 100 },
+            color: 'success.main',
+            mb: 2,
+          }}
         />
-        <Typography 
-          variant="h4" 
+        <Typography
+          variant="h4"
           component="h1"
           gutterBottom
           sx={{
             fontSize: { xs: '1.75rem', sm: '2.125rem' },
             fontWeight: 700,
-            color: 'success.main'
+            color: 'success.main',
           }}
         >
           Booking Confirmed!
         </Typography>
-        <Typography 
-          variant="h6" 
-          color="text.secondary" 
+        <Typography
+          variant="h6"
+          color="text.secondary"
           sx={{ mb: 2, fontSize: { xs: '1rem', sm: '1.25rem' } }}
         >
           Thank you for booking with Tailtown Pet Resort
@@ -117,7 +119,8 @@ const BookingConfirmation: React.FC<BookingConfirmationProps> = ({ bookingData }
                   </Typography>
                   <Typography variant="body1" fontWeight={600}>
                     {new Date(bookingData.startDate).toLocaleDateString()}
-                    {bookingData.endDate && ` - ${new Date(bookingData.endDate).toLocaleDateString()}`}
+                    {bookingData.endDate &&
+                      ` - ${new Date(bookingData.endDate).toLocaleDateString()}`}
                   </Typography>
                 </Box>
               </Grid>
@@ -150,7 +153,13 @@ const BookingConfirmation: React.FC<BookingConfirmationProps> = ({ bookingData }
             {bookingData.paymentTransactionId && (
               <Grid item xs={12}>
                 <Divider sx={{ my: 2 }} />
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    mb: 1,
+                  }}
+                >
                   <Typography variant="body2" color="text.secondary">
                     Payment Method:
                   </Typography>

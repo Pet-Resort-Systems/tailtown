@@ -4,7 +4,7 @@
  * Configure rates, discounts, deposits, and surcharges.
  */
 
-import React from "react";
+import React from 'react';
 import {
   Box,
   Typography,
@@ -21,10 +21,10 @@ import {
   Card,
   CardContent,
   Slider,
-} from "@mui/material";
-import { ArrowForward, ArrowBack } from "@mui/icons-material";
-import { useSetupWizard } from "../SetupWizardContext";
-import { KennelSize, DEFAULT_KENNEL_SIZES } from "../types";
+} from '@mui/material';
+import { ArrowForward, ArrowBack } from '@mui/icons-material';
+import { useSetupWizard } from '../SetupWizardContext';
+import { KennelSize, DEFAULT_KENNEL_SIZES } from '../types';
 
 export default function PricingStep() {
   const { state, setPricing, completeStep, nextStep, prevStep } =
@@ -33,7 +33,7 @@ export default function PricingStep() {
 
   const updateTierRate = (
     size: KennelSize,
-    field: "dailyRate" | "halfDayRate",
+    field: 'dailyRate' | 'halfDayRate',
     value: number
   ) => {
     const updatedTiers = pricing.tiers.map((tier) =>
@@ -43,7 +43,7 @@ export default function PricingStep() {
   };
 
   const handleNext = () => {
-    completeStep("pricing");
+    completeStep('pricing');
     nextStep();
   };
 
@@ -82,7 +82,7 @@ export default function PricingStep() {
                         onChange={(e) =>
                           updateTierRate(
                             tier.kennelSize,
-                            "dailyRate",
+                            'dailyRate',
                             Number(e.target.value)
                           )
                         }
@@ -99,11 +99,11 @@ export default function PricingStep() {
                         fullWidth
                         label="Half Day"
                         type="number"
-                        value={tier.halfDayRate || ""}
+                        value={tier.halfDayRate || ''}
                         onChange={(e) =>
                           updateTierRate(
                             tier.kennelSize,
-                            "halfDayRate",
+                            'halfDayRate',
                             Number(e.target.value)
                           )
                         }
@@ -143,9 +143,9 @@ export default function PricingStep() {
                   min={0}
                   max={50}
                   marks={[
-                    { value: 0, label: "0%" },
-                    { value: 25, label: "25%" },
-                    { value: 50, label: "50%" },
+                    { value: 0, label: '0%' },
+                    { value: 25, label: '25%' },
+                    { value: 50, label: '50%' },
                   ]}
                   valueLabelDisplay="on"
                   valueLabelFormat={(v) => `${v}%`}
@@ -169,9 +169,9 @@ export default function PricingStep() {
                   min={0}
                   max={30}
                   marks={[
-                    { value: 0, label: "0%" },
-                    { value: 15, label: "15%" },
-                    { value: 30, label: "30%" },
+                    { value: 0, label: '0%' },
+                    { value: 15, label: '15%' },
+                    { value: 30, label: '30%' },
                   ]}
                   valueLabelDisplay="on"
                   valueLabelFormat={(v) => `${v}%`}
@@ -210,9 +210,9 @@ export default function PricingStep() {
                     onChange={(e) =>
                       setPricing({
                         depositType: e.target.value as
-                          | "fixed"
-                          | "percentage"
-                          | "first_night",
+                          | 'fixed'
+                          | 'percentage'
+                          | 'first_night',
                       })
                     }
                   >
@@ -222,24 +222,24 @@ export default function PricingStep() {
                   </Select>
                 </FormControl>
               </Grid>
-              {pricing.depositType !== "first_night" && (
+              {pricing.depositType !== 'first_night' && (
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
                     label={
-                      pricing.depositType === "percentage"
-                        ? "Percentage"
-                        : "Amount"
+                      pricing.depositType === 'percentage'
+                        ? 'Percentage'
+                        : 'Amount'
                     }
                     type="number"
-                    value={pricing.depositAmount || ""}
+                    value={pricing.depositAmount || ''}
                     onChange={(e) =>
                       setPricing({ depositAmount: Number(e.target.value) })
                     }
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          {pricing.depositType === "percentage" ? "%" : "$"}
+                          {pricing.depositType === 'percentage' ? '%' : '$'}
                         </InputAdornment>
                       ),
                     }}
@@ -253,7 +253,7 @@ export default function PricingStep() {
       </Card>
 
       {/* Navigation */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button startIcon={<ArrowBack />} onClick={prevStep}>
           Back
         </Button>

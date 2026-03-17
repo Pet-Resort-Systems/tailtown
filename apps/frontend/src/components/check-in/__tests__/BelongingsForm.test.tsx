@@ -13,14 +13,14 @@ describe('BelongingsForm', () => {
 
   it('renders empty state correctly', () => {
     render(<BelongingsForm belongings={[]} onChange={mockOnChange} />);
-    
+
     expect(screen.getByText('Belongings Inventory')).toBeInTheDocument();
     expect(screen.getByText(/No belongings added/i)).toBeInTheDocument();
   });
 
   it('displays quick-add buttons for common items', () => {
     render(<BelongingsForm belongings={[]} onChange={mockOnChange} />);
-    
+
     expect(screen.getByText(/🔗 Collar/)).toBeInTheDocument();
     expect(screen.getByText(/🦮 Leash/)).toBeInTheDocument();
     expect(screen.getByText(/🎾 Toy/)).toBeInTheDocument();
@@ -33,7 +33,7 @@ describe('BelongingsForm', () => {
 
   it('adds item when quick-add button is clicked', async () => {
     render(<BelongingsForm belongings={[]} onChange={mockOnChange} />);
-    
+
     const collarButton = screen.getByText(/🔗 Collar/);
     fireEvent.click(collarButton);
 
@@ -42,15 +42,15 @@ describe('BelongingsForm', () => {
         expect.objectContaining({
           itemType: 'Collar',
           description: '',
-          quantity: 1
-        })
+          quantity: 1,
+        }),
       ]);
     });
   });
 
   it('adds custom item when custom button is clicked', async () => {
     render(<BelongingsForm belongings={[]} onChange={mockOnChange} />);
-    
+
     const customButton = screen.getByText(/\+ Custom Item/);
     fireEvent.click(customButton);
 
@@ -59,8 +59,8 @@ describe('BelongingsForm', () => {
         expect.objectContaining({
           itemType: 'Other',
           description: '',
-          quantity: 1
-        })
+          quantity: 1,
+        }),
       ]);
     });
   });
@@ -71,12 +71,12 @@ describe('BelongingsForm', () => {
         itemType: 'Collar',
         description: 'Blue nylon collar',
         quantity: 1,
-        color: 'Blue'
-      }
+        color: 'Blue',
+      },
     ];
 
     render(<BelongingsForm belongings={belongings} onChange={mockOnChange} />);
-    
+
     expect(screen.getByDisplayValue('Collar')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Blue nylon collar')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Blue')).toBeInTheDocument();
@@ -87,20 +87,20 @@ describe('BelongingsForm', () => {
       {
         itemType: 'Collar',
         description: '',
-        quantity: 1
-      }
+        quantity: 1,
+      },
     ];
 
     render(<BelongingsForm belongings={belongings} onChange={mockOnChange} />);
-    
+
     const descInput = screen.getByPlaceholderText(/e.g., Blue nylon collar/i);
     await userEvent.type(descInput, 'Red leather collar');
 
     await waitFor(() => {
       expect(mockOnChange).toHaveBeenCalledWith([
         expect.objectContaining({
-          description: 'Red leather collar'
-        })
+          description: 'Red leather collar',
+        }),
       ]);
     });
   });
@@ -110,12 +110,12 @@ describe('BelongingsForm', () => {
       {
         itemType: 'Collar',
         description: 'Blue collar',
-        quantity: 1
-      }
+        quantity: 1,
+      },
     ];
 
     render(<BelongingsForm belongings={belongings} onChange={mockOnChange} />);
-    
+
     const deleteButton = screen.getByRole('button', { name: /delete/i });
     fireEvent.click(deleteButton);
 
@@ -129,12 +129,12 @@ describe('BelongingsForm', () => {
       {
         itemType: 'Toy',
         description: 'Tennis ball',
-        quantity: 1
-      }
+        quantity: 1,
+      },
     ];
 
     render(<BelongingsForm belongings={belongings} onChange={mockOnChange} />);
-    
+
     const quantityInput = screen.getByLabelText(/Quantity/i);
     await userEvent.clear(quantityInput);
     await userEvent.type(quantityInput, '3');
@@ -142,8 +142,8 @@ describe('BelongingsForm', () => {
     await waitFor(() => {
       expect(mockOnChange).toHaveBeenCalledWith([
         expect.objectContaining({
-          quantity: 3
-        })
+          quantity: 3,
+        }),
       ]);
     });
   });
@@ -153,17 +153,17 @@ describe('BelongingsForm', () => {
       {
         itemType: 'Collar',
         description: 'Blue collar',
-        quantity: 1
+        quantity: 1,
       },
       {
         itemType: 'Toy',
         description: 'Tennis balls',
-        quantity: 3
-      }
+        quantity: 3,
+      },
     ];
 
     render(<BelongingsForm belongings={belongings} onChange={mockOnChange} />);
-    
+
     expect(screen.getByText(/Total Items:/)).toBeInTheDocument();
     expect(screen.getByText(/4 items across 2 categories/)).toBeInTheDocument();
   });
@@ -174,18 +174,18 @@ describe('BelongingsForm', () => {
         itemType: 'Collar',
         description: 'Blue collar',
         quantity: 1,
-        color: 'Blue'
+        color: 'Blue',
       },
       {
         itemType: 'Leash',
         description: 'Nylon leash',
         quantity: 1,
-        color: 'Red'
-      }
+        color: 'Red',
+      },
     ];
 
     render(<BelongingsForm belongings={belongings} onChange={mockOnChange} />);
-    
+
     expect(screen.getByText('Collar - Blue collar')).toBeInTheDocument();
     expect(screen.getByText('Leash - Nylon leash')).toBeInTheDocument();
   });

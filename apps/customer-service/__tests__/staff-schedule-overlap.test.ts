@@ -1,6 +1,6 @@
 /**
  * Staff Schedule Overlap Prevention Tests
- * 
+ *
  * Tests the overlap detection logic for staff scheduling to ensure
  * employees cannot be double-booked for the same time period.
  */
@@ -28,15 +28,15 @@ const hasScheduleConflict = async (
     staffId,
     date: {
       gte: startOfDay,
-      lte: endOfDay
+      lte: endOfDay,
     },
     // Time overlap: existing.endTime > new.startTime AND existing.startTime < new.endTime
     endTime: {
-      gt: startTime
+      gt: startTime,
     },
     startTime: {
-      lt: endTime
-    }
+      lt: endTime,
+    },
   };
 
   if (tenantId) {
@@ -67,7 +67,7 @@ describe('Staff Schedule Overlap Prevention', () => {
         contactEmail: 'test@example.com',
         status: 'ACTIVE',
         isActive: true,
-      }
+      },
     });
     testTenantId = tenant.id;
 
@@ -82,7 +82,7 @@ describe('Staff Schedule Overlap Prevention', () => {
         role: 'STAFF',
         position: 'Kennel Attendant',
         isActive: true,
-      }
+      },
     });
     testStaffId = staff.id;
   });
@@ -90,18 +90,18 @@ describe('Staff Schedule Overlap Prevention', () => {
   afterAll(async () => {
     // Clean up test data
     await prisma.staffSchedule.deleteMany({
-      where: { staffId: testStaffId }
+      where: { staffId: testStaffId },
     });
     await prisma.staff.delete({
-      where: { 
+      where: {
         tenantId_email: {
           tenantId: testTenantId,
-          email: 'test-schedule@example.com'
-        }
-      }
+          email: 'test-schedule@example.com',
+        },
+      },
     });
     await prisma.tenant.delete({
-      where: { id: testTenantId }
+      where: { id: testTenantId },
     });
     await prisma.$disconnect();
   });
@@ -109,7 +109,7 @@ describe('Staff Schedule Overlap Prevention', () => {
   afterEach(async () => {
     // Clean up schedules after each test
     await prisma.staffSchedule.deleteMany({
-      where: { staffId: testStaffId }
+      where: { staffId: testStaffId },
     });
   });
 
@@ -123,8 +123,8 @@ describe('Staff Schedule Overlap Prevention', () => {
           date: testDate,
           startTime: '09:00',
           endTime: '17:00',
-          status: 'SCHEDULED'
-        }
+          status: 'SCHEDULED',
+        },
       });
 
       // Try to create another schedule with exact same times
@@ -148,8 +148,8 @@ describe('Staff Schedule Overlap Prevention', () => {
           date: testDate,
           startTime: '09:00',
           endTime: '17:00',
-          status: 'SCHEDULED'
-        }
+          status: 'SCHEDULED',
+        },
       });
 
       // Try to create schedule from 8:00 to 10:00 (overlaps start)
@@ -173,8 +173,8 @@ describe('Staff Schedule Overlap Prevention', () => {
           date: testDate,
           startTime: '09:00',
           endTime: '17:00',
-          status: 'SCHEDULED'
-        }
+          status: 'SCHEDULED',
+        },
       });
 
       // Try to create schedule from 16:00 to 18:00 (overlaps end)
@@ -198,8 +198,8 @@ describe('Staff Schedule Overlap Prevention', () => {
           date: testDate,
           startTime: '10:00',
           endTime: '14:00',
-          status: 'SCHEDULED'
-        }
+          status: 'SCHEDULED',
+        },
       });
 
       // Try to create schedule from 9:00 to 17:00 (completely contains existing)
@@ -223,8 +223,8 @@ describe('Staff Schedule Overlap Prevention', () => {
           date: testDate,
           startTime: '09:00',
           endTime: '17:00',
-          status: 'SCHEDULED'
-        }
+          status: 'SCHEDULED',
+        },
       });
 
       // Try to create schedule from 10:00 to 14:00 (completely within existing)
@@ -250,8 +250,8 @@ describe('Staff Schedule Overlap Prevention', () => {
           date: testDate,
           startTime: '09:00',
           endTime: '13:00',
-          status: 'SCHEDULED'
-        }
+          status: 'SCHEDULED',
+        },
       });
 
       // Try to create schedule from 13:00 to 17:00 (starts when previous ends)
@@ -275,8 +275,8 @@ describe('Staff Schedule Overlap Prevention', () => {
           date: testDate,
           startTime: '13:00',
           endTime: '17:00',
-          status: 'SCHEDULED'
-        }
+          status: 'SCHEDULED',
+        },
       });
 
       // Try to create schedule from 9:00 to 12:00 (before existing)
@@ -300,8 +300,8 @@ describe('Staff Schedule Overlap Prevention', () => {
           date: testDate,
           startTime: '09:00',
           endTime: '13:00',
-          status: 'SCHEDULED'
-        }
+          status: 'SCHEDULED',
+        },
       });
 
       // Try to create schedule from 14:00 to 17:00 (after existing)
@@ -325,8 +325,8 @@ describe('Staff Schedule Overlap Prevention', () => {
           date: testDate,
           startTime: '09:00',
           endTime: '17:00',
-          status: 'SCHEDULED'
-        }
+          status: 'SCHEDULED',
+        },
       });
 
       // Try to create schedule on Dec 2 with same times
@@ -353,8 +353,8 @@ describe('Staff Schedule Overlap Prevention', () => {
           date: testDate,
           startTime: '09:00',
           endTime: '17:00',
-          status: 'SCHEDULED'
-        }
+          status: 'SCHEDULED',
+        },
       });
 
       // Try to update the same schedule (should not conflict with itself)
@@ -379,8 +379,8 @@ describe('Staff Schedule Overlap Prevention', () => {
           date: testDate,
           startTime: '09:00',
           endTime: '13:00',
-          status: 'SCHEDULED'
-        }
+          status: 'SCHEDULED',
+        },
       });
 
       const schedule2 = await prisma.staffSchedule.create({
@@ -390,8 +390,8 @@ describe('Staff Schedule Overlap Prevention', () => {
           date: testDate,
           startTime: '14:00',
           endTime: '17:00',
-          status: 'SCHEDULED'
-        }
+          status: 'SCHEDULED',
+        },
       });
 
       // Try to update schedule2 to overlap with schedule1
@@ -422,7 +422,7 @@ describe('Staff Schedule Overlap Prevention', () => {
           contactEmail: 'other@example.com',
           status: 'ACTIVE',
           isActive: true,
-        }
+        },
       });
       otherTenantId = tenant.id;
 
@@ -437,25 +437,25 @@ describe('Staff Schedule Overlap Prevention', () => {
           role: 'STAFF',
           position: 'Kennel Attendant',
           isActive: true,
-        }
+        },
       });
       otherStaffId = staff.id;
     });
 
     afterAll(async () => {
       await prisma.staffSchedule.deleteMany({
-        where: { staffId: otherStaffId }
+        where: { staffId: otherStaffId },
       });
       await prisma.staff.delete({
-        where: { 
+        where: {
           tenantId_email: {
             tenantId: otherTenantId,
-            email: 'other-schedule@example.com'
-          }
-        }
+            email: 'other-schedule@example.com',
+          },
+        },
       });
       await prisma.tenant.delete({
-        where: { id: otherTenantId }
+        where: { id: otherTenantId },
       });
     });
 
@@ -468,8 +468,8 @@ describe('Staff Schedule Overlap Prevention', () => {
           date: testDate,
           startTime: '09:00',
           endTime: '17:00',
-          status: 'SCHEDULED'
-        }
+          status: 'SCHEDULED',
+        },
       });
 
       // Try to create schedule for tenant 2 with same times (should be allowed)
@@ -493,8 +493,8 @@ describe('Staff Schedule Overlap Prevention', () => {
           date: testDate,
           startTime: '09:00',
           endTime: '17:00',
-          status: 'SCHEDULED'
-        }
+          status: 'SCHEDULED',
+        },
       });
 
       // Try to create another schedule for same tenant/staff (should conflict)
@@ -520,8 +520,8 @@ describe('Staff Schedule Overlap Prevention', () => {
           date: testDate,
           startTime: '09:00',
           endTime: '13:00',
-          status: 'SCHEDULED'
-        }
+          status: 'SCHEDULED',
+        },
       });
 
       // Try to create schedule from 9:00 to 17:00 (same start, different end)
@@ -545,8 +545,8 @@ describe('Staff Schedule Overlap Prevention', () => {
           date: testDate,
           startTime: '13:00',
           endTime: '17:00',
-          status: 'SCHEDULED'
-        }
+          status: 'SCHEDULED',
+        },
       });
 
       // Try to create schedule from 9:00 to 17:00 (different start, same end)
@@ -570,8 +570,8 @@ describe('Staff Schedule Overlap Prevention', () => {
           date: testDate,
           startTime: '12:00',
           endTime: '13:00',
-          status: 'SCHEDULED'
-        }
+          status: 'SCHEDULED',
+        },
       });
 
       // Try to create overlapping 1-hour schedule
@@ -595,8 +595,8 @@ describe('Staff Schedule Overlap Prevention', () => {
           date: testDate,
           startTime: '08:00',
           endTime: '12:00',
-          status: 'SCHEDULED'
-        }
+          status: 'SCHEDULED',
+        },
       });
 
       // Create afternoon schedule
@@ -607,8 +607,8 @@ describe('Staff Schedule Overlap Prevention', () => {
           date: testDate,
           startTime: '13:00',
           endTime: '17:00',
-          status: 'SCHEDULED'
-        }
+          status: 'SCHEDULED',
+        },
       });
 
       // Try to create evening schedule (should be allowed)

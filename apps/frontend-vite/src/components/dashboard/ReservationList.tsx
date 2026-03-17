@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo } from 'react';
 import {
   Card,
   CardHeader,
@@ -14,21 +14,21 @@ import {
   Tooltip,
   TextField,
   InputAdornment,
-} from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import PrintIcon from "@mui/icons-material/Print";
-import SearchIcon from "@mui/icons-material/Search";
-import ClearIcon from "@mui/icons-material/Clear";
-import ContentCutIcon from "@mui/icons-material/ContentCut";
-import LabelIcon from "@mui/icons-material/Label";
-import PetNameWithIcons from "../pets/PetNameWithIcons";
-import { PlaygroupBadge } from "../compatibility";
+} from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import PrintIcon from '@mui/icons-material/Print';
+import SearchIcon from '@mui/icons-material/Search';
+import ClearIcon from '@mui/icons-material/Clear';
+import ContentCutIcon from '@mui/icons-material/ContentCut';
+import LabelIcon from '@mui/icons-material/Label';
+import PetNameWithIcons from '../pets/PetNameWithIcons';
+import { PlaygroupBadge } from '../compatibility';
 import {
   printKennelLabel,
   KennelLabelData,
-} from "../../services/labelPrintService";
-import { formatGingrTime, formatGingrDate } from "../../utils/dateUtils";
+} from '../../services/labelPrintService';
+import { formatGingrTime, formatGingrDate } from '../../utils/dateUtils';
 
 interface Reservation {
   id: string;
@@ -44,12 +44,12 @@ interface Reservation {
     profilePhoto?: string;
     petIcons?: any; // JSON array of icon IDs
     playgroupCompatibility?:
-      | "LARGE_DOG"
-      | "MEDIUM_DOG"
-      | "SMALL_DOG"
-      | "NON_COMPATIBLE"
-      | "SENIOR_STAFF_REQUIRED"
-      | "UNKNOWN"
+      | 'LARGE_DOG'
+      | 'MEDIUM_DOG'
+      | 'SMALL_DOG'
+      | 'NON_COMPATIBLE'
+      | 'SENIOR_STAFF_REQUIRED'
+      | 'UNKNOWN'
       | null;
     aggressionFlags?: any[];
     specialRequirements?: string[];
@@ -71,8 +71,8 @@ interface ReservationListProps {
   reservations: Reservation[];
   loading: boolean;
   error: string | null;
-  filter: "in" | "out" | "all";
-  onFilterChange: (filter: "in" | "out" | "all") => void;
+  filter: 'in' | 'out' | 'all';
+  onFilterChange: (filter: 'in' | 'out' | 'all') => void;
 }
 
 /**
@@ -114,17 +114,17 @@ const ReservationList: React.FC<ReservationListProps> = ({
   onFilterChange,
 }) => {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [printingLabelId, setPrintingLabelId] = useState<string | null>(null);
 
   // Map playgroup compatibility to group size
   const mapPlayGroupToSize = (playgroup?: string): string | undefined => {
     if (!playgroup) return undefined;
     const map: Record<string, string> = {
-      LARGE_DOG: "Large",
-      MEDIUM_DOG: "Medium",
-      SMALL_DOG: "Small",
-      SOLO_ONLY: "Solo",
+      LARGE_DOG: 'Large',
+      MEDIUM_DOG: 'Medium',
+      SMALL_DOG: 'Small',
+      SOLO_ONLY: 'Solo',
     };
     return map[playgroup];
   };
@@ -134,17 +134,17 @@ const ReservationList: React.FC<ReservationListProps> = ({
     e.stopPropagation(); // Prevent navigation to reservation details
 
     const labelData: KennelLabelData = {
-      dogName: reservation.pet?.name || "Unknown",
-      customerLastName: reservation.customer?.lastName || "",
+      dogName: reservation.pet?.name || 'Unknown',
+      customerLastName: reservation.customer?.lastName || '',
       kennelNumber: reservation.resource?.name,
       groupSize: mapPlayGroupToSize(reservation.pet?.playgroupCompatibility),
     };
 
     setPrintingLabelId(reservation.id);
     try {
-      await printKennelLabel(labelData, "local");
+      await printKennelLabel(labelData, 'local');
     } catch (error) {
-      console.error("Failed to print label:", error);
+      console.error('Failed to print label:', error);
     } finally {
       setPrintingLabelId(null);
     }
@@ -158,15 +158,15 @@ const ReservationList: React.FC<ReservationListProps> = ({
 
     const query = searchQuery.toLowerCase();
     return reservations.filter((reservation) => {
-      const petName = reservation.pet?.name?.toLowerCase() || "";
+      const petName = reservation.pet?.name?.toLowerCase() || '';
       const customerFirstName =
-        reservation.customer?.firstName?.toLowerCase() || "";
+        reservation.customer?.firstName?.toLowerCase() || '';
       const customerLastName =
-        reservation.customer?.lastName?.toLowerCase() || "";
+        reservation.customer?.lastName?.toLowerCase() || '';
       const customerFullName =
         `${customerFirstName} ${customerLastName}`.trim();
-      const kennelName = reservation.resource?.name?.toLowerCase() || "";
-      const serviceName = reservation.service?.name?.toLowerCase() || "";
+      const kennelName = reservation.resource?.name?.toLowerCase() || '';
+      const serviceName = reservation.service?.name?.toLowerCase() || '';
 
       return (
         petName.includes(query) ||
@@ -180,7 +180,7 @@ const ReservationList: React.FC<ReservationListProps> = ({
   }, [reservations, searchQuery]);
 
   const handleClearSearch = () => {
-    setSearchQuery("");
+    setSearchQuery('');
   };
 
   /**
@@ -200,18 +200,18 @@ const ReservationList: React.FC<ReservationListProps> = ({
    */
   const getStatusColor = (
     status: string
-  ): "success" | "warning" | "info" | "error" | "default" => {
+  ): 'success' | 'warning' | 'info' | 'error' | 'default' => {
     switch (status) {
-      case "CONFIRMED":
-        return "success";
-      case "PENDING":
-        return "warning";
-      case "CHECKED_IN":
-        return "info";
-      case "CANCELLED":
-        return "error";
+      case 'CONFIRMED':
+        return 'success';
+      case 'PENDING':
+        return 'warning';
+      case 'CHECKED_IN':
+        return 'info';
+      case 'CANCELLED':
+        return 'error';
       default:
-        return "default";
+        return 'default';
     }
   };
 
@@ -220,26 +220,26 @@ const ReservationList: React.FC<ReservationListProps> = ({
    * DAYCARE = orange tint, BOARDING = blue tint, GROOMING = purple tint
    */
   const getServiceColor = (serviceCategory?: string) => {
-    if (serviceCategory === "DAYCARE") {
-      return "rgba(255, 152, 0, 0.08)"; // Orange tint
+    if (serviceCategory === 'DAYCARE') {
+      return 'rgba(255, 152, 0, 0.08)'; // Orange tint
     }
-    if (serviceCategory === "GROOMING") {
-      return "rgba(156, 39, 176, 0.08)"; // Purple tint
+    if (serviceCategory === 'GROOMING') {
+      return 'rgba(156, 39, 176, 0.08)'; // Purple tint
     }
-    return "rgba(25, 118, 210, 0.08)"; // Blue tint (default)
+    return 'rgba(25, 118, 210, 0.08)'; // Blue tint (default)
   };
 
   /**
    * Gets hover color based on service category
    */
   const getServiceHoverColor = (serviceCategory?: string) => {
-    if (serviceCategory === "DAYCARE") {
-      return "rgba(255, 152, 0, 0.15)"; // Orange hover
+    if (serviceCategory === 'DAYCARE') {
+      return 'rgba(255, 152, 0, 0.15)'; // Orange hover
     }
-    if (serviceCategory === "GROOMING") {
-      return "rgba(156, 39, 176, 0.15)"; // Purple hover
+    if (serviceCategory === 'GROOMING') {
+      return 'rgba(156, 39, 176, 0.15)'; // Purple hover
     }
-    return "rgba(25, 118, 210, 0.15)"; // Blue hover (default)
+    return 'rgba(25, 118, 210, 0.15)'; // Blue hover (default)
   };
 
   /**
@@ -254,17 +254,17 @@ const ReservationList: React.FC<ReservationListProps> = ({
    * Format date from ISO string using timezone-safe Gingr date parsing
    */
   const formatDate = (dateString: string) => {
-    return formatGingrDate(dateString, { month: "short", day: "numeric" });
+    return formatGingrDate(dateString, { month: 'short', day: 'numeric' });
   };
 
   const getFilterTitle = () => {
     switch (filter) {
-      case "in":
-        return "Check-Ins Today";
-      case "out":
-        return "Check-Outs Today";
+      case 'in':
+        return 'Check-Ins Today';
+      case 'out':
+        return 'Check-Outs Today';
       default:
-        return "Upcoming Appointments";
+        return 'Upcoming Appointments';
     }
   };
 
@@ -272,7 +272,7 @@ const ReservationList: React.FC<ReservationListProps> = ({
     <Card>
       <CardHeader
         title={
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {getFilterTitle()}
             {reservations.length > 0 && (
               <Chip
@@ -289,25 +289,25 @@ const ReservationList: React.FC<ReservationListProps> = ({
           </Box>
         }
         action={
-          <Box sx={{ display: "flex", gap: 1 }}>
+          <Box sx={{ display: 'flex', gap: 1 }}>
             <Button
               size="small"
-              variant={filter === "all" ? "contained" : "outlined"}
-              onClick={() => onFilterChange("all")}
+              variant={filter === 'all' ? 'contained' : 'outlined'}
+              onClick={() => onFilterChange('all')}
             >
               All
             </Button>
             <Button
               size="small"
-              variant={filter === "in" ? "contained" : "outlined"}
-              onClick={() => onFilterChange("in")}
+              variant={filter === 'in' ? 'contained' : 'outlined'}
+              onClick={() => onFilterChange('in')}
             >
               Check-Ins
             </Button>
             <Button
               size="small"
-              variant={filter === "out" ? "contained" : "outlined"}
-              onClick={() => onFilterChange("out")}
+              variant={filter === 'out' ? 'contained' : 'outlined'}
+              onClick={() => onFilterChange('out')}
             >
               Check-Outs
             </Button>
@@ -340,19 +340,19 @@ const ReservationList: React.FC<ReservationListProps> = ({
         />
 
         {loading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
             <CircularProgress />
           </Box>
         ) : error ? (
           <Typography color="error">{error}</Typography>
         ) : reservations.length === 0 ? (
           <Typography color="text.secondary">
-            No{" "}
-            {filter === "in"
-              ? "check-ins"
-              : filter === "out"
-              ? "check-outs"
-              : "appointments"}{" "}
+            No{' '}
+            {filter === 'in'
+              ? 'check-ins'
+              : filter === 'out'
+                ? 'check-outs'
+                : 'appointments'}{' '}
             scheduled
           </Typography>
         ) : filteredReservations.length === 0 ? (
@@ -363,12 +363,12 @@ const ReservationList: React.FC<ReservationListProps> = ({
           <List
             sx={{
               maxHeight: 500,
-              overflow: "auto",
+              overflow: 'auto',
               p: 0,
-              "& .MuiListItem-root": {
+              '& .MuiListItem-root': {
                 borderBottom: 1,
-                borderColor: "divider",
-                "&:last-child": {
+                borderColor: 'divider',
+                '&:last-child': {
                   borderBottom: 0,
                 },
               },
@@ -380,47 +380,47 @@ const ReservationList: React.FC<ReservationListProps> = ({
                 sx={{
                   mb: 1,
                   borderRadius: 1,
-                  border: "1px solid",
-                  borderColor: "divider",
+                  border: '1px solid',
+                  borderColor: 'divider',
                   bgcolor: getServiceColor(
                     reservation.service?.serviceCategory
                   ),
-                  transition: "all 0.2s ease",
-                  "&:hover": {
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
                     bgcolor: getServiceHoverColor(
                       reservation.service?.serviceCategory
                     ),
-                    borderColor: "primary.main",
-                    transform: "translateX(4px)",
+                    borderColor: 'primary.main',
+                    transform: 'translateX(4px)',
                   },
                   px: 2,
                   py: 1.5,
-                  display: "flex",
-                  alignItems: "center",
+                  display: 'flex',
+                  alignItems: 'center',
                   gap: 1,
                 }}
               >
                 <Box
                   sx={{
                     flex: 1,
-                    display: "flex",
-                    flexDirection: "column",
+                    display: 'flex',
+                    flexDirection: 'column',
                     gap: 0.25,
-                    cursor: "pointer",
+                    cursor: 'pointer',
                   }}
                   onClick={() => navigate(`/reservations/${reservation.id}`)}
                 >
                   {/* Row 1: Pet Name, Customer Name, Playgroup Badge & Warnings */}
                   <Box
                     sx={{
-                      display: "flex",
-                      alignItems: "center",
+                      display: 'flex',
+                      alignItems: 'center',
                       gap: 1,
-                      flexWrap: "wrap",
+                      flexWrap: 'wrap',
                     }}
                   >
                     <PetNameWithIcons
-                      petName={reservation.pet?.name || "Unknown Pet"}
+                      petName={reservation.pet?.name || 'Unknown Pet'}
                       petIcons={reservation.pet?.petIcons}
                       profilePhoto={reservation.pet?.profilePhoto}
                       showPhoto={true}
@@ -428,10 +428,10 @@ const ReservationList: React.FC<ReservationListProps> = ({
                     <Typography
                       variant="body2"
                       color="text.secondary"
-                      sx={{ fontSize: "0.8rem" }}
+                      sx={{ fontSize: '0.8rem' }}
                     >
-                      • {reservation.customer?.firstName || ""}{" "}
-                      {reservation.customer?.lastName || "Unknown"}
+                      • {reservation.customer?.firstName || ''}{' '}
+                      {reservation.customer?.lastName || 'Unknown'}
                     </Typography>
                     {reservation.pet?.playgroupCompatibility && (
                       <PlaygroupBadge
@@ -443,29 +443,29 @@ const ReservationList: React.FC<ReservationListProps> = ({
                   {/* Row 2: Kennel, Service, Time */}
                   <Box
                     sx={{
-                      display: "flex",
-                      alignItems: "center",
+                      display: 'flex',
+                      alignItems: 'center',
                       gap: 1,
-                      flexWrap: "wrap",
+                      flexWrap: 'wrap',
                     }}
                   >
                     {reservation.resource?.name && (
                       <>
                         <Box
                           sx={{
-                            display: "flex",
-                            alignItems: "center",
+                            display: 'flex',
+                            alignItems: 'center',
                             gap: 0.5,
                           }}
                         >
-                          {(reservation.pet?.type === "CAT" ||
+                          {(reservation.pet?.type === 'CAT' ||
                             reservation.resource.name
                               .toUpperCase()
-                              .startsWith("K")) && (
+                              .startsWith('K')) && (
                             <Box
                               component="span"
                               sx={{
-                                fontSize: "0.875rem",
+                                fontSize: '0.875rem',
                                 lineHeight: 1,
                               }}
                             >
@@ -476,7 +476,7 @@ const ReservationList: React.FC<ReservationListProps> = ({
                             label={
                               reservation.resource.name.length > 1
                                 ? reservation.resource.name.slice(0, -1) +
-                                  " " +
+                                  ' ' +
                                   reservation.resource.name.slice(-1)
                                 : reservation.resource.name
                             }
@@ -484,9 +484,9 @@ const ReservationList: React.FC<ReservationListProps> = ({
                             variant="outlined"
                             sx={{
                               height: 18,
-                              fontSize: "0.75rem",
+                              fontSize: '0.75rem',
                               fontWeight: 600,
-                              backgroundColor: "white",
+                              backgroundColor: 'white',
                             }}
                           />
                         </Box>
@@ -499,17 +499,17 @@ const ReservationList: React.FC<ReservationListProps> = ({
                       <>
                         <Box
                           sx={{
-                            display: "flex",
-                            alignItems: "center",
+                            display: 'flex',
+                            alignItems: 'center',
                             gap: 0.5,
                           }}
                         >
                           {reservation.service.serviceCategory ===
-                            "GROOMING" && (
+                            'GROOMING' && (
                             <ContentCutIcon
                               sx={{
-                                fontSize: "0.875rem",
-                                color: "#9c27b0",
+                                fontSize: '0.875rem',
+                                color: '#9c27b0',
                               }}
                             />
                           )}
@@ -523,12 +523,12 @@ const ReservationList: React.FC<ReservationListProps> = ({
                       </>
                     )}
                     <Typography variant="caption" color="text.secondary">
-                      {reservation.service?.serviceCategory === "BOARDING" ? (
+                      {reservation.service?.serviceCategory === 'BOARDING' ? (
                         // Show date range for boarding reservations
                         <>
-                          {formatDate(reservation.startDate)}{" "}
-                          {formatTime(reservation.startDate)} →{" "}
-                          {formatDate(reservation.endDate)}{" "}
+                          {formatDate(reservation.startDate)}{' '}
+                          {formatTime(reservation.startDate)} →{' '}
+                          {formatDate(reservation.endDate)}{' '}
                           {formatTime(reservation.endDate)}
                         </>
                       ) : (
@@ -545,10 +545,10 @@ const ReservationList: React.FC<ReservationListProps> = ({
                     onClick={(e) => handlePrintLabel(reservation, e)}
                     disabled={printingLabelId === reservation.id}
                     sx={{
-                      color: "primary.main",
-                      "&:hover": {
-                        bgcolor: "primary.light",
-                        color: "primary.dark",
+                      color: 'primary.main',
+                      '&:hover': {
+                        bgcolor: 'primary.light',
+                        color: 'primary.dark',
                       },
                     }}
                   >
@@ -571,7 +571,7 @@ const ReservationList: React.FC<ReservationListProps> = ({
                     <PrintIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
-                {filter === "in" && reservation.status === "CONFIRMED" ? (
+                {filter === 'in' && reservation.status === 'CONFIRMED' ? (
                   <Tooltip title="Start Check-In">
                     <IconButton
                       edge="end"
@@ -596,7 +596,7 @@ const ReservationList: React.FC<ReservationListProps> = ({
           </List>
         )}
         {reservations.length > 0 && (
-          <Box sx={{ mt: 2, textAlign: "center" }}>
+          <Box sx={{ mt: 2, textAlign: 'center' }}>
             <Button
               component={Link}
               to="/calendar"

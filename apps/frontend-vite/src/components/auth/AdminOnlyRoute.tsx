@@ -3,10 +3,10 @@
  * Redirects non-admin users to dashboard with an error message
  */
 
-import React from "react";
-import { Navigate, useLocation } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import { canAccessSettings } from "../../utils/permissions";
+import React from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import { canAccessSettings } from '../../utils/permissions';
 
 interface AdminOnlyRouteProps {
   children: React.ReactNode;

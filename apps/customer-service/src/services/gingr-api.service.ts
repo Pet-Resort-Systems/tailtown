@@ -147,7 +147,7 @@ export class GingrApiClient {
     await this.rateLimit();
 
     const url = new URL(`${this.baseUrl}${endpoint}`);
-    url.searchParams.append("key", this.apiKey);
+    url.searchParams.append('key', this.apiKey);
 
     Object.keys(params).forEach((key) => {
       const value = params[key];
@@ -188,7 +188,7 @@ export class GingrApiClient {
     await this.rateLimit();
 
     const formData = new URLSearchParams();
-    formData.append("key", this.apiKey);
+    formData.append('key', this.apiKey);
 
     Object.keys(data).forEach((key) => {
       const value = data[key];
@@ -201,9 +201,9 @@ export class GingrApiClient {
 
     try {
       const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+          'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
         },
         body: formData,
       });
@@ -229,14 +229,14 @@ export class GingrApiClient {
    * Format date to YYYY-MM-DD
    */
   private formatDate(date: Date): string {
-    return date.toISOString().split("T")[0];
+    return date.toISOString().split('T')[0];
   }
 
   /**
    * Fetch all owners
    */
   async fetchAllOwners(): Promise<GingrOwner[]> {
-    const response = await this.get("/owners");
+    const response = await this.get('/owners');
     return response.data || [];
   }
 
@@ -244,7 +244,7 @@ export class GingrApiClient {
    * Fetch all animals
    */
   async fetchAllAnimals(): Promise<GingrAnimal[]> {
-    const response = await this.get("/animals");
+    const response = await this.get('/animals');
     return response.data || [];
   }
 
@@ -273,7 +273,7 @@ export class GingrApiClient {
       );
 
       try {
-        const response = await this.post("/reservations", {
+        const response = await this.post('/reservations', {
           start_date: this.formatDate(currentStart),
           end_date: this.formatDate(chunkEnd),
         });
@@ -310,7 +310,7 @@ export class GingrApiClient {
    * Fetch reservation types (services)
    */
   async fetchReservationTypes(): Promise<GingrReservationType[]> {
-    const response = await this.get("/reservation_types");
+    const response = await this.get('/reservation_types');
     return response.data || [];
   }
 
@@ -321,7 +321,7 @@ export class GingrApiClient {
     fromDate: Date,
     toDate: Date
   ): Promise<GingrInvoice[]> {
-    const response = await this.get("/list_invoices", {
+    const response = await this.get('/list_invoices', {
       from_date: this.formatDate(fromDate),
       to_date: this.formatDate(toDate),
       complete: true,
@@ -334,7 +334,7 @@ export class GingrApiClient {
    * Fetch animal immunizations
    */
   async fetchAnimalImmunizations(animalId: string): Promise<any[]> {
-    const response = await this.get("/get_animal_immunizations", {
+    const response = await this.get('/get_animal_immunizations', {
       animal_id: animalId,
     });
 
@@ -345,7 +345,7 @@ export class GingrApiClient {
    * Fetch animal feeding info
    */
   async fetchFeedingInfo(animalId: string): Promise<any> {
-    const response = await this.get("/get_feeding_info", {
+    const response = await this.get('/get_feeding_info', {
       animal_id: animalId,
     });
 
@@ -356,7 +356,7 @@ export class GingrApiClient {
    * Fetch animal medication info
    */
   async fetchMedicationInfo(animalId: string): Promise<any> {
-    const response = await this.get("/get_medication_info", {
+    const response = await this.get('/get_medication_info', {
       animal_id: animalId,
     });
 
@@ -367,7 +367,7 @@ export class GingrApiClient {
    * Fetch species list
    */
   async fetchSpecies(): Promise<any[]> {
-    const response = await this.get("/get_species");
+    const response = await this.get('/get_species');
     return response.data || [];
   }
 
@@ -375,7 +375,7 @@ export class GingrApiClient {
    * Fetch breeds list
    */
   async fetchBreeds(): Promise<any[]> {
-    const response = await this.get("/get_breeds");
+    const response = await this.get('/get_breeds');
     return response.data || [];
   }
 
@@ -383,7 +383,7 @@ export class GingrApiClient {
    * Fetch locations
    */
   async fetchLocations(): Promise<any[]> {
-    const response = await this.get("/get_locations");
+    const response = await this.get('/get_locations');
     return response.data || [];
   }
 
@@ -391,7 +391,7 @@ export class GingrApiClient {
    * Fetch vets list
    */
   async fetchVets(): Promise<any[]> {
-    const response = await this.get("/get_vets");
+    const response = await this.get('/get_vets');
     return response.data || [];
   }
 

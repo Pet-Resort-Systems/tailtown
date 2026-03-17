@@ -2,7 +2,7 @@
  * Branding Step - Colors and customization
  */
 
-import React from "react";
+import React from 'react';
 import {
   Box,
   Typography,
@@ -11,9 +11,9 @@ import {
   Card,
   CardContent,
   TextField,
-} from "@mui/material";
-import { ArrowForward, ArrowBack } from "@mui/icons-material";
-import { useSetupWizard } from "../SetupWizardContext";
+} from '@mui/material';
+import { ArrowForward, ArrowBack } from '@mui/icons-material';
+import { useSetupWizard } from '../SetupWizardContext';
 
 export default function BrandingStep() {
   const { state, setBranding, completeStep, nextStep, prevStep } =
@@ -21,7 +21,7 @@ export default function BrandingStep() {
   const { branding } = state;
 
   const handleNext = () => {
-    completeStep("branding");
+    completeStep('branding');
     nextStep();
   };
 
@@ -44,7 +44,7 @@ export default function BrandingStep() {
               </Typography>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <input
                       type="color"
                       value={branding.primaryColor}
@@ -54,8 +54,8 @@ export default function BrandingStep() {
                       style={{
                         width: 50,
                         height: 50,
-                        border: "none",
-                        cursor: "pointer",
+                        border: 'none',
+                        cursor: 'pointer',
                       }}
                     />
                     <Box>
@@ -72,7 +72,7 @@ export default function BrandingStep() {
                   </Box>
                 </Grid>
                 <Grid item xs={12}>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <input
                       type="color"
                       value={branding.secondaryColor}
@@ -82,8 +82,8 @@ export default function BrandingStep() {
                       style={{
                         width: 50,
                         height: 50,
-                        border: "none",
-                        cursor: "pointer",
+                        border: 'none',
+                        cursor: 'pointer',
                       }}
                     />
                     <Box>
@@ -107,7 +107,7 @@ export default function BrandingStep() {
         </Grid>
 
         <Grid item xs={12} md={6}>
-          <Card variant="outlined" sx={{ height: "100%" }}>
+          <Card variant="outlined" sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
                 Preview
@@ -116,13 +116,13 @@ export default function BrandingStep() {
                 sx={{
                   p: 3,
                   borderRadius: 2,
-                  bgcolor: "grey.100",
-                  textAlign: "center",
+                  bgcolor: 'grey.100',
+                  textAlign: 'center',
                 }}
               >
                 <Box
                   sx={{
-                    width: "100%",
+                    width: '100%',
                     height: 8,
                     bgcolor: branding.primaryColor,
                     borderRadius: 1,
@@ -133,7 +133,7 @@ export default function BrandingStep() {
                   variant="contained"
                   sx={{
                     bgcolor: branding.primaryColor,
-                    "&:hover": { bgcolor: branding.primaryColor },
+                    '&:hover': { bgcolor: branding.primaryColor },
                   }}
                 >
                   Primary Button
@@ -154,7 +154,7 @@ export default function BrandingStep() {
         </Grid>
       </Grid>
 
-      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button startIcon={<ArrowBack />} onClick={prevStep}>
           Back
         </Button>

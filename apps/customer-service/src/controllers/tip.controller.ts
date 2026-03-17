@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient, TipType, TipCollectionMethod } from "@prisma/client";
-import { AppError } from "../middleware/error.middleware";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient, TipType, TipCollectionMethod } from '@prisma/client';
+import { AppError } from '../middleware/error.middleware';
 
 const prisma = new PrismaClient();
 
@@ -31,7 +31,7 @@ export const createTip = async (
     if (!type || !amount || !collectionMethod || !customerId) {
       return next(
         new AppError(
-          "Type, amount, collection method, and customer ID are required",
+          'Type, amount, collection method, and customer ID are required',
           400
         )
       );
@@ -40,7 +40,7 @@ export const createTip = async (
     // Validate tip type
     if (!Object.values(TipType).includes(type)) {
       return next(
-        new AppError("Invalid tip type. Must be GROOMER or GENERAL", 400)
+        new AppError('Invalid tip type. Must be GROOMER or GENERAL', 400)
       );
     }
 
@@ -48,7 +48,7 @@ export const createTip = async (
     if (!Object.values(TipCollectionMethod).includes(collectionMethod)) {
       return next(
         new AppError(
-          "Invalid collection method. Must be ONLINE, TERMINAL, or CASH",
+          'Invalid collection method. Must be ONLINE, TERMINAL, or CASH',
           400
         )
       );
@@ -56,7 +56,7 @@ export const createTip = async (
 
     // If GROOMER tip, groomerId is required
     if (type === TipType.GROOMER && !groomerId) {
-      return next(new AppError("Groomer ID is required for groomer tips", 400));
+      return next(new AppError('Groomer ID is required for groomer tips', 400));
     }
 
     // Validate customer exists
@@ -64,7 +64,7 @@ export const createTip = async (
       where: { id: customerId, tenantId },
     });
     if (!customer) {
-      return next(new AppError("Customer not found", 404));
+      return next(new AppError('Customer not found', 404));
     }
 
     // Validate groomer exists if provided
@@ -73,7 +73,7 @@ export const createTip = async (
         where: { id: groomerId, tenantId },
       });
       if (!groomer) {
-        return next(new AppError("Groomer not found", 404));
+        return next(new AppError('Groomer not found', 404));
       }
     }
 
@@ -110,12 +110,12 @@ export const createTip = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: tip,
     });
   } catch (error) {
-    console.error("Error creating tip:", error);
-    return next(new AppError("Error creating tip", 500));
+    console.error('Error creating tip:', error);
+    return next(new AppError('Error creating tip', 500));
   }
 };
 
@@ -137,8 +137,8 @@ export const getTips = async (
       invoiceId,
       startDate,
       endDate,
-      page = "1",
-      limit = "50",
+      page = '1',
+      limit = '50',
     } = req.query;
 
     const pageNum = parseInt(page as string, 10);
@@ -179,7 +179,7 @@ export const getTips = async (
             },
           },
         },
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: 'desc' },
         skip,
         take: limitNum,
       }),
@@ -187,7 +187,7 @@ export const getTips = async (
     ]);
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: tips.length,
       total,
       page: pageNum,
@@ -195,8 +195,8 @@ export const getTips = async (
       data: tips,
     });
   } catch (error) {
-    console.error("Error fetching tips:", error);
-    return next(new AppError("Error fetching tips", 500));
+    console.error('Error fetching tips:', error);
+    return next(new AppError('Error fetching tips', 500));
   }
 };
 
@@ -234,16 +234,16 @@ export const getTipById = async (
     });
 
     if (!tip) {
-      return next(new AppError("Tip not found", 404));
+      return next(new AppError('Tip not found', 404));
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: tip,
     });
   } catch (error) {
-    console.error("Error fetching tip:", error);
-    return next(new AppError("Error fetching tip", 500));
+    console.error('Error fetching tip:', error);
+    return next(new AppError('Error fetching tip', 500));
   }
 };
 
@@ -266,7 +266,7 @@ export const updateTip = async (
     });
 
     if (!existingTip) {
-      return next(new AppError("Tip not found", 404));
+      return next(new AppError('Tip not found', 404));
     }
 
     const tip = await prisma.tip.update({
@@ -295,12 +295,12 @@ export const updateTip = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: tip,
     });
   } catch (error) {
-    console.error("Error updating tip:", error);
-    return next(new AppError("Error updating tip", 500));
+    console.error('Error updating tip:', error);
+    return next(new AppError('Error updating tip', 500));
   }
 };
 
@@ -322,7 +322,7 @@ export const deleteTip = async (
     });
 
     if (!existingTip) {
-      return next(new AppError("Tip not found", 404));
+      return next(new AppError('Tip not found', 404));
     }
 
     await prisma.tip.delete({
@@ -331,8 +331,8 @@ export const deleteTip = async (
 
     res.status(204).send();
   } catch (error) {
-    console.error("Error deleting tip:", error);
-    return next(new AppError("Error deleting tip", 500));
+    console.error('Error deleting tip:', error);
+    return next(new AppError('Error deleting tip', 500));
   }
 };
 
@@ -365,7 +365,7 @@ export const getGroomerTipsSummary = async (
     });
 
     if (!groomer) {
-      return next(new AppError("Groomer not found", 404));
+      return next(new AppError('Groomer not found', 404));
     }
 
     // Get all tips for this groomer
@@ -384,7 +384,7 @@ export const getGroomerTipsSummary = async (
           },
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
 
     // Calculate summary
@@ -404,7 +404,7 @@ export const getGroomerTipsSummary = async (
     }, {});
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         groomer,
         summary: {
@@ -417,8 +417,8 @@ export const getGroomerTipsSummary = async (
       },
     });
   } catch (error) {
-    console.error("Error fetching groomer tips summary:", error);
-    return next(new AppError("Error fetching groomer tips summary", 500));
+    console.error('Error fetching groomer tips summary:', error);
+    return next(new AppError('Error fetching groomer tips summary', 500));
   }
 };
 
@@ -454,7 +454,7 @@ export const getGeneralTipPoolSummary = async (
           },
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
 
     // Calculate summary
@@ -475,7 +475,7 @@ export const getGeneralTipPoolSummary = async (
 
     // Group by day for charting
     const byDay = tips.reduce((acc: any, tip) => {
-      const day = tip.createdAt.toISOString().split("T")[0];
+      const day = tip.createdAt.toISOString().split('T')[0];
       if (!acc[day]) {
         acc[day] = { count: 0, total: 0 };
       }
@@ -485,7 +485,7 @@ export const getGeneralTipPoolSummary = async (
     }, {});
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         summary: {
           totalAmount,
@@ -498,8 +498,8 @@ export const getGeneralTipPoolSummary = async (
       },
     });
   } catch (error) {
-    console.error("Error fetching general tip pool summary:", error);
-    return next(new AppError("Error fetching general tip pool summary", 500));
+    console.error('Error fetching general tip pool summary:', error);
+    return next(new AppError('Error fetching general tip pool summary', 500));
   }
 };
 
@@ -525,7 +525,7 @@ export const getAllGroomersTipsSummary = async (
       where: {
         tenantId,
         isActive: true,
-        role: { in: ["groomer", "Groomer", "GROOMER"] },
+        role: { in: ['groomer', 'Groomer', 'GROOMER'] },
       },
       select: {
         id: true,
@@ -536,7 +536,7 @@ export const getAllGroomersTipsSummary = async (
 
     // Get tips for all groomers
     const groomerTips = await prisma.tip.groupBy({
-      by: ["groomerId"],
+      by: ['groomerId'],
       where: {
         tenantId,
         type: TipType.GROOMER,
@@ -575,7 +575,7 @@ export const getAllGroomersTipsSummary = async (
     );
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         groomers: groomerSummaries,
         totals: {
@@ -586,7 +586,7 @@ export const getAllGroomersTipsSummary = async (
       },
     });
   } catch (error) {
-    console.error("Error fetching all groomers tips summary:", error);
-    return next(new AppError("Error fetching all groomers tips summary", 500));
+    console.error('Error fetching all groomers tips summary:', error);
+    return next(new AppError('Error fetching all groomers tips summary', 500));
   }
 };

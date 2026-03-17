@@ -1,8 +1,8 @@
 /**
  * Redis Cache Client
- * 
+ *
  * Provides caching functionality to reduce database load and improve performance.
- * 
+ *
  * Usage:
  * - Cache frequently accessed data (products, services, etc.)
  * - Set TTL (time-to-live) for automatic expiration
@@ -36,7 +36,9 @@ export async function initRedis(): Promise<void> {
       socket: {
         reconnectStrategy: (retries) => {
           if (retries > 10) {
-            logger.error('Redis max reconnection attempts reached', { retries });
+            logger.error('Redis max reconnection attempts reached', {
+              retries,
+            });
             return new Error('Max reconnection attempts reached');
           }
           // Exponential backoff: 100ms, 200ms, 400ms, etc.
@@ -181,7 +183,11 @@ export async function closeRedis(): Promise<void> {
  * @param resource - Resource type (e.g., "products", "customers")
  * @param id - Optional resource ID
  */
-export function getCacheKey(tenantId: string, resource: string, id?: string): string {
+export function getCacheKey(
+  tenantId: string,
+  resource: string,
+  id?: string
+): string {
   if (id) {
     return `${tenantId}:${resource}:${id}`;
   }

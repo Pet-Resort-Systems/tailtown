@@ -5,9 +5,7 @@ import config from '../../config';
  * Customer Service API client
  * Handles customer, pet, and staff-related operations
  */
-export const customerApiClient = createApiClient(
-  config.api.customerServiceUrl
-);
+export const customerApiClient = createApiClient(config.api.customerServiceUrl);
 
 /**
  * Reservation Service API client
@@ -25,5 +23,5 @@ export const legacyApi = customerApiClient;
 
 export default {
   customer: customerApiClient,
-  reservation: reservationApiClient
+  reservation: reservationApiClient,
 };

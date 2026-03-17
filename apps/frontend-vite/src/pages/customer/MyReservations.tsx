@@ -1,6 +1,6 @@
 /**
  * My Reservations Page
- * 
+ *
  * Customer-facing reservation management dashboard.
  * Allows customers to:
  * - View all their reservations
@@ -25,7 +25,7 @@ import {
   Alert,
   CircularProgress,
   Divider,
-  Stack
+  Stack,
 } from '@mui/material';
 import {
   CalendarToday as CalendarIcon,
@@ -33,7 +33,7 @@ import {
   AttachMoney as MoneyIcon,
   Edit as EditIcon,
   Cancel as CancelIcon,
-  Visibility as ViewIcon
+  Visibility as ViewIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { reservationManagementService } from '../../services/reservationManagementService';
@@ -41,16 +41,17 @@ import { useCustomerAuth } from '../../contexts/CustomerAuthContext';
 import {
   CustomerReservationDashboard,
   ReservationSummary,
-  ReservationFilter
+  ReservationFilter,
 } from '../../types/reservationManagement';
 import { formatDate, formatCurrency } from '../../utils/formatters';
 
 export const MyReservations: React.FC = () => {
   const navigate = useNavigate();
   const { customer } = useCustomerAuth();
-  
+
   const [loading, setLoading] = useState(true);
-  const [dashboard, setDashboard] = useState<CustomerReservationDashboard | null>(null);
+  const [dashboard, setDashboard] =
+    useState<CustomerReservationDashboard | null>(null);
   const [activeTab, setActiveTab] = useState<ReservationFilter>('UPCOMING');
   const [error, setError] = useState<string | null>(null);
 
@@ -66,7 +67,9 @@ export const MyReservations: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await reservationManagementService.getCustomerDashboard(customer.id);
+      const data = await reservationManagementService.getCustomerDashboard(
+        customer.id
+      );
       setDashboard(data);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to load reservations');
@@ -77,7 +80,7 @@ export const MyReservations: React.FC = () => {
 
   const getReservationsForTab = (): ReservationSummary[] => {
     if (!dashboard) return [];
-    
+
     switch (activeTab) {
       case 'UPCOMING':
         return dashboard.upcoming;
@@ -86,7 +89,11 @@ export const MyReservations: React.FC = () => {
       case 'CANCELLED':
         return dashboard.cancelled;
       default:
-        return [...dashboard.upcoming, ...dashboard.past, ...dashboard.cancelled];
+        return [
+          ...dashboard.upcoming,
+          ...dashboard.past,
+          ...dashboard.cancelled,
+        ];
     }
   };
 
@@ -114,7 +121,12 @@ export const MyReservations: React.FC = () => {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -153,9 +165,7 @@ export const MyReservations: React.FC = () => {
                 <Typography color="text.secondary" gutterBottom>
                   Upcoming
                 </Typography>
-                <Typography variant="h4">
-                  {dashboard.upcomingCount}
-                </Typography>
+                <Typography variant="h4">{dashboard.upcomingCount}</Typography>
               </CardContent>
             </Card>
           </Grid>
@@ -219,12 +229,14 @@ export const MyReservations: React.FC = () => {
         <Card>
           <CardContent>
             <Box textAlign="center" py={4}>
-              <CalendarIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+              <CalendarIcon
+                sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }}
+              />
               <Typography variant="h6" gutterBottom>
                 No {activeTab.toLowerCase()} reservations
               </Typography>
               <Typography variant="body2" color="text.secondary" mb={3}>
-                {activeTab === 'UPCOMING' 
+                {activeTab === 'UPCOMING'
                   ? "You don't have any upcoming reservations."
                   : `You don't have any ${activeTab.toLowerCase()} reservations.`}
               </Typography>
@@ -248,10 +260,18 @@ export const MyReservations: React.FC = () => {
                   <Grid container spacing={2}>
                     {/* Status and Order Number */}
                     <Grid item xs={12}>
-                      <Box display="flex" justifyContent="space-between" alignItems="center">
+                      <Box
+                        display="flex"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
                         <Chip
-                          label={reservationManagementService.getStatusLabel(reservation.status)}
-                          color={reservationManagementService.getStatusColor(reservation.status)}
+                          label={reservationManagementService.getStatusLabel(
+                            reservation.status
+                          )}
+                          color={reservationManagementService.getStatusColor(
+                            reservation.status
+                          )}
                           size="small"
                         />
                         {reservation.orderNumber && (
@@ -326,11 +346,13 @@ export const MyReservations: React.FC = () => {
                       <Typography variant="body2" color="text.secondary">
                         {reservation.serviceName}
                       </Typography>
-                      {reservation.daysUntilCheckIn > 0 && reservation.daysUntilCheckIn <= 7 && (
-                        <Typography variant="caption" color="warning.main">
-                          Check-in in {reservation.daysUntilCheckIn} day{reservation.daysUntilCheckIn !== 1 ? 's' : ''}
-                        </Typography>
-                      )}
+                      {reservation.daysUntilCheckIn > 0 &&
+                        reservation.daysUntilCheckIn <= 7 && (
+                          <Typography variant="caption" color="warning.main">
+                            Check-in in {reservation.daysUntilCheckIn} day
+                            {reservation.daysUntilCheckIn !== 1 ? 's' : ''}
+                          </Typography>
+                        )}
                     </Grid>
                   </Grid>
                 </CardContent>

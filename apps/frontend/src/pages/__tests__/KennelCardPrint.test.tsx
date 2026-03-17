@@ -28,7 +28,7 @@ describe('KennelCardPrint', () => {
     endDate: '2025-11-07T19:00:00Z',
     resource: {
       name: 'C01 Q',
-      type: 'STANDARD'
+      type: 'STANDARD',
     },
     pet: {
       id: 'pet-123',
@@ -38,16 +38,16 @@ describe('KennelCardPrint', () => {
       type: 'DOG',
       petIcons: ['medium-size', 'small-group'],
       iconNotes: {},
-      notes: 'Friendly dog'
+      notes: 'Friendly dog',
     },
     customer: {
       id: 'customer-123',
       firstName: 'Gordon',
       lastName: 'Moore',
-      phone: '(505) 239-7297'
+      phone: '(505) 239-7297',
     },
     notes: 'Reservation notes',
-    alerts: []
+    alerts: [],
   };
 
   beforeEach(() => {
@@ -64,7 +64,10 @@ describe('KennelCardPrint', () => {
     render(
       <MemoryRouter initialEntries={['/kennel-card/test-id']}>
         <Routes>
-          <Route path="/kennel-card/:reservationId" element={<KennelCardPrint />} />
+          <Route
+            path="/kennel-card/:reservationId"
+            element={<KennelCardPrint />}
+          />
         </Routes>
       </MemoryRouter>
     );
@@ -73,12 +76,17 @@ describe('KennelCardPrint', () => {
   });
 
   it('should fetch and display reservation data', async () => {
-    (reservationService.getReservationById as jest.Mock).mockResolvedValue(mockReservation);
+    (reservationService.getReservationById as jest.Mock).mockResolvedValue(
+      mockReservation
+    );
 
     render(
       <MemoryRouter initialEntries={['/kennel-card/test-reservation-id']}>
         <Routes>
-          <Route path="/kennel-card/:reservationId" element={<KennelCardPrint />} />
+          <Route
+            path="/kennel-card/:reservationId"
+            element={<KennelCardPrint />}
+          />
         </Routes>
       </MemoryRouter>
     );
@@ -97,16 +105,21 @@ describe('KennelCardPrint', () => {
       ...mockReservation,
       pet: {
         ...mockReservation.pet,
-        petIcons: JSON.stringify(['medium-size', 'small-group'])
-      }
+        petIcons: JSON.stringify(['medium-size', 'small-group']),
+      },
     };
 
-    (reservationService.getReservationById as jest.Mock).mockResolvedValue(reservationWithStringIcons);
+    (reservationService.getReservationById as jest.Mock).mockResolvedValue(
+      reservationWithStringIcons
+    );
 
     render(
       <MemoryRouter initialEntries={['/kennel-card/test-id']}>
         <Routes>
-          <Route path="/kennel-card/:reservationId" element={<KennelCardPrint />} />
+          <Route
+            path="/kennel-card/:reservationId"
+            element={<KennelCardPrint />}
+          />
         </Routes>
       </MemoryRouter>
     );
@@ -125,16 +138,21 @@ describe('KennelCardPrint', () => {
       ...mockReservation,
       pet: {
         ...mockReservation.pet,
-        petIcons: []
-      }
+        petIcons: [],
+      },
     };
 
-    (reservationService.getReservationById as jest.Mock).mockResolvedValue(reservationWithNoIcons);
+    (reservationService.getReservationById as jest.Mock).mockResolvedValue(
+      reservationWithNoIcons
+    );
 
     render(
       <MemoryRouter initialEntries={['/kennel-card/test-id']}>
         <Routes>
-          <Route path="/kennel-card/:reservationId" element={<KennelCardPrint />} />
+          <Route
+            path="/kennel-card/:reservationId"
+            element={<KennelCardPrint />}
+          />
         </Routes>
       </MemoryRouter>
     );
@@ -154,28 +172,38 @@ describe('KennelCardPrint', () => {
     render(
       <MemoryRouter initialEntries={['/kennel-card/test-id']}>
         <Routes>
-          <Route path="/kennel-card/:reservationId" element={<KennelCardPrint />} />
+          <Route
+            path="/kennel-card/:reservationId"
+            element={<KennelCardPrint />}
+          />
         </Routes>
       </MemoryRouter>
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/Failed to fetch reservation/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Failed to fetch reservation/i)
+      ).toBeInTheDocument();
     });
   });
 
   it('should display error when reservation data is invalid', async () => {
     const invalidReservation = {
       ...mockReservation,
-      pet: null
+      pet: null,
     };
 
-    (reservationService.getReservationById as jest.Mock).mockResolvedValue(invalidReservation);
+    (reservationService.getReservationById as jest.Mock).mockResolvedValue(
+      invalidReservation
+    );
 
     render(
       <MemoryRouter initialEntries={['/kennel-card/test-id']}>
         <Routes>
-          <Route path="/kennel-card/:reservationId" element={<KennelCardPrint />} />
+          <Route
+            path="/kennel-card/:reservationId"
+            element={<KennelCardPrint />}
+          />
         </Routes>
       </MemoryRouter>
     );
@@ -187,12 +215,17 @@ describe('KennelCardPrint', () => {
 
   it('should trigger print dialog after rendering', async () => {
     jest.useFakeTimers();
-    (reservationService.getReservationById as jest.Mock).mockResolvedValue(mockReservation);
+    (reservationService.getReservationById as jest.Mock).mockResolvedValue(
+      mockReservation
+    );
 
     render(
       <MemoryRouter initialEntries={['/kennel-card/test-id']}>
         <Routes>
-          <Route path="/kennel-card/:reservationId" element={<KennelCardPrint />} />
+          <Route
+            path="/kennel-card/:reservationId"
+            element={<KennelCardPrint />}
+          />
         </Routes>
       </MemoryRouter>
     );
@@ -216,20 +249,25 @@ describe('KennelCardPrint', () => {
       pet: {
         id: 'pet-123',
         name: 'Buddy',
-        type: 'DOG'
+        type: 'DOG',
       },
       customer: {
         id: 'customer-123',
-        firstName: 'John'
-      }
+        firstName: 'John',
+      },
     };
 
-    (reservationService.getReservationById as jest.Mock).mockResolvedValue(minimalReservation);
+    (reservationService.getReservationById as jest.Mock).mockResolvedValue(
+      minimalReservation
+    );
 
     render(
       <MemoryRouter initialEntries={['/kennel-card/test-id']}>
         <Routes>
-          <Route path="/kennel-card/:reservationId" element={<KennelCardPrint />} />
+          <Route
+            path="/kennel-card/:reservationId"
+            element={<KennelCardPrint />}
+          />
         </Routes>
       </MemoryRouter>
     );

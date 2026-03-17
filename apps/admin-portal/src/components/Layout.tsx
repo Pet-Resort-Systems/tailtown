@@ -38,7 +38,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Tailtown Admin Portal
           </Typography>
-          
+
           {location.pathname !== '/' && (
             <Button
               color="inherit"
@@ -49,7 +49,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               Dashboard
             </Button>
           )}
-          
+
           <Button
             color="inherit"
             startIcon={<LogoutIcon />}
@@ -59,11 +59,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </Button>
         </Toolbar>
       </AppBar>
-      
+
       <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default' }}>
         {children}
       </Box>
-      
+
       <Box
         component="footer"
         sx={{
@@ -77,7 +77,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       >
         <Container maxWidth="lg">
           <Typography variant="body2" color="text.secondary" align="center">
-            Tailtown Admin Portal © {new Date().getFullYear()} - Platform Administration
+            Tailtown Admin Portal © {new Date().getFullYear()} - Platform
+            Administration
           </Typography>
         </Container>
       </Box>

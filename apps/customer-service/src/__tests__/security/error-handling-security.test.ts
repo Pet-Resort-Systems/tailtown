@@ -1,6 +1,6 @@
 /**
  * Error Handling Security Tests
- * 
+ *
  * Tests to ensure secure error handling:
  * - No stack traces in production
  * - Generic error messages to users
@@ -31,24 +31,22 @@ describe('Error Handling Security Tests', () => {
         password: hashedPassword,
         role: 'ADMIN',
         tenantId: testTenantId,
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     // Get auth token
-    const loginResponse = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'error-handling-test@example.com',
-        password: 'TestPassword123!'
-      });
+    const loginResponse = await request(app).post('/api/auth/login').send({
+      email: 'error-handling-test@example.com',
+      password: 'TestPassword123!',
+    });
 
     authToken = loginResponse.body.token;
   });
 
   afterAll(async () => {
     await prisma.staff.deleteMany({
-      where: { tenantId: testTenantId }
+      where: { tenantId: testTenantId },
     });
     await prisma.$disconnect();
   });
@@ -63,7 +61,7 @@ describe('Error Handling Security Tests', () => {
       // Should not contain stack trace
       expect(response.body.stack).toBeUndefined();
       expect(response.body.stackTrace).toBeUndefined();
-      
+
       const responseText = JSON.stringify(response.body);
       expect(responseText).not.toContain('at ');
       expect(responseText).not.toContain('.ts:');
@@ -110,7 +108,9 @@ describe('Error Handling Security Tests', () => {
         .set('Authorization', `Bearer ${authToken}`);
 
       if (response.status === 500) {
-        expect(response.body.message).toMatch(/internal server error|something went wrong/i);
+        expect(response.body.message).toMatch(
+          /internal server error|something went wrong/i
+        );
         expect(response.body.message).not.toContain('database');
         expect(response.body.message).not.toContain('SQL');
         expect(response.body.message).not.toContain('connection');
@@ -135,7 +135,9 @@ describe('Error Handling Security Tests', () => {
         .set('Authorization', `Bearer ${authToken}`);
 
       if (response.status === 403) {
-        expect(response.body.message).toMatch(/forbidden|not authorized|permission/i);
+        expect(response.body.message).toMatch(
+          /forbidden|not authorized|permission/i
+        );
         expect(response.body.message).not.toContain('role');
         expect(response.body.message).not.toContain('ADMIN');
       }
@@ -160,7 +162,7 @@ describe('Error Handling Security Tests', () => {
           firstName: 'Test',
           lastName: 'User',
           email: 'error-handling-test@example.com', // Duplicate email
-          phone: '1234567890'
+          phone: '1234567890',
         });
 
       const responseText = JSON.stringify(response.body);
@@ -177,7 +179,7 @@ describe('Error Handling Security Tests', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .send({
           firstName: 'A'.repeat(1000),
-          lastName: 'Test'
+          lastName: 'Test',
         });
 
       const responseText = JSON.stringify(response.body);
@@ -259,12 +261,19 @@ describe('Error Handling Security Tests', () => {
   describe('Consistent Error Format', () => {
     it('should use consistent error structure', async () => {
       const errors = [
-        await request(app).get('/api/customers/nonexistent').set('Authorization', `Bearer ${authToken}`),
-        await request(app).post('/api/customers').set('Authorization', `Bearer ${authToken}`).send({}),
-        await request(app).get('/api/customers').set('Authorization', 'Bearer invalid')
+        await request(app)
+          .get('/api/customers/nonexistent')
+          .set('Authorization', `Bearer ${authToken}`),
+        await request(app)
+          .post('/api/customers')
+          .set('Authorization', `Bearer ${authToken}`)
+          .send({}),
+        await request(app)
+          .get('/api/customers')
+          .set('Authorization', 'Bearer invalid'),
       ];
 
-      errors.forEach(response => {
+      errors.forEach((response) => {
         expect(response.body).toHaveProperty('message');
         expect(response.body).toHaveProperty('status');
         expect(typeof response.body.message).toBe('string');
@@ -309,12 +318,10 @@ describe('Error Handling Security Tests', () => {
     });
 
     it('should log error context without sensitive data', async () => {
-      await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'test@example.com',
-          password: 'WrongPassword123!'
-        });
+      await request(app).post('/api/auth/login').send({
+        email: 'test@example.com',
+        password: 'WrongPassword123!',
+      });
 
       // Logs should contain email but not password
       expect(true).toBe(true); // Placeholder
@@ -332,9 +339,16 @@ describe('Error Handling Security Tests', () => {
 
     it('should log error severity levels', async () => {
       // Different errors should have different severity
-      await request(app).get('/api/customers/not-found').set('Authorization', `Bearer ${authToken}`); // INFO
-      await request(app).post('/api/customers').set('Authorization', `Bearer ${authToken}`).send({}); // WARN
-      await request(app).get('/api/customers/server-error').set('Authorization', `Bearer ${authToken}`); // ERROR
+      await request(app)
+        .get('/api/customers/not-found')
+        .set('Authorization', `Bearer ${authToken}`); // INFO
+      await request(app)
+        .post('/api/customers')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({}); // WARN
+      await request(app)
+        .get('/api/customers/server-error')
+        .set('Authorization', `Bearer ${authToken}`); // ERROR
 
       expect(true).toBe(true); // Placeholder
     });
@@ -372,7 +386,7 @@ describe('Error Handling Security Tests', () => {
       const malformedUrls = [
         '/api/customers/%00',
         '/api/customers/../admin',
-        '/api/customers/../../etc/passwd'
+        '/api/customers/../../etc/passwd',
       ];
 
       for (const url of malformedUrls) {
@@ -392,7 +406,7 @@ describe('Error Handling Security Tests', () => {
         .post('/api/customers')
         .set('Authorization', `Bearer ${authToken}`)
         .send({
-          firstName: 'John'
+          firstName: 'John',
           // Missing required fields
         });
 
@@ -406,7 +420,7 @@ describe('Error Handling Security Tests', () => {
         .post('/api/customers')
         .set('Authorization', `Bearer ${authToken}`)
         .send({
-          firstName: 'A'.repeat(1000)
+          firstName: 'A'.repeat(1000),
         });
 
       const responseText = JSON.stringify(response.body);
@@ -419,7 +433,7 @@ describe('Error Handling Security Tests', () => {
         .post('/api/customers')
         .set('Authorization', `Bearer ${authToken}`)
         .send({
-          firstName: '<script>alert("xss")</script>'
+          firstName: '<script>alert("xss")</script>',
         });
 
       const responseText = JSON.stringify(response.body);
@@ -431,7 +445,7 @@ describe('Error Handling Security Tests', () => {
     it('should provide clear rate limit error', async () => {
       // Make many requests to trigger rate limit
       let rateLimitResponse;
-      
+
       for (let i = 0; i < 200; i++) {
         const response = await request(app)
           .get('/api/customers')
@@ -444,7 +458,9 @@ describe('Error Handling Security Tests', () => {
       }
 
       if (rateLimitResponse) {
-        expect(rateLimitResponse.body.message).toMatch(/rate limit|too many requests/i);
+        expect(rateLimitResponse.body.message).toMatch(
+          /rate limit|too many requests/i
+        );
         expect(rateLimitResponse.headers['retry-after']).toBeDefined();
       }
     });
@@ -502,7 +518,7 @@ describe('Error Handling Security Tests', () => {
         .send({
           customerId: 'test-id',
           subject: 'Test',
-          body: 'Test'
+          body: 'Test',
         });
 
       // Should not expose external service details

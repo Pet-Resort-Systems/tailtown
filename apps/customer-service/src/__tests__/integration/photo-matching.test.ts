@@ -10,19 +10,19 @@
  * causing all pets named "Apollo" to show the same photo regardless of owner.
  */
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const TENANT_ID = "b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05";
+const TENANT_ID = 'b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05';
 
-describe("Photo Matching - Gingr ID Based", () => {
+describe('Photo Matching - Gingr ID Based', () => {
   afterAll(async () => {
     await prisma.$disconnect();
   });
 
-  describe("Photo uniqueness by externalId", () => {
-    it("should have unique photos for pets with the same name but different externalIds", async () => {
+  describe('Photo uniqueness by externalId', () => {
+    it('should have unique photos for pets with the same name but different externalIds', async () => {
       // Find pets with duplicate names that have photos
       const petsWithPhotos = await prisma.pet.findMany({
         where: {
@@ -77,7 +77,7 @@ describe("Photo Matching - Gingr ID Based", () => {
         // Check if any photo is shared by pets with DIFFERENT externalIds
         for (const [photoUrl, petsWithSamePhoto] of photoGroups) {
           const uniqueExternalIds = new Set(
-            petsWithSamePhoto.map((p) => p.externalId?.replace("-tailtown", ""))
+            petsWithSamePhoto.map((p) => p.externalId?.replace('-tailtown', ''))
           );
 
           // If multiple different externalIds share the same photo, that's a violation
@@ -86,7 +86,7 @@ describe("Photo Matching - Gingr ID Based", () => {
             violations.push(
               `Photo shared incorrectly: "${name}" - ${petsWithSamePhoto
                 .map((p) => `${p.owner?.lastName} (${p.externalId})`)
-                .join(", ")} all have photo: ${photoUrl.substring(0, 60)}...`
+                .join(', ')} all have photo: ${photoUrl.substring(0, 60)}...`
             );
           }
         }
@@ -94,29 +94,29 @@ describe("Photo Matching - Gingr ID Based", () => {
 
       // Report violations
       if (violations.length > 0) {
-        console.error("Photo matching violations found:");
+        console.error('Photo matching violations found:');
         violations.forEach((v) => console.error(`  - ${v}`));
       }
 
       expect(violations).toHaveLength(0);
     });
 
-    it("should match photos by externalId, not by pet name", async () => {
+    it('should match photos by externalId, not by pet name', async () => {
       // Get a sample of pets with common names that have photos
       const commonNames = [
-        "Luna",
-        "Bella",
-        "Max",
-        "Charlie",
-        "Cooper",
-        "Buddy",
+        'Luna',
+        'Bella',
+        'Max',
+        'Charlie',
+        'Cooper',
+        'Buddy',
       ];
 
       for (const name of commonNames) {
         const petsWithName = await prisma.pet.findMany({
           where: {
             tenantId: TENANT_ID,
-            name: { equals: name, mode: "insensitive" },
+            name: { equals: name, mode: 'insensitive' },
             profilePhoto: { not: null },
             externalId: { not: null },
           },
@@ -133,7 +133,7 @@ describe("Photo Matching - Gingr ID Based", () => {
 
           for (const pet of petsWithName) {
             const baseExternalId =
-              pet.externalId?.replace("-tailtown", "") || "";
+              pet.externalId?.replace('-tailtown', '') || '';
 
             if (externalIdToPhoto.has(baseExternalId)) {
               // Same externalId should have same photo
@@ -141,7 +141,7 @@ describe("Photo Matching - Gingr ID Based", () => {
                 externalIdToPhoto.get(baseExternalId)
               );
             } else {
-              externalIdToPhoto.set(baseExternalId, pet.profilePhoto || "");
+              externalIdToPhoto.set(baseExternalId, pet.profilePhoto || '');
             }
           }
 
@@ -161,7 +161,7 @@ describe("Photo Matching - Gingr ID Based", () => {
             if (extIds.length > 1) {
               console.warn(
                 `Warning: Photo shared by multiple externalIds for "${name}": ${extIds.join(
-                  ", "
+                  ', '
                 )}`
               );
             }
@@ -172,7 +172,7 @@ describe("Photo Matching - Gingr ID Based", () => {
       }
     });
 
-    it("should have externalId set for pets with photos", async () => {
+    it('should have externalId set for pets with photos', async () => {
       // All pets with photos should have an externalId for proper matching
       const petsWithPhotosNoExternalId = await prisma.pet.count({
         where: {
@@ -201,8 +201,8 @@ describe("Photo Matching - Gingr ID Based", () => {
     });
   });
 
-  describe("Photo import script validation", () => {
-    it("should not have duplicate photos for pets with different owners", async () => {
+  describe('Photo import script validation', () => {
+    it('should not have duplicate photos for pets with different owners', async () => {
       // Find photos that are used by multiple pets
       const photoCounts = await prisma.$queryRaw<
         { profilePhoto: string; count: bigint; names: string }[]
@@ -241,7 +241,7 @@ describe("Photo Matching - Gingr ID Based", () => {
         // (they might be duplicates like "12486" and "12486-tailtown")
         const baseExternalIds = new Set(
           petsWithPhoto.map(
-            (p) => p.externalId?.replace("-tailtown", "") || "unknown"
+            (p) => p.externalId?.replace('-tailtown', '') || 'unknown'
           )
         );
 
@@ -257,12 +257,12 @@ describe("Photo Matching - Gingr ID Based", () => {
     });
   });
 
-  describe("Specific pet verification", () => {
-    it("should have correct photo for Matteo Monroe (externalId: 576)", async () => {
+  describe('Specific pet verification', () => {
+    it('should have correct photo for Matteo Monroe (externalId: 576)', async () => {
       const matteo = await prisma.pet.findFirst({
         where: {
           tenantId: TENANT_ID,
-          externalId: "576",
+          externalId: '576',
         },
         select: {
           name: true,
@@ -275,14 +275,14 @@ describe("Photo Matching - Gingr ID Based", () => {
       expect(matteo?.profilePhoto).toBeTruthy();
 
       // Photo should be from Gingr storage
-      expect(matteo?.profilePhoto).toContain("storage.googleapis.com");
+      expect(matteo?.profilePhoto).toContain('storage.googleapis.com');
     });
 
-    it("should have correct photo for Beaucoup (externalId: 12486)", async () => {
+    it('should have correct photo for Beaucoup (externalId: 12486)', async () => {
       const beaucoup = await prisma.pet.findFirst({
         where: {
           tenantId: TENANT_ID,
-          externalId: "12486",
+          externalId: '12486',
         },
         select: {
           name: true,
@@ -292,9 +292,9 @@ describe("Photo Matching - Gingr ID Based", () => {
 
       expect(beaucoup).toBeDefined();
       expect(beaucoup?.profilePhoto).toBeTruthy();
-      expect(beaucoup?.profilePhoto).toContain("storage.googleapis.com");
+      expect(beaucoup?.profilePhoto).toContain('storage.googleapis.com');
       // Beaucoup's photo should contain his name
-      expect(beaucoup?.profilePhoto?.toLowerCase()).toContain("beaucoup");
+      expect(beaucoup?.profilePhoto?.toLowerCase()).toContain('beaucoup');
     });
   });
 });

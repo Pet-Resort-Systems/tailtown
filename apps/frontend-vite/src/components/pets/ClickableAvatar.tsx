@@ -12,16 +12,16 @@ interface ClickableAvatarProps {
 
 /**
  * ClickableAvatar Component
- * 
+ *
  * An avatar that opens a full-size photo modal when clicked.
  * If no photo is provided, shows initials and doesn't open modal.
- * 
+ *
  * Features:
  * - Click to view full-size photo
  * - Modal with close button
  * - Hover effect to indicate clickability
  * - Falls back to initials if no photo
- * 
+ *
  * @param src - URL of the photo
  * @param alt - Alt text (typically pet name)
  * @param size - Avatar size in pixels
@@ -33,19 +33,19 @@ const ClickableAvatar: React.FC<ClickableAvatarProps> = ({
   alt,
   size,
   fontSize,
-  onClick
+  onClick,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
 
   const handleAvatarClick = (e: React.MouseEvent) => {
     // Stop propagation to prevent triggering parent click handlers
     e.stopPropagation();
-    
+
     // Call optional onClick handler
     if (onClick) {
       onClick(e);
     }
-    
+
     // Only open modal if there's a photo
     if (src) {
       setModalOpen(true);
@@ -68,10 +68,12 @@ const ClickableAvatar: React.FC<ClickableAvatarProps> = ({
           fontSize: fontSize,
           cursor: src ? 'pointer' : 'default',
           transition: 'transform 0.2s, box-shadow 0.2s',
-          '&:hover': src ? {
-            transform: 'scale(1.1)',
-            boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
-          } : {}
+          '&:hover': src
+            ? {
+                transform: 'scale(1.1)',
+                boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+              }
+            : {},
         }}
       >
         {alt.charAt(0).toUpperCase()}
@@ -98,7 +100,7 @@ const ClickableAvatar: React.FC<ClickableAvatarProps> = ({
               '&:hover': {
                 bgcolor: 'rgba(0, 0, 0, 0.7)',
               },
-              zIndex: 1
+              zIndex: 1,
             }}
           >
             <CloseIcon />

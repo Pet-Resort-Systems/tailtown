@@ -5,33 +5,36 @@ import { reservationApi as api } from './services/api';
 export const testResourceAvailability = async () => {
   try {
     console.log('Testing resource availability endpoint...');
-    console.log('Reservation API base URL:', process.env.REACT_APP_RESERVATION_API_URL || 'http://localhost:4003');
-    
+    console.log(
+      'Reservation API base URL:',
+      process.env.REACT_APP_RESERVATION_API_URL || 'http://localhost:4003'
+    );
+
     const response = await api.get('/api/resources/availability', {
       params: {
         resourceType: 'suite',
         date: '2025-08-03',
-      }
+      },
     });
-    
+
     console.log('API response status:', response.status);
     console.log('API response data:', response.data);
-    
+
     return {
       success: true,
       status: response.status,
-      data: response.data
+      data: response.data,
     };
   } catch (error) {
     console.error('API request failed:', error.message);
     console.error('API error response:', error.response?.data);
     console.error('API error status:', error.response?.status);
-    
+
     return {
       success: false,
       error: error.message,
       status: error.response?.status,
-      data: error.response?.data
+      data: error.response?.data,
     };
   }
 };
@@ -40,10 +43,10 @@ export const testResourceAvailability = async () => {
 export const runApiTest = () => {
   console.log('Running API test...');
   testResourceAvailability()
-    .then(result => {
+    .then((result) => {
       console.log('Test result:', result);
     })
-    .catch(error => {
+    .catch((error) => {
       console.error('Test error:', error);
     });
 };

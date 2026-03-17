@@ -3,7 +3,7 @@
  * Displays and manages recurring reservation templates for a customer
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -34,7 +34,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Tooltip,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -42,17 +42,17 @@ import {
   Repeat as RepeatIcon,
   PlayArrow as GenerateIcon,
   Pause as PauseIcon,
-} from "@mui/icons-material";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+} from '@mui/icons-material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import standingReservationService, {
   StandingReservation,
   CreateStandingReservationData,
   RecurrenceFrequency,
-} from "../../services/standingReservationService";
-import { serviceManagement } from "../../services/serviceManagement";
-import { petService } from "../../services/petService";
+} from '../../services/standingReservationService';
+import { serviceManagement } from '../../services/serviceManagement';
+import { petService } from '../../services/petService';
 
 interface StandingReservationsProps {
   customerId: string;
@@ -73,13 +73,13 @@ interface Service {
 }
 
 const DAYS_OF_WEEK = [
-  { value: 0, label: "Sun" },
-  { value: 1, label: "Mon" },
-  { value: 2, label: "Tue" },
-  { value: 3, label: "Wed" },
-  { value: 4, label: "Thu" },
-  { value: 5, label: "Fri" },
-  { value: 6, label: "Sat" },
+  { value: 0, label: 'Sun' },
+  { value: 1, label: 'Mon' },
+  { value: 2, label: 'Tue' },
+  { value: 3, label: 'Wed' },
+  { value: 4, label: 'Thu' },
+  { value: 5, label: 'Fri' },
+  { value: 6, label: 'Sat' },
 ];
 
 const StandingReservations: React.FC<StandingReservationsProps> = ({
@@ -117,17 +117,17 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
     notes: string;
     autoConfirm: boolean;
   }>({
-    petId: "",
-    serviceId: "",
-    name: "",
-    frequency: "WEEKLY",
+    petId: '',
+    serviceId: '',
+    name: '',
+    frequency: 'WEEKLY',
     daysOfWeek: [],
     dayOfMonth: 1,
-    startTime: "09:00",
-    endTime: "17:00",
+    startTime: '09:00',
+    endTime: '17:00',
     effectiveFrom: new Date(),
     effectiveUntil: null,
-    notes: "",
+    notes: '',
     autoConfirm: false,
   });
 
@@ -151,8 +151,8 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
         setPets(petsData || []);
         setServices(servicesResponse?.data || []);
       } catch (err: any) {
-        console.error("Error loading standing reservations:", err);
-        setError("Failed to load standing reservations");
+        console.error('Error loading standing reservations:', err);
+        setError('Failed to load standing reservations');
       } finally {
         setLoading(false);
       }
@@ -179,23 +179,23 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
         effectiveUntil: reservation.effectiveUntil
           ? new Date(reservation.effectiveUntil)
           : null,
-        notes: reservation.notes || "",
+        notes: reservation.notes || '',
         autoConfirm: reservation.autoConfirm,
       });
     } else {
       setEditingReservation(null);
       setFormData({
-        petId: pets.length > 0 ? pets[0].id : "",
-        serviceId: "",
-        name: "",
-        frequency: "WEEKLY",
+        petId: pets.length > 0 ? pets[0].id : '',
+        serviceId: '',
+        name: '',
+        frequency: 'WEEKLY',
         daysOfWeek: [1, 3, 5], // Mon, Wed, Fri default
         dayOfMonth: 1,
-        startTime: "09:00",
-        endTime: "17:00",
+        startTime: '09:00',
+        endTime: '17:00',
         effectiveFrom: new Date(),
         effectiveUntil: null,
-        notes: "",
+        notes: '',
         autoConfirm: false,
       });
     }
@@ -213,16 +213,16 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
       setError(null);
 
       if (!formData.petId || !formData.serviceId || !formData.name) {
-        setError("Please fill in all required fields");
+        setError('Please fill in all required fields');
         return;
       }
 
       if (
-        (formData.frequency === "WEEKLY" ||
-          formData.frequency === "BIWEEKLY") &&
+        (formData.frequency === 'WEEKLY' ||
+          formData.frequency === 'BIWEEKLY') &&
         formData.daysOfWeek.length === 0
       ) {
-        setError("Please select at least one day of the week");
+        setError('Please select at least one day of the week');
         return;
       }
 
@@ -233,11 +233,11 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
         name: formData.name,
         frequency: formData.frequency,
         daysOfWeek:
-          formData.frequency === "WEEKLY" || formData.frequency === "BIWEEKLY"
+          formData.frequency === 'WEEKLY' || formData.frequency === 'BIWEEKLY'
             ? formData.daysOfWeek
             : undefined,
         dayOfMonth:
-          formData.frequency === "MONTHLY" ? formData.dayOfMonth : undefined,
+          formData.frequency === 'MONTHLY' ? formData.dayOfMonth : undefined,
         startTime: formData.startTime,
         endTime: formData.endTime,
         effectiveFrom:
@@ -249,22 +249,21 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
 
       if (editingReservation) {
         await standingReservationService.update(editingReservation.id, data);
-        setSuccess("Standing reservation updated successfully");
+        setSuccess('Standing reservation updated successfully');
       } else {
         await standingReservationService.create(data);
-        setSuccess("Standing reservation created successfully");
+        setSuccess('Standing reservation created successfully');
       }
 
       // Reload
-      const updated = await standingReservationService.getByCustomer(
-        customerId
-      );
+      const updated =
+        await standingReservationService.getByCustomer(customerId);
       setStandingReservations(updated);
       handleCloseDialog();
     } catch (err: any) {
-      console.error("Error saving standing reservation:", err);
+      console.error('Error saving standing reservation:', err);
       setError(
-        err.response?.data?.message || "Failed to save standing reservation"
+        err.response?.data?.message || 'Failed to save standing reservation'
       );
     } finally {
       setSaving(false);
@@ -277,17 +276,16 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
     try {
       setSaving(true);
       await standingReservationService.delete(reservationToDelete.id);
-      setSuccess("Standing reservation deleted");
+      setSuccess('Standing reservation deleted');
 
-      const updated = await standingReservationService.getByCustomer(
-        customerId
-      );
+      const updated =
+        await standingReservationService.getByCustomer(customerId);
       setStandingReservations(updated);
       setDeleteConfirmOpen(false);
       setReservationToDelete(null);
     } catch (err: any) {
-      console.error("Error deleting standing reservation:", err);
-      setError("Failed to delete standing reservation");
+      console.error('Error deleting standing reservation:', err);
+      setError('Failed to delete standing reservation');
     } finally {
       setSaving(false);
     }
@@ -298,16 +296,15 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
       await standingReservationService.update(reservation.id, {
         isActive: !reservation.isActive,
       });
-      const updated = await standingReservationService.getByCustomer(
-        customerId
-      );
+      const updated =
+        await standingReservationService.getByCustomer(customerId);
       setStandingReservations(updated);
       setSuccess(
-        `Standing reservation ${reservation.isActive ? "paused" : "activated"}`
+        `Standing reservation ${reservation.isActive ? 'paused' : 'activated'}`
       );
     } catch (err: any) {
-      console.error("Error toggling standing reservation:", err);
-      setError("Failed to update standing reservation");
+      console.error('Error toggling standing reservation:', err);
+      setError('Failed to update standing reservation');
     }
   };
 
@@ -318,14 +315,14 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
       );
       setSuccess(`Generated ${result.generatedCount} reservation instances`);
     } catch (err: any) {
-      console.error("Error generating reservations:", err);
-      setError("Failed to generate reservations");
+      console.error('Error generating reservations:', err);
+      setError('Failed to generate reservations');
     }
   };
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -336,13 +333,13 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
       <Box>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             mb: 3,
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <RepeatIcon color="primary" />
             <Typography variant="h6">Standing Reservations</Typography>
           </Box>
@@ -373,14 +370,14 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
         )}
 
         {pets.length === 0 ? (
-          <Paper sx={{ p: 4, textAlign: "center" }}>
+          <Paper sx={{ p: 4, textAlign: 'center' }}>
             <Typography color="text.secondary">
               This customer has no pets. Add a pet first to create standing
               reservations.
             </Typography>
           </Paper>
         ) : standingReservations.length === 0 ? (
-          <Paper sx={{ p: 4, textAlign: "center" }}>
+          <Paper sx={{ p: 4, textAlign: 'center' }}>
             <Typography color="text.secondary">
               No standing reservations for {customerName}.
             </Typography>
@@ -427,8 +424,8 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
                     </TableCell>
                     <TableCell>
                       <Chip
-                        label={reservation.isActive ? "Active" : "Paused"}
-                        color={reservation.isActive ? "success" : "default"}
+                        label={reservation.isActive ? 'Active' : 'Paused'}
+                        color={reservation.isActive ? 'success' : 'default'}
                         size="small"
                       />
                     </TableCell>
@@ -443,7 +440,7 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
                         </IconButton>
                       </Tooltip>
                       <Tooltip
-                        title={reservation.isActive ? "Pause" : "Activate"}
+                        title={reservation.isActive ? 'Pause' : 'Activate'}
                       >
                         <IconButton
                           size="small"
@@ -489,12 +486,12 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
         >
           <DialogTitle>
             {editingReservation
-              ? "Edit Standing Reservation"
-              : "Create Standing Reservation"}
+              ? 'Edit Standing Reservation'
+              : 'Create Standing Reservation'}
           </DialogTitle>
           <DialogContent>
             <Box
-              sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}
+              sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}
             >
               <TextField
                 label="Name"
@@ -565,8 +562,8 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
                 </Select>
               </FormControl>
 
-              {(formData.frequency === "WEEKLY" ||
-                formData.frequency === "BIWEEKLY") && (
+              {(formData.frequency === 'WEEKLY' ||
+                formData.frequency === 'BIWEEKLY') && (
                 <Box>
                   <Typography
                     variant="body2"
@@ -595,7 +592,7 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
                 </Box>
               )}
 
-              {formData.frequency === "MONTHLY" && (
+              {formData.frequency === 'MONTHLY' && (
                 <TextField
                   label="Day of Month"
                   type="number"
@@ -696,7 +693,7 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
               disabled={saving}
               startIcon={saving ? <CircularProgress size={16} /> : null}
             >
-              {saving ? "Saving..." : "Save"}
+              {saving ? 'Saving...' : 'Save'}
             </Button>
           </DialogActions>
         </Dialog>
@@ -721,7 +718,7 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
               onClick={handleDelete}
               disabled={saving}
             >
-              {saving ? "Deleting..." : "Delete"}
+              {saving ? 'Deleting...' : 'Delete'}
             </Button>
           </DialogActions>
         </Dialog>

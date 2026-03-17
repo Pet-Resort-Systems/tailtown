@@ -19,7 +19,7 @@ const createProcessEnvDefine = (mode: string) => {
     Object.entries(processEnv).map(([key, value]) => [
       `process.env.${key}`,
       JSON.stringify(value),
-    ]),
+    ])
   );
 };
 

@@ -136,31 +136,36 @@ const CheckoutComplete: React.FC<CheckoutCompleteProps> = ({
             </>
           )}
 
-          {checkoutData.finalPayment && checkoutData.finalPayment.amount > 0 && (
-            <>
-              <Grid item xs={6}>
-                <Typography variant="body2" color="text.secondary">
-                  Final Payment:
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body2" align="right" color="success.main">
-                  {formatCurrency(checkoutData.finalPayment.amount)}
-                </Typography>
-              </Grid>
+          {checkoutData.finalPayment &&
+            checkoutData.finalPayment.amount > 0 && (
+              <>
+                <Grid item xs={6}>
+                  <Typography variant="body2" color="text.secondary">
+                    Final Payment:
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body2"
+                    align="right"
+                    color="success.main"
+                  >
+                    {formatCurrency(checkoutData.finalPayment.amount)}
+                  </Typography>
+                </Grid>
 
-              <Grid item xs={6}>
-                <Typography variant="body2" color="text.secondary">
-                  Payment Method:
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body2" align="right">
-                  {checkoutData.finalPayment.method}
-                </Typography>
-              </Grid>
-            </>
-          )}
+                <Grid item xs={6}>
+                  <Typography variant="body2" color="text.secondary">
+                    Payment Method:
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2" align="right">
+                    {checkoutData.finalPayment.method}
+                  </Typography>
+                </Grid>
+              </>
+            )}
 
           <Grid item xs={12}>
             <Divider sx={{ my: 1 }} />
@@ -172,17 +177,27 @@ const CheckoutComplete: React.FC<CheckoutCompleteProps> = ({
                 <strong>Items Returned:</strong>
               </Typography>
               <Typography variant="body2">
-                ✓ All belongings returned ({checkoutData.belongings?.length || 0} items)
+                ✓ All belongings returned (
+                {checkoutData.belongings?.length || 0} items)
               </Typography>
               <Typography variant="body2">
-                ✓ All medications returned ({checkoutData.medications?.length || 0} items)
+                ✓ All medications returned (
+                {checkoutData.medications?.length || 0} items)
               </Typography>
             </Alert>
           </Grid>
         </Grid>
       </Paper>
 
-      <Box sx={{ display: 'flex', gap: 2, mt: 3, justifyContent: 'center', flexWrap: 'wrap' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          gap: 2,
+          mt: 3,
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+        }}
+      >
         <Button
           variant="outlined"
           startIcon={<PrintIcon />}
@@ -197,10 +212,7 @@ const CheckoutComplete: React.FC<CheckoutCompleteProps> = ({
         >
           Email Receipt
         </Button>
-        <Button
-          variant="contained"
-          onClick={onComplete}
-        >
+        <Button variant="contained" onClick={onComplete}>
           Back to Reservation
         </Button>
       </Box>

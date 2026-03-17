@@ -34,7 +34,7 @@ const getFeedingScheduleSummary = (
   if (!template || Object.keys(responses).length === 0) return null;
 
   const feedingSection = template.sections.find((s) =>
-    s.title.toLowerCase().includes("feeding")
+    s.title.toLowerCase().includes('feeding')
   );
   if (!feedingSection) return null;
 
@@ -46,59 +46,59 @@ const getFeedingScheduleSummary = (
 
     const qText = question.questionText.toLowerCase();
 
-    if (qText.includes("when") && qText.includes("fed")) {
+    if (qText.includes('when') && qText.includes('fed')) {
       parts.push(response);
-    } else if (qText.includes("how much") || qText.includes("per meal")) {
+    } else if (qText.includes('how much') || qText.includes('per meal')) {
       parts.push(response);
-    } else if (qText.includes("meals per day")) {
+    } else if (qText.includes('meals per day')) {
       parts.push(`${response} meals/day`);
     }
   }
 
-  return parts.length > 0 ? parts.join(", ") : null;
+  return parts.length > 0 ? parts.join(', ') : null;
 };
 
 const mockTemplate: Template = {
-  id: "template-123",
-  name: "Standard Check-In",
+  id: 'template-123',
+  name: 'Standard Check-In',
   sections: [
     {
-      id: "section-contact",
-      title: "Contact Information",
+      id: 'section-contact',
+      title: 'Contact Information',
       order: 1,
       questions: [
         {
-          id: "q-phone",
-          questionText: "Best phone number",
-          questionType: "TEXT",
+          id: 'q-phone',
+          questionText: 'Best phone number',
+          questionType: 'TEXT',
           isRequired: true,
           order: 1,
         },
       ],
     },
     {
-      id: "section-feeding",
-      title: "Feeding Schedule",
+      id: 'section-feeding',
+      title: 'Feeding Schedule',
       order: 2,
       questions: [
         {
-          id: "q-meals",
-          questionText: "How many meals per day do they get?",
-          questionType: "MULTIPLE_CHOICE",
+          id: 'q-meals',
+          questionText: 'How many meals per day do they get?',
+          questionType: 'MULTIPLE_CHOICE',
           isRequired: true,
           order: 1,
         },
         {
-          id: "q-amount",
-          questionText: "How much food per meal?",
-          questionType: "TEXT",
+          id: 'q-amount',
+          questionText: 'How much food per meal?',
+          questionType: 'TEXT',
           isRequired: true,
           order: 2,
         },
         {
-          id: "q-when",
-          questionText: "When is your pet typically fed?",
-          questionType: "MULTIPLE_CHOICE",
+          id: 'q-when',
+          questionText: 'When is your pet typically fed?',
+          questionType: 'MULTIPLE_CHOICE',
           isRequired: true,
           order: 3,
         },
@@ -107,94 +107,94 @@ const mockTemplate: Template = {
   ],
 };
 
-describe("getFeedingScheduleSummary", () => {
-  it("returns null when template is null", () => {
-    const result = getFeedingScheduleSummary(null, { "q-meals": "2" });
+describe('getFeedingScheduleSummary', () => {
+  it('returns null when template is null', () => {
+    const result = getFeedingScheduleSummary(null, { 'q-meals': '2' });
     expect(result).toBeNull();
   });
 
-  it("returns null when responses are empty", () => {
+  it('returns null when responses are empty', () => {
     const result = getFeedingScheduleSummary(mockTemplate, {});
     expect(result).toBeNull();
   });
 
-  it("returns null when no feeding section exists", () => {
+  it('returns null when no feeding section exists', () => {
     const templateWithoutFeeding: Template = {
       ...mockTemplate,
       sections: [mockTemplate.sections[0]], // Only contact section
     };
     const result = getFeedingScheduleSummary(templateWithoutFeeding, {
-      "q-phone": "555-1234",
+      'q-phone': '555-1234',
     });
     expect(result).toBeNull();
   });
 
-  it("extracts meals per day correctly", () => {
+  it('extracts meals per day correctly', () => {
     const responses = {
-      "q-meals": "2",
+      'q-meals': '2',
     };
     const result = getFeedingScheduleSummary(mockTemplate, responses);
-    expect(result).toBe("2 meals/day");
+    expect(result).toBe('2 meals/day');
   });
 
-  it("extracts food amount correctly", () => {
+  it('extracts food amount correctly', () => {
     const responses = {
-      "q-amount": "1/3 cup",
+      'q-amount': '1/3 cup',
     };
     const result = getFeedingScheduleSummary(mockTemplate, responses);
-    expect(result).toBe("1/3 cup");
+    expect(result).toBe('1/3 cup');
   });
 
-  it("extracts feeding time correctly", () => {
+  it('extracts feeding time correctly', () => {
     const responses = {
-      "q-when": "Morning & Evening",
+      'q-when': 'Morning & Evening',
     };
     const result = getFeedingScheduleSummary(mockTemplate, responses);
-    expect(result).toBe("Morning & Evening");
+    expect(result).toBe('Morning & Evening');
   });
 
-  it("combines multiple feeding responses", () => {
+  it('combines multiple feeding responses', () => {
     const responses = {
-      "q-meals": "2",
-      "q-amount": "1/3 cup",
-      "q-when": "Morning & Evening",
+      'q-meals': '2',
+      'q-amount': '1/3 cup',
+      'q-when': 'Morning & Evening',
     };
     const result = getFeedingScheduleSummary(mockTemplate, responses);
-    expect(result).toBe("2 meals/day, 1/3 cup, Morning & Evening");
+    expect(result).toBe('2 meals/day, 1/3 cup, Morning & Evening');
   });
 
-  it("ignores unrelated responses from other sections", () => {
+  it('ignores unrelated responses from other sections', () => {
     const responses = {
-      "q-phone": "555-1234",
-      "q-meals": "2",
+      'q-phone': '555-1234',
+      'q-meals': '2',
     };
     const result = getFeedingScheduleSummary(mockTemplate, responses);
-    expect(result).toBe("2 meals/day");
+    expect(result).toBe('2 meals/day');
   });
 
-  it("handles template with case-insensitive feeding section title", () => {
+  it('handles template with case-insensitive feeding section title', () => {
     const templateWithDifferentCase: Template = {
       ...mockTemplate,
       sections: [
         {
           ...mockTemplate.sections[1],
-          title: "FEEDING SCHEDULE",
+          title: 'FEEDING SCHEDULE',
         },
       ],
     };
     const responses = {
-      "q-meals": "3",
+      'q-meals': '3',
     };
     const result = getFeedingScheduleSummary(
       templateWithDifferentCase,
       responses
     );
-    expect(result).toBe("3 meals/day");
+    expect(result).toBe('3 meals/day');
   });
 
-  it("returns null when feeding section exists but no matching responses", () => {
+  it('returns null when feeding section exists but no matching responses', () => {
     const responses = {
-      "q-unrelated": "some value",
+      'q-unrelated': 'some value',
     };
     const result = getFeedingScheduleSummary(mockTemplate, responses);
     expect(result).toBeNull();

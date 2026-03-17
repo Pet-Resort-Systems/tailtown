@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Container,
@@ -16,8 +16,8 @@ import {
   CardContent,
   CardHeader,
   useTheme,
-} from "@mui/material";
-import { SelectChangeEvent } from "@mui/material/Select";
+} from '@mui/material';
+import { SelectChangeEvent } from '@mui/material/Select';
 import {
   BarChart,
   Bar,
@@ -30,13 +30,13 @@ import {
   PieChart,
   Pie,
   Cell,
-} from "recharts";
+} from 'recharts';
 import analyticsService, {
   DashboardSummaryData,
   SalesByServiceData,
   SalesByAddOnData,
-} from "../../services/analyticsService";
-import { formatCurrency } from "../../utils/formatters";
+} from '../../services/analyticsService';
+import { formatCurrency } from '../../utils/formatters';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -63,7 +63,7 @@ const TabPanel = (props: TabPanelProps) => {
 const AnalyticsDashboard = () => {
   const theme = useTheme();
   const [loading, setLoading] = useState(true);
-  const [period, setPeriod] = useState("month");
+  const [period, setPeriod] = useState('month');
   const [tabValue, setTabValue] = useState(0);
   const [dashboardData, setDashboardData] =
     useState<DashboardSummaryData | null>(null);
@@ -80,10 +80,10 @@ const AnalyticsDashboard = () => {
     theme.palette.warning.main,
     theme.palette.error.main,
     theme.palette.info.main,
-    "#8884d8",
-    "#82ca9d",
-    "#ffc658",
-    "#ff8042",
+    '#8884d8',
+    '#82ca9d',
+    '#ffc658',
+    '#ff8042',
   ];
 
   const loadData = useCallback(async () => {
@@ -100,8 +100,8 @@ const AnalyticsDashboard = () => {
       setServiceData(servicesSales);
       setAddonData(addonSales);
     } catch (err) {
-      console.error("Error loading analytics data:", err);
-      setError("Failed to load analytics data. Please try again.");
+      console.error('Error loading analytics data:', err);
+      setError('Failed to load analytics data. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -121,18 +121,18 @@ const AnalyticsDashboard = () => {
 
   const getPeriodLabel = () => {
     switch (period) {
-      case "day":
-        return "Today";
-      case "week":
-        return "This Week";
-      case "month":
-        return "This Month";
-      case "year":
-        return "This Year";
-      case "all":
-        return "All Time";
+      case 'day':
+        return 'Today';
+      case 'week':
+        return 'This Week';
+      case 'month':
+        return 'This Month';
+      case 'year':
+        return 'This Year';
+      case 'all':
+        return 'All Time';
       default:
-        return "Custom Period";
+        return 'Custom Period';
     }
   };
 
@@ -140,10 +140,10 @@ const AnalyticsDashboard = () => {
     return (
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "80vh",
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '80vh',
         }}
       >
         <CircularProgress />
@@ -153,7 +153,7 @@ const AnalyticsDashboard = () => {
 
   if (error) {
     return (
-      <Box sx={{ p: 3, color: "error.main" }}>
+      <Box sx={{ p: 3, color: 'error.main' }}>
         <Typography variant="h6">{error}</Typography>
       </Box>
     );
@@ -167,9 +167,9 @@ const AnalyticsDashboard = () => {
         </Typography>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             mb: 2,
           }}
         >
@@ -201,12 +201,12 @@ const AnalyticsDashboard = () => {
             <Grid item xs={12} md={3}>
               <Paper
                 elevation={2}
-                sx={{ p: 2, borderRadius: 2, height: "100%" }}
+                sx={{ p: 2, borderRadius: 2, height: '100%' }}
               >
                 <Typography variant="subtitle2" color="text.secondary">
                   Total Revenue
                 </Typography>
-                <Typography variant="h4" sx={{ mt: 1, color: "primary.main" }}>
+                <Typography variant="h4" sx={{ mt: 1, color: 'primary.main' }}>
                   {formatCurrency(dashboardData.totalRevenue, true)}
                 </Typography>
                 <Typography
@@ -221,14 +221,14 @@ const AnalyticsDashboard = () => {
             <Grid item xs={12} md={3}>
               <Paper
                 elevation={2}
-                sx={{ p: 2, borderRadius: 2, height: "100%" }}
+                sx={{ p: 2, borderRadius: 2, height: '100%' }}
               >
                 <Typography variant="subtitle2" color="text.secondary">
                   Active Customers
                 </Typography>
                 <Typography
                   variant="h4"
-                  sx={{ mt: 1, color: "secondary.main" }}
+                  sx={{ mt: 1, color: 'secondary.main' }}
                 >
                   {dashboardData.customerCount}
                 </Typography>
@@ -244,12 +244,12 @@ const AnalyticsDashboard = () => {
             <Grid item xs={12} md={3}>
               <Paper
                 elevation={2}
-                sx={{ p: 2, borderRadius: 2, height: "100%" }}
+                sx={{ p: 2, borderRadius: 2, height: '100%' }}
               >
                 <Typography variant="subtitle2" color="text.secondary">
                   Service Bookings
                 </Typography>
-                <Typography variant="h4" sx={{ mt: 1, color: "success.main" }}>
+                <Typography variant="h4" sx={{ mt: 1, color: 'success.main' }}>
                   {serviceData?.totalBookings ||
                     dashboardData?.reservationCount ||
                     dashboardData?.serviceData.reduce(
@@ -269,12 +269,12 @@ const AnalyticsDashboard = () => {
             <Grid item xs={12} md={3}>
               <Paper
                 elevation={2}
-                sx={{ p: 2, borderRadius: 2, height: "100%" }}
+                sx={{ p: 2, borderRadius: 2, height: '100%' }}
               >
                 <Typography variant="subtitle2" color="text.secondary">
                   Add-On Revenue
                 </Typography>
-                <Typography variant="h4" sx={{ mt: 1, color: "warning.main" }}>
+                <Typography variant="h4" sx={{ mt: 1, color: 'warning.main' }}>
                   {formatCurrency(dashboardData.addOnRevenue)}
                 </Typography>
                 <Typography
@@ -291,7 +291,7 @@ const AnalyticsDashboard = () => {
       )}
 
       <Paper elevation={3} sx={{ borderRadius: 2 }}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs
             value={tabValue}
             onChange={handleTabChange}
@@ -328,16 +328,16 @@ const AnalyticsDashboard = () => {
                             borderLeft: `4px solid ${
                               COLORS[index % COLORS.length]
                             }`,
-                            height: "100%",
+                            height: '100%',
                           }}
                         >
                           <Typography
                             variant="caption"
                             color="text.secondary"
-                            sx={{ display: "block", mb: 0.5 }}
+                            sx={{ display: 'block', mb: 0.5 }}
                           >
                             {service.name.length > 25
-                              ? service.name.substring(0, 23) + "..."
+                              ? service.name.substring(0, 23) + '...'
                               : service.name}
                           </Typography>
                           <Typography
@@ -347,12 +347,12 @@ const AnalyticsDashboard = () => {
                             {formatCurrency(service.revenue)}
                           </Typography>
                           <Typography variant="body2" color="text.secondary">
-                            {service.count} bookings •{" "}
+                            {service.count} bookings •{' '}
                             {formatCurrency(
                               service.count > 0
                                 ? service.revenue / service.count
                                 : 0
-                            )}{" "}
+                            )}{' '}
                             avg
                           </Typography>
                         </Paper>
@@ -366,7 +366,7 @@ const AnalyticsDashboard = () => {
                 <Card>
                   <CardHeader
                     title="Top 10 Services by Revenue"
-                    titleTypographyProps={{ variant: "h6" }}
+                    titleTypographyProps={{ variant: 'h6' }}
                   />
                   <CardContent>
                     <Box sx={{ height: 400 }}>
@@ -396,7 +396,7 @@ const AnalyticsDashboard = () => {
                             tick={{ fontSize: 12 }}
                             tickFormatter={(value) => {
                               if (value.length > 20) {
-                                return value.substring(0, 18) + "...";
+                                return value.substring(0, 18) + '...';
                               }
                               return value;
                             }}
@@ -404,7 +404,7 @@ const AnalyticsDashboard = () => {
                           <Tooltip
                             formatter={(value) => [
                               formatCurrency(Number(value)),
-                              "Revenue",
+                              'Revenue',
                             ]}
                             labelFormatter={(label) => `${label}`}
                           />
@@ -422,14 +422,14 @@ const AnalyticsDashboard = () => {
 
               {/* Quick Stats */}
               <Grid item xs={12} lg={4}>
-                <Card sx={{ height: "100%" }}>
+                <Card sx={{ height: '100%' }}>
                   <CardHeader
                     title="Service Overview"
-                    titleTypographyProps={{ variant: "h6" }}
+                    titleTypographyProps={{ variant: 'h6' }}
                   />
                   <CardContent>
                     <Box
-                      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                      sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
                     >
                       <Box>
                         <Typography variant="body2" color="text.secondary">
@@ -445,7 +445,7 @@ const AnalyticsDashboard = () => {
                         </Typography>
                         <Typography
                           variant="h4"
-                          sx={{ fontWeight: 600, color: "primary.main" }}
+                          sx={{ fontWeight: 600, color: 'primary.main' }}
                         >
                           {formatCurrency(serviceData.totalRevenue)}
                         </Typography>
@@ -488,53 +488,53 @@ const AnalyticsDashboard = () => {
                 <Card>
                   <CardHeader title="Service Performance" />
                   <CardContent>
-                    <Box sx={{ overflowX: "auto" }}>
+                    <Box sx={{ overflowX: 'auto' }}>
                       <table
-                        style={{ width: "100%", borderCollapse: "collapse" }}
+                        style={{ width: '100%', borderCollapse: 'collapse' }}
                       >
                         <thead>
                           <tr>
                             <th
                               style={{
-                                textAlign: "left",
-                                padding: "8px",
-                                borderBottom: "1px solid #ddd",
+                                textAlign: 'left',
+                                padding: '8px',
+                                borderBottom: '1px solid #ddd',
                               }}
                             >
                               Service
                             </th>
                             <th
                               style={{
-                                textAlign: "right",
-                                padding: "8px",
-                                borderBottom: "1px solid #ddd",
+                                textAlign: 'right',
+                                padding: '8px',
+                                borderBottom: '1px solid #ddd',
                               }}
                             >
                               Bookings
                             </th>
                             <th
                               style={{
-                                textAlign: "right",
-                                padding: "8px",
-                                borderBottom: "1px solid #ddd",
+                                textAlign: 'right',
+                                padding: '8px',
+                                borderBottom: '1px solid #ddd',
                               }}
                             >
                               Revenue
                             </th>
                             <th
                               style={{
-                                textAlign: "right",
-                                padding: "8px",
-                                borderBottom: "1px solid #ddd",
+                                textAlign: 'right',
+                                padding: '8px',
+                                borderBottom: '1px solid #ddd',
                               }}
                             >
                               Avg. Revenue
                             </th>
                             <th
                               style={{
-                                textAlign: "right",
-                                padding: "8px",
-                                borderBottom: "1px solid #ddd",
+                                textAlign: 'right',
+                                padding: '8px',
+                                borderBottom: '1px solid #ddd',
                               }}
                             >
                               % of Total
@@ -546,35 +546,35 @@ const AnalyticsDashboard = () => {
                             <tr key={service.id}>
                               <td
                                 style={{
-                                  padding: "8px",
-                                  borderBottom: "1px solid #ddd",
+                                  padding: '8px',
+                                  borderBottom: '1px solid #ddd',
                                 }}
                               >
                                 {service.name}
                               </td>
                               <td
                                 style={{
-                                  textAlign: "right",
-                                  padding: "8px",
-                                  borderBottom: "1px solid #ddd",
+                                  textAlign: 'right',
+                                  padding: '8px',
+                                  borderBottom: '1px solid #ddd',
                                 }}
                               >
                                 {service.count}
                               </td>
                               <td
                                 style={{
-                                  textAlign: "right",
-                                  padding: "8px",
-                                  borderBottom: "1px solid #ddd",
+                                  textAlign: 'right',
+                                  padding: '8px',
+                                  borderBottom: '1px solid #ddd',
                                 }}
                               >
                                 {formatCurrency(service.revenue)}
                               </td>
                               <td
                                 style={{
-                                  textAlign: "right",
-                                  padding: "8px",
-                                  borderBottom: "1px solid #ddd",
+                                  textAlign: 'right',
+                                  padding: '8px',
+                                  borderBottom: '1px solid #ddd',
                                 }}
                               >
                                 {formatCurrency(
@@ -585,9 +585,9 @@ const AnalyticsDashboard = () => {
                               </td>
                               <td
                                 style={{
-                                  textAlign: "right",
-                                  padding: "8px",
-                                  borderBottom: "1px solid #ddd",
+                                  textAlign: 'right',
+                                  padding: '8px',
+                                  borderBottom: '1px solid #ddd',
                                 }}
                               >
                                 {serviceData.totalRevenue > 0
@@ -596,24 +596,24 @@ const AnalyticsDashboard = () => {
                                         serviceData.totalRevenue) *
                                       100
                                     ).toFixed(1)}%`
-                                  : "0%"}
+                                  : '0%'}
                               </td>
                             </tr>
                           ))}
-                          <tr style={{ fontWeight: "bold" }}>
+                          <tr style={{ fontWeight: 'bold' }}>
                             <td
                               style={{
-                                padding: "8px",
-                                borderTop: "2px solid #ddd",
+                                padding: '8px',
+                                borderTop: '2px solid #ddd',
                               }}
                             >
                               Total
                             </td>
                             <td
                               style={{
-                                textAlign: "right",
-                                padding: "8px",
-                                borderTop: "2px solid #ddd",
+                                textAlign: 'right',
+                                padding: '8px',
+                                borderTop: '2px solid #ddd',
                               }}
                             >
                               {serviceData.services.reduce(
@@ -623,25 +623,25 @@ const AnalyticsDashboard = () => {
                             </td>
                             <td
                               style={{
-                                textAlign: "right",
-                                padding: "8px",
-                                borderTop: "2px solid #ddd",
+                                textAlign: 'right',
+                                padding: '8px',
+                                borderTop: '2px solid #ddd',
                               }}
                             >
                               {formatCurrency(serviceData.totalRevenue)}
                             </td>
                             <td
                               style={{
-                                textAlign: "right",
-                                padding: "8px",
-                                borderTop: "2px solid #ddd",
+                                textAlign: 'right',
+                                padding: '8px',
+                                borderTop: '2px solid #ddd',
                               }}
                             ></td>
                             <td
                               style={{
-                                textAlign: "right",
-                                padding: "8px",
-                                borderTop: "2px solid #ddd",
+                                textAlign: 'right',
+                                padding: '8px',
+                                borderTop: '2px solid #ddd',
                               }}
                             >
                               100%
@@ -664,7 +664,7 @@ const AnalyticsDashboard = () => {
                 <Card>
                   <CardHeader
                     title="Add-On Revenue Breakdown"
-                    titleTypographyProps={{ variant: "h6", fontSize: "1rem" }}
+                    titleTypographyProps={{ variant: 'h6', fontSize: '1rem' }}
                     sx={{ pb: 1 }}
                   />
                   <CardContent sx={{ pt: 1 }}>
@@ -688,7 +688,7 @@ const AnalyticsDashboard = () => {
                             tick={{ fontSize: 9 }}
                             tickFormatter={(value) => {
                               if (value.length > 15) {
-                                return value.substring(0, 13) + "...";
+                                return value.substring(0, 13) + '...';
                               }
                               return value;
                             }}
@@ -716,7 +716,7 @@ const AnalyticsDashboard = () => {
                 <Card>
                   <CardHeader
                     title="Add-On Usage"
-                    titleTypographyProps={{ variant: "h6", fontSize: "1rem" }}
+                    titleTypographyProps={{ variant: 'h6', fontSize: '1rem' }}
                     sx={{ pb: 1 }}
                   />
                   <CardContent sx={{ pt: 1 }}>
@@ -735,7 +735,7 @@ const AnalyticsDashboard = () => {
                             label={({ percent }: { percent?: number }) =>
                               percent && percent > 0.05
                                 ? `${(percent * 100).toFixed(0)}%`
-                                : ""
+                                : ''
                             }
                             outerRadius={window.innerWidth < 600 ? 60 : 80}
                             fill="#8884d8"
@@ -749,20 +749,20 @@ const AnalyticsDashboard = () => {
                             ))}
                           </Pie>
                           <Tooltip
-                            formatter={(value) => [`${value} usages`, "Count"]}
+                            formatter={(value) => [`${value} usages`, 'Count']}
                           />
                           <Legend
                             layout="horizontal"
                             verticalAlign="bottom"
                             align="center"
                             wrapperStyle={{
-                              fontSize: "11px",
-                              paddingTop: "10px",
+                              fontSize: '11px',
+                              paddingTop: '10px',
                             }}
                             iconSize={8}
                             formatter={(value) =>
                               value.length > 20
-                                ? value.substring(0, 18) + "..."
+                                ? value.substring(0, 18) + '...'
                                 : value
                             }
                           />
@@ -776,53 +776,53 @@ const AnalyticsDashboard = () => {
                 <Card>
                   <CardHeader title="Add-On Performance" />
                   <CardContent>
-                    <Box sx={{ overflowX: "auto" }}>
+                    <Box sx={{ overflowX: 'auto' }}>
                       <table
-                        style={{ width: "100%", borderCollapse: "collapse" }}
+                        style={{ width: '100%', borderCollapse: 'collapse' }}
                       >
                         <thead>
                           <tr>
                             <th
                               style={{
-                                textAlign: "left",
-                                padding: "8px",
-                                borderBottom: "1px solid #ddd",
+                                textAlign: 'left',
+                                padding: '8px',
+                                borderBottom: '1px solid #ddd',
                               }}
                             >
                               Add-On
                             </th>
                             <th
                               style={{
-                                textAlign: "right",
-                                padding: "8px",
-                                borderBottom: "1px solid #ddd",
+                                textAlign: 'right',
+                                padding: '8px',
+                                borderBottom: '1px solid #ddd',
                               }}
                             >
                               Sales
                             </th>
                             <th
                               style={{
-                                textAlign: "right",
-                                padding: "8px",
-                                borderBottom: "1px solid #ddd",
+                                textAlign: 'right',
+                                padding: '8px',
+                                borderBottom: '1px solid #ddd',
                               }}
                             >
                               Revenue
                             </th>
                             <th
                               style={{
-                                textAlign: "right",
-                                padding: "8px",
-                                borderBottom: "1px solid #ddd",
+                                textAlign: 'right',
+                                padding: '8px',
+                                borderBottom: '1px solid #ddd',
                               }}
                             >
                               Avg. Price
                             </th>
                             <th
                               style={{
-                                textAlign: "right",
-                                padding: "8px",
-                                borderBottom: "1px solid #ddd",
+                                textAlign: 'right',
+                                padding: '8px',
+                                borderBottom: '1px solid #ddd',
                               }}
                             >
                               % of Total
@@ -834,35 +834,35 @@ const AnalyticsDashboard = () => {
                             <tr key={addon.id}>
                               <td
                                 style={{
-                                  padding: "8px",
-                                  borderBottom: "1px solid #ddd",
+                                  padding: '8px',
+                                  borderBottom: '1px solid #ddd',
                                 }}
                               >
                                 {addon.name}
                               </td>
                               <td
                                 style={{
-                                  textAlign: "right",
-                                  padding: "8px",
-                                  borderBottom: "1px solid #ddd",
+                                  textAlign: 'right',
+                                  padding: '8px',
+                                  borderBottom: '1px solid #ddd',
                                 }}
                               >
                                 {addon.count}
                               </td>
                               <td
                                 style={{
-                                  textAlign: "right",
-                                  padding: "8px",
-                                  borderBottom: "1px solid #ddd",
+                                  textAlign: 'right',
+                                  padding: '8px',
+                                  borderBottom: '1px solid #ddd',
                                 }}
                               >
                                 {formatCurrency(addon.revenue)}
                               </td>
                               <td
                                 style={{
-                                  textAlign: "right",
-                                  padding: "8px",
-                                  borderBottom: "1px solid #ddd",
+                                  textAlign: 'right',
+                                  padding: '8px',
+                                  borderBottom: '1px solid #ddd',
                                 }}
                               >
                                 {formatCurrency(
@@ -873,9 +873,9 @@ const AnalyticsDashboard = () => {
                               </td>
                               <td
                                 style={{
-                                  textAlign: "right",
-                                  padding: "8px",
-                                  borderBottom: "1px solid #ddd",
+                                  textAlign: 'right',
+                                  padding: '8px',
+                                  borderBottom: '1px solid #ddd',
                                 }}
                               >
                                 {addonData.totalRevenue > 0
@@ -883,24 +883,24 @@ const AnalyticsDashboard = () => {
                                       (addon.revenue / addonData.totalRevenue) *
                                       100
                                     ).toFixed(1)}%`
-                                  : "0%"}
+                                  : '0%'}
                               </td>
                             </tr>
                           ))}
-                          <tr style={{ fontWeight: "bold" }}>
+                          <tr style={{ fontWeight: 'bold' }}>
                             <td
                               style={{
-                                padding: "8px",
-                                borderTop: "2px solid #ddd",
+                                padding: '8px',
+                                borderTop: '2px solid #ddd',
                               }}
                             >
                               Total
                             </td>
                             <td
                               style={{
-                                textAlign: "right",
-                                padding: "8px",
-                                borderTop: "2px solid #ddd",
+                                textAlign: 'right',
+                                padding: '8px',
+                                borderTop: '2px solid #ddd',
                               }}
                             >
                               {addonData.addOns.reduce(
@@ -910,25 +910,25 @@ const AnalyticsDashboard = () => {
                             </td>
                             <td
                               style={{
-                                textAlign: "right",
-                                padding: "8px",
-                                borderTop: "2px solid #ddd",
+                                textAlign: 'right',
+                                padding: '8px',
+                                borderTop: '2px solid #ddd',
                               }}
                             >
                               {formatCurrency(addonData.totalRevenue)}
                             </td>
                             <td
                               style={{
-                                textAlign: "right",
-                                padding: "8px",
-                                borderTop: "2px solid #ddd",
+                                textAlign: 'right',
+                                padding: '8px',
+                                borderTop: '2px solid #ddd',
                               }}
                             ></td>
                             <td
                               style={{
-                                textAlign: "right",
-                                padding: "8px",
-                                borderTop: "2px solid #ddd",
+                                textAlign: 'right',
+                                padding: '8px',
+                                borderTop: '2px solid #ddd',
                               }}
                             >
                               100%

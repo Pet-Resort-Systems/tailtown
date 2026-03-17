@@ -3,7 +3,7 @@
  * Displays and manages customer's cards on file
  */
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Typography,
@@ -23,18 +23,18 @@ import {
   MenuItem,
   ListItemIcon,
   ListItemText,
-} from "@mui/material";
+} from '@mui/material';
 import {
   CreditCard as CreditCardIcon,
   MoreVert as MoreVertIcon,
   Delete as DeleteIcon,
   Star as StarIcon,
   Edit as EditIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import {
   customerPaymentMethodService,
   SavedPaymentMethod,
-} from "../../services/customerPaymentMethodService";
+} from '../../services/customerPaymentMethodService';
 
 interface SavedPaymentMethodsProps {
   customerId: string;
@@ -59,19 +59,18 @@ const SavedPaymentMethods: React.FC<SavedPaymentMethodsProps> = ({
     useState<SavedPaymentMethod | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [nickname, setNickname] = useState("");
+  const [nickname, setNickname] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
 
   const loadPaymentMethods = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const methods = await customerPaymentMethodService.getPaymentMethods(
-        customerId
-      );
+      const methods =
+        await customerPaymentMethodService.getPaymentMethods(customerId);
       setPaymentMethods(methods);
     } catch (err: any) {
-      setError(err.message || "Failed to load payment methods");
+      setError(err.message || 'Failed to load payment methods');
     } finally {
       setLoading(false);
     }
@@ -96,7 +95,7 @@ const SavedPaymentMethods: React.FC<SavedPaymentMethodsProps> = ({
 
   const handleEditClick = () => {
     if (selectedMethod) {
-      setNickname(selectedMethod.nickname || "");
+      setNickname(selectedMethod.nickname || '');
       setEditDialogOpen(true);
     }
     handleMenuClose();
@@ -119,7 +118,7 @@ const SavedPaymentMethods: React.FC<SavedPaymentMethodsProps> = ({
       );
       await loadPaymentMethods();
     } catch (err: any) {
-      setError(err.message || "Failed to set default");
+      setError(err.message || 'Failed to set default');
     } finally {
       setActionLoading(false);
       handleMenuClose();
@@ -139,7 +138,7 @@ const SavedPaymentMethods: React.FC<SavedPaymentMethodsProps> = ({
       setEditDialogOpen(false);
       await loadPaymentMethods();
     } catch (err: any) {
-      setError(err.message || "Failed to update");
+      setError(err.message || 'Failed to update');
     } finally {
       setActionLoading(false);
     }
@@ -157,7 +156,7 @@ const SavedPaymentMethods: React.FC<SavedPaymentMethodsProps> = ({
       setDeleteDialogOpen(false);
       await loadPaymentMethods();
     } catch (err: any) {
-      setError(err.message || "Failed to delete");
+      setError(err.message || 'Failed to delete');
     } finally {
       setActionLoading(false);
     }
@@ -183,15 +182,15 @@ const SavedPaymentMethods: React.FC<SavedPaymentMethodsProps> = ({
     );
 
     return (
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2, flex: 1 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1 }}>
         <CreditCardIcon
           sx={{
             fontSize: 40,
-            color: isExpired ? "error.main" : "primary.main",
+            color: isExpired ? 'error.main' : 'primary.main',
           }}
         />
         <Box sx={{ flex: 1 }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Typography variant="subtitle1" fontWeight="medium">
               {method.nickname || `${brand} ending in ${method.lastFour}`}
             </Typography>
@@ -215,7 +214,7 @@ const SavedPaymentMethods: React.FC<SavedPaymentMethodsProps> = ({
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
         <CircularProgress />
       </Box>
     );
@@ -231,9 +230,9 @@ const SavedPaymentMethods: React.FC<SavedPaymentMethodsProps> = ({
 
       {paymentMethods.length === 0 ? (
         <Card variant="outlined">
-          <CardContent sx={{ textAlign: "center", py: 4 }}>
+          <CardContent sx={{ textAlign: 'center', py: 4 }}>
             <CreditCardIcon
-              sx={{ fontSize: 48, color: "text.disabled", mb: 1 }}
+              sx={{ fontSize: 48, color: 'text.disabled', mb: 1 }}
             />
             <Typography variant="body1" color="text.secondary">
               No saved payment methods
@@ -244,26 +243,26 @@ const SavedPaymentMethods: React.FC<SavedPaymentMethodsProps> = ({
           </CardContent>
         </Card>
       ) : (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           {paymentMethods.map((method) => (
             <Card
               key={method.id}
               variant="outlined"
               sx={{
-                cursor: selectable ? "pointer" : "default",
+                cursor: selectable ? 'pointer' : 'default',
                 border: selectedMethodId === method.id ? 2 : 1,
                 borderColor:
-                  selectedMethodId === method.id ? "primary.main" : "divider",
-                "&:hover": selectable ? { borderColor: "primary.light" } : {},
+                  selectedMethodId === method.id ? 'primary.main' : 'divider',
+                '&:hover': selectable ? { borderColor: 'primary.light' } : {},
               }}
               onClick={() => handleCardClick(method)}
             >
               <CardContent
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
+                  display: 'flex',
+                  alignItems: 'center',
                   py: 1.5,
-                  "&:last-child": { pb: 1.5 },
+                  '&:last-child': { pb: 1.5 },
                 }}
               >
                 {getCardDisplay(method)}
@@ -299,7 +298,7 @@ const SavedPaymentMethods: React.FC<SavedPaymentMethodsProps> = ({
           </ListItemIcon>
           <ListItemText>Edit Nickname</ListItemText>
         </MenuItem>
-        <MenuItem onClick={handleDeleteClick} sx={{ color: "error.main" }}>
+        <MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }}>
           <ListItemIcon>
             <DeleteIcon fontSize="small" color="error" />
           </ListItemIcon>
@@ -334,7 +333,7 @@ const SavedPaymentMethods: React.FC<SavedPaymentMethodsProps> = ({
             variant="contained"
             disabled={actionLoading}
           >
-            {actionLoading ? <CircularProgress size={20} /> : "Save"}
+            {actionLoading ? <CircularProgress size={20} /> : 'Save'}
           </Button>
         </DialogActions>
       </Dialog>
@@ -351,11 +350,11 @@ const SavedPaymentMethods: React.FC<SavedPaymentMethodsProps> = ({
             undone.
           </Typography>
           {selectedMethod && (
-            <Box sx={{ mt: 2, p: 2, bgcolor: "grey.100", borderRadius: 1 }}>
+            <Box sx={{ mt: 2, p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
               <Typography variant="body2">
                 {customerPaymentMethodService.formatCardBrand(
                   selectedMethod.cardBrand
-                )}{" "}
+                )}{' '}
                 •••• {selectedMethod.lastFour}
               </Typography>
             </Box>
@@ -369,7 +368,7 @@ const SavedPaymentMethods: React.FC<SavedPaymentMethodsProps> = ({
             variant="contained"
             disabled={actionLoading}
           >
-            {actionLoading ? <CircularProgress size={20} /> : "Remove"}
+            {actionLoading ? <CircularProgress size={20} /> : 'Remove'}
           </Button>
         </DialogActions>
       </Dialog>

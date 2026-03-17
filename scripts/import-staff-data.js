@@ -2,15 +2,15 @@
 
 /**
  * Comprehensive Staff Data Import Tool
- * 
+ *
  * Imports staff, availability, and permissions from various sources:
  * - Gingr API (employees and availability)
  * - CSV files (staff data, availability schedules)
  * - JSON files (structured data)
- * 
+ *
  * Usage:
  *   node scripts/import-staff-data.js <source-type> <source-details>
- * 
+ *
  * Examples:
  *   node scripts/import-staff-data.js gingr <subdomain> <api-key>
  *   node scripts/import-staff-data.js csv staff-data.csv
@@ -27,12 +27,22 @@ const args = process.argv.slice(2);
 if (args.length < 1) {
   console.error('❌ Error: Missing required arguments');
   console.log('\nUsage:');
-  console.log('  Gingr Import:    node scripts/import-staff-data.js gingr <subdomain> <api-key>');
-  console.log('  CSV Import:      node scripts/import-staff-data.js csv <file-path>');
-  console.log('  JSON Import:     node scripts/import-staff-data.js json <file-path>');
-  console.log('  Hash Password:   node scripts/import-staff-data.js hash-password');
+  console.log(
+    '  Gingr Import:    node scripts/import-staff-data.js gingr <subdomain> <api-key>'
+  );
+  console.log(
+    '  CSV Import:      node scripts/import-staff-data.js csv <file-path>'
+  );
+  console.log(
+    '  JSON Import:     node scripts/import-staff-data.js json <file-path>'
+  );
+  console.log(
+    '  Hash Password:   node scripts/import-staff-data.js hash-password'
+  );
   console.log('\nExamples:');
-  console.log('  node scripts/import-staff-data.js gingr tailtown abc123xyz456');
+  console.log(
+    '  node scripts/import-staff-data.js gingr tailtown abc123xyz456'
+  );
   console.log('  node scripts/import-staff-data.js csv ./staff-data.csv');
   console.log('  node scripts/import-staff-data.js json ./staff-data.json');
   console.log('  node scripts/import-staff-data.js hash-password');
@@ -52,16 +62,16 @@ console.log('');
 function makeGingrRequest(url, data = {}) {
   return new Promise((resolve, reject) => {
     const formData = new URLSearchParams();
-    
+
     Object.entries(data).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         formData.append(key, String(value));
       }
     });
-    
+
     const postData = formData.toString();
     const parsedUrl = new URL(url);
-    
+
     const options = {
       hostname: parsedUrl.hostname,
       port: parsedUrl.port || 443,
@@ -69,24 +79,28 @@ function makeGingrRequest(url, data = {}) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Content-Length': Buffer.byteLength(postData)
-      }
+        'Content-Length': Buffer.byteLength(postData),
+      },
     };
-    
+
     const req = https.request(options, (res) => {
       let responseData = '';
-      
+
       res.on('data', (chunk) => {
         responseData += chunk;
       });
-      
+
       res.on('end', () => {
         try {
           if (res.statusCode !== 200) {
-            reject(new Error(`Gingr API error: ${res.statusCode} ${res.statusMessage}\n${responseData}`));
+            reject(
+              new Error(
+                `Gingr API error: ${res.statusCode} ${res.statusMessage}\n${responseData}`
+              )
+            );
             return;
           }
-          
+
           const jsonData = JSON.parse(responseData);
           resolve(jsonData);
         } catch (error) {
@@ -94,11 +108,11 @@ function makeGingrRequest(url, data = {}) {
         }
       });
     });
-    
+
     req.on('error', (error) => {
       reject(error);
     });
-    
+
     req.write(postData);
     req.end();
   });
@@ -110,26 +124,28 @@ function makeGingrRequest(url, data = {}) {
 function readCSVFile(filePath) {
   try {
     const fileContent = fs.readFileSync(filePath, 'utf8');
-    const lines = fileContent.split('\n').filter(line => line.trim());
-    
+    const lines = fileContent.split('\n').filter((line) => line.trim());
+
     if (lines.length < 2) {
       throw new Error('CSV file must have at least a header and one data row');
     }
-    
-    const headers = lines[0].split(',').map(h => h.trim());
+
+    const headers = lines[0].split(',').map((h) => h.trim());
     const records = [];
-    
+
     for (let i = 1; i < lines.length; i++) {
-      const values = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+      const values = lines[i]
+        .split(',')
+        .map((v) => v.trim().replace(/^"|"$/g, ''));
       const record = {};
-      
+
       headers.forEach((header, index) => {
         record[header] = values[index] || '';
       });
-      
+
       records.push(record);
     }
-    
+
     return records;
   } catch (error) {
     throw new Error(`Failed to read CSV file: ${error.message}`);
@@ -153,9 +169,9 @@ function readJSONFile(filePath) {
  */
 function mapRole(gingrRole) {
   if (!gingrRole) return 'STAFF';
-  
+
   const role = gingrRole.toLowerCase();
-  
+
   if (role.includes('manager') || role.includes('admin')) {
     return 'MANAGER';
   }
@@ -165,7 +181,7 @@ function mapRole(gingrRole) {
   if (role.includes('trainer') || role.includes('instructor')) {
     return 'INSTRUCTOR';
   }
-  
+
   return 'STAFF';
 }
 
@@ -174,10 +190,10 @@ function mapRole(gingrRole) {
  */
 function mapDepartmentAndPosition(role, title = '') {
   const combined = `${role} ${title}`.toLowerCase();
-  
+
   let department = 'MANAGEMENT';
   let position = 'STAFF';
-  
+
   if (combined.includes('groom')) {
     department = 'GROOMING';
     if (combined.includes('lead') || combined.includes('manager')) {
@@ -195,7 +211,11 @@ function mapDepartmentAndPosition(role, title = '') {
     } else {
       position = 'KENNEL TECHNICIAN';
     }
-  } else if (combined.includes('front') || combined.includes('desk') || combined.includes('reception')) {
+  } else if (
+    combined.includes('front') ||
+    combined.includes('desk') ||
+    combined.includes('reception')
+  ) {
     department = 'FRONT DESK';
     if (combined.includes('manager')) {
       position = 'FRONT DESK MANAGER';
@@ -213,7 +233,7 @@ function mapDepartmentAndPosition(role, title = '') {
     department = 'MANAGEMENT';
     position = 'GENERAL MANAGER';
   }
-  
+
   return { department, position };
 }
 
@@ -222,31 +242,35 @@ function mapDepartmentAndPosition(role, title = '') {
  */
 function parseAvailabilityData(availabilityRecords, staffIdMap) {
   const availabilitySQL = [];
-  
-  availabilityRecords.forEach(record => {
+
+  availabilityRecords.forEach((record) => {
     const staffEmail = record.email || record.staffEmail;
     const staffId = staffIdMap[staffEmail];
-    
+
     if (!staffId) {
-      console.warn(`⚠️  Skipping availability for unknown staff: ${staffEmail}`);
+      console.warn(
+        `⚠️  Skipping availability for unknown staff: ${staffEmail}`
+      );
       return;
     }
-    
+
     // Parse day of week (0-6 for Sunday-Saturday)
     const dayOfWeek = parseInt(record.dayOfWeek || record.day);
     if (isNaN(dayOfWeek) || dayOfWeek < 0 || dayOfWeek > 6) {
-      console.warn(`⚠️  Invalid day of week: ${record.dayOfWeek} for ${staffEmail}`);
+      console.warn(
+        `⚠️  Invalid day of week: ${record.dayOfWeek} for ${staffEmail}`
+      );
       return;
     }
-    
+
     const startTime = record.startTime || record.start;
     const endTime = record.endTime || record.end;
-    
+
     if (!startTime || !endTime) {
       console.warn(`⚠️  Missing start/end time for ${staffEmail}`);
       return;
     }
-    
+
     const sql = `
 -- Availability for ${staffEmail}
 INSERT INTO "StaffAvailability" (
@@ -273,10 +297,10 @@ VALUES (
 )
 ON CONFLICT DO NOTHING;
 `;
-    
+
     availabilitySQL.push(sql.trim());
   });
-  
+
   return availabilitySQL.join('\n\n');
 }
 
@@ -294,27 +318,41 @@ function generatePermissions(role, department) {
     canViewReports: true,
     canCheckInPets: true,
     canManageInventory: role === 'ADMINISTRATOR' || role === 'MANAGER',
-    canManageGrooming: department === 'GROOMING' || role === 'ADMINISTRATOR' || role === 'MANAGER',
-    canManageTraining: department === 'TRAINING' || role === 'ADMINISTRATOR' || role === 'MANAGER',
-    canManageKennels: department === 'KENNEL' || role === 'ADMINISTRATOR' || role === 'MANAGER'
+    canManageGrooming:
+      department === 'GROOMING' ||
+      role === 'ADMINISTRATOR' ||
+      role === 'MANAGER',
+    canManageTraining:
+      department === 'TRAINING' ||
+      role === 'ADMINISTRATOR' ||
+      role === 'MANAGER',
+    canManageKennels:
+      department === 'KENNEL' || role === 'ADMINISTRATOR' || role === 'MANAGER',
   };
-  
+
   return permissions;
 }
 
 /**
  * Generate SQL for staff import
  */
-function generateStaffSQL(staffRecords, includeAvailability = false, availabilityRecords = []) {
+function generateStaffSQL(
+  staffRecords,
+  includeAvailability = false,
+  availabilityRecords = []
+) {
   const sqlStatements = [];
   const staffIdMap = {};
-  
+
   // Generate staff records
-  staffRecords.forEach(emp => {
-    const { department, position } = mapDepartmentAndPosition(emp.role, emp.title || emp.position);
+  staffRecords.forEach((emp) => {
+    const { department, position } = mapDepartmentAndPosition(
+      emp.role,
+      emp.title || emp.position
+    );
     const role = mapRole(emp.role || emp.roleTitle);
     const permissions = generatePermissions(role, department);
-    
+
     // Parse specialties from CSV/JSON (handle array format)
     let specialties = [];
     if (emp.specialties) {
@@ -327,18 +365,21 @@ function generateStaffSQL(staffRecords, includeAvailability = false, availabilit
           specialties = JSON.parse(emp.specialties.replace(/"/g, '"'));
         } catch {
           // If not JSON, split by comma
-          specialties = emp.specialties.split(',').map(s => s.trim()).filter(s => s);
+          specialties = emp.specialties
+            .split(',')
+            .map((s) => s.trim())
+            .filter((s) => s);
         }
       }
     }
-    
+
     // Generate UUID for this staff member
     const staffId = emp.id || 'gen_random_uuid()';
     staffIdMap[emp.email] = staffId;
-    
+
     // Generate a temporary password
     const tempPassword = 'TempPass@2024!';
-    
+
     const sql = `
 -- ${emp.firstName} ${emp.lastName}${emp.email ? ` (${emp.email})` : ''}
 INSERT INTO staff (
@@ -376,7 +417,7 @@ VALUES (
   ${emp.city ? `'${emp.city.replace(/'/g, "''")}'` : 'NULL'},
   ${emp.state ? `'${emp.state.replace(/'/g, "''")}'` : 'NULL'},
   ${emp.zipCode ? `'${emp.zipCode.replace(/'/g, "''")}'` : 'NULL'},
-  ${specialties.length > 0 ? `ARRAY[${specialties.map(s => `'${s.replace(/'/g, "''")}'`).join(',')}]` : 'ARRAY[]::TEXT[]'},
+  ${specialties.length > 0 ? `ARRAY[${specialties.map((s) => `'${s.replace(/'/g, "''")}'`).join(',')}]` : 'ARRAY[]::TEXT[]'},
   ${emp.isActive !== false ? 'true' : 'false'},
   '${JSON.stringify(permissions).replace(/'/g, "''")}',
   'dev',
@@ -385,18 +426,21 @@ VALUES (
 )
 ON CONFLICT (email, "tenantId") DO NOTHING;
 `;
-    
+
     sqlStatements.push(sql.trim());
   });
-  
+
   // Add availability if requested
   if (includeAvailability && availabilityRecords.length > 0) {
-    const availabilitySQL = parseAvailabilityData(availabilityRecords, staffIdMap);
+    const availabilitySQL = parseAvailabilityData(
+      availabilityRecords,
+      staffIdMap
+    );
     if (availabilitySQL) {
       sqlStatements.push(availabilitySQL);
     }
   }
-  
+
   return sqlStatements.join('\n\n');
 }
 
@@ -405,20 +449,24 @@ ON CONFLICT (email, "tenantId") DO NOTHING;
  */
 async function importFromGingr(subdomain, apiKey) {
   console.log('📥 Fetching data from Gingr API...\n');
-  
+
   const BASE_URL = `https://${subdomain}.gingrapp.com/api/v1`;
-  
+
   try {
     // Fetch employees
     console.log('👥 Fetching employees...');
     let employees = [];
-    
+
     try {
-      const response = await makeGingrRequest(`${BASE_URL}/get_staff`, { key: apiKey });
+      const response = await makeGingrRequest(`${BASE_URL}/get_staff`, {
+        key: apiKey,
+      });
       employees = response.staff || response.data || response;
     } catch (error) {
       try {
-        const response = await makeGingrRequest(`${BASE_URL}/staff`, { key: apiKey });
+        const response = await makeGingrRequest(`${BASE_URL}/staff`, {
+          key: apiKey,
+        });
         employees = response.staff || response.data || response;
       } catch (error2) {
         console.error('❌ Could not fetch employees from Gingr API');
@@ -426,41 +474,47 @@ async function importFromGingr(subdomain, apiKey) {
         throw error2;
       }
     }
-    
+
     if (!Array.isArray(employees) || employees.length === 0) {
       console.log('⚠️  No employees found in Gingr');
       return;
     }
-    
+
     console.log(`✅ Found ${employees.length} employees\n`);
-    
+
     // Try to fetch availability (if available)
     let availability = [];
     try {
       console.log('📅 Fetching availability...');
-      const availResponse = await makeGingrRequest(`${BASE_URL}/get_availability`, { key: apiKey });
+      const availResponse = await makeGingrRequest(
+        `${BASE_URL}/get_availability`,
+        { key: apiKey }
+      );
       availability = availResponse.availability || availResponse.data || [];
       console.log(`✅ Found ${availability.length} availability records\n`);
     } catch (error) {
       console.log('⚠️  Could not fetch availability (may not be supported)\n');
     }
-    
+
     // Display summary
     console.log('📊 IMPORT SUMMARY');
     console.log('═══════════════════════════════\n');
     console.log(`Employees: ${employees.length}`);
     console.log(`Availability Records: ${availability.length}\n`);
-    
+
     // Generate SQL
     const sql = generateStaffSQL(employees, true, availability);
-    
+
     console.log('💾 GENERATED SQL:');
     console.log('═══════════════════════════════\n');
-    console.log('-- IMPORTANT: Passwords must be hashed with bcrypt before inserting');
-    console.log('-- The default password "TempPass@2024!" meets all security requirements');
+    console.log(
+      '-- IMPORTANT: Passwords must be hashed with bcrypt before inserting'
+    );
+    console.log(
+      '-- The default password "TempPass@2024!" meets all security requirements'
+    );
     console.log('-- Employees should change their password on first login\n');
     console.log(sql);
-    
   } catch (error) {
     console.error('❌ Gingr import failed:', error.message);
     throw error;
@@ -472,20 +526,24 @@ async function importFromGingr(subdomain, apiKey) {
  */
 async function importFromCSV(filePath) {
   console.log(`📄 Reading CSV file: ${filePath}\n`);
-  
+
   try {
     const records = readCSVFile(filePath);
     console.log(`✅ Found ${records.length} records in CSV\n`);
-    
+
     // Check if this is staff data or availability data
-    const hasStaffFields = records.some(r => r.firstName || r.lastName || r.email);
-    const hasAvailabilityFields = records.some(r => r.dayOfWeek || r.startTime || r.endTime);
-    
+    const hasStaffFields = records.some(
+      (r) => r.firstName || r.lastName || r.email
+    );
+    const hasAvailabilityFields = records.some(
+      (r) => r.dayOfWeek || r.startTime || r.endTime
+    );
+
     if (hasStaffFields) {
       // Process as staff data
       console.log('👥 Processing staff data...\n');
       const sql = generateStaffSQL(records);
-      
+
       console.log('💾 GENERATED SQL:');
       console.log('═══════════════════════════════\n');
       console.log(sql);
@@ -494,9 +552,10 @@ async function importFromCSV(filePath) {
       console.log('⚠️  Availability import requires existing staff mapping');
       console.log('   Please ensure staff records exist first');
     } else {
-      throw new Error('CSV file does not contain recognizable staff or availability data');
+      throw new Error(
+        'CSV file does not contain recognizable staff or availability data'
+      );
     }
-    
   } catch (error) {
     console.error('❌ CSV import failed:', error.message);
     throw error;
@@ -508,13 +567,13 @@ async function importFromCSV(filePath) {
  */
 async function importFromJSON(filePath) {
   console.log(`📄 Reading JSON file: ${filePath}\n`);
-  
+
   try {
     const data = readJSONFile(filePath);
-    
+
     let staffRecords = [];
     let availabilityRecords = [];
-    
+
     if (Array.isArray(data)) {
       // Simple array of staff records
       staffRecords = data;
@@ -523,22 +582,29 @@ async function importFromJSON(filePath) {
       staffRecords = data.staff;
       availabilityRecords = data.availability || [];
     } else {
-      throw new Error('JSON file must contain an array of staff records or {staff: [], availability: []}');
+      throw new Error(
+        'JSON file must contain an array of staff records or {staff: [], availability: []}'
+      );
     }
-    
+
     console.log(`✅ Found ${staffRecords.length} staff records`);
-    console.log(`✅ Found ${availabilityRecords.length} availability records\n`);
-    
+    console.log(
+      `✅ Found ${availabilityRecords.length} availability records\n`
+    );
+
     // Generate SQL
     const sql = generateStaffSQL(staffRecords, true, availabilityRecords);
-    
+
     console.log('💾 GENERATED SQL:');
     console.log('═══════════════════════════════\n');
-    console.log('-- IMPORTANT: Passwords must be hashed with bcrypt before inserting');
-    console.log('-- The default password "TempPass@2024!" meets all security requirements');
+    console.log(
+      '-- IMPORTANT: Passwords must be hashed with bcrypt before inserting'
+    );
+    console.log(
+      '-- The default password "TempPass@2024!" meets all security requirements'
+    );
     console.log('-- Employees should change their password on first login\n');
     console.log(sql);
-    
   } catch (error) {
     console.error('❌ JSON import failed:', error.message);
     throw error;
@@ -559,7 +625,9 @@ async function hashPassword(password) {
   console.log('');
   console.log('Or install bcrypt separately:');
   console.log('pnpm install bcrypt');
-  console.log('node -e "const bcrypt = require(\"bcrypt\"); bcrypt.hash(\"TempPass@2024!\", 10).then(console.log)"');
+  console.log(
+    'node -e "const bcrypt = require(\"bcrypt\"); bcrypt.hash(\"TempPass@2024!\", 10).then(console.log)"'
+  );
   return '$2b$10$YourHashedPasswordHere';
 }
 
@@ -572,50 +640,59 @@ async function main() {
       case 'gingr':
         if (sourceArgs.length < 2) {
           console.error('❌ Gingr import requires subdomain and API key');
-          console.log('Usage: node scripts/import-staff-data.js gingr <subdomain> <api-key>');
+          console.log(
+            'Usage: node scripts/import-staff-data.js gingr <subdomain> <api-key>'
+          );
           process.exit(1);
         }
         await importFromGingr(sourceArgs[0], sourceArgs[1]);
         break;
-        
+
       case 'csv':
         if (sourceArgs.length < 1) {
           console.error('❌ CSV import requires file path');
-          console.log('Usage: node scripts/import-staff-data.js csv <file-path>');
+          console.log(
+            'Usage: node scripts/import-staff-data.js csv <file-path>'
+          );
           process.exit(1);
         }
         await importFromCSV(sourceArgs[0]);
         break;
-        
+
       case 'json':
         if (sourceArgs.length < 1) {
           console.error('❌ JSON import requires file path');
-          console.log('Usage: node scripts/import-staff-data.js json <file-path>');
+          console.log(
+            'Usage: node scripts/import-staff-data.js json <file-path>'
+          );
           process.exit(1);
         }
         await importFromJSON(sourceArgs[0]);
         break;
-        
+
       case 'hash-password':
         // Utility to hash the default password
         await hashPassword('TempPass@2024!');
         break;
-        
+
       default:
         console.error(`❌ Unknown source type: ${sourceType}`);
         console.log('Supported types: gingr, csv, json, hash-password');
         process.exit(1);
     }
-    
+
     console.log('\n📝 NEXT STEPS:');
     console.log('═══════════════════════════════');
-    console.log('1. Hash the default password: node scripts/import-staff-data.js hash-password');
-    console.log('2. Replace "$2b$10$YourHashedPasswordHere" with the actual hash');
+    console.log(
+      '1. Hash the default password: node scripts/import-staff-data.js hash-password'
+    );
+    console.log(
+      '2. Replace "$2b$10$YourHashedPasswordHere" with the actual hash'
+    );
     console.log('3. Run the SQL in your PostgreSQL database');
     console.log('4. Verify staff members appear in Tailtown Admin → Users');
     console.log('5. Notify staff to log in and change their password');
     console.log('\n✅ Import complete!');
-    
   } catch (error) {
     console.error('\n❌ Import failed:', error.message);
     process.exit(1);

@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
-const fs = require("fs");
-const { parse } = require("csv-parse/sync");
+const fs = require('fs');
+const { parse } = require('csv-parse/sync');
 
 // Parse all CSV files
 const files = fs
-  .readdirSync("/tmp")
-  .filter((f) => f.startsWith("Reservations"));
+  .readdirSync('/tmp')
+  .filter((f) => f.startsWith('Reservations'));
 let allFlags = new Map();
 
 files.forEach((file) => {
-  const csv = fs.readFileSync(`/tmp/${file}`, "utf8");
+  const csv = fs.readFileSync(`/tmp/${file}`, 'utf8');
   const records = parse(csv, {
     columns: true,
     skip_empty_lines: true,
@@ -43,10 +43,10 @@ files.forEach((file) => {
   });
 });
 
-console.log("\n🚩 PLAYGROUP FLAGS FOUND IN GINGR:\n");
-console.log("Color    | Title                      | Count | Examples");
+console.log('\n🚩 PLAYGROUP FLAGS FOUND IN GINGR:\n');
+console.log('Color    | Title                      | Count | Examples');
 console.log(
-  "---------|----------------------------|-------|------------------"
+  '---------|----------------------------|-------|------------------'
 );
 
 [...allFlags.values()]
@@ -55,7 +55,7 @@ console.log(
     console.log(
       `${f.color} | ${f.title.padEnd(26)} | ${String(f.count).padStart(
         5
-      )} | ${f.examples.join(", ")}`
+      )} | ${f.examples.join(', ')}`
     );
   });
 

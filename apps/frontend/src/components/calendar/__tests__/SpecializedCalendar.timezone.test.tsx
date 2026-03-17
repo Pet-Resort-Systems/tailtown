@@ -26,11 +26,11 @@ describe('SpecializedCalendar Timezone Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockCalendarEvents = [];
-    
+
     // Mock reservations to return empty array
     (reservationService.getAllReservations as jest.Mock).mockResolvedValue({
       status: 'success',
-      data: { reservations: [] }
+      data: { reservations: [] },
     });
   });
 
@@ -77,8 +77,12 @@ describe('SpecializedCalendar Timezone Tests', () => {
         },
       ];
 
-      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(mockClasses);
-      (schedulingService.trainingClasses.getSessions as jest.Mock).mockResolvedValue(mockSessions);
+      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(
+        mockClasses
+      );
+      (
+        schedulingService.trainingClasses.getSessions as jest.Mock
+      ).mockResolvedValue(mockSessions);
 
       render(
         <BrowserRouter>
@@ -87,7 +91,9 @@ describe('SpecializedCalendar Timezone Tests', () => {
       );
 
       await waitFor(() => {
-        expect(schedulingService.trainingClasses.getSessions).toHaveBeenCalled();
+        expect(
+          schedulingService.trainingClasses.getSessions
+        ).toHaveBeenCalled();
       });
 
       const events = mockCalendarEvents;
@@ -144,8 +150,12 @@ describe('SpecializedCalendar Timezone Tests', () => {
         },
       ];
 
-      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(mockClasses);
-      (schedulingService.trainingClasses.getSessions as jest.Mock).mockResolvedValue(mockSessions);
+      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(
+        mockClasses
+      );
+      (
+        schedulingService.trainingClasses.getSessions as jest.Mock
+      ).mockResolvedValue(mockSessions);
 
       render(
         <BrowserRouter>
@@ -158,7 +168,9 @@ describe('SpecializedCalendar Timezone Tests', () => {
       });
 
       await waitFor(() => {
-        expect(schedulingService.trainingClasses.getSessions).toHaveBeenCalled();
+        expect(
+          schedulingService.trainingClasses.getSessions
+        ).toHaveBeenCalled();
       });
 
       // Get the events that were passed to FullCalendar
@@ -213,8 +225,12 @@ describe('SpecializedCalendar Timezone Tests', () => {
         },
       ];
 
-      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(mockClasses);
-      (schedulingService.trainingClasses.getSessions as jest.Mock).mockResolvedValue(mockSessions);
+      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(
+        mockClasses
+      );
+      (
+        schedulingService.trainingClasses.getSessions as jest.Mock
+      ).mockResolvedValue(mockSessions);
 
       render(
         <BrowserRouter>
@@ -271,8 +287,12 @@ describe('SpecializedCalendar Timezone Tests', () => {
         },
       ];
 
-      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(mockClasses);
-      (schedulingService.trainingClasses.getSessions as jest.Mock).mockResolvedValue(mockSessions);
+      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(
+        mockClasses
+      );
+      (
+        schedulingService.trainingClasses.getSessions as jest.Mock
+      ).mockResolvedValue(mockSessions);
 
       render(
         <BrowserRouter>
@@ -339,8 +359,12 @@ describe('SpecializedCalendar Timezone Tests', () => {
         },
       ];
 
-      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(mockClasses);
-      (schedulingService.trainingClasses.getSessions as jest.Mock).mockResolvedValue(mockSessions);
+      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(
+        mockClasses
+      );
+      (
+        schedulingService.trainingClasses.getSessions as jest.Mock
+      ).mockResolvedValue(mockSessions);
 
       render(
         <BrowserRouter>
@@ -395,8 +419,12 @@ describe('SpecializedCalendar Timezone Tests', () => {
         },
       ];
 
-      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(mockClasses);
-      (schedulingService.trainingClasses.getSessions as jest.Mock).mockResolvedValue(mockSessions);
+      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(
+        mockClasses
+      );
+      (
+        schedulingService.trainingClasses.getSessions as jest.Mock
+      ).mockResolvedValue(mockSessions);
 
       render(
         <BrowserRouter>
@@ -441,8 +469,12 @@ describe('SpecializedCalendar Timezone Tests', () => {
         },
       ];
 
-      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(mockClasses);
-      (schedulingService.trainingClasses.getSessions as jest.Mock).mockResolvedValue(mockSessions);
+      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(
+        mockClasses
+      );
+      (
+        schedulingService.trainingClasses.getSessions as jest.Mock
+      ).mockResolvedValue(mockSessions);
 
       render(
         <BrowserRouter>
@@ -492,8 +524,12 @@ describe('SpecializedCalendar Timezone Tests', () => {
         },
       ];
 
-      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(mockClasses);
-      (schedulingService.trainingClasses.getSessions as jest.Mock).mockResolvedValue(mockSessions);
+      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(
+        mockClasses
+      );
+      (
+        schedulingService.trainingClasses.getSessions as jest.Mock
+      ).mockResolvedValue(mockSessions);
 
       render(
         <BrowserRouter>
@@ -568,7 +604,9 @@ describe('SpecializedCalendar Timezone Tests', () => {
         },
       ];
 
-      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(mockClasses);
+      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(
+        mockClasses
+      );
       (schedulingService.trainingClasses.getSessions as jest.Mock)
         .mockResolvedValueOnce(mockSessions1)
         .mockResolvedValueOnce(mockSessions2);
@@ -639,8 +677,12 @@ describe('SpecializedCalendar Timezone Tests', () => {
         },
       ];
 
-      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(mockClasses);
-      (schedulingService.trainingClasses.getSessions as jest.Mock).mockResolvedValue(mockSessions);
+      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(
+        mockClasses
+      );
+      (
+        schedulingService.trainingClasses.getSessions as jest.Mock
+      ).mockResolvedValue(mockSessions);
 
       render(
         <BrowserRouter>
@@ -713,8 +755,12 @@ describe('SpecializedCalendar Timezone Tests', () => {
         },
       ];
 
-      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(mockClasses);
-      (schedulingService.trainingClasses.getSessions as jest.Mock).mockResolvedValue(mockSessions);
+      (schedulingService.trainingClasses.getAll as jest.Mock).mockResolvedValue(
+        mockClasses
+      );
+      (
+        schedulingService.trainingClasses.getSessions as jest.Mock
+      ).mockResolvedValue(mockSessions);
 
       render(
         <BrowserRouter>

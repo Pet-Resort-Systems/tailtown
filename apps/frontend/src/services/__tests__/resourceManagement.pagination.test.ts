@@ -9,8 +9,8 @@ import { reservationApi } from '../api';
 // Mock the API
 jest.mock('../api', () => ({
   reservationApi: {
-    get: jest.fn()
-  }
+    get: jest.fn(),
+  },
 }));
 
 describe('ResourceManagement Pagination', () => {
@@ -24,28 +24,32 @@ describe('ResourceManagement Pagination', () => {
       const firstPageResponse = {
         data: {
           status: 'success',
-          data: Array(100).fill(null).map((_, i) => ({ 
-            id: `resource-${i}`, 
-            name: `Resource ${i}`,
-            type: 'suite'
-          })),
+          data: Array(100)
+            .fill(null)
+            .map((_, i) => ({
+              id: `resource-${i}`,
+              name: `Resource ${i}`,
+              type: 'suite',
+            })),
           totalPages: 2,
-          currentPage: 1
-        }
+          currentPage: 1,
+        },
       };
 
       // Mock second page (73 resources)
       const secondPageResponse = {
         data: {
           status: 'success',
-          data: Array(73).fill(null).map((_, i) => ({ 
-            id: `resource-${i + 100}`, 
-            name: `Resource ${i + 100}`,
-            type: 'suite'
-          })),
+          data: Array(73)
+            .fill(null)
+            .map((_, i) => ({
+              id: `resource-${i + 100}`,
+              name: `Resource ${i + 100}`,
+              type: 'suite',
+            })),
           totalPages: 2,
-          currentPage: 2
-        }
+          currentPage: 2,
+        },
       };
 
       (reservationApi.get as jest.Mock)
@@ -61,16 +65,16 @@ describe('ResourceManagement Pagination', () => {
       expect(reservationApi.get).toHaveBeenNthCalledWith(1, '/api/resources', {
         params: {
           page: 1,
-          limit: 100
-        }
+          limit: 100,
+        },
       });
 
       // Second call
       expect(reservationApi.get).toHaveBeenNthCalledWith(2, '/api/resources', {
         params: {
           page: 2,
-          limit: 100
-        }
+          limit: 100,
+        },
       });
 
       // Should return all 173 resources
@@ -81,16 +85,20 @@ describe('ResourceManagement Pagination', () => {
       const singlePageResponse = {
         data: {
           status: 'success',
-          data: Array(50).fill(null).map((_, i) => ({ 
-            id: `resource-${i}`, 
-            name: `Resource ${i}`
-          })),
+          data: Array(50)
+            .fill(null)
+            .map((_, i) => ({
+              id: `resource-${i}`,
+              name: `Resource ${i}`,
+            })),
           totalPages: 1,
-          currentPage: 1
-        }
+          currentPage: 1,
+        },
       };
 
-      (reservationApi.get as jest.Mock).mockResolvedValueOnce(singlePageResponse);
+      (reservationApi.get as jest.Mock).mockResolvedValueOnce(
+        singlePageResponse
+      );
 
       const result = await getAllResources();
 
@@ -107,8 +115,8 @@ describe('ResourceManagement Pagination', () => {
           status: 'success',
           data: [],
           totalPages: 0,
-          currentPage: 1
-        }
+          currentPage: 1,
+        },
       };
 
       (reservationApi.get as jest.Mock).mockResolvedValueOnce(emptyResponse);
@@ -123,31 +131,35 @@ describe('ResourceManagement Pagination', () => {
     it('should NEVER return only 10 resources when 173 exist', async () => {
       // This is the exact bug we're preventing:
       // The Kennels page was showing "Total Suites: 10" instead of 173
-      
+
       const firstPageResponse = {
         data: {
           status: 'success',
-          data: Array(100).fill(null).map((_, i) => ({ 
-            id: `suite-${i}`, 
-            name: `Suite ${i}`,
-            type: 'suite'
-          })),
+          data: Array(100)
+            .fill(null)
+            .map((_, i) => ({
+              id: `suite-${i}`,
+              name: `Suite ${i}`,
+              type: 'suite',
+            })),
           totalPages: 2,
-          currentPage: 1
-        }
+          currentPage: 1,
+        },
       };
 
       const secondPageResponse = {
         data: {
           status: 'success',
-          data: Array(73).fill(null).map((_, i) => ({ 
-            id: `suite-${i + 100}`, 
-            name: `Suite ${i + 100}`,
-            type: 'suite'
-          })),
+          data: Array(73)
+            .fill(null)
+            .map((_, i) => ({
+              id: `suite-${i + 100}`,
+              name: `Suite ${i + 100}`,
+              type: 'suite',
+            })),
           totalPages: 2,
-          currentPage: 2
-        }
+          currentPage: 2,
+        },
       };
 
       (reservationApi.get as jest.Mock)
@@ -160,7 +172,7 @@ describe('ResourceManagement Pagination', () => {
       expect(result.length).toBe(173);
       expect(result.length).toBeGreaterThan(10);
       expect(result.length).toBeGreaterThan(100);
-      
+
       // Should have fetched both pages
       expect(reservationApi.get).toHaveBeenCalledTimes(2);
     });
@@ -170,25 +182,29 @@ describe('ResourceManagement Pagination', () => {
       const firstPageResponse = {
         data: {
           status: 'success',
-          data: Array(100).fill(null).map((_, i) => ({ 
-            id: `kennel-${i}`, 
-            name: `Kennel ${i}`
-          })),
+          data: Array(100)
+            .fill(null)
+            .map((_, i) => ({
+              id: `kennel-${i}`,
+              name: `Kennel ${i}`,
+            })),
           totalPages: 2,
-          currentPage: 1
-        }
+          currentPage: 1,
+        },
       };
 
       const secondPageResponse = {
         data: {
           status: 'success',
-          data: Array(66).fill(null).map((_, i) => ({ 
-            id: `kennel-${i + 100}`, 
-            name: `Kennel ${i + 100}`
-          })),
+          data: Array(66)
+            .fill(null)
+            .map((_, i) => ({
+              id: `kennel-${i + 100}`,
+              name: `Kennel ${i + 100}`,
+            })),
           totalPages: 2,
-          currentPage: 2
-        }
+          currentPage: 2,
+        },
       };
 
       (reservationApi.get as jest.Mock)
@@ -216,17 +232,19 @@ describe('ResourceManagement Pagination', () => {
         mockResponses.push({
           data: {
             status: 'success',
-            data: Array(pageSize).fill(null).map((_, i) => ({ 
-              id: `resource-${startIdx + i}`, 
-              name: `Resource ${startIdx + i}`
-            })),
+            data: Array(pageSize)
+              .fill(null)
+              .map((_, i) => ({
+                id: `resource-${startIdx + i}`,
+                name: `Resource ${startIdx + i}`,
+              })),
             totalPages: totalPages,
-            currentPage: page
-          }
+            currentPage: page,
+          },
         });
       }
 
-      (reservationApi.get as jest.Mock).mockImplementation(() => 
+      (reservationApi.get as jest.Mock).mockImplementation(() =>
         Promise.resolve(mockResponses.shift())
       );
 
@@ -240,7 +258,9 @@ describe('ResourceManagement Pagination', () => {
 
   describe('Error Handling', () => {
     it('should throw error when API fails', async () => {
-      (reservationApi.get as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+      (reservationApi.get as jest.Mock).mockRejectedValueOnce(
+        new Error('Network error')
+      );
 
       await expect(getAllResources()).rejects.toThrow('Network error');
     });
@@ -249,8 +269,8 @@ describe('ResourceManagement Pagination', () => {
       const invalidResponse = {
         data: {
           status: 'error',
-          message: 'Invalid request'
-        }
+          message: 'Invalid request',
+        },
       };
 
       (reservationApi.get as jest.Mock).mockResolvedValueOnce(invalidResponse);
@@ -264,19 +284,23 @@ describe('ResourceManagement Pagination', () => {
       const firstPageResponse = {
         data: {
           status: 'success',
-          data: Array(100).fill(null).map((_, i) => ({ id: `r-${i}` })),
+          data: Array(100)
+            .fill(null)
+            .map((_, i) => ({ id: `r-${i}` })),
           totalPages: 2,
-          currentPage: 1
-        }
+          currentPage: 1,
+        },
       };
 
       const secondPageResponse = {
         data: {
           status: 'success',
-          data: Array(73).fill(null).map((_, i) => ({ id: `r-${i + 100}` })),
+          data: Array(73)
+            .fill(null)
+            .map((_, i) => ({ id: `r-${i + 100}` })),
           totalPages: 2,
-          currentPage: 2
-        }
+          currentPage: 2,
+        },
       };
 
       (reservationApi.get as jest.Mock)
@@ -287,7 +311,7 @@ describe('ResourceManagement Pagination', () => {
 
       // Should use limit of 100 (not 10 or 1000)
       expect(reservationApi.get).toHaveBeenCalledWith('/api/resources', {
-        params: { page: 1, limit: 100 }
+        params: { page: 1, limit: 100 },
       });
 
       // Should only need 2 calls for 173 resources

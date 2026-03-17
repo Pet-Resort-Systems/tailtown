@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Container,
   Typography,
@@ -21,14 +21,14 @@ import {
   InputLabel,
   Select,
   MenuItem,
-} from "@mui/material";
-import { Search as SearchIcon } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { Pet, petService } from "../../services/petService";
-import PetNameWithIcons from "../../components/pets/PetNameWithIcons";
-import SimpleVaccinationBadge from "../../components/pets/SimpleVaccinationBadge";
-import { PlaygroupBadge } from "../../components/compatibility";
-import { debounce } from "lodash";
+} from '@mui/material';
+import { Search as SearchIcon } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import { Pet, petService } from '../../services/petService';
+import PetNameWithIcons from '../../components/pets/PetNameWithIcons';
+import SimpleVaccinationBadge from '../../components/pets/SimpleVaccinationBadge';
+import { PlaygroupBadge } from '../../components/compatibility';
+import { debounce } from 'lodash';
 
 const DEFAULT_PAGE_SIZE = 50;
 
@@ -39,12 +39,12 @@ const Pets = () => {
   const [error, setError] = useState<string | null>(null);
   const [snackbar, setSnackbar] = useState({
     open: false,
-    message: "",
-    severity: "success" as "success" | "error",
+    message: '',
+    severity: 'success' as 'success' | 'error',
   });
   const [page, setPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [initialLoad, setInitialLoad] = useState(true);
 
@@ -61,8 +61,8 @@ const Pets = () => {
         setTotalCount(response.results);
         setError(null);
       } catch (err) {
-        console.error("Error loading pets:", err);
-        setError("Failed to load pets");
+        console.error('Error loading pets:', err);
+        setError('Failed to load pets');
         setPets([]);
       } finally {
         setLoading(false);
@@ -106,7 +106,7 @@ const Pets = () => {
     e.stopPropagation(); // Prevent row click
     if (
       window.confirm(
-        "Are you sure you want to permanently delete this pet? This action cannot be undone."
+        'Are you sure you want to permanently delete this pet? This action cannot be undone.'
       )
     ) {
       try {
@@ -123,15 +123,15 @@ const Pets = () => {
 
         setSnackbar({
           open: true,
-          message: "Pet permanently deleted",
-          severity: "success",
+          message: 'Pet permanently deleted',
+          severity: 'success',
         });
       } catch (err) {
-        console.error("Error deleting pet:", err);
+        console.error('Error deleting pet:', err);
         setSnackbar({
           open: true,
-          message: "Error deleting pet. Please try again.",
-          severity: "error",
+          message: 'Error deleting pet. Please try again.',
+          severity: 'error',
         });
 
         // Refresh list to ensure UI is in sync with backend
@@ -141,7 +141,7 @@ const Pets = () => {
           searchTerm
         );
         if (!response?.data || !Array.isArray(response.data)) {
-          throw new Error("Invalid response format");
+          throw new Error('Invalid response format');
         }
         setPets(response.data);
         setTotalCount(response.results);
@@ -154,9 +154,9 @@ const Pets = () => {
       <Box sx={{ mt: 4, mb: 4 }}>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             mb: 3,
           }}
         >
@@ -166,13 +166,13 @@ const Pets = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => navigate("/pets/new")}
+            onClick={() => navigate('/pets/new')}
           >
             Add New Pet
           </Button>
         </Box>
 
-        <Box sx={{ display: "flex", gap: 2, mb: 3, alignItems: "center" }}>
+        <Box sx={{ display: 'flex', gap: 2, mb: 3, alignItems: 'center' }}>
           <TextField
             fullWidth
             placeholder="Search pets by name or breed..."
@@ -243,16 +243,16 @@ const Pets = () => {
                     <TableRow
                       key={pet.id}
                       sx={{
-                        "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.04)" },
+                        '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' },
                       }}
                     >
                       <TableCell
                         onClick={() => handleRowClick(pet.id)}
-                        sx={{ cursor: "pointer", py: 0.5 }}
+                        sx={{ cursor: 'pointer', py: 0.5 }}
                       >
                         <PetNameWithIcons
                           petName={`${pet.name}${
-                            pet.owner ? ` (${pet.owner.lastName})` : ""
+                            pet.owner ? ` (${pet.owner.lastName})` : ''
                           }`}
                           petIcons={pet.petIcons}
                           iconNotes={pet.iconNotes}
@@ -265,31 +265,31 @@ const Pets = () => {
                       </TableCell>
                       <TableCell
                         onClick={() => handleRowClick(pet.id)}
-                        sx={{ cursor: "pointer", py: 0.5 }}
+                        sx={{ cursor: 'pointer', py: 0.5 }}
                       >
                         {pet.type}
                       </TableCell>
                       <TableCell
                         onClick={() => handleRowClick(pet.id)}
-                        sx={{ cursor: "pointer", py: 0.5 }}
+                        sx={{ cursor: 'pointer', py: 0.5 }}
                       >
-                        {pet.breed || "N/A"}
+                        {pet.breed || 'N/A'}
                       </TableCell>
                       <TableCell
                         onClick={() => handleRowClick(pet.id)}
-                        sx={{ cursor: "pointer", py: 0.5 }}
+                        sx={{ cursor: 'pointer', py: 0.5 }}
                       >
-                        {pet.gender || "N/A"}
+                        {pet.gender || 'N/A'}
                       </TableCell>
                       <TableCell
                         onClick={() => handleRowClick(pet.id)}
-                        sx={{ cursor: "pointer", py: 0.5 }}
+                        sx={{ cursor: 'pointer', py: 0.5 }}
                       >
-                        {pet.weight ? `${pet.weight} lbs` : "N/A"}
+                        {pet.weight ? `${pet.weight} lbs` : 'N/A'}
                       </TableCell>
                       <TableCell
                         onClick={() => handleRowClick(pet.id)}
-                        sx={{ cursor: "pointer", py: 0.5 }}
+                        sx={{ cursor: 'pointer', py: 0.5 }}
                       >
                         <PlaygroupBadge
                           compatibility={pet.playgroupCompatibility || null}
@@ -297,29 +297,29 @@ const Pets = () => {
                       </TableCell>
                       <TableCell
                         onClick={() => handleRowClick(pet.id)}
-                        sx={{ cursor: "pointer", py: 0.5 }}
+                        sx={{ cursor: 'pointer', py: 0.5 }}
                       >
                         {/* Icons removed */}
                       </TableCell>
                       <TableCell
                         onClick={() => handleRowClick(pet.id)}
-                        sx={{ cursor: "pointer", py: 0.5 }}
+                        sx={{ cursor: 'pointer', py: 0.5 }}
                       >
                         <SimpleVaccinationBadge pet={pet} showDetails={true} />
                       </TableCell>
                       <TableCell align="right" sx={{ py: 0.5 }}>
                         <Box
                           sx={{
-                            display: "flex",
+                            display: 'flex',
                             gap: 0.5,
-                            justifyContent: "flex-end",
+                            justifyContent: 'flex-end',
                           }}
                         >
                           <Button
                             variant="outlined"
                             size="small"
                             onClick={() => navigate(`/pets/${pet.id}`)}
-                            sx={{ minWidth: "auto", px: 1 }}
+                            sx={{ minWidth: 'auto', px: 1 }}
                           >
                             Edit
                           </Button>
@@ -328,7 +328,7 @@ const Pets = () => {
                             color="error"
                             size="small"
                             onClick={(e) => handleDelete(e, pet.id)}
-                            sx={{ minWidth: "auto", px: 1 }}
+                            sx={{ minWidth: 'auto', px: 1 }}
                           >
                             Delete
                           </Button>
@@ -366,7 +366,7 @@ const Pets = () => {
         <Alert
           onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
           severity={snackbar.severity}
-          sx={{ width: "100%" }}
+          sx={{ width: '100%' }}
         >
           {snackbar.message}
         </Alert>

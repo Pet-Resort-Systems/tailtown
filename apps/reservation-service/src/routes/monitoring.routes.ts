@@ -1,6 +1,6 @@
 /**
  * Monitoring Routes
- * 
+ *
  * Endpoints for viewing metrics and health status
  */
 
@@ -134,16 +134,24 @@ router.get('/dashboard', (req, res) => {
   <div class="container">
     <h1>🔍 Tailtown Monitoring Dashboard</h1>
     
-    ${alerts.length > 0 ? `
+    ${
+      alerts.length > 0
+        ? `
     <div class="card" style="margin-bottom: 20px;">
       <h2>⚠️ Active Alerts (${alerts.length})</h2>
-      ${alerts.map(alert => `
+      ${alerts
+        .map(
+          (alert) => `
         <div class="alert ${alert.severity}">
           <strong>${alert.type}</strong>: ${alert.message}
         </div>
-      `).join('')}
+      `
+        )
+        .join('')}
     </div>
-    ` : ''}
+    `
+        : ''
+    }
     
     <div class="grid">
       <div class="card">
@@ -162,7 +170,7 @@ router.get('/dashboard', (req, res) => {
       
       <div class="card">
         <h2>Error Rate</h2>
-        <div class="metric ${(metrics.errors.total / Math.max(metrics.requests.total, 1)) > 0.05 ? 'error' : 'success'}">
+        <div class="metric ${metrics.errors.total / Math.max(metrics.requests.total, 1) > 0.05 ? 'error' : 'success'}">
           ${((metrics.errors.total / Math.max(metrics.requests.total, 1)) * 100).toFixed(2)}%
         </div>
         <div class="label">${metrics.errors.total} errors</div>
@@ -202,9 +210,12 @@ router.get('/dashboard', (req, res) => {
             ${Object.entries(metrics.requests.byTenant)
               .sort((a, b) => b[1] - a[1])
               .slice(0, 10)
-              .map(([tenant, count]) => `
+              .map(
+                ([tenant, count]) => `
                 <tr><td>${tenant}</td><td>${count}</td></tr>
-              `).join('')}
+              `
+              )
+              .join('')}
           </tbody>
         </table>
       </div>
@@ -219,15 +230,20 @@ router.get('/dashboard', (req, res) => {
             ${Object.entries(metrics.requests.byEndpoint)
               .sort((a, b) => b[1] - a[1])
               .slice(0, 10)
-              .map(([endpoint, count]) => `
+              .map(
+                ([endpoint, count]) => `
                 <tr><td>${endpoint}</td><td>${count}</td></tr>
-              `).join('')}
+              `
+              )
+              .join('')}
           </tbody>
         </table>
       </div>
     </div>
     
-    ${metrics.errors.recent.length > 0 ? `
+    ${
+      metrics.errors.recent.length > 0
+        ? `
     <div class="card">
       <h2>Recent Errors</h2>
       <table>
@@ -235,17 +251,23 @@ router.get('/dashboard', (req, res) => {
           <tr><th>Time</th><th>Error</th><th>Tenant</th></tr>
         </thead>
         <tbody>
-          ${metrics.errors.recent.map(err => `
+          ${metrics.errors.recent
+            .map(
+              (err) => `
             <tr>
               <td>${new Date(err.timestamp).toLocaleTimeString()}</td>
               <td>${err.error}</td>
               <td>${err.tenant || 'N/A'}</td>
             </tr>
-          `).join('')}
+          `
+            )
+            .join('')}
         </tbody>
       </table>
     </div>
-    ` : ''}
+    `
+        : ''
+    }
   </div>
   
   <button class="refresh" onclick="location.reload()">🔄 Refresh</button>
@@ -267,7 +289,9 @@ router.get('/dashboard', (req, res) => {
  */
 router.post('/reset', (req, res) => {
   if (process.env.NODE_ENV === 'production') {
-    return res.status(403).json({ error: 'Cannot reset metrics in production' });
+    return res
+      .status(403)
+      .json({ error: 'Cannot reset metrics in production' });
   }
 
   monitoring.reset();

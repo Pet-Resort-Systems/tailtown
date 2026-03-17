@@ -11,7 +11,7 @@
  * 3. Creates services if they don't exist
  */
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -33,50 +33,50 @@ function getResourceTypeFromName(
   const lowerName = name.toLowerCase();
 
   // Junior kennels - names containing "junior" or specific patterns
-  if (lowerName.includes("junior")) {
-    return { type: "JUNIOR_KENNEL", price: PRICING.JUNIOR_KENNEL };
+  if (lowerName.includes('junior')) {
+    return { type: 'JUNIOR_KENNEL', price: PRICING.JUNIOR_KENNEL };
   }
 
   // Queen kennels
-  if (lowerName.includes("queen")) {
-    return { type: "QUEEN_KENNEL", price: PRICING.QUEEN_KENNEL };
+  if (lowerName.includes('queen')) {
+    return { type: 'QUEEN_KENNEL', price: PRICING.QUEEN_KENNEL };
   }
 
   // King kennels
-  if (lowerName.includes("king")) {
-    return { type: "KING_KENNEL", price: PRICING.KING_KENNEL };
+  if (lowerName.includes('king')) {
+    return { type: 'KING_KENNEL', price: PRICING.KING_KENNEL };
   }
 
   // VIP rooms
-  if (lowerName.includes("vip")) {
-    return { type: "VIP_ROOM", price: PRICING.VIP_ROOM };
+  if (lowerName.includes('vip')) {
+    return { type: 'VIP_ROOM', price: PRICING.VIP_ROOM };
   }
 
   // Cat condos
   if (
-    lowerName.includes("cat") ||
-    lowerName.includes("condo") ||
-    lowerName.includes("feline")
+    lowerName.includes('cat') ||
+    lowerName.includes('condo') ||
+    lowerName.includes('feline')
   ) {
-    return { type: "CAT_CONDO", price: PRICING.CAT_CONDO };
+    return { type: 'CAT_CONDO', price: PRICING.CAT_CONDO };
   }
 
   // Day camp
-  if (lowerName.includes("day camp") || lowerName.includes("daycamp")) {
-    if (lowerName.includes("half")) {
-      return { type: "DAY_CAMP_HALF", price: PRICING.DAY_CAMP_HALF };
+  if (lowerName.includes('day camp') || lowerName.includes('daycamp')) {
+    if (lowerName.includes('half')) {
+      return { type: 'DAY_CAMP_HALF', price: PRICING.DAY_CAMP_HALF };
     }
-    return { type: "DAY_CAMP_FULL", price: PRICING.DAY_CAMP_FULL };
+    return { type: 'DAY_CAMP_FULL', price: PRICING.DAY_CAMP_FULL };
   }
 
   return null;
 }
 
 async function listResources() {
-  console.log("\n📋 Current Resources:\n");
+  console.log('\n📋 Current Resources:\n');
 
   const resources = await prisma.resource.findMany({
-    orderBy: { name: "asc" },
+    orderBy: { name: 'asc' },
     select: {
       id: true,
       name: true,
@@ -87,18 +87,18 @@ async function listResources() {
     },
   });
 
-  console.log("ID | Name | Type | Price | Tenant | Active");
-  console.log("-".repeat(80));
+  console.log('ID | Name | Type | Price | Tenant | Active');
+  console.log('-'.repeat(80));
 
   for (const r of resources) {
     const suggestedType = getResourceTypeFromName(r.name);
     const needsUpdate =
       suggestedType &&
       (r.type !== suggestedType.type || r.price !== suggestedType.price);
-    const marker = needsUpdate ? " ⚠️ NEEDS UPDATE" : "";
+    const marker = needsUpdate ? ' ⚠️ NEEDS UPDATE' : '';
     console.log(
       `${r.id.substring(0, 20)}... | ${r.name} | ${r.type} | $${
-        r.price || "null"
+        r.price || 'null'
       } | ${r.tenantId} | ${r.isActive}${marker}`
     );
   }
@@ -107,7 +107,7 @@ async function listResources() {
 }
 
 async function updateResources(dryRun = true) {
-  console.log(`\n${dryRun ? "🔍 DRY RUN - " : ""}Updating resources...\n`);
+  console.log(`\n${dryRun ? '🔍 DRY RUN - ' : ''}Updating resources...\n`);
 
   const resources = await prisma.resource.findMany({
     select: { id: true, name: true, type: true, price: true, tenantId: true },
@@ -137,7 +137,7 @@ async function updateResources(dryRun = true) {
 
     console.log(
       `🔄 "${resource.name}": ${resource.type} → ${mapping.type}, $${
-        resource.price || "null"
+        resource.price || 'null'
       } → $${mapping.price}`
     );
 
@@ -155,65 +155,65 @@ async function updateResources(dryRun = true) {
     updated++;
   }
 
-  console.log(`\n${dryRun ? "Would update" : "Updated"}: ${updated} resources`);
+  console.log(`\n${dryRun ? 'Would update' : 'Updated'}: ${updated} resources`);
   console.log(`Skipped: ${skipped} resources (no mapping)`);
 }
 
 async function ensureServices(tenantId: string, dryRun = true) {
   console.log(
     `\n${
-      dryRun ? "🔍 DRY RUN - " : ""
+      dryRun ? '🔍 DRY RUN - ' : ''
     }Ensuring services for tenant: ${tenantId}\n`
   );
 
   const services = [
     {
-      name: "Indoor Suite",
-      description: "Standard indoor boarding for dogs",
+      name: 'Indoor Suite',
+      description: 'Standard indoor boarding for dogs',
       duration: 1440,
       price: 50.0,
-      serviceCategory: "BOARDING",
-      color: "#4CAF50",
+      serviceCategory: 'BOARDING',
+      color: '#4CAF50',
     },
     {
-      name: "King Suite",
-      description: "Premium boarding with extra space for large dogs",
+      name: 'King Suite',
+      description: 'Premium boarding with extra space for large dogs',
       duration: 1440,
       price: 75.0,
-      serviceCategory: "BOARDING",
-      color: "#2196F3",
+      serviceCategory: 'BOARDING',
+      color: '#2196F3',
     },
     {
-      name: "VIP Suite",
-      description: "Luxury private room with premium amenities",
+      name: 'VIP Suite',
+      description: 'Luxury private room with premium amenities',
       duration: 1440,
       price: 95.0,
-      serviceCategory: "BOARDING",
-      color: "#9C27B0",
+      serviceCategory: 'BOARDING',
+      color: '#9C27B0',
     },
     {
-      name: "Cat Boarding",
-      description: "Comfortable condo for feline guests",
+      name: 'Cat Boarding',
+      description: 'Comfortable condo for feline guests',
       duration: 1440,
       price: 35.0,
-      serviceCategory: "BOARDING",
-      color: "#FF9800",
+      serviceCategory: 'BOARDING',
+      color: '#FF9800',
     },
     {
-      name: "Day Camp Full Day",
-      description: "Full day of supervised play and socialization",
+      name: 'Day Camp Full Day',
+      description: 'Full day of supervised play and socialization',
       duration: 480,
       price: 40.0,
-      serviceCategory: "DAYCARE",
-      color: "#00BCD4",
+      serviceCategory: 'DAYCARE',
+      color: '#00BCD4',
     },
     {
-      name: "Day Camp Half Day",
-      description: "Half day of supervised play and socialization",
+      name: 'Day Camp Half Day',
+      description: 'Half day of supervised play and socialization',
       duration: 240,
       price: 25.0,
-      serviceCategory: "DAYCARE",
-      color: "#009688",
+      serviceCategory: 'DAYCARE',
+      color: '#009688',
     },
   ];
 
@@ -232,7 +232,7 @@ async function ensureServices(tenantId: string, dryRun = true) {
           data: {
             id: `${tenantId}-${service.name
               .toLowerCase()
-              .replace(/\s+/g, "-")}`,
+              .replace(/\s+/g, '-')}`,
             tenantId,
             ...service,
             serviceCategory: service.serviceCategory as any,
@@ -245,26 +245,26 @@ async function ensureServices(tenantId: string, dryRun = true) {
 
 async function main() {
   const args = process.argv.slice(2);
-  const command = args[0] || "list";
-  const dryRun = !args.includes("--execute");
+  const command = args[0] || 'list';
+  const dryRun = !args.includes('--execute');
 
-  console.log("=".repeat(60));
-  console.log("Production Resource Update Script");
-  console.log("=".repeat(60));
+  console.log('='.repeat(60));
+  console.log('Production Resource Update Script');
+  console.log('='.repeat(60));
 
   try {
     switch (command) {
-      case "list":
+      case 'list':
         await listResources();
         console.log(
-          "\nTo update resources, run: npx ts-node prisma/scripts/update-production-resources.ts update"
+          '\nTo update resources, run: npx ts-node prisma/scripts/update-production-resources.ts update'
         );
         break;
 
-      case "update":
+      case 'update':
         if (dryRun) {
-          console.log("\n⚠️  DRY RUN MODE - No changes will be made");
-          console.log("Add --execute flag to apply changes\n");
+          console.log('\n⚠️  DRY RUN MODE - No changes will be made');
+          console.log('Add --execute flag to apply changes\n');
         }
         await listResources();
         await updateResources(dryRun);
@@ -280,29 +280,29 @@ async function main() {
         }
 
         if (dryRun) {
-          console.log("\n✅ Dry run complete. To apply changes, run:");
+          console.log('\n✅ Dry run complete. To apply changes, run:');
           console.log(
-            "npx ts-node prisma/scripts/update-production-resources.ts update --execute"
+            'npx ts-node prisma/scripts/update-production-resources.ts update --execute'
           );
         } else {
-          console.log("\n✅ Update complete!");
+          console.log('\n✅ Update complete!');
         }
         break;
 
       default:
-        console.log("Usage:");
+        console.log('Usage:');
         console.log(
-          "  npx ts-node prisma/scripts/update-production-resources.ts list"
+          '  npx ts-node prisma/scripts/update-production-resources.ts list'
         );
         console.log(
-          "  npx ts-node prisma/scripts/update-production-resources.ts update"
+          '  npx ts-node prisma/scripts/update-production-resources.ts update'
         );
         console.log(
-          "  npx ts-node prisma/scripts/update-production-resources.ts update --execute"
+          '  npx ts-node prisma/scripts/update-production-resources.ts update --execute'
         );
     }
   } catch (error) {
-    console.error("Error:", error);
+    console.error('Error:', error);
     throw error;
   } finally {
     await prisma.$disconnect();

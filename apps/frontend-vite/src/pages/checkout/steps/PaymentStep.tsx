@@ -8,7 +8,7 @@ import {
   Select,
   MenuItem,
   InputAdornment,
-  FormHelperText
+  FormHelperText,
 } from '@mui/material';
 
 interface PaymentStepProps {
@@ -27,26 +27,29 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
   onPaymentMethodChange,
   paymentAmount,
   onPaymentAmountChange,
-  totalAmount
+  totalAmount,
 }) => {
   const [cardNumber, setCardNumber] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
   const [cvv, setCvv] = useState('');
   const [checkNumber, setCheckNumber] = useState('');
-  
+
   // Set initial payment method to cash if not set or invalid
   useEffect(() => {
     const validMethods = ['cash', 'credit_card', 'check', 'account'];
-    
-    if (!paymentMethod || paymentMethod === 'undefined' || !validMethods.includes(paymentMethod)) {
+
+    if (
+      !paymentMethod ||
+      paymentMethod === 'undefined' ||
+      !validMethods.includes(paymentMethod)
+    ) {
       // Using setTimeout to ensure this happens after the current render cycle
       setTimeout(() => onPaymentMethodChange('cash'), 0);
     }
   }, [paymentMethod, onPaymentMethodChange]); // Include dependencies to avoid exhaustive deps warning
-  
+
   return (
     <Box>
-      
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <FormControl fullWidth required>
@@ -66,7 +69,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
             </Select>
           </FormControl>
         </Grid>
-        
+
         <Grid item xs={12} md={6}>
           <TextField
             label="Payment Amount"
@@ -78,23 +81,25 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
               onPaymentAmountChange(amount);
             }}
             inputProps={{
-              step: 0.01 // Ensures the number input increments/decrements by 0.01
+              step: 0.01, // Ensures the number input increments/decrements by 0.01
             }}
             fullWidth
             required
             InputProps={{
-              startAdornment: <InputAdornment position="start">$</InputAdornment>,
+              startAdornment: (
+                <InputAdornment position="start">$</InputAdornment>
+              ),
             }}
             helperText={
-              paymentAmount < totalAmount 
+              paymentAmount < totalAmount
                 ? `Remaining balance: $${(totalAmount - paymentAmount).toFixed(2)}`
                 : paymentAmount > totalAmount
-                ? `Change due: $${(paymentAmount - totalAmount).toFixed(2)}`
-                : 'Payment amount matches total'
+                  ? `Change due: $${(paymentAmount - totalAmount).toFixed(2)}`
+                  : 'Payment amount matches total'
             }
           />
         </Grid>
-        
+
         {paymentMethod === 'credit_card' && (
           <>
             <Grid item xs={12}>
@@ -107,11 +112,11 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
                 required
                 inputProps={{
                   maxLength: 19,
-                  pattern: '[0-9\\s]{13,19}'
+                  pattern: '[0-9\\s]{13,19}',
                 }}
               />
             </Grid>
-            
+
             <Grid item xs={12} md={6}>
               <TextField
                 label="Expiration Date"
@@ -121,11 +126,11 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
                 fullWidth
                 required
                 inputProps={{
-                  maxLength: 5
+                  maxLength: 5,
                 }}
               />
             </Grid>
-            
+
             <Grid item xs={12} md={6}>
               <TextField
                 label="CVV"
@@ -136,13 +141,13 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
                 required
                 type="password"
                 inputProps={{
-                  maxLength: 4
+                  maxLength: 4,
                 }}
               />
             </Grid>
           </>
         )}
-        
+
         {paymentMethod === 'check' && (
           <Grid item xs={12}>
             <TextField
@@ -154,7 +159,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
             />
           </Grid>
         )}
-        
+
         {paymentMethod === 'account' && (
           <Grid item xs={12}>
             <FormHelperText>

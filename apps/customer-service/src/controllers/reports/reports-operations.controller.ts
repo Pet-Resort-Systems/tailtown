@@ -8,16 +8,16 @@
  * - getCapacityAnalysis
  */
 
-import { Response, NextFunction } from "express";
-import { AppError } from "../../middleware/error.middleware";
-import { TenantRequest } from "../../middleware/tenant.middleware";
+import { Response, NextFunction } from 'express';
+import { AppError } from '../../middleware/error.middleware';
+import { TenantRequest } from '../../middleware/tenant.middleware';
 import {
   getStaffPerformanceReport,
   getResourceUtilizationReport,
   getBookingPatternsReport,
   getCapacityAnalysisReport,
-} from "../../services/operationalReportService";
-import { logger } from "../../utils/logger";
+} from '../../services/operationalReportService';
+import { logger } from '../../utils/logger';
 
 /**
  * GET /api/reports/operations/staff
@@ -29,12 +29,12 @@ export const getStaffPerformance = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
       return next(
-        new AppError("startDate and endDate parameters are required", 400)
+        new AppError('startDate and endDate parameters are required', 400)
       );
     }
 
@@ -51,9 +51,9 @@ export const getStaffPerformance = async (
     );
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "operations_staff",
+        reportType: 'operations_staff',
         title: `Staff Performance Report - ${startDate} to ${endDate}`,
         generatedAt: new Date(),
         filters: { startDate, endDate },
@@ -66,9 +66,9 @@ export const getStaffPerformance = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating staff performance report", { error });
+    logger.error('Error generating staff performance report', { error });
     return next(
-      new AppError("Failed to generate staff performance report", 500)
+      new AppError('Failed to generate staff performance report', 500)
     );
   }
 };
@@ -83,12 +83,12 @@ export const getResourceUtilization = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
       return next(
-        new AppError("startDate and endDate parameters are required", 400)
+        new AppError('startDate and endDate parameters are required', 400)
       );
     }
 
@@ -105,9 +105,9 @@ export const getResourceUtilization = async (
         : 0;
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "operations_resources",
+        reportType: 'operations_resources',
         title: `Resource Utilization Report - ${startDate} to ${endDate}`,
         generatedAt: new Date(),
         filters: { startDate, endDate },
@@ -119,9 +119,9 @@ export const getResourceUtilization = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating resource utilization report", { error });
+    logger.error('Error generating resource utilization report', { error });
     return next(
-      new AppError("Failed to generate resource utilization report", 500)
+      new AppError('Failed to generate resource utilization report', 500)
     );
   }
 };
@@ -136,12 +136,12 @@ export const getBookingPatterns = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
       return next(
-        new AppError("startDate and endDate parameters are required", 400)
+        new AppError('startDate and endDate parameters are required', 400)
       );
     }
 
@@ -157,9 +157,9 @@ export const getBookingPatterns = async (
     );
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "operations_bookings",
+        reportType: 'operations_bookings',
         title: `Booking Patterns Report - ${startDate} to ${endDate}`,
         generatedAt: new Date(),
         filters: { startDate, endDate },
@@ -171,9 +171,9 @@ export const getBookingPatterns = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating booking patterns report", { error });
+    logger.error('Error generating booking patterns report', { error });
     return next(
-      new AppError("Failed to generate booking patterns report", 500)
+      new AppError('Failed to generate booking patterns report', 500)
     );
   }
 };
@@ -188,12 +188,12 @@ export const getCapacityAnalysis = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
       return next(
-        new AppError("startDate and endDate parameters are required", 400)
+        new AppError('startDate and endDate parameters are required', 400)
       );
     }
 
@@ -210,9 +210,9 @@ export const getCapacityAnalysis = async (
         : 0;
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "operations_capacity",
+        reportType: 'operations_capacity',
         title: `Capacity Analysis Report - ${startDate} to ${endDate}`,
         generatedAt: new Date(),
         filters: { startDate, endDate },
@@ -224,9 +224,9 @@ export const getCapacityAnalysis = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating capacity analysis report", { error });
+    logger.error('Error generating capacity analysis report', { error });
     return next(
-      new AppError("Failed to generate capacity analysis report", 500)
+      new AppError('Failed to generate capacity analysis report', 500)
     );
   }
 };

@@ -1,6 +1,6 @@
 /**
  * Waitlist Service
- * 
+ *
  * Frontend service for waitlist operations
  */
 
@@ -115,7 +115,7 @@ class WaitlistService {
    */
   async getMyEntries(customerId: string): Promise<WaitlistEntry[]> {
     const response = await api.get('/api/waitlist/my-entries', {
-      params: { customerId }
+      params: { customerId },
     });
     return response.data.data;
   }
@@ -151,11 +151,14 @@ class WaitlistService {
   /**
    * Update waitlist entry (staff only)
    */
-  async updateEntry(id: string, data: {
-    notes?: string;
-    status?: string;
-    position?: number;
-  }): Promise<WaitlistEntry> {
+  async updateEntry(
+    id: string,
+    data: {
+      notes?: string;
+      status?: string;
+      position?: number;
+    }
+  ): Promise<WaitlistEntry> {
     const response = await api.patch(`/api/waitlist/${id}`, data);
     return response.data.data;
   }
@@ -163,8 +166,13 @@ class WaitlistService {
   /**
    * Convert waitlist entry to reservation (staff only)
    */
-  async convertToReservation(id: string, reservationId: string): Promise<WaitlistEntry> {
-    const response = await api.post(`/api/waitlist/${id}/convert`, { reservationId });
+  async convertToReservation(
+    id: string,
+    reservationId: string
+  ): Promise<WaitlistEntry> {
+    const response = await api.post(`/api/waitlist/${id}/convert`, {
+      reservationId,
+    });
     return response.data.data;
   }
 
@@ -193,7 +201,7 @@ class WaitlistService {
       BOARDING: 'Boarding',
       DAYCARE: 'Daycare',
       GROOMING: 'Grooming',
-      TRAINING: 'Training'
+      TRAINING: 'Training',
     };
     return map[serviceType] || serviceType;
   }
@@ -207,7 +215,7 @@ class WaitlistService {
       NOTIFIED: 'Notified',
       CONVERTED: 'Converted',
       EXPIRED: 'Expired',
-      CANCELLED: 'Cancelled'
+      CANCELLED: 'Cancelled',
     };
     return map[status] || status;
   }
@@ -215,13 +223,18 @@ class WaitlistService {
   /**
    * Get status color
    */
-  getStatusColor(status: string): 'success' | 'warning' | 'error' | 'info' | 'default' {
-    const map: Record<string, 'success' | 'warning' | 'error' | 'info' | 'default'> = {
+  getStatusColor(
+    status: string
+  ): 'success' | 'warning' | 'error' | 'info' | 'default' {
+    const map: Record<
+      string,
+      'success' | 'warning' | 'error' | 'info' | 'default'
+    > = {
       ACTIVE: 'info',
       NOTIFIED: 'warning',
       CONVERTED: 'success',
       EXPIRED: 'default',
-      CANCELLED: 'error'
+      CANCELLED: 'error',
     };
     return map[status] || 'default';
   }

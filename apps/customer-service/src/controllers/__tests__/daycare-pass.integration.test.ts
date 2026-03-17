@@ -4,13 +4,13 @@
  * Tests that actually call controller functions against the test database.
  */
 
-import { Response, NextFunction } from "express";
+import { Response, NextFunction } from 'express';
 import {
   getTestPrismaClient,
   createTestTenant,
   deleteTestData,
   disconnectTestDatabase,
-} from "../../test/setup-test-db";
+} from '../../test/setup-test-db';
 import {
   getPassPackages,
   createPassPackage,
@@ -18,7 +18,7 @@ import {
   deletePassPackage,
   getCustomerPasses,
   purchasePass,
-} from "../daycare-pass.controller";
+} from '../daycare-pass.controller';
 
 // Extended request type
 interface TenantRequest {
@@ -29,7 +29,7 @@ interface TenantRequest {
   user?: { id: string; email: string; role: string };
 }
 
-describe("Daycare Pass Controller Integration Tests", () => {
+describe('Daycare Pass Controller Integration Tests', () => {
   const prisma = getTestPrismaClient();
   let testTenantId: string;
   let testCustomerId: string;
@@ -52,10 +52,10 @@ describe("Daycare Pass Controller Integration Tests", () => {
     const customer = await prisma.customer.create({
       data: {
         tenantId: testTenantId,
-        firstName: "Daycare",
-        lastName: "Test",
+        firstName: 'Daycare',
+        lastName: 'Test',
         email: `daycare-test-${Date.now()}@example.com`,
-        phone: "555-0600",
+        phone: '555-0600',
       },
     });
     testCustomerId = customer.id;
@@ -85,14 +85,14 @@ describe("Daycare Pass Controller Integration Tests", () => {
     jest.clearAllMocks();
   });
 
-  describe("Pass Package Management", () => {
-    describe("getPassPackages", () => {
+  describe('Pass Package Management', () => {
+    describe('getPassPackages', () => {
       beforeAll(async () => {
         // Create test packages
         const pkg1 = await prisma.daycarePassPackage.create({
           data: {
             tenantId: testTenantId,
-            name: "5-Day Pass",
+            name: '5-Day Pass',
             passCount: 5,
             price: 100,
             regularPricePerDay: 25,
@@ -107,7 +107,7 @@ describe("Daycare Pass Controller Integration Tests", () => {
         const pkg2 = await prisma.daycarePassPackage.create({
           data: {
             tenantId: testTenantId,
-            name: "10-Day Pass",
+            name: '10-Day Pass',
             passCount: 10,
             price: 180,
             regularPricePerDay: 25,
@@ -122,7 +122,7 @@ describe("Daycare Pass Controller Integration Tests", () => {
         const pkg3 = await prisma.daycarePassPackage.create({
           data: {
             tenantId: testTenantId,
-            name: "Inactive Pass",
+            name: 'Inactive Pass',
             passCount: 3,
             price: 60,
             regularPricePerDay: 25,
@@ -135,7 +135,7 @@ describe("Daycare Pass Controller Integration Tests", () => {
         testPackageIds.push(pkg3.id);
       });
 
-      it("should return active packages only by default", async () => {
+      it('should return active packages only by default', async () => {
         const req = {
           tenantId: testTenantId,
           query: {},
@@ -154,10 +154,10 @@ describe("Daycare Pass Controller Integration Tests", () => {
         });
       });
 
-      it("should include inactive packages when requested", async () => {
+      it('should include inactive packages when requested', async () => {
         const req = {
           tenantId: testTenantId,
-          query: { includeInactive: "true" },
+          query: { includeInactive: 'true' },
           params: {},
           body: {},
         } as unknown as TenantRequest;
@@ -170,7 +170,7 @@ describe("Daycare Pass Controller Integration Tests", () => {
         expect(responseData.results).toBe(3); // All packages
       });
 
-      it("should call next with error when tenantId is missing", async () => {
+      it('should call next with error when tenantId is missing', async () => {
         const req = {
           query: {},
           params: {},
@@ -182,12 +182,12 @@ describe("Daycare Pass Controller Integration Tests", () => {
 
         expect(mockNext).toHaveBeenCalled();
         const error = (mockNext as jest.Mock).mock.calls[0][0];
-        expect(error.message).toBe("Tenant ID is required");
+        expect(error.message).toBe('Tenant ID is required');
       });
     });
 
-    describe("createPassPackage", () => {
-      it("should create a new pass package", async () => {
+    describe('createPassPackage', () => {
+      it('should create a new pass package', async () => {
         const req = {
           tenantId: testTenantId,
           query: {},
@@ -212,13 +212,13 @@ describe("Daycare Pass Controller Integration Tests", () => {
         testPackageIds.push(responseData.data.id);
       });
 
-      it("should reject package with missing required fields", async () => {
+      it('should reject package with missing required fields', async () => {
         const req = {
           tenantId: testTenantId,
           query: {},
           params: {},
           body: {
-            name: "Incomplete Package",
+            name: 'Incomplete Package',
             // Missing passCount, price, etc.
           },
         } as unknown as TenantRequest;
@@ -228,18 +228,18 @@ describe("Daycare Pass Controller Integration Tests", () => {
 
         expect(mockNext).toHaveBeenCalled();
         const error = (mockNext as jest.Mock).mock.calls[0][0];
-        expect(error.message).toContain("Missing required fields");
+        expect(error.message).toContain('Missing required fields');
       });
     });
 
-    describe("updatePassPackage", () => {
+    describe('updatePassPackage', () => {
       let updatePackageId: string;
 
       beforeAll(async () => {
         const pkg = await prisma.daycarePassPackage.create({
           data: {
             tenantId: testTenantId,
-            name: "Update Test Package",
+            name: 'Update Test Package',
             passCount: 5,
             price: 100,
             regularPricePerDay: 25,
@@ -252,7 +252,7 @@ describe("Daycare Pass Controller Integration Tests", () => {
         testPackageIds.push(updatePackageId);
       });
 
-      it("should update package fields", async () => {
+      it('should update package fields', async () => {
         const req = {
           tenantId: testTenantId,
           params: { id: updatePackageId },
@@ -272,10 +272,10 @@ describe("Daycare Pass Controller Integration Tests", () => {
         expect(responseData.data.discountPercent).toBe(25);
       });
 
-      it("should return 404 for non-existent package", async () => {
+      it('should return 404 for non-existent package', async () => {
         const req = {
           tenantId: testTenantId,
-          params: { id: "00000000-0000-0000-0000-000000000000" },
+          params: { id: '00000000-0000-0000-0000-000000000000' },
           query: {},
           body: { price: 150 },
         } as unknown as TenantRequest;
@@ -285,18 +285,18 @@ describe("Daycare Pass Controller Integration Tests", () => {
 
         expect(mockNext).toHaveBeenCalled();
         const error = (mockNext as jest.Mock).mock.calls[0][0];
-        expect(error.message).toBe("Pass package not found");
+        expect(error.message).toBe('Pass package not found');
       });
     });
 
-    describe("deletePassPackage", () => {
+    describe('deletePassPackage', () => {
       let deletePackageId: string;
 
       beforeAll(async () => {
         const pkg = await prisma.daycarePassPackage.create({
           data: {
             tenantId: testTenantId,
-            name: "Delete Test Package",
+            name: 'Delete Test Package',
             passCount: 3,
             price: 60,
             regularPricePerDay: 25,
@@ -309,7 +309,7 @@ describe("Daycare Pass Controller Integration Tests", () => {
         testPackageIds.push(deletePackageId);
       });
 
-      it("should soft delete (deactivate) package", async () => {
+      it('should soft delete (deactivate) package', async () => {
         const req = {
           tenantId: testTenantId,
           params: { id: deletePackageId },
@@ -329,10 +329,10 @@ describe("Daycare Pass Controller Integration Tests", () => {
         expect(pkg?.isActive).toBe(false);
       });
 
-      it("should return 404 for non-existent package", async () => {
+      it('should return 404 for non-existent package', async () => {
         const req = {
           tenantId: testTenantId,
-          params: { id: "00000000-0000-0000-0000-000000000000" },
+          params: { id: '00000000-0000-0000-0000-000000000000' },
           query: {},
           body: {},
         } as unknown as TenantRequest;
@@ -342,12 +342,12 @@ describe("Daycare Pass Controller Integration Tests", () => {
 
         expect(mockNext).toHaveBeenCalled();
         const error = (mockNext as jest.Mock).mock.calls[0][0];
-        expect(error.message).toBe("Pass package not found");
+        expect(error.message).toBe('Pass package not found');
       });
     });
   });
 
-  describe("Customer Pass Management", () => {
+  describe('Customer Pass Management', () => {
     let purchasePackageId: string;
 
     beforeAll(async () => {
@@ -355,7 +355,7 @@ describe("Daycare Pass Controller Integration Tests", () => {
       const pkg = await prisma.daycarePassPackage.create({
         data: {
           tenantId: testTenantId,
-          name: "Purchase Test Package",
+          name: 'Purchase Test Package',
           passCount: 5,
           price: 100,
           regularPricePerDay: 25,
@@ -368,8 +368,8 @@ describe("Daycare Pass Controller Integration Tests", () => {
       testPackageIds.push(purchasePackageId);
     });
 
-    describe("purchasePass", () => {
-      it("should purchase a pass for customer", async () => {
+    describe('purchasePass', () => {
+      it('should purchase a pass for customer', async () => {
         const req = {
           tenantId: testTenantId,
           params: {},
@@ -378,7 +378,7 @@ describe("Daycare Pass Controller Integration Tests", () => {
             customerId: testCustomerId,
             packageId: purchasePackageId,
           },
-          user: { id: "staff-1", email: "staff@test.com", role: "ADMIN" },
+          user: { id: 'staff-1', email: 'staff@test.com', role: 'ADMIN' },
         } as unknown as TenantRequest;
         const res = createMockResponse();
 
@@ -392,7 +392,7 @@ describe("Daycare Pass Controller Integration Tests", () => {
         testPassIds.push(responseData.data.id);
       });
 
-      it("should reject purchase with missing customerId", async () => {
+      it('should reject purchase with missing customerId', async () => {
         const req = {
           tenantId: testTenantId,
           params: {},
@@ -407,17 +407,17 @@ describe("Daycare Pass Controller Integration Tests", () => {
 
         expect(mockNext).toHaveBeenCalled();
         const error = (mockNext as jest.Mock).mock.calls[0][0];
-        expect(error.message).toContain("Customer ID");
+        expect(error.message).toContain('Customer ID');
       });
 
-      it("should reject purchase with invalid packageId", async () => {
+      it('should reject purchase with invalid packageId', async () => {
         const req = {
           tenantId: testTenantId,
           params: {},
           query: {},
           body: {
             customerId: testCustomerId,
-            packageId: "00000000-0000-0000-0000-000000000000",
+            packageId: '00000000-0000-0000-0000-000000000000',
           },
         } as unknown as TenantRequest;
         const res = createMockResponse();
@@ -426,11 +426,11 @@ describe("Daycare Pass Controller Integration Tests", () => {
 
         expect(mockNext).toHaveBeenCalled();
         const error = (mockNext as jest.Mock).mock.calls[0][0];
-        expect(error.message).toContain("not found");
+        expect(error.message).toContain('not found');
       });
     });
 
-    describe("getCustomerPasses", () => {
+    describe('getCustomerPasses', () => {
       beforeAll(async () => {
         // Create additional passes for the customer
         const pass = await prisma.customerDaycarePass.create({
@@ -444,13 +444,13 @@ describe("Daycare Pass Controller Integration Tests", () => {
             purchasePrice: 180,
             pricePerPass: 18,
             expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
-            status: "ACTIVE",
+            status: 'ACTIVE',
           },
         });
         testPassIds.push(pass.id);
       });
 
-      it("should return customer passes with summary", async () => {
+      it('should return customer passes with summary', async () => {
         const req = {
           tenantId: testTenantId,
           params: { customerId: testCustomerId },
@@ -468,7 +468,7 @@ describe("Daycare Pass Controller Integration Tests", () => {
         expect(responseData.data.length).toBeGreaterThan(0);
       });
 
-      it("should filter active passes only by default", async () => {
+      it('should filter active passes only by default', async () => {
         const req = {
           tenantId: testTenantId,
           params: { customerId: testCustomerId },
@@ -482,7 +482,7 @@ describe("Daycare Pass Controller Integration Tests", () => {
         expect(res.status).toHaveBeenCalledWith(200);
         const responseData = (res.json as jest.Mock).mock.calls[0][0];
         responseData.data.forEach((pass: any) => {
-          expect(pass.status).toBe("ACTIVE");
+          expect(pass.status).toBe('ACTIVE');
         });
       });
     });

@@ -1,6 +1,6 @@
 /**
  * Integration tests for service persistence
- * 
+ *
  * These tests verify that services are correctly persisted to the database
  * and can be retrieved afterward. They prevent regressions of the issues
  * discovered in November 2025.
@@ -20,8 +20,8 @@ describe('Service Persistence Integration Tests', () => {
     // Clean up test data
     await prisma.service.deleteMany({
       where: {
-        tenantId: testTenantId
-      }
+        tenantId: testTenantId,
+      },
     });
     await prisma.$disconnect();
   });
@@ -37,7 +37,7 @@ describe('Service Persistence Integration Tests', () => {
         serviceCategory: 'GROOMING' as ServiceCategory,
         isActive: true,
         requiresStaff: false,
-        taxable: true
+        taxable: true,
       };
 
       const createResponse = await request(app)
@@ -48,13 +48,13 @@ describe('Service Persistence Integration Tests', () => {
 
       expect(createResponse.body.status).toBe('success');
       expect(createResponse.body.data).toHaveProperty('id');
-      
+
       const serviceId = createResponse.body.data.id;
       createdServiceIds.push(serviceId);
 
       // Verify it exists in the database directly
       const dbService = await prisma.service.findUnique({
-        where: { id: serviceId }
+        where: { id: serviceId },
       });
 
       expect(dbService).not.toBeNull();
@@ -73,7 +73,7 @@ describe('Service Persistence Integration Tests', () => {
         serviceCategory: 'GROOMING' as ServiceCategory,
         isActive: true,
         requiresStaff: true,
-        taxable: true
+        taxable: true,
       };
 
       const createResponse = await request(app)
@@ -105,7 +105,7 @@ describe('Service Persistence Integration Tests', () => {
         serviceCategory: 'GROOMING' as ServiceCategory,
         isActive: true,
         requiresStaff: false,
-        taxable: true
+        taxable: true,
       };
 
       const createResponse = await request(app)
@@ -119,7 +119,7 @@ describe('Service Persistence Integration Tests', () => {
 
       // Verify tenantId is set in database
       const dbService = await prisma.service.findUnique({
-        where: { id: serviceId }
+        where: { id: serviceId },
       });
 
       expect(dbService?.tenantId).toBe(testTenantId);
@@ -136,7 +136,7 @@ describe('Service Persistence Integration Tests', () => {
         serviceCategory: 'GROOMING' as ServiceCategory,
         isActive: true,
         requiresStaff: false,
-        taxable: true
+        taxable: true,
       };
 
       const createResponse = await request(app)
@@ -150,7 +150,7 @@ describe('Service Persistence Integration Tests', () => {
 
       // Verify timestamps exist in database
       const dbService = await prisma.service.findUnique({
-        where: { id: serviceId }
+        where: { id: serviceId },
       });
 
       expect(dbService?.createdAt).toBeInstanceOf(Date);
@@ -163,8 +163,13 @@ describe('Service Persistence Integration Tests', () => {
   describe('Service Filtering and Pagination', () => {
     beforeAll(async () => {
       // Create multiple services of different categories
-      const categories: ServiceCategory[] = ['GROOMING', 'BOARDING', 'DAYCARE', 'TRAINING'];
-      
+      const categories: ServiceCategory[] = [
+        'GROOMING',
+        'BOARDING',
+        'DAYCARE',
+        'TRAINING',
+      ];
+
       for (const category of categories) {
         for (let i = 0; i < 5; i++) {
           const service = await prisma.service.create({
@@ -177,8 +182,8 @@ describe('Service Persistence Integration Tests', () => {
               serviceCategory: category,
               isActive: true,
               requiresStaff: false,
-              taxable: true
-            }
+              taxable: true,
+            },
           });
           createdServiceIds.push(service.id);
         }
@@ -203,7 +208,7 @@ describe('Service Persistence Integration Tests', () => {
         .expect(200);
 
       expect(response.body.data.length).toBeGreaterThanOrEqual(5);
-      
+
       // Verify all returned services are GROOMING
       response.body.data.forEach((service: any) => {
         expect(service.serviceCategory).toBe('GROOMING');
@@ -271,15 +276,15 @@ describe('Service Persistence Integration Tests', () => {
           serviceCategory: 'GROOMING',
           isActive: true,
           requiresStaff: false,
-          taxable: true
-        }
+          taxable: true,
+        },
       });
       otherTenantServiceId = service.id;
     });
 
     afterAll(async () => {
       await prisma.service.delete({
-        where: { id: otherTenantServiceId }
+        where: { id: otherTenantServiceId },
       });
     });
 

@@ -1,6 +1,6 @@
 /**
  * Waitlist Notification Service
- * 
+ *
  * Handles sending notifications for waitlist events
  * Supports: Email, SMS, In-App, Push notifications
  */
@@ -11,7 +11,12 @@ const prisma = new PrismaClient();
 
 export interface NotificationPayload {
   waitlistEntryId: string;
-  notificationType: 'SPOT_AVAILABLE' | 'POSITION_UPDATE' | 'EXPIRING_SOON' | 'CONVERTED' | 'CANCELLED';
+  notificationType:
+    | 'SPOT_AVAILABLE'
+    | 'POSITION_UPDATE'
+    | 'EXPIRING_SOON'
+    | 'CONVERTED'
+    | 'CANCELLED';
   recipientType: 'STAFF' | 'CUSTOMER';
   recipientId: string;
   recipientEmail?: string;
@@ -54,13 +59,13 @@ class WaitlistNotificationService {
         status: 'PENDING',
         subject: template.subject,
         message: template.message,
-        expiresAt: this.calculateExpiration(payload.notificationType)
-      }
+        expiresAt: this.calculateExpiration(payload.notificationType),
+      },
     });
 
     // Send via configured channels
     const channels = this.getChannels(payload.recipientType, config);
-    
+
     for (const channel of channels) {
       try {
         switch (channel) {
@@ -87,19 +92,19 @@ class WaitlistNotificationService {
           where: { id: notification.id },
           data: {
             status: 'SENT',
-            sentAt: new Date()
-          }
+            sentAt: new Date(),
+          },
         });
       } catch (error: any) {
         console.error(`Failed to send ${channel} notification:`, error);
-        
+
         // Update notification with error
         await prisma.waitlistNotification.update({
           where: { id: notification.id },
           data: {
             status: 'FAILED',
-            errorMessage: error.message
-          }
+            errorMessage: error.message,
+          },
         });
       }
     }
@@ -109,7 +114,9 @@ class WaitlistNotificationService {
    * Send batch notifications
    */
   async sendBatchNotifications(payloads: NotificationPayload[]): Promise<void> {
-    await Promise.all(payloads.map(payload => this.sendNotification(payload)));
+    await Promise.all(
+      payloads.map((payload) => this.sendNotification(payload))
+    );
   }
 
   /**
@@ -122,12 +129,12 @@ class WaitlistNotificationService {
         tenantId: waitlistEntry.tenantId,
         isActive: true,
         role: {
-          in: ['TENANT_ADMIN', 'MANAGER']
-        }
-      }
+          in: ['TENANT_ADMIN', 'MANAGER'],
+        },
+      },
     });
 
-    const notifications = staff.map(staffMember => ({
+    const notifications = staff.map((staffMember) => ({
       waitlistEntryId: waitlistEntry.id,
       notificationType: 'SPOT_AVAILABLE' as const,
       recipientType: 'STAFF' as const,
@@ -139,8 +146,8 @@ class WaitlistNotificationService {
         petName: waitlistEntry.pet.name,
         serviceType: waitlistEntry.serviceType,
         requestedDate: waitlistEntry.requestedStartDate,
-        position: waitlistEntry.position
-      }
+        position: waitlistEntry.position,
+      },
     }));
 
     await this.sendBatchNotifications(notifications);
@@ -166,15 +173,18 @@ class WaitlistNotificationService {
         petName: waitlistEntry.pet.name,
         serviceType: waitlistEntry.serviceType,
         requestedDate: waitlistEntry.requestedStartDate,
-        expiresAt: expiresAt.toISOString()
-      }
+        expiresAt: expiresAt.toISOString(),
+      },
     });
   }
 
   /**
    * Notify customer of position update
    */
-  async notifyCustomerPositionUpdate(waitlistEntry: any, oldPosition: number): Promise<void> {
+  async notifyCustomerPositionUpdate(
+    waitlistEntry: any,
+    oldPosition: number
+  ): Promise<void> {
     // Only notify if moved up significantly (e.g., 3+ positions)
     if (oldPosition - waitlistEntry.position < 3) {
       return;
@@ -192,8 +202,8 @@ class WaitlistNotificationService {
         customerName: `${waitlistEntry.customer.firstName} ${waitlistEntry.customer.lastName}`,
         petName: waitlistEntry.pet.name,
         serviceType: waitlistEntry.serviceType,
-        position: waitlistEntry.position
-      }
+        position: waitlistEntry.position,
+      },
     });
   }
 
@@ -206,39 +216,41 @@ class WaitlistNotificationService {
         subject: '🎉 Great News! A Spot Opened Up',
         message: `Good news, ${data.customerName}! A spot has opened up for ${data.petName}'s ${data.serviceType} on ${data.requestedDate}. Book now before it's gone! This offer expires in 24 hours.`,
         emailHtml: this.generateSpotAvailableEmail(data),
-        smsText: `Good news! A spot opened for ${data.petName}'s ${data.serviceType} on ${data.requestedDate}. Book now! Expires in 24hrs. Reply YES to book.`
+        smsText: `Good news! A spot opened for ${data.petName}'s ${data.serviceType} on ${data.requestedDate}. Book now! Expires in 24hrs. Reply YES to book.`,
       },
       POSITION_UPDATE: {
         subject: 'You Moved Up on the Waitlist!',
         message: `Great news, ${data.customerName}! You've moved up to position #${data.position} on the waitlist for ${data.petName}'s ${data.serviceType}.`,
         emailHtml: this.generatePositionUpdateEmail(data),
-        smsText: `You're now #${data.position} on the waitlist for ${data.petName}'s ${data.serviceType}!`
+        smsText: `You're now #${data.position} on the waitlist for ${data.petName}'s ${data.serviceType}!`,
       },
       EXPIRING_SOON: {
         subject: 'Waitlist Entry Expiring Soon',
         message: `Hi ${data.customerName}, your waitlist entry for ${data.petName}'s ${data.serviceType} will expire on ${data.expiresAt}. Please contact us if you'd like to stay on the waitlist.`,
         emailHtml: this.generateExpiringSoonEmail(data),
-        smsText: `Your waitlist entry for ${data.petName} expires soon. Contact us to stay on the list.`
+        smsText: `Your waitlist entry for ${data.petName} expires soon. Contact us to stay on the list.`,
       },
       CONVERTED: {
         subject: 'Reservation Confirmed!',
         message: `Congratulations, ${data.customerName}! Your waitlist entry has been converted to a confirmed reservation for ${data.petName}'s ${data.serviceType}.`,
         emailHtml: this.generateConvertedEmail(data),
-        smsText: `Confirmed! Your reservation for ${data.petName} is booked. Reservation #${data.reservationId}`
+        smsText: `Confirmed! Your reservation for ${data.petName} is booked. Reservation #${data.reservationId}`,
       },
       CANCELLED: {
         subject: 'Waitlist Entry Cancelled',
         message: `Hi ${data.customerName}, your waitlist entry for ${data.petName}'s ${data.serviceType} has been cancelled as requested.`,
         emailHtml: this.generateCancelledEmail(data),
-        smsText: `Your waitlist entry for ${data.petName} has been cancelled.`
-      }
+        smsText: `Your waitlist entry for ${data.petName} has been cancelled.`,
+      },
     };
 
-    return templates[type] || {
-      subject: 'Waitlist Update',
-      message: 'Your waitlist status has been updated.',
-      emailHtml: '<p>Your waitlist status has been updated.</p>'
-    };
+    return (
+      templates[type] || {
+        subject: 'Waitlist Update',
+        message: 'Your waitlist status has been updated.',
+        emailHtml: '<p>Your waitlist status has been updated.</p>',
+      }
+    );
   }
 
   /**
@@ -458,10 +470,13 @@ class WaitlistNotificationService {
   /**
    * Send email notification
    */
-  private async sendEmail(email: string, template: NotificationTemplate): Promise<void> {
+  private async sendEmail(
+    email: string,
+    template: NotificationTemplate
+  ): Promise<void> {
     // TODO: Integrate with email service (SendGrid, AWS SES, etc.)
     console.log(`[EMAIL] Sending to ${email}:`, template.subject);
-    
+
     // Example SendGrid integration:
     // const sgMail = require('@sendgrid/mail');
     // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -477,10 +492,13 @@ class WaitlistNotificationService {
   /**
    * Send SMS notification
    */
-  private async sendSMS(phone: string, template: NotificationTemplate): Promise<void> {
+  private async sendSMS(
+    phone: string,
+    template: NotificationTemplate
+  ): Promise<void> {
     // TODO: Integrate with SMS service (Twilio, AWS SNS, etc.)
     console.log(`[SMS] Sending to ${phone}:`, template.smsText);
-    
+
     // Example Twilio integration:
     // const twilio = require('twilio');
     // const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
@@ -494,10 +512,13 @@ class WaitlistNotificationService {
   /**
    * Send in-app notification
    */
-  private async sendInAppNotification(userId: string, template: NotificationTemplate): Promise<void> {
+  private async sendInAppNotification(
+    userId: string,
+    template: NotificationTemplate
+  ): Promise<void> {
     // TODO: Implement in-app notification (WebSocket, database record, etc.)
     console.log(`[IN-APP] Sending to user ${userId}:`, template.subject);
-    
+
     // Could create a notification record in the database
     // that the frontend polls or receives via WebSocket
   }
@@ -505,10 +526,13 @@ class WaitlistNotificationService {
   /**
    * Send push notification
    */
-  private async sendPushNotification(userId: string, template: NotificationTemplate): Promise<void> {
+  private async sendPushNotification(
+    userId: string,
+    template: NotificationTemplate
+  ): Promise<void> {
     // TODO: Integrate with push notification service (Firebase, OneSignal, etc.)
     console.log(`[PUSH] Sending to user ${userId}:`, template.subject);
-    
+
     // Example Firebase integration:
     // const admin = require('firebase-admin');
     // await admin.messaging().send({
@@ -527,7 +551,7 @@ class WaitlistNotificationService {
     // Get from waitlist config or use defaults
     return {
       customerChannels: ['EMAIL', 'SMS'],
-      staffChannels: ['IN_APP', 'EMAIL']
+      staffChannels: ['IN_APP', 'EMAIL'],
     };
   }
 
@@ -535,8 +559,8 @@ class WaitlistNotificationService {
    * Get channels for recipient type
    */
   private getChannels(recipientType: string, config: any): string[] {
-    return recipientType === 'CUSTOMER' 
-      ? config.customerChannels 
+    return recipientType === 'CUSTOMER'
+      ? config.customerChannels
       : config.staffChannels;
   }
 

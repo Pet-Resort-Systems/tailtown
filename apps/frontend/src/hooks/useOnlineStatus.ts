@@ -3,7 +3,7 @@
  * Detects network connectivity and provides offline handling utilities
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from 'react';
 
 export interface OnlineStatus {
   isOnline: boolean;
@@ -20,7 +20,7 @@ export interface PendingAction {
   retryCount: number;
 }
 
-const PENDING_ACTIONS_KEY = "tailtown_pending_actions";
+const PENDING_ACTIONS_KEY = 'tailtown_pending_actions';
 
 /**
  * Hook to monitor online/offline status
@@ -34,9 +34,9 @@ export const useOnlineStatus = (): OnlineStatus => {
 
   const checkConnection = useCallback(async (): Promise<boolean> => {
     try {
-      const response = await fetch("/api/health", {
-        method: "HEAD",
-        cache: "no-store",
+      const response = await fetch('/api/health', {
+        method: 'HEAD',
+        cache: 'no-store',
       });
       return response.ok;
     } catch {
@@ -50,22 +50,22 @@ export const useOnlineStatus = (): OnlineStatus => {
       setLastOnline(new Date());
       if (wasOffline) {
         // Connection restored - could trigger sync here
-        console.log("Connection restored");
+        console.log('Connection restored');
       }
     };
 
     const handleOffline = () => {
       setIsOnline(false);
       setWasOffline(true);
-      console.warn("Connection lost");
+      console.warn('Connection lost');
     };
 
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
 
     return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
     };
   }, [wasOffline]);
 
@@ -76,7 +76,7 @@ export const useOnlineStatus = (): OnlineStatus => {
  * Queue an action to be retried when back online
  */
 export const queuePendingAction = (
-  action: Omit<PendingAction, "id" | "timestamp" | "retryCount">
+  action: Omit<PendingAction, 'id' | 'timestamp' | 'retryCount'>
 ) => {
   const pending = getPendingActions();
   const newAction: PendingAction = {

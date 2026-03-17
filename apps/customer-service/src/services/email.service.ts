@@ -1,5 +1,5 @@
-import sgMail from "@sendgrid/mail";
-import { Reservation, Customer, Pet } from "@prisma/client";
+import sgMail from '@sendgrid/mail';
+import { Reservation, Customer, Pet } from '@prisma/client';
 
 // Initialize SendGrid with API key from environment
 if (process.env.SENDGRID_API_KEY) {
@@ -29,8 +29,8 @@ export class EmailService {
   private fromName: string;
 
   constructor() {
-    this.fromEmail = process.env.SENDGRID_FROM_EMAIL || "noreply@tailtown.com";
-    this.fromName = process.env.SENDGRID_FROM_NAME || "Tailtown Pet Resort";
+    this.fromEmail = process.env.SENDGRID_FROM_EMAIL || 'noreply@tailtown.com';
+    this.fromName = process.env.SENDGRID_FROM_NAME || 'Tailtown Pet Resort';
   }
 
   /**
@@ -39,9 +39,9 @@ export class EmailService {
   async sendEmail(options: EmailOptions): Promise<void> {
     if (!process.env.SENDGRID_API_KEY) {
       console.warn(
-        "[Email Service] SendGrid API key not configured. Email not sent."
+        '[Email Service] SendGrid API key not configured. Email not sent.'
       );
-      console.log("[Email Service] Would have sent:", options);
+      console.log('[Email Service] Would have sent:', options);
       return;
     }
 
@@ -62,7 +62,7 @@ export class EmailService {
       );
     } catch (error: any) {
       console.error(
-        "[Email Service] Failed to send email:",
+        '[Email Service] Failed to send email:',
         error.response?.body || error.message
       );
       throw new Error(`Failed to send email: ${error.message}`);
@@ -73,32 +73,32 @@ export class EmailService {
    * Send reservation confirmation email
    */
   async sendReservationConfirmation(data: ReservationEmailData): Promise<void> {
-    const { reservation, businessName = "Tailtown Pet Resort" } = data;
+    const { reservation, businessName = 'Tailtown Pet Resort' } = data;
 
     if (!reservation.customer?.email) {
       console.warn(
-        "[Email Service] No customer email provided for reservation confirmation"
+        '[Email Service] No customer email provided for reservation confirmation'
       );
       return;
     }
 
     const petNames =
-      reservation.pets?.map((p) => p.name).join(", ") || "your pet(s)";
-    const serviceName = reservation.service?.name || "service";
+      reservation.pets?.map((p) => p.name).join(', ') || 'your pet(s)';
+    const serviceName = reservation.service?.name || 'service';
     const startDate = new Date(reservation.startDate).toLocaleDateString(
-      "en-US",
+      'en-US',
       {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
       }
     );
     const startTime = new Date(reservation.startDate).toLocaleTimeString(
-      "en-US",
+      'en-US',
       {
-        hour: "numeric",
-        minute: "2-digit",
+        hour: 'numeric',
+        minute: '2-digit',
         hour12: true,
       }
     );
@@ -126,8 +126,8 @@ export class EmailService {
             </div>
             <div class="content">
               <p>Dear ${reservation.customer.firstName} ${
-      reservation.customer.lastName
-    },</p>
+                reservation.customer.lastName
+              },</p>
               
               <p>Thank you for choosing ${businessName}! Your reservation has been confirmed.</p>
               
@@ -159,7 +159,7 @@ export class EmailService {
               </div>
               
               ${
-                reservation.status === "CONFIRMED"
+                reservation.status === 'CONFIRMED'
                   ? `
                 <p style="margin-top: 30px;">
                   <strong>What to bring:</strong><br>
@@ -169,7 +169,7 @@ export class EmailService {
                   • Food if your pet has special dietary requirements
                 </p>
               `
-                  : ""
+                  : ''
               }
               
               <p style="margin-top: 30px;">
@@ -202,34 +202,34 @@ export class EmailService {
   async sendReservationReminder(data: ReservationEmailData): Promise<void> {
     const {
       reservation,
-      businessName = "Tailtown Pet Resort",
+      businessName = 'Tailtown Pet Resort',
       businessPhone,
     } = data;
 
     if (!reservation.customer?.email) {
       console.warn(
-        "[Email Service] No customer email provided for reservation reminder"
+        '[Email Service] No customer email provided for reservation reminder'
       );
       return;
     }
 
     const petNames =
-      reservation.pets?.map((p) => p.name).join(", ") || "your pet(s)";
-    const serviceName = reservation.service?.name || "service";
+      reservation.pets?.map((p) => p.name).join(', ') || 'your pet(s)';
+    const serviceName = reservation.service?.name || 'service';
     const startDate = new Date(reservation.startDate).toLocaleDateString(
-      "en-US",
+      'en-US',
       {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
       }
     );
     const startTime = new Date(reservation.startDate).toLocaleTimeString(
-      "en-US",
+      'en-US',
       {
-        hour: "numeric",
-        minute: "2-digit",
+        hour: 'numeric',
+        minute: '2-digit',
         hour12: true,
       }
     );
@@ -257,8 +257,8 @@ export class EmailService {
             </div>
             <div class="content">
               <p>Dear ${reservation.customer.firstName} ${
-      reservation.customer.lastName
-    },</p>
+                reservation.customer.lastName
+              },</p>
               
               <div class="reminder-box">
                 <strong>This is a friendly reminder about your upcoming reservation!</strong>
@@ -337,54 +337,54 @@ export class EmailService {
     oldStatus: string,
     newStatus: string
   ): Promise<void> {
-    const { reservation, businessName = "Tailtown Pet Resort" } = data;
+    const { reservation, businessName = 'Tailtown Pet Resort' } = data;
 
     if (!reservation.customer?.email) {
       console.warn(
-        "[Email Service] No customer email provided for status change notification"
+        '[Email Service] No customer email provided for status change notification'
       );
       return;
     }
 
     const petNames =
-      reservation.pets?.map((p) => p.name).join(", ") || "your pet(s)";
-    const serviceName = reservation.service?.name || "service";
+      reservation.pets?.map((p) => p.name).join(', ') || 'your pet(s)';
+    const serviceName = reservation.service?.name || 'service';
 
     const statusMessages: Record<
       string,
       { title: string; message: string; color: string }
     > = {
       CONFIRMED: {
-        title: "Reservation Confirmed",
-        message: "Your reservation has been confirmed!",
-        color: "#4caf50",
+        title: 'Reservation Confirmed',
+        message: 'Your reservation has been confirmed!',
+        color: '#4caf50',
       },
       CHECKED_IN: {
-        title: "Check-In Complete",
+        title: 'Check-In Complete',
         message: `${petNames} has been checked in and is settling in nicely!`,
-        color: "#2196f3",
+        color: '#2196f3',
       },
       CHECKED_OUT: {
-        title: "Check-Out Complete",
+        title: 'Check-Out Complete',
         message: `${petNames} has been checked out. We hope to see you again soon!`,
-        color: "#4c8bf5",
+        color: '#4c8bf5',
       },
       CANCELLED: {
-        title: "Reservation Cancelled",
-        message: "Your reservation has been cancelled.",
-        color: "#f44336",
+        title: 'Reservation Cancelled',
+        message: 'Your reservation has been cancelled.',
+        color: '#f44336',
       },
       COMPLETED: {
-        title: "Service Completed",
-        message: "Your service has been completed. Thank you for choosing us!",
-        color: "#4caf50",
+        title: 'Service Completed',
+        message: 'Your service has been completed. Thank you for choosing us!',
+        color: '#4caf50',
       },
     };
 
     const statusInfo = statusMessages[newStatus] || {
-      title: "Reservation Status Updated",
+      title: 'Reservation Status Updated',
       message: `Your reservation status has been updated to ${newStatus}.`,
-      color: "#757575",
+      color: '#757575',
     };
 
     const html = `
@@ -411,8 +411,8 @@ export class EmailService {
             </div>
             <div class="content">
               <p>Dear ${reservation.customer.firstName} ${
-      reservation.customer.lastName
-    },</p>
+                reservation.customer.lastName
+              },</p>
               
               <p>${statusInfo.message}</p>
               
@@ -460,11 +460,11 @@ export class EmailService {
    */
   async sendWelcomeEmail(
     customer: Customer,
-    businessName: string = "Tailtown Pet Resort"
+    businessName: string = 'Tailtown Pet Resort'
   ): Promise<void> {
     if (!customer.email) {
       console.warn(
-        "[Email Service] No customer email provided for welcome email"
+        '[Email Service] No customer email provided for welcome email'
       );
       return;
     }
@@ -527,12 +527,12 @@ export class EmailService {
     email: string,
     firstName: string,
     resetToken: string,
-    businessName: string = "Tailtown Pet Resort",
+    businessName: string = 'Tailtown Pet Resort',
     portalUrl?: string
   ): Promise<void> {
     // Build reset URL - use provided URL or construct from environment
     const baseUrl =
-      portalUrl || process.env.FRONTEND_URL || "https://tailtown.canicloud.com";
+      portalUrl || process.env.FRONTEND_URL || 'https://tailtown.canicloud.com';
     const resetUrl = `${baseUrl}/book/reset-password?token=${resetToken}`;
 
     const html = `
@@ -604,12 +604,12 @@ export class EmailService {
     lastName: string,
     role: string,
     resetToken: string,
-    businessName: string = "Tailtown Pet Resort",
+    businessName: string = 'Tailtown Pet Resort',
     adminUrl?: string
   ): Promise<void> {
     // Build password setup URL
     const baseUrl =
-      adminUrl || process.env.FRONTEND_URL || "https://tailtown.canicloud.com";
+      adminUrl || process.env.FRONTEND_URL || 'https://tailtown.canicloud.com';
     const setupUrl = `${baseUrl}/set-password?token=${resetToken}&new=true`;
 
     const roleDisplay =
@@ -704,9 +704,9 @@ export class EmailService {
    */
   private stripHtml(html: string): string {
     return html
-      .replace(/<style[^>]*>.*?<\/style>/gi, "")
-      .replace(/<[^>]+>/g, "")
-      .replace(/\s+/g, " ")
+      .replace(/<style[^>]*>.*?<\/style>/gi, '')
+      .replace(/<[^>]+>/g, '')
+      .replace(/\s+/g, ' ')
       .trim();
   }
 }

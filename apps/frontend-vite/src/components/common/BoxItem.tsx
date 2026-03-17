@@ -15,7 +15,7 @@ type BoxItemProps = {
 
 const BoxItem = React.forwardRef<HTMLDivElement, BoxItemProps>((props, ref) => {
   const { children, xs, sm, md, lg, xl, sx = {}, ...other } = props;
-  
+
   // Convert grid props to flex basis in sx
   const getFlexBasis = (value: number | boolean | undefined) => {
     if (typeof value === 'number') {
@@ -30,7 +30,7 @@ const BoxItem = React.forwardRef<HTMLDivElement, BoxItemProps>((props, ref) => {
     '@media (min-width: 900px)': { flexBasis: getFlexBasis(md) },
     '@media (min-width: 1200px)': { flexBasis: getFlexBasis(lg) },
     '@media (min-width: 1536px)': { flexBasis: getFlexBasis(xl) },
-    ...sx
+    ...sx,
   };
 
   return (

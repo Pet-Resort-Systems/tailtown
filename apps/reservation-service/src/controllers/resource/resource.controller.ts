@@ -9,16 +9,16 @@
  * and catchAsync wrapper for consistent error handling across services.
  */
 
-import { Response } from "express";
-import { ResourceType } from "@prisma/client";
-import { AppError } from "../../utils/appError";
-import { catchAsync } from "../../middleware/errorHandler";
-import { logger } from "../../utils/logger";
-import { TenantRequest } from "../../types/request";
+import { Response } from 'express';
+import { ResourceType } from '@prisma/client';
+import { AppError } from '../../utils/appError';
+import { catchAsync } from '../../middleware/errorHandler';
+import { logger } from '../../utils/logger';
+import { TenantRequest } from '../../types/request';
 import {
   prisma,
   safeExecutePrismaQuery,
-} from "../reservation/utils/prisma-helpers";
+} from '../reservation/utils/prisma-helpers';
 
 /**
  * Get all resources with pagination and filtering
@@ -28,13 +28,13 @@ import {
 export const getAllResources = catchAsync(
   async (req: TenantRequest, res: Response) => {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     if (!tenantId) {
-      throw AppError.authorizationError("Tenant ID is required");
+      throw AppError.authorizationError('Tenant ID is required');
     }
 
     logger.info(
-      `[RESOURCES] Getting resources for tenantId: ${tenantId}, header: ${req.headers["x-tenant-id"]}`
+      `[RESOURCES] Getting resources for tenantId: ${tenantId}, header: ${req.headers['x-tenant-id']}`
     );
 
     // Parse pagination parameters
@@ -55,8 +55,8 @@ export const getAllResources = catchAsync(
         const typeStr = String(req.query.type);
 
         // Handle comma-separated types or single type
-        if (typeStr.includes(",")) {
-          const types = typeStr.split(",").map((t) => t.trim().toUpperCase());
+        if (typeStr.includes(',')) {
+          const types = typeStr.split(',').map((t) => t.trim().toUpperCase());
           const validTypes = types.filter((t) =>
             Object.values(ResourceType).includes(t as ResourceType)
           );
@@ -79,7 +79,7 @@ export const getAllResources = catchAsync(
           }
         } else {
           // Single type - handle 'suite' as a wildcard for all suite types
-          if (typeStr.toLowerCase() === "suite") {
+          if (typeStr.toLowerCase() === 'suite') {
             whereConditions.type = {
               in: [
                 ResourceType.SUITE,
@@ -91,7 +91,7 @@ export const getAllResources = catchAsync(
             logger.debug(
               `Suite wildcard filter applied: all suite types including SUITE`
             );
-          } else if (typeStr.toLowerCase() === "kennel") {
+          } else if (typeStr.toLowerCase() === 'kennel') {
             // Handle 'kennel' as a wildcard for all kennel types
             whereConditions.type = {
               in: [
@@ -127,7 +127,7 @@ export const getAllResources = catchAsync(
     if (req.query.search) {
       whereConditions.name = {
         contains: req.query.search as string,
-        mode: "insensitive",
+        mode: 'insensitive',
       };
     }
 
@@ -150,7 +150,7 @@ export const getAllResources = catchAsync(
         });
       },
       0, // Zero fallback if there's an error
-      "Error counting resources"
+      'Error counting resources'
     );
 
     // Get resources with safe execution
@@ -161,12 +161,12 @@ export const getAllResources = catchAsync(
           skip,
           take: limit,
           orderBy: {
-            name: "asc",
+            name: 'asc',
           },
         });
       },
       [], // Empty array fallback if there's an error
-      "Error fetching resources"
+      'Error fetching resources'
     );
 
     logger.success(
@@ -176,7 +176,7 @@ export const getAllResources = catchAsync(
     // Return paginated results
     res.status(200).json({
       success: true,
-      status: "success",
+      status: 'success',
       results: resources?.length || 0,
       totalPages: Math.ceil((totalCount || 0) / limit),
       currentPage: page,
@@ -194,13 +194,13 @@ export const getResourceById = catchAsync(
   async (req: TenantRequest, res: Response) => {
     const { id } = req.params;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     if (!tenantId) {
-      throw AppError.authorizationError("Tenant ID is required");
+      throw AppError.authorizationError('Tenant ID is required');
     }
 
     if (!id) {
-      throw AppError.validationError("Resource ID is required");
+      throw AppError.validationError('Resource ID is required');
     }
 
     logger.info(`Fetching resource with ID: ${id} for tenant: ${tenantId}`);
@@ -220,14 +220,14 @@ export const getResourceById = catchAsync(
     );
 
     if (!resource) {
-      throw AppError.notFoundError("Resource", id);
+      throw AppError.notFoundError('Resource', id);
     }
 
     logger.success(`Successfully retrieved resource: ${id}`);
 
     res.status(200).json({
       success: true,
-      status: "success",
+      status: 'success',
       data: resource,
     });
   }
@@ -241,9 +241,9 @@ export const getResourceById = catchAsync(
 export const createResource = catchAsync(
   async (req: TenantRequest, res: Response) => {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     if (!tenantId) {
-      throw AppError.authorizationError("Tenant ID is required");
+      throw AppError.authorizationError('Tenant ID is required');
     }
 
     const {
@@ -259,11 +259,11 @@ export const createResource = catchAsync(
 
     // Validate required fields with factory methods
     if (!name) {
-      throw AppError.validationError("Name is required");
+      throw AppError.validationError('Name is required');
     }
 
     if (!type) {
-      throw AppError.validationError("Type is required");
+      throw AppError.validationError('Type is required');
     }
 
     logger.info(
@@ -297,12 +297,12 @@ export const createResource = catchAsync(
         });
       },
       null, // Null fallback if there's an error
-      "Error creating resource",
+      'Error creating resource',
       true // Throw error instead of returning fallback
     );
 
     if (!newResource) {
-      throw AppError.serverError("Failed to create resource", {
+      throw AppError.serverError('Failed to create resource', {
         resourceData: req.body,
       });
     }
@@ -311,7 +311,7 @@ export const createResource = catchAsync(
 
     res.status(201).json({
       success: true,
-      status: "success",
+      status: 'success',
       data: newResource,
     });
   }
@@ -326,13 +326,13 @@ export const updateResource = catchAsync(
   async (req: TenantRequest, res: Response) => {
     const { id } = req.params;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     if (!tenantId) {
-      throw AppError.authorizationError("Tenant ID is required");
+      throw AppError.authorizationError('Tenant ID is required');
     }
 
     if (!id) {
-      throw AppError.validationError("Resource ID is required");
+      throw AppError.validationError('Resource ID is required');
     }
 
     const {
@@ -358,7 +358,7 @@ export const updateResource = catchAsync(
       suiteNumber === undefined
     ) {
       throw AppError.validationError(
-        "At least one field must be provided for update"
+        'At least one field must be provided for update'
       );
     }
 
@@ -395,7 +395,7 @@ export const updateResource = catchAsync(
       `Error verifying resource ownership before update: ${id}`
     );
     if (!existingResource) {
-      throw AppError.notFoundError("Resource", id);
+      throw AppError.notFoundError('Resource', id);
     }
 
     // Update resource with safe execution and throw errors
@@ -427,7 +427,7 @@ export const updateResource = catchAsync(
 
     res.status(200).json({
       success: true,
-      status: "success",
+      status: 'success',
       data: updatedResource,
     });
   }
@@ -442,13 +442,13 @@ export const deleteResource = catchAsync(
   async (req: TenantRequest, res: Response) => {
     const { id } = req.params;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     if (!tenantId) {
-      throw AppError.authorizationError("Tenant ID is required");
+      throw AppError.authorizationError('Tenant ID is required');
     }
 
     if (!id) {
-      throw AppError.validationError("Resource ID is required");
+      throw AppError.validationError('Resource ID is required');
     }
 
     logger.info(
@@ -473,7 +473,7 @@ export const deleteResource = catchAsync(
 
     if (reservationsUsingResource && reservationsUsingResource > 0) {
       throw AppError.conflictError(
-        "Cannot delete resource that is used in reservations",
+        'Cannot delete resource that is used in reservations',
         { resourceId: id, reservationCount: reservationsUsingResource }
       );
     }
@@ -490,7 +490,7 @@ export const deleteResource = catchAsync(
     );
 
     if (!existingResource) {
-      throw AppError.notFoundError("Resource", id);
+      throw AppError.notFoundError('Resource', id);
     }
 
     // Delete resource with safe execution
@@ -505,15 +505,15 @@ export const deleteResource = catchAsync(
     );
 
     if (!deleteResult || deleteResult.count === 0) {
-      throw AppError.notFoundError("Resource", id);
+      throw AppError.notFoundError('Resource', id);
     }
 
     logger.success(`Successfully deleted resource: ${id}`);
 
     res.status(200).json({
       success: true,
-      status: "success",
-      message: "Resource deleted successfully",
+      status: 'success',
+      message: 'Resource deleted successfully',
     });
   }
 );
@@ -527,18 +527,18 @@ export const getResourceAvailability = catchAsync(
   async (req: TenantRequest, res: Response) => {
     const { id } = req.params;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     if (!tenantId) {
-      throw AppError.authorizationError("Tenant ID is required");
+      throw AppError.authorizationError('Tenant ID is required');
     }
     const { startDate, endDate } = req.query;
 
     if (!id) {
-      throw AppError.validationError("Resource ID is required");
+      throw AppError.validationError('Resource ID is required');
     }
 
     if (!startDate || !endDate) {
-      throw AppError.validationError("Start date and end date are required");
+      throw AppError.validationError('Start date and end date are required');
     }
 
     // Parse dates
@@ -546,7 +546,7 @@ export const getResourceAvailability = catchAsync(
     const parsedEndDate = new Date(endDate as string);
 
     if (isNaN(parsedStartDate.getTime()) || isNaN(parsedEndDate.getTime())) {
-      throw AppError.validationError("Invalid date format", {
+      throw AppError.validationError('Invalid date format', {
         startDate,
         endDate,
       });
@@ -567,7 +567,7 @@ export const getResourceAvailability = catchAsync(
       `Error verifying resource before availability check: ${id}`
     );
     if (!resourceRecord) {
-      throw AppError.notFoundError("Resource", id);
+      throw AppError.notFoundError('Resource', id);
     }
 
     // Check for overlapping reservations with safe execution
@@ -632,7 +632,7 @@ export const getResourceAvailability = catchAsync(
 
     res.status(200).json({
       success: true,
-      status: "success",
+      status: 'success',
       data: {
         resourceId: id,
         startDate: parsedStartDate,

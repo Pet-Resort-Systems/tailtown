@@ -2,10 +2,10 @@ import { PrismaClient } from '@prisma/client';
 
 /**
  * Service Health Check Tests
- * 
+ *
  * These tests verify that the service can start and operate correctly.
  * Run these tests before deployment to catch configuration issues.
- * 
+ *
  * Purpose: Prevent deployment failures by validating service health
  * before code reaches production.
  */
@@ -34,7 +34,9 @@ describe('Service Health Checks', () => {
 
     it('should have NODE_ENV configured', () => {
       expect(process.env.NODE_ENV).toBeDefined();
-      expect(['development', 'test', 'production']).toContain(process.env.NODE_ENV);
+      expect(['development', 'test', 'production']).toContain(
+        process.env.NODE_ENV
+      );
     });
   });
 
@@ -55,7 +57,7 @@ describe('Service Health Checks', () => {
         WHERE schemaname = 'public'
         AND tablename IN ('tenants', 'customers', 'pets', 'staff', 'training_classes')
       `;
-      
+
       expect(tables.length).toBeGreaterThan(0);
       const tableNames = tables.map((t: { tablename: string }) => t.tablename);
       expect(tableNames).toContain('tenants');
@@ -75,7 +77,7 @@ describe('Service Health Checks', () => {
     it('should have correct Prisma client version', () => {
       const prismaPackage = require('@prisma/client/package.json');
       expect(prismaPackage.version).toBeDefined();
-      
+
       // Verify it's a valid semver
       expect(prismaPackage.version).toMatch(/^\d+\.\d+\.\d+/);
     });
@@ -101,10 +103,10 @@ describe('Service Health Checks', () => {
       'trainingClass',
       'classEnrollment',
       'groomerAppointment',
-      'reportCard'
+      'reportCard',
     ];
 
-    models.forEach(modelName => {
+    models.forEach((modelName) => {
       it(`should have ${modelName} model accessible`, () => {
         expect((prisma as any)[modelName]).toBeDefined();
         expect(typeof (prisma as any)[modelName].findMany).toBe('function');
@@ -117,7 +119,7 @@ describe('Service Health Checks', () => {
     it('should execute tenant lookup without errors', async () => {
       await expect(
         prisma.tenant.findFirst({
-          where: { isActive: true }
+          where: { isActive: true },
         })
       ).resolves.not.toThrow();
     });
@@ -126,8 +128,8 @@ describe('Service Health Checks', () => {
       await expect(
         prisma.customer.findFirst({
           include: {
-            pets: true
-          }
+            pets: true,
+          },
         })
       ).resolves.not.toThrow();
     });
@@ -139,10 +141,10 @@ describe('Service Health Checks', () => {
             _count: {
               select: {
                 enrollments: true,
-                sessions: true
-              }
-            }
-          }
+                sessions: true,
+              },
+            },
+          },
         })
       ).resolves.not.toThrow();
     });
@@ -152,7 +154,7 @@ describe('Service Health Checks', () => {
     it('should handle invalid queries gracefully', async () => {
       await expect(
         prisma.tenant.findUnique({
-          where: { id: 'non-existent-id' }
+          where: { id: 'non-existent-id' },
         })
       ).resolves.toBeNull();
     });
@@ -162,14 +164,12 @@ describe('Service Health Checks', () => {
       const tempPrisma = new PrismaClient({
         datasources: {
           db: {
-            url: 'postgresql://invalid:invalid@localhost:5432/invalid'
-          }
-        }
+            url: 'postgresql://invalid:invalid@localhost:5432/invalid',
+          },
+        },
       });
 
-      await expect(
-        tempPrisma.$connect()
-      ).rejects.toThrow();
+      await expect(tempPrisma.$connect()).rejects.toThrow();
 
       await tempPrisma.$disconnect();
     });
@@ -186,13 +186,11 @@ describe('Service Health Checks', () => {
     });
 
     it('should handle concurrent queries', async () => {
-      const queries = Array(10).fill(null).map(() => 
-        prisma.tenant.count()
-      );
+      const queries = Array(10)
+        .fill(null)
+        .map(() => prisma.tenant.count());
 
-      await expect(
-        Promise.all(queries)
-      ).resolves.toBeDefined();
+      await expect(Promise.all(queries)).resolves.toBeDefined();
     });
   });
 });

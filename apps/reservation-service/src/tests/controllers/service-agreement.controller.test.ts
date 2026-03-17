@@ -6,10 +6,10 @@
  * service agreement templates and signed agreements.
  */
 
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 
 // Mock dependencies
-jest.mock("../../config/prisma", () => ({
+jest.mock('../../config/prisma', () => ({
   prisma: {
     serviceAgreementTemplate: {
       findMany: jest.fn(),
@@ -27,7 +27,7 @@ jest.mock("../../config/prisma", () => ({
   },
 }));
 
-jest.mock("../../utils/logger", () => ({
+jest.mock('../../utils/logger', () => ({
   logger: {
     error: jest.fn(),
     info: jest.fn(),
@@ -36,14 +36,14 @@ jest.mock("../../utils/logger", () => ({
   },
 }));
 
-import { prisma } from "../../config/prisma";
-import { logger } from "../../utils/logger";
+import { prisma } from '../../config/prisma';
+import { logger } from '../../utils/logger';
 import {
   getAllTemplates,
   getTemplateById,
   getDefaultTemplate,
   createTemplate,
-} from "../../controllers/service-agreement.controller";
+} from '../../controllers/service-agreement.controller';
 
 // Helper to create mock request
 const createMockRequest = (overrides: Partial<Request> = {}): Request => {
@@ -52,9 +52,9 @@ const createMockRequest = (overrides: Partial<Request> = {}): Request => {
     query: {},
     body: {},
     headers: {
-      "x-tenant-id": "test-tenant",
+      'x-tenant-id': 'test-tenant',
     },
-    tenantId: "test-tenant",
+    tenantId: 'test-tenant',
     ...overrides,
   } as unknown as Request;
 };
@@ -68,25 +68,25 @@ const createMockResponse = (): Response => {
   return res as Response;
 };
 
-describe("Service Agreement Controller", () => {
+describe('Service Agreement Controller', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe("getAllTemplates", () => {
-    it("should return all templates for a tenant", async () => {
+  describe('getAllTemplates', () => {
+    it('should return all templates for a tenant', async () => {
       const mockTemplates = [
         {
-          id: "template-1",
-          name: "Standard Agreement",
-          tenantId: "test-tenant",
+          id: 'template-1',
+          name: 'Standard Agreement',
+          tenantId: 'test-tenant',
           isActive: true,
           isDefault: true,
         },
         {
-          id: "template-2",
-          name: "VIP Agreement",
-          tenantId: "test-tenant",
+          id: 'template-2',
+          name: 'VIP Agreement',
+          tenantId: 'test-tenant',
           isActive: true,
           isDefault: false,
         },
@@ -103,23 +103,23 @@ describe("Service Agreement Controller", () => {
 
       expect(prisma.serviceAgreementTemplate.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { tenantId: "test-tenant" },
+          where: { tenantId: 'test-tenant' },
         })
       );
       expect(res.json).toHaveBeenCalledWith({
-        status: "success",
+        status: 'success',
         results: 2,
         data: mockTemplates,
       });
     });
 
-    it("should filter by active status when query param provided", async () => {
+    it('should filter by active status when query param provided', async () => {
       (prisma.serviceAgreementTemplate.findMany as jest.Mock).mockResolvedValue(
         []
       );
 
       const req = createMockRequest({
-        query: { active: "true" },
+        query: { active: 'true' },
       });
       const res = createMockResponse();
 
@@ -128,16 +128,16 @@ describe("Service Agreement Controller", () => {
       expect(prisma.serviceAgreementTemplate.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {
-            tenantId: "test-tenant",
+            tenantId: 'test-tenant',
             isActive: true,
           },
         })
       );
     });
 
-    it("should handle database errors gracefully", async () => {
+    it('should handle database errors gracefully', async () => {
       (prisma.serviceAgreementTemplate.findMany as jest.Mock).mockRejectedValue(
-        new Error("Database error")
+        new Error('Database error')
       );
 
       const req = createMockRequest();
@@ -148,19 +148,19 @@ describe("Service Agreement Controller", () => {
       expect(logger.error).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        status: "error",
-        message: "Failed to fetch service agreement templates",
+        status: 'error',
+        message: 'Failed to fetch service agreement templates',
       });
     });
   });
 
-  describe("getTemplateById", () => {
-    it("should return a template by ID", async () => {
+  describe('getTemplateById', () => {
+    it('should return a template by ID', async () => {
       const mockTemplate = {
-        id: "template-1",
-        name: "Standard Agreement",
-        tenantId: "test-tenant",
-        content: "Agreement content...",
+        id: 'template-1',
+        name: 'Standard Agreement',
+        tenantId: 'test-tenant',
+        content: 'Agreement content...',
       };
 
       (
@@ -168,7 +168,7 @@ describe("Service Agreement Controller", () => {
       ).mockResolvedValue(mockTemplate);
 
       const req = createMockRequest({
-        params: { id: "template-1" },
+        params: { id: 'template-1' },
       });
       const res = createMockResponse();
 
@@ -176,22 +176,22 @@ describe("Service Agreement Controller", () => {
 
       expect(prisma.serviceAgreementTemplate.findFirst).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { id: "template-1", tenantId: "test-tenant" },
+          where: { id: 'template-1', tenantId: 'test-tenant' },
         })
       );
       expect(res.json).toHaveBeenCalledWith({
-        status: "success",
+        status: 'success',
         data: mockTemplate,
       });
     });
 
-    it("should return 404 when template not found", async () => {
+    it('should return 404 when template not found', async () => {
       (
         prisma.serviceAgreementTemplate.findFirst as jest.Mock
       ).mockResolvedValue(null);
 
       const req = createMockRequest({
-        params: { id: "nonexistent-id" },
+        params: { id: 'nonexistent-id' },
       });
       const res = createMockResponse();
 
@@ -199,18 +199,18 @@ describe("Service Agreement Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
-        status: "error",
-        message: "Template not found",
+        status: 'error',
+        message: 'Template not found',
       });
     });
 
-    it("should handle database errors gracefully", async () => {
+    it('should handle database errors gracefully', async () => {
       (
         prisma.serviceAgreementTemplate.findFirst as jest.Mock
-      ).mockRejectedValue(new Error("Query failed"));
+      ).mockRejectedValue(new Error('Query failed'));
 
       const req = createMockRequest({
-        params: { id: "template-1" },
+        params: { id: 'template-1' },
       });
       const res = createMockResponse();
 
@@ -221,11 +221,11 @@ describe("Service Agreement Controller", () => {
     });
   });
 
-  describe("getDefaultTemplate", () => {
-    it("should return the default active template", async () => {
+  describe('getDefaultTemplate', () => {
+    it('should return the default active template', async () => {
       const mockTemplate = {
-        id: "template-1",
-        name: "Default Agreement",
+        id: 'template-1',
+        name: 'Default Agreement',
         isDefault: true,
         isActive: true,
       };
@@ -242,19 +242,19 @@ describe("Service Agreement Controller", () => {
       expect(prisma.serviceAgreementTemplate.findFirst).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {
-            tenantId: "test-tenant",
+            tenantId: 'test-tenant',
             isDefault: true,
             isActive: true,
           },
         })
       );
       expect(res.json).toHaveBeenCalledWith({
-        status: "success",
+        status: 'success',
         data: mockTemplate,
       });
     });
 
-    it("should return 404 when no default template exists", async () => {
+    it('should return 404 when no default template exists', async () => {
       (
         prisma.serviceAgreementTemplate.findFirst as jest.Mock
       ).mockResolvedValue(null);
@@ -266,15 +266,15 @@ describe("Service Agreement Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
-        status: "error",
-        message: "No default template found",
+        status: 'error',
+        message: 'No default template found',
       });
     });
 
-    it("should handle database errors gracefully", async () => {
+    it('should handle database errors gracefully', async () => {
       (
         prisma.serviceAgreementTemplate.findFirst as jest.Mock
-      ).mockRejectedValue(new Error("Database error"));
+      ).mockRejectedValue(new Error('Database error'));
 
       const req = createMockRequest();
       const res = createMockResponse();
@@ -286,15 +286,15 @@ describe("Service Agreement Controller", () => {
     });
   });
 
-  describe("createTemplate", () => {
-    it("should create a new template", async () => {
+  describe('createTemplate', () => {
+    it('should create a new template', async () => {
       const mockTemplate = {
-        id: "new-template",
-        name: "New Agreement",
-        content: "Agreement content",
+        id: 'new-template',
+        name: 'New Agreement',
+        content: 'Agreement content',
         isDefault: false,
         isActive: true,
-        tenantId: "test-tenant",
+        tenantId: 'test-tenant',
       };
 
       (prisma.serviceAgreementTemplate.create as jest.Mock).mockResolvedValue(
@@ -303,8 +303,8 @@ describe("Service Agreement Controller", () => {
 
       const req = createMockRequest({
         body: {
-          name: "New Agreement",
-          content: "Agreement content",
+          name: 'New Agreement',
+          content: 'Agreement content',
           isDefault: false,
         },
       });
@@ -315,19 +315,19 @@ describe("Service Agreement Controller", () => {
       expect(prisma.serviceAgreementTemplate.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
-            tenantId: "test-tenant",
-            name: "New Agreement",
-            content: "Agreement content",
+            tenantId: 'test-tenant',
+            name: 'New Agreement',
+            content: 'Agreement content',
           }),
         })
       );
       expect(res.status).toHaveBeenCalledWith(201);
     });
 
-    it("should unset other defaults when creating a default template", async () => {
+    it('should unset other defaults when creating a default template', async () => {
       const mockTemplate = {
-        id: "new-template",
-        name: "New Default",
+        id: 'new-template',
+        name: 'New Default',
         isDefault: true,
         isActive: true,
       };
@@ -341,8 +341,8 @@ describe("Service Agreement Controller", () => {
 
       const req = createMockRequest({
         body: {
-          name: "New Default",
-          content: "Content",
+          name: 'New Default',
+          content: 'Content',
           isDefault: true,
         },
       });
@@ -351,20 +351,20 @@ describe("Service Agreement Controller", () => {
       await createTemplate(req, res);
 
       expect(prisma.serviceAgreementTemplate.updateMany).toHaveBeenCalledWith({
-        where: { tenantId: "test-tenant", isDefault: true },
+        where: { tenantId: 'test-tenant', isDefault: true },
         data: { isDefault: false },
       });
     });
 
-    it("should handle database errors gracefully", async () => {
+    it('should handle database errors gracefully', async () => {
       (prisma.serviceAgreementTemplate.create as jest.Mock).mockRejectedValue(
-        new Error("Create failed")
+        new Error('Create failed')
       );
 
       const req = createMockRequest({
         body: {
-          name: "New Agreement",
-          content: "Content",
+          name: 'New Agreement',
+          content: 'Content',
         },
       });
       const res = createMockResponse();

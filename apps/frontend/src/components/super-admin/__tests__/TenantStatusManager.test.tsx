@@ -40,9 +40,7 @@ describe('TenantStatusManager', () => {
   const renderWithContext = (component: React.ReactElement) => {
     return render(
       <MemoryRouter>
-        <SuperAdminProvider>
-          {component}
-        </SuperAdminProvider>
+        <SuperAdminProvider>{component}</SuperAdminProvider>
       </MemoryRouter>
     );
   };
@@ -51,7 +49,10 @@ describe('TenantStatusManager', () => {
     localStorageMock.getItem.mockReturnValue(null);
 
     const { container } = renderWithContext(
-      <TenantStatusManager tenant={mockTenant} onStatusChange={mockOnStatusChange} />
+      <TenantStatusManager
+        tenant={mockTenant}
+        onStatusChange={mockOnStatusChange}
+      />
     );
 
     expect(container.firstChild).toBeNull();
@@ -59,7 +60,10 @@ describe('TenantStatusManager', () => {
 
   it('should render super admin controls for active tenant', () => {
     renderWithContext(
-      <TenantStatusManager tenant={mockTenant} onStatusChange={mockOnStatusChange} />
+      <TenantStatusManager
+        tenant={mockTenant}
+        onStatusChange={mockOnStatusChange}
+      />
     );
 
     expect(screen.getByText('🔐 Super Admin Controls')).toBeInTheDocument();
@@ -77,7 +81,10 @@ describe('TenantStatusManager', () => {
     };
 
     renderWithContext(
-      <TenantStatusManager tenant={suspendedTenant} onStatusChange={mockOnStatusChange} />
+      <TenantStatusManager
+        tenant={suspendedTenant}
+        onStatusChange={mockOnStatusChange}
+      />
     );
 
     expect(screen.getByText('Activate Tenant')).toBeInTheDocument();
@@ -92,7 +99,10 @@ describe('TenantStatusManager', () => {
     };
 
     renderWithContext(
-      <TenantStatusManager tenant={deletedTenant} onStatusChange={mockOnStatusChange} />
+      <TenantStatusManager
+        tenant={deletedTenant}
+        onStatusChange={mockOnStatusChange}
+      />
     );
 
     expect(screen.getByText('Restore Tenant')).toBeInTheDocument();
@@ -101,23 +111,33 @@ describe('TenantStatusManager', () => {
   describe('Suspend Tenant', () => {
     it('should open suspend dialog when button clicked', () => {
       renderWithContext(
-        <TenantStatusManager tenant={mockTenant} onStatusChange={mockOnStatusChange} />
+        <TenantStatusManager
+          tenant={mockTenant}
+          onStatusChange={mockOnStatusChange}
+        />
       );
 
       fireEvent.click(screen.getByText('Suspend Tenant'));
 
-      expect(screen.getByText('Suspend Tenant', { selector: 'h2' })).toBeInTheDocument();
+      expect(
+        screen.getByText('Suspend Tenant', { selector: 'h2' })
+      ).toBeInTheDocument();
       expect(screen.getByLabelText('Suspension Reason')).toBeInTheDocument();
     });
 
     it('should require reason for suspension', async () => {
       renderWithContext(
-        <TenantStatusManager tenant={mockTenant} onStatusChange={mockOnStatusChange} />
+        <TenantStatusManager
+          tenant={mockTenant}
+          onStatusChange={mockOnStatusChange}
+        />
       );
 
       fireEvent.click(screen.getByText('Suspend Tenant'));
 
-      const suspendButton = screen.getByRole('button', { name: /Suspend Tenant/i });
+      const suspendButton = screen.getByRole('button', {
+        name: /Suspend Tenant/i,
+      });
       expect(suspendButton).toBeDisabled();
     });
 
@@ -127,7 +147,10 @@ describe('TenantStatusManager', () => {
       });
 
       renderWithContext(
-        <TenantStatusManager tenant={mockTenant} onStatusChange={mockOnStatusChange} />
+        <TenantStatusManager
+          tenant={mockTenant}
+          onStatusChange={mockOnStatusChange}
+        />
       );
 
       fireEvent.click(screen.getByText('Suspend Tenant'));
@@ -135,7 +158,9 @@ describe('TenantStatusManager', () => {
       const reasonInput = screen.getByLabelText('Suspension Reason');
       fireEvent.change(reasonInput, { target: { value: 'Payment overdue' } });
 
-      const suspendButton = screen.getByRole('button', { name: /Suspend Tenant/i });
+      const suspendButton = screen.getByRole('button', {
+        name: /Suspend Tenant/i,
+      });
       fireEvent.click(suspendButton);
 
       await waitFor(() => {
@@ -165,7 +190,10 @@ describe('TenantStatusManager', () => {
       });
 
       renderWithContext(
-        <TenantStatusManager tenant={mockTenant} onStatusChange={mockOnStatusChange} />
+        <TenantStatusManager
+          tenant={mockTenant}
+          onStatusChange={mockOnStatusChange}
+        />
       );
 
       fireEvent.click(screen.getByText('Suspend Tenant'));
@@ -173,11 +201,15 @@ describe('TenantStatusManager', () => {
       const reasonInput = screen.getByLabelText('Suspension Reason');
       fireEvent.change(reasonInput, { target: { value: 'Test reason' } });
 
-      const suspendButton = screen.getByRole('button', { name: /Suspend Tenant/i });
+      const suspendButton = screen.getByRole('button', {
+        name: /Suspend Tenant/i,
+      });
       fireEvent.click(suspendButton);
 
       await waitFor(() => {
-        expect(screen.getByText('Failed to suspend tenant')).toBeInTheDocument();
+        expect(
+          screen.getByText('Failed to suspend tenant')
+        ).toBeInTheDocument();
       });
     });
   });
@@ -195,7 +227,10 @@ describe('TenantStatusManager', () => {
       });
 
       renderWithContext(
-        <TenantStatusManager tenant={suspendedTenant} onStatusChange={mockOnStatusChange} />
+        <TenantStatusManager
+          tenant={suspendedTenant}
+          onStatusChange={mockOnStatusChange}
+        />
       );
 
       fireEvent.click(screen.getByText('Activate Tenant'));
@@ -221,12 +256,17 @@ describe('TenantStatusManager', () => {
   describe('Delete Tenant', () => {
     it('should open delete dialog with warning', () => {
       renderWithContext(
-        <TenantStatusManager tenant={mockTenant} onStatusChange={mockOnStatusChange} />
+        <TenantStatusManager
+          tenant={mockTenant}
+          onStatusChange={mockOnStatusChange}
+        />
       );
 
       fireEvent.click(screen.getByText('Delete Tenant'));
 
-      expect(screen.getByText('Delete Tenant', { selector: 'h2' })).toBeInTheDocument();
+      expect(
+        screen.getByText('Delete Tenant', { selector: 'h2' })
+      ).toBeInTheDocument();
       expect(screen.getByText(/soft delete/i)).toBeInTheDocument();
       expect(screen.getByText(/1 year/i)).toBeInTheDocument();
     });
@@ -237,12 +277,17 @@ describe('TenantStatusManager', () => {
       });
 
       renderWithContext(
-        <TenantStatusManager tenant={mockTenant} onStatusChange={mockOnStatusChange} />
+        <TenantStatusManager
+          tenant={mockTenant}
+          onStatusChange={mockOnStatusChange}
+        />
       );
 
       fireEvent.click(screen.getByText('Delete Tenant'));
 
-      const deleteButton = screen.getByRole('button', { name: /Delete Tenant/i });
+      const deleteButton = screen.getByRole('button', {
+        name: /Delete Tenant/i,
+      });
       fireEvent.click(deleteButton);
 
       await waitFor(() => {
@@ -276,7 +321,10 @@ describe('TenantStatusManager', () => {
       });
 
       renderWithContext(
-        <TenantStatusManager tenant={deletedTenant} onStatusChange={mockOnStatusChange} />
+        <TenantStatusManager
+          tenant={deletedTenant}
+          onStatusChange={mockOnStatusChange}
+        />
       );
 
       fireEvent.click(screen.getByText('Restore Tenant'));

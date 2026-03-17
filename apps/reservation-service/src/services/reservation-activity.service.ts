@@ -7,27 +7,27 @@
  * - When the changes occurred
  */
 
-import { PrismaClient } from "@prisma/client";
-import { logger } from "../utils/logger";
+import { PrismaClient } from '@prisma/client';
+import { logger } from '../utils/logger';
 
 const prisma = new PrismaClient();
 
 export type ReservationActivityType =
-  | "CREATED"
-  | "UPDATED"
-  | "STATUS_CHANGED"
-  | "CHECKED_IN"
-  | "CHECKED_OUT"
-  | "CANCELLED"
-  | "CONFIRMED"
-  | "PAYMENT_RECEIVED"
-  | "NOTE_ADDED"
-  | "RESOURCE_ASSIGNED"
-  | "STAFF_ASSIGNED"
-  | "ADDON_ADDED"
-  | "ADDON_REMOVED";
+  | 'CREATED'
+  | 'UPDATED'
+  | 'STATUS_CHANGED'
+  | 'CHECKED_IN'
+  | 'CHECKED_OUT'
+  | 'CANCELLED'
+  | 'CONFIRMED'
+  | 'PAYMENT_RECEIVED'
+  | 'NOTE_ADDED'
+  | 'RESOURCE_ASSIGNED'
+  | 'STAFF_ASSIGNED'
+  | 'ADDON_ADDED'
+  | 'ADDON_REMOVED';
 
-export type ActivityActorType = "CUSTOMER" | "EMPLOYEE" | "SYSTEM";
+export type ActivityActorType = 'CUSTOMER' | 'EMPLOYEE' | 'SYSTEM';
 
 export interface ActivityLogInput {
   tenantId: string;
@@ -73,7 +73,7 @@ export async function logReservationActivity(
     );
   } catch (error) {
     // Don't fail the main operation if logging fails
-    logger.error("Failed to log reservation activity:", error);
+    logger.error('Failed to log reservation activity:', error);
   }
 }
 
@@ -91,7 +91,7 @@ export async function getReservationActivityLogs(
       reservationId,
     },
     orderBy: {
-      createdAt: "desc",
+      createdAt: 'desc',
     },
     take: limit,
   });
@@ -111,7 +111,7 @@ export async function getTenantActivityLogs(
       ...(actorType && { actorType: actorType as any }),
     },
     orderBy: {
-      createdAt: "desc",
+      createdAt: 'desc',
     },
     take: limit,
   });
@@ -122,14 +122,14 @@ export async function getTenantActivityLogs(
  */
 function getDefaultActorName(actorType: ActivityActorType): string {
   switch (actorType) {
-    case "CUSTOMER":
-      return "Customer (Online)";
-    case "EMPLOYEE":
-      return "Staff Member";
-    case "SYSTEM":
-      return "System";
+    case 'CUSTOMER':
+      return 'Customer (Online)';
+    case 'EMPLOYEE':
+      return 'Staff Member';
+    case 'SYSTEM':
+      return 'System';
     default:
-      return "Unknown";
+      return 'Unknown';
   }
 }
 
@@ -169,18 +169,18 @@ export async function logStatusChange(
  */
 function getActivityTypeForStatus(status: string): ReservationActivityType {
   switch (status.toUpperCase()) {
-    case "CHECKED_IN":
-      return "CHECKED_IN";
-    case "CHECKED_OUT":
-    case "COMPLETED":
-      return "CHECKED_OUT";
-    case "CANCELLED":
-    case "NO_SHOW":
-      return "CANCELLED";
-    case "CONFIRMED":
-      return "CONFIRMED";
+    case 'CHECKED_IN':
+      return 'CHECKED_IN';
+    case 'CHECKED_OUT':
+    case 'COMPLETED':
+      return 'CHECKED_OUT';
+    case 'CANCELLED':
+    case 'NO_SHOW':
+      return 'CANCELLED';
+    case 'CONFIRMED':
+      return 'CONFIRMED';
     default:
-      return "STATUS_CHANGED";
+      return 'STATUS_CHANGED';
   }
 }
 
@@ -200,7 +200,7 @@ export async function logReservationCreated(
   await logReservationActivity({
     tenantId,
     reservationId,
-    activityType: "CREATED",
+    activityType: 'CREATED',
     actorType,
     actorId,
     actorName,
@@ -224,12 +224,12 @@ export async function logReservationUpdated(
   ipAddress?: string,
   userAgent?: string
 ): Promise<void> {
-  const changedFields = changes.map((c) => c.field).join(", ");
+  const changedFields = changes.map((c) => c.field).join(', ');
 
   await logReservationActivity({
     tenantId,
     reservationId,
-    activityType: "UPDATED",
+    activityType: 'UPDATED',
     actorType,
     actorId,
     actorName,

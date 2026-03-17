@@ -14,15 +14,15 @@ interface EmojiIconDisplayProps {
 const EmojiIconDisplay: React.FC<EmojiIconDisplayProps> = ({
   icons,
   maxDisplay = 10,
-  size = 'small'
+  size = 'small',
 }) => {
   if (!icons || icons.length === 0) {
     return null;
   }
 
   // Filter out any null or empty values
-  const validIcons = icons.filter(icon => icon && icon.trim());
-  
+  const validIcons = icons.filter((icon) => icon && icon.trim());
+
   if (validIcons.length === 0) {
     return null;
   }
@@ -31,7 +31,9 @@ const EmojiIconDisplay: React.FC<EmojiIconDisplayProps> = ({
   const remainingCount = validIcons.length - maxDisplay;
 
   return (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, alignItems: 'center' }}>
+    <Box
+      sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, alignItems: 'center' }}
+    >
       {displayIcons.map((icon, index) => (
         <Chip
           key={`${icon}-${index}`}

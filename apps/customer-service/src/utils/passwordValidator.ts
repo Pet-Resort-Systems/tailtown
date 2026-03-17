@@ -13,11 +13,36 @@ export interface PasswordValidationResult {
  * Common weak passwords to reject
  */
 const COMMON_PASSWORDS = [
-  'password', 'password123', '123456', '12345678', 'qwerty', 'abc123',
-  'monkey', '1234567', 'letmein', 'trustno1', 'dragon', 'baseball',
-  'iloveyou', 'master', 'sunshine', 'ashley', 'bailey', 'passw0rd',
-  'shadow', '123123', '654321', 'superman', 'qazwsx', 'michael',
-  'football', 'admin', 'admin123', 'welcome', 'login', 'test123'
+  'password',
+  'password123',
+  '123456',
+  '12345678',
+  'qwerty',
+  'abc123',
+  'monkey',
+  '1234567',
+  'letmein',
+  'trustno1',
+  'dragon',
+  'baseball',
+  'iloveyou',
+  'master',
+  'sunshine',
+  'ashley',
+  'bailey',
+  'passw0rd',
+  'shadow',
+  '123123',
+  '654321',
+  'superman',
+  'qazwsx',
+  'michael',
+  'football',
+  'admin',
+  'admin123',
+  'welcome',
+  'login',
+  'test123',
 ];
 
 /**
@@ -56,7 +81,9 @@ export function validatePassword(password: string): PasswordValidationResult {
 
   // Check for special character
   if (!/[^a-zA-Z0-9]/.test(password)) {
-    errors.push('Password must contain at least one special character (!@#$%^&*(),.?":{}|<>)');
+    errors.push(
+      'Password must contain at least one special character (!@#$%^&*(),.?":{}|<>)'
+    );
   }
 
   // Check against common passwords
@@ -65,33 +92,39 @@ export function validatePassword(password: string): PasswordValidationResult {
   }
 
   // Check for sequential characters
-  if (/(?:abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz|012|123|234|345|456|567|678|789)/i.test(password)) {
+  if (
+    /(?:abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz|012|123|234|345|456|567|678|789)/i.test(
+      password
+    )
+  ) {
     errors.push('Password should not contain sequential characters');
   }
 
   // Check for repeated characters
   if (/(.)\1{2,}/.test(password)) {
-    errors.push('Password should not contain repeated characters (e.g., aaa, 111)');
+    errors.push(
+      'Password should not contain repeated characters (e.g., aaa, 111)'
+    );
   }
 
   // Calculate strength
   if (errors.length === 0) {
     let strengthScore = 0;
-    
+
     // Length bonus
     if (password.length >= 12) strengthScore += 2;
     else if (password.length >= 10) strengthScore += 1;
-    
+
     // Complexity bonus
     if (/[A-Z]/.test(password)) strengthScore += 1;
     if (/[a-z]/.test(password)) strengthScore += 1;
     if (/[0-9]/.test(password)) strengthScore += 1;
     if (/[^a-zA-Z0-9]/.test(password)) strengthScore += 1;
-    
+
     // Multiple special characters
     const specialCharCount = (password.match(/[^a-zA-Z0-9]/g) || []).length;
     if (specialCharCount >= 2) strengthScore += 1;
-    
+
     // Determine strength
     if (strengthScore >= 7) strength = 'strong';
     else if (strengthScore >= 5) strength = 'medium';
@@ -101,7 +134,7 @@ export function validatePassword(password: string): PasswordValidationResult {
   return {
     isValid: errors.length === 0,
     errors,
-    strength
+    strength,
   };
 }
 

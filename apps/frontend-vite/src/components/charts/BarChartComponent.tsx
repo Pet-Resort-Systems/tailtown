@@ -7,7 +7,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from 'recharts';
 import { BarChartProps } from './types';
 
@@ -20,7 +20,7 @@ const BarChartComponent: React.FC<BarChartProps> = ({
   dataKey,
   xAxisKey,
   height = 300,
-  color = '#8884d8'
+  color = '#8884d8',
 }) => {
   return (
     <ResponsiveContainer width="100%" height={height}>

@@ -11,9 +11,9 @@ interface PetIconsPreviewProps {
  * A compact preview of pet icons for use in list views
  * Shows only the icons without labels and with a limit on how many to display
  */
-const PetIconsPreview: React.FC<PetIconsPreviewProps> = ({ 
-  iconIds = [], 
-  maxIcons = 5 
+const PetIconsPreview: React.FC<PetIconsPreviewProps> = ({
+  iconIds = [],
+  maxIcons = 5,
 }) => {
   if (!iconIds || iconIds.length === 0) {
     return null;
@@ -25,17 +25,12 @@ const PetIconsPreview: React.FC<PetIconsPreviewProps> = ({
 
   return (
     <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-      {displayIcons.map(iconId => {
+      {displayIcons.map((iconId) => {
         const icon = getIconById(iconId);
         if (!icon) return null;
-        
+
         return (
-          <Tooltip
-            key={iconId}
-            title={icon.label}
-            arrow
-            placement="top"
-          >
+          <Tooltip key={iconId} title={icon.label} arrow placement="top">
             <Box
               sx={{
                 fontSize: '1rem',
@@ -46,7 +41,7 @@ const PetIconsPreview: React.FC<PetIconsPreviewProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: 'background.paper'
+                backgroundColor: 'background.paper',
               }}
             >
               {icon.icon}
@@ -54,9 +49,12 @@ const PetIconsPreview: React.FC<PetIconsPreviewProps> = ({
           </Tooltip>
         );
       })}
-      
+
       {remainingCount > 0 && (
-        <Tooltip title={`${remainingCount} more icon${remainingCount > 1 ? 's' : ''}`} arrow>
+        <Tooltip
+          title={`${remainingCount} more icon${remainingCount > 1 ? 's' : ''}`}
+          arrow
+        >
           <Box
             sx={{
               fontSize: '0.75rem',
@@ -67,7 +65,7 @@ const PetIconsPreview: React.FC<PetIconsPreviewProps> = ({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: '#f5f5f5'
+              backgroundColor: '#f5f5f5',
             }}
           >
             +{remainingCount}

@@ -8,7 +8,7 @@ import {
   Tooltip,
   Chip,
   Paper,
-  Divider
+  Divider,
 } from '@mui/material';
 import {
   GROUP_ICONS,
@@ -17,7 +17,7 @@ import {
   MEDICAL_ICONS,
   HANDLING_ICONS,
   FLAG_ICONS,
-  ALL_PET_ICONS
+  ALL_PET_ICONS,
 } from '../../constants/petIcons';
 
 interface PetIconSelectorProps {
@@ -28,7 +28,10 @@ interface PetIconSelectorProps {
 /**
  * Component for selecting pet icons by category
  */
-const PetIconSelector: React.FC<PetIconSelectorProps> = ({ selectedIcons, onChange }) => {
+const PetIconSelector: React.FC<PetIconSelectorProps> = ({
+  selectedIcons,
+  onChange,
+}) => {
   const [activeTab, setActiveTab] = useState(0);
 
   // Categories for tabs
@@ -48,7 +51,7 @@ const PetIconSelector: React.FC<PetIconSelectorProps> = ({ selectedIcons, onChan
 
   const handleIconToggle = (iconId: string) => {
     if (selectedIcons.includes(iconId)) {
-      onChange(selectedIcons.filter(id => id !== iconId));
+      onChange(selectedIcons.filter((id) => id !== iconId));
     } else {
       onChange([...selectedIcons, iconId]);
     }
@@ -62,7 +65,8 @@ const PetIconSelector: React.FC<PetIconSelectorProps> = ({ selectedIcons, onChan
         Pet Icons
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-        Select icons that apply to this pet. These will be visible to staff as quick reference notes.
+        Select icons that apply to this pet. These will be visible to staff as
+        quick reference notes.
       </Typography>
 
       <Tabs
@@ -91,8 +95,10 @@ const PetIconSelector: React.FC<PetIconSelectorProps> = ({ selectedIcons, onChan
                   </Box>
                 }
                 onClick={() => handleIconToggle(icon.id)}
-                color={selectedIcons.includes(icon.id) ? "primary" : "default"}
-                variant={selectedIcons.includes(icon.id) ? "filled" : "outlined"}
+                color={selectedIcons.includes(icon.id) ? 'primary' : 'default'}
+                variant={
+                  selectedIcons.includes(icon.id) ? 'filled' : 'outlined'
+                }
                 sx={{
                   minWidth: '100px',
                   height: 'auto',
@@ -102,8 +108,8 @@ const PetIconSelector: React.FC<PetIconSelectorProps> = ({ selectedIcons, onChan
                     flexDirection: 'column',
                     alignItems: 'center',
                     px: 1,
-                    py: 0.5
-                  }
+                    py: 0.5,
+                  },
                 }}
               />
             </Tooltip>
@@ -117,13 +123,19 @@ const PetIconSelector: React.FC<PetIconSelectorProps> = ({ selectedIcons, onChan
             Selected Icons:
           </Typography>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-            {selectedIcons.map(iconId => {
-              const icon = ALL_PET_ICONS.find(i => i.id === iconId);
+            {selectedIcons.map((iconId) => {
+              const icon = ALL_PET_ICONS.find((i) => i.id === iconId);
               return icon ? (
-                <Tooltip key={icon.id} title={`${icon.label}: ${icon.description}`} arrow>
+                <Tooltip
+                  key={icon.id}
+                  title={`${icon.label}: ${icon.description}`}
+                  arrow
+                >
                   <Chip
                     label={
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      <Box
+                        sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
+                      >
                         <span>{icon.icon}</span>
                         <Typography variant="caption">{icon.label}</Typography>
                       </Box>

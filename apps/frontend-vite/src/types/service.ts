@@ -3,7 +3,7 @@ export enum ServiceCategory {
   BOARDING = 'BOARDING',
   GROOMING = 'GROOMING',
   TRAINING = 'TRAINING',
-  OTHER = 'OTHER'
+  OTHER = 'OTHER',
 }
 
 export interface AddOnService {
@@ -18,7 +18,7 @@ export interface AddOnService {
 
 export enum DepositType {
   PERCENTAGE = 'PERCENTAGE',
-  FIXED_AMOUNT = 'FIXED_AMOUNT'
+  FIXED_AMOUNT = 'FIXED_AMOUNT',
 }
 
 export interface Service {

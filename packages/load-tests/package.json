@@ -10,7 +10,11 @@
     "test:prod": "API_URL=http://129.212.178.244:4004 k6 run --vus 10 --duration 1m",
     "install-k6": "echo 'Run: brew install k6'"
   },
-  "keywords": ["load-testing", "k6", "performance"],
+  "keywords": [
+    "load-testing",
+    "k6",
+    "performance"
+  ],
   "author": "",
   "license": "ISC"
 }

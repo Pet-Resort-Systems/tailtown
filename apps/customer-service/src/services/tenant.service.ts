@@ -1,4 +1,10 @@
-import { PrismaClient, Tenant, TenantStatus, TenantUser, UserRole } from '@prisma/client';
+import {
+  PrismaClient,
+  Tenant,
+  TenantStatus,
+  TenantUser,
+  UserRole,
+} from '@prisma/client';
 import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
@@ -17,7 +23,7 @@ export interface CreateTenantDto {
   planType?: string;
   maxEmployees?: number;
   timezone?: string;
-  
+
   // Admin user for the tenant
   adminFirstName: string;
   adminLastName: string;
@@ -45,7 +51,6 @@ export interface UpdateTenantDto {
 }
 
 export class TenantService {
-  
   /**
    * Get all tenants with optional filtering
    */
@@ -155,7 +160,9 @@ export class TenantService {
       where: { contactEmail: data.contactEmail },
     });
     if (existingEmail) {
-      throw new Error(`Contact email "${data.contactEmail}" is already registered`);
+      throw new Error(
+        `Contact email "${data.contactEmail}" is already registered`
+      );
     }
 
     // Hash admin password
@@ -336,7 +343,7 @@ export class TenantService {
           name: 'Daycare',
           description: 'Daily pet daycare service',
           serviceCategory: 'DAYCARE',
-          price: 30.00,
+          price: 30.0,
           duration: 480, // 8 hours
           isActive: true,
         },
@@ -345,7 +352,7 @@ export class TenantService {
           name: 'Overnight Boarding',
           description: 'Overnight pet boarding',
           serviceCategory: 'BOARDING',
-          price: 50.00,
+          price: 50.0,
           duration: 1440, // 24 hours
           isActive: true,
         },
@@ -354,7 +361,7 @@ export class TenantService {
           name: 'Bath & Brush',
           description: 'Basic grooming service',
           serviceCategory: 'GROOMING',
-          price: 60.00,
+          price: 60.0,
           duration: 90, // 1.5 hours
           isActive: true,
         },
@@ -365,9 +372,13 @@ export class TenantService {
     // after services are set up through the UI
 
     // Create sample resources (kennels)
-    const resourceTypes = ['STANDARD_SUITE', 'STANDARD_PLUS_SUITE', 'VIP_SUITE'];
+    const resourceTypes = [
+      'STANDARD_SUITE',
+      'STANDARD_PLUS_SUITE',
+      'VIP_SUITE',
+    ];
     const resources = [];
-    
+
     for (let i = 1; i <= 10; i++) {
       resources.push({
         tenantId,
@@ -377,7 +388,7 @@ export class TenantService {
         isActive: true,
       });
     }
-    
+
     await tx.resource.createMany({ data: resources });
   }
 }

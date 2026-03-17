@@ -1,6 +1,6 @@
 /**
  * API Security Tests
- * 
+ *
  * Tests to ensure API security:
  * - CORS policy enforcement
  * - Request size limits
@@ -32,24 +32,22 @@ describe('API Security Tests', () => {
         password: hashedPassword,
         role: 'ADMIN',
         tenantId: testTenantId,
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     // Get auth token
-    const loginResponse = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'api-security-test@example.com',
-        password: 'TestPassword123!'
-      });
+    const loginResponse = await request(app).post('/api/auth/login').send({
+      email: 'api-security-test@example.com',
+      password: 'TestPassword123!',
+    });
 
     authToken = loginResponse.body.token;
   });
 
   afterAll(async () => {
     await prisma.staff.deleteMany({
-      where: { tenantId: testTenantId }
+      where: { tenantId: testTenantId },
     });
     await prisma.$disconnect();
   });
@@ -71,7 +69,9 @@ describe('API Security Tests', () => {
 
       // Should either not include CORS headers or reject
       if (response.headers['access-control-allow-origin']) {
-        expect(response.headers['access-control-allow-origin']).not.toBe('http://evil.com');
+        expect(response.headers['access-control-allow-origin']).not.toBe(
+          'http://evil.com'
+        );
       }
     });
 
@@ -94,7 +94,9 @@ describe('API Security Tests', () => {
         .set('Authorization', `Bearer ${authToken}`);
 
       if (response.headers['access-control-allow-credentials']) {
-        expect(response.headers['access-control-allow-credentials']).toBe('false');
+        expect(response.headers['access-control-allow-credentials']).toBe(
+          'false'
+        );
       }
     });
 
@@ -118,7 +120,7 @@ describe('API Security Tests', () => {
         firstName: 'A'.repeat(10 * 1024 * 1024), // 10MB of 'A's
         lastName: 'Test',
         email: 'test@example.com',
-        phone: '1234567890'
+        phone: '1234567890',
       };
 
       const response = await request(app)
@@ -134,7 +136,7 @@ describe('API Security Tests', () => {
         firstName: 'John',
         lastName: 'Doe',
         email: `normal-${Date.now()}@example.com`,
-        phone: '1234567890'
+        phone: '1234567890',
       };
 
       const response = await request(app)
@@ -187,7 +189,7 @@ describe('API Security Tests', () => {
           firstName: 'John',
           lastName: 'Doe',
           email: `json-${Date.now()}@example.com`,
-          phone: '1234567890'
+          phone: '1234567890',
         });
 
       expect([200, 201]).toContain(response.status);
@@ -198,7 +200,7 @@ describe('API Security Tests', () => {
         'text/plain',
         'text/html',
         'application/xml',
-        'multipart/form-data'
+        'multipart/form-data',
       ];
 
       for (const contentType of unsupportedTypes) {
@@ -221,7 +223,7 @@ describe('API Security Tests', () => {
           firstName: 'John',
           lastName: 'Doe',
           email: `charset-${Date.now()}@example.com`,
-          phone: '1234567890'
+          phone: '1234567890',
         });
 
       expect([200, 201]).toContain(response.status);
@@ -287,7 +289,7 @@ describe('API Security Tests', () => {
         '"string root"',
         '123',
         'true',
-        'null'
+        'null',
       ];
 
       for (const invalidRoot of invalidRoots) {
@@ -398,7 +400,7 @@ describe('API Security Tests', () => {
 
     it('should limit array parameter length', async () => {
       const longArray = Array(1000).fill('id').join(',');
-      
+
       const response = await request(app)
         .get(`/api/customers?ids=${longArray}`)
         .set('Authorization', `Bearer ${authToken}`);
@@ -484,16 +486,11 @@ describe('API Security Tests', () => {
 
   describe('API Documentation Security', () => {
     it('should not expose API documentation in production', async () => {
-      const docEndpoints = [
-        '/api-docs',
-        '/swagger',
-        '/docs',
-        '/api/docs'
-      ];
+      const docEndpoints = ['/api-docs', '/swagger', '/docs', '/api/docs'];
 
       for (const endpoint of docEndpoints) {
         const response = await request(app).get(endpoint);
-        
+
         // Should be 404 in production or require auth
         if (process.env.NODE_ENV === 'production') {
           expect([401, 404]).toContain(response.status);
@@ -502,11 +499,9 @@ describe('API Security Tests', () => {
     });
 
     it('should protect GraphQL introspection in production', async () => {
-      const response = await request(app)
-        .post('/graphql')
-        .send({
-          query: '{ __schema { types { name } } }'
-        });
+      const response = await request(app).post('/graphql').send({
+        query: '{ __schema { types { name } } }',
+      });
 
       if (process.env.NODE_ENV === 'production') {
         expect([400, 404]).toContain(response.status);

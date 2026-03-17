@@ -38,11 +38,11 @@ const CreateTenant: React.FC = () => {
     adminPassword: '',
   });
 
-  const handleChange = (field: keyof CreateTenantDto) => (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setFormData({ ...formData, [field]: e.target.value });
-  };
+  const handleChange =
+    (field: keyof CreateTenantDto) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData({ ...formData, [field]: e.target.value });
+    };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -249,11 +249,7 @@ const CreateTenant: React.FC = () => {
           >
             Cancel
           </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={loading}
-          >
+          <Button type="submit" variant="contained" disabled={loading}>
             {loading ? 'Creating...' : 'Create Tenant'}
           </Button>
         </Box>

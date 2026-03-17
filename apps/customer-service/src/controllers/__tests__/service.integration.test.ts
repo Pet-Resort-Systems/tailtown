@@ -4,13 +4,13 @@
  * Tests that actually call controller functions against the test database.
  */
 
-import { Response, NextFunction } from "express";
+import { Response, NextFunction } from 'express';
 import {
   getTestPrismaClient,
   createTestTenant,
   deleteTestData,
   disconnectTestDatabase,
-} from "../../test/setup-test-db";
+} from '../../test/setup-test-db';
 import {
   getAllServices,
   getServiceById,
@@ -18,10 +18,10 @@ import {
   updateService,
   deleteService,
   deactivateService,
-} from "../service.controller";
-import { TenantRequest } from "../../middleware/tenant.middleware";
+} from '../service.controller';
+import { TenantRequest } from '../../middleware/tenant.middleware';
 
-describe("Service Controller Integration Tests", () => {
+describe('Service Controller Integration Tests', () => {
   const prisma = getTestPrismaClient();
   let testTenantId: string;
   let testServiceIds: string[] = [];
@@ -42,8 +42,8 @@ describe("Service Controller Integration Tests", () => {
     const service1 = await prisma.service.create({
       data: {
         tenantId: testTenantId,
-        name: "Boarding Service",
-        serviceCategory: "BOARDING",
+        name: 'Boarding Service',
+        serviceCategory: 'BOARDING',
         price: 50,
         duration: 1440,
         isActive: true,
@@ -54,8 +54,8 @@ describe("Service Controller Integration Tests", () => {
     const service2 = await prisma.service.create({
       data: {
         tenantId: testTenantId,
-        name: "Grooming Service",
-        serviceCategory: "GROOMING",
+        name: 'Grooming Service',
+        serviceCategory: 'GROOMING',
         price: 75,
         duration: 60,
         isActive: true,
@@ -66,8 +66,8 @@ describe("Service Controller Integration Tests", () => {
     const service3 = await prisma.service.create({
       data: {
         tenantId: testTenantId,
-        name: "Inactive Service",
-        serviceCategory: "DAYCARE",
+        name: 'Inactive Service',
+        serviceCategory: 'DAYCARE',
         price: 35,
         duration: 480,
         isActive: false,
@@ -89,8 +89,8 @@ describe("Service Controller Integration Tests", () => {
     jest.clearAllMocks();
   });
 
-  describe("getAllServices", () => {
-    it("should return all services for tenant", async () => {
+  describe('getAllServices', () => {
+    it('should return all services for tenant', async () => {
       const req = {
         tenantId: testTenantId,
         query: {},
@@ -106,10 +106,10 @@ describe("Service Controller Integration Tests", () => {
       expect(responseData.results).toBeGreaterThanOrEqual(2);
     });
 
-    it("should filter by category", async () => {
+    it('should filter by category', async () => {
       const req = {
         tenantId: testTenantId,
-        query: { category: "BOARDING" },
+        query: { category: 'BOARDING' },
         params: {},
         body: {},
       } as unknown as TenantRequest;
@@ -120,11 +120,11 @@ describe("Service Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       const responseData = (res.json as jest.Mock).mock.calls[0][0];
       responseData.data.forEach((service: any) => {
-        expect(service.serviceCategory).toBe("BOARDING");
+        expect(service.serviceCategory).toBe('BOARDING');
       });
     });
 
-    it("should return services including active ones", async () => {
+    it('should return services including active ones', async () => {
       const req = {
         tenantId: testTenantId,
         query: {},
@@ -141,10 +141,10 @@ describe("Service Controller Integration Tests", () => {
       expect(responseData.results).toBeGreaterThanOrEqual(1);
     });
 
-    it("should include inactive when requested", async () => {
+    it('should include inactive when requested', async () => {
       const req = {
         tenantId: testTenantId,
-        query: { includeInactive: "true" },
+        query: { includeInactive: 'true' },
         params: {},
         body: {},
       } as unknown as TenantRequest;
@@ -157,10 +157,10 @@ describe("Service Controller Integration Tests", () => {
       expect(responseData.results).toBeGreaterThanOrEqual(3);
     });
 
-    it("should search by name", async () => {
+    it('should search by name', async () => {
       const req = {
         tenantId: testTenantId,
-        query: { search: "Boarding" },
+        query: { search: 'Boarding' },
         params: {},
         body: {},
       } as unknown as TenantRequest;
@@ -174,8 +174,8 @@ describe("Service Controller Integration Tests", () => {
     });
   });
 
-  describe("getServiceById", () => {
-    it("should return service by ID", async () => {
+  describe('getServiceById', () => {
+    it('should return service by ID', async () => {
       const req = {
         tenantId: testTenantId,
         params: { id: testServiceIds[0] },
@@ -189,13 +189,13 @@ describe("Service Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       const responseData = (res.json as jest.Mock).mock.calls[0][0];
       expect(responseData.data.id).toBe(testServiceIds[0]);
-      expect(responseData.data.name).toBe("Boarding Service");
+      expect(responseData.data.name).toBe('Boarding Service');
     });
 
-    it("should return 404 for non-existent service", async () => {
+    it('should return 404 for non-existent service', async () => {
       const req = {
         tenantId: testTenantId,
-        params: { id: "00000000-0000-0000-0000-000000000000" },
+        params: { id: '00000000-0000-0000-0000-000000000000' },
         query: {},
         body: {},
       } as unknown as TenantRequest;
@@ -205,19 +205,19 @@ describe("Service Controller Integration Tests", () => {
 
       expect(mockNext).toHaveBeenCalled();
       const error = (mockNext as jest.Mock).mock.calls[0][0];
-      expect(error.message).toContain("not found");
+      expect(error.message).toContain('not found');
     });
   });
 
-  describe("createService", () => {
-    it("should create a new service", async () => {
+  describe('createService', () => {
+    it('should create a new service', async () => {
       const req = {
         tenantId: testTenantId,
         params: {},
         query: {},
         body: {
           name: `New Service ${Date.now()}`,
-          serviceCategory: "TRAINING",
+          serviceCategory: 'TRAINING',
           price: 100,
           duration: 60,
         },
@@ -228,17 +228,17 @@ describe("Service Controller Integration Tests", () => {
 
       expect(res.status).toHaveBeenCalledWith(201);
       const responseData = (res.json as jest.Mock).mock.calls[0][0];
-      expect(responseData.data.serviceCategory).toBe("TRAINING");
+      expect(responseData.data.serviceCategory).toBe('TRAINING');
       testServiceIds.push(responseData.data.id);
     });
 
-    it("should reject service without name", async () => {
+    it('should reject service without name', async () => {
       const req = {
         tenantId: testTenantId,
         params: {},
         query: {},
         body: {
-          serviceCategory: "BOARDING",
+          serviceCategory: 'BOARDING',
           price: 50,
         },
       } as unknown as TenantRequest;
@@ -250,15 +250,15 @@ describe("Service Controller Integration Tests", () => {
     });
   });
 
-  describe("updateService", () => {
+  describe('updateService', () => {
     let updateServiceId: string;
 
     beforeAll(async () => {
       const service = await prisma.service.create({
         data: {
           tenantId: testTenantId,
-          name: "Update Test Service",
-          serviceCategory: "BOARDING",
+          name: 'Update Test Service',
+          serviceCategory: 'BOARDING',
           price: 60,
           duration: 1440,
           isActive: true,
@@ -268,13 +268,13 @@ describe("Service Controller Integration Tests", () => {
       testServiceIds.push(updateServiceId);
     });
 
-    it("should update service fields", async () => {
+    it('should update service fields', async () => {
       const req = {
         tenantId: testTenantId,
         params: { id: updateServiceId },
         query: {},
         body: {
-          name: "Updated Service Name",
+          name: 'Updated Service Name',
           price: 80,
         },
       } as unknown as TenantRequest;
@@ -284,16 +284,16 @@ describe("Service Controller Integration Tests", () => {
 
       expect(res.status).toHaveBeenCalledWith(200);
       const responseData = (res.json as jest.Mock).mock.calls[0][0];
-      expect(responseData.data.name).toBe("Updated Service Name");
+      expect(responseData.data.name).toBe('Updated Service Name');
       expect(responseData.data.price).toBe(80);
     });
 
-    it("should return 404 for non-existent service", async () => {
+    it('should return 404 for non-existent service', async () => {
       const req = {
         tenantId: testTenantId,
-        params: { id: "00000000-0000-0000-0000-000000000000" },
+        params: { id: '00000000-0000-0000-0000-000000000000' },
         query: {},
-        body: { name: "Test" },
+        body: { name: 'Test' },
       } as unknown as TenantRequest;
       const res = createMockResponse();
 
@@ -303,15 +303,15 @@ describe("Service Controller Integration Tests", () => {
     });
   });
 
-  describe("deactivateService", () => {
+  describe('deactivateService', () => {
     let deactivateServiceId: string;
 
     beforeAll(async () => {
       const service = await prisma.service.create({
         data: {
           tenantId: testTenantId,
-          name: "Deactivate Test Service",
-          serviceCategory: "GROOMING",
+          name: 'Deactivate Test Service',
+          serviceCategory: 'GROOMING',
           price: 45,
           duration: 45,
           isActive: true,
@@ -321,7 +321,7 @@ describe("Service Controller Integration Tests", () => {
       testServiceIds.push(deactivateServiceId);
     });
 
-    it("should deactivate service", async () => {
+    it('should deactivate service', async () => {
       const req = {
         tenantId: testTenantId,
         params: { id: deactivateServiceId },
@@ -341,10 +341,10 @@ describe("Service Controller Integration Tests", () => {
       expect(service?.isActive).toBe(false);
     });
 
-    it("should return 404 for non-existent service", async () => {
+    it('should return 404 for non-existent service', async () => {
       const req = {
         tenantId: testTenantId,
-        params: { id: "00000000-0000-0000-0000-000000000000" },
+        params: { id: '00000000-0000-0000-0000-000000000000' },
         query: {},
         body: {},
       } as unknown as TenantRequest;
@@ -356,15 +356,15 @@ describe("Service Controller Integration Tests", () => {
     });
   });
 
-  describe("deleteService", () => {
+  describe('deleteService', () => {
     let deleteServiceId: string;
 
     beforeAll(async () => {
       const service = await prisma.service.create({
         data: {
           tenantId: testTenantId,
-          name: "Delete Test Service",
-          serviceCategory: "DAYCARE",
+          name: 'Delete Test Service',
+          serviceCategory: 'DAYCARE',
           price: 30,
           duration: 480,
           isActive: true,
@@ -374,7 +374,7 @@ describe("Service Controller Integration Tests", () => {
       testServiceIds.push(deleteServiceId);
     });
 
-    it("should delete service", async () => {
+    it('should delete service', async () => {
       const req = {
         tenantId: testTenantId,
         params: { id: deleteServiceId },
@@ -388,10 +388,10 @@ describe("Service Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(204);
     });
 
-    it("should return 404 for non-existent service", async () => {
+    it('should return 404 for non-existent service', async () => {
       const req = {
         tenantId: testTenantId,
-        params: { id: "00000000-0000-0000-0000-000000000000" },
+        params: { id: '00000000-0000-0000-0000-000000000000' },
         query: {},
         body: {},
       } as unknown as TenantRequest;

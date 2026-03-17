@@ -5,7 +5,7 @@
  * Per roadmap: "Loyalty/Coupons Testing"
  */
 
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
 // Mock Prisma
 const mockFindUnique = jest.fn();
@@ -13,7 +13,7 @@ const mockCreate = jest.fn();
 const mockUpdate = jest.fn();
 const mockTransaction = jest.fn();
 
-jest.mock("@prisma/client", () => ({
+jest.mock('@prisma/client', () => ({
   PrismaClient: jest.fn().mockImplementation(() => ({
     loyaltyMember: {
       findUnique: mockFindUnique,
@@ -29,25 +29,25 @@ jest.mock("@prisma/client", () => ({
     $transaction: mockTransaction,
   })),
   PointEarningType: {
-    RESERVATION: "RESERVATION",
-    REFERRAL: "REFERRAL",
-    BONUS: "BONUS",
-    ADJUSTMENT: "ADJUSTMENT",
+    RESERVATION: 'RESERVATION',
+    REFERRAL: 'REFERRAL',
+    BONUS: 'BONUS',
+    ADJUSTMENT: 'ADJUSTMENT',
   },
   RedemptionType: {
-    DISCOUNT: "DISCOUNT",
-    FREE_SERVICE: "FREE_SERVICE",
-    PRODUCT: "PRODUCT",
+    DISCOUNT: 'DISCOUNT',
+    FREE_SERVICE: 'FREE_SERVICE',
+    PRODUCT: 'PRODUCT',
   },
   TierLevel: {
-    BRONZE: "BRONZE",
-    SILVER: "SILVER",
-    GOLD: "GOLD",
-    PLATINUM: "PLATINUM",
+    BRONZE: 'BRONZE',
+    SILVER: 'SILVER',
+    GOLD: 'GOLD',
+    PLATINUM: 'PLATINUM',
   },
 }));
 
-describe("Loyalty Controller", () => {
+describe('Loyalty Controller', () => {
   let mockReq: Partial<Request>;
   let mockRes: Partial<Response>;
   let mockNext: NextFunction;
@@ -62,15 +62,15 @@ describe("Loyalty Controller", () => {
     jest.clearAllMocks();
   });
 
-  describe("Points Earning", () => {
-    it("should calculate points from reservation total", () => {
+  describe('Points Earning', () => {
+    it('should calculate points from reservation total', () => {
       const reservationTotal = 150;
       const pointsPerDollar = 1;
       const earnedPoints = Math.floor(reservationTotal * pointsPerDollar);
       expect(earnedPoints).toBe(150);
     });
 
-    it("should apply tier bonus multiplier", () => {
+    it('should apply tier bonus multiplier', () => {
       const basePoints = 100;
       const tierMultipliers = {
         BRONZE: 1.0,
@@ -86,14 +86,14 @@ describe("Loyalty Controller", () => {
       expect(platinumPoints).toBe(200);
     });
 
-    it("should award referral bonus points", () => {
+    it('should award referral bonus points', () => {
       const referralBonus = 500;
       const member = { currentPoints: 100 };
       const newBalance = member.currentPoints + referralBonus;
       expect(newBalance).toBe(600);
     });
 
-    it("should track lifetime points separately from current", () => {
+    it('should track lifetime points separately from current', () => {
       const member = {
         currentPoints: 200,
         lifetimePoints: 1500,
@@ -110,7 +110,7 @@ describe("Loyalty Controller", () => {
     });
   });
 
-  describe("Tier Calculations", () => {
+  describe('Tier Calculations', () => {
     const tierThresholds = {
       BRONZE: 0,
       SILVER: 1000,
@@ -119,45 +119,45 @@ describe("Loyalty Controller", () => {
     };
 
     function calculateTier(lifetimePoints: number): string {
-      if (lifetimePoints >= tierThresholds.PLATINUM) return "PLATINUM";
-      if (lifetimePoints >= tierThresholds.GOLD) return "GOLD";
-      if (lifetimePoints >= tierThresholds.SILVER) return "SILVER";
-      return "BRONZE";
+      if (lifetimePoints >= tierThresholds.PLATINUM) return 'PLATINUM';
+      if (lifetimePoints >= tierThresholds.GOLD) return 'GOLD';
+      if (lifetimePoints >= tierThresholds.SILVER) return 'SILVER';
+      return 'BRONZE';
     }
 
-    it("should assign BRONZE tier for new members", () => {
-      expect(calculateTier(0)).toBe("BRONZE");
-      expect(calculateTier(500)).toBe("BRONZE");
-      expect(calculateTier(999)).toBe("BRONZE");
+    it('should assign BRONZE tier for new members', () => {
+      expect(calculateTier(0)).toBe('BRONZE');
+      expect(calculateTier(500)).toBe('BRONZE');
+      expect(calculateTier(999)).toBe('BRONZE');
     });
 
-    it("should upgrade to SILVER at 1000 points", () => {
-      expect(calculateTier(1000)).toBe("SILVER");
-      expect(calculateTier(2500)).toBe("SILVER");
+    it('should upgrade to SILVER at 1000 points', () => {
+      expect(calculateTier(1000)).toBe('SILVER');
+      expect(calculateTier(2500)).toBe('SILVER');
     });
 
-    it("should upgrade to GOLD at 5000 points", () => {
-      expect(calculateTier(5000)).toBe("GOLD");
-      expect(calculateTier(7500)).toBe("GOLD");
+    it('should upgrade to GOLD at 5000 points', () => {
+      expect(calculateTier(5000)).toBe('GOLD');
+      expect(calculateTier(7500)).toBe('GOLD');
     });
 
-    it("should upgrade to PLATINUM at 10000 points", () => {
-      expect(calculateTier(10000)).toBe("PLATINUM");
-      expect(calculateTier(50000)).toBe("PLATINUM");
+    it('should upgrade to PLATINUM at 10000 points', () => {
+      expect(calculateTier(10000)).toBe('PLATINUM');
+      expect(calculateTier(50000)).toBe('PLATINUM');
     });
 
-    it("should calculate points to next tier", () => {
+    it('should calculate points to next tier', () => {
       const lifetimePoints = 3500;
       const currentTier = calculateTier(lifetimePoints);
-      expect(currentTier).toBe("SILVER");
+      expect(currentTier).toBe('SILVER');
 
       const pointsToGold = tierThresholds.GOLD - lifetimePoints;
       expect(pointsToGold).toBe(1500);
     });
   });
 
-  describe("Points Redemption", () => {
-    it("should validate sufficient points for redemption", () => {
+  describe('Points Redemption', () => {
+    it('should validate sufficient points for redemption', () => {
       const member = { currentPoints: 500 };
       const redemptionCost = 300;
 
@@ -165,7 +165,7 @@ describe("Loyalty Controller", () => {
       expect(canRedeem).toBe(true);
     });
 
-    it("should reject redemption with insufficient points", () => {
+    it('should reject redemption with insufficient points', () => {
       const member = { currentPoints: 200 };
       const redemptionCost = 500;
 
@@ -173,7 +173,7 @@ describe("Loyalty Controller", () => {
       expect(canRedeem).toBe(false);
     });
 
-    it("should deduct points after redemption", () => {
+    it('should deduct points after redemption', () => {
       const member = { currentPoints: 1000 };
       const redemptionCost = 300;
 
@@ -181,7 +181,7 @@ describe("Loyalty Controller", () => {
       expect(newBalance).toBe(700);
     });
 
-    it("should calculate discount value from points", () => {
+    it('should calculate discount value from points', () => {
       const pointsToRedeem = 500;
       const pointsPerDollar = 100; // 100 points = $1
 
@@ -189,7 +189,7 @@ describe("Loyalty Controller", () => {
       expect(discountValue).toBe(5);
     });
 
-    it("should not affect lifetime points on redemption", () => {
+    it('should not affect lifetime points on redemption', () => {
       const member = {
         currentPoints: 1000,
         lifetimePoints: 5000,
@@ -206,19 +206,19 @@ describe("Loyalty Controller", () => {
     });
   });
 
-  describe("Member Stats", () => {
-    it("should calculate total points earned", () => {
+  describe('Member Stats', () => {
+    it('should calculate total points earned', () => {
       const transactions = [
-        { points: 100, type: "RESERVATION" },
-        { points: 50, type: "BONUS" },
-        { points: 500, type: "REFERRAL" },
+        { points: 100, type: 'RESERVATION' },
+        { points: 50, type: 'BONUS' },
+        { points: 500, type: 'REFERRAL' },
       ];
 
       const totalEarned = transactions.reduce((sum, t) => sum + t.points, 0);
       expect(totalEarned).toBe(650);
     });
 
-    it("should calculate total points redeemed", () => {
+    it('should calculate total points redeemed', () => {
       const redemptions = [
         { pointsRedeemed: 200 },
         { pointsRedeemed: 150 },
@@ -232,9 +232,9 @@ describe("Loyalty Controller", () => {
       expect(totalRedeemed).toBe(450);
     });
 
-    it("should track last activity date", () => {
-      const lastActivity = new Date("2025-12-01");
-      const now = new Date("2025-12-02");
+    it('should track last activity date', () => {
+      const lastActivity = new Date('2025-12-01');
+      const now = new Date('2025-12-02');
       const daysSinceActivity = Math.floor(
         (now.getTime() - lastActivity.getTime()) / (1000 * 60 * 60 * 24)
       );
@@ -242,27 +242,27 @@ describe("Loyalty Controller", () => {
     });
   });
 
-  describe("Auto-Create Member", () => {
-    it("should create member if not exists", () => {
-      const customerId = "cust-123";
+  describe('Auto-Create Member', () => {
+    it('should create member if not exists', () => {
+      const customerId = 'cust-123';
       const newMember = {
         customerId,
         currentPoints: 0,
         lifetimePoints: 0,
-        currentTier: "BRONZE",
+        currentTier: 'BRONZE',
       };
 
       expect(newMember.customerId).toBe(customerId);
-      expect(newMember.currentTier).toBe("BRONZE");
+      expect(newMember.currentTier).toBe('BRONZE');
     });
   });
 
-  describe("Validation", () => {
-    it("should require points, type, and description for adding points", () => {
+  describe('Validation', () => {
+    it('should require points, type, and description for adding points', () => {
       const validRequest = {
         points: 100,
-        type: "RESERVATION",
-        description: "Boarding reservation #123",
+        type: 'RESERVATION',
+        description: 'Boarding reservation #123',
       };
 
       const isValid =
@@ -270,12 +270,12 @@ describe("Loyalty Controller", () => {
       expect(isValid).toBeTruthy();
     });
 
-    it("should require all fields for redemption", () => {
+    it('should require all fields for redemption', () => {
       const validRequest = {
         pointsToRedeem: 500,
-        redemptionType: "DISCOUNT",
+        redemptionType: 'DISCOUNT',
         value: 5,
-        description: "$5 off next reservation",
+        description: '$5 off next reservation',
       };
 
       const isValid =

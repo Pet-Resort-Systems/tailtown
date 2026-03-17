@@ -1,6 +1,6 @@
 /**
  * Waitlist Dialog Component
- * 
+ *
  * Allows customers to join waitlist when dates are unavailable.
  * Features:
  * - Contact information
@@ -21,11 +21,11 @@ import {
   Box,
   Alert,
   CircularProgress,
-  Divider
+  Divider,
 } from '@mui/material';
 import {
   NotificationsActive as WaitlistIcon,
-  CheckCircle as SuccessIcon
+  CheckCircle as SuccessIcon,
 } from '@mui/icons-material';
 import { availabilityService } from '../../services/availabilityService';
 import { WaitlistRequest, WaitlistEntry } from '../../types/availability';
@@ -51,7 +51,7 @@ export const WaitlistDialog: React.FC<WaitlistDialogProps> = ({
   requestedEndDate,
   numberOfPets,
   customerEmail = '',
-  customerPhone = ''
+  customerPhone = '',
 }) => {
   const [email, setEmail] = useState(customerEmail);
   const [phone, setPhone] = useState(customerPhone);
@@ -59,7 +59,9 @@ export const WaitlistDialog: React.FC<WaitlistDialogProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [waitlistEntry, setWaitlistEntry] = useState<WaitlistEntry | null>(null);
+  const [waitlistEntry, setWaitlistEntry] = useState<WaitlistEntry | null>(
+    null
+  );
 
   const handleJoinWaitlist = async () => {
     // Validation
@@ -80,7 +82,7 @@ export const WaitlistDialog: React.FC<WaitlistDialogProps> = ({
         numberOfPets,
         contactEmail: email,
         contactPhone: phone,
-        notes: notes.trim() || undefined
+        notes: notes.trim() || undefined,
       };
 
       const entry = await availabilityService.joinWaitlist(request);
@@ -103,7 +105,10 @@ export const WaitlistDialog: React.FC<WaitlistDialogProps> = ({
     onClose();
   };
 
-  const dateRange = availabilityService.formatDateRange(requestedStartDate, requestedEndDate);
+  const dateRange = availabilityService.formatDateRange(
+    requestedStartDate,
+    requestedEndDate
+  );
 
   // Success state
   if (success && waitlistEntry) {
@@ -116,7 +121,8 @@ export const WaitlistDialog: React.FC<WaitlistDialogProps> = ({
               You're on the Waitlist!
             </Typography>
             <Typography variant="body1" color="text.secondary" paragraph>
-              We'll notify you as soon as a spot opens up for your requested dates.
+              We'll notify you as soon as a spot opens up for your requested
+              dates.
             </Typography>
 
             <Box mt={3} p={2} bgcolor="background.default" borderRadius={1}>
@@ -141,7 +147,8 @@ export const WaitlistDialog: React.FC<WaitlistDialogProps> = ({
             </Box>
 
             <Alert severity="info" sx={{ mt: 2 }}>
-              We'll contact you at {email} or {phone} when availability opens up.
+              We'll contact you at {email} or {phone} when availability opens
+              up.
             </Alert>
           </Box>
         </DialogContent>
@@ -159,16 +166,15 @@ export const WaitlistDialog: React.FC<WaitlistDialogProps> = ({
       <DialogTitle>
         <Box display="flex" alignItems="center" gap={1}>
           <WaitlistIcon color="primary" />
-          <Typography variant="h6">
-            Join Waitlist
-          </Typography>
+          <Typography variant="h6">Join Waitlist</Typography>
         </Box>
       </DialogTitle>
 
       <DialogContent>
         <Box mb={2}>
           <Typography variant="body2" color="text.secondary">
-            We'll notify you if a spot becomes available for your requested dates.
+            We'll notify you if a spot becomes available for your requested
+            dates.
           </Typography>
         </Box>
 
@@ -177,9 +183,7 @@ export const WaitlistDialog: React.FC<WaitlistDialogProps> = ({
           <Typography variant="subtitle2" gutterBottom>
             Requested Dates
           </Typography>
-          <Typography variant="body2">
-            {dateRange}
-          </Typography>
+          <Typography variant="body2">{dateRange}</Typography>
           <Typography variant="caption" color="text.secondary">
             {numberOfPets} pet{numberOfPets !== 1 ? 's' : ''}
           </Typography>
@@ -227,7 +231,7 @@ export const WaitlistDialog: React.FC<WaitlistDialogProps> = ({
 
         <Alert severity="info" sx={{ mt: 2 }}>
           <Typography variant="body2">
-            You'll receive an email or text notification when a spot opens up. 
+            You'll receive an email or text notification when a spot opens up.
             You'll have 24 hours to confirm your reservation.
           </Typography>
         </Alert>
@@ -241,7 +245,9 @@ export const WaitlistDialog: React.FC<WaitlistDialogProps> = ({
           onClick={handleJoinWaitlist}
           variant="contained"
           disabled={loading || !email || !phone}
-          startIcon={loading ? <CircularProgress size={20} /> : <WaitlistIcon />}
+          startIcon={
+            loading ? <CircularProgress size={20} /> : <WaitlistIcon />
+          }
         >
           {loading ? 'Joining...' : 'Join Waitlist'}
         </Button>

@@ -5,13 +5,13 @@
  * All endpoints require admin authentication.
  */
 
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 import {
   tenantAuditLog,
   AuditAction,
   AuditCategory,
   AuditSeverity,
-} from "../services/tenant-audit-log.service";
+} from '../services/tenant-audit-log.service';
 
 /**
  * GET /api/audit-logs
@@ -28,7 +28,7 @@ export const getAuditLogs = async (
     if (!tenantId) {
       return res.status(400).json({
         success: false,
-        message: "Tenant ID is required",
+        message: 'Tenant ID is required',
       });
     }
 
@@ -42,8 +42,8 @@ export const getAuditLogs = async (
       startDate,
       endDate,
       search,
-      limit = "50",
-      offset = "0",
+      limit = '50',
+      offset = '0',
     } = req.query;
 
     const filters = {
@@ -74,7 +74,7 @@ export const getAuditLogs = async (
       },
     });
   } catch (error) {
-    console.error("[AuditLog] Error querying audit logs:", error);
+    console.error('[AuditLog] Error querying audit logs:', error);
     next(error);
   }
 };
@@ -95,7 +95,7 @@ export const getEntityAuditTrail = async (
     if (!tenantId) {
       return res.status(400).json({
         success: false,
-        message: "Tenant ID is required",
+        message: 'Tenant ID is required',
       });
     }
 
@@ -110,7 +110,7 @@ export const getEntityAuditTrail = async (
       data: logs,
     });
   } catch (error) {
-    console.error("[AuditLog] Error getting entity audit trail:", error);
+    console.error('[AuditLog] Error getting entity audit trail:', error);
     next(error);
   }
 };
@@ -132,7 +132,7 @@ export const getUserActivity = async (
     if (!tenantId) {
       return res.status(400).json({
         success: false,
-        message: "Tenant ID is required",
+        message: 'Tenant ID is required',
       });
     }
 
@@ -148,7 +148,7 @@ export const getUserActivity = async (
       data: logs,
     });
   } catch (error) {
-    console.error("[AuditLog] Error getting user activity:", error);
+    console.error('[AuditLog] Error getting user activity:', error);
     next(error);
   }
 };
@@ -169,14 +169,14 @@ export const getActivitySummary = async (
     if (!tenantId) {
       return res.status(400).json({
         success: false,
-        message: "Tenant ID is required",
+        message: 'Tenant ID is required',
       });
     }
 
     if (!startDate || !endDate) {
       return res.status(400).json({
         success: false,
-        message: "startDate and endDate are required",
+        message: 'startDate and endDate are required',
       });
     }
 
@@ -191,7 +191,7 @@ export const getActivitySummary = async (
       data: summary,
     });
   } catch (error) {
-    console.error("[AuditLog] Error getting activity summary:", error);
+    console.error('[AuditLog] Error getting activity summary:', error);
     next(error);
   }
 };
@@ -207,12 +207,12 @@ export const getCriticalEvents = async (
 ) => {
   try {
     const tenantId = (req as any).tenantId;
-    const { limit = "50" } = req.query;
+    const { limit = '50' } = req.query;
 
     if (!tenantId) {
       return res.status(400).json({
         success: false,
-        message: "Tenant ID is required",
+        message: 'Tenant ID is required',
       });
     }
 
@@ -226,7 +226,7 @@ export const getCriticalEvents = async (
       data: logs,
     });
   } catch (error) {
-    console.error("[AuditLog] Error getting critical events:", error);
+    console.error('[AuditLog] Error getting critical events:', error);
     next(error);
   }
 };
@@ -247,7 +247,7 @@ export const getFailedLogins = async (
     if (!tenantId) {
       return res.status(400).json({
         success: false,
-        message: "Tenant ID is required",
+        message: 'Tenant ID is required',
       });
     }
 
@@ -263,7 +263,7 @@ export const getFailedLogins = async (
       data: logs,
     });
   } catch (error) {
-    console.error("[AuditLog] Error getting failed logins:", error);
+    console.error('[AuditLog] Error getting failed logins:', error);
     next(error);
   }
 };

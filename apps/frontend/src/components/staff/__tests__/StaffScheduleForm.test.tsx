@@ -1,7 +1,11 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import StaffScheduleForm from '../StaffScheduleForm';
-import { StaffSchedule, ScheduleStatus, Staff } from '../../../services/staffService';
+import {
+  StaffSchedule,
+  ScheduleStatus,
+  Staff,
+} from '../../../services/staffService';
 
 // Mock date-fns
 jest.mock('date-fns', () => ({
@@ -14,13 +18,13 @@ jest.mock('date-fns', () => ({
     }
     return date.toISOString();
   }),
-  parse: jest.fn((timeStr) => new Date(`2025-11-01T${timeStr}:00`))
+  parse: jest.fn((timeStr) => new Date(`2025-11-01T${timeStr}:00`)),
 }));
 
 describe('StaffScheduleForm', () => {
   const mockOnClose = jest.fn();
   const mockOnSave = jest.fn();
-  
+
   const mockStaff: Staff[] = [
     {
       id: 'staff-1',
@@ -31,7 +35,7 @@ describe('StaffScheduleForm', () => {
       department: 'Grooming',
       position: 'Lead Groomer',
       status: 'Active',
-      isActive: true
+      isActive: true,
     },
     {
       id: 'staff-2',
@@ -42,8 +46,8 @@ describe('StaffScheduleForm', () => {
       department: 'Training',
       position: 'Dog Trainer',
       status: 'Active',
-      isActive: true
-    }
+      isActive: true,
+    },
   ];
 
   const mockExistingSchedules: StaffSchedule[] = [
@@ -56,8 +60,8 @@ describe('StaffScheduleForm', () => {
       status: ScheduleStatus.SCHEDULED,
       notes: '',
       location: 'Main Location',
-      role: 'groomer'
-    }
+      role: 'groomer',
+    },
   ];
 
   const defaultProps = {
@@ -66,7 +70,7 @@ describe('StaffScheduleForm', () => {
     onSave: mockOnSave,
     isEditing: false,
     allStaff: mockStaff,
-    existingSchedules: []
+    existingSchedules: [],
   };
 
   beforeEach(() => {
@@ -92,7 +96,9 @@ describe('StaffScheduleForm', () => {
 
       // Should show error
       await waitFor(() => {
-        expect(screen.getByText(/already has a schedule during this time/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(/already has a schedule during this time/i)
+        ).toBeInTheDocument();
       });
 
       // Should not call onSave
@@ -110,8 +116,8 @@ describe('StaffScheduleForm', () => {
           status: ScheduleStatus.SCHEDULED,
           notes: '',
           location: 'Main Location',
-          role: 'groomer'
-        }
+          role: 'groomer',
+        },
       ];
 
       render(
@@ -127,12 +133,14 @@ describe('StaffScheduleForm', () => {
 
       // Try to schedule 12:00-16:00 (overlaps with 09:00-13:00)
       // Note: In real test, you'd need to interact with time pickers
-      
+
       const saveButton = screen.getByText(/save/i);
       fireEvent.click(saveButton);
 
       await waitFor(() => {
-        expect(screen.getByText(/already has a schedule during this time/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(/already has a schedule during this time/i)
+        ).toBeInTheDocument();
       });
 
       expect(mockOnSave).not.toHaveBeenCalled();
@@ -155,7 +163,9 @@ describe('StaffScheduleForm', () => {
 
       // Should not show overlap error
       await waitFor(() => {
-        expect(screen.queryByText(/already has a schedule during this time/i)).not.toBeInTheDocument();
+        expect(
+          screen.queryByText(/already has a schedule during this time/i)
+        ).not.toBeInTheDocument();
       });
     });
 
@@ -170,8 +180,8 @@ describe('StaffScheduleForm', () => {
           status: ScheduleStatus.SCHEDULED,
           notes: '',
           location: 'Main Location',
-          role: 'groomer'
-        }
+          role: 'groomer',
+        },
       ];
 
       render(
@@ -187,13 +197,15 @@ describe('StaffScheduleForm', () => {
 
       // Schedule 13:00-17:00 (starts exactly when previous ends)
       // This should be allowed (back-to-back is OK)
-      
+
       const saveButton = screen.getByText(/save/i);
       fireEvent.click(saveButton);
 
       // Should not show overlap error for back-to-back schedules
       await waitFor(() => {
-        expect(screen.queryByText(/already has a schedule during this time/i)).not.toBeInTheDocument();
+        expect(
+          screen.queryByText(/already has a schedule during this time/i)
+        ).not.toBeInTheDocument();
       });
     });
 
@@ -208,8 +220,8 @@ describe('StaffScheduleForm', () => {
           status: ScheduleStatus.SCHEDULED,
           notes: '',
           location: 'Main Location',
-          role: 'groomer'
-        }
+          role: 'groomer',
+        },
       ];
 
       render(
@@ -227,7 +239,9 @@ describe('StaffScheduleForm', () => {
 
       // Should detect overlap even with ISO format
       await waitFor(() => {
-        expect(screen.getByText(/already has a schedule during this time/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(/already has a schedule during this time/i)
+        ).toBeInTheDocument();
       });
     });
 
@@ -242,8 +256,8 @@ describe('StaffScheduleForm', () => {
           status: ScheduleStatus.SCHEDULED,
           notes: '',
           location: 'Main Location',
-          role: 'groomer'
-        }
+          role: 'groomer',
+        },
       ];
 
       render(
@@ -261,7 +275,9 @@ describe('StaffScheduleForm', () => {
 
       // Should detect overlap with simple date format
       await waitFor(() => {
-        expect(screen.getByText(/already has a schedule during this time/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(/already has a schedule during this time/i)
+        ).toBeInTheDocument();
       });
     });
 
@@ -275,7 +291,7 @@ describe('StaffScheduleForm', () => {
         status: ScheduleStatus.SCHEDULED,
         notes: '',
         location: 'Main Location',
-        role: 'groomer'
+        role: 'groomer',
       };
 
       render(
@@ -292,7 +308,9 @@ describe('StaffScheduleForm', () => {
 
       // Should not show overlap error when editing the same schedule
       await waitFor(() => {
-        expect(screen.queryByText(/already has a schedule during this time/i)).not.toBeInTheDocument();
+        expect(
+          screen.queryByText(/already has a schedule during this time/i)
+        ).not.toBeInTheDocument();
       });
     });
   });
@@ -305,7 +323,9 @@ describe('StaffScheduleForm', () => {
       fireEvent.click(saveButton);
 
       await waitFor(() => {
-        expect(screen.getByText(/staff member is required/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(/staff member is required/i)
+        ).toBeInTheDocument();
       });
 
       expect(mockOnSave).not.toHaveBeenCalled();

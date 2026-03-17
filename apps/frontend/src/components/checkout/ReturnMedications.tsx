@@ -28,7 +28,7 @@ const ReturnMedications: React.FC<ReturnMedicationsProps> = ({
   onBack,
 }) => {
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>(
-    {},
+    {}
   );
 
   const handleToggle = (itemId: string) => {

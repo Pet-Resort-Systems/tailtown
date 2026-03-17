@@ -5,16 +5,15 @@ import {
   createPriceRule,
   updatePriceRule,
   deletePriceRule,
-  calculatePrice
+  calculatePrice,
 } from '../controllers/priceRule.controller';
 
 const router = Router();
 
-router.route('/')
-  .get(getAllPriceRules)
-  .post(createPriceRule);
+router.route('/').get(getAllPriceRules).post(createPriceRule);
 
-router.route('/:id')
+router
+  .route('/:id')
   .get(getPriceRuleById)
   .put(updatePriceRule)
   .delete(deletePriceRule);

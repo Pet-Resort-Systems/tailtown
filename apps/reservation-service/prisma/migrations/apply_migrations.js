@@ -1,9 +1,9 @@
 /**
  * Database Migration Script
- * 
+ *
  * This script applies the SQL migration to create the critical tables
  * identified by our schema validation: Reservation, Customer, Pet, and Resource.
- * 
+ *
  * Usage:
  * 1. Ensure DATABASE_URL in .env is correctly configured
  * 2. Run: node prisma/migrations/apply_migrations.js
@@ -16,20 +16,20 @@ const prisma = new PrismaClient();
 
 async function main() {
   console.log('Starting database migration...');
-  
+
   try {
     // Read the SQL migration file
     const sqlPath = path.join(__dirname, 'create_critical_tables.sql');
     const sql = fs.readFileSync(sqlPath, 'utf8');
-    
+
     // Split the SQL into individual statements (split by semicolon)
     const statements = sql
       .split(';')
-      .map(statement => statement.trim())
-      .filter(statement => statement.length > 0);
-    
+      .map((statement) => statement.trim())
+      .filter((statement) => statement.length > 0);
+
     console.log(`Found ${statements.length} SQL statements to execute`);
-    
+
     // Execute each statement
     for (let i = 0; i < statements.length; i++) {
       const statement = statements[i];
@@ -42,7 +42,7 @@ async function main() {
         // This allows the script to create as many tables as possible
       }
     }
-    
+
     console.log('Migration completed successfully');
   } catch (error) {
     console.error('Migration failed:', error.message);

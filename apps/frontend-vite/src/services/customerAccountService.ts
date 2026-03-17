@@ -8,7 +8,7 @@
  * - View account balance
  */
 
-import api from "./api";
+import api from './api';
 
 export interface CustomerReservation {
   id: string;
@@ -61,7 +61,7 @@ export interface DaycarePass {
   expiresAt?: string;
   purchasedAt: string;
   price: number;
-  status: "ACTIVE" | "EXPIRED" | "USED";
+  status: 'ACTIVE' | 'EXPIRED' | 'USED';
 }
 
 export interface DaycarePassType {
@@ -84,7 +84,7 @@ export interface Invoice {
   id: string;
   invoiceNumber: string;
   amount: number;
-  status: "PAID" | "PENDING" | "OVERDUE";
+  status: 'PAID' | 'PENDING' | 'OVERDUE';
   dueDate: string;
   createdAt: string;
   items?: {
@@ -145,7 +145,7 @@ export const customerAccountService = {
     customerId: string,
     data: Partial<CustomerPet>
   ): Promise<CustomerPet> {
-    const response = await api.post("/pets", { ...data, customerId });
+    const response = await api.post('/pets', { ...data, customerId });
     return response.data.data || response.data;
   },
 
@@ -161,7 +161,7 @@ export const customerAccountService = {
    * Get available daycare pass types for purchase
    */
   async getAvailablePassTypes(): Promise<DaycarePassType[]> {
-    const response = await api.get("/daycare-passes/types");
+    const response = await api.get('/daycare-passes/types');
     return response.data.data || response.data || [];
   },
 
@@ -173,7 +173,7 @@ export const customerAccountService = {
     passTypeId: string,
     paymentMethod?: any
   ): Promise<DaycarePass> {
-    const response = await api.post("/daycare-passes/purchase", {
+    const response = await api.post('/daycare-passes/purchase', {
       customerId,
       passTypeId,
       paymentMethod,
@@ -195,7 +195,7 @@ export const customerAccountService = {
    * Get customer's invoices
    */
   async getInvoices(customerId: string, status?: string): Promise<Invoice[]> {
-    const params = status ? `?status=${status}` : "";
+    const params = status ? `?status=${status}` : '';
     const response = await api.get(`/invoices/customer/${customerId}${params}`);
     return response.data.data || response.data || [];
   },

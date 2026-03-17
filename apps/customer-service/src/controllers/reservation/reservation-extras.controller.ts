@@ -6,10 +6,10 @@
  * - addAddOnsToReservation
  */
 
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-import { AppError } from "../../middleware/error.middleware";
-import { logger } from "../../utils/logger";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { AppError } from '../../middleware/error.middleware';
+import { logger } from '../../utils/logger';
 
 const prisma = new PrismaClient();
 
@@ -44,7 +44,7 @@ export const getTodayRevenue = async (
           lte: endOfDay,
         },
         status: {
-          in: ["CONFIRMED", "CHECKED_IN", "COMPLETED"],
+          in: ['CONFIRMED', 'CHECKED_IN', 'COMPLETED'],
         },
       },
       include: {
@@ -58,7 +58,7 @@ export const getTodayRevenue = async (
     }, 0);
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       revenue,
     });
   } catch (error) {
@@ -80,7 +80,7 @@ export const addAddOnsToReservation = async (
 
     // Validate input
     if (!Array.isArray(addOns) || addOns.length === 0) {
-      return next(new AppError("Add-ons must be a non-empty array", 400));
+      return next(new AppError('Add-ons must be a non-empty array', 400));
     }
 
     // Check if the reservation exists
@@ -90,7 +90,7 @@ export const addAddOnsToReservation = async (
     });
 
     if (!reservation) {
-      return next(new AppError("Reservation not found", 404));
+      return next(new AppError('Reservation not found', 404));
     }
 
     // Process each add-on
@@ -137,7 +137,7 @@ export const addAddOnsToReservation = async (
             // Create a temporary add-on service object
             addOnService = {
               id: serviceId,
-              tenantId: "dev",
+              tenantId: 'dev',
               name: service.name,
               description: service.description,
               price: service.price,
@@ -173,7 +173,7 @@ export const addAddOnsToReservation = async (
 
               addOnResults.push(reservationAddOn);
             } catch (createError) {
-              logger.error("Error creating reservation add-on", {
+              logger.error('Error creating reservation add-on', {
                 createError,
               });
               errors.push(
@@ -187,7 +187,7 @@ export const addAddOnsToReservation = async (
           }
         }
       } catch (error) {
-        logger.error("Error processing add-on", { error });
+        logger.error('Error processing add-on', { error });
         errors.push(error instanceof Error ? error.message : String(error));
       }
     }
@@ -198,14 +198,14 @@ export const addAddOnsToReservation = async (
       message:
         addOnResults.length > 0
           ? `Successfully added ${addOnResults.length} add-on(s) to the reservation`
-          : "Failed to add any add-ons to the reservation",
+          : 'Failed to add any add-ons to the reservation',
       addOns: addOnResults,
       errors: errors.length > 0 ? errors : undefined,
     };
 
     return res.status(addOnResults.length > 0 ? 200 : 400).json(response);
   } catch (error) {
-    logger.error("Error in addAddOnsToReservation", { error });
+    logger.error('Error in addAddOnsToReservation', { error });
     return next(error);
   }
 };

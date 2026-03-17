@@ -4,20 +4,20 @@
  * Tests that actually call controller functions against the test database.
  */
 
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 import {
   getTestPrismaClient,
   createTestTenant,
   deleteTestData,
   disconnectTestDatabase,
-} from "../../test/setup-test-db";
+} from '../../test/setup-test-db';
 import {
   getAllSuites,
   updateSuiteCleaning,
   getSuiteStats,
-} from "../suite.controller";
+} from '../suite.controller';
 
-describe("Suite Controller Integration Tests", () => {
+describe('Suite Controller Integration Tests', () => {
   const prisma = getTestPrismaClient();
   let testTenantId: string;
   let testSuiteIds: string[] = [];
@@ -38,8 +38,8 @@ describe("Suite Controller Integration Tests", () => {
     const suite1 = await prisma.resource.create({
       data: {
         tenantId: testTenantId,
-        name: "Suite A",
-        type: "STANDARD_SUITE",
+        name: 'Suite A',
+        type: 'STANDARD_SUITE',
         isActive: true,
       },
     });
@@ -48,8 +48,8 @@ describe("Suite Controller Integration Tests", () => {
     const suite2 = await prisma.resource.create({
       data: {
         tenantId: testTenantId,
-        name: "Suite B",
-        type: "VIP_SUITE",
+        name: 'Suite B',
+        type: 'VIP_SUITE',
         isActive: true,
       },
     });
@@ -58,8 +58,8 @@ describe("Suite Controller Integration Tests", () => {
     const suite3 = await prisma.resource.create({
       data: {
         tenantId: testTenantId,
-        name: "Suite C",
-        type: "STANDARD_PLUS_SUITE",
+        name: 'Suite C',
+        type: 'STANDARD_PLUS_SUITE',
         isActive: false, // Inactive suite
       },
     });
@@ -79,8 +79,8 @@ describe("Suite Controller Integration Tests", () => {
     jest.clearAllMocks();
   });
 
-  describe("getAllSuites", () => {
-    it("should return all active suites", async () => {
+  describe('getAllSuites', () => {
+    it('should return all active suites', async () => {
       const req = {
         query: {},
         params: {},
@@ -92,13 +92,13 @@ describe("Suite Controller Integration Tests", () => {
 
       expect(res.status).toHaveBeenCalledWith(200);
       const responseData = (res.json as jest.Mock).mock.calls[0][0];
-      expect(responseData.status).toBe("success");
+      expect(responseData.status).toBe('success');
       expect(Array.isArray(responseData.data)).toBe(true);
     });
 
-    it("should filter by suite type", async () => {
+    it('should filter by suite type', async () => {
       const req = {
-        query: { type: "VIP_SUITE" },
+        query: { type: 'VIP_SUITE' },
         params: {},
         body: {},
       } as unknown as Request;
@@ -109,12 +109,12 @@ describe("Suite Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       const responseData = (res.json as jest.Mock).mock.calls[0][0];
       responseData.data.forEach((suite: any) => {
-        expect(suite.type).toBe("VIP_SUITE");
+        expect(suite.type).toBe('VIP_SUITE');
       });
     });
 
-    it("should filter by date", async () => {
-      const today = new Date().toISOString().split("T")[0];
+    it('should filter by date', async () => {
+      const today = new Date().toISOString().split('T')[0];
       const req = {
         query: { date: today },
         params: {},
@@ -128,15 +128,15 @@ describe("Suite Controller Integration Tests", () => {
     });
   });
 
-  describe("updateSuiteCleaning", () => {
+  describe('updateSuiteCleaning', () => {
     let cleaningSuiteId: string;
 
     beforeAll(async () => {
       const suite = await prisma.resource.create({
         data: {
           tenantId: testTenantId,
-          name: "Cleaning Test Suite",
-          type: "STANDARD_SUITE",
+          name: 'Cleaning Test Suite',
+          type: 'STANDARD_SUITE',
           isActive: true,
         },
       });
@@ -144,12 +144,12 @@ describe("Suite Controller Integration Tests", () => {
       testSuiteIds.push(cleaningSuiteId);
     });
 
-    it("should update suite cleaning status", async () => {
+    it('should update suite cleaning status', async () => {
       const req = {
         params: { id: cleaningSuiteId },
         query: {},
         body: {
-          cleaningStatus: "CLEAN",
+          cleaningStatus: 'CLEAN',
         },
       } as unknown as Request;
       const res = createMockResponse();
@@ -159,11 +159,11 @@ describe("Suite Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
-    it("should handle non-existent suite", async () => {
+    it('should handle non-existent suite', async () => {
       const req = {
-        params: { id: "00000000-0000-0000-0000-000000000000" },
+        params: { id: '00000000-0000-0000-0000-000000000000' },
         query: {},
-        body: { cleaningStatus: "CLEAN" },
+        body: { cleaningStatus: 'CLEAN' },
       } as unknown as Request;
       const res = createMockResponse();
 
@@ -173,8 +173,8 @@ describe("Suite Controller Integration Tests", () => {
     });
   });
 
-  describe("getSuiteStats", () => {
-    it("should return suite statistics", async () => {
+  describe('getSuiteStats', () => {
+    it('should return suite statistics', async () => {
       const req = {
         query: {},
         params: {},
@@ -186,11 +186,11 @@ describe("Suite Controller Integration Tests", () => {
 
       expect(res.status).toHaveBeenCalledWith(200);
       const responseData = (res.json as jest.Mock).mock.calls[0][0];
-      expect(responseData.status).toBe("success");
+      expect(responseData.status).toBe('success');
     });
 
-    it("should filter stats by date", async () => {
-      const today = new Date().toISOString().split("T")[0];
+    it('should filter stats by date', async () => {
+      const today = new Date().toISOString().split('T')[0];
       const req = {
         query: { date: today },
         params: {},

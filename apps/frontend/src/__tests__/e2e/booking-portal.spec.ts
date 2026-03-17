@@ -7,15 +7,15 @@
  * - Mobile responsiveness
  */
 
-import { test, expect, Page } from "@playwright/test";
+import { test, expect, Page } from '@playwright/test';
 
-const BASE_URL = process.env.REACT_APP_URL || "http://localhost:3000";
-const TENANT_ID = "dev";
+const BASE_URL = process.env.REACT_APP_URL || 'http://localhost:3000';
+const TENANT_ID = 'dev';
 
 // Test customer - must exist in database
 const TEST_CUSTOMER = {
-  email: "test@example.com",
-  password: "anypassword", // Password not verified yet
+  email: 'test@example.com',
+  password: 'anypassword', // Password not verified yet
 };
 
 /**
@@ -26,7 +26,7 @@ async function customerLogin(page: Page) {
 
   // Set tenant ID in localStorage
   await page.evaluate((tenantId) => {
-    localStorage.setItem("tailtown_tenant_id", tenantId);
+    localStorage.setItem('tailtown_tenant_id', tenantId);
   }, TENANT_ID);
 
   // Reload to pick up tenant ID
@@ -38,99 +38,99 @@ async function customerLogin(page: Page) {
   await page.click('button[type="submit"]');
 
   // Wait for service selection step indicator
-  await page.waitForSelector("text=Select Service", { timeout: 15000 });
+  await page.waitForSelector('text=Select Service', { timeout: 15000 });
 }
 
-test.describe("Booking Portal - Authentication UI", () => {
-  test("should display login form", async ({ page }) => {
+test.describe('Booking Portal - Authentication UI', () => {
+  test('should display login form', async ({ page }) => {
     await page.goto(`${BASE_URL}/book`);
-    await expect(page.locator("text=Login")).toBeVisible();
-    await expect(page.locator("text=Create Account")).toBeVisible();
+    await expect(page.locator('text=Login')).toBeVisible();
+    await expect(page.locator('text=Create Account')).toBeVisible();
     await expect(page.locator('input[type="email"]')).toBeVisible();
     await expect(page.locator('input[type="password"]')).toBeVisible();
   });
 
-  test("should show error for non-existent customer", async ({ page }) => {
+  test('should show error for non-existent customer', async ({ page }) => {
     await page.goto(`${BASE_URL}/book`);
 
     // Set tenant ID
     await page.evaluate((tenantId) => {
-      localStorage.setItem("tailtown_tenant_id", tenantId);
+      localStorage.setItem('tailtown_tenant_id', tenantId);
     }, TENANT_ID);
     await page.reload();
 
-    await page.fill('input[type="email"]', "nonexistent@example.com");
-    await page.fill('input[type="password"]', "anypassword");
+    await page.fill('input[type="email"]', 'nonexistent@example.com');
+    await page.fill('input[type="password"]', 'anypassword');
     await page.click('button[type="submit"]');
     // Error appears in Alert component
     await expect(page.locator('[role="alert"]')).toBeVisible({ timeout: 5000 });
   });
 
-  test("should show signup form", async ({ page }) => {
+  test('should show signup form', async ({ page }) => {
     await page.goto(`${BASE_URL}/book`);
-    await page.click("text=Create Account");
+    await page.click('text=Create Account');
     await expect(page.locator('label:has-text("First Name")')).toBeVisible();
     await expect(page.locator('label:has-text("Last Name")')).toBeVisible();
     await expect(page.locator('label:has-text("Email")')).toBeVisible();
     await expect(page.locator('label:has-text("Phone Number")')).toBeVisible();
   });
 
-  test("should have forgot password link", async ({ page }) => {
+  test('should have forgot password link', async ({ page }) => {
     await page.goto(`${BASE_URL}/book`);
-    await expect(page.locator("text=Forgot password")).toBeVisible();
+    await expect(page.locator('text=Forgot password')).toBeVisible();
   });
 });
 
-test.describe("Booking Portal - Login Flow", () => {
-  test("should login successfully with existing customer email", async ({
+test.describe('Booking Portal - Login Flow', () => {
+  test('should login successfully with existing customer email', async ({
     page,
   }) => {
     await customerLogin(page);
     // After login, should see "Select Service" step indicator
-    await expect(page.getByText("Select Service")).toBeVisible();
+    await expect(page.getByText('Select Service')).toBeVisible();
   });
 
-  test("should display service categories after login", async ({ page }) => {
+  test('should display service categories after login', async ({ page }) => {
     await customerLogin(page);
     // Should see at least one service category
     await expect(
-      page.locator("text=/boarding|daycare|grooming/i").first()
+      page.locator('text=/boarding|daycare|grooming/i').first()
     ).toBeVisible();
   });
 });
 
-test.describe("Booking Portal - Service Selection", () => {
-  test("should show service selection page after login", async ({ page }) => {
+test.describe('Booking Portal - Service Selection', () => {
+  test('should show service selection page after login', async ({ page }) => {
     await customerLogin(page);
 
     // Should see the service selection prompt
     await expect(
-      page.getByText("What service would you like to book?")
+      page.getByText('What service would you like to book?')
     ).toBeVisible();
     // Should be on step 1 of 6
-    await expect(page.getByText("Step 1 of 6")).toBeVisible();
+    await expect(page.getByText('Step 1 of 6')).toBeVisible();
   });
 });
 
-test.describe("Booking Portal - Mobile", () => {
+test.describe('Booking Portal - Mobile', () => {
   test.use({ viewport: { width: 375, height: 667 } });
 
-  test("should be usable on mobile", async ({ page }) => {
+  test('should be usable on mobile', async ({ page }) => {
     await page.goto(`${BASE_URL}/book`);
     await expect(page.locator('input[type="email"]')).toBeVisible();
     await expect(page.locator('button[type="submit"]')).toBeVisible();
 
     // Check page doesn't overflow horizontally
-    const body = page.locator("body");
+    const body = page.locator('body');
     const bodyWidth = await body.evaluate((el) => el.scrollWidth);
     expect(bodyWidth).toBeLessThanOrEqual(375);
   });
 
-  test("should show mobile-friendly form", async ({ page }) => {
+  test('should show mobile-friendly form', async ({ page }) => {
     await page.goto(`${BASE_URL}/book`);
 
     // Form should be visible and properly sized
-    const form = page.locator("form");
+    const form = page.locator('form');
     await expect(form).toBeVisible();
 
     // Inputs should be full width on mobile
@@ -141,8 +141,8 @@ test.describe("Booking Portal - Mobile", () => {
   });
 });
 
-test.describe("Booking Portal - Accessibility", () => {
-  test("should have proper form labels", async ({ page }) => {
+test.describe('Booking Portal - Accessibility', () => {
+  test('should have proper form labels', async ({ page }) => {
     await page.goto(`${BASE_URL}/book`);
 
     // Email input should have a label
@@ -152,7 +152,7 @@ test.describe("Booking Portal - Accessibility", () => {
     await expect(page.locator('label:has-text("Password")')).toBeVisible();
   });
 
-  test("should have submit button", async ({ page }) => {
+  test('should have submit button', async ({ page }) => {
     await page.goto(`${BASE_URL}/book`);
     const submitButton = page.locator('button[type="submit"]');
     await expect(submitButton).toBeVisible();

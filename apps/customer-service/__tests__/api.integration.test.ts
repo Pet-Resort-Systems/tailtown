@@ -1,6 +1,6 @@
 /**
  * API Integration Tests
- * 
+ *
  * These tests validate that the API endpoints are working correctly
  * and returning expected data.
  */
@@ -49,11 +49,9 @@ describe('API Integration Tests', () => {
       //     tenantId: 'test'
       //   }
       // });
-      
       // const response = await request(app).get(`/api/customers/${customer.id}`);
       // expect(response.status).toBe(200);
       // expect(response.body.id).toBe(customer.id);
-      
       // Clean up
       // await prisma.customer.delete({ where: { id: customer.id } });
     });
@@ -65,14 +63,11 @@ describe('API Integration Tests', () => {
       //   lastName: 'Customer',
       //   phone: '555-0123'
       // };
-      
       // const response = await request(app)
       //   .post('/api/customers')
       //   .send(customerData);
-      
       // expect(response.status).toBe(201);
       // expect(response.body.email).toBe(customerData.email);
-      
       // Clean up
       // await prisma.customer.delete({ where: { id: response.body.id } });
     });
@@ -105,11 +100,9 @@ describe('API Integration Tests', () => {
       //   // Missing required fields
       //   firstName: 'Test'
       // };
-      
       // const response = await request(app)
       //   .post('/api/customers')
       //   .send(invalidData);
-      
       // expect(response.status).toBe(400);
     });
 

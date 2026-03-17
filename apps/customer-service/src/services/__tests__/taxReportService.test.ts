@@ -7,17 +7,17 @@ import {
   getMonthlyTaxReport,
   getQuarterlyTaxReport,
   getAnnualTaxReport,
-  getTaxBreakdown
+  getTaxBreakdown,
 } from '../taxReportService';
 
 jest.mock('@prisma/client', () => {
   const mockPrismaClient = {
     invoice: {
-      findMany: jest.fn()
-    }
+      findMany: jest.fn(),
+    },
   };
   return {
-    PrismaClient: jest.fn(() => mockPrismaClient)
+    PrismaClient: jest.fn(() => mockPrismaClient),
   };
 });
 
@@ -41,9 +41,9 @@ describe('TaxReportService', () => {
               type: 'SERVICE',
               description: 'Service',
               amount: 100,
-              taxable: true
-            }
-          ]
+              taxable: true,
+            },
+          ],
         },
         {
           id: '2',
@@ -55,10 +55,10 @@ describe('TaxReportService', () => {
               type: 'PRODUCT',
               description: 'Product',
               amount: 50,
-              taxable: true
-            }
-          ]
-        }
+              taxable: true,
+            },
+          ],
+        },
       ];
 
       (prisma.invoice.findMany as jest.Mock).mockResolvedValue(mockInvoices);
@@ -83,16 +83,16 @@ describe('TaxReportService', () => {
               type: 'SERVICE',
               description: 'Taxable Service',
               amount: 80,
-              taxable: true
+              taxable: true,
             },
             {
               type: 'SERVICE',
               description: 'Non-Taxable Service',
               amount: 20,
-              taxable: false
-            }
-          ]
-        }
+              taxable: false,
+            },
+          ],
+        },
       ];
 
       (prisma.invoice.findMany as jest.Mock).mockResolvedValue(mockInvoices);
@@ -116,10 +116,10 @@ describe('TaxReportService', () => {
               type: 'SERVICE',
               description: 'Service',
               amount: 100,
-              taxable: false
-            }
-          ]
-        }
+              taxable: false,
+            },
+          ],
+        },
       ];
 
       (prisma.invoice.findMany as jest.Mock).mockResolvedValue(mockInvoices);
@@ -139,8 +139,15 @@ describe('TaxReportService', () => {
           subtotal: 100,
           taxAmount: 8,
           taxRate: 8.0,
-          lineItems: [{ type: 'SERVICE', description: 'Service', amount: 100, taxable: true }]
-        }
+          lineItems: [
+            {
+              type: 'SERVICE',
+              description: 'Service',
+              amount: 100,
+              taxable: true,
+            },
+          ],
+        },
       ];
 
       (prisma.invoice.findMany as jest.Mock).mockResolvedValue(mockInvoices);
@@ -175,8 +182,15 @@ describe('TaxReportService', () => {
           subtotal: 1000,
           taxAmount: 80,
           taxRate: 8.0,
-          lineItems: [{ type: 'SERVICE', description: 'Service', amount: 1000, taxable: true }]
-        }
+          lineItems: [
+            {
+              type: 'SERVICE',
+              description: 'Service',
+              amount: 1000,
+              taxable: true,
+            },
+          ],
+        },
       ];
 
       (prisma.invoice.findMany as jest.Mock).mockResolvedValue(mockInvoices);
@@ -195,10 +209,20 @@ describe('TaxReportService', () => {
           taxAmount: 8,
           taxRate: 8.0,
           lineItems: [
-            { type: 'SERVICE', description: 'Service', amount: 60, taxable: true },
-            { type: 'PRODUCT', description: 'Product', amount: 40, taxable: true }
-          ]
-        }
+            {
+              type: 'SERVICE',
+              description: 'Service',
+              amount: 60,
+              taxable: true,
+            },
+            {
+              type: 'PRODUCT',
+              description: 'Product',
+              amount: 40,
+              taxable: true,
+            },
+          ],
+        },
       ];
 
       (prisma.invoice.findMany as jest.Mock).mockResolvedValue(mockInvoices);
@@ -218,10 +242,20 @@ describe('TaxReportService', () => {
           taxAmount: 8,
           taxRate: 8.0,
           lineItems: [
-            { type: 'SERVICE', description: 'Service', amount: 60, taxable: true },
-            { type: 'PRODUCT', description: 'Product', amount: 40, taxable: true }
-          ]
-        }
+            {
+              type: 'SERVICE',
+              description: 'Service',
+              amount: 60,
+              taxable: true,
+            },
+            {
+              type: 'PRODUCT',
+              description: 'Product',
+              amount: 40,
+              taxable: true,
+            },
+          ],
+        },
       ];
 
       (prisma.invoice.findMany as jest.Mock).mockResolvedValue(mockInvoices);
@@ -229,8 +263,8 @@ describe('TaxReportService', () => {
       const result = await getTaxBreakdown('dev', '2025-10-01', '2025-10-31');
 
       expect(result.length).toBeGreaterThan(0);
-      const serviceCategory = result.find(r => r.category === 'SERVICE');
-      const productCategory = result.find(r => r.category === 'PRODUCT');
+      const serviceCategory = result.find((r) => r.category === 'SERVICE');
+      const productCategory = result.find((r) => r.category === 'PRODUCT');
 
       expect(serviceCategory).toBeDefined();
       expect(productCategory).toBeDefined();
@@ -244,17 +278,27 @@ describe('TaxReportService', () => {
           taxAmount: 8,
           taxRate: 8.0,
           lineItems: [
-            { type: 'SERVICE', description: 'Taxable', amount: 100, taxable: true },
-            { type: 'SERVICE', description: 'Non-Taxable', amount: 50, taxable: false }
-          ]
-        }
+            {
+              type: 'SERVICE',
+              description: 'Taxable',
+              amount: 100,
+              taxable: true,
+            },
+            {
+              type: 'SERVICE',
+              description: 'Non-Taxable',
+              amount: 50,
+              taxable: false,
+            },
+          ],
+        },
       ];
 
       (prisma.invoice.findMany as jest.Mock).mockResolvedValue(mockInvoices);
 
       const result = await getTaxBreakdown('dev', '2025-10-01', '2025-10-31');
 
-      const serviceCategory = result.find(r => r.category === 'SERVICE');
+      const serviceCategory = result.find((r) => r.category === 'SERVICE');
       expect(serviceCategory?.taxableAmount).toBe(100);
       expect(serviceCategory?.nonTaxableAmount).toBe(50);
     });
@@ -278,8 +322,8 @@ describe('TaxReportService', () => {
           subtotal: 0,
           taxAmount: 0,
           taxRate: 0,
-          lineItems: []
-        }
+          lineItems: [],
+        },
       ];
 
       (prisma.invoice.findMany as jest.Mock).mockResolvedValue(mockInvoices);

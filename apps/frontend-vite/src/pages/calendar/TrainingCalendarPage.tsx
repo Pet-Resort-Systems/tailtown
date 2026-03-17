@@ -6,10 +6,10 @@ import { ServiceCategory } from '../../types/service';
 
 /**
  * Training Calendar Page Component
- * 
+ *
  * Displays a calendar view filtered to show only training service reservations.
  * Uses the SpecializedCalendar component with fixed time formatting.
- * 
+ *
  * Note: Class management has been moved to Admin section to prevent accidental
  * schedule modifications by staff. Access via Admin > Training Classes.
  */
@@ -27,8 +27,8 @@ const TrainingCalendarPage: React.FC = () => {
         <UpcomingClasses />
       </Box>
 
-      <SpecializedCalendar 
-        serviceCategories={[ServiceCategory.TRAINING]} 
+      <SpecializedCalendar
+        serviceCategories={[ServiceCategory.TRAINING]}
         calendarTitle="Training Calendar"
       />
     </Container>

@@ -1,5 +1,11 @@
 import express from 'express';
-import { getMember, addPoints, redeemPoints, getMemberStats, getAllMembers } from '../controllers/loyalty.controller';
+import {
+  getMember,
+  addPoints,
+  redeemPoints,
+  getMemberStats,
+  getAllMembers,
+} from '../controllers/loyalty.controller';
 
 const router = express.Router();
 

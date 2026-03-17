@@ -1,13 +1,16 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_CUSTOMER_SERVICE_URL || window.location.origin;
+const API_URL =
+  import.meta.env.VITE_CUSTOMER_SERVICE_URL || window.location.origin;
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
 });
 
 axiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem('superAdminAccessToken') || localStorage.getItem('accessToken');
+  const token =
+    localStorage.getItem('superAdminAccessToken') ||
+    localStorage.getItem('accessToken');
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -117,10 +120,14 @@ class TenantService {
   }): Promise<Tenant[]> {
     const params = new URLSearchParams();
     if (filters?.status) params.append('status', filters.status);
-    if (filters?.isActive !== undefined) params.append('isActive', filters.isActive.toString());
-    if (filters?.isPaused !== undefined) params.append('isPaused', filters.isPaused.toString());
+    if (filters?.isActive !== undefined)
+      params.append('isActive', filters.isActive.toString());
+    if (filters?.isPaused !== undefined)
+      params.append('isPaused', filters.isPaused.toString());
 
-    const response = await axiosInstance.get(`/api/tenants?${params.toString()}`);
+    const response = await axiosInstance.get(
+      `/api/tenants?${params.toString()}`
+    );
     return response.data.data;
   }
 
@@ -130,7 +137,9 @@ class TenantService {
   }
 
   async getTenantBySubdomain(subdomain: string): Promise<Tenant> {
-    const response = await axiosInstance.get(`/api/tenants/subdomain/${subdomain}`);
+    const response = await axiosInstance.get(
+      `/api/tenants/subdomain/${subdomain}`
+    );
     return response.data.data;
   }
 

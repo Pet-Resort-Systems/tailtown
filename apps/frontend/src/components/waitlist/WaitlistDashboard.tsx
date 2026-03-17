@@ -4,7 +4,7 @@
  * Staff dashboard for managing waitlist entries
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Card,
@@ -22,8 +22,8 @@ import {
   Alert,
   CircularProgress,
   Divider,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   Notifications as NotificationsIcon,
   Info as InfoIcon,
@@ -31,9 +31,9 @@ import {
   Pets as PetsIcon,
   ContentCut as GroomingIcon,
   School as TrainingIcon,
-} from "@mui/icons-material";
-import { waitlistService, WaitlistEntry } from "../../services/waitlistService";
-import { format } from "date-fns";
+} from '@mui/icons-material';
+import { waitlistService, WaitlistEntry } from '../../services/waitlistService';
+import { format } from 'date-fns';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -82,7 +82,7 @@ const WaitlistDashboard: React.FC = () => {
       setGrouped(data.grouped);
       setSummary(data.summary);
     } catch (err: any) {
-      setError(err.message || "Failed to load waitlist");
+      setError(err.message || 'Failed to load waitlist');
     } finally {
       setLoading(false);
     }
@@ -104,10 +104,10 @@ const WaitlistDashboard: React.FC = () => {
 
   const handleCancelEntry = async (id: string) => {
     try {
-      await waitlistService.updateEntry(id, { status: "CANCELLED" });
+      await waitlistService.updateEntry(id, { status: 'CANCELLED' });
       await loadWaitlist();
     } catch (err: any) {
-      setError(err.message || "Failed to cancel entry");
+      setError(err.message || 'Failed to cancel entry');
     }
   };
 
@@ -126,7 +126,7 @@ const WaitlistDashboard: React.FC = () => {
       <CardContent>
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
-            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
               <Box sx={{ mr: 1 }}>{getServiceIcon(entry.serviceType)}</Box>
               <Typography variant="h6">
                 {entry.customer?.firstName} {entry.customer?.lastName}
@@ -136,18 +136,18 @@ const WaitlistDashboard: React.FC = () => {
               Pet: {entry.pet?.name} ({entry.pet?.type})
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Requested:{" "}
-              {format(new Date(entry.requestedStartDate), "MMM dd, yyyy")}
+              Requested:{' '}
+              {format(new Date(entry.requestedStartDate), 'MMM dd, yyyy')}
               {entry.requestedEndDate &&
                 ` - ${format(
                   new Date(entry.requestedEndDate),
-                  "MMM dd, yyyy"
+                  'MMM dd, yyyy'
                 )}`}
             </Typography>
           </Grid>
 
           <Grid item xs={12} md={3}>
-            <Box sx={{ textAlign: "center" }}>
+            <Box sx={{ textAlign: 'center' }}>
               <Typography variant="h4" color="primary">
                 #{entry.position}
               </Typography>
@@ -158,7 +158,7 @@ const WaitlistDashboard: React.FC = () => {
           </Grid>
 
           <Grid item xs={12} md={3}>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               <Chip
                 label={waitlistService.formatStatus(entry.status)}
                 color={waitlistService.getStatusColor(entry.status)}
@@ -169,7 +169,7 @@ const WaitlistDashboard: React.FC = () => {
                 variant="outlined"
                 startIcon={<NotificationsIcon />}
                 onClick={() => handleNotify(entry)}
-                disabled={entry.status !== "ACTIVE"}
+                disabled={entry.status !== 'ACTIVE'}
               >
                 Notify
               </Button>
@@ -186,7 +186,7 @@ const WaitlistDashboard: React.FC = () => {
 
         {entry.customerNotes && (
           <Box
-            sx={{ mt: 2, p: 1, bgcolor: "background.default", borderRadius: 1 }}
+            sx={{ mt: 2, p: 1, bgcolor: 'background.default', borderRadius: 1 }}
           >
             <Typography variant="caption" color="text.secondary">
               Customer Notes:
@@ -200,7 +200,7 @@ const WaitlistDashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -229,7 +229,7 @@ const WaitlistDashboard: React.FC = () => {
           </Alert>
         )}
 
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs
             value={tabValue}
             onChange={handleTabChange}
@@ -301,7 +301,7 @@ const WaitlistDashboard: React.FC = () => {
                     Customer
                   </Typography>
                   <Typography variant="body1">
-                    {selectedEntry.customer?.firstName}{" "}
+                    {selectedEntry.customer?.firstName}{' '}
                     {selectedEntry.customer?.lastName}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -357,12 +357,12 @@ const WaitlistDashboard: React.FC = () => {
                   <Typography variant="body1">
                     {format(
                       new Date(selectedEntry.requestedStartDate),
-                      "MMM dd, yyyy"
+                      'MMM dd, yyyy'
                     )}
                     {selectedEntry.requestedEndDate &&
                       ` - ${format(
                         new Date(selectedEntry.requestedEndDate),
-                        "MMM dd, yyyy"
+                        'MMM dd, yyyy'
                       )}`}
                   </Typography>
                 </Grid>
@@ -383,7 +383,7 @@ const WaitlistDashboard: React.FC = () => {
                   <Typography variant="body1">
                     {selectedEntry.flexibleDates
                       ? `Yes (±${selectedEntry.dateFlexibilityDays} days)`
-                      : "No"}
+                      : 'No'}
                   </Typography>
                 </Grid>
 
@@ -423,7 +423,7 @@ const WaitlistDashboard: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDetailsOpen(false)}>Close</Button>
-          {selectedEntry && selectedEntry.status === "ACTIVE" && (
+          {selectedEntry && selectedEntry.status === 'ACTIVE' && (
             <>
               <Button
                 variant="outlined"
@@ -462,7 +462,7 @@ const WaitlistDashboard: React.FC = () => {
           </Typography>
           {selectedEntry && (
             <Alert severity="info">
-              Customer: {selectedEntry.customer?.firstName}{" "}
+              Customer: {selectedEntry.customer?.firstName}{' '}
               {selectedEntry.customer?.lastName}
               <br />
               Email: {selectedEntry.customer?.email}
@@ -478,7 +478,7 @@ const WaitlistDashboard: React.FC = () => {
             onClick={async () => {
               // TODO: Implement notification sending
               setNotifyDialogOpen(false);
-              alert("Notification feature coming soon!");
+              alert('Notification feature coming soon!');
             }}
           >
             Send Notification

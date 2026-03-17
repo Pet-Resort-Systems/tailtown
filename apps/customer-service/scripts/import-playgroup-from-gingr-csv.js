@@ -13,26 +13,26 @@
  *   node import-playgroup-from-gingr-csv.js <csv-file> [tenant-id]
  */
 
-const fs = require("fs");
-const path = require("path");
-const csv = require("csv-parser");
+const fs = require('fs');
+const path = require('path');
+const csv = require('csv-parser');
 
-require("dotenv").config({ path: path.join(__dirname, "../.env") });
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 // Color to playgroup mapping
 const COLOR_MAPPING = {
-  "#8dc7a0": "LARGE_DOG", // Green flag
-  "#697db0": "SMALL_DOG", // Blue flag
-  "#c04de8": "MEDIUM_DOG", // Purple flag
-  "#ff4a81": "NON_COMPATIBLE", // Pink/fuchsia flag - Solo play only
+  '#8dc7a0': 'LARGE_DOG', // Green flag
+  '#697db0': 'SMALL_DOG', // Blue flag
+  '#c04de8': 'MEDIUM_DOG', // Purple flag
+  '#ff4a81': 'NON_COMPATIBLE', // Pink/fuchsia flag - Solo play only
 };
 
 async function importPlaygroups(csvFile, tenantId) {
-  console.log("🐕 Gingr Playgroup Import from CSV");
-  console.log("═══════════════════════════════════════");
+  console.log('🐕 Gingr Playgroup Import from CSV');
+  console.log('═══════════════════════════════════════');
   console.log(`CSV File: ${csvFile}`);
   console.log(`Tenant: ${tenantId}\n`);
 
@@ -43,10 +43,10 @@ async function importPlaygroups(csvFile, tenantId) {
   return new Promise((resolve, reject) => {
     fs.createReadStream(csvFile)
       .pipe(csv())
-      .on("data", async (row) => {
+      .on('data', async (row) => {
         const petId = row.a_id;
         const petName = row.a_first?.trim();
-        const icons = row.icons_string || "";
+        const icons = row.icons_string || '';
 
         if (!petId || !petName) return;
 
@@ -57,9 +57,9 @@ async function importPlaygroups(csvFile, tenantId) {
         for (const [color, group] of Object.entries(COLOR_MAPPING)) {
           // Non Compat flag doesn't use "Playgroup" text, just "Non Compat"
           if (
-            color === "#ff4a81" &&
+            color === '#ff4a81' &&
             icons.includes(`color:${color}`) &&
-            icons.includes("Non Compat")
+            icons.includes('Non Compat')
           ) {
             playgroup = group;
             break;
@@ -67,7 +67,7 @@ async function importPlaygroups(csvFile, tenantId) {
           // Other flags use "Playgroup" or "PlayGroup" text
           if (
             icons.includes(`color:${color}`) &&
-            (icons.includes("Playgroup") || icons.includes("PlayGroup"))
+            (icons.includes('Playgroup') || icons.includes('PlayGroup'))
           ) {
             playgroup = group;
             break;
@@ -76,9 +76,9 @@ async function importPlaygroups(csvFile, tenantId) {
 
         updates.push({ petId, petName, playgroup });
       })
-      .on("end", async () => {
+      .on('end', async () => {
         console.log(`Processed ${processed} pets from CSV\n`);
-        console.log("Updating database...\n");
+        console.log('Updating database...\n');
 
         let updated = 0;
         let skipped = 0;
@@ -116,32 +116,32 @@ async function importPlaygroups(csvFile, tenantId) {
           }
         }
 
-        console.log("\n📊 Import Summary");
-        console.log("═══════════════════════════════════════");
+        console.log('\n📊 Import Summary');
+        console.log('═══════════════════════════════════════');
         console.log(`Total processed: ${processed}`);
         console.log(`Updated: ${updated}`);
         console.log(`Skipped (no flag): ${skipped}`);
         console.log(`Not found: ${notFound.length}`);
 
         if (notFound.length > 0) {
-          console.log("\nPets not found in Tailtown:");
+          console.log('\nPets not found in Tailtown:');
           notFound.forEach((name) => console.log(`  - ${name}`));
         }
 
         await prisma.$disconnect();
         resolve();
       })
-      .on("error", reject);
+      .on('error', reject);
   });
 }
 
 // Main
 const csvFile = process.argv[2];
-const tenantId = process.argv[3] || "b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05";
+const tenantId = process.argv[3] || 'b696b4e8-6e86-4d4b-a0c2-1da0e4b1ae05';
 
 if (!csvFile) {
   console.error(
-    "Usage: node import-playgroup-from-gingr-csv.js <csv-file> [tenant-id]"
+    'Usage: node import-playgroup-from-gingr-csv.js <csv-file> [tenant-id]'
   );
   process.exit(1);
 }
@@ -153,10 +153,10 @@ if (!fs.existsSync(csvFile)) {
 
 importPlaygroups(csvFile, tenantId)
   .then(() => {
-    console.log("\n✅ Import complete");
+    console.log('\n✅ Import complete');
     process.exit(0);
   })
   .catch((error) => {
-    console.error("\n❌ Import failed:", error);
+    console.error('\n❌ Import failed:', error);
     process.exit(1);
   });

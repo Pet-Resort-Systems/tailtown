@@ -8,14 +8,14 @@
  * - Request transformation
  */
 
-import { Request, Response, NextFunction } from "express";
-import { redisClient } from "../utils/redis";
+import { Request, Response, NextFunction } from 'express';
+import { redisClient } from '../utils/redis';
 
 // API version configuration
 export const API_VERSIONS = {
-  V1: "v1",
-  V2: "v2", // Reserved for future use
-  CURRENT: "v1",
+  V1: 'v1',
+  V2: 'v2', // Reserved for future use
+  CURRENT: 'v1',
 };
 
 interface ApiMetrics {
@@ -38,12 +38,12 @@ async function trackApiMetrics(metrics: ApiMetrics): Promise<void> {
     const redis = redisClient;
     if (!redis) return;
 
-    const date = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+    const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
     const hour = new Date().getHours();
 
     // Increment request count for tenant
     const tenantKey = `api:metrics:${metrics.tenantId}:${date}`;
-    await redis.hIncrBy(tenantKey, "total_requests", 1);
+    await redis.hIncrBy(tenantKey, 'total_requests', 1);
     await redis.hIncrBy(
       tenantKey,
       `${metrics.method}:${metrics.statusCode}`,
@@ -80,11 +80,11 @@ async function trackApiMetrics(metrics: ApiMetrics): Promise<void> {
 
     // Global metrics (across all tenants)
     const globalKey = `api:global:${date}`;
-    await redis.hIncrBy(globalKey, "total_requests", 1);
+    await redis.hIncrBy(globalKey, 'total_requests', 1);
     await redis.expire(globalKey, 60 * 60 * 24 * 30);
   } catch (error) {
     // Don't fail the request if metrics tracking fails
-    console.error("[API Gateway] Failed to track metrics:", error);
+    console.error('[API Gateway] Failed to track metrics:', error);
   }
 }
 
@@ -95,7 +95,7 @@ async function trackApiMetrics(metrics: ApiMetrics): Promise<void> {
 export function apiAnalytics() {
   return async (req: Request, res: Response, next: NextFunction) => {
     const startTime = Date.now();
-    const tenantId = (req as any).tenantId || "unknown";
+    const tenantId = (req as any).tenantId || 'unknown';
     const userId = (req as any).user?.id;
 
     // Capture original end function
@@ -115,7 +115,7 @@ export function apiAnalytics() {
           responseTime,
           timestamp: new Date().toISOString(),
           userId,
-          userAgent: req.get("user-agent"),
+          userAgent: req.get('user-agent'),
           ip: req.ip,
         });
       });
@@ -135,15 +135,15 @@ function normalizeEndpoint(path: string): string {
   // Remove UUIDs
   let normalized = path.replace(
     /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi,
-    ":id"
+    ':id'
   );
   // Remove numeric IDs
-  normalized = normalized.replace(/\/\d+/g, "/:id");
+  normalized = normalized.replace(/\/\d+/g, '/:id');
   // Remove query strings
-  normalized = normalized.split("?")[0];
+  normalized = normalized.split('?')[0];
   // Remove trailing slashes
-  normalized = normalized.replace(/\/+$/, "");
-  return normalized || "/";
+  normalized = normalized.replace(/\/+$/, '');
+  return normalized || '/';
 }
 
 /**
@@ -153,14 +153,14 @@ function normalizeEndpoint(path: string): string {
 export function apiVersionHeaders() {
   return (req: Request, res: Response, next: NextFunction) => {
     // Add API version headers
-    res.setHeader("X-API-Version", API_VERSIONS.CURRENT);
-    res.setHeader("X-API-Deprecated", "false");
+    res.setHeader('X-API-Version', API_VERSIONS.CURRENT);
+    res.setHeader('X-API-Deprecated', 'false');
 
     // Check if client requested specific version
-    const requestedVersion = req.get("X-API-Version") || req.query.api_version;
+    const requestedVersion = req.get('X-API-Version') || req.query.api_version;
     if (requestedVersion && requestedVersion !== API_VERSIONS.CURRENT) {
       res.setHeader(
-        "X-API-Version-Warning",
+        'X-API-Version-Warning',
         `Requested version ${requestedVersion} not available, using ${API_VERSIONS.CURRENT}`
       );
     }
@@ -177,16 +177,16 @@ export function correlationId() {
   return (req: Request, res: Response, next: NextFunction) => {
     // Use existing request ID or generate new one
     const requestId =
-      req.get("X-Request-ID") ||
-      req.get("X-Correlation-ID") ||
+      req.get('X-Request-ID') ||
+      req.get('X-Correlation-ID') ||
       `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
     // Attach to request for downstream use
     (req as any).correlationId = requestId;
 
     // Add to response headers
-    res.setHeader("X-Request-ID", requestId);
-    res.setHeader("X-Correlation-ID", requestId);
+    res.setHeader('X-Request-ID', requestId);
+    res.setHeader('X-Correlation-ID', requestId);
 
     next();
   };
@@ -199,13 +199,13 @@ export function correlationId() {
 export function enhancedRequestLogging() {
   return (req: Request, res: Response, next: NextFunction) => {
     const startTime = Date.now();
-    const tenantId = (req as any).tenantId || "unknown";
-    const correlationId = (req as any).correlationId || "unknown";
+    const tenantId = (req as any).tenantId || 'unknown';
+    const correlationId = (req as any).correlationId || 'unknown';
 
     // Log on response finish
-    res.on("finish", () => {
+    res.on('finish', () => {
       const duration = Date.now() - startTime;
-      const userId = (req as any).user?.id || "anonymous";
+      const userId = (req as any).user?.id || 'anonymous';
 
       // Structured log format for easy parsing
       const logEntry = {
@@ -217,18 +217,18 @@ export function enhancedRequestLogging() {
         path: req.path,
         statusCode: res.statusCode,
         duration,
-        userAgent: req.get("user-agent"),
+        userAgent: req.get('user-agent'),
         ip: req.ip,
       };
 
       // Log level based on status code
       if (res.statusCode >= 500) {
-        console.error("[API] ERROR:", JSON.stringify(logEntry));
+        console.error('[API] ERROR:', JSON.stringify(logEntry));
       } else if (res.statusCode >= 400) {
-        console.warn("[API] WARN:", JSON.stringify(logEntry));
-      } else if (process.env.NODE_ENV !== "production" || duration > 1000) {
+        console.warn('[API] WARN:', JSON.stringify(logEntry));
+      } else if (process.env.NODE_ENV !== 'production' || duration > 1000) {
         // In production, only log slow requests (>1s)
-        console.log("[API] INFO:", JSON.stringify(logEntry));
+        console.log('[API] INFO:', JSON.stringify(logEntry));
       }
     });
 
@@ -245,10 +245,10 @@ export async function getApiMetrics(
 ): Promise<any> {
   const redis = redisClient;
   if (!redis) {
-    return { error: "Redis not available" };
+    return { error: 'Redis not available' };
   }
 
-  const targetDate = date || new Date().toISOString().split("T")[0];
+  const targetDate = date || new Date().toISOString().split('T')[0];
 
   try {
     const [metrics, endpoints, hourly, latencies, errors] = await Promise.all([
@@ -273,7 +273,7 @@ export async function getApiMetrics(
       date: targetDate,
       tenantId,
       summary: {
-        totalRequests: parseInt(metrics?.total_requests || "0"),
+        totalRequests: parseInt(metrics?.total_requests || '0'),
         avgResponseTime: Math.round(avg),
         p50ResponseTime: p50,
         p95ResponseTime: p95,
@@ -281,16 +281,16 @@ export async function getApiMetrics(
       },
       byMethod: {
         GET: Object.entries(metrics || {})
-          .filter(([k]) => k.startsWith("GET:"))
+          .filter(([k]) => k.startsWith('GET:'))
           .reduce((acc, [, v]) => acc + parseInt(v as string), 0),
         POST: Object.entries(metrics || {})
-          .filter(([k]) => k.startsWith("POST:"))
+          .filter(([k]) => k.startsWith('POST:'))
           .reduce((acc, [, v]) => acc + parseInt(v as string), 0),
         PUT: Object.entries(metrics || {})
-          .filter(([k]) => k.startsWith("PUT:"))
+          .filter(([k]) => k.startsWith('PUT:'))
           .reduce((acc, [, v]) => acc + parseInt(v as string), 0),
         DELETE: Object.entries(metrics || {})
-          .filter(([k]) => k.startsWith("DELETE:"))
+          .filter(([k]) => k.startsWith('DELETE:'))
           .reduce((acc, [, v]) => acc + parseInt(v as string), 0),
       },
       topEndpoints: Object.entries(endpoints || {})
@@ -303,7 +303,7 @@ export async function getApiMetrics(
       hourlyDistribution: hourly,
       errors: Object.entries(errors || {})
         .map(([key, count]) => {
-          const [endpoint, statusCode] = key.split(":");
+          const [endpoint, statusCode] = key.split(':');
           return {
             endpoint,
             statusCode: parseInt(statusCode),
@@ -313,8 +313,8 @@ export async function getApiMetrics(
         .sort((a, b) => b.count - a.count),
     };
   } catch (error) {
-    console.error("[API Gateway] Failed to get metrics:", error);
-    return { error: "Failed to retrieve metrics" };
+    console.error('[API Gateway] Failed to get metrics:', error);
+    return { error: 'Failed to retrieve metrics' };
   }
 }
 
@@ -324,20 +324,20 @@ export async function getApiMetrics(
 export async function getGlobalApiMetrics(date?: string): Promise<any> {
   const redis = redisClient;
   if (!redis) {
-    return { error: "Redis not available" };
+    return { error: 'Redis not available' };
   }
 
-  const targetDate = date || new Date().toISOString().split("T")[0];
+  const targetDate = date || new Date().toISOString().split('T')[0];
 
   try {
     const global = await redis.hGetAll(`api:global:${targetDate}`);
 
     return {
       date: targetDate,
-      totalRequests: parseInt(global?.total_requests || "0"),
+      totalRequests: parseInt(global?.total_requests || '0'),
     };
   } catch (error) {
-    console.error("[API Gateway] Failed to get global metrics:", error);
-    return { error: "Failed to retrieve global metrics" };
+    console.error('[API Gateway] Failed to get global metrics:', error);
+    return { error: 'Failed to retrieve global metrics' };
   }
 }

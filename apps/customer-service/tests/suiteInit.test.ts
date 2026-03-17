@@ -4,7 +4,7 @@ import { PrismaClient, ResourceType } from '@prisma/client';
 enum SuiteType {
   STANDARD = 'STANDARD',
   STANDARD_PLUS = 'STANDARD_PLUS',
-  VIP = 'VIP'
+  VIP = 'VIP',
 }
 
 const prisma = new PrismaClient();
@@ -15,7 +15,11 @@ describe('Suite Initialization', () => {
     await prisma.resource.deleteMany({
       where: {
         type: {
-          in: [ResourceType.VIP_SUITE, ResourceType.STANDARD_PLUS_SUITE, ResourceType.STANDARD_SUITE],
+          in: [
+            ResourceType.VIP_SUITE,
+            ResourceType.STANDARD_PLUS_SUITE,
+            ResourceType.STANDARD_SUITE,
+          ],
         },
       },
     });
@@ -43,7 +47,12 @@ describe('Suite Initialization', () => {
           suiteNumber: i,
           lastCleaned: null,
           maintenanceStatus: 'AVAILABLE',
-          amenities: ['Premium Bedding', 'Dedicated Play Time', 'Webcam', 'Spa Treatment'],
+          amenities: [
+            'Premium Bedding',
+            'Dedicated Play Time',
+            'Webcam',
+            'Spa Treatment',
+          ],
           size: 'Extra Large',
           location: 'Premium Wing',
         },
@@ -90,9 +99,15 @@ describe('Suite Initialization', () => {
     );
 
     // Validate counts
-    const vip = await prisma.resource.count({ where: { type: ResourceType.VIP_SUITE } });
-    const plus = await prisma.resource.count({ where: { type: ResourceType.STANDARD_PLUS_SUITE } });
-    const standard = await prisma.resource.count({ where: { type: ResourceType.STANDARD_SUITE } });
+    const vip = await prisma.resource.count({
+      where: { type: ResourceType.VIP_SUITE },
+    });
+    const plus = await prisma.resource.count({
+      where: { type: ResourceType.STANDARD_PLUS_SUITE },
+    });
+    const standard = await prisma.resource.count({
+      where: { type: ResourceType.STANDARD_SUITE },
+    });
     expect(vip).toBe(vipCount);
     expect(plus).toBe(standardPlusCount);
     expect(standard).toBe(count - vipCount - standardPlusCount);

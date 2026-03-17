@@ -1,6 +1,6 @@
 /**
  * Customer Loyalty Dashboard
- * 
+ *
  * Shows customer their loyalty points, tier, and redemption options
  */
 
@@ -32,14 +32,14 @@ import {
   CardGiftcard as GiftIcon,
   History as HistoryIcon,
   Redeem as RedeemIcon,
-  EmojiEvents as TrophyIcon
+  EmojiEvents as TrophyIcon,
 } from '@mui/icons-material';
 import { loyaltyService } from '../../services/loyaltyService';
 import {
   CustomerLoyalty,
   PointTransaction,
   RedemptionOption,
-  LoyaltyTier
+  LoyaltyTier,
 } from '../../types/loyalty';
 import { formatCurrency } from '../../utils/formatters';
 
@@ -47,16 +47,22 @@ interface CustomerLoyaltyDashboardProps {
   customerId: string;
 }
 
-export const CustomerLoyaltyDashboard: React.FC<CustomerLoyaltyDashboardProps> = ({ customerId }) => {
+export const CustomerLoyaltyDashboard: React.FC<
+  CustomerLoyaltyDashboardProps
+> = ({ customerId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loyalty, setLoyalty] = useState<CustomerLoyalty | null>(null);
   const [transactions, setTransactions] = useState<PointTransaction[]>([]);
-  const [redemptionOptions, setRedemptionOptions] = useState<RedemptionOption[]>([]);
+  const [redemptionOptions, setRedemptionOptions] = useState<
+    RedemptionOption[]
+  >([]);
   const [tiers, setTiers] = useState<LoyaltyTier[]>([]);
-  
+
   const [showRedeemDialog, setShowRedeemDialog] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<RedemptionOption | null>(null);
+  const [selectedOption, setSelectedOption] = useState<RedemptionOption | null>(
+    null
+  );
   const [showHistoryDialog, setShowHistoryDialog] = useState(false);
 
   useEffect(() => {
@@ -68,19 +74,22 @@ export const CustomerLoyaltyDashboard: React.FC<CustomerLoyaltyDashboardProps> =
       setLoading(true);
       setError(null);
 
-      const [loyaltyData, transactionsData, optionsData, tiersData] = await Promise.all([
-        loyaltyService.getCustomerLoyalty(customerId),
-        loyaltyService.getPointTransactions(customerId, { limit: 10 }),
-        loyaltyService.getRedemptionOptions(),
-        loyaltyService.getTiers()
-      ]);
+      const [loyaltyData, transactionsData, optionsData, tiersData] =
+        await Promise.all([
+          loyaltyService.getCustomerLoyalty(customerId),
+          loyaltyService.getPointTransactions(customerId, { limit: 10 }),
+          loyaltyService.getRedemptionOptions(),
+          loyaltyService.getTiers(),
+        ]);
 
       setLoyalty(loyaltyData);
       setTransactions(transactionsData.data);
-      setRedemptionOptions(optionsData.filter(o => o.isActive));
+      setRedemptionOptions(optionsData.filter((o) => o.isActive));
       setTiers(tiersData);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load loyalty information');
+      setError(
+        err.response?.data?.message || 'Failed to load loyalty information'
+      );
     } finally {
       setLoading(false);
     }
@@ -109,7 +118,9 @@ export const CustomerLoyaltyDashboard: React.FC<CustomerLoyaltyDashboardProps> =
     if (!loyalty || !tiers.length) return undefined;
     const currentTier = getCurrentTier();
     const sortedTiers = [...tiers].sort((a, b) => a.minPoints - b.minPoints);
-    const currentIndex = sortedTiers.findIndex(t => t.level === currentTier?.level);
+    const currentIndex = sortedTiers.findIndex(
+      (t) => t.level === currentTier?.level
+    );
     return sortedTiers[currentIndex + 1];
   };
 
@@ -117,12 +128,14 @@ export const CustomerLoyaltyDashboard: React.FC<CustomerLoyaltyDashboardProps> =
     if (!loyalty || !tiers.length) return 0;
     const currentTier = getCurrentTier();
     const nextTier = getNextTier();
-    
+
     if (!nextTier) return 100; // Max tier reached
-    
-    const pointsInCurrentTier = loyalty.currentPoints - (currentTier?.minPoints || 0);
-    const pointsNeededForNext = nextTier.minPoints - (currentTier?.minPoints || 0);
-    
+
+    const pointsInCurrentTier =
+      loyalty.currentPoints - (currentTier?.minPoints || 0);
+    const pointsNeededForNext =
+      nextTier.minPoints - (currentTier?.minPoints || 0);
+
     return (pointsInCurrentTier / pointsNeededForNext) * 100;
   };
 
@@ -157,7 +170,12 @@ export const CustomerLoyaltyDashboard: React.FC<CustomerLoyaltyDashboardProps> =
       {/* Points Overview */}
       <Grid container spacing={3} mb={3}>
         <Grid item xs={12} md={4}>
-          <Card sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
+          <Card
+            sx={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              color: 'white',
+            }}
+          >
             <CardContent>
               <Box display="flex" alignItems="center" mb={2}>
                 <StarIcon sx={{ mr: 1 }} />
@@ -186,12 +204,16 @@ export const CustomerLoyaltyDashboard: React.FC<CustomerLoyaltyDashboardProps> =
                   backgroundColor: currentTier?.color,
                   color: 'white',
                   fontWeight: 'bold',
-                  mb: 2
+                  mb: 2,
                 }}
               />
               {nextTier && (
                 <>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    gutterBottom
+                  >
                     {loyalty.pointsToNextTier} points to {nextTier.name}
                   </Typography>
                   <LinearProgress
@@ -221,10 +243,12 @@ export const CustomerLoyaltyDashboard: React.FC<CustomerLoyaltyDashboardProps> =
                 <strong>Total Visits:</strong> {loyalty.totalVisits}
               </Typography>
               <Typography variant="body2" gutterBottom>
-                <strong>Total Spent:</strong> {formatCurrency(loyalty.totalSpent)}
+                <strong>Total Spent:</strong>{' '}
+                {formatCurrency(loyalty.totalSpent)}
               </Typography>
               <Typography variant="body2">
-                <strong>Member Since:</strong> {new Date(loyalty.memberSince).toLocaleDateString()}
+                <strong>Member Since:</strong>{' '}
+                {new Date(loyalty.memberSince).toLocaleDateString()}
               </Typography>
             </CardContent>
           </Card>
@@ -242,7 +266,9 @@ export const CustomerLoyaltyDashboard: React.FC<CustomerLoyaltyDashboardProps> =
               {currentTier.benefits.map((benefit, idx) => (
                 <Grid item xs={12} sm={6} md={4} key={idx}>
                   <Box display="flex" alignItems="center">
-                    <StarIcon sx={{ color: currentTier.color, mr: 1, fontSize: 20 }} />
+                    <StarIcon
+                      sx={{ color: currentTier.color, mr: 1, fontSize: 20 }}
+                    />
                     <Typography variant="body2">{benefit}</Typography>
                   </Box>
                 </Grid>
@@ -255,7 +281,12 @@ export const CustomerLoyaltyDashboard: React.FC<CustomerLoyaltyDashboardProps> =
       {/* Redemption Options */}
       <Card sx={{ mb: 3 }}>
         <CardContent>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={2}
+          >
             <Typography variant="h6">
               <GiftIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
               Redeem Your Points
@@ -277,7 +308,11 @@ export const CustomerLoyaltyDashboard: React.FC<CustomerLoyaltyDashboardProps> =
                       <Typography variant="h6" gutterBottom>
                         {option.name}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        gutterBottom
+                      >
                         {option.description}
                       </Typography>
                       <Divider sx={{ my: 2 }} />
@@ -308,7 +343,12 @@ export const CustomerLoyaltyDashboard: React.FC<CustomerLoyaltyDashboardProps> =
       {/* Recent Activity */}
       <Card>
         <CardContent>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={2}
+          >
             <Typography variant="h6">
               <HistoryIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
               Recent Activity
@@ -323,7 +363,9 @@ export const CustomerLoyaltyDashboard: React.FC<CustomerLoyaltyDashboardProps> =
               <ListItem key={transaction.id}>
                 <ListItemText
                   primary={transaction.description}
-                  secondary={new Date(transaction.createdAt).toLocaleDateString()}
+                  secondary={new Date(
+                    transaction.createdAt
+                  ).toLocaleDateString()}
                 />
                 <ListItemSecondaryAction>
                   <Chip
@@ -339,19 +381,28 @@ export const CustomerLoyaltyDashboard: React.FC<CustomerLoyaltyDashboardProps> =
       </Card>
 
       {/* Redeem Confirmation Dialog */}
-      <Dialog open={showRedeemDialog} onClose={() => setShowRedeemDialog(false)}>
+      <Dialog
+        open={showRedeemDialog}
+        onClose={() => setShowRedeemDialog(false)}
+      >
         <DialogTitle>Confirm Redemption</DialogTitle>
         <DialogContent>
           {selectedOption && (
             <Box>
               <Typography gutterBottom>
-                Are you sure you want to redeem <strong>{selectedOption.name}</strong>?
+                Are you sure you want to redeem{' '}
+                <strong>{selectedOption.name}</strong>?
               </Typography>
               <Typography variant="body2" color="text.secondary" gutterBottom>
-                This will cost {loyaltyService.formatPoints(selectedOption.pointsCost)} points.
+                This will cost{' '}
+                {loyaltyService.formatPoints(selectedOption.pointsCost)} points.
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                You will have {loyaltyService.formatPoints(loyalty.currentPoints - selectedOption.pointsCost)} points remaining.
+                You will have{' '}
+                {loyaltyService.formatPoints(
+                  loyalty.currentPoints - selectedOption.pointsCost
+                )}{' '}
+                points remaining.
               </Typography>
             </Box>
           )}

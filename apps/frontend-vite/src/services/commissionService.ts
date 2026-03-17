@@ -3,14 +3,14 @@
  * Handles API calls for staff commission management
  */
 
-import api from "./api";
+import api from './api';
 
 export interface StaffCommission {
   id: string;
   tenantId: string;
   staffId: string;
   name: string;
-  commissionType: "PERCENTAGE" | "FLAT_AMOUNT";
+  commissionType: 'PERCENTAGE' | 'FLAT_AMOUNT';
   commissionValue: number;
   isActive: boolean;
   notes?: string;
@@ -28,7 +28,7 @@ export interface StaffCommission {
 export interface CreateCommissionData {
   staffId: string;
   name: string;
-  commissionType: "PERCENTAGE" | "FLAT_AMOUNT";
+  commissionType: 'PERCENTAGE' | 'FLAT_AMOUNT';
   commissionValue: number;
   serviceIds: string[];
   notes?: string;
@@ -36,7 +36,7 @@ export interface CreateCommissionData {
 
 export interface UpdateCommissionData {
   name?: string;
-  commissionType?: "PERCENTAGE" | "FLAT_AMOUNT";
+  commissionType?: 'PERCENTAGE' | 'FLAT_AMOUNT';
   commissionValue?: number;
   serviceIds?: string[];
   isActive?: boolean;
@@ -47,7 +47,7 @@ export interface CommissionCalculation {
   hasCommission: boolean;
   commissionId?: string;
   commissionName?: string;
-  commissionType?: "PERCENTAGE" | "FLAT_AMOUNT";
+  commissionType?: 'PERCENTAGE' | 'FLAT_AMOUNT';
   commissionValue?: number;
   serviceAmount?: number;
   commissionAmount: number;
@@ -58,7 +58,7 @@ export interface CommissionReportDetail {
   serviceName: string;
   serviceAmount: number;
   commissionName: string;
-  commissionType: "PERCENTAGE" | "FLAT_AMOUNT";
+  commissionType: 'PERCENTAGE' | 'FLAT_AMOUNT';
   commissionValue: number;
   commissionAmount: number;
   completedDate: string;
@@ -81,7 +81,7 @@ export const commissionService = {
    */
   getAllCommissions: async (isActive?: boolean): Promise<StaffCommission[]> => {
     const params = isActive !== undefined ? { isActive } : {};
-    const response = await api.get("/api/commissions", { params });
+    const response = await api.get('/api/commissions', { params });
     return response.data?.data || [];
   },
 
@@ -107,7 +107,7 @@ export const commissionService = {
   createCommission: async (
     data: CreateCommissionData
   ): Promise<StaffCommission> => {
-    const response = await api.post("/api/commissions", data);
+    const response = await api.post('/api/commissions', data);
     return response.data?.data;
   },
 
@@ -137,7 +137,7 @@ export const commissionService = {
     serviceId: string,
     serviceAmount: number
   ): Promise<CommissionCalculation> => {
-    const response = await api.post("/api/commissions/calculate", {
+    const response = await api.post('/api/commissions/calculate', {
       staffId,
       serviceId,
       serviceAmount,
@@ -167,7 +167,7 @@ export const commissionService = {
    * Format commission value for display
    */
   formatCommissionValue: (commission: StaffCommission): string => {
-    if (commission.commissionType === "PERCENTAGE") {
+    if (commission.commissionType === 'PERCENTAGE') {
       return `${commission.commissionValue}%`;
     }
     return `$${commission.commissionValue.toFixed(2)}`;

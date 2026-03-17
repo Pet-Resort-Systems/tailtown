@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -17,15 +17,15 @@ import {
   Tooltip,
   Tabs,
   Tab,
-} from "@mui/material";
+} from '@mui/material';
 import {
   CheckCircle as CompleteIcon,
   Cancel as CancelIcon,
   EmojiEvents as CertificateIcon,
-} from "@mui/icons-material";
-import { useParams, useNavigate } from "react-router-dom";
-import schedulingService from "../../services/schedulingService";
-import { ClassEnrollment, TrainingClass } from "../../types/scheduling";
+} from '@mui/icons-material';
+import { useParams, useNavigate } from 'react-router-dom';
+import schedulingService from '../../services/schedulingService';
+import { ClassEnrollment, TrainingClass } from '../../types/scheduling';
 
 const ClassEnrollments: React.FC = () => {
   const { classId } = useParams<{ classId: string }>();
@@ -56,7 +56,7 @@ const ClassEnrollments: React.FC = () => {
       setEnrollments([]);
       setError(null);
     } catch (err: any) {
-      setError(err.message || "Failed to load data");
+      setError(err.message || 'Failed to load data');
       console.error(err);
     } finally {
       setLoading(false);
@@ -64,25 +64,25 @@ const ClassEnrollments: React.FC = () => {
   };
 
   const handleComplete = async (enrollmentId: string) => {
-    if (window.confirm("Mark this enrollment as completed?")) {
+    if (window.confirm('Mark this enrollment as completed?')) {
       try {
         await schedulingService.enrollments.update(enrollmentId, {
-          status: "COMPLETED",
+          status: 'COMPLETED',
         });
         await loadData();
       } catch (err: any) {
-        setError(err.message || "Failed to complete enrollment");
+        setError(err.message || 'Failed to complete enrollment');
       }
     }
   };
 
   const handleCancel = async (enrollmentId: string) => {
-    if (window.confirm("Are you sure you want to drop this enrollment?")) {
+    if (window.confirm('Are you sure you want to drop this enrollment?')) {
       try {
         await schedulingService.enrollments.drop(enrollmentId);
         await loadData();
       } catch (err: any) {
-        setError(err.message || "Failed to drop enrollment");
+        setError(err.message || 'Failed to drop enrollment');
       }
     }
   };
@@ -91,37 +91,37 @@ const ClassEnrollments: React.FC = () => {
     try {
       await schedulingService.enrollments.issueCertificate(enrollmentId);
       await loadData();
-      alert("Certificate issued successfully!");
+      alert('Certificate issued successfully!');
     } catch (err: any) {
-      setError(err.message || "Failed to issue certificate");
+      setError(err.message || 'Failed to issue certificate');
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "ACTIVE":
-        return "success";
-      case "COMPLETED":
-        return "info";
-      case "CANCELLED":
-        return "error";
-      case "PENDING":
-        return "warning";
+      case 'ACTIVE':
+        return 'success';
+      case 'COMPLETED':
+        return 'info';
+      case 'CANCELLED':
+        return 'error';
+      case 'PENDING':
+        return 'warning';
       default:
-        return "default";
+        return 'default';
     }
   };
 
   const getPaymentStatusColor = (status: string) => {
     switch (status) {
-      case "PAID":
-        return "success";
-      case "PARTIAL":
-        return "warning";
-      case "PENDING":
-        return "error";
+      case 'PAID':
+        return 'success';
+      case 'PARTIAL':
+        return 'warning';
+      case 'PENDING':
+        return 'error';
       default:
-        return "default";
+        return 'default';
     }
   };
 
@@ -147,13 +147,13 @@ const ClassEnrollments: React.FC = () => {
   }
 
   const activeEnrollments = enrollments.filter(
-    (e) => e.status === "ACTIVE" || e.status === "ENROLLED"
+    (e) => e.status === 'ACTIVE' || e.status === 'ENROLLED'
   );
   const completedEnrollments = enrollments.filter(
-    (e) => e.status === "COMPLETED"
+    (e) => e.status === 'COMPLETED'
   );
   const cancelledEnrollments = enrollments.filter(
-    (e) => e.status === "DROPPED"
+    (e) => e.status === 'DROPPED'
   );
 
   return (
@@ -167,13 +167,13 @@ const ClassEnrollments: React.FC = () => {
         <Box>
           <Typography variant="h4">{trainingClass.name}</Typography>
           <Typography variant="body2" color="textSecondary">
-            Enrollments: {activeEnrollments.length} /{" "}
+            Enrollments: {activeEnrollments.length} /{' '}
             {trainingClass.maxCapacity}
           </Typography>
         </Box>
         <Button
           variant="outlined"
-          onClick={() => navigate("/training/classes")}
+          onClick={() => navigate('/training/classes')}
         >
           Back to Classes
         </Button>
@@ -255,8 +255,8 @@ const ClassEnrollments: React.FC = () => {
               {(selectedTab === 0
                 ? activeEnrollments
                 : selectedTab === 1
-                ? completedEnrollments
-                : cancelledEnrollments
+                  ? completedEnrollments
+                  : cancelledEnrollments
               ).length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} align="center">
@@ -269,15 +269,15 @@ const ClassEnrollments: React.FC = () => {
                 (selectedTab === 0
                   ? activeEnrollments
                   : selectedTab === 1
-                  ? completedEnrollments
-                  : cancelledEnrollments
+                    ? completedEnrollments
+                    : cancelledEnrollments
                 ).map((enrollment) => (
                   <TableRow key={enrollment.id}>
-                    <TableCell>{enrollment.pet?.name || "Unknown"}</TableCell>
+                    <TableCell>{enrollment.pet?.name || 'Unknown'}</TableCell>
                     <TableCell>
                       {enrollment.customer
                         ? `${enrollment.customer.firstName} ${enrollment.customer.lastName}`
-                        : "Unknown"}
+                        : 'Unknown'}
                     </TableCell>
                     <TableCell>
                       {new Date(enrollment.enrollmentDate).toLocaleDateString()}
@@ -294,7 +294,7 @@ const ClassEnrollments: React.FC = () => {
                     </TableCell>
                     <TableCell>
                       <Typography variant="body2">
-                        {enrollment.sessionsAttended || 0} /{" "}
+                        {enrollment.sessionsAttended || 0} /{' '}
                         {trainingClass.totalWeeks} sessions
                       </Typography>
                     </TableCell>
@@ -315,7 +315,7 @@ const ClassEnrollments: React.FC = () => {
                       )}
                     </TableCell>
                     <TableCell align="right">
-                      {enrollment.status === "ACTIVE" && (
+                      {enrollment.status === 'ACTIVE' && (
                         <>
                           <Tooltip title="Mark Complete">
                             <IconButton
@@ -337,7 +337,7 @@ const ClassEnrollments: React.FC = () => {
                           </Tooltip>
                         </>
                       )}
-                      {enrollment.status === "COMPLETED" &&
+                      {enrollment.status === 'COMPLETED' &&
                         !enrollment.certificateIssued && (
                           <Tooltip title="Issue Certificate">
                             <IconButton

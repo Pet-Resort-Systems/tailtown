@@ -105,12 +105,19 @@ class MessagingService {
   /**
    * Get messages for a specific channel
    */
-  async getChannelMessages(channelId: string, limit: number = 50, before?: string): Promise<Message[]> {
+  async getChannelMessages(
+    channelId: string,
+    limit: number = 50,
+    before?: string
+  ): Promise<Message[]> {
     try {
       const params: any = { limit };
       if (before) params.before = before;
-      
-      const response = await api.get<Message[]>(`/api/messaging/channels/${channelId}/messages`, { params });
+
+      const response = await api.get<Message[]>(
+        `/api/messaging/channels/${channelId}/messages`,
+        { params }
+      );
       return response.data;
     } catch (error) {
       console.error(`Error fetching messages for channel ${channelId}:`, error);
@@ -121,12 +128,19 @@ class MessagingService {
   /**
    * Send a message to a channel
    */
-  async sendMessage(channelId: string, content: string, mentions?: string[]): Promise<Message> {
+  async sendMessage(
+    channelId: string,
+    content: string,
+    mentions?: string[]
+  ): Promise<Message> {
     try {
-      const response = await api.post<Message>(`/api/messaging/channels/${channelId}/messages`, {
-        content,
-        mentions
-      });
+      const response = await api.post<Message>(
+        `/api/messaging/channels/${channelId}/messages`,
+        {
+          content,
+          mentions,
+        }
+      );
       return response.data;
     } catch (error) {
       console.error(`Error sending message to channel ${channelId}:`, error);
@@ -150,7 +164,9 @@ class MessagingService {
    */
   async getUnreadCount(): Promise<number> {
     try {
-      const response = await api.get<{ unreadCount: number }>('/api/messaging/unread-count');
+      const response = await api.get<{ unreadCount: number }>(
+        '/api/messaging/unread-count'
+      );
       return response.data.unreadCount;
     } catch (error) {
       console.error('Error fetching unread count:', error);
@@ -176,11 +192,14 @@ class MessagingService {
   async getOrCreateDirectMessage(otherStaffId: string): Promise<Channel> {
     try {
       const response = await api.post<Channel>('/api/messaging/direct', {
-        recipientId: otherStaffId
+        recipientId: otherStaffId,
       });
       return response.data;
     } catch (error) {
-      console.error(`Error creating direct message with staff ${otherStaffId}:`, error);
+      console.error(
+        `Error creating direct message with staff ${otherStaffId}:`,
+        error
+      );
       throw error;
     }
   }
@@ -190,7 +209,9 @@ class MessagingService {
    */
   async getDirectMessageThreads(): Promise<DirectMessageThread[]> {
     try {
-      const response = await api.get<DirectMessageThread[]>('/api/messaging/direct');
+      const response = await api.get<DirectMessageThread[]>(
+        '/api/messaging/direct'
+      );
       return response.data;
     } catch (error) {
       console.error('Error fetching direct message threads:', error);
@@ -222,7 +243,9 @@ class MessagingService {
    */
   async addReaction(messageId: string, emoji: string): Promise<void> {
     try {
-      await api.post(`/api/messaging/messages/${messageId}/reactions`, { emoji });
+      await api.post(`/api/messaging/messages/${messageId}/reactions`, {
+        emoji,
+      });
     } catch (error) {
       console.error(`Error adding reaction to message ${messageId}:`, error);
       throw error;
@@ -234,9 +257,14 @@ class MessagingService {
    */
   async removeReaction(messageId: string, reactionId: string): Promise<void> {
     try {
-      await api.delete(`/api/messaging/messages/${messageId}/reactions/${reactionId}`);
+      await api.delete(
+        `/api/messaging/messages/${messageId}/reactions/${reactionId}`
+      );
     } catch (error) {
-      console.error(`Error removing reaction from message ${messageId}:`, error);
+      console.error(
+        `Error removing reaction from message ${messageId}:`,
+        error
+      );
       throw error;
     }
   }
@@ -258,9 +286,9 @@ class MessagingService {
         lastMessage: {
           content: 'Morning team! Ready for a great day',
           createdAt: new Date(Date.now() - 30 * 60 * 1000), // 30 mins ago
-          senderId: 'user1'
+          senderId: 'user1',
         },
-        messageCount: 156
+        messageCount: 156,
       },
       {
         id: '2',
@@ -276,9 +304,9 @@ class MessagingService {
         lastMessage: {
           content: 'Staff meeting at 2 PM today',
           createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000), // Yesterday
-          senderId: 'user2'
+          senderId: 'user2',
         },
-        messageCount: 42
+        messageCount: 42,
       },
       {
         id: '3',
@@ -294,9 +322,9 @@ class MessagingService {
         lastMessage: {
           content: 'Max needs medication at 3 PM',
           createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-          senderId: 'user3'
+          senderId: 'user3',
         },
-        messageCount: 89
+        messageCount: 89,
       },
       {
         id: '4',
@@ -312,9 +340,9 @@ class MessagingService {
         lastMessage: {
           content: 'Appointment schedule updated',
           createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000), // 3 hours ago
-          senderId: 'user4'
+          senderId: 'user4',
         },
-        messageCount: 34
+        messageCount: 34,
       },
       {
         id: '5',
@@ -330,10 +358,10 @@ class MessagingService {
         lastMessage: {
           content: 'New check-in at 4 PM',
           createdAt: new Date(Date.now() - 45 * 60 * 1000), // 45 mins ago
-          senderId: 'user5'
+          senderId: 'user5',
         },
-        messageCount: 67
-      }
+        messageCount: 67,
+      },
     ];
   }
 }

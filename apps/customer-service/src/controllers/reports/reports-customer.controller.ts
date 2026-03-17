@@ -9,17 +9,17 @@
  * - getInactiveCustomers
  */
 
-import { Response, NextFunction } from "express";
-import { AppError } from "../../middleware/error.middleware";
-import { TenantRequest } from "../../middleware/tenant.middleware";
+import { Response, NextFunction } from 'express';
+import { AppError } from '../../middleware/error.middleware';
+import { TenantRequest } from '../../middleware/tenant.middleware';
 import {
   getCustomerAcquisitionReport,
   getCustomerRetentionReport,
   getCustomerLifetimeValueReport,
   getCustomerDemographicsReport,
   getInactiveCustomersReport,
-} from "../../services/customerReportService";
-import { logger } from "../../utils/logger";
+} from '../../services/customerReportService';
+import { logger } from '../../utils/logger';
 
 /**
  * GET /api/reports/customers/acquisition
@@ -31,12 +31,12 @@ export const getCustomerAcquisition = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
       return next(
-        new AppError("startDate and endDate parameters are required", 400)
+        new AppError('startDate and endDate parameters are required', 400)
       );
     }
 
@@ -49,9 +49,9 @@ export const getCustomerAcquisition = async (
     const totalNew = report.reduce((sum, item) => sum + item.newCustomers, 0);
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "customer_acquisition",
+        reportType: 'customer_acquisition',
         title: `Customer Acquisition Report - ${startDate} to ${endDate}`,
         generatedAt: new Date(),
         filters: { startDate, endDate },
@@ -63,9 +63,9 @@ export const getCustomerAcquisition = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating customer acquisition report", { error });
+    logger.error('Error generating customer acquisition report', { error });
     return next(
-      new AppError("Failed to generate customer acquisition report", 500)
+      new AppError('Failed to generate customer acquisition report', 500)
     );
   }
 };
@@ -80,12 +80,12 @@ export const getCustomerRetention = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
       return next(
-        new AppError("startDate and endDate parameters are required", 400)
+        new AppError('startDate and endDate parameters are required', 400)
       );
     }
 
@@ -101,9 +101,9 @@ export const getCustomerRetention = async (
     };
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "customer_retention",
+        reportType: 'customer_retention',
         title: `Customer Retention Report - ${startDate} to ${endDate}`,
         generatedAt: new Date(),
         filters: { startDate, endDate },
@@ -116,9 +116,9 @@ export const getCustomerRetention = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating customer retention report", { error });
+    logger.error('Error generating customer retention report', { error });
     return next(
-      new AppError("Failed to generate customer retention report", 500)
+      new AppError('Failed to generate customer retention report', 500)
     );
   }
 };
@@ -133,7 +133,7 @@ export const getCustomerLifetimeValue = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const limit = parseInt(req.query.limit as string) || 50;
 
     const report = await getCustomerLifetimeValueReport(tenantId, limit);
@@ -142,10 +142,10 @@ export const getCustomerLifetimeValue = async (
     const avgLTV = report.length > 0 ? totalLTV / report.length : 0;
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "customer_lifetime_value",
-        title: "Customer Lifetime Value Report",
+        reportType: 'customer_lifetime_value',
+        title: 'Customer Lifetime Value Report',
         generatedAt: new Date(),
         filters: { limit },
         summary: {
@@ -157,9 +157,9 @@ export const getCustomerLifetimeValue = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating customer lifetime value report", { error });
+    logger.error('Error generating customer lifetime value report', { error });
     return next(
-      new AppError("Failed to generate customer lifetime value report", 500)
+      new AppError('Failed to generate customer lifetime value report', 500)
     );
   }
 };
@@ -174,15 +174,15 @@ export const getCustomerDemographics = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
     const report = await getCustomerDemographicsReport(tenantId);
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "customer_demographics",
-        title: "Customer Demographics Report",
+        reportType: 'customer_demographics',
+        title: 'Customer Demographics Report',
         generatedAt: new Date(),
         filters: {},
         summary: {
@@ -194,9 +194,9 @@ export const getCustomerDemographics = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating customer demographics report", { error });
+    logger.error('Error generating customer demographics report', { error });
     return next(
-      new AppError("Failed to generate customer demographics report", 500)
+      new AppError('Failed to generate customer demographics report', 500)
     );
   }
 };
@@ -211,15 +211,15 @@ export const getInactiveCustomers = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const days = parseInt(req.query.days as string) || 90;
 
     const report = await getInactiveCustomersReport(tenantId, days);
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        reportType: "customer_inactive",
+        reportType: 'customer_inactive',
         title: `Inactive Customers Report - ${days} days`,
         generatedAt: new Date(),
         filters: { days },
@@ -231,9 +231,9 @@ export const getInactiveCustomers = async (
       },
     });
   } catch (error) {
-    logger.error("Error generating inactive customers report", { error });
+    logger.error('Error generating inactive customers report', { error });
     return next(
-      new AppError("Failed to generate inactive customers report", 500)
+      new AppError('Failed to generate inactive customers report', 500)
     );
   }
 };

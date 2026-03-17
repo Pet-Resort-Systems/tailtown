@@ -1,7 +1,9 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_CUSTOMER_SERVICE_URL || 'http://localhost:4004';
-const API_KEY = process.env.REACT_APP_SUPER_ADMIN_API_KEY || 'dev-super-admin-key-12345';
+const API_URL =
+  process.env.REACT_APP_CUSTOMER_SERVICE_URL || 'http://localhost:4004';
+const API_KEY =
+  process.env.REACT_APP_SUPER_ADMIN_API_KEY || 'dev-super-admin-key-12345';
 
 // Configure axios to include API key in all requests
 const axiosInstance = axios.create({
@@ -115,10 +117,14 @@ class TenantService {
   }): Promise<Tenant[]> {
     const params = new URLSearchParams();
     if (filters?.status) params.append('status', filters.status);
-    if (filters?.isActive !== undefined) params.append('isActive', filters.isActive.toString());
-    if (filters?.isPaused !== undefined) params.append('isPaused', filters.isPaused.toString());
+    if (filters?.isActive !== undefined)
+      params.append('isActive', filters.isActive.toString());
+    if (filters?.isPaused !== undefined)
+      params.append('isPaused', filters.isPaused.toString());
 
-    const response = await axiosInstance.get(`/api/tenants?${params.toString()}`);
+    const response = await axiosInstance.get(
+      `/api/tenants?${params.toString()}`
+    );
     return response.data.data;
   }
 
@@ -134,7 +140,9 @@ class TenantService {
    * Get tenant by subdomain
    */
   async getTenantBySubdomain(subdomain: string): Promise<Tenant> {
-    const response = await axiosInstance.get(`/api/tenants/subdomain/${subdomain}`);
+    const response = await axiosInstance.get(
+      `/api/tenants/subdomain/${subdomain}`
+    );
     return response.data.data;
   }
 

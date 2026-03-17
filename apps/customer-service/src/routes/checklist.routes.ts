@@ -10,7 +10,7 @@ import {
   updateChecklistItem,
   completeChecklist,
   getAllInstances,
-  getChecklistStats
+  getChecklistStats,
 } from '../controllers/checklist.controller';
 
 const router = express.Router();

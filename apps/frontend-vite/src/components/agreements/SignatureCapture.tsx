@@ -1,6 +1,6 @@
-import React, { useRef, useEffect, useState, useCallback } from "react";
-import { Box, Button, Typography, Paper } from "@mui/material";
-import { Clear as ClearIcon } from "@mui/icons-material";
+import React, { useRef, useEffect, useState, useCallback } from 'react';
+import { Box, Button, Typography, Paper } from '@mui/material';
+import { Clear as ClearIcon } from '@mui/icons-material';
 
 interface SignatureCaptureProps {
   onSignatureChange: (signature: string | null) => void;
@@ -15,7 +15,7 @@ const SignatureCapture: React.FC<SignatureCaptureProps> = ({
   onSignatureChange,
   width = 400,
   height = 150,
-  lineColor = "#000000",
+  lineColor = '#000000',
   lineWidth = 2,
   disabled = false,
 }) => {
@@ -29,7 +29,7 @@ const SignatureCapture: React.FC<SignatureCaptureProps> = ({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     // Set canvas size
@@ -39,11 +39,11 @@ const SignatureCapture: React.FC<SignatureCaptureProps> = ({
     // Set drawing styles
     ctx.strokeStyle = lineColor;
     ctx.lineWidth = lineWidth;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
 
     // Fill with white background
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, width, height);
   }, [width, height, lineColor, lineWidth]);
 
@@ -58,7 +58,7 @@ const SignatureCapture: React.FC<SignatureCaptureProps> = ({
       const scaleX = canvas.width / rect.width;
       const scaleY = canvas.height / rect.height;
 
-      if ("touches" in event) {
+      if ('touches' in event) {
         const touch = event.touches[0];
         return {
           x: (touch.clientX - rect.left) * scaleX,
@@ -94,7 +94,7 @@ const SignatureCapture: React.FC<SignatureCaptureProps> = ({
 
       event.preventDefault();
       const canvas = canvasRef.current;
-      const ctx = canvas?.getContext("2d");
+      const ctx = canvas?.getContext('2d');
       if (!canvas || !ctx || !lastPosRef.current) return;
 
       const coords = getCoordinates(event);
@@ -123,17 +123,17 @@ const SignatureCapture: React.FC<SignatureCaptureProps> = ({
     // Export signature as base64
     const canvas = canvasRef.current;
     if (canvas && hasSignature) {
-      const signature = canvas.toDataURL("image/png");
+      const signature = canvas.toDataURL('image/png');
       onSignatureChange(signature);
     }
   }, [isDrawing, hasSignature, onSignatureChange]);
 
   const clearSignature = useCallback(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
+    const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
 
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     setHasSignature(false);
     onSignatureChange(null);
@@ -164,18 +164,18 @@ const SignatureCapture: React.FC<SignatureCaptureProps> = ({
       <Paper
         variant="outlined"
         sx={{
-          display: "inline-block",
-          cursor: disabled ? "not-allowed" : "crosshair",
-          touchAction: "none",
+          display: 'inline-block',
+          cursor: disabled ? 'not-allowed' : 'crosshair',
+          touchAction: 'none',
           opacity: disabled ? 0.6 : 1,
         }}
       >
         <canvas
           ref={canvasRef}
           style={{
-            display: "block",
-            maxWidth: "100%",
-            height: "auto",
+            display: 'block',
+            maxWidth: '100%',
+            height: 'auto',
           }}
           onMouseDown={startDrawing}
           onMouseMove={draw}

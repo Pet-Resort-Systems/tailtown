@@ -1,24 +1,24 @@
-import React, { useState, useCallback, useMemo, useEffect } from "react";
-import { Box, Dialog, DialogTitle, DialogContent, Alert } from "@mui/material";
-import { reservationService } from "../../services/reservationService";
-import { reservationApi } from "../../services/api";
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { Box, Dialog, DialogTitle, DialogContent, Alert } from '@mui/material';
+import { reservationService } from '../../services/reservationService';
+import { reservationApi } from '../../services/api';
 // formatDateToYYYYMMDD imported but used in useKennelData
 import {
   useKennelData,
   ExtendedResource,
   Reservation,
   KennelType,
-} from "../../hooks/useKennelData";
+} from '../../hooks/useKennelData';
 import {
   useResponsive,
   getResponsiveDialogWidth,
-} from "../../utils/responsive";
-import KennelCalendarHeader from "./components/KennelCalendarHeader";
-import KennelGrid from "./components/KennelGrid";
-import ReservationFormWrapper from "./components/ReservationFormWrapper";
+} from '../../utils/responsive';
+import KennelCalendarHeader from './components/KennelCalendarHeader';
+import KennelGrid from './components/KennelGrid';
+import ReservationFormWrapper from './components/ReservationFormWrapper';
 
 // Define the view types
-type ViewType = "month" | "week" | "day";
+type ViewType = 'month' | 'week' | 'day';
 
 // Define the props for the KennelCalendar component
 interface KennelCalendarProps {
@@ -48,11 +48,11 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
 
   // State for the current date and view
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
-  const [viewType, setViewType] = useState<ViewType>("week");
+  const [viewType, setViewType] = useState<ViewType>('week');
 
   // State for filtering
-  const [kennelTypeFilter, setKennelTypeFilter] = useState<KennelType | "ALL">(
-    "ALL"
+  const [kennelTypeFilter, setKennelTypeFilter] = useState<KennelType | 'ALL'>(
+    'ALL'
   );
 
   // State for the reservation form dialog
@@ -82,11 +82,11 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
     const today = new Date(currentDate);
 
     switch (viewType) {
-      case "day":
+      case 'day':
         days.push(new Date(today));
         break;
 
-      case "week":
+      case 'week':
         // Start from current date (today on far left) and show 7 days forward
         for (let i = 0; i < 7; i++) {
           const day = new Date(today);
@@ -95,7 +95,7 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
         }
         break;
 
-      case "month":
+      case 'month':
         // Get the last day of the month
         const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
@@ -165,7 +165,7 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
       const response = await reservationApi.get(
         `/api/reservations/${reservationId}`
       );
-      if (response.data.status === "success") {
+      if (response.data.status === 'success') {
         // Handle nested response structure
         const reservationData =
           response.data.data?.reservation ||
@@ -174,13 +174,13 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
         return reservationData;
       } else {
         console.error(
-          "Failed to fetch complete reservation data:",
+          'Failed to fetch complete reservation data:',
           response.data
         );
         return null;
       }
     } catch (error) {
-      console.error("Error fetching complete reservation data:", error);
+      console.error('Error fetching complete reservation data:', error);
       return null;
     }
   };
@@ -200,7 +200,7 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
           setSelectedReservation(completeReservation);
         } else {
           console.warn(
-            "KennelCalendar: Could not fetch complete reservation data, using incomplete data"
+            'KennelCalendar: Could not fetch complete reservation data, using incomplete data'
           );
           setSelectedReservation(reservation);
         }
@@ -262,8 +262,8 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
         // Return the expected format
         return { reservationId: (result as any)?.id };
       } catch (error: any) {
-        console.error("Error submitting reservation form:", error);
-        setFormError(error.message || "Failed to save reservation");
+        console.error('Error submitting reservation form:', error);
+        setFormError(error.message || 'Failed to save reservation');
         throw error;
       }
     },
@@ -287,7 +287,7 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
   // Handle drag-and-drop reservation move
   const handleReservationDrop = useCallback(
     async (reservationId: string, targetKennelId: string, targetDate: Date) => {
-      console.log("[DragDrop] handleReservationDrop called", {
+      console.log('[DragDrop] handleReservationDrop called', {
         reservationId,
         targetKennelId,
         targetDate,
@@ -328,7 +328,7 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
             updatePayload.startDate = newStartDate.toISOString();
             updatePayload.endDate = newEndDate.toISOString();
 
-            console.log("[DragDrop] Date shift:", daysDiff, "days", {
+            console.log('[DragDrop] Date shift:', daysDiff, 'days', {
               originalStart: originalReservation.startDate,
               newStart: updatePayload.startDate,
               originalEnd: originalReservation.endDate,
@@ -338,19 +338,19 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
         }
 
         console.log(
-          "[DragDrop] Calling reservationService.updateReservation..."
+          '[DragDrop] Calling reservationService.updateReservation...'
         );
         const result = await reservationService.updateReservation(
           reservationId,
           updatePayload
         );
-        console.log("[DragDrop] Update result:", result);
+        console.log('[DragDrop] Update result:', result);
 
         // Small delay to ensure database write is complete, then refresh
         await new Promise((resolve) => setTimeout(resolve, 300));
 
         // Force a complete re-render by updating the refresh key
-        console.log("[DragDrop] Forcing calendar refresh...");
+        console.log('[DragDrop] Forcing calendar refresh...');
         setRefreshKey((prev) => prev + 1);
 
         // Show success feedback
@@ -358,9 +358,9 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
           `Moved reservation ${reservationId} to kennel ${targetKennelId}`
         );
       } catch (error: any) {
-        console.error("[DragDrop] Error moving reservation:", error);
-        console.error("[DragDrop] Error details:", error.response?.data);
-        setFormError(error.message || "Failed to move reservation");
+        console.error('[DragDrop] Error moving reservation:', error);
+        console.error('[DragDrop] Error details:', error.response?.data);
+        setFormError(error.message || 'Failed to move reservation');
       }
     },
     [reservations]
@@ -379,9 +379,9 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
   // Listen for checkout completion and refresh calendar
   useEffect(() => {
     // Check if we need to refresh on mount (after checkout redirect)
-    const shouldRefresh = sessionStorage.getItem("refreshCalendar");
-    if (shouldRefresh === "true") {
-      sessionStorage.removeItem("refreshCalendar");
+    const shouldRefresh = sessionStorage.getItem('refreshCalendar');
+    if (shouldRefresh === 'true') {
+      sessionStorage.removeItem('refreshCalendar');
       // Small delay to ensure component is fully mounted
       setTimeout(() => {
         refreshData();
@@ -397,13 +397,13 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
     };
 
     // Listen for both events
-    window.addEventListener("reservation-created", handleCheckoutComplete);
-    document.addEventListener("reservationComplete", handleReservationComplete);
+    window.addEventListener('reservation-created', handleCheckoutComplete);
+    document.addEventListener('reservationComplete', handleReservationComplete);
 
     return () => {
-      window.removeEventListener("reservation-created", handleCheckoutComplete);
+      window.removeEventListener('reservation-created', handleCheckoutComplete);
       document.removeEventListener(
-        "reservationComplete",
+        'reservationComplete',
         handleReservationComplete
       );
     };
@@ -412,9 +412,9 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
   // Memoize the dialog title
   const dialogTitle = useMemo(() => {
     if (selectedReservation) {
-      return "Edit Reservation";
+      return 'Edit Reservation';
     }
-    return `New Reservation - ${selectedKennel?.name || "Kennel"}`;
+    return `New Reservation - ${selectedKennel?.name || 'Kennel'}`;
   }, [selectedReservation, selectedKennel]);
 
   return (
@@ -452,14 +452,14 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
       <Dialog
         open={isFormOpen}
         onClose={handleFormClose}
-        maxWidth={isMobile ? false : "md"}
+        maxWidth={isMobile ? false : 'md'}
         fullWidth={!isMobile}
         fullScreen={isMobile}
         PaperProps={{
           sx: {
-            maxHeight: isMobile ? "100vh" : "90vh",
+            maxHeight: isMobile ? '100vh' : '90vh',
             width: isMobile
-              ? "100%"
+              ? '100%'
               : getResponsiveDialogWidth(isMobile, isTablet),
           },
         }}

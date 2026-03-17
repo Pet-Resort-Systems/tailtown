@@ -6,11 +6,11 @@
  * - deleteProfilePhoto
  */
 
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-import { AppError } from "../../middleware/error.middleware";
-import fs from "fs";
-import path from "path";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { AppError } from '../../middleware/error.middleware';
+import fs from 'fs';
+import path from 'path';
 
 const prisma = new PrismaClient();
 
@@ -26,7 +26,7 @@ export const uploadProfilePhoto = async (
     const { id } = req.params;
 
     if (!req.file) {
-      return next(new AppError("No file uploaded", 400));
+      return next(new AppError('No file uploaded', 400));
     }
 
     // Get the staff member
@@ -37,14 +37,14 @@ export const uploadProfilePhoto = async (
     if (!staff) {
       // Delete the uploaded file if staff not found
       fs.unlinkSync(req.file.path);
-      return next(new AppError("Staff member not found", 404));
+      return next(new AppError('Staff member not found', 404));
     }
 
     // Delete old photo if exists
     if (staff.profilePhoto) {
       const oldPhotoPath = path.join(
         __dirname,
-        "../../../uploads/profile-photos",
+        '../../../uploads/profile-photos',
         path.basename(staff.profilePhoto)
       );
       if (fs.existsSync(oldPhotoPath)) {
@@ -73,8 +73,8 @@ export const uploadProfilePhoto = async (
     });
 
     res.status(200).json({
-      status: "success",
-      message: "Profile photo uploaded successfully",
+      status: 'success',
+      message: 'Profile photo uploaded successfully',
       data: updatedStaff,
     });
   } catch (error) {
@@ -103,14 +103,14 @@ export const deleteProfilePhoto = async (
     });
 
     if (!staff) {
-      return next(new AppError("Staff member not found", 404));
+      return next(new AppError('Staff member not found', 404));
     }
 
     // Delete photo file if exists
     if (staff.profilePhoto) {
       const photoPath = path.join(
         __dirname,
-        "../../../uploads/profile-photos",
+        '../../../uploads/profile-photos',
         path.basename(staff.profilePhoto)
       );
       if (fs.existsSync(photoPath)) {
@@ -136,8 +136,8 @@ export const deleteProfilePhoto = async (
     });
 
     res.status(200).json({
-      status: "success",
-      message: "Profile photo deleted successfully",
+      status: 'success',
+      message: 'Profile photo deleted successfully',
       data: updatedStaff,
     });
   } catch (error) {

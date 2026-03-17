@@ -74,7 +74,7 @@ interface NavItem {
  * @returns Full URL to profile photo or undefined if invalid
  */
 const getProfilePhotoUrl = (
-  profilePhoto: string | null | undefined,
+  profilePhoto: string | null | undefined
 ): string | undefined => {
   if (!profilePhoto) return undefined;
 
@@ -396,7 +396,7 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
                 <ListItemText primary={item.label} />
               </ListItemButton>
             </ListItem>
-          ),
+          )
         )}
       </List>
       {/* Admin link - only visible to Managers and Administrators */}

@@ -14,7 +14,7 @@ const getEnvironment = (): string => {
  */
 const getConfig = (): AppConfig => {
   const env = getEnvironment();
-  
+
   switch (env) {
     case 'production':
       return productionConfig;
@@ -37,8 +37,8 @@ export * from './types';
 
 // Helper function to get service URL
 export const getServiceUrl = (service: 'customer' | 'reservation'): string => {
-  return service === 'customer' 
-    ? config.api.customerServiceUrl 
+  return service === 'customer'
+    ? config.api.customerServiceUrl
     : config.api.reservationServiceUrl;
 };
 
@@ -46,12 +46,13 @@ export const getServiceUrl = (service: 'customer' | 'reservation'): string => {
 export const getTenantId = (): string | undefined => {
   try {
     const fromStorage =
-      localStorage.getItem('tailtown_tenant_id') || localStorage.getItem('tenantId');
+      localStorage.getItem('tailtown_tenant_id') ||
+      localStorage.getItem('tenantId');
     if (fromStorage && fromStorage.trim()) return fromStorage.trim();
   } catch (_) {
     // Access to localStorage might fail in non-browser environments
   }
-  
+
   return config.api.defaultTenantId;
 };
 
@@ -63,7 +64,7 @@ export const getTenantTimezone = (): string => {
   } catch (_) {
     // Access to localStorage might fail in non-browser environments
   }
-  
+
   // Default to America/Denver (Mountain Time) if not set
   return 'America/Denver';
 };
@@ -74,9 +75,9 @@ export const formatDate = (date: Date | string, format?: string): string => {
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'numeric',
-    day: 'numeric'
+    day: 'numeric',
   };
-  
+
   return dateObj.toLocaleDateString('en-US', options);
 };
 
@@ -86,14 +87,17 @@ export const formatTime = (date: Date | string, format?: string): string => {
   const options: Intl.DateTimeFormatOptions = {
     hour: 'numeric',
     minute: 'numeric',
-    hour12: true
+    hour12: true,
   };
-  
+
   return dateObj.toLocaleTimeString('en-US', options);
 };
 
 // Helper function to format a date and time according to the configured format
-export const formatDateTime = (date: Date | string, format?: string): string => {
+export const formatDateTime = (
+  date: Date | string,
+  format?: string
+): string => {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
@@ -101,8 +105,8 @@ export const formatDateTime = (date: Date | string, format?: string): string => 
     day: 'numeric',
     hour: 'numeric',
     minute: 'numeric',
-    hour12: true
+    hour12: true,
   };
-  
+
   return dateObj.toLocaleString('en-US', options);
 };

@@ -1,6 +1,6 @@
 /**
  * System Health Dashboard Component
- * 
+ *
  * Displays real-time system health metrics for super admin monitoring.
  * Auto-refreshes every 30 seconds to provide up-to-date status.
  */
@@ -105,10 +105,10 @@ const SystemHealthDashboard: React.FC = () => {
 
   useEffect(() => {
     fetchHealthMetrics();
-    
+
     // Auto-refresh every 30 seconds
     const interval = setInterval(fetchHealthMetrics, 30000);
-    
+
     return () => clearInterval(interval);
   }, []);
 
@@ -142,7 +142,7 @@ const SystemHealthDashboard: React.FC = () => {
     const days = Math.floor(seconds / 86400);
     const hours = Math.floor((seconds % 86400) / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
-    
+
     if (days > 0) return `${days}d ${hours}h`;
     if (hours > 0) return `${hours}h ${minutes}m`;
     return `${minutes}m`;
@@ -150,7 +150,14 @@ const SystemHealthDashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: 400,
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -174,7 +181,14 @@ const SystemHealthDashboard: React.FC = () => {
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+        }}
+      >
         <Box>
           <Typography variant="h5" gutterBottom>
             System Health Dashboard
@@ -255,7 +269,9 @@ const SystemHealthDashboard: React.FC = () => {
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <DatabaseIcon color={getStatusColor(health.services.database.status)} />
+                <DatabaseIcon
+                  color={getStatusColor(health.services.database.status)}
+                />
                 <Typography variant="h6" sx={{ ml: 1 }}>
                   Database
                 </Typography>
@@ -282,7 +298,9 @@ const SystemHealthDashboard: React.FC = () => {
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <CacheIcon color={getStatusColor(health.services.cache.status)} />
+                <CacheIcon
+                  color={getStatusColor(health.services.cache.status)}
+                />
                 <Typography variant="h6" sx={{ ml: 1 }}>
                   Redis Cache
                 </Typography>
@@ -318,7 +336,13 @@ const SystemHealthDashboard: React.FC = () => {
                 </Typography>
               </Box>
               <Box sx={{ mb: 1 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    mb: 0.5,
+                  }}
+                >
                   <Typography variant="body2" color="text.secondary">
                     {health.system.memory.used} / {health.system.memory.total}
                   </Typography>
@@ -329,7 +353,13 @@ const SystemHealthDashboard: React.FC = () => {
                 <LinearProgress
                   variant="determinate"
                   value={health.system.memory.percentage}
-                  color={health.system.memory.percentage > 80 ? 'error' : health.system.memory.percentage > 60 ? 'warning' : 'success'}
+                  color={
+                    health.system.memory.percentage > 80
+                      ? 'error'
+                      : health.system.memory.percentage > 60
+                        ? 'warning'
+                        : 'success'
+                  }
                   sx={{ height: 8, borderRadius: 1 }}
                 />
               </Box>
@@ -348,7 +378,13 @@ const SystemHealthDashboard: React.FC = () => {
                 </Typography>
               </Box>
               <Box sx={{ mb: 1 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    mb: 0.5,
+                  }}
+                >
                   <Typography variant="body2" color="text.secondary">
                     {health.system.cpu.cores} cores
                   </Typography>
@@ -359,7 +395,13 @@ const SystemHealthDashboard: React.FC = () => {
                 <LinearProgress
                   variant="determinate"
                   value={health.system.cpu.usage}
-                  color={health.system.cpu.usage > 80 ? 'error' : health.system.cpu.usage > 60 ? 'warning' : 'success'}
+                  color={
+                    health.system.cpu.usage > 80
+                      ? 'error'
+                      : health.system.cpu.usage > 60
+                        ? 'warning'
+                        : 'success'
+                  }
                   sx={{ height: 8, borderRadius: 1 }}
                 />
               </Box>
@@ -379,7 +421,14 @@ const SystemHealthDashboard: React.FC = () => {
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={4}>
-              <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'primary.light', borderRadius: 1 }}>
+              <Box
+                sx={{
+                  textAlign: 'center',
+                  p: 2,
+                  bgcolor: 'primary.light',
+                  borderRadius: 1,
+                }}
+              >
                 <Typography variant="h4" color="primary.main">
                   {health.metrics.activeTenants}
                 </Typography>
@@ -390,7 +439,14 @@ const SystemHealthDashboard: React.FC = () => {
             </Grid>
             {health.metrics.totalRequests !== undefined && (
               <Grid item xs={12} sm={4}>
-                <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'success.light', borderRadius: 1 }}>
+                <Box
+                  sx={{
+                    textAlign: 'center',
+                    p: 2,
+                    bgcolor: 'success.light',
+                    borderRadius: 1,
+                  }}
+                >
                   <Typography variant="h4" color="success.main">
                     {health.metrics.totalRequests.toLocaleString()}
                   </Typography>
@@ -402,7 +458,14 @@ const SystemHealthDashboard: React.FC = () => {
             )}
             {health.metrics.averageResponseTime !== undefined && (
               <Grid item xs={12} sm={4}>
-                <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'info.light', borderRadius: 1 }}>
+                <Box
+                  sx={{
+                    textAlign: 'center',
+                    p: 2,
+                    bgcolor: 'info.light',
+                    borderRadius: 1,
+                  }}
+                >
                   <Typography variant="h4" color="info.main">
                     {health.metrics.averageResponseTime}ms
                   </Typography>

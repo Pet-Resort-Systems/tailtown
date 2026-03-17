@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Paper,
@@ -15,16 +15,16 @@ import {
   FormControl,
   InputLabel,
   Tooltip,
-} from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import SearchIcon from "@mui/icons-material/Search";
-import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
-import PetsIcon from "@mui/icons-material/Pets";
-import { resourceService, type Resource } from "../../services/resourceService";
-import { formatDateToYYYYMMDD } from "../../utils/dateUtils";
-import { determineSuiteStatus } from "../../utils/suiteUtils";
+} from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import SearchIcon from '@mui/icons-material/Search';
+import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
+import PetsIcon from '@mui/icons-material/Pets';
+import { resourceService, type Resource } from '../../services/resourceService';
+import { formatDateToYYYYMMDD } from '../../utils/dateUtils';
+import { determineSuiteStatus } from '../../utils/suiteUtils';
 
 /**
  * Extended Resource type that includes reservations
@@ -55,26 +55,26 @@ interface ResourceWithReservations extends Resource {
 
 // Room sizes for kennels
 enum RoomSize {
-  JUNIOR = "JUNIOR",
-  QUEEN = "QUEEN",
-  KING = "KING",
-  VIP = "VIP",
+  JUNIOR = 'JUNIOR',
+  QUEEN = 'QUEEN',
+  KING = 'KING',
+  VIP = 'VIP',
 }
 
 // Room size colors
 const roomSizeColors = {
-  [RoomSize.JUNIOR]: "#E0E0E0",
-  [RoomSize.QUEEN]: "#BBDEFB",
-  [RoomSize.KING]: "#90CAF9",
-  [RoomSize.VIP]: "#FFECB3",
+  [RoomSize.JUNIOR]: '#E0E0E0',
+  [RoomSize.QUEEN]: '#BBDEFB',
+  [RoomSize.KING]: '#90CAF9',
+  [RoomSize.VIP]: '#FFECB3',
 };
 
 // Suite colors for different statuses
 const statusColors = {
-  AVAILABLE: "#81C784",
-  OCCUPIED: "#FF8A65",
-  MAINTENANCE: "#9E9E9E",
-  RESERVED: "#FFD54F",
+  AVAILABLE: '#81C784',
+  OCCUPIED: '#FF8A65',
+  MAINTENANCE: '#9E9E9E',
+  RESERVED: '#FFD54F',
 };
 
 interface SuiteBoardProps {
@@ -110,9 +110,9 @@ const SuiteBoard: React.FC<SuiteBoardProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState({
-    suiteType: "all",
-    status: "all",
-    search: "",
+    suiteType: 'all',
+    status: 'all',
+    search: '',
     date: filterDate || new Date(),
   });
 
@@ -159,12 +159,12 @@ const SuiteBoard: React.FC<SuiteBoardProps> = ({
       // Get all suites regardless of status, we'll filter client-side
       // This ensures we have all the data needed to determine status accurately
       const response = await resourceService.getSuites(
-        filter.suiteType !== "all" ? filter.suiteType : undefined,
+        filter.suiteType !== 'all' ? filter.suiteType : undefined,
         undefined, // Don't use backend status filtering
         undefined, // Don't pass search parameter to API
         formattedDate
       );
-      if (response?.status === "success" && Array.isArray(response?.data)) {
+      if (response?.status === 'success' && Array.isArray(response?.data)) {
         const suites = response.data
           .map((suite: ResourceWithReservations) => {
             // Safely extract pet and owner info
@@ -191,17 +191,17 @@ const SuiteBoard: React.FC<SuiteBoardProps> = ({
             const status = determineSuiteStatus(suite);
 
             // Use the suite.size for room size, fallback to JUNIOR if not set
-            const roomSize = suite.size || "JUNIOR";
+            const roomSize = suite.size || 'JUNIOR';
 
             return {
               id: suite.id,
               name: suite.name,
-              suiteNumber: suite.attributes?.suiteNumber || suite.name || "N/A",
+              suiteNumber: suite.attributes?.suiteNumber || suite.name || 'N/A',
               suiteType: roomSize, // Use room size instead of old suite type
               status: status,
               pet: pet,
               owner: owner,
-              notes: suite.notes || "",
+              notes: suite.notes || '',
               lastCleaned: suite.attributes?.lastCleaned,
             };
           })
@@ -215,14 +215,14 @@ const SuiteBoard: React.FC<SuiteBoardProps> = ({
               const bNum = String(b.suiteNumber);
               return aNum.localeCompare(bNum, undefined, {
                 numeric: true,
-                sensitivity: "base",
+                sensitivity: 'base',
               });
             }
           );
 
         // Apply client-side status filtering if needed
         let filteredResults = suites;
-        if (filter.status !== "all") {
+        if (filter.status !== 'all') {
           filteredResults = suites.filter(
             (suite) => suite.status === filter.status
           );
@@ -231,12 +231,12 @@ const SuiteBoard: React.FC<SuiteBoardProps> = ({
         setSuites(filteredResults);
         setError(null);
       } else {
-        setError("Could not load suites: Unexpected response format.");
+        setError('Could not load suites: Unexpected response format.');
         setSuites([]);
-        console.error("Suites API response:", response);
+        console.error('Suites API response:', response);
       }
     } catch (error: any) {
-      let msg = "Could not load suites.";
+      let msg = 'Could not load suites.';
       if (error?.response) {
         msg += ` Server responded with status ${error.response.status}: ${
           error.response.data?.message || error.response.statusText
@@ -246,7 +246,7 @@ const SuiteBoard: React.FC<SuiteBoardProps> = ({
       }
       setError(msg);
       setSuites([]);
-      console.error("Error loading suites:", error);
+      console.error('Error loading suites:', error);
     } finally {
       setLoading(false);
     }
@@ -305,23 +305,23 @@ const SuiteBoard: React.FC<SuiteBoardProps> = ({
     notes?: string;
     lastCleaned?: string | Date | null;
   }) => {
-    const bgColor = roomSizeColors[suite.suiteType as RoomSize] || "#E0E0E0";
+    const bgColor = roomSizeColors[suite.suiteType as RoomSize] || '#E0E0E0';
     const statusColor =
-      statusColors[suite.status as keyof typeof statusColors] || "#E0E0E0";
+      statusColors[suite.status as keyof typeof statusColors] || '#E0E0E0';
 
     return (
       <Card
         key={suite.id}
         sx={{
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          cursor: "pointer",
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          cursor: 'pointer',
           borderLeft: `8px solid ${statusColor}`,
-          "&:hover": {
+          '&:hover': {
             boxShadow: 3,
-            transform: "translateY(-4px)",
-            transition: "transform 0.2s",
+            transform: 'translateY(-4px)',
+            transition: 'transform 0.2s',
           },
         }}
         data-suite-id={suite.id}
@@ -336,9 +336,9 @@ const SuiteBoard: React.FC<SuiteBoardProps> = ({
         <CardContent sx={{ p: 1, flexGrow: 1 }}>
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
               mb: 1,
             }}
           >
@@ -350,10 +350,10 @@ const SuiteBoard: React.FC<SuiteBoardProps> = ({
               size="small"
               color={
                 suite.suiteType === RoomSize.VIP
-                  ? "warning"
+                  ? 'warning'
                   : suite.suiteType === RoomSize.KING
-                  ? "info"
-                  : "default"
+                    ? 'info'
+                    : 'default'
               }
             />
           </Box>
@@ -362,8 +362,8 @@ const SuiteBoard: React.FC<SuiteBoardProps> = ({
             <Box>
               <Box
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
+                  display: 'flex',
+                  alignItems: 'center',
                   gap: 0.5,
                   mb: 0.5,
                 }}
@@ -374,35 +374,35 @@ const SuiteBoard: React.FC<SuiteBoardProps> = ({
                 </Typography>
               </Box>
               <Box
-                sx={{ display: "flex", alignItems: "center", gap: 0.5, ml: 1 }}
+                sx={{ display: 'flex', alignItems: 'center', gap: 0.5, ml: 1 }}
               >
                 <Typography
                   variant="body2"
                   color="text.secondary"
-                  sx={{ display: "flex", alignItems: "center" }}
+                  sx={{ display: 'flex', alignItems: 'center' }}
                 >
-                  <span style={{ fontWeight: "bold", marginRight: "4px" }}>
+                  <span style={{ fontWeight: 'bold', marginRight: '4px' }}>
                     Owner:
                   </span>
                   {suite.owner
                     ? `${suite.owner.firstName} ${suite.owner.lastName}`
-                    : "Unknown"}
+                    : 'Unknown'}
                 </Typography>
               </Box>
             </Box>
           ) : (
-            <Box sx={{ height: "40px", display: "flex", alignItems: "center" }}>
+            <Box sx={{ height: '40px', display: 'flex', alignItems: 'center' }}>
               <Typography variant="body2" color="text.secondary">
-                {suite.status === "MAINTENANCE"
-                  ? "Under Maintenance"
-                  : "Available"}
+                {suite.status === 'MAINTENANCE'
+                  ? 'Under Maintenance'
+                  : 'Available'}
               </Typography>
             </Box>
           )}
         </CardContent>
 
-        {suite.status !== "OCCUPIED" && (
-          <Box sx={{ display: "flex", justifyContent: "flex-end", p: 0.5 }}>
+        {suite.status !== 'OCCUPIED' && (
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 0.5 }}>
             <Tooltip title="Mark as cleaned">
               <IconButton
                 size="small"
@@ -424,7 +424,7 @@ const SuiteBoard: React.FC<SuiteBoardProps> = ({
     <Box>
       {error && (
         <Box sx={{ mb: 2 }}>
-          <Paper sx={{ p: 2, bgcolor: "#ffebee", color: "#b71c1c" }}>
+          <Paper sx={{ p: 2, bgcolor: '#ffebee', color: '#b71c1c' }}>
             <Typography variant="body1">{error}</Typography>
           </Paper>
         </Box>
@@ -432,10 +432,10 @@ const SuiteBoard: React.FC<SuiteBoardProps> = ({
       <Box
         sx={{
           mb: 3,
-          display: "flex",
-          flexWrap: "wrap",
+          display: 'flex',
+          flexWrap: 'wrap',
           gap: 2,
-          alignItems: "center",
+          alignItems: 'center',
         }}
       >
         <TextField
@@ -452,10 +452,10 @@ const SuiteBoard: React.FC<SuiteBoardProps> = ({
               </InputAdornment>
             ),
           }}
-          sx={{ flexGrow: 1, minWidth: "200px" }}
+          sx={{ flexGrow: 1, minWidth: '200px' }}
         />
 
-        <FormControl size="small" sx={{ minWidth: "150px" }}>
+        <FormControl size="small" sx={{ minWidth: '150px' }}>
           <InputLabel>Suite Type</InputLabel>
           <Select
             value={filter.suiteType}
@@ -472,7 +472,7 @@ const SuiteBoard: React.FC<SuiteBoardProps> = ({
           </Select>
         </FormControl>
 
-        <FormControl size="small" sx={{ minWidth: "150px" }}>
+        <FormControl size="small" sx={{ minWidth: '150px' }}>
           <InputLabel>Status</InputLabel>
           <Select
             value={filter.status}
@@ -506,8 +506,8 @@ const SuiteBoard: React.FC<SuiteBoardProps> = ({
             }}
             slotProps={{
               textField: {
-                size: "small",
-                sx: { minWidth: "150px" },
+                size: 'small',
+                sx: { minWidth: '150px' },
               },
             }}
           />
@@ -531,52 +531,52 @@ const SuiteBoard: React.FC<SuiteBoardProps> = ({
           ))
         )}
       </Grid>
-      <Box sx={{ mt: 3, display: "flex", gap: 2, flexWrap: "wrap" }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+      <Box sx={{ mt: 3, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Box
             sx={{
               width: 16,
               height: 16,
               backgroundColor: statusColors.AVAILABLE,
-              borderRadius: "50%",
+              borderRadius: '50%',
             }}
           />
           <Typography variant="body2">Available</Typography>
         </Box>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Box
             sx={{
               width: 16,
               height: 16,
               backgroundColor: statusColors.OCCUPIED,
-              borderRadius: "50%",
+              borderRadius: '50%',
             }}
           />
           <Typography variant="body2">Occupied</Typography>
         </Box>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Box
             sx={{
               width: 16,
               height: 16,
               backgroundColor: statusColors.MAINTENANCE,
-              borderRadius: "50%",
+              borderRadius: '50%',
             }}
           />
           <Typography variant="body2">Maintenance</Typography>
         </Box>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Box
             sx={{
               width: 16,
               height: 16,
               backgroundColor: statusColors.RESERVED,
-              borderRadius: "50%",
+              borderRadius: '50%',
             }}
           />
           <Typography variant="body2">Reserved</Typography>
         </Box>
-        <Typography variant="caption" sx={{ ml: 2, alignSelf: "center" }}>
+        <Typography variant="caption" sx={{ ml: 2, alignSelf: 'center' }}>
           The colored bar on the left of each card indicates its status
         </Typography>
       </Box>

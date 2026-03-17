@@ -47,26 +47,28 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
   initialPayment,
 }) => {
   // State for payment details
-  const [paymentOption, setPaymentOption] = useState<'deposit' | 'full' | 'skip'>(
-    depositRequired ? 'deposit' : 'full'
+  const [paymentOption, setPaymentOption] = useState<
+    'deposit' | 'full' | 'skip'
+  >(depositRequired ? 'deposit' : 'full');
+  const [paymentMethod, setPaymentMethod] = useState<string>(
+    initialPayment.method || 'CASH'
   );
-  const [paymentMethod, setPaymentMethod] = useState<string>(initialPayment.method || 'CASH');
   const [cardNumber, setCardNumber] = useState<string>('');
   const [expiryDate, setExpiryDate] = useState<string>('');
   const [cvv, setCvv] = useState<string>('');
   const [nameOnCard, setNameOnCard] = useState<string>('');
   const [paymentNotes, setPaymentNotes] = useState<string>('');
-  
+
   // Store credit info
   const [storeCredit, setStoreCredit] = useState<number>(0);
   const [useStoreCredit, setUseStoreCredit] = useState<boolean>(false);
   const [storeCreditToUse, setStoreCreditToUse] = useState<number>(0);
-  
+
   // Loading and error states
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
-  
+
   // Load customer store credit from the API if we have an invoice
   useEffect(() => {
     const loadStoreCredit = async () => {
@@ -76,7 +78,9 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
           const invoice = await invoiceService.getInvoiceById(invoiceId);
           if (invoice?.customerId) {
             // Get customer details and extract store credit
-            const customerData = await customerService.getCustomerById(invoice.customerId);
+            const customerData = await customerService.getCustomerById(
+              invoice.customerId
+            );
             if (customerData?.storeCredit) {
               setStoreCredit(customerData.storeCredit);
             }
@@ -88,15 +92,17 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
         setStoreCredit(0);
       }
     };
-    
+
     loadStoreCredit();
   }, [invoiceId]);
-  
+
   // Handle store credit checkbox change
-  const handleStoreCreditChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleStoreCreditChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const checked = event.target.checked;
     setUseStoreCredit(checked);
-    
+
     if (checked) {
       // Calculate how much store credit to use
       const creditToUse = Math.min(storeCredit, amount);
@@ -105,9 +111,11 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
       setStoreCreditToUse(0);
     }
   };
-  
+
   // Handle store credit amount change
-  const handleStoreCreditAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleStoreCreditAmountChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const value = Math.min(
       Math.max(0, parseFloat(event.target.value) || 0),
       storeCredit,
@@ -115,11 +123,14 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
     );
     setStoreCreditToUse(value);
   };
-  
+
   // Calculate remaining amount to pay after applying store credit
   // Round to nearest penny to avoid floating point issues
-  const remainingAmount = Math.max(0, Math.round((amount - storeCreditToUse) * 100) / 100);
-  
+  const remainingAmount = Math.max(
+    0,
+    Math.round((amount - storeCreditToUse) * 100) / 100
+  );
+
   // Format currency
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -127,7 +138,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
       currency: 'USD',
     }).format(amount);
   };
-  
+
   // Handle form submission and payment processing
   const handleSubmitPayment = async () => {
     // Validate inputs based on payment method
@@ -136,30 +147,30 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
         setError('Please fill in all credit card details');
         return;
       }
-      
+
       // Simple validation for card number format
       if (!/^\d{16}$/.test(cardNumber.replace(/\s/g, ''))) {
         setError('Card number should be 16 digits');
         return;
       }
-      
+
       // Simple validation for expiry date format (MM/YY)
       if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
         setError('Expiry date should be in format MM/YY');
         return;
       }
-      
+
       // Simple validation for CVV
       if (!/^\d{3,4}$/.test(cvv)) {
         setError('CVV should be 3 or 4 digits');
         return;
       }
     }
-    
+
     try {
       setLoading(true);
       setError(null);
-      
+
       // Create paymentData object
       const paymentData: any = {
         invoiceId, // Include the invoiceId in payment data
@@ -169,12 +180,12 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
         transactionId: `SIMULATED-${Date.now()}`,
         notes: paymentNotes,
       };
-      
+
       // If using store credit, include it in the payment data
       if (useStoreCredit && storeCreditToUse > 0) {
         paymentData.storeCredit = storeCreditToUse;
       }
-      
+
       // For credit card payments, add card info
       if (paymentMethod === 'CREDIT_CARD') {
         // In a real implementation, this would be sent to a payment processor
@@ -183,71 +194,84 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
         paymentData.notes += ` | Card ending in ${last4}`;
         paymentData.cardLastFour = last4;
       }
-      
+
       // In a real implementation, we would process the payment through the API
       // For this demonstration, we'll simulate a successful response
-      
+
       // Simulate API response delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       setSuccess(true);
-      
+
       // Pass payment data back to parent component
       onContinue({
         ...paymentData,
         storeCredit: useStoreCredit ? storeCreditToUse : 0,
-        cardDetails: paymentMethod === 'CREDIT_CARD' ? {
-          cardNumber,
-          expiryDate,
-          cvv,
-          cardholderName: nameOnCard
-        } : undefined
+        cardDetails:
+          paymentMethod === 'CREDIT_CARD'
+            ? {
+                cardNumber,
+                expiryDate,
+                cvv,
+                cardholderName: nameOnCard,
+              }
+            : undefined,
       });
     } catch (err: any) {
       console.error('Error processing payment:', err);
-      setError(err.response?.data?.message || 'Failed to process payment. Please try again.');
+      setError(
+        err.response?.data?.message ||
+          'Failed to process payment. Please try again.'
+      );
     } finally {
       setLoading(false);
     }
   };
-  
+
   return (
     <Box>
       <Typography variant="h6" gutterBottom>
         Payment Processing
       </Typography>
-      
+
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
-      
+
       {success && (
         <Alert severity="success" sx={{ mb: 2 }}>
           Payment processed successfully!
         </Alert>
       )}
-      
+
       <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <Typography variant="h6" gutterBottom>
               Invoice Total: {formatCurrency(totalAmount || amount)}
             </Typography>
-            
+
             {depositRequired && (
-              <Box sx={{ mt: 2, p: 2, bgcolor: 'primary.light', borderRadius: 1 }}>
-                <Typography variant="subtitle2" color="primary.contrastText" gutterBottom>
+              <Box
+                sx={{ mt: 2, p: 2, bgcolor: 'primary.light', borderRadius: 1 }}
+              >
+                <Typography
+                  variant="subtitle2"
+                  color="primary.contrastText"
+                  gutterBottom
+                >
                   Deposit Required: {formatCurrency(depositAmount)}
                 </Typography>
                 <Typography variant="body2" color="primary.contrastText">
-                  Balance Due at Checkout: {formatCurrency((totalAmount || amount) - depositAmount)}
+                  Balance Due at Checkout:{' '}
+                  {formatCurrency((totalAmount || amount) - depositAmount)}
                 </Typography>
               </Box>
             )}
           </Grid>
-          
+
           {/* Payment Option Selection */}
           <Grid item xs={12}>
             <Divider sx={{ my: 1 }} />
@@ -258,7 +282,9 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
               <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                 {depositRequired && (
                   <Button
-                    variant={paymentOption === 'deposit' ? 'contained' : 'outlined'}
+                    variant={
+                      paymentOption === 'deposit' ? 'contained' : 'outlined'
+                    }
                     onClick={() => setPaymentOption('deposit')}
                     sx={{ minWidth: 150 }}
                   >
@@ -274,7 +300,9 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
                 </Button>
                 {!depositRequired && (
                   <Button
-                    variant={paymentOption === 'skip' ? 'contained' : 'outlined'}
+                    variant={
+                      paymentOption === 'skip' ? 'contained' : 'outlined'
+                    }
                     color="secondary"
                     onClick={() => setPaymentOption('skip')}
                     sx={{ minWidth: 150 }}
@@ -285,23 +313,29 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
               </Box>
             </FormControl>
           </Grid>
-          
+
           {paymentOption !== 'skip' && (
             <Grid item xs={12}>
               <Typography variant="h6" color="primary">
-                Amount to Pay Now: {formatCurrency(paymentOption === 'deposit' ? depositAmount : (totalAmount || amount))}
+                Amount to Pay Now:{' '}
+                {formatCurrency(
+                  paymentOption === 'deposit'
+                    ? depositAmount
+                    : totalAmount || amount
+                )}
               </Typography>
             </Grid>
           )}
-          
+
           {paymentOption === 'skip' && (
             <Grid item xs={12}>
               <Alert severity="info">
-                No payment will be processed. The reservation will be created with a pending invoice.
+                No payment will be processed. The reservation will be created
+                with a pending invoice.
               </Alert>
             </Grid>
           )}
-          
+
           {storeCredit > 0 && (
             <>
               <Grid item xs={12}>
@@ -332,7 +366,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
                   </Box>
                 </Box>
               </Grid>
-              
+
               <Grid item xs={12}>
                 <Divider />
                 <Typography variant="h6" sx={{ mt: 2 }}>
@@ -341,7 +375,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
               </Grid>
             </>
           )}
-          
+
           <Grid item xs={12}>
             <FormControl fullWidth size="small">
               <InputLabel id="payment-method-label">Payment Method</InputLabel>
@@ -358,7 +392,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
               </Select>
             </FormControl>
           </Grid>
-          
+
           {paymentMethod === 'CREDIT_CARD' && (
             <>
               <Grid item xs={12}>
@@ -372,7 +406,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
                   size="small"
                 />
               </Grid>
-              
+
               <Grid item xs={6}>
                 <TextField
                   fullWidth
@@ -384,7 +418,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
                   size="small"
                 />
               </Grid>
-              
+
               <Grid item xs={6}>
                 <TextField
                   fullWidth
@@ -396,7 +430,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
                   size="small"
                 />
               </Grid>
-              
+
               <Grid item xs={12}>
                 <TextField
                   fullWidth
@@ -408,7 +442,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
               </Grid>
             </>
           )}
-          
+
           {(paymentMethod === 'CASH' || paymentMethod === 'CHECK') && (
             <Grid item xs={12}>
               <TextField
@@ -417,7 +451,9 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
                 type="number"
                 value={remainingAmount}
                 InputProps={{
-                  startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                  startAdornment: (
+                    <InputAdornment position="start">$</InputAdornment>
+                  ),
                   inputProps: {
                     min: 0,
                     step: 0.01,
@@ -428,7 +464,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
               />
             </Grid>
           )}
-          
+
           <Grid item xs={12}>
             <TextField
               fullWidth
@@ -442,7 +478,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
           </Grid>
         </Grid>
       </Paper>
-      
+
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
         {paymentOption === 'skip' ? (
           <Button
@@ -466,7 +502,11 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
             onClick={handleSubmitPayment}
             disabled={loading || success}
           >
-            {loading ? <CircularProgress size={24} /> : `Process Payment (${formatCurrency(paymentOption === 'deposit' ? depositAmount : (totalAmount || amount))})`}
+            {loading ? (
+              <CircularProgress size={24} />
+            ) : (
+              `Process Payment (${formatCurrency(paymentOption === 'deposit' ? depositAmount : totalAmount || amount)})`
+            )}
           </Button>
         )}
       </Box>

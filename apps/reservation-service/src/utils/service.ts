@@ -3,14 +3,14 @@
  * This provides the core functionality needed for the service to operate independently
  */
 
-import express, { Express, Request, Response, NextFunction } from "express";
-import cors from "cors";
-import helmet from "helmet";
-import morgan from "morgan";
-import compression from "compression";
-import rateLimit from "express-rate-limit";
-import { logger } from "./logger";
-import { requestIdMiddleware } from "../middleware/requestId.middleware";
+import express, { Express, Request, Response, NextFunction } from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import compression from 'compression';
+import rateLimit from 'express-rate-limit';
+import { logger } from './logger';
+import { requestIdMiddleware } from '../middleware/requestId.middleware';
 
 /**
  * Create and configure an Express service with standard middleware
@@ -31,7 +31,7 @@ export function createService(options: { name: string; version: string }) {
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 1000, // Limit each tenant to 1000 requests per windowMs
     message:
-      "Too many requests from your organization, please try again later.",
+      'Too many requests from your organization, please try again later.',
     standardHeaders: true,
     legacyHeaders: false,
     // Key by tenantId to enforce per-tenant limits
@@ -39,30 +39,30 @@ export function createService(options: { name: string; version: string }) {
       // Use tenantId if available, otherwise use default (handles IPv6)
       return req.tenantId;
     },
-    skip: (req) => req.path === "/health",
+    skip: (req) => req.path === '/health',
     // Custom handler for better error messages
     handler: (req: any, res: any) => {
       res.status(429).json({
         success: false,
         error: {
-          type: "RATE_LIMIT_ERROR",
-          message: "Rate limit exceeded for your organization",
+          type: 'RATE_LIMIT_ERROR',
+          message: 'Rate limit exceeded for your organization',
           tenantId: req.tenantId,
-          retryAfter: res.getHeader("Retry-After"),
+          retryAfter: res.getHeader('Retry-After'),
         },
       });
     },
   });
 
-  app.use("/api/", limiter);
+  app.use('/api/', limiter);
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
   // CORS configuration - allow all subdomains in production
   const allowedOrigins = process.env.ALLOWED_ORIGINS
-    ? process.env.ALLOWED_ORIGINS.split(",").map((origin) => origin.trim())
-    : ["http://localhost:3000", "http://localhost:3001"];
+    ? process.env.ALLOWED_ORIGINS.split(',').map((origin) => origin.trim())
+    : ['http://localhost:3000', 'http://localhost:3001'];
 
   app.use(
     cors({
@@ -71,14 +71,14 @@ export function createService(options: { name: string; version: string }) {
         if (!origin) return callback(null, true);
 
         // In development, allow all origins
-        if (process.env.NODE_ENV !== "production") {
+        if (process.env.NODE_ENV !== 'production') {
           return callback(null, true);
         }
 
         // In production, allow canicloud.com and all its subdomains
         const allowedDomains = [
-          "https://canicloud.com",
-          "https://www.canicloud.com",
+          'https://canicloud.com',
+          'https://www.canicloud.com',
         ];
 
         // Check if origin matches canicloud.com or any subdomain
@@ -90,26 +90,26 @@ export function createService(options: { name: string; version: string }) {
         } else if (allowedOrigins.includes(origin)) {
           callback(null, true);
         } else {
-          callback(new Error("Not allowed by CORS"));
+          callback(new Error('Not allowed by CORS'));
         }
       },
-      methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
       allowedHeaders: [
-        "Content-Type",
-        "Authorization",
-        "x-tenant-id",
-        "X-Tenant-Subdomain",
+        'Content-Type',
+        'Authorization',
+        'x-tenant-id',
+        'X-Tenant-Subdomain',
       ],
       credentials: true,
     })
   );
   app.use(helmet());
-  app.use(morgan("dev"));
+  app.use(morgan('dev'));
 
   // Add health check endpoint
-  app.get("/health", (req, res) => {
+  app.get('/health', (req, res) => {
     res.json({
-      status: "up",
+      status: 'up',
       service: options.name,
       version: options.version,
       timestamp: new Date().toISOString(),
@@ -127,7 +127,7 @@ export function createService(options: { name: string; version: string }) {
       res.status(404).json({
         success: false,
         error: {
-          type: "NOT_FOUND_ERROR",
+          type: 'NOT_FOUND_ERROR',
           message: `Route ${req.method} ${req.path} not found`,
         },
       });
@@ -139,16 +139,16 @@ export function createService(options: { name: string; version: string }) {
 
       // Determine status code based on error type
       let statusCode = 500;
-      if (err.type === "VALIDATION_ERROR") statusCode = 400;
-      if (err.type === "NOT_FOUND_ERROR") statusCode = 404;
-      if (err.type === "UNAUTHORIZED_ERROR") statusCode = 401;
-      if (err.type === "FORBIDDEN_ERROR") statusCode = 403;
+      if (err.type === 'VALIDATION_ERROR') statusCode = 400;
+      if (err.type === 'NOT_FOUND_ERROR') statusCode = 404;
+      if (err.type === 'UNAUTHORIZED_ERROR') statusCode = 401;
+      if (err.type === 'FORBIDDEN_ERROR') statusCode = 403;
 
       res.status(statusCode).json({
         success: false,
         error: {
-          type: err.type || "SERVER_ERROR",
-          message: err.message || "An unexpected error occurred",
+          type: err.type || 'SERVER_ERROR',
+          message: err.message || 'An unexpected error occurred',
           details: err.details || undefined,
         },
       });
@@ -170,15 +170,15 @@ export function tenantMiddleware(options: {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Get tenant ID or subdomain from header
-      const tenantIdOrSubdomain = req.headers["x-tenant-id"] as string;
+      const tenantIdOrSubdomain = req.headers['x-tenant-id'] as string;
 
       // Check if tenant ID is required but missing
       if (options.required && !tenantIdOrSubdomain) {
         return res.status(401).json({
           success: false,
           error: {
-            type: "UNAUTHORIZED_ERROR",
-            message: "Tenant ID is required but was not provided",
+            type: 'UNAUTHORIZED_ERROR',
+            message: 'Tenant ID is required but was not provided',
           },
         });
       }
@@ -196,7 +196,7 @@ export function tenantMiddleware(options: {
         if (!isUUID) {
           // In non-production, allow simple tenant IDs like "dev" without requiring
           // a Tenant table lookup (local dev often uses literal tenant IDs).
-          if (process.env.NODE_ENV !== "production") {
+          if (process.env.NODE_ENV !== 'production') {
             finalTenantId = tenantIdOrSubdomain;
             (req as any).tenantId = finalTenantId;
 
@@ -206,7 +206,7 @@ export function tenantMiddleware(options: {
                 return res.status(403).json({
                   success: false,
                   error: {
-                    type: "FORBIDDEN_ERROR",
+                    type: 'FORBIDDEN_ERROR',
                     message: `Invalid tenant: ${tenantIdOrSubdomain}`,
                   },
                 });
@@ -217,7 +217,7 @@ export function tenantMiddleware(options: {
           }
 
           // It's a subdomain, need to convert to UUID
-          const { prisma } = require("../config/prisma");
+          const { prisma } = require('../config/prisma');
           const tenant = await prisma.tenant.findUnique({
             where: { subdomain: tenantIdOrSubdomain },
             select: { id: true },
@@ -227,7 +227,7 @@ export function tenantMiddleware(options: {
             return res.status(404).json({
               success: false,
               error: {
-                type: "NOT_FOUND_ERROR",
+                type: 'NOT_FOUND_ERROR',
                 message: `Tenant not found for subdomain: ${tenantIdOrSubdomain}`,
               },
             });
@@ -243,8 +243,8 @@ export function tenantMiddleware(options: {
             return res.status(403).json({
               success: false,
               error: {
-                type: "FORBIDDEN_ERROR",
-                message: "Invalid tenant ID",
+                type: 'FORBIDDEN_ERROR',
+                message: 'Invalid tenant ID',
               },
             });
           }
@@ -280,18 +280,18 @@ export class AppError extends Error {
     isOperational = true
   ) {
     super(message);
-    this.name = "AppError";
+    this.name = 'AppError';
     this.statusCode = statusCode;
     this.isOperational = isOperational;
 
     // Map status code to error type
-    if (statusCode === 400) this.type = "VALIDATION_ERROR";
-    else if (statusCode === 401) this.type = "UNAUTHORIZED_ERROR";
-    else if (statusCode === 403) this.type = "FORBIDDEN_ERROR";
-    else if (statusCode === 404) this.type = "NOT_FOUND_ERROR";
-    else if (statusCode === 409) this.type = "CONFLICT_ERROR";
-    else if (statusCode === 422) this.type = "UNPROCESSABLE_ENTITY";
-    else this.type = "SERVER_ERROR";
+    if (statusCode === 400) this.type = 'VALIDATION_ERROR';
+    else if (statusCode === 401) this.type = 'UNAUTHORIZED_ERROR';
+    else if (statusCode === 403) this.type = 'FORBIDDEN_ERROR';
+    else if (statusCode === 404) this.type = 'NOT_FOUND_ERROR';
+    else if (statusCode === 409) this.type = 'CONFLICT_ERROR';
+    else if (statusCode === 422) this.type = 'UNPROCESSABLE_ENTITY';
+    else this.type = 'SERVER_ERROR';
 
     this.details = details;
 

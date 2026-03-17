@@ -8,12 +8,12 @@
  * - Password change for logged-in customers
  */
 
-import { Response } from "express";
-import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
-import crypto from "crypto";
-import { emailService } from "../services/email.service";
-import { TenantRequest } from "../middleware/tenant.middleware";
+import { Response } from 'express';
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
+import crypto from 'crypto';
+import { emailService } from '../services/email.service';
+import { TenantRequest } from '../middleware/tenant.middleware';
 
 const prisma = new PrismaClient();
 
@@ -31,8 +31,8 @@ export const customerLogin = async (req: TenantRequest, res: Response) => {
 
     if (!email || !password) {
       return res.status(400).json({
-        status: "error",
-        message: "Email and password are required",
+        status: 'error',
+        message: 'Email and password are required',
       });
     }
 
@@ -62,23 +62,23 @@ export const customerLogin = async (req: TenantRequest, res: Response) => {
 
     if (!customer) {
       return res.status(404).json({
-        status: "error",
-        message: "Customer not found",
+        status: 'error',
+        message: 'Customer not found',
       });
     }
 
     if (!customer.portalEnabled) {
       return res.status(403).json({
-        status: "error",
-        message: "Portal access is disabled for this account",
+        status: 'error',
+        message: 'Portal access is disabled for this account',
       });
     }
 
     // Check if customer has set a password
     if (!customer.passwordHash) {
       return res.status(401).json({
-        status: "error",
-        message: "PASSWORD_NOT_SET",
+        status: 'error',
+        message: 'PASSWORD_NOT_SET',
         detail: 'Please set up your password using the "Forgot Password" link',
       });
     }
@@ -90,8 +90,8 @@ export const customerLogin = async (req: TenantRequest, res: Response) => {
     );
     if (!isValidPassword) {
       return res.status(401).json({
-        status: "error",
-        message: "Invalid password",
+        status: 'error',
+        message: 'Invalid password',
       });
     }
 
@@ -105,14 +105,14 @@ export const customerLogin = async (req: TenantRequest, res: Response) => {
     const { passwordHash: _, ...customerData } = customer;
 
     return res.status(200).json({
-      status: "success",
+      status: 'success',
       data: customerData,
     });
   } catch (error: any) {
-    console.error("Customer login error:", error);
+    console.error('Customer login error:', error);
     return res.status(500).json({
-      status: "error",
-      message: "Login failed",
+      status: 'error',
+      message: 'Login failed',
     });
   }
 };
@@ -131,8 +131,8 @@ export const requestPasswordReset = async (
 
     if (!email) {
       return res.status(400).json({
-        status: "error",
-        message: "Email is required",
+        status: 'error',
+        message: 'Email is required',
       });
     }
 
@@ -148,22 +148,22 @@ export const requestPasswordReset = async (
     // Always return success to prevent email enumeration
     if (!customer) {
       return res.status(200).json({
-        status: "success",
+        status: 'success',
         message:
-          "If an account exists with this email, a password reset link will be sent",
+          'If an account exists with this email, a password reset link will be sent',
       });
     }
 
     if (!customer.portalEnabled) {
       return res.status(200).json({
-        status: "success",
+        status: 'success',
         message:
-          "If an account exists with this email, a password reset link will be sent",
+          'If an account exists with this email, a password reset link will be sent',
       });
     }
 
     // Generate reset token
-    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetToken = crypto.randomBytes(32).toString('hex');
     const resetTokenExpiry = new Date(
       Date.now() + RESET_TOKEN_EXPIRY_HOURS * 60 * 60 * 1000
     );
@@ -183,29 +183,29 @@ export const requestPasswordReset = async (
         customer.email,
         customer.firstName,
         resetToken,
-        "Tailtown Pet Resort" // TODO: Get business name from tenant settings
+        'Tailtown Pet Resort' // TODO: Get business name from tenant settings
       );
       console.log(`[CustomerAuth] Password reset email sent to ${email}`);
     } catch (emailError) {
       // Log but don't fail - user shouldn't know if email failed
       console.error(
-        "[CustomerAuth] Failed to send password reset email:",
+        '[CustomerAuth] Failed to send password reset email:',
         emailError
       );
     }
 
     return res.status(200).json({
-      status: "success",
+      status: 'success',
       message:
-        "If an account exists with this email, a password reset link will be sent",
+        'If an account exists with this email, a password reset link will be sent',
       // Include token in dev mode for testing (remove in production)
-      ...(process.env.NODE_ENV === "development" && { resetToken }),
+      ...(process.env.NODE_ENV === 'development' && { resetToken }),
     });
   } catch (error: any) {
-    console.error("Password reset request error:", error);
+    console.error('Password reset request error:', error);
     return res.status(500).json({
-      status: "error",
-      message: "Failed to process password reset request",
+      status: 'error',
+      message: 'Failed to process password reset request',
     });
   }
 };
@@ -221,15 +221,15 @@ export const resetPassword = async (req: TenantRequest, res: Response) => {
 
     if (!token || !password) {
       return res.status(400).json({
-        status: "error",
-        message: "Token and password are required",
+        status: 'error',
+        message: 'Token and password are required',
       });
     }
 
     if (password.length < 6) {
       return res.status(400).json({
-        status: "error",
-        message: "Password must be at least 6 characters",
+        status: 'error',
+        message: 'Password must be at least 6 characters',
       });
     }
 
@@ -247,8 +247,8 @@ export const resetPassword = async (req: TenantRequest, res: Response) => {
 
     if (!customer) {
       return res.status(400).json({
-        status: "error",
-        message: "Invalid or expired reset token",
+        status: 'error',
+        message: 'Invalid or expired reset token',
       });
     }
 
@@ -270,14 +270,14 @@ export const resetPassword = async (req: TenantRequest, res: Response) => {
     );
 
     return res.status(200).json({
-      status: "success",
-      message: "Password has been reset successfully",
+      status: 'success',
+      message: 'Password has been reset successfully',
     });
   } catch (error: any) {
-    console.error("Password reset error:", error);
+    console.error('Password reset error:', error);
     return res.status(500).json({
-      status: "error",
-      message: "Failed to reset password",
+      status: 'error',
+      message: 'Failed to reset password',
     });
   }
 };
@@ -291,10 +291,10 @@ export const verifyResetToken = async (req: TenantRequest, res: Response) => {
     const { token } = req.query;
     const tenantId = req.tenantId;
 
-    if (!token || typeof token !== "string") {
+    if (!token || typeof token !== 'string') {
       return res.status(400).json({
-        status: "error",
-        message: "Token is required",
+        status: 'error',
+        message: 'Token is required',
       });
     }
 
@@ -316,23 +316,23 @@ export const verifyResetToken = async (req: TenantRequest, res: Response) => {
 
     if (!customer) {
       return res.status(400).json({
-        status: "error",
-        message: "Invalid or expired reset token",
+        status: 'error',
+        message: 'Invalid or expired reset token',
       });
     }
 
     return res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         email: customer.email,
         firstName: customer.firstName,
       },
     });
   } catch (error: any) {
-    console.error("Token verification error:", error);
+    console.error('Token verification error:', error);
     return res.status(500).json({
-      status: "error",
-      message: "Failed to verify token",
+      status: 'error',
+      message: 'Failed to verify token',
     });
   }
 };
@@ -349,10 +349,10 @@ export const checkPasswordStatus = async (
     const { email } = req.query;
     const tenantId = req.tenantId;
 
-    if (!email || typeof email !== "string") {
+    if (!email || typeof email !== 'string') {
       return res.status(400).json({
-        status: "error",
-        message: "Email is required",
+        status: 'error',
+        message: 'Email is required',
       });
     }
 
@@ -371,23 +371,23 @@ export const checkPasswordStatus = async (
 
     if (!customer) {
       return res.status(404).json({
-        status: "error",
-        message: "Customer not found",
+        status: 'error',
+        message: 'Customer not found',
       });
     }
 
     return res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         hasPassword: !!customer.passwordHash,
         portalEnabled: customer.portalEnabled,
       },
     });
   } catch (error: any) {
-    console.error("Check password status error:", error);
+    console.error('Check password status error:', error);
     return res.status(500).json({
-      status: "error",
-      message: "Failed to check password status",
+      status: 'error',
+      message: 'Failed to check password status',
     });
   }
 };

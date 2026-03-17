@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Container,
   Box,
@@ -13,27 +13,27 @@ import {
   Select,
   MenuItem,
   Grid,
-} from "@mui/material";
-import PrintIcon from "@mui/icons-material/Print";
-import DownloadIcon from "@mui/icons-material/Download";
-import SettingsIcon from "@mui/icons-material/Settings";
+} from '@mui/material';
+import PrintIcon from '@mui/icons-material/Print';
+import DownloadIcon from '@mui/icons-material/Download';
+import SettingsIcon from '@mui/icons-material/Settings';
 import {
   KennelLabelData,
   printKennelLabel,
   getZPLPreview,
-} from "../../services/labelPrintService";
+} from '../../services/labelPrintService';
 
 const GROUP_SIZES = [
-  { value: "Small", label: "Small" },
-  { value: "Medium", label: "Medium" },
-  { value: "Large", label: "Large" },
+  { value: 'Small', label: 'Small' },
+  { value: 'Medium', label: 'Medium' },
+  { value: 'Large', label: 'Large' },
 ];
 
 const LabelPrinterTest: React.FC = () => {
-  const [dogName, setDogName] = useState("Max");
-  const [customerLastName, setCustomerLastName] = useState("Smith");
-  const [kennelNumber, setKennelNumber] = useState("A-12");
-  const [groupSize, setGroupSize] = useState("");
+  const [dogName, setDogName] = useState('Max');
+  const [customerLastName, setCustomerLastName] = useState('Smith');
+  const [kennelNumber, setKennelNumber] = useState('A-12');
+  const [groupSize, setGroupSize] = useState('');
   const [printing, setPrinting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -46,7 +46,7 @@ const LabelPrinterTest: React.FC = () => {
     groupSize,
   };
 
-  const handlePrint = async (method: "server" | "download") => {
+  const handlePrint = async (method: 'server' | 'download') => {
     setPrinting(true);
     setError(null);
     setSuccess(null);
@@ -54,12 +54,12 @@ const LabelPrinterTest: React.FC = () => {
     try {
       await printKennelLabel(labelData, method);
       setSuccess(
-        method === "download"
-          ? "ZPL file downloaded! Send it to your Zebra printer."
-          : "Label sent to printer!"
+        method === 'download'
+          ? 'ZPL file downloaded! Send it to your Zebra printer.'
+          : 'Label sent to printer!'
       );
     } catch (err: any) {
-      setError(err.message || "Failed to print label");
+      setError(err.message || 'Failed to print label');
     } finally {
       setPrinting(false);
     }
@@ -71,7 +71,7 @@ const LabelPrinterTest: React.FC = () => {
     <Container maxWidth="md">
       <Box sx={{ py: 4 }}>
         <Paper sx={{ p: 3, mb: 3 }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
             <SettingsIcon color="primary" />
             <Typography variant="h5">Zebra Label Printer Test</Typography>
           </Box>
@@ -112,7 +112,7 @@ const LabelPrinterTest: React.FC = () => {
                 Label Content
               </Typography>
 
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <TextField
                   label="Dog Name"
                   value={dogName}
@@ -163,23 +163,23 @@ const LabelPrinterTest: React.FC = () => {
                 elevation={3}
                 sx={{
                   p: 2,
-                  bgcolor: "white",
-                  border: "2px solid",
-                  borderColor: "grey.400",
+                  bgcolor: 'white',
+                  border: '2px solid',
+                  borderColor: 'grey.400',
                   minHeight: 200,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
                 <Typography variant="h6" fontWeight="bold">
-                  {dogName || "Dog Name"} ({customerLastName || "Last Name"})
-                  {"   "}
+                  {dogName || 'Dog Name'} ({customerLastName || 'Last Name'})
+                  {'   '}
                   <Box component="span" color="primary.main">
-                    #{kennelNumber || "---"}
+                    #{kennelNumber || '---'}
                   </Box>
-                  {"   "}
+                  {'   '}
                   {groupSize}
                 </Typography>
                 <Typography
@@ -194,7 +194,7 @@ const LabelPrinterTest: React.FC = () => {
               <Typography
                 variant="caption"
                 color="text.secondary"
-                sx={{ mt: 1, display: "block" }}
+                sx={{ mt: 1, display: 'block' }}
               >
                 Label prints ~14" with content duplicated
               </Typography>
@@ -205,34 +205,34 @@ const LabelPrinterTest: React.FC = () => {
 
           <Box
             sx={{
-              display: "flex",
+              display: 'flex',
               gap: 2,
-              justifyContent: "center",
-              flexWrap: "wrap",
+              justifyContent: 'center',
+              flexWrap: 'wrap',
             }}
           >
             <Button
               variant="contained"
               size="large"
               startIcon={<PrintIcon />}
-              onClick={() => handlePrint("server")}
+              onClick={() => handlePrint('server')}
               disabled={printing || !dogName}
             >
-              {printing ? "Printing..." : "Print"}
+              {printing ? 'Printing...' : 'Print'}
             </Button>
 
             <Button
               variant="outlined"
               size="large"
               startIcon={<DownloadIcon />}
-              onClick={() => handlePrint("download")}
+              onClick={() => handlePrint('download')}
               disabled={printing || !dogName}
             >
               Download ZPL File
             </Button>
 
             <Button variant="text" onClick={() => setShowZPL(!showZPL)}>
-              {showZPL ? "Hide" : "Show"} ZPL Code
+              {showZPL ? 'Hide' : 'Show'} ZPL Code
             </Button>
           </Box>
 
@@ -244,15 +244,15 @@ const LabelPrinterTest: React.FC = () => {
               <Paper
                 sx={{
                   p: 2,
-                  bgcolor: "grey.900",
-                  color: "grey.100",
-                  fontFamily: "monospace",
-                  fontSize: "0.8rem",
-                  overflow: "auto",
+                  bgcolor: 'grey.900',
+                  color: 'grey.100',
+                  fontFamily: 'monospace',
+                  fontSize: '0.8rem',
+                  overflow: 'auto',
                   maxHeight: 300,
                 }}
               >
-                <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>
+                <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>
                   {zplCode}
                 </pre>
               </Paper>
@@ -262,7 +262,7 @@ const LabelPrinterTest: React.FC = () => {
 
         <Paper sx={{ p: 3 }}>
           <Typography variant="h6" gutterBottom>
-            <PrintIcon sx={{ mr: 1, verticalAlign: "middle" }} />
+            <PrintIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
             Troubleshooting
           </Typography>
 
@@ -284,9 +284,9 @@ const LabelPrinterTest: React.FC = () => {
           <Paper
             sx={{
               p: 2,
-              bgcolor: "grey.100",
-              fontFamily: "monospace",
-              fontSize: "0.8rem",
+              bgcolor: 'grey.100',
+              fontFamily: 'monospace',
+              fontSize: '0.8rem',
             }}
           >
             <strong># Option 1: Use lp command (easiest)</strong>
@@ -300,7 +300,7 @@ const LabelPrinterTest: React.FC = () => {
             <br />
             ls /dev/cu.usb* # Find your printer
             <br />
-            cat ~/Downloads/kennel-label-*.zpl {">"} /dev/cu.usbmodemXXXX
+            cat ~/Downloads/kennel-label-*.zpl {'>'} /dev/cu.usbmodemXXXX
             <br />
             <br />
             <strong># Option 3: Use Zebra Browser Print (if installed)</strong>

@@ -12,15 +12,15 @@
  * - getReservationsByStatus
  */
 
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient, ReservationStatus } from "@prisma/client";
-import { AppError } from "../../middleware/error.middleware";
-import { logger } from "../../utils/logger";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient, ReservationStatus } from '@prisma/client';
+import { AppError } from '../../middleware/error.middleware';
+import { logger } from '../../utils/logger';
 import {
   reservationSelectForList,
   reservationSelectFull,
   petSelectMinimal,
-} from "../../utils/prisma-optimized";
+} from '../../utils/prisma-optimized';
 
 const prisma = new PrismaClient();
 
@@ -39,7 +39,7 @@ export const getAllReservations = async (
 
     // Get tenant ID from request
     const tenantId =
-      (req as any).tenantId || (process.env.NODE_ENV !== "production" && "dev");
+      (req as any).tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
     // Build where clause - always filter by tenantId
     let where: any = { tenantId };
@@ -47,7 +47,7 @@ export const getAllReservations = async (
     // Handle multiple status values
     const status = req.query.status as string;
     if (status) {
-      const statusArray = status.split(",");
+      const statusArray = status.split(',');
       const validStatuses = ReservationStatus
         ? Object.values(ReservationStatus)
         : [];
@@ -58,8 +58,8 @@ export const getAllReservations = async (
       if (invalidStatuses.length > 0) {
         throw new AppError(
           `Invalid status values: ${invalidStatuses.join(
-            ", "
-          )}. Valid values are: ${validStatuses.join(", ")}`,
+            ', '
+          )}. Valid values are: ${validStatuses.join(', ')}`,
           400
         );
       }
@@ -90,16 +90,16 @@ export const getAllReservations = async (
         { endDate: { gte: rangeStart } },
       ];
     } else if (date) {
-      const [year, month, day] = date.split("-").map(Number);
+      const [year, month, day] = date.split('-').map(Number);
 
       // Get timezone from query parameter, default to America/Denver (MST/UTC-7)
-      const timezone = (req.query.timezone as string) || "America/Denver";
+      const timezone = (req.query.timezone as string) || 'America/Denver';
       const timezoneOffsets: { [key: string]: number } = {
-        "America/New_York": -5,
-        "America/Chicago": -6,
-        "America/Denver": -7,
-        "America/Los_Angeles": -8,
-        "America/Phoenix": -7,
+        'America/New_York': -5,
+        'America/Chicago': -6,
+        'America/Denver': -7,
+        'America/Los_Angeles': -8,
+        'America/Phoenix': -7,
         UTC: 0,
       };
       const offsetHours = timezoneOffsets[timezone] || -7;
@@ -121,8 +121,8 @@ export const getAllReservations = async (
     }
 
     // Allow sorting
-    const sortBy = (req.query.sortBy as string) || "startDate";
-    const sortOrder = (req.query.sortOrder as "asc" | "desc") || "asc";
+    const sortBy = (req.query.sortBy as string) || 'startDate';
+    const sortOrder = (req.query.sortOrder as 'asc' | 'desc') || 'asc';
 
     // Use optimized select instead of include: true to reduce data transfer
     const reservations = await prisma.reservation.findMany({
@@ -136,7 +136,7 @@ export const getAllReservations = async (
     const total = await prisma.reservation.count({ where });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: reservations.length,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
@@ -165,11 +165,11 @@ export const getReservationById = async (
     });
 
     if (!reservation) {
-      return next(new AppError("Reservation not found", 404));
+      return next(new AppError('Reservation not found', 404));
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: reservation,
     });
   } catch (error) {
@@ -196,7 +196,7 @@ export const getReservationsByCustomer = async (
       where: { customerId },
       skip,
       take: limit,
-      orderBy: { startDate: "desc" },
+      orderBy: { startDate: 'desc' },
       select: {
         ...reservationSelectForList,
         pet: { select: petSelectMinimal },
@@ -208,7 +208,7 @@ export const getReservationsByCustomer = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: reservations.length,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
@@ -236,14 +236,14 @@ export const getUpcomingReservationsByCustomer = async (
       where: {
         customerId,
         startDate: { gte: now },
-        status: { notIn: ["CANCELLED", "COMPLETED", "CHECKED_OUT", "NO_SHOW"] },
+        status: { notIn: ['CANCELLED', 'COMPLETED', 'CHECKED_OUT', 'NO_SHOW'] },
       },
-      orderBy: { startDate: "asc" },
+      orderBy: { startDate: 'asc' },
       select: reservationSelectForList,
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: reservations,
     });
   } catch (error) {
@@ -271,13 +271,13 @@ export const getPastReservationsByCustomer = async (
           { endDate: { lt: now } },
           {
             status: {
-              in: ["COMPLETED", "CHECKED_OUT", "CANCELLED", "NO_SHOW"],
+              in: ['COMPLETED', 'CHECKED_OUT', 'CANCELLED', 'NO_SHOW'],
             },
           },
         ],
       },
       take: limit,
-      orderBy: { startDate: "desc" },
+      orderBy: { startDate: 'desc' },
       include: {
         pet: true,
         resource: true,
@@ -285,7 +285,7 @@ export const getPastReservationsByCustomer = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: reservations,
     });
   } catch (error) {
@@ -311,7 +311,7 @@ export const getReservationsByPet = async (
       where: { petId },
       skip,
       take: limit,
-      orderBy: { startDate: "desc" },
+      orderBy: { startDate: 'desc' },
       include: { customer: true },
     });
 
@@ -320,7 +320,7 @@ export const getReservationsByPet = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: reservations.length,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
@@ -346,7 +346,7 @@ export const getReservationsByDateRange = async (
     const skip = (page - 1) * limit;
 
     if (!startDate || !endDate) {
-      return next(new AppError("Both startDate and endDate are required", 400));
+      return next(new AppError('Both startDate and endDate are required', 400));
     }
 
     const reservations = await prisma.reservation.findMany({
@@ -356,7 +356,7 @@ export const getReservationsByDateRange = async (
       },
       skip,
       take: limit,
-      orderBy: { startDate: "asc" },
+      orderBy: { startDate: 'asc' },
       include: {
         customer: true,
         pet: true,
@@ -371,7 +371,7 @@ export const getReservationsByDateRange = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: reservations.length,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
@@ -401,7 +401,7 @@ export const getReservationsByStatus = async (
     if (!validStatuses.includes(status as ReservationStatus)) {
       return next(
         new AppError(
-          `Invalid status. Must be one of: ${validStatuses.join(", ")}`,
+          `Invalid status. Must be one of: ${validStatuses.join(', ')}`,
           400
         )
       );
@@ -411,7 +411,7 @@ export const getReservationsByStatus = async (
       where: { status: status as ReservationStatus },
       skip,
       take: limit,
-      orderBy: { startDate: "asc" },
+      orderBy: { startDate: 'asc' },
       include: {
         customer: true,
         pet: true,
@@ -423,7 +423,7 @@ export const getReservationsByStatus = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: reservations.length,
       totalPages: Math.ceil(total / limit),
       currentPage: page,

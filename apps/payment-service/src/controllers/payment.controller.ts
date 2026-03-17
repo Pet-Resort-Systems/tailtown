@@ -3,13 +3,13 @@
  * Handles payment processing endpoints
  */
 
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 import {
   CardConnectService,
   cardConnectService,
-} from "../services/cardconnect.service";
-import { logger } from "../utils/logger";
-import Joi from "joi";
+} from '../services/cardconnect.service';
+import { logger } from '../utils/logger';
+import Joi from 'joi';
 
 // Validation schemas
 const authorizeSchema = Joi.object({
@@ -54,8 +54,8 @@ export async function authorizePayment(req: Request, res: Response) {
     const { error, value } = authorizeSchema.validate(req.body);
     if (error) {
       return res.status(400).json({
-        status: "error",
-        message: "Validation error",
+        status: 'error',
+        message: 'Validation error',
         errors: error.details.map((d) => d.message),
       });
     }
@@ -91,19 +91,19 @@ export async function authorizePayment(req: Request, res: Response) {
       region: state,
       postal: zip,
       orderid: orderId,
-      capture: capture ? "Y" : "N",
+      capture: capture ? 'Y' : 'N',
     });
 
     // Check if approved
-    if (result.respstat === "A") {
-      logger.info("Payment authorized successfully", {
+    if (result.respstat === 'A') {
+      logger.info('Payment authorized successfully', {
         retref: result.retref,
         amount: formattedAmount,
       });
 
       return res.status(200).json({
-        status: "success",
-        message: "Payment authorized successfully",
+        status: 'success',
+        message: 'Payment authorized successfully',
         data: {
           transactionId: result.retref,
           authCode: result.authcode,
@@ -118,14 +118,14 @@ export async function authorizePayment(req: Request, res: Response) {
         },
       });
     } else {
-      logger.warn("Payment declined", {
+      logger.warn('Payment declined', {
         respstat: result.respstat,
         resptext: result.resptext,
       });
 
       return res.status(402).json({
-        status: "declined",
-        message: "Payment declined",
+        status: 'declined',
+        message: 'Payment declined',
         data: {
           approved: false,
           responseCode: result.respcode,
@@ -134,11 +134,11 @@ export async function authorizePayment(req: Request, res: Response) {
       });
     }
   } catch (error) {
-    logger.error("Payment authorization error", { error });
+    logger.error('Payment authorization error', { error });
     return res.status(500).json({
-      status: "error",
-      message: "Payment processing failed",
-      error: error instanceof Error ? error.message : "Unknown error",
+      status: 'error',
+      message: 'Payment processing failed',
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 }
@@ -151,8 +151,8 @@ export async function capturePayment(req: Request, res: Response) {
     const { error, value } = captureSchema.validate(req.body);
     if (error) {
       return res.status(400).json({
-        status: "error",
-        message: "Validation error",
+        status: 'error',
+        message: 'Validation error',
         errors: error.details.map((d) => d.message),
       });
     }
@@ -169,10 +169,10 @@ export async function capturePayment(req: Request, res: Response) {
       amount: formattedAmount,
     });
 
-    if (result.respstat === "A") {
+    if (result.respstat === 'A') {
       return res.status(200).json({
-        status: "success",
-        message: "Payment captured successfully",
+        status: 'success',
+        message: 'Payment captured successfully',
         data: {
           transactionId: result.retref,
           amount: amount,
@@ -181,8 +181,8 @@ export async function capturePayment(req: Request, res: Response) {
       });
     } else {
       return res.status(402).json({
-        status: "declined",
-        message: "Payment capture declined",
+        status: 'declined',
+        message: 'Payment capture declined',
         data: {
           approved: false,
           responseText: result.resptext,
@@ -190,11 +190,11 @@ export async function capturePayment(req: Request, res: Response) {
       });
     }
   } catch (error) {
-    logger.error("Payment capture error", { error });
+    logger.error('Payment capture error', { error });
     return res.status(500).json({
-      status: "error",
-      message: "Payment capture failed",
-      error: error instanceof Error ? error.message : "Unknown error",
+      status: 'error',
+      message: 'Payment capture failed',
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 }
@@ -207,8 +207,8 @@ export async function refundPayment(req: Request, res: Response) {
     const { error, value } = refundSchema.validate(req.body);
     if (error) {
       return res.status(400).json({
-        status: "error",
-        message: "Validation error",
+        status: 'error',
+        message: 'Validation error',
         errors: error.details.map((d) => d.message),
       });
     }
@@ -225,10 +225,10 @@ export async function refundPayment(req: Request, res: Response) {
       amount: formattedAmount,
     });
 
-    if (result.respstat === "A") {
+    if (result.respstat === 'A') {
       return res.status(200).json({
-        status: "success",
-        message: "Payment refunded successfully",
+        status: 'success',
+        message: 'Payment refunded successfully',
         data: {
           transactionId: result.retref,
           amount: amount,
@@ -237,8 +237,8 @@ export async function refundPayment(req: Request, res: Response) {
       });
     } else {
       return res.status(402).json({
-        status: "declined",
-        message: "Payment refund declined",
+        status: 'declined',
+        message: 'Payment refund declined',
         data: {
           approved: false,
           responseText: result.resptext,
@@ -246,11 +246,11 @@ export async function refundPayment(req: Request, res: Response) {
       });
     }
   } catch (error) {
-    logger.error("Payment refund error", { error });
+    logger.error('Payment refund error', { error });
     return res.status(500).json({
-      status: "error",
-      message: "Payment refund failed",
-      error: error instanceof Error ? error.message : "Unknown error",
+      status: 'error',
+      message: 'Payment refund failed',
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 }
@@ -263,8 +263,8 @@ export async function voidPayment(req: Request, res: Response) {
     const { error, value } = voidSchema.validate(req.body);
     if (error) {
       return res.status(400).json({
-        status: "error",
-        message: "Validation error",
+        status: 'error',
+        message: 'Validation error',
         errors: error.details.map((d) => d.message),
       });
     }
@@ -275,10 +275,10 @@ export async function voidPayment(req: Request, res: Response) {
       retref,
     });
 
-    if (result.respstat === "A") {
+    if (result.respstat === 'A') {
       return res.status(200).json({
-        status: "success",
-        message: "Payment voided successfully",
+        status: 'success',
+        message: 'Payment voided successfully',
         data: {
           transactionId: result.retref,
           approved: true,
@@ -286,8 +286,8 @@ export async function voidPayment(req: Request, res: Response) {
       });
     } else {
       return res.status(402).json({
-        status: "declined",
-        message: "Payment void declined",
+        status: 'declined',
+        message: 'Payment void declined',
         data: {
           approved: false,
           responseText: result.resptext,
@@ -295,11 +295,11 @@ export async function voidPayment(req: Request, res: Response) {
       });
     }
   } catch (error) {
-    logger.error("Payment void error", { error });
+    logger.error('Payment void error', { error });
     return res.status(500).json({
-      status: "error",
-      message: "Payment void failed",
-      error: error instanceof Error ? error.message : "Unknown error",
+      status: 'error',
+      message: 'Payment void failed',
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 }
@@ -313,23 +313,23 @@ export async function inquireTransaction(req: Request, res: Response) {
 
     if (!retref) {
       return res.status(400).json({
-        status: "error",
-        message: "Transaction reference is required",
+        status: 'error',
+        message: 'Transaction reference is required',
       });
     }
 
     const result = await cardConnectService.inquire({ retref });
 
     return res.status(200).json({
-      status: "success",
+      status: 'success',
       data: result,
     });
   } catch (error) {
-    logger.error("Transaction inquiry error", { error });
+    logger.error('Transaction inquiry error', { error });
     return res.status(500).json({
-      status: "error",
-      message: "Transaction inquiry failed",
-      error: error instanceof Error ? error.message : "Unknown error",
+      status: 'error',
+      message: 'Transaction inquiry failed',
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 }
@@ -344,8 +344,8 @@ export async function chargeToken(req: Request, res: Response) {
 
     if (!token || !amount) {
       return res.status(400).json({
-        status: "error",
-        message: "Token and amount are required",
+        status: 'error',
+        message: 'Token and amount are required',
       });
     }
 
@@ -356,20 +356,20 @@ export async function chargeToken(req: Request, res: Response) {
     const result = await cardConnectService.authorize({
       amount: formattedAmount,
       account: token, // Token is used as the account for saved cards
-      expiry: expiry || "1299", // Use stored expiry or far-future fallback
+      expiry: expiry || '1299', // Use stored expiry or far-future fallback
       orderid: orderId,
-      capture: "Y",
+      capture: 'Y',
     });
 
-    if (result.respstat === "A") {
-      logger.info("Token charge successful", {
+    if (result.respstat === 'A') {
+      logger.info('Token charge successful', {
         retref: result.retref,
         amount: formattedAmount,
       });
 
       return res.status(200).json({
-        status: "success",
-        message: "Payment processed successfully",
+        status: 'success',
+        message: 'Payment processed successfully',
         data: {
           transactionId: result.retref,
           authCode: result.authcode,
@@ -380,14 +380,14 @@ export async function chargeToken(req: Request, res: Response) {
         },
       });
     } else {
-      logger.warn("Token charge declined", {
+      logger.warn('Token charge declined', {
         respstat: result.respstat,
         resptext: result.resptext,
       });
 
       return res.status(402).json({
-        status: "declined",
-        message: "Payment declined",
+        status: 'declined',
+        message: 'Payment declined',
         data: {
           approved: false,
           responseCode: result.respcode,
@@ -396,11 +396,11 @@ export async function chargeToken(req: Request, res: Response) {
       });
     }
   } catch (error) {
-    logger.error("Token charge error", { error });
+    logger.error('Token charge error', { error });
     return res.status(500).json({
-      status: "error",
-      message: "Payment processing failed",
-      error: error instanceof Error ? error.message : "Unknown error",
+      status: 'error',
+      message: 'Payment processing failed',
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 }
@@ -409,19 +409,19 @@ export async function chargeToken(req: Request, res: Response) {
  * Get test card numbers (for development only)
  */
 export function getTestCards(req: Request, res: Response) {
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.NODE_ENV === 'production') {
     return res.status(403).json({
-      status: "error",
-      message: "Test cards not available in production",
+      status: 'error',
+      message: 'Test cards not available in production',
     });
   }
 
   const testCards = CardConnectService.getTestCards();
 
   return res.status(200).json({
-    status: "success",
-    message: "Test card numbers for CardConnect UAT environment",
+    status: 'success',
+    message: 'Test card numbers for CardConnect UAT environment',
     data: testCards,
-    note: "These are test cards only. Do not use real card numbers in test environment.",
+    note: 'These are test cards only. Do not use real card numbers in test environment.',
   });
 }

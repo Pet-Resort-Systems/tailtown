@@ -22,7 +22,9 @@ async function fixStaffStatus() {
     console.log(`Found ${allStaff.length} staff accounts:\n`);
 
     allStaff.forEach((staff, index) => {
-      console.log(`${index + 1}. ${staff.firstName} ${staff.lastName} (${staff.email})`);
+      console.log(
+        `${index + 1}. ${staff.firstName} ${staff.lastName} (${staff.email})`
+      );
       console.log(`   Role: ${staff.role}`);
       console.log(`   Status: ${staff.isActive ? '✅ Active' : '❌ Inactive'}`);
       console.log(`   Tenant: ${staff.tenantId}`);
@@ -30,7 +32,7 @@ async function fixStaffStatus() {
     });
 
     // Find inactive accounts
-    const inactiveStaff = allStaff.filter(s => !s.isActive);
+    const inactiveStaff = allStaff.filter((s) => !s.isActive);
 
     if (inactiveStaff.length === 0) {
       console.log('✅ All staff accounts are active!');
@@ -48,12 +50,15 @@ async function fixStaffStatus() {
         data: { isActive: true },
       });
 
-      console.log(`✅ Activated: ${staff.firstName} ${staff.lastName} (${staff.email})`);
+      console.log(
+        `✅ Activated: ${staff.firstName} ${staff.lastName} (${staff.email})`
+      );
     }
 
     console.log('\n✅ All staff accounts are now active!');
-    console.log('\n💡 Please log out and log back in to see the updated status.');
-
+    console.log(
+      '\n💡 Please log out and log back in to see the updated status.'
+    );
   } catch (error) {
     console.error('❌ Error:', error);
   } finally {

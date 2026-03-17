@@ -10,11 +10,11 @@
  * - getCustomerPayments
  */
 
-import { Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-import { AppError } from "../../middleware/error.middleware";
-import { TenantRequest } from "../../middleware/tenant.middleware";
-import { logger } from "../../utils/logger";
+import { Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { AppError } from '../../middleware/error.middleware';
+import { TenantRequest } from '../../middleware/tenant.middleware';
+import { logger } from '../../utils/logger';
 
 const prisma = new PrismaClient();
 
@@ -35,13 +35,13 @@ export const getCustomerDocuments = async (
     });
 
     if (!customer) {
-      return next(new AppError("Customer not found", 404));
+      return next(new AppError('Customer not found', 404));
     }
 
     // Document model is not in the current schema
     res.status(200).json({
-      status: "success",
-      message: "Document functionality is not available in the current schema",
+      status: 'success',
+      message: 'Document functionality is not available in the current schema',
       data: [],
     });
   } catch (error) {
@@ -61,7 +61,7 @@ export const uploadCustomerDocument = async (
     const { id } = req.params;
 
     if (!req.file) {
-      return next(new AppError("No file uploaded", 400));
+      return next(new AppError('No file uploaded', 400));
     }
 
     const customer = await prisma.customer.findUnique({
@@ -70,14 +70,14 @@ export const uploadCustomerDocument = async (
     });
 
     if (!customer) {
-      return next(new AppError("Customer not found", 404));
+      return next(new AppError('Customer not found', 404));
     }
 
     // Document model is not in the current schema
     res.status(200).json({
-      status: "success",
+      status: 'success',
       message:
-        "Document upload functionality is not available in the current schema",
+        'Document upload functionality is not available in the current schema',
       data: {
         fileName: req.file.originalname,
         fileType: req.file.mimetype,
@@ -107,14 +107,14 @@ export const getCustomerNotificationPreferences = async (
     });
 
     if (!customer) {
-      return next(new AppError("Customer not found", 404));
+      return next(new AppError('Customer not found', 404));
     }
 
     // Notification preferences not in current schema
     res.status(200).json({
-      status: "success",
+      status: 'success',
       message:
-        "Notification preferences are not available in the current schema",
+        'Notification preferences are not available in the current schema',
       data: null,
     });
   } catch (error) {
@@ -139,14 +139,14 @@ export const updateCustomerNotificationPreferences = async (
     });
 
     if (!customer) {
-      return next(new AppError("Customer not found", 404));
+      return next(new AppError('Customer not found', 404));
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         message:
-          "Notification preferences are not available in the current schema",
+          'Notification preferences are not available in the current schema',
       },
     });
   } catch (error) {
@@ -174,7 +174,7 @@ export const getCustomerInvoices = async (
     });
 
     if (!customerExists) {
-      return next(new AppError("Customer not found", 404));
+      return next(new AppError('Customer not found', 404));
     }
 
     let invoices: any[] = [];
@@ -195,14 +195,14 @@ export const getCustomerInvoices = async (
       `;
       total = totalResult[0]?.count ? Number(totalResult[0].count) : 0;
     } catch (error) {
-      logger.warn("Invoice table may not exist in the database", {
+      logger.warn('Invoice table may not exist in the database', {
         tenantId: req.tenantId,
         customerId: id,
       });
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: invoices.length,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
@@ -232,12 +232,12 @@ export const getCustomerPayments = async (
     });
 
     if (!customerExists) {
-      return next(new AppError("Customer not found", 404));
+      return next(new AppError('Customer not found', 404));
     }
 
     // Payment model is not in the current schema
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: 0,
       totalPages: 0,
       currentPage: page,
@@ -267,11 +267,11 @@ export const getCustomerPermanentCoupon = async (
     });
 
     if (!customer) {
-      return next(new AppError("Customer not found", 404));
+      return next(new AppError('Customer not found', 404));
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: customer.permanentCoupon,
     });
   } catch (error) {
@@ -298,7 +298,7 @@ export const setCustomerPermanentCoupon = async (
     });
 
     if (!customer) {
-      return next(new AppError("Customer not found", 404));
+      return next(new AppError('Customer not found', 404));
     }
 
     // If couponId provided, verify coupon exists and is active
@@ -308,11 +308,11 @@ export const setCustomerPermanentCoupon = async (
       });
 
       if (!coupon) {
-        return next(new AppError("Coupon not found", 404));
+        return next(new AppError('Coupon not found', 404));
       }
 
-      if (coupon.status !== "ACTIVE") {
-        return next(new AppError("Coupon is not active", 400));
+      if (coupon.status !== 'ACTIVE') {
+        return next(new AppError('Coupon is not active', 400));
       }
     }
 
@@ -328,11 +328,11 @@ export const setCustomerPermanentCoupon = async (
     });
 
     logger.info(
-      `Set permanent coupon for customer ${id}: ${couponId || "removed"}`
+      `Set permanent coupon for customer ${id}: ${couponId || 'removed'}`
     );
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: updatedCustomer,
     });
   } catch (error) {
@@ -357,7 +357,7 @@ export const removeCustomerPermanentCoupon = async (
     });
 
     if (!customer) {
-      return next(new AppError("Customer not found", 404));
+      return next(new AppError('Customer not found', 404));
     }
 
     const updatedCustomer = await prisma.customer.update({
@@ -370,7 +370,7 @@ export const removeCustomerPermanentCoupon = async (
     logger.info(`Removed permanent coupon from customer ${id}`);
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: updatedCustomer,
     });
   } catch (error) {

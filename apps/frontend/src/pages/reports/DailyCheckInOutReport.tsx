@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -12,10 +12,10 @@ import {
   TableRow,
   CircularProgress,
   TextField,
-} from "@mui/material";
-import PrintIcon from "@mui/icons-material/Print";
-import { format } from "date-fns";
-import { reservationService } from "../../services/reservationService";
+} from '@mui/material';
+import PrintIcon from '@mui/icons-material/Print';
+import { format } from 'date-fns';
+import { reservationService } from '../../services/reservationService';
 
 interface DogEntry {
   dogName: string;
@@ -33,14 +33,14 @@ const DailyCheckInOutReport: React.FC = () => {
   const loadData = React.useCallback(async () => {
     setLoading(true);
     try {
-      const dateStr = format(date, "yyyy-MM-dd");
+      const dateStr = format(date, 'yyyy-MM-dd');
 
       // Fetch all reservations for the selected date (API handles date filtering)
       const response = await reservationService.getAllReservations(
         1,
         1000,
-        "startDate",
-        "asc",
+        'startDate',
+        'asc',
         undefined,
         dateStr
       );
@@ -50,7 +50,7 @@ const DailyCheckInOutReport: React.FC = () => {
       // Filter for boarding and daycamp only
       const todaysReservations = allReservations.filter((r: any) => {
         const serviceCategory = r.service?.serviceCategory?.toUpperCase();
-        return serviceCategory === "BOARDING" || serviceCategory === "DAYCAMP";
+        return serviceCategory === 'BOARDING' || serviceCategory === 'DAYCAMP';
       });
 
       // Map to dog entries
@@ -59,22 +59,22 @@ const DailyCheckInOutReport: React.FC = () => {
         .map((r: any) => {
           const playgroupMap: Record<string, { label: string; order: number }> =
             {
-              LARGE_DOG: { label: "Large", order: 1 },
-              MEDIUM_DOG: { label: "Medium", order: 2 },
-              SMALL_DOG: { label: "Small", order: 3 },
-              SOLO_ONLY: { label: "Solo", order: 4 },
+              LARGE_DOG: { label: 'Large', order: 1 },
+              MEDIUM_DOG: { label: 'Medium', order: 2 },
+              SMALL_DOG: { label: 'Small', order: 3 },
+              SOLO_ONLY: { label: 'Solo', order: 4 },
             };
 
           const playgroup =
             r.pet?.playgroupCompatibility &&
             playgroupMap[r.pet.playgroupCompatibility]
               ? playgroupMap[r.pet.playgroupCompatibility]
-              : { label: "Unknown", order: 5 };
+              : { label: 'Unknown', order: 5 };
 
           return {
             dogName: r.pet.name,
-            customerLastName: r.customer?.lastName || "",
-            roomNumber: r.resource?.name || "___",
+            customerLastName: r.customer?.lastName || '',
+            roomNumber: r.resource?.name || '___',
             groupSize: playgroup.label,
             groupSizeOrder: playgroup.order,
           };
@@ -90,7 +90,7 @@ const DailyCheckInOutReport: React.FC = () => {
 
       setDogs(entries);
     } catch (error) {
-      console.error("Failed to load reservations:", error);
+      console.error('Failed to load reservations:', error);
     } finally {
       setLoading(false);
     }
@@ -107,14 +107,14 @@ const DailyCheckInOutReport: React.FC = () => {
   return (
     <Box sx={{ p: 3 }}>
       {/* Controls - hidden when printing */}
-      <Box sx={{ mb: 3, "@media print": { display: "none" } }}>
-        <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+      <Box sx={{ mb: 3, '@media print': { display: 'none' } }}>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
           <TextField
             label="Report Date"
             type="date"
-            value={format(date, "yyyy-MM-dd")}
+            value={format(date, 'yyyy-MM-dd')}
             onChange={(e) => {
-              const [year, month, day] = e.target.value.split("-").map(Number);
+              const [year, month, day] = e.target.value.split('-').map(Number);
               setDate(new Date(year, month - 1, day));
             }}
             InputLabelProps={{ shrink: true }}
@@ -135,14 +135,14 @@ const DailyCheckInOutReport: React.FC = () => {
       <Paper
         sx={{
           p: 3,
-          "@media print": {
-            boxShadow: "none",
+          '@media print': {
+            boxShadow: 'none',
             p: 0,
           },
         }}
       >
         {loading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
             <CircularProgress />
           </Box>
         ) : (
@@ -155,14 +155,14 @@ const DailyCheckInOutReport: React.FC = () => {
                   <Box
                     key={groupSize}
                     sx={{
-                      "@media print": {
+                      '@media print': {
                         pageBreakAfter:
                           groupIndex <
                           Array.from(new Set(dogs.map((d) => d.groupSize)))
                             .length -
                             1
-                            ? "always"
-                            : "auto",
+                            ? 'always'
+                            : 'auto',
                       },
                     }}
                   >
@@ -171,34 +171,34 @@ const DailyCheckInOutReport: React.FC = () => {
                       sx={{
                         mb: 2,
                         mt: groupIndex > 0 ? 3 : 0,
-                        display: "flex",
-                        alignItems: "baseline",
+                        display: 'flex',
+                        alignItems: 'baseline',
                         gap: 2,
                       }}
                     >
-                      <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                      <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
                         {groupSize} Play Group
                       </Typography>
                       <Typography variant="body1" color="text.secondary">
-                        {format(date, "M/d/yyyy")}
+                        {format(date, 'M/d/yyyy')}
                       </Typography>
                       <Typography
                         variant="body2"
                         color="text.secondary"
-                        sx={{ ml: "auto" }}
+                        sx={{ ml: 'auto' }}
                       >
                         {groupDogs.length} dog
-                        {groupDogs.length !== 1 ? "s" : ""}
+                        {groupDogs.length !== 1 ? 's' : ''}
                       </Typography>
                     </Box>
 
                     <TableContainer>
                       <Table
                         sx={{
-                          "@media print": {
-                            "& td, & th": {
-                              fontSize: "12pt",
-                              padding: "8px",
+                          '@media print': {
+                            '& td, & th': {
+                              fontSize: '12pt',
+                              padding: '8px',
                             },
                           },
                         }}
@@ -206,29 +206,29 @@ const DailyCheckInOutReport: React.FC = () => {
                         <TableHead>
                           <TableRow>
                             <TableCell
-                              sx={{ fontWeight: "bold", width: "40%" }}
+                              sx={{ fontWeight: 'bold', width: '40%' }}
                             >
                               Dog (Owner)
                             </TableCell>
                             <TableCell
-                              sx={{ fontWeight: "bold", width: "15%" }}
+                              sx={{ fontWeight: 'bold', width: '15%' }}
                             >
                               Room
                             </TableCell>
                             <TableCell
                               sx={{
-                                fontWeight: "bold",
-                                width: "22.5%",
-                                borderLeft: "2px solid #ddd",
+                                fontWeight: 'bold',
+                                width: '22.5%',
+                                borderLeft: '2px solid #ddd',
                               }}
                             >
                               In
                             </TableCell>
                             <TableCell
                               sx={{
-                                fontWeight: "bold",
-                                width: "22.5%",
-                                borderLeft: "2px solid #ddd",
+                                fontWeight: 'bold',
+                                width: '22.5%',
+                                borderLeft: '2px solid #ddd',
                               }}
                             >
                               Out
@@ -240,11 +240,11 @@ const DailyCheckInOutReport: React.FC = () => {
                             <TableRow
                               key={index}
                               sx={{
-                                "&:nth-of-type(odd)": {
-                                  backgroundColor: "rgba(0, 0, 0, 0.02)",
+                                '&:nth-of-type(odd)': {
+                                  backgroundColor: 'rgba(0, 0, 0, 0.02)',
                                 },
-                                "@media print": {
-                                  pageBreakInside: "avoid",
+                                '@media print': {
+                                  pageBreakInside: 'avoid',
                                 },
                               }}
                             >
@@ -253,10 +253,10 @@ const DailyCheckInOutReport: React.FC = () => {
                                 {dog.customerLastName})
                               </TableCell>
                               <TableCell>{dog.roomNumber}</TableCell>
-                              <TableCell sx={{ borderLeft: "2px solid #ddd" }}>
+                              <TableCell sx={{ borderLeft: '2px solid #ddd' }}>
                                 &nbsp;
                               </TableCell>
-                              <TableCell sx={{ borderLeft: "2px solid #ddd" }}>
+                              <TableCell sx={{ borderLeft: '2px solid #ddd' }}>
                                 &nbsp;
                               </TableCell>
                             </TableRow>
@@ -273,8 +273,8 @@ const DailyCheckInOutReport: React.FC = () => {
             <Box
               sx={{
                 mt: 3,
-                textAlign: "right",
-                "@media print": { display: "none" },
+                textAlign: 'right',
+                '@media print': { display: 'none' },
               }}
             >
               <Typography variant="body2" color="text.secondary">

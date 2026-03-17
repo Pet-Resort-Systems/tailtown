@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Typography,
@@ -15,12 +15,12 @@ import {
   CardContent,
   Stack,
   Chip,
-} from "@mui/material";
-import RefreshIcon from "@mui/icons-material/Refresh";
-import SuiteBoard from "../../components/suites/SuiteBoard";
-import { resourceService } from "../../services";
-import { formatDateToYYYYMMDD } from "../../utils/dateUtils";
-import { determineSuiteStatus } from "../../utils/suiteUtils";
+} from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import SuiteBoard from '../../components/suites/SuiteBoard';
+import { resourceService } from '../../services';
+import { formatDateToYYYYMMDD } from '../../utils/dateUtils';
+import { determineSuiteStatus } from '../../utils/suiteUtils';
 
 const SuitesPage: React.FC = () => {
   const [selectedSuiteId, setSelectedSuiteId] = useState<string | null>(null);
@@ -54,12 +54,12 @@ const SuitesPage: React.FC = () => {
     resourceService
       .getSuiteStats(formattedDate)
       .then((response) => {
-        if (response?.status === "success" && response?.data) {
+        if (response?.status === 'success' && response?.data) {
           setStats(response.data);
         }
       })
       .catch((error) => {
-        console.error("Error refreshing suite stats:", error);
+        console.error('Error refreshing suite stats:', error);
       });
 
     // Trigger SuiteBoard refresh
@@ -82,12 +82,12 @@ const SuitesPage: React.FC = () => {
     resourceService
       .getSuiteStats(formattedDate)
       .then((response) => {
-        if (response?.status === "success" && response?.data) {
+        if (response?.status === 'success' && response?.data) {
           setStats(response.data);
         }
       })
       .catch((error) => {
-        console.error("Error refreshing suite stats:", error);
+        console.error('Error refreshing suite stats:', error);
       });
 
     // If we have a selected suite, refresh its details with the new date
@@ -103,11 +103,11 @@ const SuitesPage: React.FC = () => {
       // Format date as YYYY-MM-DD for API using local timezone
       const formattedDate = formatDateToYYYYMMDD(filterDate);
       const response = await resourceService.getSuiteStats(formattedDate);
-      if (response?.status === "success" && response?.data) {
+      if (response?.status === 'success' && response?.data) {
         setStats(response.data);
       }
     } catch (error: any) {
-      let msg = "Could not load suite stats.";
+      let msg = 'Could not load suite stats.';
       if (error?.response) {
         msg += ` Server responded with status ${error.response.status}: ${
           error.response.data?.message || error.response.statusText
@@ -116,7 +116,7 @@ const SuitesPage: React.FC = () => {
         msg += ` ${error.message}`;
       }
       setStatsError(msg);
-      console.error("Error loading suite stats:", error);
+      console.error('Error loading suite stats:', error);
     } finally {
       setLoading(false);
     }
@@ -143,14 +143,14 @@ const SuitesPage: React.FC = () => {
         suiteId,
         formattedDate
       );
-      if (response?.status === "success" && response?.data) {
+      if (response?.status === 'success' && response?.data) {
         // Use the utility function to determine if the suite is occupied
         determineSuiteStatus(response.data);
         // Store the suite details as received from the API
         setSuiteDetails(response.data);
       }
     } catch (error) {
-      console.error("Error loading suite details:", error);
+      console.error('Error loading suite details:', error);
     } finally {
       setLoading(false);
     }
@@ -164,17 +164,17 @@ const SuitesPage: React.FC = () => {
     // Update the suite's cleaning status
     resourceService
       .updateSuiteCleaning(selectedSuiteId, {
-        maintenanceStatus: "AVAILABLE",
-        notes: suiteDetails.notes || "",
+        maintenanceStatus: 'AVAILABLE',
+        notes: suiteDetails.notes || '',
       })
       .then((response) => {
-        if (response?.status === "success" && response?.data) {
+        if (response?.status === 'success' && response?.data) {
           setSuiteDetails({
             ...suiteDetails,
             attributes: {
               ...suiteDetails.attributes,
               lastCleaned: new Date().toISOString(),
-              maintenanceStatus: "AVAILABLE",
+              maintenanceStatus: 'AVAILABLE',
             },
           });
           setJustCleaned(true);
@@ -184,7 +184,7 @@ const SuitesPage: React.FC = () => {
         }
       })
       .catch((error) => {
-        console.error("Error updating suite cleaning status:", error);
+        console.error('Error updating suite cleaning status:', error);
       })
       .finally(() => {
         setLoading(false);
@@ -196,9 +196,9 @@ const SuitesPage: React.FC = () => {
       <Box sx={{ p: 3 }}>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             mb: 3,
           }}
         >
@@ -208,7 +208,7 @@ const SuitesPage: React.FC = () => {
         </Box>
         {statsError && (
           <Box sx={{ mb: 2 }}>
-            <Paper sx={{ p: 2, bgcolor: "#ffebee", color: "#b71c1c" }}>
+            <Paper sx={{ p: 2, bgcolor: '#ffebee', color: '#b71c1c' }}>
               <Typography variant="body1">{statsError}</Typography>
             </Paper>
           </Box>
@@ -220,9 +220,9 @@ const SuitesPage: React.FC = () => {
               <Paper
                 sx={{
                   p: 2,
-                  height: "100%",
-                  bgcolor: "primary.light",
-                  color: "white",
+                  height: '100%',
+                  bgcolor: 'primary.light',
+                  color: 'white',
                 }}
               >
                 <Typography variant="h6">Total Suites</Typography>
@@ -230,7 +230,7 @@ const SuitesPage: React.FC = () => {
               </Paper>
             </Grid>
             <Grid item xs={12} md={4} lg={2.5}>
-              <Paper sx={{ p: 2, height: "100%", bgcolor: "#81C784" }}>
+              <Paper sx={{ p: 2, height: '100%', bgcolor: '#81C784' }}>
                 <Typography variant="h6">Available</Typography>
                 <Typography variant="h3">{stats.available}</Typography>
               </Paper>
@@ -239,9 +239,9 @@ const SuitesPage: React.FC = () => {
               <Paper
                 sx={{
                   p: 2,
-                  height: "100%",
-                  bgcolor: "#FF8A65",
-                  color: "white",
+                  height: '100%',
+                  bgcolor: '#FF8A65',
+                  color: 'white',
                 }}
               >
                 <Typography variant="h6">Occupied</Typography>
@@ -249,7 +249,7 @@ const SuitesPage: React.FC = () => {
               </Paper>
             </Grid>
             <Grid item xs={12} md={6} lg={2.5}>
-              <Paper sx={{ p: 2, height: "100%", bgcolor: "#FFB74D" }}>
+              <Paper sx={{ p: 2, height: '100%', bgcolor: '#FFB74D' }}>
                 <Typography variant="h6">Reserved</Typography>
                 <Typography variant="h3">{stats.reserved || 0}</Typography>
               </Paper>
@@ -258,9 +258,9 @@ const SuitesPage: React.FC = () => {
               <Paper
                 sx={{
                   p: 2,
-                  height: "100%",
-                  bgcolor: "#9E9E9E",
-                  color: "white",
+                  height: '100%',
+                  bgcolor: '#9E9E9E',
+                  color: 'white',
                 }}
               >
                 <Typography variant="h6">Maintenance</Typography>
@@ -274,7 +274,7 @@ const SuitesPage: React.FC = () => {
           <Typography variant="h5" gutterBottom>
             Kennel Board
           </Typography>
-          <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
             <Button
               variant="outlined"
               startIcon={<RefreshIcon />}
@@ -303,7 +303,7 @@ const SuitesPage: React.FC = () => {
         <DialogTitle>Suite Details</DialogTitle>
         <DialogContent dividers>
           {loading ? (
-            <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
               <CircularProgress />
             </Box>
           ) : suiteDetails ? (
@@ -315,9 +315,9 @@ const SuitesPage: React.FC = () => {
                 </Typography>
               </Box>
 
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 <Chip
-                  label={suiteDetails.attributes?.suiteType || "Standard"}
+                  label={suiteDetails.attributes?.suiteType || 'Standard'}
                   color="primary"
                   variant="outlined"
                 />
@@ -325,12 +325,12 @@ const SuitesPage: React.FC = () => {
                 {(() => {
                   // TEMPORARY WORKAROUND: Hardcoded list of known occupied suites
                   const knownOccupiedSuiteIds = [
-                    "af03b272-1efc-4458-bfb2-bded0cba4ef4", // Standard Plus Suite 21
-                    "e03a5845-b768-4517-8cc1-29d7656298a4", // VIP Suite 1
-                    "09c2e6be-e371-49a5-b476-4e09a7632997", // Standard Suite 109
-                    "780944e8-324b-4e46-a044-1d3c6e710ff8", // Standard Suite 100
-                    "63d8e961-0fff-46f6-8561-cc16111b9251", // Standard Plus Suite 13
-                    "034c57df-d80b-4cac-a47b-b6e097430120", // Standard Suite 104
+                    'af03b272-1efc-4458-bfb2-bded0cba4ef4', // Standard Plus Suite 21
+                    'e03a5845-b768-4517-8cc1-29d7656298a4', // VIP Suite 1
+                    '09c2e6be-e371-49a5-b476-4e09a7632997', // Standard Suite 109
+                    '780944e8-324b-4e46-a044-1d3c6e710ff8', // Standard Suite 100
+                    '63d8e961-0fff-46f6-8561-cc16111b9251', // Standard Plus Suite 13
+                    '034c57df-d80b-4cac-a47b-b6e097430120', // Standard Suite 104
                   ];
 
                   // Check if this suite is in our known occupied list
@@ -341,13 +341,13 @@ const SuitesPage: React.FC = () => {
                   // Determine status using utility function plus hardcoded override
                   const calculatedStatus = determineSuiteStatus(suiteDetails);
                   const finalStatus = isKnownOccupied
-                    ? "OCCUPIED"
+                    ? 'OCCUPIED'
                     : calculatedStatus;
 
                   // Return the appropriate chip based on the status
-                  if (finalStatus === "OCCUPIED" || isKnownOccupied) {
+                  if (finalStatus === 'OCCUPIED' || isKnownOccupied) {
                     return <Chip label="Occupied" color="error" />;
-                  } else if (finalStatus === "MAINTENANCE") {
+                  } else if (finalStatus === 'MAINTENANCE') {
                     return <Chip label="Maintenance" color="default" />;
                   } else {
                     return <Chip label="Available" color="success" />;
@@ -362,26 +362,26 @@ const SuitesPage: React.FC = () => {
                       Current Occupant
                     </Typography>
                     <Typography>
-                      <strong>Pet:</strong>{" "}
-                      {suiteDetails.reservations[0].pet?.name || "Unknown"} (
-                      {suiteDetails.reservations[0].pet?.type || "Unknown"})
+                      <strong>Pet:</strong>{' '}
+                      {suiteDetails.reservations[0].pet?.name || 'Unknown'} (
+                      {suiteDetails.reservations[0].pet?.type || 'Unknown'})
                     </Typography>
                     <Typography>
-                      <strong>Owner:</strong>{" "}
+                      <strong>Owner:</strong>{' '}
                       {suiteDetails.reservations[0].pet?.owner
                         ? `${suiteDetails.reservations[0].pet.owner.firstName} ${suiteDetails.reservations[0].pet.owner.lastName}`
                         : suiteDetails.reservations[0].customer
-                        ? `${suiteDetails.reservations[0].customer.firstName} ${suiteDetails.reservations[0].customer.lastName}`
-                        : "Unknown"}
+                          ? `${suiteDetails.reservations[0].customer.firstName} ${suiteDetails.reservations[0].customer.lastName}`
+                          : 'Unknown'}
                     </Typography>
                     <Typography>
-                      <strong>Check-in:</strong>{" "}
+                      <strong>Check-in:</strong>{' '}
                       {new Date(
                         suiteDetails.reservations[0].startDate
                       ).toLocaleDateString()}
                     </Typography>
                     <Typography>
-                      <strong>Check-out:</strong>{" "}
+                      <strong>Check-out:</strong>{' '}
                       {new Date(
                         suiteDetails.reservations[0].endDate
                       ).toLocaleDateString()}
@@ -393,33 +393,33 @@ const SuitesPage: React.FC = () => {
               <Box>
                 <Typography variant="subtitle1">Suite Information</Typography>
                 <Typography>
-                  <strong>Suite Number:</strong>{" "}
-                  {suiteDetails.attributes?.suiteNumber || "N/A"}
+                  <strong>Suite Number:</strong>{' '}
+                  {suiteDetails.attributes?.suiteNumber || 'N/A'}
                 </Typography>
                 <Typography>
-                  <strong>Last Cleaned:</strong>{" "}
+                  <strong>Last Cleaned:</strong>{' '}
                   <span
                     style={{
-                      background: justCleaned ? "#E3FCEF" : undefined,
-                      color: justCleaned ? "#388E3C" : undefined,
-                      padding: justCleaned ? "2px 6px" : undefined,
-                      borderRadius: justCleaned ? "4px" : undefined,
+                      background: justCleaned ? '#E3FCEF' : undefined,
+                      color: justCleaned ? '#388E3C' : undefined,
+                      padding: justCleaned ? '2px 6px' : undefined,
+                      borderRadius: justCleaned ? '4px' : undefined,
                     }}
                   >
                     {suiteDetails.attributes?.lastCleaned
                       ? new Date(
                           suiteDetails.attributes.lastCleaned
                         ).toLocaleString()
-                      : "Never"}
+                      : 'Never'}
                   </span>
                 </Typography>
                 <Typography>
-                  <strong>Location:</strong>{" "}
-                  {suiteDetails.attributes?.location || "Main Building"}
+                  <strong>Location:</strong>{' '}
+                  {suiteDetails.attributes?.location || 'Main Building'}
                 </Typography>
                 <Typography>
-                  <strong>Amenities:</strong>{" "}
-                  {suiteDetails.attributes?.amenities?.join(", ") || "None"}
+                  <strong>Amenities:</strong>{' '}
+                  {suiteDetails.attributes?.amenities?.join(', ') || 'None'}
                 </Typography>
               </Box>
 

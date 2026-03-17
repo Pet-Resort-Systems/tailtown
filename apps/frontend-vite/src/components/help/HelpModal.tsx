@@ -23,7 +23,7 @@ import {
   Tab,
   Paper,
   Breadcrumbs,
-  Link
+  Link,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
@@ -42,17 +42,23 @@ const HelpModal: React.FC<HelpModalProps> = ({
   open,
   onClose,
   pageContent,
-  initialArticleId
+  initialArticleId,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<HelpCategory | 'all'>('all');
-  const [selectedArticle, setSelectedArticle] = useState<HelpArticle | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<
+    HelpCategory | 'all'
+  >('all');
+  const [selectedArticle, setSelectedArticle] = useState<HelpArticle | null>(
+    null
+  );
   const [viewMode, setViewMode] = useState<'list' | 'article'>('list');
 
   // Initialize with article if provided
   React.useEffect(() => {
     if (initialArticleId && pageContent) {
-      const article = pageContent.articles.find(a => a.id === initialArticleId);
+      const article = pageContent.articles.find(
+        (a) => a.id === initialArticleId
+      );
       if (article) {
         setSelectedArticle(article);
         setViewMode('article');
@@ -70,7 +76,7 @@ const HelpModal: React.FC<HelpModalProps> = ({
     { value: 'reports', label: 'Reports' },
     { value: 'billing', label: 'Billing' },
     { value: 'staff', label: 'Staff' },
-    { value: 'admin', label: 'Admin' }
+    { value: 'admin', label: 'Admin' },
   ];
 
   // Filter articles based on search and category
@@ -81,16 +87,17 @@ const HelpModal: React.FC<HelpModalProps> = ({
 
     // Filter by category
     if (selectedCategory !== 'all') {
-      articles = articles.filter(a => a.category === selectedCategory);
+      articles = articles.filter((a) => a.category === selectedCategory);
     }
 
     // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      articles = articles.filter(a =>
-        a.title.toLowerCase().includes(query) ||
-        a.content.toLowerCase().includes(query) ||
-        a.tags.some(tag => tag.toLowerCase().includes(query))
+      articles = articles.filter(
+        (a) =>
+          a.title.toLowerCase().includes(query) ||
+          a.content.toLowerCase().includes(query) ||
+          a.tags.some((tag) => tag.toLowerCase().includes(query))
       );
     }
 
@@ -122,19 +129,26 @@ const HelpModal: React.FC<HelpModalProps> = ({
       maxWidth="md"
       fullWidth
       PaperProps={{
-        sx: { height: '80vh' }
+        sx: { height: '80vh' },
       }}
     >
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pb: 1 }}>
+      <DialogTitle
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          pb: 1,
+        }}
+      >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography variant="h6">
             {viewMode === 'list' ? 'Help Center' : 'Help Article'}
           </Typography>
           {pageContent && (
-            <Chip 
-              label={pageContent.pageName} 
-              size="small" 
-              color="primary" 
+            <Chip
+              label={pageContent.pageName}
+              size="small"
+              color="primary"
               variant="outlined"
             />
           )}
@@ -171,7 +185,7 @@ const HelpModal: React.FC<HelpModalProps> = ({
               scrollButtons="auto"
               sx={{ mb: 2, borderBottom: 1, borderColor: 'divider' }}
             >
-              {categories.map(cat => (
+              {categories.map((cat) => (
                 <Tab key={cat.value} label={cat.label} value={cat.value} />
               ))}
             </Tabs>
@@ -195,24 +209,50 @@ const HelpModal: React.FC<HelpModalProps> = ({
                   <React.Fragment key={article.id}>
                     {index > 0 && <Divider />}
                     <ListItem disablePadding>
-                      <ListItemButton onClick={() => handleArticleClick(article)}>
+                      <ListItemButton
+                        onClick={() => handleArticleClick(article)}
+                      >
                         <ListItemText
                           primary={
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1,
+                              }}
+                            >
                               {article.title}
                               {article.videoUrl && (
-                                <PlayCircleOutlineIcon fontSize="small" color="primary" />
+                                <PlayCircleOutlineIcon
+                                  fontSize="small"
+                                  color="primary"
+                                />
                               )}
                             </Box>
                           }
                           secondary={
                             <Box sx={{ mt: 0.5 }}>
-                              <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                                sx={{ mb: 0.5 }}
+                              >
                                 {article.content.substring(0, 150)}...
                               </Typography>
-                              <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                                {article.tags.map(tag => (
-                                  <Chip key={tag} label={tag} size="small" variant="outlined" />
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  gap: 0.5,
+                                  flexWrap: 'wrap',
+                                }}
+                              >
+                                {article.tags.map((tag) => (
+                                  <Chip
+                                    key={tag}
+                                    label={tag}
+                                    size="small"
+                                    variant="outlined"
+                                  />
                                 ))}
                               </Box>
                             </Box>
@@ -226,7 +266,9 @@ const HelpModal: React.FC<HelpModalProps> = ({
             ) : (
               <Box sx={{ textAlign: 'center', py: 4 }}>
                 <Typography variant="body1" color="text.secondary">
-                  {searchQuery ? 'No articles found matching your search.' : 'No articles available in this category.'}
+                  {searchQuery
+                    ? 'No articles found matching your search.'
+                    : 'No articles available in this category.'}
                 </Typography>
               </Box>
             )}
@@ -255,18 +297,37 @@ const HelpModal: React.FC<HelpModalProps> = ({
                 <Typography variant="h5" sx={{ mb: 1 }}>
                   {selectedArticle.title}
                 </Typography>
-                
-                <Box sx={{ display: 'flex', gap: 0.5, mb: 2, flexWrap: 'wrap' }}>
-                  <Chip label={selectedArticle.category} size="small" color="primary" />
-                  {selectedArticle.tags.map(tag => (
-                    <Chip key={tag} label={tag} size="small" variant="outlined" />
+
+                <Box
+                  sx={{ display: 'flex', gap: 0.5, mb: 2, flexWrap: 'wrap' }}
+                >
+                  <Chip
+                    label={selectedArticle.category}
+                    size="small"
+                    color="primary"
+                  />
+                  {selectedArticle.tags.map((tag) => (
+                    <Chip
+                      key={tag}
+                      label={tag}
+                      size="small"
+                      variant="outlined"
+                    />
                   ))}
                 </Box>
 
                 {/* Video Player (if available) */}
                 {selectedArticle.videoUrl && (
                   <Paper sx={{ mb: 3, p: 2, bgcolor: 'grey.50' }}>
-                    <Typography variant="subtitle2" sx={{ mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{
+                        mb: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                      }}
+                    >
                       <PlayCircleOutlineIcon color="primary" />
                       Video Tutorial
                     </Typography>
@@ -276,7 +337,7 @@ const HelpModal: React.FC<HelpModalProps> = ({
                         paddingBottom: '56.25%', // 16:9 aspect ratio
                         height: 0,
                         overflow: 'hidden',
-                        borderRadius: 1
+                        borderRadius: 1,
                       }}
                     >
                       <iframe
@@ -288,7 +349,7 @@ const HelpModal: React.FC<HelpModalProps> = ({
                           left: 0,
                           width: '100%',
                           height: '100%',
-                          border: 'none'
+                          border: 'none',
                         }}
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
@@ -298,38 +359,46 @@ const HelpModal: React.FC<HelpModalProps> = ({
                 )}
 
                 {/* Article Text */}
-                <Typography 
-                  variant="body1" 
-                  sx={{ 
+                <Typography
+                  variant="body1"
+                  sx={{
                     whiteSpace: 'pre-wrap',
-                    lineHeight: 1.7
+                    lineHeight: 1.7,
                   }}
                 >
                   {selectedArticle.content}
                 </Typography>
 
                 {/* Related Articles */}
-                {selectedArticle.relatedArticles && selectedArticle.relatedArticles.length > 0 && (
-                  <Box sx={{ mt: 4 }}>
-                    <Divider sx={{ mb: 2 }} />
-                    <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
-                      Related Articles
-                    </Typography>
-                    <List>
-                      {selectedArticle.relatedArticles.map(relatedId => {
-                        const related = pageContent?.articles.find(a => a.id === relatedId);
-                        if (!related) return null;
-                        return (
-                          <ListItem key={relatedId} disablePadding>
-                            <ListItemButton onClick={() => handleArticleClick(related)}>
-                              <ListItemText primary={related.title} />
-                            </ListItemButton>
-                          </ListItem>
-                        );
-                      })}
-                    </List>
-                  </Box>
-                )}
+                {selectedArticle.relatedArticles &&
+                  selectedArticle.relatedArticles.length > 0 && (
+                    <Box sx={{ mt: 4 }}>
+                      <Divider sx={{ mb: 2 }} />
+                      <Typography
+                        variant="subtitle1"
+                        sx={{ fontWeight: 600, mb: 1 }}
+                      >
+                        Related Articles
+                      </Typography>
+                      <List>
+                        {selectedArticle.relatedArticles.map((relatedId) => {
+                          const related = pageContent?.articles.find(
+                            (a) => a.id === relatedId
+                          );
+                          if (!related) return null;
+                          return (
+                            <ListItem key={relatedId} disablePadding>
+                              <ListItemButton
+                                onClick={() => handleArticleClick(related)}
+                              >
+                                <ListItemText primary={related.title} />
+                              </ListItemButton>
+                            </ListItem>
+                          );
+                        })}
+                      </List>
+                    </Box>
+                  )}
               </Box>
             )}
           </Box>

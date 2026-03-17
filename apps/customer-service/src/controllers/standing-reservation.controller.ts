@@ -5,10 +5,10 @@
  * and generation of actual reservations from templates
  */
 
-import { Response, NextFunction } from "express";
-import { PrismaClient, RecurrenceFrequency } from "@prisma/client";
-import { AppError } from "../middleware/error.middleware";
-import { TenantRequest } from "../middleware/tenant.middleware";
+import { Response, NextFunction } from 'express';
+import { PrismaClient, RecurrenceFrequency } from '@prisma/client';
+import { AppError } from '../middleware/error.middleware';
+import { TenantRequest } from '../middleware/tenant.middleware';
 
 const prisma = new PrismaClient();
 
@@ -26,7 +26,7 @@ export const getAllStandingReservations = async (
 
     const where: any = { tenantId };
     if (customerId) where.customerId = customerId;
-    if (isActive !== undefined) where.isActive = isActive === "true";
+    if (isActive !== undefined) where.isActive = isActive === 'true';
 
     const standingReservations = await prisma.standingReservation.findMany({
       where,
@@ -50,11 +50,11 @@ export const getAllStandingReservations = async (
           select: { generatedReservations: true },
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: standingReservations.length,
       data: standingReservations,
     });
@@ -94,15 +94,15 @@ export const getCustomerStandingReservations = async (
           where: {
             scheduledDate: { gte: new Date() },
           },
-          orderBy: { scheduledDate: "asc" },
+          orderBy: { scheduledDate: 'asc' },
           take: 10,
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: standingReservations.length,
       data: standingReservations,
     });
@@ -142,18 +142,18 @@ export const getStandingReservationById = async (
           select: { id: true, firstName: true, lastName: true },
         },
         generatedReservations: {
-          orderBy: { scheduledDate: "desc" },
+          orderBy: { scheduledDate: 'desc' },
           take: 50,
         },
       },
     });
 
     if (!standingReservation) {
-      return next(new AppError("Standing reservation not found", 404));
+      return next(new AppError('Standing reservation not found', 404));
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: standingReservation,
     });
   } catch (error) {
@@ -201,14 +201,14 @@ export const createStandingReservation = async (
       !endTime ||
       !effectiveFrom
     ) {
-      return next(new AppError("Missing required fields", 400));
+      return next(new AppError('Missing required fields', 400));
     }
 
     // Validate frequency
-    if (!["DAILY", "WEEKLY", "BIWEEKLY", "MONTHLY"].includes(frequency)) {
+    if (!['DAILY', 'WEEKLY', 'BIWEEKLY', 'MONTHLY'].includes(frequency)) {
       return next(
         new AppError(
-          "Invalid frequency. Must be DAILY, WEEKLY, BIWEEKLY, or MONTHLY",
+          'Invalid frequency. Must be DAILY, WEEKLY, BIWEEKLY, or MONTHLY',
           400
         )
       );
@@ -216,22 +216,22 @@ export const createStandingReservation = async (
 
     // Validate daysOfWeek for weekly/biweekly
     if (
-      (frequency === "WEEKLY" || frequency === "BIWEEKLY") &&
+      (frequency === 'WEEKLY' || frequency === 'BIWEEKLY') &&
       (!daysOfWeek || daysOfWeek.length === 0)
     ) {
       return next(
-        new AppError("Days of week required for weekly/biweekly frequency", 400)
+        new AppError('Days of week required for weekly/biweekly frequency', 400)
       );
     }
 
     // Validate dayOfMonth for monthly
     if (
-      frequency === "MONTHLY" &&
+      frequency === 'MONTHLY' &&
       (!dayOfMonth || dayOfMonth < 1 || dayOfMonth > 31)
     ) {
       return next(
         new AppError(
-          "Valid day of month (1-31) required for monthly frequency",
+          'Valid day of month (1-31) required for monthly frequency',
           400
         )
       );
@@ -242,7 +242,7 @@ export const createStandingReservation = async (
       where: { id: customerId, tenantId },
     });
     if (!customer) {
-      return next(new AppError("Customer not found", 404));
+      return next(new AppError('Customer not found', 404));
     }
 
     // Verify pet exists and belongs to customer
@@ -251,7 +251,7 @@ export const createStandingReservation = async (
     });
     if (!pet) {
       return next(
-        new AppError("Pet not found or does not belong to customer", 404)
+        new AppError('Pet not found or does not belong to customer', 404)
       );
     }
 
@@ -260,7 +260,7 @@ export const createStandingReservation = async (
       where: { id: serviceId, tenantId },
     });
     if (!service) {
-      return next(new AppError("Service not found", 404));
+      return next(new AppError('Service not found', 404));
     }
 
     const standingReservation = await prisma.standingReservation.create({
@@ -297,7 +297,7 @@ export const createStandingReservation = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: standingReservation,
     });
   } catch (error) {
@@ -323,7 +323,7 @@ export const updateStandingReservation = async (
       where: { id, tenantId },
     });
     if (!existing) {
-      return next(new AppError("Standing reservation not found", 404));
+      return next(new AppError('Standing reservation not found', 404));
     }
 
     // Build update object
@@ -372,7 +372,7 @@ export const updateStandingReservation = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: standingReservation,
     });
   } catch (error) {
@@ -396,7 +396,7 @@ export const deleteStandingReservation = async (
       where: { id, tenantId },
     });
     if (!existing) {
-      return next(new AppError("Standing reservation not found", 404));
+      return next(new AppError('Standing reservation not found', 404));
     }
 
     await prisma.standingReservation.delete({
@@ -431,7 +431,7 @@ export const generateReservations = async (
 
     if (!standingReservation) {
       return next(
-        new AppError("Standing reservation not found or inactive", 404)
+        new AppError('Standing reservation not found or inactive', 404)
       );
     }
 
@@ -479,7 +479,7 @@ export const generateReservations = async (
             tenantId,
             standingReservationId: id,
             scheduledDate: date,
-            status: "PENDING",
+            status: 'PENDING',
           },
         });
         createdInstances.push(instance);
@@ -497,7 +497,7 @@ export const generateReservations = async (
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         generatedCount: createdInstances.length,
         instances: createdInstances,
@@ -526,19 +526,19 @@ export const skipInstance = async (
     });
 
     if (!instance) {
-      return next(new AppError("Instance not found", 404));
+      return next(new AppError('Instance not found', 404));
     }
 
     const updated = await prisma.standingReservationInstance.update({
       where: { id: instanceId },
       data: {
-        status: "SKIPPED",
-        skipReason: reason || "Manually skipped",
+        status: 'SKIPPED',
+        skipReason: reason || 'Manually skipped',
       },
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: updated,
     });
   } catch (error) {
@@ -565,12 +565,12 @@ export const getUpcomingInstances = async (
         standingReservationId: id,
         scheduledDate: { gte: new Date() },
       },
-      orderBy: { scheduledDate: "asc" },
+      orderBy: { scheduledDate: 'asc' },
       take: parseInt(limit as string),
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: instances.length,
       data: instances,
     });
@@ -600,15 +600,15 @@ function calculateRecurrenceDates(
     let shouldAdd = false;
 
     switch (frequency) {
-      case "DAILY":
+      case 'DAILY':
         shouldAdd = true;
         break;
 
-      case "WEEKLY":
+      case 'WEEKLY':
         shouldAdd = daysOfWeek.includes(current.getDay());
         break;
 
-      case "BIWEEKLY":
+      case 'BIWEEKLY':
         // Check if it's the right day and the right week
         const weekNumber = Math.floor(
           (current.getTime() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000)
@@ -617,7 +617,7 @@ function calculateRecurrenceDates(
           daysOfWeek.includes(current.getDay()) && weekNumber % 2 === 0;
         break;
 
-      case "MONTHLY":
+      case 'MONTHLY':
         shouldAdd = dayOfMonth !== null && current.getDate() === dayOfMonth;
         break;
     }

@@ -3,14 +3,14 @@
  * Generates customer analytics and insights
  */
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 import {
   CustomerAcquisitionData,
   CustomerRetentionData,
   CustomerLifetimeValue,
   CustomerDemographics,
   InactiveCustomer,
-} from "../types/reports.types";
+} from '../types/reports.types';
 
 const prisma = new PrismaClient();
 
@@ -51,7 +51,7 @@ export const getCustomerAcquisitionReport = async (
       newCustomers,
       totalCustomers: allCustomers,
       acquisitionRate,
-      source: "All Sources",
+      source: 'All Sources',
     },
   ];
 };
@@ -80,7 +80,7 @@ export const getCustomerRetentionReport = async (
     select: {
       customerId: true,
     },
-    distinct: ["customerId"],
+    distinct: ['customerId'],
   });
 
   const returningCustomers = customersWithReservations.length;
@@ -89,7 +89,7 @@ export const getCustomerRetentionReport = async (
   const totalActiveCustomers = await prisma.reservation.findMany({
     where: { tenantId },
     select: { customerId: true },
-    distinct: ["customerId"],
+    distinct: ['customerId'],
   });
 
   const totalCustomers = totalActiveCustomers.length;
@@ -121,10 +121,10 @@ export const getCustomerLifetimeValueReport = async (
     include: {
       invoices: {
         where: {
-          status: "PAID",
+          status: 'PAID',
         },
         orderBy: {
-          issueDate: "asc",
+          issueDate: 'asc',
         },
       },
       pets: {
@@ -149,20 +149,20 @@ export const getCustomerLifetimeValueReport = async (
 
     const firstVisit = customer.invoices[0].issueDate
       .toISOString()
-      .split("T")[0];
+      .split('T')[0];
     const lastVisit = customer.invoices[customer.invoices.length - 1].issueDate
       .toISOString()
-      .split("T")[0];
+      .split('T')[0];
 
     // Calculate tier based on total spent
-    let tier = "Bronze";
-    if (totalSpent > 5000) tier = "Platinum";
-    else if (totalSpent > 2000) tier = "Gold";
-    else if (totalSpent > 1000) tier = "Silver";
+    let tier = 'Bronze';
+    if (totalSpent > 5000) tier = 'Platinum';
+    else if (totalSpent > 2000) tier = 'Gold';
+    else if (totalSpent > 1000) tier = 'Silver';
 
     // Get unique pet names (avoid duplicates from sync issues)
     const uniquePetNames = [...new Set(customer.pets.map((p) => p.name))];
-    const petNames = uniquePetNames.join(", ") || "No pets";
+    const petNames = uniquePetNames.join(', ') || 'No pets';
 
     customerValues.push({
       customerId: customer.id,
@@ -203,7 +203,7 @@ export const getCustomerDemographicsReport = async (
   // Aggregate by location (city)
   const locationMap = new Map<string, number>();
   for (const customer of customers) {
-    const city = customer.city || "Unknown";
+    const city = customer.city || 'Unknown';
     locationMap.set(city, (locationMap.get(city) || 0) + 1);
   }
 
@@ -217,7 +217,7 @@ export const getCustomerDemographicsReport = async (
   const petTypeMap = new Map<string, number>();
   for (const customer of customers) {
     for (const pet of customer.pets) {
-      const type = pet.type || "Unknown";
+      const type = pet.type || 'Unknown';
       petTypeMap.set(type, (petTypeMap.get(type) || 0) + 1);
     }
   }
@@ -232,9 +232,9 @@ export const getCustomerDemographicsReport = async (
 
   // Service preference (would need reservation data - placeholder)
   const byServicePreference = [
-    { service: "Boarding", count: 0, percentage: 0 },
-    { service: "Daycare", count: 0, percentage: 0 },
-    { service: "Grooming", count: 0, percentage: 0 },
+    { service: 'Boarding', count: 0, percentage: 0 },
+    { service: 'Daycare', count: 0, percentage: 0 },
+    { service: 'Grooming', count: 0, percentage: 0 },
   ];
 
   return {
@@ -261,13 +261,13 @@ export const getInactiveCustomersReport = async (
     include: {
       reservations: {
         orderBy: {
-          startDate: "desc",
+          startDate: 'desc',
         },
         take: 1,
       },
       invoices: {
         where: {
-          status: "PAID",
+          status: 'PAID',
         },
       },
     },
@@ -293,12 +293,12 @@ export const getInactiveCustomersReport = async (
       inactiveCustomers.push({
         customerId: customer.id,
         customerName: `${customer.firstName} ${customer.lastName}`,
-        lastVisit: lastVisit.toISOString().split("T")[0],
+        lastVisit: lastVisit.toISOString().split('T')[0],
         daysSinceLastVisit: daysSince,
         totalSpent,
         totalVisits,
         email: customer.email,
-        phone: customer.phone || "",
+        phone: customer.phone || '',
       });
     }
   }

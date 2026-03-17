@@ -10,32 +10,36 @@ async function createAdminAccount() {
 
     // Check if admin account already exists
     const existingStaff = await prisma.staff.findUnique({
-      where: { tenantId_email: { tenantId, email } }
+      where: { tenantId_email: { tenantId, email } },
     });
 
     if (existingStaff) {
       console.log('✅ Admin account already exists');
       console.log(`   Email: ${existingStaff.email}`);
-      console.log(`   Name: ${existingStaff.firstName} ${existingStaff.lastName}`);
+      console.log(
+        `   Name: ${existingStaff.firstName} ${existingStaff.lastName}`
+      );
       console.log(`   Role: ${existingStaff.role}`);
-      console.log(`   Status: ${existingStaff.isActive ? 'Active' : 'Inactive'}`);
-      
+      console.log(
+        `   Status: ${existingStaff.isActive ? 'Active' : 'Inactive'}`
+      );
+
       // If inactive, activate it
       if (!existingStaff.isActive) {
         console.log('\n🔧 Activating account...');
         await prisma.staff.update({
           where: { id: existingStaff.id },
-          data: { isActive: true }
+          data: { isActive: true },
         });
         console.log('✅ Account activated!');
       }
-      
+
       return;
     }
 
     // Create admin account with hashed password
     const hashedPassword = await bcrypt.hash('admin123', 10);
-    
+
     const staff = await prisma.staff.create({
       data: {
         tenantId,
@@ -46,7 +50,7 @@ async function createAdminAccount() {
         role: 'ADMIN',
         isActive: true,
         password: hashedPassword,
-      } as any
+      } as any,
     });
 
     console.log('✅ Admin account created successfully!');
@@ -57,7 +61,6 @@ async function createAdminAccount() {
     console.log('🏢 Tenant: dev');
     console.log('');
     console.log('⚠️  Please change the password after first login!');
-
   } catch (error) {
     console.error('❌ Error:', error);
   } finally {

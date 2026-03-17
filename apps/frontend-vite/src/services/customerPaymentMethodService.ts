@@ -3,7 +3,7 @@
  * Handles API calls for saved cards on file
  */
 
-const API_BASE = "/api/customers";
+const API_BASE = '/api/customers';
 
 export interface SavedPaymentMethod {
   id: string;
@@ -41,8 +41,8 @@ export interface ChargePaymentMethodData {
 }
 
 const getHeaders = () => ({
-  "Content-Type": "application/json",
-  "x-tenant-id": localStorage.getItem("tailtown_tenant_id") || "dev",
+  'Content-Type': 'application/json',
+  'x-tenant-id': localStorage.getItem('tailtown_tenant_id') || 'dev',
 });
 
 export const customerPaymentMethodService = {
@@ -55,7 +55,7 @@ export const customerPaymentMethodService = {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to fetch payment methods");
+      throw new Error('Failed to fetch payment methods');
     }
 
     const data = await response.json();
@@ -74,7 +74,7 @@ export const customerPaymentMethodService = {
     );
 
     if (!response.ok) {
-      throw new Error("Failed to fetch default payment method");
+      throw new Error('Failed to fetch default payment method');
     }
 
     const data = await response.json();
@@ -89,14 +89,14 @@ export const customerPaymentMethodService = {
     paymentData: CreatePaymentMethodData
   ): Promise<SavedPaymentMethod> {
     const response = await fetch(`${API_BASE}/${customerId}/payment-methods`, {
-      method: "POST",
+      method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(paymentData),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "Failed to save payment method");
+      throw new Error(error.message || 'Failed to save payment method');
     }
 
     const data = await response.json();
@@ -114,7 +114,7 @@ export const customerPaymentMethodService = {
     const response = await fetch(
       `${API_BASE}/${customerId}/payment-methods/${methodId}`,
       {
-        method: "PATCH",
+        method: 'PATCH',
         headers: getHeaders(),
         body: JSON.stringify(updates),
       }
@@ -122,7 +122,7 @@ export const customerPaymentMethodService = {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "Failed to update payment method");
+      throw new Error(error.message || 'Failed to update payment method');
     }
 
     const data = await response.json();
@@ -139,14 +139,14 @@ export const customerPaymentMethodService = {
     const response = await fetch(
       `${API_BASE}/${customerId}/payment-methods/${methodId}`,
       {
-        method: "DELETE",
+        method: 'DELETE',
         headers: getHeaders(),
       }
     );
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "Failed to delete payment method");
+      throw new Error(error.message || 'Failed to delete payment method');
     }
   },
 
@@ -166,7 +166,7 @@ export const customerPaymentMethodService = {
     const response = await fetch(
       `${API_BASE}/${customerId}/payment-methods/${methodId}/charge`,
       {
-        method: "POST",
+        method: 'POST',
         headers: getHeaders(),
         body: JSON.stringify(chargeData),
       }
@@ -174,7 +174,7 @@ export const customerPaymentMethodService = {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "Payment failed");
+      throw new Error(error.message || 'Payment failed');
     }
 
     const data = await response.json();
@@ -186,12 +186,12 @@ export const customerPaymentMethodService = {
    */
   formatCardBrand(brand: string): string {
     const brands: Record<string, string> = {
-      VISA: "Visa",
-      MASTERCARD: "Mastercard",
-      AMEX: "American Express",
-      DISCOVER: "Discover",
-      DINERS: "Diners Club",
-      JCB: "JCB",
+      VISA: 'Visa',
+      MASTERCARD: 'Mastercard',
+      AMEX: 'American Express',
+      DISCOVER: 'Discover',
+      DINERS: 'Diners Club',
+      JCB: 'JCB',
     };
     return brands[brand.toUpperCase()] || brand;
   },
@@ -200,7 +200,7 @@ export const customerPaymentMethodService = {
    * Helper: Format expiry date for display
    */
   formatExpiry(month: number, year: number): string {
-    return `${String(month).padStart(2, "0")}/${String(year).slice(-2)}`;
+    return `${String(month).padStart(2, '0')}/${String(year).slice(-2)}`;
   },
 
   /**
@@ -217,12 +217,12 @@ export const customerPaymentMethodService = {
    */
   getCardIcon(brand: string): string {
     const icons: Record<string, string> = {
-      VISA: "visa",
-      MASTERCARD: "mastercard",
-      AMEX: "amex",
-      DISCOVER: "discover",
+      VISA: 'visa',
+      MASTERCARD: 'mastercard',
+      AMEX: 'amex',
+      DISCOVER: 'discover',
     };
-    return icons[brand.toUpperCase()] || "credit-card";
+    return icons[brand.toUpperCase()] || 'credit-card';
   },
 };
 

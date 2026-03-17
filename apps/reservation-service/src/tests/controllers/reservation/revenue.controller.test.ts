@@ -5,10 +5,10 @@
  * Tests the revenue calculation controller endpoints.
  */
 
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 
 // Mock dependencies
-jest.mock("../../../controllers/reservation/utils/prisma-helpers", () => ({
+jest.mock('../../../controllers/reservation/utils/prisma-helpers', () => ({
   prisma: {
     reservation: {
       count: jest.fn(),
@@ -19,7 +19,7 @@ jest.mock("../../../controllers/reservation/utils/prisma-helpers", () => ({
   safeExecutePrismaQuery: jest.fn((fn) => fn()),
 }));
 
-jest.mock("../../../utils/logger", () => ({
+jest.mock('../../../utils/logger', () => ({
   logger: {
     error: jest.fn(),
     info: jest.fn(),
@@ -31,15 +31,15 @@ jest.mock("../../../utils/logger", () => ({
 import {
   prisma,
   safeExecutePrismaQuery,
-} from "../../../controllers/reservation/utils/prisma-helpers";
-import { logger } from "../../../utils/logger";
+} from '../../../controllers/reservation/utils/prisma-helpers';
+import { logger } from '../../../utils/logger';
 
 // Helper to create mock request
 const createMockRequest = (overrides: any = {}): Request => {
   return {
-    tenantId: "test-tenant",
+    tenantId: 'test-tenant',
     query: {},
-    headers: { "x-tenant-id": "test-tenant" },
+    headers: { 'x-tenant-id': 'test-tenant' },
     ...overrides,
   } as unknown as Request;
 };
@@ -53,13 +53,13 @@ const createMockResponse = (): Response => {
   return res as Response;
 };
 
-describe("Revenue Controller", () => {
+describe('Revenue Controller', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe("Date calculations", () => {
-    it("should calculate start of today correctly", () => {
+  describe('Date calculations', () => {
+    it('should calculate start of today correctly', () => {
       const today = new Date();
       const year = today.getFullYear();
       const month = today.getMonth();
@@ -72,7 +72,7 @@ describe("Revenue Controller", () => {
       expect(startOfToday.getSeconds()).toBe(0);
     });
 
-    it("should calculate end of today correctly", () => {
+    it('should calculate end of today correctly', () => {
       const today = new Date();
       const year = today.getFullYear();
       const month = today.getMonth();
@@ -85,7 +85,7 @@ describe("Revenue Controller", () => {
       expect(endOfToday.getSeconds()).toBe(59);
     });
 
-    it("should format date string correctly", () => {
+    it('should format date string correctly', () => {
       const today = new Date(2024, 5, 15); // June 15, 2024
       const year = today.getFullYear();
       const month = today.getMonth();
@@ -93,33 +93,33 @@ describe("Revenue Controller", () => {
 
       const formattedDate = `${year}-${String(month + 1).padStart(
         2,
-        "0"
-      )}-${String(day).padStart(2, "0")}`;
+        '0'
+      )}-${String(day).padStart(2, '0')}`;
 
-      expect(formattedDate).toBe("2024-06-15");
+      expect(formattedDate).toBe('2024-06-15');
     });
 
-    it("should pad single-digit months correctly", () => {
+    it('should pad single-digit months correctly', () => {
       const date = new Date(2024, 0, 5); // January 5, 2024
       const month = date.getMonth();
 
-      const paddedMonth = String(month + 1).padStart(2, "0");
+      const paddedMonth = String(month + 1).padStart(2, '0');
 
-      expect(paddedMonth).toBe("01");
+      expect(paddedMonth).toBe('01');
     });
 
-    it("should pad single-digit days correctly", () => {
+    it('should pad single-digit days correctly', () => {
       const date = new Date(2024, 5, 5); // June 5, 2024
       const day = date.getDate();
 
-      const paddedDay = String(day).padStart(2, "0");
+      const paddedDay = String(day).padStart(2, '0');
 
-      expect(paddedDay).toBe("05");
+      expect(paddedDay).toBe('05');
     });
   });
 
-  describe("Revenue calculation", () => {
-    it("should calculate revenue based on reservation count", () => {
+  describe('Revenue calculation', () => {
+    it('should calculate revenue based on reservation count', () => {
       const reservationCount = 10;
       const basePrice = 50;
 
@@ -128,7 +128,7 @@ describe("Revenue Controller", () => {
       expect(totalRevenue).toBe(500);
     });
 
-    it("should handle zero reservations", () => {
+    it('should handle zero reservations', () => {
       const reservationCount = 0;
       const basePrice = 50;
 
@@ -137,7 +137,7 @@ describe("Revenue Controller", () => {
       expect(totalRevenue).toBe(0);
     });
 
-    it("should handle null reservation count", () => {
+    it('should handle null reservation count', () => {
       const reservationCount = null;
       const basePrice = 50;
 
@@ -147,84 +147,84 @@ describe("Revenue Controller", () => {
     });
   });
 
-  describe("Status filtering", () => {
-    it("should include CONFIRMED status", () => {
-      const validStatuses = ["CONFIRMED", "CHECKED_IN", "COMPLETED"];
-      expect(validStatuses).toContain("CONFIRMED");
+  describe('Status filtering', () => {
+    it('should include CONFIRMED status', () => {
+      const validStatuses = ['CONFIRMED', 'CHECKED_IN', 'COMPLETED'];
+      expect(validStatuses).toContain('CONFIRMED');
     });
 
-    it("should include CHECKED_IN status", () => {
-      const validStatuses = ["CONFIRMED", "CHECKED_IN", "COMPLETED"];
-      expect(validStatuses).toContain("CHECKED_IN");
+    it('should include CHECKED_IN status', () => {
+      const validStatuses = ['CONFIRMED', 'CHECKED_IN', 'COMPLETED'];
+      expect(validStatuses).toContain('CHECKED_IN');
     });
 
-    it("should include COMPLETED status", () => {
-      const validStatuses = ["CONFIRMED", "CHECKED_IN", "COMPLETED"];
-      expect(validStatuses).toContain("COMPLETED");
+    it('should include COMPLETED status', () => {
+      const validStatuses = ['CONFIRMED', 'CHECKED_IN', 'COMPLETED'];
+      expect(validStatuses).toContain('COMPLETED');
     });
 
-    it("should not include CANCELED status", () => {
-      const validStatuses = ["CONFIRMED", "CHECKED_IN", "COMPLETED"];
-      expect(validStatuses).not.toContain("CANCELED");
+    it('should not include CANCELED status', () => {
+      const validStatuses = ['CONFIRMED', 'CHECKED_IN', 'COMPLETED'];
+      expect(validStatuses).not.toContain('CANCELED');
     });
 
-    it("should not include PENDING status", () => {
-      const validStatuses = ["CONFIRMED", "CHECKED_IN", "COMPLETED"];
-      expect(validStatuses).not.toContain("PENDING");
+    it('should not include PENDING status', () => {
+      const validStatuses = ['CONFIRMED', 'CHECKED_IN', 'COMPLETED'];
+      expect(validStatuses).not.toContain('PENDING');
     });
   });
 
-  describe("Tenant isolation", () => {
-    it("should require tenant ID", () => {
+  describe('Tenant isolation', () => {
+    it('should require tenant ID', () => {
       const req = createMockRequest({ tenantId: null });
       expect(req.tenantId).toBeNull();
     });
 
-    it("should use dev tenant in development mode", () => {
+    it('should use dev tenant in development mode', () => {
       const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = "development";
+      process.env.NODE_ENV = 'development';
 
-      const isDev = process.env.NODE_ENV === "development";
-      const tenantId = null || (isDev ? "dev-tenant-001" : undefined);
+      const isDev = process.env.NODE_ENV === 'development';
+      const tenantId = null || (isDev ? 'dev-tenant-001' : undefined);
 
-      expect(tenantId).toBe("dev-tenant-001");
+      expect(tenantId).toBe('dev-tenant-001');
 
       process.env.NODE_ENV = originalEnv;
     });
   });
 
-  describe("Response structure", () => {
-    it("should include status in response", () => {
+  describe('Response structure', () => {
+    it('should include status in response', () => {
       const response = {
-        status: "success",
+        status: 'success',
         data: {
-          date: "2024-06-15",
+          date: '2024-06-15',
           reservationCount: 10,
           totalRevenue: 500,
         },
       };
 
-      expect(response.status).toBe("success");
+      expect(response.status).toBe('success');
     });
 
-    it("should include date in response data", () => {
+    it('should include date in response data', () => {
       const response = {
-        status: "success",
+        status: 'success',
         data: {
-          date: "2024-06-15",
+          date: '2024-06-15',
           reservationCount: 10,
           totalRevenue: 500,
         },
       };
 
-      expect(response.data.date).toBe("2024-06-15");
+      expect(response.data.date).toBe('2024-06-15');
     });
 
-    it("should include reservation count in response data", () => {
+    it('should include reservation count in response data', () => {
       const response = {
-        status: "success",
+        status: 'success',
         data: {
-          date: "2024-06-15",
+          date: '2024-06-15',
           reservationCount: 10,
           totalRevenue: 500,
         },
@@ -233,11 +233,11 @@ describe("Revenue Controller", () => {
       expect(response.data.reservationCount).toBe(10);
     });
 
-    it("should include total revenue in response data", () => {
+    it('should include total revenue in response data', () => {
       const response = {
-        status: "success",
+        status: 'success',
         data: {
-          date: "2024-06-15",
+          date: '2024-06-15',
           reservationCount: 10,
           totalRevenue: 500,
         },

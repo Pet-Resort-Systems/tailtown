@@ -5,7 +5,12 @@ export interface MessageTemplate {
   tenantId: string;
   name: string;
   type: 'SMS' | 'EMAIL';
-  category: 'APPOINTMENT_REMINDER' | 'MARKETING' | 'CONFIRMATION' | 'FOLLOW_UP' | 'PROMOTIONAL';
+  category:
+    | 'APPOINTMENT_REMINDER'
+    | 'MARKETING'
+    | 'CONFIRMATION'
+    | 'FOLLOW_UP'
+    | 'PROMOTIONAL';
   subject?: string;
   body: string;
   variables: string[];
@@ -17,7 +22,12 @@ export interface MessageTemplate {
 export interface CreateTemplateData {
   name: string;
   type: 'SMS' | 'EMAIL';
-  category: 'APPOINTMENT_REMINDER' | 'MARKETING' | 'CONFIRMATION' | 'FOLLOW_UP' | 'PROMOTIONAL';
+  category:
+    | 'APPOINTMENT_REMINDER'
+    | 'MARKETING'
+    | 'CONFIRMATION'
+    | 'FOLLOW_UP'
+    | 'PROMOTIONAL';
   subject?: string;
   body: string;
   variables?: string[];
@@ -26,7 +36,12 @@ export interface CreateTemplateData {
 export interface UpdateTemplateData {
   name?: string;
   type?: 'SMS' | 'EMAIL';
-  category?: 'APPOINTMENT_REMINDER' | 'MARKETING' | 'CONFIRMATION' | 'FOLLOW_UP' | 'PROMOTIONAL';
+  category?:
+    | 'APPOINTMENT_REMINDER'
+    | 'MARKETING'
+    | 'CONFIRMATION'
+    | 'FOLLOW_UP'
+    | 'PROMOTIONAL';
   subject?: string;
   body?: string;
   variables?: string[];
@@ -46,9 +61,12 @@ class MessageTemplateService {
       const params = new URLSearchParams();
       if (filters?.type) params.append('type', filters.type);
       if (filters?.category) params.append('category', filters.category);
-      if (filters?.isActive !== undefined) params.append('isActive', String(filters.isActive));
+      if (filters?.isActive !== undefined)
+        params.append('isActive', String(filters.isActive));
 
-      const response = await api.get(`/api/message-templates?${params.toString()}`);
+      const response = await api.get(
+        `/api/message-templates?${params.toString()}`
+      );
       return response.data.data || [];
     } catch (error) {
       console.error('Error fetching message templates:', error);
@@ -85,7 +103,10 @@ class MessageTemplateService {
   /**
    * Update template
    */
-  async updateTemplate(id: string, data: UpdateTemplateData): Promise<MessageTemplate> {
+  async updateTemplate(
+    id: string,
+    data: UpdateTemplateData
+  ): Promise<MessageTemplate> {
     try {
       const response = await api.put(`/api/message-templates/${id}`, data);
       return response.data.data;

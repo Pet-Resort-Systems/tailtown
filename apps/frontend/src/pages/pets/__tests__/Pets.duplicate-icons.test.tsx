@@ -11,61 +11,61 @@
  * SOLUTION: Only PetNameWithIcons should render the photo icon (with showPhoto={true})
  */
 
-import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import { BrowserRouter } from "react-router-dom";
-import Pets from "../Pets";
-import { petService } from "../../../services/petService";
+import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { BrowserRouter } from 'react-router-dom';
+import Pets from '../Pets';
+import { petService } from '../../../services/petService';
 
 // Mock the pet service
-jest.mock("../../../services/petService", () => ({
+jest.mock('../../../services/petService', () => ({
   petService: {
     getAllPets: jest.fn(),
   },
 }));
 
 // Mock the navigate hook
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useNavigate: () => jest.fn(),
 }));
 
-describe("Pets Page - Duplicate Photo Icon Prevention", () => {
+describe('Pets Page - Duplicate Photo Icon Prevention', () => {
   const mockPetsWithPhotos = {
     data: [
       {
-        id: "1",
-        name: "Buddy",
-        type: "DOG",
-        breed: "Golden Retriever",
-        gender: "MALE",
+        id: '1',
+        name: 'Buddy',
+        type: 'DOG',
+        breed: 'Golden Retriever',
+        gender: 'MALE',
         weight: 65,
-        profilePhoto: "https://example.com/photo1.jpg", // Has photo
-        playgroupCompatibility: "LARGE_DOG",
+        profilePhoto: 'https://example.com/photo1.jpg', // Has photo
+        playgroupCompatibility: 'LARGE_DOG',
         specialRequirements: [],
         vaccinationStatus: {},
         owner: {
-          id: "owner1",
-          firstName: "John",
-          lastName: "Smith",
+          id: 'owner1',
+          firstName: 'John',
+          lastName: 'Smith',
         },
       },
       {
-        id: "2",
-        name: "Max",
-        type: "DOG",
-        breed: "Labrador",
-        gender: "MALE",
+        id: '2',
+        name: 'Max',
+        type: 'DOG',
+        breed: 'Labrador',
+        gender: 'MALE',
         weight: 70,
-        profilePhoto: "https://example.com/photo2.jpg", // Has photo
-        playgroupCompatibility: "LARGE_DOG",
+        profilePhoto: 'https://example.com/photo2.jpg', // Has photo
+        playgroupCompatibility: 'LARGE_DOG',
         specialRequirements: [],
         vaccinationStatus: {},
         owner: {
-          id: "owner2",
-          firstName: "Jane",
-          lastName: "Doe",
+          id: 'owner2',
+          firstName: 'Jane',
+          lastName: 'Doe',
         },
       },
     ],
@@ -79,7 +79,7 @@ describe("Pets Page - Duplicate Photo Icon Prevention", () => {
     (petService.getAllPets as jest.Mock).mockResolvedValue(mockPetsWithPhotos);
   });
 
-  it("should NOT render duplicate camera/photo icons for pets with photos", async () => {
+  it('should NOT render duplicate camera/photo icons for pets with photos', async () => {
     const { container } = render(
       <BrowserRouter>
         <Pets />
@@ -88,7 +88,7 @@ describe("Pets Page - Duplicate Photo Icon Prevention", () => {
 
     // Wait for pets to load
     await waitFor(() => {
-      expect(screen.getByText("Buddy (Smith)")).toBeInTheDocument();
+      expect(screen.getByText('Buddy (Smith)')).toBeInTheDocument();
     });
 
     // Count all camera icons in the document
@@ -108,7 +108,7 @@ describe("Pets Page - Duplicate Photo Icon Prevention", () => {
     expect(cameraIcons.length).toBeLessThanOrEqual(petsWithPhotos.length);
   });
 
-  it("should render photo icon through PetNameWithIcons component only", async () => {
+  it('should render photo icon through PetNameWithIcons component only', async () => {
     const { container } = render(
       <BrowserRouter>
         <Pets />
@@ -116,12 +116,12 @@ describe("Pets Page - Duplicate Photo Icon Prevention", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("Buddy (Smith)")).toBeInTheDocument();
+      expect(screen.getByText('Buddy (Smith)')).toBeInTheDocument();
     });
 
     // Check that there's NO standalone CameraIcon/CameraAlt import being used
     // The photo icon should ONLY come from PetNameWithIcons component
-    const tableCell = screen.getByText("Buddy (Smith)").closest("td");
+    const tableCell = screen.getByText('Buddy (Smith)').closest('td');
     expect(tableCell).toBeInTheDocument();
 
     // The table cell should contain PetNameWithIcons, not a separate camera icon
@@ -129,7 +129,7 @@ describe("Pets Page - Duplicate Photo Icon Prevention", () => {
     // that's the duplicate we're trying to prevent
   });
 
-  it("should have showPhoto={true} on PetNameWithIcons component", async () => {
+  it('should have showPhoto={true} on PetNameWithIcons component', async () => {
     // This is a code-level check - we verify the component is called correctly
     // by checking that the photo is actually displayed
     const { container } = render(
@@ -139,7 +139,7 @@ describe("Pets Page - Duplicate Photo Icon Prevention", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("Buddy (Smith)")).toBeInTheDocument();
+      expect(screen.getByText('Buddy (Smith)')).toBeInTheDocument();
     });
 
     // If showPhoto is true, PetNameWithIcons will render the photo
@@ -149,7 +149,7 @@ describe("Pets Page - Duplicate Photo Icon Prevention", () => {
     ).toBeTruthy();
   });
 
-  it("should NOT import CameraIcon or CameraAlt in Pets.tsx", () => {
+  it('should NOT import CameraIcon or CameraAlt in Pets.tsx', () => {
     // This is a meta-test that checks the source code
     // In a real test environment, we'd use a linter or static analysis
     // For now, this serves as documentation of the requirement

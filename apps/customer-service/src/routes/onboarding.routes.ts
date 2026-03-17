@@ -5,18 +5,18 @@
  * No authentication required - these are for new signups.
  */
 
-import { Router } from "express";
+import { Router } from 'express';
 import {
   completeTenantOnboarding,
   validateOnboardingData,
-} from "../controllers/onboarding.controller";
+} from '../controllers/onboarding.controller';
 
 const router = Router();
 
 // Validate wizard data before final submission
-router.post("/validate", validateOnboardingData);
+router.post('/validate', validateOnboardingData);
 
 // Complete onboarding - creates tenant and all related records
-router.post("/complete", completeTenantOnboarding);
+router.post('/complete', completeTenantOnboarding);
 
 export default router;

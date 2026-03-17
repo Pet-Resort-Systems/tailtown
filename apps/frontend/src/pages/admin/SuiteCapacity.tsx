@@ -1,6 +1,6 @@
 /**
  * Suite Capacity Configuration Page
- * 
+ *
  * Admin interface for configuring multi-pet suite capacities
  */
 
@@ -36,14 +36,14 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   Save as SaveIcon,
-  Pets as PetsIcon
+  Pets as PetsIcon,
 } from '@mui/icons-material';
 import { multiPetService } from '../../services/multiPetService';
 import {
   SuiteCapacityConfig,
   SuiteCapacity,
   SuiteCapacityType,
-  MultiPetPricingType
+  MultiPetPricingType,
 } from '../../types/multiPet';
 
 export const SuiteCapacityPage: React.FC = () => {
@@ -57,15 +57,19 @@ export const SuiteCapacityPage: React.FC = () => {
 
   // Dialog state
   const [showCapacityDialog, setShowCapacityDialog] = useState(false);
-  const [editingCapacity, setEditingCapacity] = useState<SuiteCapacity | null>(null);
+  const [editingCapacity, setEditingCapacity] = useState<SuiteCapacity | null>(
+    null
+  );
 
   // Form state
-  const [capacityFormData, setCapacityFormData] = useState<Partial<SuiteCapacity>>({
+  const [capacityFormData, setCapacityFormData] = useState<
+    Partial<SuiteCapacity>
+  >({
     capacityType: 'DOUBLE',
     maxPets: 2,
     pricingType: 'PER_PET',
     basePrice: 50,
-    isActive: true
+    isActive: true,
   });
 
   useEffect(() => {
@@ -79,13 +83,16 @@ export const SuiteCapacityPage: React.FC = () => {
 
       const [configData, capacitiesData] = await Promise.all([
         multiPetService.getConfig(),
-        multiPetService.getSuiteCapacities()
+        multiPetService.getSuiteCapacities(),
       ]);
 
       setConfig(configData);
       setCapacities(capacitiesData);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load suite capacity configuration');
+      setError(
+        err.response?.data?.message ||
+          'Failed to load suite capacity configuration'
+      );
     } finally {
       setLoading(false);
     }
@@ -115,7 +122,10 @@ export const SuiteCapacityPage: React.FC = () => {
       }
 
       if (editingCapacity) {
-        await multiPetService.updateSuiteCapacity(editingCapacity.id, capacityFormData);
+        await multiPetService.updateSuiteCapacity(
+          editingCapacity.id,
+          capacityFormData
+        );
       } else {
         await multiPetService.createSuiteCapacity(capacityFormData);
       }
@@ -127,7 +137,7 @@ export const SuiteCapacityPage: React.FC = () => {
         maxPets: 2,
         pricingType: 'PER_PET',
         basePrice: 50,
-        isActive: true
+        isActive: true,
       });
       loadData();
       setSuccess('Suite capacity saved successfully');
@@ -137,14 +147,17 @@ export const SuiteCapacityPage: React.FC = () => {
   };
 
   const handleDeleteCapacity = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this suite capacity?')) return;
+    if (!window.confirm('Are you sure you want to delete this suite capacity?'))
+      return;
 
     try {
       await multiPetService.deleteSuiteCapacity(id);
       loadData();
       setSuccess('Suite capacity deleted successfully');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete suite capacity');
+      setError(
+        err.response?.data?.message || 'Failed to delete suite capacity'
+      );
     }
   };
 
@@ -154,7 +167,7 @@ export const SuiteCapacityPage: React.FC = () => {
       DOUBLE: 'Double (2 pets)',
       FAMILY: 'Family (3-4 pets)',
       GROUP: 'Group (5+ pets)',
-      CUSTOM: 'Custom'
+      CUSTOM: 'Custom',
     };
     return labels[type];
   };
@@ -164,14 +177,19 @@ export const SuiteCapacityPage: React.FC = () => {
       PER_PET: 'Per Pet',
       FLAT_RATE: 'Flat Rate',
       TIERED: 'Tiered Pricing',
-      PERCENTAGE_OFF: 'Percentage Off'
+      PERCENTAGE_OFF: 'Percentage Off',
     };
     return labels[type];
   };
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -180,7 +198,9 @@ export const SuiteCapacityPage: React.FC = () => {
   if (!config) {
     return (
       <Box>
-        <Alert severity="error">Failed to load suite capacity configuration</Alert>
+        <Alert severity="error">
+          Failed to load suite capacity configuration
+        </Alert>
       </Box>
     );
   }
@@ -188,7 +208,12 @@ export const SuiteCapacityPage: React.FC = () => {
   return (
     <Box>
       {/* Header */}
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
         <Box>
           <Typography variant="h4" component="h1" gutterBottom>
             Multi-Pet Suite Capacity
@@ -207,7 +232,7 @@ export const SuiteCapacityPage: React.FC = () => {
               maxPets: 2,
               pricingType: 'PER_PET',
               basePrice: 50,
-              isActive: true
+              isActive: true,
             });
             setShowCapacityDialog(true);
           }}
@@ -223,7 +248,11 @@ export const SuiteCapacityPage: React.FC = () => {
       )}
 
       {success && (
-        <Alert severity="success" onClose={() => setSuccess(null)} sx={{ mb: 3 }}>
+        <Alert
+          severity="success"
+          onClose={() => setSuccess(null)}
+          sx={{ mb: 3 }}
+        >
           {success}
         </Alert>
       )}
@@ -241,7 +270,12 @@ export const SuiteCapacityPage: React.FC = () => {
                 control={
                   <Switch
                     checked={config.allowMultiplePets}
-                    onChange={(e) => setConfig({ ...config, allowMultiplePets: e.target.checked })}
+                    onChange={(e) =>
+                      setConfig({
+                        ...config,
+                        allowMultiplePets: e.target.checked,
+                      })
+                    }
                   />
                 }
                 label="Allow Multiple Pets per Suite"
@@ -253,7 +287,12 @@ export const SuiteCapacityPage: React.FC = () => {
                 control={
                   <Switch
                     checked={config.requireSameOwner}
-                    onChange={(e) => setConfig({ ...config, requireSameOwner: e.target.checked })}
+                    onChange={(e) =>
+                      setConfig({
+                        ...config,
+                        requireSameOwner: e.target.checked,
+                      })
+                    }
                   />
                 }
                 label="Require Same Owner"
@@ -265,7 +304,12 @@ export const SuiteCapacityPage: React.FC = () => {
                 control={
                   <Switch
                     checked={config.enableCompatibilityChecks}
-                    onChange={(e) => setConfig({ ...config, enableCompatibilityChecks: e.target.checked })}
+                    onChange={(e) =>
+                      setConfig({
+                        ...config,
+                        enableCompatibilityChecks: e.target.checked,
+                      })
+                    }
                   />
                 }
                 label="Enable Compatibility Checks"
@@ -277,7 +321,12 @@ export const SuiteCapacityPage: React.FC = () => {
                 control={
                   <Switch
                     checked={config.showOccupancyIndicators}
-                    onChange={(e) => setConfig({ ...config, showOccupancyIndicators: e.target.checked })}
+                    onChange={(e) =>
+                      setConfig({
+                        ...config,
+                        showOccupancyIndicators: e.target.checked,
+                      })
+                    }
                   />
                 }
                 label="Show Occupancy Indicators"
@@ -324,7 +373,9 @@ export const SuiteCapacityPage: React.FC = () => {
                       {capacity.suiteType}
                     </Typography>
                   </TableCell>
-                  <TableCell>{getCapacityTypeLabel(capacity.capacityType)}</TableCell>
+                  <TableCell>
+                    {getCapacityTypeLabel(capacity.capacityType)}
+                  </TableCell>
                   <TableCell>
                     <Chip
                       icon={<PetsIcon />}
@@ -333,7 +384,9 @@ export const SuiteCapacityPage: React.FC = () => {
                       color="primary"
                     />
                   </TableCell>
-                  <TableCell>{getPricingTypeLabel(capacity.pricingType)}</TableCell>
+                  <TableCell>
+                    {getPricingTypeLabel(capacity.pricingType)}
+                  </TableCell>
                   <TableCell>${capacity.basePrice}</TableCell>
                   <TableCell>
                     <Chip
@@ -368,7 +421,8 @@ export const SuiteCapacityPage: React.FC = () => {
           {capacities.length === 0 && (
             <Box textAlign="center" py={4}>
               <Typography color="text.secondary">
-                No suite capacities configured. Add your first capacity to get started.
+                No suite capacities configured. Add your first capacity to get
+                started.
               </Typography>
             </Box>
           )}
@@ -392,7 +446,12 @@ export const SuiteCapacityPage: React.FC = () => {
                 fullWidth
                 label="Suite Type"
                 value={capacityFormData.suiteType || ''}
-                onChange={(e) => setCapacityFormData({ ...capacityFormData, suiteType: e.target.value })}
+                onChange={(e) =>
+                  setCapacityFormData({
+                    ...capacityFormData,
+                    suiteType: e.target.value,
+                  })
+                }
                 helperText="e.g., STANDARD, DELUXE, LUXURY"
               />
             </Grid>
@@ -403,7 +462,12 @@ export const SuiteCapacityPage: React.FC = () => {
                 select
                 label="Capacity Type"
                 value={capacityFormData.capacityType}
-                onChange={(e) => setCapacityFormData({ ...capacityFormData, capacityType: e.target.value as SuiteCapacityType })}
+                onChange={(e) =>
+                  setCapacityFormData({
+                    ...capacityFormData,
+                    capacityType: e.target.value as SuiteCapacityType,
+                  })
+                }
               >
                 <MenuItem value="SINGLE">Single (1 pet)</MenuItem>
                 <MenuItem value="DOUBLE">Double (2 pets)</MenuItem>
@@ -419,7 +483,12 @@ export const SuiteCapacityPage: React.FC = () => {
                 type="number"
                 label="Maximum Pets"
                 value={capacityFormData.maxPets || 1}
-                onChange={(e) => setCapacityFormData({ ...capacityFormData, maxPets: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  setCapacityFormData({
+                    ...capacityFormData,
+                    maxPets: parseInt(e.target.value),
+                  })
+                }
               />
             </Grid>
 
@@ -436,7 +505,12 @@ export const SuiteCapacityPage: React.FC = () => {
                 select
                 label="Pricing Type"
                 value={capacityFormData.pricingType}
-                onChange={(e) => setCapacityFormData({ ...capacityFormData, pricingType: e.target.value as MultiPetPricingType })}
+                onChange={(e) =>
+                  setCapacityFormData({
+                    ...capacityFormData,
+                    pricingType: e.target.value as MultiPetPricingType,
+                  })
+                }
               >
                 <MenuItem value="PER_PET">Per Pet</MenuItem>
                 <MenuItem value="FLAT_RATE">Flat Rate</MenuItem>
@@ -451,7 +525,12 @@ export const SuiteCapacityPage: React.FC = () => {
                 type="number"
                 label="Base Price ($)"
                 value={capacityFormData.basePrice || 0}
-                onChange={(e) => setCapacityFormData({ ...capacityFormData, basePrice: parseFloat(e.target.value) })}
+                onChange={(e) =>
+                  setCapacityFormData({
+                    ...capacityFormData,
+                    basePrice: parseFloat(e.target.value),
+                  })
+                }
               />
             </Grid>
 
@@ -462,7 +541,12 @@ export const SuiteCapacityPage: React.FC = () => {
                   type="number"
                   label="Additional Pet Price ($)"
                   value={capacityFormData.additionalPetPrice || 0}
-                  onChange={(e) => setCapacityFormData({ ...capacityFormData, additionalPetPrice: parseFloat(e.target.value) })}
+                  onChange={(e) =>
+                    setCapacityFormData({
+                      ...capacityFormData,
+                      additionalPetPrice: parseFloat(e.target.value),
+                    })
+                  }
                   helperText="Price for each additional pet"
                 />
               </Grid>
@@ -476,7 +560,12 @@ export const SuiteCapacityPage: React.FC = () => {
                     type="number"
                     label="Additional Pet Price ($)"
                     value={capacityFormData.additionalPetPrice || 0}
-                    onChange={(e) => setCapacityFormData({ ...capacityFormData, additionalPetPrice: parseFloat(e.target.value) })}
+                    onChange={(e) =>
+                      setCapacityFormData({
+                        ...capacityFormData,
+                        additionalPetPrice: parseFloat(e.target.value),
+                      })
+                    }
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -485,7 +574,12 @@ export const SuiteCapacityPage: React.FC = () => {
                     type="number"
                     label="Percentage Off (%)"
                     value={capacityFormData.percentageOff || 0}
-                    onChange={(e) => setCapacityFormData({ ...capacityFormData, percentageOff: parseFloat(e.target.value) })}
+                    onChange={(e) =>
+                      setCapacityFormData({
+                        ...capacityFormData,
+                        percentageOff: parseFloat(e.target.value),
+                      })
+                    }
                     helperText="Discount for additional pets"
                   />
                 </Grid>
@@ -497,7 +591,12 @@ export const SuiteCapacityPage: React.FC = () => {
                 control={
                   <Switch
                     checked={capacityFormData.isActive}
-                    onChange={(e) => setCapacityFormData({ ...capacityFormData, isActive: e.target.checked })}
+                    onChange={(e) =>
+                      setCapacityFormData({
+                        ...capacityFormData,
+                        isActive: e.target.checked,
+                      })
+                    }
                   />
                 }
                 label="Active"

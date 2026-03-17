@@ -9,11 +9,11 @@
  * - Available in req.requestId for logging
  */
 
-import { Request, Response, NextFunction } from "express";
-import { randomUUID } from "crypto";
+import { Request, Response, NextFunction } from 'express';
+import { randomUUID } from 'crypto';
 
 // Header name for request ID (standard header)
-export const REQUEST_ID_HEADER = "X-Request-ID";
+export const REQUEST_ID_HEADER = 'X-Request-ID';
 
 // Extend Express Request type
 declare global {

@@ -1,6 +1,6 @@
 /**
  * GroomerSelector Component Tests
- * 
+ *
  * Tests groomer selection, availability checking, and UI states
  */
 
@@ -8,7 +8,11 @@ import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import GroomerSelector from '../GroomerSelector';
-import staffService, { TimeOffType, TimeOffStatus, ScheduleStatus } from '../../../services/staffService';
+import staffService, {
+  TimeOffType,
+  TimeOffStatus,
+  ScheduleStatus,
+} from '../../../services/staffService';
 
 // Mock the staff service
 jest.mock('../../../services/staffService');
@@ -29,7 +33,7 @@ describe('GroomerSelector', () => {
       department: 'Grooming',
       position: 'Senior Groomer',
       isActive: true,
-      specialties: ['GROOMING', 'BATHING']
+      specialties: ['GROOMING', 'BATHING'],
     },
     {
       id: 'groomer-2',
@@ -40,7 +44,7 @@ describe('GroomerSelector', () => {
       department: 'Grooming',
       position: 'Groomer',
       isActive: true,
-      specialties: ['GROOMING']
+      specialties: ['GROOMING'],
     },
     {
       id: 'groomer-3',
@@ -51,8 +55,8 @@ describe('GroomerSelector', () => {
       department: 'Grooming',
       position: 'Junior Groomer',
       isActive: true,
-      specialties: ['GROOMING']
-    }
+      specialties: ['GROOMING'],
+    },
   ];
 
   const mockAvailability = [
@@ -63,8 +67,8 @@ describe('GroomerSelector', () => {
       startTime: '08:00',
       endTime: '16:00',
       isRecurring: true,
-      isAvailable: true
-    }
+      isAvailable: true,
+    },
   ];
 
   beforeEach(() => {
@@ -164,7 +168,9 @@ describe('GroomerSelector', () => {
     });
 
     it('should show error message on load failure', async () => {
-      mockStaffService.getAllStaff.mockRejectedValue(new Error('Network error'));
+      mockStaffService.getAllStaff.mockRejectedValue(
+        new Error('Network error')
+      );
 
       render(
         <GroomerSelector
@@ -175,7 +181,9 @@ describe('GroomerSelector', () => {
       );
 
       await waitFor(() => {
-        expect(screen.getByText(/failed to load groomers/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(/failed to load groomers/i)
+        ).toBeInTheDocument();
       });
     });
   });
@@ -231,8 +239,8 @@ describe('GroomerSelector', () => {
           startDate: '2025-10-25',
           endDate: '2025-10-27',
           type: TimeOffType.VACATION,
-          status: TimeOffStatus.APPROVED
-        }
+          status: TimeOffStatus.APPROVED,
+        },
       ]);
 
       render(
@@ -244,7 +252,9 @@ describe('GroomerSelector', () => {
       );
 
       await waitFor(() => {
-        expect(mockStaffService.getStaffTimeOff).toHaveBeenCalledWith('groomer-1');
+        expect(mockStaffService.getStaffTimeOff).toHaveBeenCalledWith(
+          'groomer-1'
+        );
       });
     });
 
@@ -256,8 +266,8 @@ describe('GroomerSelector', () => {
           date: '2025-10-26',
           startTime: '10:00',
           endTime: '11:00',
-          status: ScheduleStatus.SCHEDULED
-        }
+          status: ScheduleStatus.SCHEDULED,
+        },
       ]);
 
       render(
@@ -303,7 +313,9 @@ describe('GroomerSelector', () => {
       );
 
       await waitFor(() => {
-        expect(screen.getByText(/select an appointment date/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(/select an appointment date/i)
+        ).toBeInTheDocument();
       });
     });
   });
@@ -423,8 +435,8 @@ describe('GroomerSelector', () => {
           department: 'Grooming',
           position: 'Groomer',
           isActive: false,
-          specialties: ['GROOMING']
-        }
+          specialties: ['GROOMING'],
+        },
       ];
 
       mockStaffService.getAllStaff.mockResolvedValue(mixedGroomers);
@@ -461,8 +473,8 @@ describe('GroomerSelector', () => {
           department: 'Front Desk',
           position: 'Receptionist',
           isActive: true,
-          specialties: ['RECEPTION']
-        }
+          specialties: ['RECEPTION'],
+        },
       ];
 
       mockStaffService.getAllStaff.mockResolvedValue(mixedStaff);
@@ -515,7 +527,9 @@ describe('GroomerSelector', () => {
       );
 
       await waitFor(() => {
-        const formControl = screen.getByLabelText(/assign groomer/i).closest('.MuiFormControl-root');
+        const formControl = screen
+          .getByLabelText(/assign groomer/i)
+          .closest('.MuiFormControl-root');
         expect(formControl).toHaveClass('Mui-required');
       });
     });

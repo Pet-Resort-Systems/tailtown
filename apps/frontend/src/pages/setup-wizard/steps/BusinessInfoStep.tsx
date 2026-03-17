@@ -4,7 +4,7 @@
  * Collects basic business information: name, address, contact, logo.
  */
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   TextField,
@@ -15,71 +15,71 @@ import {
   Select,
   MenuItem,
   Avatar,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
-import { PhotoCamera, ArrowForward } from "@mui/icons-material";
-import { useSetupWizard } from "../SetupWizardContext";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
+import { PhotoCamera, ArrowForward } from '@mui/icons-material';
+import { useSetupWizard } from '../SetupWizardContext';
 
 const US_STATES = [
-  "Alabama",
-  "Alaska",
-  "Arizona",
-  "Arkansas",
-  "California",
-  "Colorado",
-  "Connecticut",
-  "Delaware",
-  "Florida",
-  "Georgia",
-  "Hawaii",
-  "Idaho",
-  "Illinois",
-  "Indiana",
-  "Iowa",
-  "Kansas",
-  "Kentucky",
-  "Louisiana",
-  "Maine",
-  "Maryland",
-  "Massachusetts",
-  "Michigan",
-  "Minnesota",
-  "Mississippi",
-  "Missouri",
-  "Montana",
-  "Nebraska",
-  "Nevada",
-  "New Hampshire",
-  "New Jersey",
-  "New Mexico",
-  "New York",
-  "North Carolina",
-  "North Dakota",
-  "Ohio",
-  "Oklahoma",
-  "Oregon",
-  "Pennsylvania",
-  "Rhode Island",
-  "South Carolina",
-  "South Dakota",
-  "Tennessee",
-  "Texas",
-  "Utah",
-  "Vermont",
-  "Virginia",
-  "Washington",
-  "West Virginia",
-  "Wisconsin",
-  "Wyoming",
+  'Alabama',
+  'Alaska',
+  'Arizona',
+  'Arkansas',
+  'California',
+  'Colorado',
+  'Connecticut',
+  'Delaware',
+  'Florida',
+  'Georgia',
+  'Hawaii',
+  'Idaho',
+  'Illinois',
+  'Indiana',
+  'Iowa',
+  'Kansas',
+  'Kentucky',
+  'Louisiana',
+  'Maine',
+  'Maryland',
+  'Massachusetts',
+  'Michigan',
+  'Minnesota',
+  'Mississippi',
+  'Missouri',
+  'Montana',
+  'Nebraska',
+  'Nevada',
+  'New Hampshire',
+  'New Jersey',
+  'New Mexico',
+  'New York',
+  'North Carolina',
+  'North Dakota',
+  'Ohio',
+  'Oklahoma',
+  'Oregon',
+  'Pennsylvania',
+  'Rhode Island',
+  'South Carolina',
+  'South Dakota',
+  'Tennessee',
+  'Texas',
+  'Utah',
+  'Vermont',
+  'Virginia',
+  'Washington',
+  'West Virginia',
+  'Wisconsin',
+  'Wyoming',
 ];
 
 const TIMEZONES = [
-  { value: "America/New_York", label: "Eastern Time (ET)" },
-  { value: "America/Chicago", label: "Central Time (CT)" },
-  { value: "America/Denver", label: "Mountain Time (MT)" },
-  { value: "America/Los_Angeles", label: "Pacific Time (PT)" },
-  { value: "America/Anchorage", label: "Alaska Time (AKT)" },
-  { value: "Pacific/Honolulu", label: "Hawaii Time (HT)" },
+  { value: 'America/New_York', label: 'Eastern Time (ET)' },
+  { value: 'America/Chicago', label: 'Central Time (CT)' },
+  { value: 'America/Denver', label: 'Mountain Time (MT)' },
+  { value: 'America/Los_Angeles', label: 'Pacific Time (PT)' },
+  { value: 'America/Anchorage', label: 'Alaska Time (AKT)' },
+  { value: 'Pacific/Honolulu', label: 'Hawaii Time (HT)' },
 ];
 
 export default function BusinessInfoStep() {
@@ -92,7 +92,7 @@ export default function BusinessInfoStep() {
     (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
       setBusinessInfo({ [field]: e.target.value });
       if (errors[field]) {
-        setErrors((prev) => ({ ...prev, [field]: "" }));
+        setErrors((prev) => ({ ...prev, [field]: '' }));
       }
     };
 
@@ -111,17 +111,17 @@ export default function BusinessInfoStep() {
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    if (!businessInfo.name.trim()) newErrors.name = "Business name is required";
-    if (!businessInfo.address.trim()) newErrors.address = "Address is required";
-    if (!businessInfo.city.trim()) newErrors.city = "City is required";
-    if (!businessInfo.state) newErrors.state = "State is required";
+    if (!businessInfo.name.trim()) newErrors.name = 'Business name is required';
+    if (!businessInfo.address.trim()) newErrors.address = 'Address is required';
+    if (!businessInfo.city.trim()) newErrors.city = 'City is required';
+    if (!businessInfo.state) newErrors.state = 'State is required';
     if (!businessInfo.zipCode.trim())
-      newErrors.zipCode = "ZIP code is required";
-    if (!businessInfo.phone.trim()) newErrors.phone = "Phone is required";
+      newErrors.zipCode = 'ZIP code is required';
+    if (!businessInfo.phone.trim()) newErrors.phone = 'Phone is required';
     if (!businessInfo.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(businessInfo.email)) {
-      newErrors.email = "Invalid email format";
+      newErrors.email = 'Invalid email format';
     }
 
     setErrors(newErrors);
@@ -130,7 +130,7 @@ export default function BusinessInfoStep() {
 
   const handleNext = () => {
     if (validate()) {
-      completeStep("business-info");
+      completeStep('business-info');
       nextStep();
     }
   };
@@ -149,18 +149,18 @@ export default function BusinessInfoStep() {
         <Grid
           item
           xs={12}
-          sx={{ display: "flex", alignItems: "center", gap: 3 }}
+          sx={{ display: 'flex', alignItems: 'center', gap: 3 }}
         >
           <Avatar
             src={logoPreview || undefined}
-            sx={{ width: 100, height: 100, bgcolor: "grey.200" }}
+            sx={{ width: 100, height: 100, bgcolor: 'grey.200' }}
           >
             {!logoPreview && businessInfo.name?.charAt(0)?.toUpperCase()}
           </Avatar>
           <Box>
             <input
               accept="image/*"
-              style={{ display: "none" }}
+              style={{ display: 'none' }}
               id="logo-upload"
               type="file"
               onChange={handleLogoChange}
@@ -191,7 +191,7 @@ export default function BusinessInfoStep() {
             fullWidth
             label="Business Name"
             value={businessInfo.name}
-            onChange={handleChange("name")}
+            onChange={handleChange('name')}
             error={!!errors.name}
             helperText={errors.name}
             required
@@ -203,8 +203,8 @@ export default function BusinessInfoStep() {
           <TextField
             fullWidth
             label="Legal Business Name"
-            value={businessInfo.legalName || ""}
-            onChange={handleChange("legalName")}
+            value={businessInfo.legalName || ''}
+            onChange={handleChange('legalName')}
             helperText="If different from business name"
           />
         </Grid>
@@ -215,7 +215,7 @@ export default function BusinessInfoStep() {
             fullWidth
             label="Street Address"
             value={businessInfo.address}
-            onChange={handleChange("address")}
+            onChange={handleChange('address')}
             error={!!errors.address}
             helperText={errors.address}
             required
@@ -228,7 +228,7 @@ export default function BusinessInfoStep() {
             fullWidth
             label="City"
             value={businessInfo.city}
-            onChange={handleChange("city")}
+            onChange={handleChange('city')}
             error={!!errors.city}
             helperText={errors.city}
             required
@@ -255,7 +255,7 @@ export default function BusinessInfoStep() {
             fullWidth
             label="ZIP Code"
             value={businessInfo.zipCode}
-            onChange={handleChange("zipCode")}
+            onChange={handleChange('zipCode')}
             error={!!errors.zipCode}
             helperText={errors.zipCode}
             required
@@ -268,7 +268,7 @@ export default function BusinessInfoStep() {
             fullWidth
             label="Phone Number"
             value={businessInfo.phone}
-            onChange={handleChange("phone")}
+            onChange={handleChange('phone')}
             error={!!errors.phone}
             helperText={errors.phone}
             placeholder="(555) 123-4567"
@@ -281,7 +281,7 @@ export default function BusinessInfoStep() {
             label="Email Address"
             type="email"
             value={businessInfo.email}
-            onChange={handleChange("email")}
+            onChange={handleChange('email')}
             error={!!errors.email}
             helperText={errors.email}
             required
@@ -293,8 +293,8 @@ export default function BusinessInfoStep() {
           <TextField
             fullWidth
             label="Website"
-            value={businessInfo.website || ""}
-            onChange={handleChange("website")}
+            value={businessInfo.website || ''}
+            onChange={handleChange('website')}
             placeholder="https://www.example.com"
           />
         </Grid>
@@ -319,7 +319,7 @@ export default function BusinessInfoStep() {
       </Grid>
 
       {/* Navigation */}
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
         <Button
           variant="contained"
           size="large"

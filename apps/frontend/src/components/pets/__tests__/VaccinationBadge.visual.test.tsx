@@ -5,21 +5,21 @@
  * with different vaccination statuses.
  */
 
-import React from "react";
-import { render, screen } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import SimpleVaccinationBadge from "../SimpleVaccinationBadge";
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import SimpleVaccinationBadge from '../SimpleVaccinationBadge';
 
-describe("SimpleVaccinationBadge Visual Tests", () => {
-  describe("Current Vaccinations", () => {
-    it("should display green badge for all current vaccinations", () => {
+describe('SimpleVaccinationBadge Visual Tests', () => {
+  describe('Current Vaccinations', () => {
+    it('should display green badge for all current vaccinations', () => {
       const pet = {
-        id: "1",
-        name: "Test Dog",
+        id: '1',
+        name: 'Test Dog',
         vaccinationStatus: {
-          Rabies: { status: "CURRENT", expiration: "2026-01-01" },
-          DHPP: { status: "CURRENT", expiration: "2026-01-01" },
-          Bordetella: { status: "CURRENT", expiration: "2026-01-01" },
+          Rabies: { status: 'CURRENT', expiration: '2026-01-01' },
+          DHPP: { status: 'CURRENT', expiration: '2026-01-01' },
+          Bordetella: { status: 'CURRENT', expiration: '2026-01-01' },
         },
       };
 
@@ -28,13 +28,13 @@ describe("SimpleVaccinationBadge Visual Tests", () => {
       expect(badge).toBeInTheDocument();
     });
 
-    it("should show vaccination details when showDetails is true", () => {
+    it('should show vaccination details when showDetails is true', () => {
       const pet = {
-        id: "1",
-        name: "Test Dog",
+        id: '1',
+        name: 'Test Dog',
         vaccinationStatus: {
-          Rabies: { status: "CURRENT", expiration: "2026-01-01" },
-          DHPP: { status: "CURRENT", expiration: "2026-01-01" },
+          Rabies: { status: 'CURRENT', expiration: '2026-01-01' },
+          DHPP: { status: 'CURRENT', expiration: '2026-01-01' },
         },
       };
 
@@ -44,13 +44,13 @@ describe("SimpleVaccinationBadge Visual Tests", () => {
     });
   });
 
-  describe("Expired Vaccinations", () => {
-    it("should display red badge for expired vaccinations", () => {
+  describe('Expired Vaccinations', () => {
+    it('should display red badge for expired vaccinations', () => {
       const pet = {
-        id: "1",
-        name: "Test Dog",
+        id: '1',
+        name: 'Test Dog',
         vaccinationStatus: {
-          Rabies: { status: "EXPIRED", expiration: "2020-01-01" },
+          Rabies: { status: 'EXPIRED', expiration: '2020-01-01' },
         },
       };
 
@@ -59,13 +59,13 @@ describe("SimpleVaccinationBadge Visual Tests", () => {
       expect(badge).toBeInTheDocument();
     });
 
-    it("should show which vaccines are expired", () => {
+    it('should show which vaccines are expired', () => {
       const pet = {
-        id: "1",
-        name: "Test Dog",
+        id: '1',
+        name: 'Test Dog',
         vaccinationStatus: {
-          Rabies: { status: "EXPIRED", expiration: "2020-01-01" },
-          DHPP: { status: "CURRENT", expiration: "2026-01-01" },
+          Rabies: { status: 'EXPIRED', expiration: '2020-01-01' },
+          DHPP: { status: 'CURRENT', expiration: '2026-01-01' },
         },
       };
 
@@ -74,11 +74,11 @@ describe("SimpleVaccinationBadge Visual Tests", () => {
     });
   });
 
-  describe("Missing Vaccinations", () => {
-    it("should display warning badge for missing vaccinations", () => {
+  describe('Missing Vaccinations', () => {
+    it('should display warning badge for missing vaccinations', () => {
       const pet = {
-        id: "1",
-        name: "Test Dog",
+        id: '1',
+        name: 'Test Dog',
         vaccinationStatus: {},
       };
 
@@ -87,10 +87,10 @@ describe("SimpleVaccinationBadge Visual Tests", () => {
       expect(badge).toBeInTheDocument();
     });
 
-    it("should handle null vaccination status", () => {
+    it('should handle null vaccination status', () => {
       const pet = {
-        id: "1",
-        name: "Test Dog",
+        id: '1',
+        name: 'Test Dog',
         vaccinationStatus: null,
       };
 
@@ -100,15 +100,15 @@ describe("SimpleVaccinationBadge Visual Tests", () => {
     });
   });
 
-  describe("Mixed Vaccination Status", () => {
-    it("should show overdue if any vaccine is expired", () => {
+  describe('Mixed Vaccination Status', () => {
+    it('should show overdue if any vaccine is expired', () => {
       const pet = {
-        id: "1",
-        name: "Test Dog",
+        id: '1',
+        name: 'Test Dog',
         vaccinationStatus: {
-          Rabies: { status: "CURRENT", expiration: "2026-01-01" },
-          DHPP: { status: "EXPIRED", expiration: "2020-01-01" },
-          Bordetella: { status: "CURRENT", expiration: "2026-01-01" },
+          Rabies: { status: 'CURRENT', expiration: '2026-01-01' },
+          DHPP: { status: 'EXPIRED', expiration: '2020-01-01' },
+          Bordetella: { status: 'CURRENT', expiration: '2026-01-01' },
         },
       };
 
@@ -118,16 +118,16 @@ describe("SimpleVaccinationBadge Visual Tests", () => {
     });
   });
 
-  describe("Dog vs Cat Vaccinations", () => {
-    it("should check for dog-specific vaccines", () => {
+  describe('Dog vs Cat Vaccinations', () => {
+    it('should check for dog-specific vaccines', () => {
       const dog = {
-        id: "1",
-        name: "Test Dog",
-        type: "DOG",
+        id: '1',
+        name: 'Test Dog',
+        type: 'DOG',
         vaccinationStatus: {
-          Rabies: { status: "CURRENT", expiration: "2026-01-01" },
-          DHPP: { status: "CURRENT", expiration: "2026-01-01" },
-          Bordetella: { status: "CURRENT", expiration: "2026-01-01" },
+          Rabies: { status: 'CURRENT', expiration: '2026-01-01' },
+          DHPP: { status: 'CURRENT', expiration: '2026-01-01' },
+          Bordetella: { status: 'CURRENT', expiration: '2026-01-01' },
         },
       };
 
@@ -137,14 +137,14 @@ describe("SimpleVaccinationBadge Visual Tests", () => {
       expect(screen.getByText(/Bordetella/i)).toBeInTheDocument();
     });
 
-    it("should check for cat-specific vaccines", () => {
+    it('should check for cat-specific vaccines', () => {
       const cat = {
-        id: "1",
-        name: "Test Cat",
-        type: "CAT",
+        id: '1',
+        name: 'Test Cat',
+        type: 'CAT',
         vaccinationStatus: {
-          Rabies: { status: "CURRENT", expiration: "2026-01-01" },
-          FVRCP: { status: "CURRENT", expiration: "2026-01-01" },
+          Rabies: { status: 'CURRENT', expiration: '2026-01-01' },
+          FVRCP: { status: 'CURRENT', expiration: '2026-01-01' },
         },
       };
 
@@ -154,13 +154,13 @@ describe("SimpleVaccinationBadge Visual Tests", () => {
     });
   });
 
-  describe("Accessibility", () => {
-    it("should have accessible labels", () => {
+  describe('Accessibility', () => {
+    it('should have accessible labels', () => {
       const pet = {
-        id: "1",
-        name: "Test Dog",
+        id: '1',
+        name: 'Test Dog',
         vaccinationStatus: {
-          Rabies: { status: "CURRENT", expiration: "2026-01-01" },
+          Rabies: { status: 'CURRENT', expiration: '2026-01-01' },
         },
       };
 
@@ -170,21 +170,21 @@ describe("SimpleVaccinationBadge Visual Tests", () => {
     });
   });
 
-  describe("Edge Cases", () => {
-    it("should handle pet without vaccination status field", () => {
+  describe('Edge Cases', () => {
+    it('should handle pet without vaccination status field', () => {
       const pet = {
-        id: "1",
-        name: "Test Dog",
+        id: '1',
+        name: 'Test Dog',
       };
 
       render(<SimpleVaccinationBadge pet={pet} showDetails={false} />);
       expect(screen.getByText(/Overdue/i)).toBeInTheDocument();
     });
 
-    it("should handle empty vaccination status object", () => {
+    it('should handle empty vaccination status object', () => {
       const pet = {
-        id: "1",
-        name: "Test Dog",
+        id: '1',
+        name: 'Test Dog',
         vaccinationStatus: {},
       };
 
@@ -192,12 +192,12 @@ describe("SimpleVaccinationBadge Visual Tests", () => {
       expect(screen.getByText(/Overdue/i)).toBeInTheDocument();
     });
 
-    it("should handle invalid expiration dates", () => {
+    it('should handle invalid expiration dates', () => {
       const pet = {
-        id: "1",
-        name: "Test Dog",
+        id: '1',
+        name: 'Test Dog',
         vaccinationStatus: {
-          Rabies: { status: "CURRENT", expiration: "invalid-date" },
+          Rabies: { status: 'CURRENT', expiration: 'invalid-date' },
         },
       };
 

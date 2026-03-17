@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import {
   Typography,
   Container,
@@ -20,35 +20,35 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-} from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import { useNavigate } from "react-router-dom";
-import debounce from "lodash/debounce";
-import { Customer, customerService } from "../../services/customerService";
-import EmojiIconDisplay from "../../components/customers/EmojiIconDisplay";
-import CustomerIconSelectorNew from "../../components/customers/CustomerIconSelectorNew";
+} from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import { useNavigate } from 'react-router-dom';
+import debounce from 'lodash/debounce';
+import { Customer, customerService } from '../../services/customerService';
+import EmojiIconDisplay from '../../components/customers/EmojiIconDisplay';
+import CustomerIconSelectorNew from '../../components/customers/CustomerIconSelectorNew';
 import {
   ALL_CUSTOMER_ICONS,
   getCustomerIconById,
-} from "../../constants/customerIcons";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import ClearIcon from "@mui/icons-material/Clear";
-import DescriptionIcon from "@mui/icons-material/Description";
-import Tooltip from "@mui/material/Tooltip";
-import { Chip, Collapse } from "@mui/material";
+} from '../../constants/customerIcons';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import ClearIcon from '@mui/icons-material/Clear';
+import DescriptionIcon from '@mui/icons-material/Description';
+import Tooltip from '@mui/material/Tooltip';
+import { Chip, Collapse } from '@mui/material';
 
 const Customers = () => {
   const navigate = useNavigate();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilterIcons, setSelectedFilterIcons] = useState<string[]>([]);
   const [filterIconsOpen, setFilterIconsOpen] = useState(false);
 
   const debouncedSearch = useMemo(
     () =>
       debounce(async (query: string, iconFilters: string[]) => {
-        console.log("Debounced search triggered:", { query, iconFilters });
+        console.log('Debounced search triggered:', { query, iconFilters });
 
         try {
           // Don't show loading spinner for searches - keeps UI stable
@@ -56,15 +56,15 @@ const Customers = () => {
 
           // Use server-side search if there's a text query
           if (query) {
-            console.log("Using server-side search for:", query);
+            console.log('Using server-side search for:', query);
             result = await customerService.searchCustomers(query, 1, 100); // Search results
           } else {
-            console.log("Loading initial customers (use search to find more)");
+            console.log('Loading initial customers (use search to find more)');
             result = await customerService.getAllCustomers(1, 100); // Fast initial load, use search for more
           }
 
           let filtered = result.data || [];
-          console.log("Server returned:", filtered.length, "customers");
+          console.log('Server returned:', filtered.length, 'customers');
 
           // Apply icon filters client-side (customer must have ALL selected icons)
           if (iconFilters.length > 0) {
@@ -74,15 +74,15 @@ const Customers = () => {
                 customerIcons.includes(iconId)
               );
             });
-            console.log("After icon filter:", filtered.length, "customers");
+            console.log('After icon filter:', filtered.length, 'customers');
           }
 
           setCustomers(filtered);
           setFilteredCustomers(filtered);
           setLoading(false); // Clear initial loading state
         } catch (err) {
-          console.error("Error searching customers:", err);
-          setError("Failed to search customers");
+          console.error('Error searching customers:', err);
+          setError('Failed to search customers');
           setLoading(false);
         }
       }, 300),
@@ -99,8 +99,8 @@ const Customers = () => {
   const [error, setError] = useState<string | null>(null);
   const [snackbar, setSnackbar] = useState({
     open: false,
-    message: "",
-    severity: "success" as "success" | "error",
+    message: '',
+    severity: 'success' as 'success' | 'error',
   });
   const [iconSelectorOpen, setIconSelectorOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
@@ -114,7 +114,7 @@ const Customers = () => {
   // Initial load is handled by debouncedSearch effect - no separate loadCustomers needed
 
   const handleAddNew = useCallback(() => {
-    navigate("/customers/new");
+    navigate('/customers/new');
   }, [navigate]);
 
   const handleRowClick = useCallback(
@@ -156,15 +156,15 @@ const Customers = () => {
 
         setSnackbar({
           open: true,
-          message: "Customer icons updated",
-          severity: "success",
+          message: 'Customer icons updated',
+          severity: 'success',
         });
       } catch (err) {
-        console.error("Error updating customer icons:", err);
+        console.error('Error updating customer icons:', err);
         setSnackbar({
           open: true,
-          message: "Failed to update icons",
-          severity: "error",
+          message: 'Failed to update icons',
+          severity: 'error',
         });
       }
     },
@@ -176,7 +176,7 @@ const Customers = () => {
       e.stopPropagation(); // Prevent row click
       if (
         window.confirm(
-          "Are you sure you want to permanently delete this customer? This action cannot be undone."
+          'Are you sure you want to permanently delete this customer? This action cannot be undone.'
         )
       ) {
         try {
@@ -188,15 +188,15 @@ const Customers = () => {
 
           setSnackbar({
             open: true,
-            message: "Customer permanently deleted",
-            severity: "success",
+            message: 'Customer permanently deleted',
+            severity: 'success',
           });
         } catch (err) {
-          console.error("Error deleting customer:", err);
+          console.error('Error deleting customer:', err);
           setSnackbar({
             open: true,
-            message: "Error deleting customer. Please try again.",
-            severity: "error",
+            message: 'Error deleting customer. Please try again.',
+            severity: 'error',
           });
 
           // Refresh list to ensure UI is in sync with backend
@@ -211,12 +211,12 @@ const Customers = () => {
   return (
     <Container maxWidth="lg">
       <Box sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mb: 3 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 3 }}>
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
             }}
           >
             <Typography variant="h4" gutterBottom>
@@ -243,16 +243,16 @@ const Customers = () => {
 
           {/* Icon Filter Section */}
           <Box>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
               <Button
                 size="small"
                 startIcon={<FilterListIcon />}
                 onClick={() => setFilterIconsOpen(!filterIconsOpen)}
                 variant={
-                  selectedFilterIcons.length > 0 ? "contained" : "outlined"
+                  selectedFilterIcons.length > 0 ? 'contained' : 'outlined'
                 }
               >
-                Filter by Icons{" "}
+                Filter by Icons{' '}
                 {selectedFilterIcons.length > 0 &&
                   `(${selectedFilterIcons.length})`}
               </Button>
@@ -274,7 +274,7 @@ const Customers = () => {
                   Select icons to filter customers (customers must have ALL
                   selected icons):
                 </Typography>
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
                   {ALL_CUSTOMER_ICONS.map((icon) => {
                     const isSelected = selectedFilterIcons.includes(icon.id);
                     return (
@@ -283,12 +283,12 @@ const Customers = () => {
                         label={
                           <Box
                             sx={{
-                              display: "flex",
-                              alignItems: "center",
+                              display: 'flex',
+                              alignItems: 'center',
                               gap: 0.5,
                             }}
                           >
-                            <span style={{ fontSize: "1rem" }}>
+                            <span style={{ fontSize: '1rem' }}>
                               {icon.icon}
                             </span>
                             <Typography variant="caption">
@@ -308,14 +308,14 @@ const Customers = () => {
                             ]);
                           }
                         }}
-                        color={isSelected ? "primary" : "default"}
-                        variant={isSelected ? "filled" : "outlined"}
+                        color={isSelected ? 'primary' : 'default'}
+                        variant={isSelected ? 'filled' : 'outlined'}
                         sx={{
-                          cursor: "pointer",
-                          "&:hover": {
-                            transform: "scale(1.05)",
+                          cursor: 'pointer',
+                          '&:hover': {
+                            transform: 'scale(1.05)',
                           },
-                          transition: "transform 0.2s",
+                          transition: 'transform 0.2s',
                         }}
                       />
                     );
@@ -326,11 +326,11 @@ const Customers = () => {
 
             {/* Active Filter Chips */}
             {selectedFilterIcons.length > 0 && !filterIconsOpen && (
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mb: 1 }}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1 }}>
                 <Typography
                   variant="caption"
                   color="text.secondary"
-                  sx={{ mr: 1, alignSelf: "center" }}
+                  sx={{ mr: 1, alignSelf: 'center' }}
                 >
                   Active filters:
                 </Typography>
@@ -343,12 +343,12 @@ const Customers = () => {
                       label={
                         <Box
                           sx={{
-                            display: "flex",
-                            alignItems: "center",
+                            display: 'flex',
+                            alignItems: 'center',
                             gap: 0.5,
                           }}
                         >
-                          <span style={{ fontSize: "0.9rem" }}>
+                          <span style={{ fontSize: '0.9rem' }}>
                             {iconDef.icon}
                           </span>
                           <Typography variant="caption">
@@ -378,7 +378,7 @@ const Customers = () => {
         )}
 
         {loading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
             <CircularProgress />
           </Box>
         ) : (
@@ -402,7 +402,7 @@ const Customers = () => {
                   <TableRow
                     key={customer.id}
                     sx={{
-                      "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.04)" },
+                      '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' },
                     }}
                   >
                     {/* Contract Icon - Red by default, will turn green when valid */}
@@ -410,16 +410,16 @@ const Customers = () => {
                       <Tooltip title="Contract not signed">
                         <DescriptionIcon
                           sx={{
-                            color: "#d32f2f", // Red - unsigned
-                            cursor: "pointer",
-                            "&:hover": { opacity: 0.7 },
+                            color: '#d32f2f', // Red - unsigned
+                            cursor: 'pointer',
+                            '&:hover': { opacity: 0.7 },
                           }}
                         />
                       </Tooltip>
                     </TableCell>
                     <TableCell
                       onClick={(e) => handleIconClick(e, customer)}
-                      sx={{ cursor: "pointer", minWidth: 120 }}
+                      sx={{ cursor: 'pointer', minWidth: 120 }}
                     >
                       {customer.customerIcons &&
                       customer.customerIcons.length > 0 ? (
@@ -436,26 +436,26 @@ const Customers = () => {
                     </TableCell>
                     <TableCell
                       onClick={() => handleRowClick(customer.id)}
-                      sx={{ cursor: "pointer" }}
+                      sx={{ cursor: 'pointer' }}
                     >{`${customer.firstName} ${customer.lastName}`}</TableCell>
                     <TableCell
                       onClick={() => handleRowClick(customer.id)}
-                      sx={{ cursor: "pointer" }}
+                      sx={{ cursor: 'pointer' }}
                     >
                       {customer.pets && customer.pets.length > 0 ? (
                         <Typography
                           variant="body2"
-                          sx={{ fontSize: "0.85rem" }}
+                          sx={{ fontSize: '0.85rem' }}
                         >
                           {customer.pets
                             .map((pet: { name: string }) => pet.name)
-                            .join(", ")}
+                            .join(', ')}
                         </Typography>
                       ) : (
                         <Typography
                           variant="body2"
                           color="text.secondary"
-                          sx={{ fontSize: "0.85rem" }}
+                          sx={{ fontSize: '0.85rem' }}
                         >
                           No pets
                         </Typography>
@@ -463,22 +463,22 @@ const Customers = () => {
                     </TableCell>
                     <TableCell
                       onClick={() => handleRowClick(customer.id)}
-                      sx={{ cursor: "pointer" }}
+                      sx={{ cursor: 'pointer' }}
                     >
                       {customer.email}
                     </TableCell>
                     <TableCell
                       onClick={() => handleRowClick(customer.id)}
-                      sx={{ cursor: "pointer" }}
+                      sx={{ cursor: 'pointer' }}
                     >
                       {customer.phone}
                     </TableCell>
                     <TableCell align="right">
                       <Box
                         sx={{
-                          display: "flex",
+                          display: 'flex',
                           gap: 1,
-                          justifyContent: "flex-end",
+                          justifyContent: 'flex-end',
                         }}
                       >
                         <Button
@@ -527,7 +527,7 @@ const Customers = () => {
           fullWidth
         >
           <DialogTitle>
-            Manage Icons for {selectedCustomer.firstName}{" "}
+            Manage Icons for {selectedCustomer.firstName}{' '}
             {selectedCustomer.lastName}
           </DialogTitle>
           <DialogContent>
@@ -573,7 +573,7 @@ const Customers = () => {
         <Alert
           onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
           severity={snackbar.severity}
-          sx={{ width: "100%" }}
+          sx={{ width: '100%' }}
         >
           {snackbar.message}
         </Alert>

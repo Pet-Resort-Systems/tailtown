@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   IconButton,
   Badge,
@@ -10,14 +10,14 @@ import {
   Typography,
   Box,
   Chip,
-} from "@mui/material";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import InfoIcon from "@mui/icons-material/Info";
-import WarningIcon from "@mui/icons-material/Warning";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ErrorIcon from "@mui/icons-material/Error";
-import AddIcon from "@mui/icons-material/Add";
-import { Announcement } from "./AnnouncementModal";
+} from '@mui/material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import InfoIcon from '@mui/icons-material/Info';
+import WarningIcon from '@mui/icons-material/Warning';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorIcon from '@mui/icons-material/Error';
+import AddIcon from '@mui/icons-material/Add';
+import { Announcement } from './AnnouncementModal';
 
 interface AnnouncementBellProps {
   announcements: Announcement[];
@@ -54,13 +54,13 @@ const AnnouncementBell: React.FC<AnnouncementBellProps> = ({
   };
 
   const getTypeIcon = (type: string) => {
-    const iconProps = { fontSize: "small" as const };
+    const iconProps = { fontSize: 'small' as const };
     switch (type) {
-      case "WARNING":
+      case 'WARNING':
         return <WarningIcon {...iconProps} color="warning" />;
-      case "SUCCESS":
+      case 'SUCCESS':
         return <CheckCircleIcon {...iconProps} color="success" />;
-      case "ERROR":
+      case 'ERROR':
         return <ErrorIcon {...iconProps} color="error" />;
       default:
         return <InfoIcon {...iconProps} color="info" />;
@@ -69,21 +69,21 @@ const AnnouncementBell: React.FC<AnnouncementBellProps> = ({
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "URGENT":
-        return "error";
-      case "HIGH":
-        return "warning";
-      case "NORMAL":
-        return "primary";
+      case 'URGENT':
+        return 'error';
+      case 'HIGH':
+        return 'warning';
+      case 'NORMAL':
+        return 'primary';
       default:
-        return "default";
+        return 'default';
     }
   };
 
   const urgentCount = announcements.filter(
-    (a) => a.priority === "URGENT"
+    (a) => a.priority === 'URGENT'
   ).length;
-  const badgeColor = urgentCount > 0 ? "error" : "primary";
+  const badgeColor = urgentCount > 0 ? 'error' : 'primary';
 
   return (
     <>
@@ -109,16 +109,16 @@ const AnnouncementBell: React.FC<AnnouncementBellProps> = ({
             mt: 1,
           },
         }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <Box sx={{ px: 2, py: 1.5, borderBottom: 1, borderColor: "divider" }}>
+        <Box sx={{ px: 2, py: 1.5, borderBottom: 1, borderColor: 'divider' }}>
           <Typography variant="h6" component="div">
             Announcements
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {announcements.length}{" "}
-            {announcements.length === 1 ? "announcement" : "announcements"}
+            {announcements.length}{' '}
+            {announcements.length === 1 ? 'announcement' : 'announcements'}
           </Typography>
         </Box>
 
@@ -138,14 +138,14 @@ const AnnouncementBell: React.FC<AnnouncementBellProps> = ({
                       onClick={handleCreate}
                       sx={{
                         py: 1.5,
-                        backgroundColor: "primary.main",
-                        color: "primary.contrastText",
-                        "&:hover": {
-                          backgroundColor: "primary.dark",
+                        backgroundColor: 'primary.main',
+                        color: 'primary.contrastText',
+                        '&:hover': {
+                          backgroundColor: 'primary.dark',
                         },
                       }}
                     >
-                      <ListItemIcon sx={{ minWidth: 36, color: "inherit" }}>
+                      <ListItemIcon sx={{ minWidth: 36, color: 'inherit' }}>
                         <AddIcon />
                       </ListItemIcon>
                       <ListItemText
@@ -168,9 +168,9 @@ const AnnouncementBell: React.FC<AnnouncementBellProps> = ({
                     py: 1.5,
                     borderLeft: 3,
                     borderColor:
-                      getPriorityColor(announcement.priority) + ".main",
-                    "&:hover": {
-                      backgroundColor: "action.hover",
+                      getPriorityColor(announcement.priority) + '.main',
+                    '&:hover': {
+                      backgroundColor: 'action.hover',
                     },
                   }}
                 >
@@ -180,7 +180,7 @@ const AnnouncementBell: React.FC<AnnouncementBellProps> = ({
                   <ListItemText
                     primary={
                       <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
                       >
                         <Typography
                           variant="body2"
@@ -188,14 +188,14 @@ const AnnouncementBell: React.FC<AnnouncementBellProps> = ({
                         >
                           {announcement.title}
                         </Typography>
-                        {announcement.priority !== "NORMAL" && (
+                        {announcement.priority !== 'NORMAL' && (
                           <Chip
                             label={announcement.priority}
                             size="small"
                             color={
                               getPriorityColor(announcement.priority) as any
                             }
-                            sx={{ height: 20, fontSize: "0.7rem" }}
+                            sx={{ height: 20, fontSize: '0.7rem' }}
                           />
                         )}
                       </Box>
@@ -205,10 +205,10 @@ const AnnouncementBell: React.FC<AnnouncementBellProps> = ({
                         variant="caption"
                         color="text.secondary"
                         sx={{
-                          display: "-webkit-box",
+                          display: '-webkit-box',
                           WebkitLineClamp: 2,
-                          WebkitBoxOrient: "vertical",
-                          overflow: "hidden",
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
                         }}
                       >
                         {announcement.message}
@@ -226,7 +226,7 @@ const AnnouncementBell: React.FC<AnnouncementBellProps> = ({
                           <Typography
                             variant="body2"
                             color="primary"
-                            sx={{ textAlign: "center" }}
+                            sx={{ textAlign: 'center' }}
                           >
                             View all {announcements.length} announcements
                           </Typography>
@@ -243,14 +243,14 @@ const AnnouncementBell: React.FC<AnnouncementBellProps> = ({
                       onClick={handleCreate}
                       sx={{
                         py: 1.5,
-                        backgroundColor: "primary.main",
-                        color: "primary.contrastText",
-                        "&:hover": {
-                          backgroundColor: "primary.dark",
+                        backgroundColor: 'primary.main',
+                        color: 'primary.contrastText',
+                        '&:hover': {
+                          backgroundColor: 'primary.dark',
                         },
                       }}
                     >
-                      <ListItemIcon sx={{ minWidth: 36, color: "inherit" }}>
+                      <ListItemIcon sx={{ minWidth: 36, color: 'inherit' }}>
                         <AddIcon />
                       </ListItemIcon>
                       <ListItemText

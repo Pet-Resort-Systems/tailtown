@@ -1,6 +1,6 @@
 /**
  * Availability Logic Tests
- * 
+ *
  * Tests for complex availability checking algorithms.
  * These define what "working" means for suite availability.
  */
@@ -8,7 +8,7 @@
 describe('Availability Checking Algorithm', () => {
   /**
    * BUSINESS LOGIC: Suite Availability
-   * 
+   *
    * A suite is available if:
    * 1. No overlapping reservations exist
    * 2. Suite is not under maintenance
@@ -18,10 +18,10 @@ describe('Availability Checking Algorithm', () => {
     it('should identify suite as available when no conflicts exist', () => {
       const requestedCheckIn = new Date('2025-10-24');
       const requestedCheckOut = new Date('2025-10-26');
-      
+
       const existingReservations = [
         { checkIn: new Date('2025-10-20'), checkOut: new Date('2025-10-22') },
-        { checkIn: new Date('2025-10-28'), checkOut: new Date('2025-10-30') }
+        { checkIn: new Date('2025-10-28'), checkOut: new Date('2025-10-30') },
       ];
 
       const isAvailable = checkSuiteAvailability(
@@ -36,9 +36,9 @@ describe('Availability Checking Algorithm', () => {
     it('should identify suite as unavailable when dates overlap', () => {
       const requestedCheckIn = new Date('2025-10-24');
       const requestedCheckOut = new Date('2025-10-26');
-      
+
       const existingReservations = [
-        { checkIn: new Date('2025-10-25'), checkOut: new Date('2025-10-27') }
+        { checkIn: new Date('2025-10-25'), checkOut: new Date('2025-10-27') },
       ];
 
       const isAvailable = checkSuiteAvailability(
@@ -53,10 +53,13 @@ describe('Availability Checking Algorithm', () => {
     it('should handle same-day checkout and checkin (edge case)', () => {
       const requestedCheckIn = new Date('2025-10-24T14:00:00');
       const requestedCheckOut = new Date('2025-10-26T11:00:00');
-      
+
       // Previous guest checks out at 11am, new guest checks in at 2pm
       const existingReservations = [
-        { checkIn: new Date('2025-10-22'), checkOut: new Date('2025-10-24T11:00:00') }
+        {
+          checkIn: new Date('2025-10-22'),
+          checkOut: new Date('2025-10-24T11:00:00'),
+        },
       ];
 
       const isAvailable = checkSuiteAvailability(
@@ -72,11 +75,11 @@ describe('Availability Checking Algorithm', () => {
     it('should handle multiple overlapping reservations', () => {
       const requestedCheckIn = new Date('2025-10-24');
       const requestedCheckOut = new Date('2025-10-30');
-      
+
       const existingReservations = [
         { checkIn: new Date('2025-10-23'), checkOut: new Date('2025-10-25') },
         { checkIn: new Date('2025-10-26'), checkOut: new Date('2025-10-28') },
-        { checkIn: new Date('2025-10-29'), checkOut: new Date('2025-10-31') }
+        { checkIn: new Date('2025-10-29'), checkOut: new Date('2025-10-31') },
       ];
 
       const isAvailable = checkSuiteAvailability(
@@ -91,7 +94,7 @@ describe('Availability Checking Algorithm', () => {
 
   /**
    * BUSINESS LOGIC: Multi-Pet Suite Assignment
-   * 
+   *
    * When booking multiple pets:
    * 1. Check if pets can share a suite (same owner, compatible)
    * 2. Find available suites with sufficient capacity
@@ -101,38 +104,38 @@ describe('Availability Checking Algorithm', () => {
     it('should assign multiple pets to same suite when capacity allows', () => {
       const pets = [
         { id: 'pet-1', size: 'small' },
-        { id: 'pet-2', size: 'small' }
+        { id: 'pet-2', size: 'small' },
       ];
 
       const availableSuites = [
         { id: 'suite-1', capacity: 2, location: 'A01' },
-        { id: 'suite-2', capacity: 1, location: 'A02' }
+        { id: 'suite-2', capacity: 1, location: 'A02' },
       ];
 
       const assignment = assignPetsToSuites(pets, availableSuites, {
-        preferSameSuite: true
+        preferSameSuite: true,
       });
 
       expect(assignment).toEqual({
-        'suite-1': ['pet-1', 'pet-2']
+        'suite-1': ['pet-1', 'pet-2'],
       });
     });
 
     it('should assign pets to separate suites when requested', () => {
       const pets = [
         { id: 'pet-1', size: 'medium' },
-        { id: 'pet-2', size: 'medium' }
+        { id: 'pet-2', size: 'medium' },
       ];
 
       const availableSuites = [
         { id: 'suite-1', capacity: 1, location: 'A01' },
         { id: 'suite-2', capacity: 1, location: 'A02' },
-        { id: 'suite-3', capacity: 1, location: 'B01' }
+        { id: 'suite-3', capacity: 1, location: 'B01' },
       ];
 
       const assignment = assignPetsToSuites(pets, availableSuites, {
         preferSameSuite: false,
-        preferNearby: true
+        preferNearby: true,
       });
 
       // Should assign to A01 and A02 (same room letter)
@@ -145,12 +148,12 @@ describe('Availability Checking Algorithm', () => {
       const pets = [
         { id: 'pet-1', size: 'large' },
         { id: 'pet-2', size: 'large' },
-        { id: 'pet-3', size: 'large' }
+        { id: 'pet-3', size: 'large' },
       ];
 
       const availableSuites = [
         { id: 'suite-1', capacity: 1, location: 'A01' },
-        { id: 'suite-2', capacity: 1, location: 'A02' }
+        { id: 'suite-2', capacity: 1, location: 'A02' },
       ];
 
       const assignment = assignPetsToSuites(pets, availableSuites);
@@ -163,7 +166,7 @@ describe('Availability Checking Algorithm', () => {
 
   /**
    * BUSINESS LOGIC: Pricing Calculations
-   * 
+   *
    * Price should include:
    * 1. Base service price × number of nights
    * 2. Additional pet discounts
@@ -177,7 +180,7 @@ describe('Availability Checking Algorithm', () => {
         checkIn: new Date('2025-10-24'),
         checkOut: new Date('2025-10-26'),
         numberOfPets: 1,
-        addOns: []
+        addOns: [],
       };
 
       const total = calculateBookingPrice(booking);
@@ -193,7 +196,7 @@ describe('Availability Checking Algorithm', () => {
         checkIn: new Date('2025-10-24'),
         checkOut: new Date('2025-10-26'),
         numberOfPets: 2,
-        addOns: []
+        addOns: [],
       };
 
       const total = calculateBookingPrice(booking);
@@ -213,8 +216,8 @@ describe('Availability Checking Algorithm', () => {
         numberOfPets: 1,
         addOns: [
           { name: 'Bath', price: 25 },
-          { name: 'Nail Trim', price: 15 }
-        ]
+          { name: 'Nail Trim', price: 15 },
+        ],
       };
 
       const total = calculateBookingPrice(booking);
@@ -231,14 +234,14 @@ describe('Availability Checking Algorithm', () => {
         checkOut: new Date('2025-10-26'),
         numberOfPets: 1,
         addOns: [],
-        taxRate: 0.08 // 8%
+        taxRate: 0.08, // 8%
       };
 
       const total = calculateBookingPrice(booking);
 
       expect(total.subtotal).toBe(90);
-      expect(total.tax).toBe(7.20); // 8% of $90
-      expect(total.total).toBe(97.20);
+      expect(total.tax).toBe(7.2); // 8% of $90
+      expect(total.total).toBe(97.2);
     });
 
     it('should handle partial day pricing', () => {
@@ -248,7 +251,7 @@ describe('Availability Checking Algorithm', () => {
         checkOut: new Date('2025-10-24T18:00:00'),
         numberOfPets: 1,
         addOns: [],
-        isDaycare: true
+        isDaycare: true,
       };
 
       const total = calculateBookingPrice(booking);
@@ -263,7 +266,7 @@ describe('Availability Checking Algorithm', () => {
 
   /**
    * BUSINESS LOGIC: Date Validation
-   * 
+   *
    * Valid booking dates must:
    * 1. Check-in is before check-out
    * 2. Check-in is not in the past
@@ -296,7 +299,7 @@ describe('Availability Checking Algorithm', () => {
       const checkOut = new Date('2026-10-24'); // Same day
 
       const validation = validateBookingDates(checkIn, checkOut, {
-        minimumNights: 1
+        minimumNights: 1,
       });
 
       expect(validation.isValid).toBe(false);
@@ -311,7 +314,7 @@ describe('Availability Checking Algorithm', () => {
       checkOut.setDate(checkOut.getDate() + 2);
 
       const validation = validateBookingDates(checkIn, checkOut, {
-        maxAdvanceDays: 365
+        maxAdvanceDays: 365,
       });
 
       expect(validation.isValid).toBe(false);
@@ -339,7 +342,7 @@ function checkSuiteAvailability(
   checkOut: Date,
   existingReservations: Array<{ checkIn: Date; checkOut: Date }>
 ): boolean {
-  return !existingReservations.some(reservation => {
+  return !existingReservations.some((reservation) => {
     return (
       (checkIn >= reservation.checkIn && checkIn < reservation.checkOut) ||
       (checkOut > reservation.checkIn && checkOut <= reservation.checkOut) ||
@@ -354,9 +357,9 @@ function assignPetsToSuites(
   options: { preferSameSuite?: boolean; preferNearby?: boolean } = {}
 ): any {
   if (options.preferSameSuite) {
-    const suitableSuite = suites.find(s => s.capacity >= pets.length);
+    const suitableSuite = suites.find((s) => s.capacity >= pets.length);
     if (suitableSuite) {
-      return { [suitableSuite.id]: pets.map(p => p.id) };
+      return { [suitableSuite.id]: pets.map((p) => p.id) };
     }
   }
 
@@ -376,7 +379,8 @@ function assignPetsToSuites(
 
 function calculateBookingPrice(booking: any): any {
   const nights = Math.ceil(
-    (booking.checkOut.getTime() - booking.checkIn.getTime()) / (1000 * 60 * 60 * 24)
+    (booking.checkOut.getTime() - booking.checkIn.getTime()) /
+      (1000 * 60 * 60 * 24)
   );
 
   let subtotal = booking.servicePrice * nights;
@@ -387,8 +391,11 @@ function calculateBookingPrice(booking: any): any {
     const additionalCost = booking.servicePrice * nights * additionalPets * 0.8;
     const discount = booking.servicePrice * nights * additionalPets * 0.2;
     subtotal += additionalCost;
-    
-    const addOnsTotal = booking.addOns.reduce((sum: number, addon: any) => sum + addon.price, 0);
+
+    const addOnsTotal = booking.addOns.reduce(
+      (sum: number, addon: any) => sum + addon.price,
+      0
+    );
     subtotal += addOnsTotal;
 
     return {
@@ -397,11 +404,14 @@ function calculateBookingPrice(booking: any): any {
       discount,
       addOnsTotal,
       tax: 0,
-      total: subtotal
+      total: subtotal,
     };
   }
 
-  const addOnsTotal = booking.addOns.reduce((sum: number, addon: any) => sum + addon.price, 0);
+  const addOnsTotal = booking.addOns.reduce(
+    (sum: number, addon: any) => sum + addon.price,
+    0
+  );
   subtotal += addOnsTotal;
 
   const tax = booking.taxRate ? subtotal * booking.taxRate : 0;
@@ -409,12 +419,15 @@ function calculateBookingPrice(booking: any): any {
   return {
     subtotal,
     nights,
-    hours: booking.isDaycare ? Math.ceil(
-      (booking.checkOut.getTime() - booking.checkIn.getTime()) / (1000 * 60 * 60)
-    ) : 0,
+    hours: booking.isDaycare
+      ? Math.ceil(
+          (booking.checkOut.getTime() - booking.checkIn.getTime()) /
+            (1000 * 60 * 60)
+        )
+      : 0,
     addOnsTotal,
     tax: parseFloat(tax.toFixed(2)),
-    total: parseFloat((subtotal + tax).toFixed(2))
+    total: parseFloat((subtotal + tax).toFixed(2)),
   };
 }
 
@@ -439,7 +452,10 @@ function validateBookingDates(
       (checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24)
     );
     if (nights < options.minimumNights) {
-      return { isValid: false, error: `Minimum stay is ${options.minimumNights} night(s)` };
+      return {
+        isValid: false,
+        error: `Minimum stay is ${options.minimumNights} night(s)`,
+      };
     }
   }
 
@@ -448,7 +464,10 @@ function validateBookingDates(
       (checkIn.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
     );
     if (daysInAdvance > options.maxAdvanceDays) {
-      return { isValid: false, error: `Cannot book more than ${options.maxAdvanceDays} days in advance` };
+      return {
+        isValid: false,
+        error: `Cannot book more than ${options.maxAdvanceDays} days in advance`,
+      };
     }
   }
 

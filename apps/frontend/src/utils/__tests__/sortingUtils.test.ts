@@ -7,7 +7,7 @@ import {
   sortByRoomAndNumber,
   sortBySuiteNumber,
   sortByName,
-  extractKennelNumber
+  extractKennelNumber,
 } from '../sortingUtils';
 
 describe('sortingUtils', () => {
@@ -18,20 +18,22 @@ describe('sortingUtils', () => {
         { name: 'A10' },
         { name: 'A01' },
         { name: 'C05' },
-        { name: 'B01' }
+        { name: 'B01' },
       ];
 
       const result = sortByRoomAndNumber(items);
 
-      expect(result.map(i => i.name)).toEqual(['A01', 'A10', 'B01', 'B02', 'C05']);
+      expect(result.map((i) => i.name)).toEqual([
+        'A01',
+        'A10',
+        'B01',
+        'B02',
+        'C05',
+      ]);
     });
 
     it('should handle items without names', () => {
-      const items = [
-        { name: 'A02' },
-        { name: undefined },
-        { name: 'A01' }
-      ];
+      const items = [{ name: 'A02' }, { name: undefined }, { name: 'A01' }];
 
       const result = sortByRoomAndNumber(items);
 
@@ -41,11 +43,7 @@ describe('sortingUtils', () => {
     });
 
     it('should fallback to string comparison for non-matching patterns', () => {
-      const items = [
-        { name: 'Suite 2' },
-        { name: 'A01' },
-        { name: 'Suite 1' }
-      ];
+      const items = [{ name: 'Suite 2' }, { name: 'A01' }, { name: 'Suite 1' }];
 
       const result = sortByRoomAndNumber(items);
 
@@ -69,19 +67,19 @@ describe('sortingUtils', () => {
       const items = [
         { suiteNumber: '10' },
         { suiteNumber: '2' },
-        { suiteNumber: '1' }
+        { suiteNumber: '1' },
       ];
 
       const result = sortBySuiteNumber(items);
 
-      expect(result.map(i => i.suiteNumber)).toEqual(['1', '2', '10']);
+      expect(result.map((i) => i.suiteNumber)).toEqual(['1', '2', '10']);
     });
 
     it('should extract numbers from name if suiteNumber missing', () => {
       const items = [
         { name: 'Suite 10' },
         { name: 'Suite 2' },
-        { name: 'Suite 1' }
+        { name: 'Suite 1' },
       ];
 
       const result = sortBySuiteNumber(items);
@@ -95,7 +93,7 @@ describe('sortingUtils', () => {
       const items = [
         { suiteNumber: '5', name: 'Suite 10' },
         { name: 'Suite 2' },
-        { suiteNumber: '1' }
+        { suiteNumber: '1' },
       ];
 
       const result = sortBySuiteNumber(items);
@@ -109,34 +107,26 @@ describe('sortingUtils', () => {
       const items = [
         { suiteNumber: 10 },
         { suiteNumber: 2 },
-        { suiteNumber: 1 }
+        { suiteNumber: 1 },
       ];
 
       const result = sortBySuiteNumber(items);
 
-      expect(result.map(i => i.suiteNumber)).toEqual([1, 2, 10]);
+      expect(result.map((i) => i.suiteNumber)).toEqual([1, 2, 10]);
     });
   });
 
   describe('sortByName', () => {
     it('should sort alphabetically by name', () => {
-      const items = [
-        { name: 'Charlie' },
-        { name: 'Alice' },
-        { name: 'Bob' }
-      ];
+      const items = [{ name: 'Charlie' }, { name: 'Alice' }, { name: 'Bob' }];
 
       const result = sortByName(items);
 
-      expect(result.map(i => i.name)).toEqual(['Alice', 'Bob', 'Charlie']);
+      expect(result.map((i) => i.name)).toEqual(['Alice', 'Bob', 'Charlie']);
     });
 
     it('should handle case-insensitive sorting', () => {
-      const items = [
-        { name: 'zebra' },
-        { name: 'Apple' },
-        { name: 'banana' }
-      ];
+      const items = [{ name: 'zebra' }, { name: 'Apple' }, { name: 'banana' }];
 
       const result = sortByName(items);
 
@@ -146,11 +136,7 @@ describe('sortingUtils', () => {
     });
 
     it('should handle empty names', () => {
-      const items = [
-        { name: 'Bob' },
-        { name: '' },
-        { name: 'Alice' }
-      ];
+      const items = [{ name: 'Bob' }, { name: '' }, { name: 'Alice' }];
 
       const result = sortByName(items);
 
@@ -179,7 +165,7 @@ describe('sortingUtils', () => {
     it('should prioritize suiteNumber over attributes', () => {
       const item = {
         suiteNumber: 'A01',
-        attributes: { suiteNumber: 'B02' }
+        attributes: { suiteNumber: 'B02' },
       };
       expect(extractKennelNumber(item)).toBe('A01');
     });
@@ -187,7 +173,7 @@ describe('sortingUtils', () => {
     it('should prioritize attributes over name', () => {
       const item = {
         attributes: { suiteNumber: 'B02' },
-        name: 'Suite A03'
+        name: 'Suite A03',
       };
       expect(extractKennelNumber(item)).toBe('B02');
     });

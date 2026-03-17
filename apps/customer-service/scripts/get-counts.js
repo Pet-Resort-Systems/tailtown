@@ -7,12 +7,12 @@ async function getCounts() {
     const reservationCount = await prisma.reservation.count();
     const serviceCount = await prisma.service.count();
     const invoiceCount = await prisma.invoice.count();
-    
+
     console.log({
       customerCount,
       reservationCount,
       serviceCount,
-      invoiceCount
+      invoiceCount,
     });
   } catch (error) {
     console.error('Error getting counts:', error);

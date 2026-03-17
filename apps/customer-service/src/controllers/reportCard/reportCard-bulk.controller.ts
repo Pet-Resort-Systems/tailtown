@@ -10,10 +10,10 @@
  * - getReservationReportCards
  */
 
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-import { AppError } from "../../middleware/error.middleware";
-import { logger } from "../../utils/logger";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { AppError } from '../../middleware/error.middleware';
+import { logger } from '../../utils/logger';
 
 const prisma = new PrismaClient();
 
@@ -21,7 +21,7 @@ export interface AuthRequest extends Request {
   user?: {
     id: string;
     email: string;
-    role: "SUPER_ADMIN" | "TENANT_ADMIN" | "MANAGER" | "STAFF";
+    role: 'SUPER_ADMIN' | 'TENANT_ADMIN' | 'MANAGER' | 'STAFF';
     tenantId?: string;
   };
   tenantId?: string;
@@ -46,15 +46,15 @@ export const sendReportCard = async (
       include: {
         customer: true,
         pet: true,
-        photos: { orderBy: { order: "asc" } },
+        photos: { orderBy: { order: 'asc' } },
       },
     });
 
     if (!reportCard) {
-      return next(new AppError("Report card not found", 404));
+      return next(new AppError('Report card not found', 404));
     }
 
-    const updateData: any = { status: "SENT", sentAt: new Date() };
+    const updateData: any = { status: 'SENT', sentAt: new Date() };
 
     if (sendEmail) {
       updateData.sentViaEmail = true;
@@ -77,10 +77,10 @@ export const sendReportCard = async (
     res.json({
       success: true,
       data: updated,
-      message: "Report card sent successfully",
+      message: 'Report card sent successfully',
     });
   } catch (error: any) {
-    next(new AppError(error.message || "Failed to send report card", 500));
+    next(new AppError(error.message || 'Failed to send report card', 500));
   }
 };
 
@@ -98,13 +98,13 @@ export const bulkCreateReportCards = async (
     const staffId = req.user?.id;
 
     if (!tenantId || !staffId) {
-      return next(new AppError("Tenant ID and Staff ID are required", 400));
+      return next(new AppError('Tenant ID and Staff ID are required', 400));
     }
 
     const { reportCards } = req.body;
 
     if (!Array.isArray(reportCards) || reportCards.length === 0) {
-      return next(new AppError("Report cards array is required", 400));
+      return next(new AppError('Report cards array is required', 400));
     }
 
     const created = await Promise.all(
@@ -143,15 +143,13 @@ export const bulkCreateReportCards = async (
       })
     );
 
-    res
-      .status(201)
-      .json({
-        success: true,
-        data: { created: created.length, reportCards: created },
-      });
+    res.status(201).json({
+      success: true,
+      data: { created: created.length, reportCards: created },
+    });
   } catch (error: any) {
     next(
-      new AppError(error.message || "Failed to create bulk report cards", 500)
+      new AppError(error.message || 'Failed to create bulk report cards', 500)
     );
   }
 };
@@ -170,10 +168,10 @@ export const bulkSendReportCards = async (
     const { reportCardIds, sendEmail = true, sendSMS = true } = req.body;
 
     if (!Array.isArray(reportCardIds) || reportCardIds.length === 0) {
-      return next(new AppError("Report card IDs array is required", 400));
+      return next(new AppError('Report card IDs array is required', 400));
     }
 
-    const updateData: any = { status: "SENT", sentAt: new Date() };
+    const updateData: any = { status: 'SENT', sentAt: new Date() };
 
     if (sendEmail) {
       updateData.sentViaEmail = true;
@@ -197,7 +195,7 @@ export const bulkSendReportCards = async (
     });
   } catch (error: any) {
     next(
-      new AppError(error.message || "Failed to send bulk report cards", 500)
+      new AppError(error.message || 'Failed to send bulk report cards', 500)
     );
   }
 };
@@ -219,21 +217,21 @@ export const getCustomerReportCards = async (
       where: {
         customerId,
         tenantId: tenantId!,
-        status: { in: ["SENT", "VIEWED"] },
+        status: { in: ['SENT', 'VIEWED'] },
       },
       include: {
         pet: { select: { id: true, name: true, type: true, breed: true } },
-        photos: { orderBy: { order: "asc" } },
+        photos: { orderBy: { order: 'asc' } },
         createdByStaff: { select: { firstName: true, lastName: true } },
       },
-      orderBy: { reportDate: "desc" },
+      orderBy: { reportDate: 'desc' },
     });
 
     res.json({ success: true, data: reportCards });
   } catch (error: any) {
     next(
       new AppError(
-        error.message || "Failed to fetch customer report cards",
+        error.message || 'Failed to fetch customer report cards',
         500
       )
     );
@@ -256,16 +254,16 @@ export const getPetReportCards = async (
     const reportCards = await prisma.reportCard.findMany({
       where: { petId, tenantId: tenantId! },
       include: {
-        photos: { orderBy: { order: "asc" }, take: 3 },
+        photos: { orderBy: { order: 'asc' }, take: 3 },
         createdByStaff: { select: { firstName: true, lastName: true } },
       },
-      orderBy: { reportDate: "desc" },
+      orderBy: { reportDate: 'desc' },
     });
 
     res.json({ success: true, data: reportCards });
   } catch (error: any) {
     next(
-      new AppError(error.message || "Failed to fetch pet report cards", 500)
+      new AppError(error.message || 'Failed to fetch pet report cards', 500)
     );
   }
 };
@@ -287,17 +285,17 @@ export const getReservationReportCards = async (
       where: { reservationId, tenantId: tenantId! },
       include: {
         pet: { select: { id: true, name: true } },
-        photos: { orderBy: { order: "asc" } },
+        photos: { orderBy: { order: 'asc' } },
         createdByStaff: { select: { firstName: true, lastName: true } },
       },
-      orderBy: { reportDate: "asc" },
+      orderBy: { reportDate: 'asc' },
     });
 
     res.json({ success: true, data: reportCards });
   } catch (error: any) {
     next(
       new AppError(
-        error.message || "Failed to fetch reservation report cards",
+        error.message || 'Failed to fetch reservation report cards',
         500
       )
     );

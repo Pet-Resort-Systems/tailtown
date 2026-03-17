@@ -2,14 +2,16 @@
 
 /**
  * Create Demo Template Tenant
- * 
+ *
  * Creates a demo-template tenant with sample data that can be cloned
  * for testing and demonstrations.
  */
 
 require('dotenv').config({ path: './apps/customer-service/.env' });
 
-const { PrismaClient } = require('../apps/customer-service/node_modules/@prisma/client');
+const {
+  PrismaClient,
+} = require('../apps/customer-service/node_modules/@prisma/client');
 const bcrypt = require('bcrypt');
 
 const prisma = new PrismaClient();
@@ -20,20 +22,22 @@ async function main() {
   try {
     // Check if demo-template already exists
     const existing = await prisma.tenant.findUnique({
-      where: { subdomain: 'demo-template' }
+      where: { subdomain: 'demo-template' },
     });
 
     if (existing) {
       console.log('⚠️  demo-template tenant already exists');
       console.log('   Cleaning up existing data...\n');
-      
+
       // Delete all related data first
       await prisma.pet.deleteMany({ where: { tenantId: 'demo-template' } });
-      await prisma.customer.deleteMany({ where: { tenantId: 'demo-template' } });
+      await prisma.customer.deleteMany({
+        where: { tenantId: 'demo-template' },
+      });
       await prisma.staff.deleteMany({ where: { tenantId: 'demo-template' } });
       await prisma.service.deleteMany({ where: { tenantId: 'demo-template' } });
       await prisma.tenant.delete({ where: { subdomain: 'demo-template' } });
-      
+
       console.log('   ✓ Cleaned up existing demo-template\n');
     }
 
@@ -52,13 +56,13 @@ async function main() {
         zipCode: '90210',
         status: 'ACTIVE',
         isActive: true,
-        isTemplate: true,  // Mark as template
+        isTemplate: true, // Mark as template
         isProduction: false,
         gingrSyncEnabled: false,
         planType: 'PROFESSIONAL',
         maxEmployees: 50,
-        maxLocations: 1
-      }
+        maxLocations: 1,
+      },
     });
     console.log(`   ✓ Created tenant: ${tenant.id}\n`);
 
@@ -66,16 +70,66 @@ async function main() {
     console.log('2️⃣  Creating sample customers...');
     const customers = [];
     const customerNames = [
-      { first: 'John', last: 'Smith', email: 'john.smith@example.com', phone: '(555) 111-1111' },
-      { first: 'Sarah', last: 'Johnson', email: 'sarah.j@example.com', phone: '(555) 222-2222' },
-      { first: 'Michael', last: 'Brown', email: 'mbrown@example.com', phone: '(555) 333-3333' },
-      { first: 'Emily', last: 'Davis', email: 'emily.davis@example.com', phone: '(555) 444-4444' },
-      { first: 'David', last: 'Wilson', email: 'dwilson@example.com', phone: '(555) 555-5555' },
-      { first: 'Lisa', last: 'Anderson', email: 'lisa.a@example.com', phone: '(555) 666-6666' },
-      { first: 'James', last: 'Taylor', email: 'jtaylor@example.com', phone: '(555) 777-7777' },
-      { first: 'Jennifer', last: 'Martinez', email: 'jmartinez@example.com', phone: '(555) 888-8888' },
-      { first: 'Robert', last: 'Garcia', email: 'rgarcia@example.com', phone: '(555) 999-9999' },
-      { first: 'Maria', last: 'Rodriguez', email: 'mrodriguez@example.com', phone: '(555) 000-0000' }
+      {
+        first: 'John',
+        last: 'Smith',
+        email: 'john.smith@example.com',
+        phone: '(555) 111-1111',
+      },
+      {
+        first: 'Sarah',
+        last: 'Johnson',
+        email: 'sarah.j@example.com',
+        phone: '(555) 222-2222',
+      },
+      {
+        first: 'Michael',
+        last: 'Brown',
+        email: 'mbrown@example.com',
+        phone: '(555) 333-3333',
+      },
+      {
+        first: 'Emily',
+        last: 'Davis',
+        email: 'emily.davis@example.com',
+        phone: '(555) 444-4444',
+      },
+      {
+        first: 'David',
+        last: 'Wilson',
+        email: 'dwilson@example.com',
+        phone: '(555) 555-5555',
+      },
+      {
+        first: 'Lisa',
+        last: 'Anderson',
+        email: 'lisa.a@example.com',
+        phone: '(555) 666-6666',
+      },
+      {
+        first: 'James',
+        last: 'Taylor',
+        email: 'jtaylor@example.com',
+        phone: '(555) 777-7777',
+      },
+      {
+        first: 'Jennifer',
+        last: 'Martinez',
+        email: 'jmartinez@example.com',
+        phone: '(555) 888-8888',
+      },
+      {
+        first: 'Robert',
+        last: 'Garcia',
+        email: 'rgarcia@example.com',
+        phone: '(555) 999-9999',
+      },
+      {
+        first: 'Maria',
+        last: 'Rodriguez',
+        email: 'mrodriguez@example.com',
+        phone: '(555) 000-0000',
+      },
     ];
 
     for (const name of customerNames) {
@@ -91,8 +145,8 @@ async function main() {
           state: 'CA',
           zipCode: '90210',
           emergencyContact: 'Emergency Contact',
-          emergencyPhone: '(555) 911-9111'
-        }
+          emergencyPhone: '(555) 911-9111',
+        },
       });
       customers.push(customer);
     }
@@ -104,25 +158,35 @@ async function main() {
       { name: 'Max', type: 'DOG', breed: 'Golden Retriever', color: 'Golden' },
       { name: 'Bella', type: 'DOG', breed: 'Labrador', color: 'Black' },
       { name: 'Charlie', type: 'DOG', breed: 'Beagle', color: 'Tri-color' },
-      { name: 'Luna', type: 'DOG', breed: 'German Shepherd', color: 'Black & Tan' },
+      {
+        name: 'Luna',
+        type: 'DOG',
+        breed: 'German Shepherd',
+        color: 'Black & Tan',
+      },
       { name: 'Cooper', type: 'DOG', breed: 'Poodle', color: 'White' },
       { name: 'Daisy', type: 'DOG', breed: 'Bulldog', color: 'Brindle' },
       { name: 'Rocky', type: 'DOG', breed: 'Boxer', color: 'Fawn' },
       { name: 'Sadie', type: 'DOG', breed: 'Husky', color: 'Gray & White' },
       { name: 'Tucker', type: 'DOG', breed: 'Corgi', color: 'Red & White' },
       { name: 'Molly', type: 'DOG', breed: 'Dachshund', color: 'Brown' },
-      { name: 'Whiskers', type: 'CAT', breed: 'Domestic Shorthair', color: 'Tabby' },
+      {
+        name: 'Whiskers',
+        type: 'CAT',
+        breed: 'Domestic Shorthair',
+        color: 'Tabby',
+      },
       { name: 'Shadow', type: 'CAT', breed: 'Siamese', color: 'Seal Point' },
       { name: 'Mittens', type: 'CAT', breed: 'Maine Coon', color: 'Orange' },
       { name: 'Felix', type: 'CAT', breed: 'Persian', color: 'White' },
-      { name: 'Cleo', type: 'CAT', breed: 'Bengal', color: 'Spotted' }
+      { name: 'Cleo', type: 'CAT', breed: 'Bengal', color: 'Spotted' },
     ];
 
     let petCount = 0;
     for (let i = 0; i < petData.length; i++) {
       const customerIndex = i % customers.length;
       const pet = petData[i];
-      
+
       await prisma.pet.create({
         data: {
           tenantId: tenant.subdomain,
@@ -132,13 +196,21 @@ async function main() {
           breed: pet.breed,
           color: pet.color,
           gender: Math.random() > 0.5 ? 'MALE' : 'FEMALE',
-          birthdate: new Date(2020 + Math.floor(Math.random() * 4), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28)),
-          weight: pet.type === 'DOG' ? 30 + Math.floor(Math.random() * 40) : 8 + Math.floor(Math.random() * 8),
+          birthdate: new Date(
+            2020 + Math.floor(Math.random() * 4),
+            Math.floor(Math.random() * 12),
+            Math.floor(Math.random() * 28)
+          ),
+          weight:
+            pet.type === 'DOG'
+              ? 30 + Math.floor(Math.random() * 40)
+              : 8 + Math.floor(Math.random() * 8),
           isActive: true,
           specialNeeds: Math.random() > 0.7 ? 'Needs extra attention' : null,
-          medicationNotes: Math.random() > 0.8 ? 'Daily medication required' : null,
-          foodNotes: Math.random() > 0.8 ? 'Grain-free diet' : null
-        }
+          medicationNotes:
+            Math.random() > 0.8 ? 'Daily medication required' : null,
+          foodNotes: Math.random() > 0.8 ? 'Grain-free diet' : null,
+        },
       });
       petCount++;
     }
@@ -147,13 +219,28 @@ async function main() {
     // Create sample staff
     console.log('4️⃣  Creating sample staff...');
     const staffMembers = [
-      { firstName: 'Admin', lastName: 'User', email: 'admin@demo-template.com', role: 'ADMIN' },
-      { firstName: 'Manager', lastName: 'Demo', email: 'manager@demo-template.com', role: 'MANAGER' },
-      { firstName: 'Staff', lastName: 'Member', email: 'staff@demo-template.com', role: 'STAFF' }
+      {
+        firstName: 'Admin',
+        lastName: 'User',
+        email: 'admin@demo-template.com',
+        role: 'ADMIN',
+      },
+      {
+        firstName: 'Manager',
+        lastName: 'Demo',
+        email: 'manager@demo-template.com',
+        role: 'MANAGER',
+      },
+      {
+        firstName: 'Staff',
+        lastName: 'Member',
+        email: 'staff@demo-template.com',
+        role: 'STAFF',
+      },
     ];
 
     const hashedPassword = await bcrypt.hash('Demo123!', 10);
-    
+
     for (const staff of staffMembers) {
       await prisma.staff.create({
         data: {
@@ -164,8 +251,8 @@ async function main() {
           password: hashedPassword,
           role: staff.role,
           phone: '(555) 123-4567',
-          isActive: true
-        }
+          isActive: true,
+        },
       });
     }
     console.log(`   ✓ Created ${staffMembers.length} staff members\n`);
@@ -173,15 +260,45 @@ async function main() {
     // Create sample services
     console.log('5️⃣  Creating sample services...');
     const services = [
-      { name: 'Boarding - Standard Suite', category: 'BOARDING', price: 45.00, duration: 1440 },
-      { name: 'Boarding - VIP Suite', category: 'BOARDING', price: 75.00, duration: 1440 },
-      { name: 'Daycare - Full Day', category: 'DAYCARE', price: 35.00, duration: 480 },
-      { name: 'Daycare - Half Day', category: 'DAYCARE', price: 20.00, duration: 240 },
-      { name: 'Bath & Brush', category: 'GROOMING', price: 50.00, duration: 60 },
-      { name: 'Full Groom', category: 'GROOMING', price: 85.00, duration: 120 },
-      { name: 'Nail Trim', category: 'GROOMING', price: 15.00, duration: 15 },
-      { name: 'Basic Obedience', category: 'TRAINING', price: 100.00, duration: 60 },
-      { name: 'Puppy Training', category: 'TRAINING', price: 120.00, duration: 60 }
+      {
+        name: 'Boarding - Standard Suite',
+        category: 'BOARDING',
+        price: 45.0,
+        duration: 1440,
+      },
+      {
+        name: 'Boarding - VIP Suite',
+        category: 'BOARDING',
+        price: 75.0,
+        duration: 1440,
+      },
+      {
+        name: 'Daycare - Full Day',
+        category: 'DAYCARE',
+        price: 35.0,
+        duration: 480,
+      },
+      {
+        name: 'Daycare - Half Day',
+        category: 'DAYCARE',
+        price: 20.0,
+        duration: 240,
+      },
+      { name: 'Bath & Brush', category: 'GROOMING', price: 50.0, duration: 60 },
+      { name: 'Full Groom', category: 'GROOMING', price: 85.0, duration: 120 },
+      { name: 'Nail Trim', category: 'GROOMING', price: 15.0, duration: 15 },
+      {
+        name: 'Basic Obedience',
+        category: 'TRAINING',
+        price: 100.0,
+        duration: 60,
+      },
+      {
+        name: 'Puppy Training',
+        category: 'TRAINING',
+        price: 120.0,
+        duration: 60,
+      },
     ];
 
     for (const service of services) {
@@ -193,8 +310,8 @@ async function main() {
           price: service.price,
           duration: service.duration,
           isActive: true,
-          taxable: true
-        }
+          taxable: true,
+        },
       });
     }
     console.log(`   ✓ Created ${services.length} services\n`);
@@ -210,7 +327,6 @@ async function main() {
     console.log('   1. Log in to super admin panel');
     console.log('   2. Navigate to Tenant Management');
     console.log('   3. Clone demo-template to create new test accounts\n');
-
   } catch (error) {
     console.error('❌ Error creating demo template:', error);
     throw error;
@@ -219,8 +335,7 @@ async function main() {
   }
 }
 
-main()
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

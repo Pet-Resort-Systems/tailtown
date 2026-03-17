@@ -10,9 +10,9 @@
  * - Gradual rollout (percentage-based)
  */
 
-import { PrismaClient, FeatureFlagCategory } from "@prisma/client";
-import { getCache, setCache, deleteCache } from "../utils/redis";
-import { logger } from "../utils/logger";
+import { PrismaClient, FeatureFlagCategory } from '@prisma/client';
+import { getCache, setCache, deleteCache } from '../utils/redis';
+import { logger } from '../utils/logger';
 
 const prisma = new PrismaClient();
 
@@ -21,24 +21,24 @@ const CACHE_TTL = 300; // 5 minutes
 
 // Predefined service module flags
 export const SERVICE_MODULE_FLAGS = {
-  BOARDING_DAYCARE: "boarding_daycare",
-  GROOMING: "grooming_services",
-  TRAINING: "training_classes",
-  POINT_OF_SALE: "point_of_sale",
-  RETAIL_INVENTORY: "retail_inventory",
-  REPORT_CARDS: "report_cards",
+  BOARDING_DAYCARE: 'boarding_daycare',
+  GROOMING: 'grooming_services',
+  TRAINING: 'training_classes',
+  POINT_OF_SALE: 'point_of_sale',
+  RETAIL_INVENTORY: 'retail_inventory',
+  REPORT_CARDS: 'report_cards',
 } as const;
 
 // Predefined feature flags
 export const FEATURE_FLAGS = {
-  AI_RECOMMENDATIONS: "ai_recommendations",
-  AI_PRICING: "ai_pricing",
-  AI_CHURN_PREDICTION: "ai_churn_prediction",
-  ADVANCED_REPORTS: "advanced_reports",
-  CUSTOMER_PORTAL: "customer_portal",
-  MOBILE_CHECKIN: "mobile_checkin",
-  SMS_NOTIFICATIONS: "sms_notifications",
-  EMAIL_MARKETING: "email_marketing",
+  AI_RECOMMENDATIONS: 'ai_recommendations',
+  AI_PRICING: 'ai_pricing',
+  AI_CHURN_PREDICTION: 'ai_churn_prediction',
+  ADVANCED_REPORTS: 'advanced_reports',
+  CUSTOMER_PORTAL: 'customer_portal',
+  MOBILE_CHECKIN: 'mobile_checkin',
+  SMS_NOTIFICATIONS: 'sms_notifications',
+  EMAIL_MARKETING: 'email_marketing',
 } as const;
 
 export type ServiceModuleFlag =
@@ -66,7 +66,7 @@ export const isFeatureEnabled = async (
     let cachedFlags = await getCache<Record<string, boolean>>(cacheKey);
 
     if (cachedFlags && flagKey in cachedFlags) {
-      logger.debug("Feature flag cache hit", { tenantId, flagKey });
+      logger.debug('Feature flag cache hit', { tenantId, flagKey });
       return cachedFlags[flagKey];
     }
 
@@ -114,7 +114,7 @@ export const isFeatureEnabled = async (
 
     return flag.defaultEnabled;
   } catch (error) {
-    logger.error("Error checking feature flag", { tenantId, flagKey, error });
+    logger.error('Error checking feature flag', { tenantId, flagKey, error });
     return false;
   }
 };
@@ -131,7 +131,7 @@ export const getTenantFeatureFlags = async (
     const cached = await getCache<Record<string, boolean>>(cacheKey);
 
     if (cached) {
-      logger.debug("Feature flags cache hit", { tenantId });
+      logger.debug('Feature flags cache hit', { tenantId });
       return cached;
     }
 
@@ -165,7 +165,7 @@ export const getTenantFeatureFlags = async (
 
     return result;
   } catch (error) {
-    logger.error("Error getting tenant feature flags", { tenantId, error });
+    logger.error('Error getting tenant feature flags', { tenantId, error });
     return {};
   }
 };
@@ -231,7 +231,7 @@ export const enableFeatureForTenant = async (
   // Invalidate cache
   await deleteCache(getCacheKey(tenantId));
 
-  logger.info("Feature enabled for tenant", { tenantId, flagKey, enabledBy });
+  logger.info('Feature enabled for tenant', { tenantId, flagKey, enabledBy });
 };
 
 /**
@@ -277,7 +277,7 @@ export const disableFeatureForTenant = async (
   // Invalidate cache
   await deleteCache(getCacheKey(tenantId));
 
-  logger.info("Feature disabled for tenant", { tenantId, flagKey, disabledBy });
+  logger.info('Feature disabled for tenant', { tenantId, flagKey, disabledBy });
 };
 
 /**
@@ -299,7 +299,7 @@ export const upsertFeatureFlag = async (
       key,
       name: data.name,
       description: data.description,
-      category: data.category || "FEATURE",
+      category: data.category || 'FEATURE',
       defaultEnabled: data.defaultEnabled ?? false,
       rolloutPercent: data.rolloutPercent ?? 0,
     },
@@ -312,7 +312,7 @@ export const upsertFeatureFlag = async (
     },
   });
 
-  logger.info("Feature flag upserted", { key, data });
+  logger.info('Feature flag upserted', { key, data });
 };
 
 /**
@@ -320,7 +320,7 @@ export const upsertFeatureFlag = async (
  */
 export const getAllFeatureFlags = async () => {
   return prisma.featureFlag.findMany({
-    orderBy: [{ category: "asc" }, { name: "asc" }],
+    orderBy: [{ category: 'asc' }, { name: 'asc' }],
   });
 };
 
@@ -357,103 +357,103 @@ export const seedDefaultFeatureFlags = async (): Promise<void> => {
     // Service Modules
     {
       key: SERVICE_MODULE_FLAGS.BOARDING_DAYCARE,
-      name: "Boarding & Daycare",
-      category: "SERVICE_MODULE" as const,
+      name: 'Boarding & Daycare',
+      category: 'SERVICE_MODULE' as const,
       defaultEnabled: true,
-      description: "Core boarding and daycare reservation system",
+      description: 'Core boarding and daycare reservation system',
     },
     {
       key: SERVICE_MODULE_FLAGS.GROOMING,
-      name: "Grooming Services",
-      category: "SERVICE_MODULE" as const,
+      name: 'Grooming Services',
+      category: 'SERVICE_MODULE' as const,
       defaultEnabled: true,
-      description: "Grooming appointment scheduling",
+      description: 'Grooming appointment scheduling',
     },
     {
       key: SERVICE_MODULE_FLAGS.TRAINING,
-      name: "Training Classes",
-      category: "SERVICE_MODULE" as const,
+      name: 'Training Classes',
+      category: 'SERVICE_MODULE' as const,
       defaultEnabled: false,
-      description: "Dog training class management",
+      description: 'Dog training class management',
     },
     {
       key: SERVICE_MODULE_FLAGS.POINT_OF_SALE,
-      name: "Point of Sale",
-      category: "SERVICE_MODULE" as const,
+      name: 'Point of Sale',
+      category: 'SERVICE_MODULE' as const,
       defaultEnabled: false,
-      description: "In-store POS system",
+      description: 'In-store POS system',
     },
     {
       key: SERVICE_MODULE_FLAGS.RETAIL_INVENTORY,
-      name: "Retail Inventory",
-      category: "SERVICE_MODULE" as const,
+      name: 'Retail Inventory',
+      category: 'SERVICE_MODULE' as const,
       defaultEnabled: false,
-      description: "Product inventory management",
+      description: 'Product inventory management',
     },
     {
       key: SERVICE_MODULE_FLAGS.REPORT_CARDS,
-      name: "Report Cards",
-      category: "SERVICE_MODULE" as const,
+      name: 'Report Cards',
+      category: 'SERVICE_MODULE' as const,
       defaultEnabled: true,
-      description: "Pet report card system",
+      description: 'Pet report card system',
     },
 
     // Features
     {
       key: FEATURE_FLAGS.AI_RECOMMENDATIONS,
-      name: "AI Recommendations",
-      category: "FEATURE" as const,
+      name: 'AI Recommendations',
+      category: 'FEATURE' as const,
       defaultEnabled: false,
-      description: "AI-powered booking recommendations",
+      description: 'AI-powered booking recommendations',
     },
     {
       key: FEATURE_FLAGS.AI_PRICING,
-      name: "AI Pricing",
-      category: "FEATURE" as const,
+      name: 'AI Pricing',
+      category: 'FEATURE' as const,
       defaultEnabled: false,
-      description: "AI-powered dynamic pricing",
+      description: 'AI-powered dynamic pricing',
     },
     {
       key: FEATURE_FLAGS.AI_CHURN_PREDICTION,
-      name: "AI Churn Prediction",
-      category: "FEATURE" as const,
+      name: 'AI Churn Prediction',
+      category: 'FEATURE' as const,
       defaultEnabled: false,
-      description: "Predict customer churn risk",
+      description: 'Predict customer churn risk',
     },
     {
       key: FEATURE_FLAGS.ADVANCED_REPORTS,
-      name: "Advanced Reports",
-      category: "FEATURE" as const,
+      name: 'Advanced Reports',
+      category: 'FEATURE' as const,
       defaultEnabled: true,
-      description: "Advanced reporting and analytics",
+      description: 'Advanced reporting and analytics',
     },
     {
       key: FEATURE_FLAGS.CUSTOMER_PORTAL,
-      name: "Customer Portal",
-      category: "FEATURE" as const,
+      name: 'Customer Portal',
+      category: 'FEATURE' as const,
       defaultEnabled: true,
-      description: "Customer self-service portal",
+      description: 'Customer self-service portal',
     },
     {
       key: FEATURE_FLAGS.MOBILE_CHECKIN,
-      name: "Mobile Check-in",
-      category: "FEATURE" as const,
+      name: 'Mobile Check-in',
+      category: 'FEATURE' as const,
       defaultEnabled: true,
-      description: "Mobile check-in/check-out",
+      description: 'Mobile check-in/check-out',
     },
     {
       key: FEATURE_FLAGS.SMS_NOTIFICATIONS,
-      name: "SMS Notifications",
-      category: "FEATURE" as const,
+      name: 'SMS Notifications',
+      category: 'FEATURE' as const,
       defaultEnabled: false,
-      description: "SMS notification system",
+      description: 'SMS notification system',
     },
     {
       key: FEATURE_FLAGS.EMAIL_MARKETING,
-      name: "Email Marketing",
-      category: "FEATURE" as const,
+      name: 'Email Marketing',
+      category: 'FEATURE' as const,
       defaultEnabled: false,
-      description: "Email marketing campaigns",
+      description: 'Email marketing campaigns',
     },
   ];
 
@@ -461,5 +461,5 @@ export const seedDefaultFeatureFlags = async (): Promise<void> => {
     await upsertFeatureFlag(flag.key, flag);
   }
 
-  logger.info("Default feature flags seeded", { count: defaultFlags.length });
+  logger.info('Default feature flags seeded', { count: defaultFlags.length });
 };

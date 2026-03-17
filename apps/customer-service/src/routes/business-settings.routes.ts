@@ -1,6 +1,6 @@
 /**
  * Business Settings Routes
- * 
+ *
  * Routes for managing business customization settings
  */
 
@@ -10,7 +10,7 @@ import {
   getBusinessSettings,
   uploadLogo,
   deleteLogo,
-  uploadMiddleware
+  uploadMiddleware,
 } from '../controllers/business-settings.controller';
 
 const router = express.Router();

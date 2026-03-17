@@ -4,17 +4,17 @@
  * Tests that actually call controller functions against the test database.
  */
 
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 import {
   getTestPrismaClient,
   createTestTenant,
   deleteTestData,
   disconnectTestDatabase,
-} from "../../test/setup-test-db";
-import { getAllReservations } from "../reservation/reservation-queries.controller";
-import { TenantRequest } from "../../middleware/tenant.middleware";
+} from '../../test/setup-test-db';
+import { getAllReservations } from '../reservation/reservation-queries.controller';
+import { TenantRequest } from '../../middleware/tenant.middleware';
 
-describe("Reservation Controller Integration Tests", () => {
+describe('Reservation Controller Integration Tests', () => {
   const prisma = getTestPrismaClient();
   let testTenantId: string;
   let testCustomerId: string;
@@ -39,10 +39,10 @@ describe("Reservation Controller Integration Tests", () => {
     const customer = await prisma.customer.create({
       data: {
         tenantId: testTenantId,
-        firstName: "Reservation",
-        lastName: "Test",
+        firstName: 'Reservation',
+        lastName: 'Test',
         email: `reservation-test-${Date.now()}@example.com`,
-        phone: "555-0400",
+        phone: '555-0400',
       },
     });
     testCustomerId = customer.id;
@@ -52,9 +52,9 @@ describe("Reservation Controller Integration Tests", () => {
       data: {
         tenantId: testTenantId,
         customerId: testCustomerId,
-        name: "ReservationTestPet",
-        type: "DOG",
-        breed: "Test Breed",
+        name: 'ReservationTestPet',
+        type: 'DOG',
+        breed: 'Test Breed',
       },
     });
     testPetId = pet.id;
@@ -63,8 +63,8 @@ describe("Reservation Controller Integration Tests", () => {
     const service = await prisma.service.create({
       data: {
         tenantId: testTenantId,
-        name: "Reservation Test Service",
-        serviceCategory: "BOARDING",
+        name: 'Reservation Test Service',
+        serviceCategory: 'BOARDING',
         price: 50,
         duration: 1440,
         isActive: true,
@@ -76,8 +76,8 @@ describe("Reservation Controller Integration Tests", () => {
     const resource = await prisma.resource.create({
       data: {
         tenantId: testTenantId,
-        name: "Reservation Test Suite",
-        type: "STANDARD_SUITE",
+        name: 'Reservation Test Suite',
+        type: 'STANDARD_SUITE',
         isActive: true,
       },
     });
@@ -91,9 +91,9 @@ describe("Reservation Controller Integration Tests", () => {
         petId: testPetId,
         serviceId: testServiceId,
         resourceId: testResourceId,
-        startDate: new Date("2025-12-01"),
-        endDate: new Date("2025-12-03"),
-        status: "CONFIRMED",
+        startDate: new Date('2025-12-01'),
+        endDate: new Date('2025-12-03'),
+        status: 'CONFIRMED',
       },
     });
     testReservationIds.push(res1.id);
@@ -105,9 +105,9 @@ describe("Reservation Controller Integration Tests", () => {
         petId: testPetId,
         serviceId: testServiceId,
         resourceId: testResourceId,
-        startDate: new Date("2025-12-10"),
-        endDate: new Date("2025-12-15"),
-        status: "PENDING",
+        startDate: new Date('2025-12-10'),
+        endDate: new Date('2025-12-15'),
+        status: 'PENDING',
       },
     });
     testReservationIds.push(res2.id);
@@ -119,9 +119,9 @@ describe("Reservation Controller Integration Tests", () => {
         petId: testPetId,
         serviceId: testServiceId,
         resourceId: testResourceId,
-        startDate: new Date("2025-12-20"),
-        endDate: new Date("2025-12-25"),
-        status: "CANCELLED",
+        startDate: new Date('2025-12-20'),
+        endDate: new Date('2025-12-25'),
+        status: 'CANCELLED',
       },
     });
     testReservationIds.push(res3.id);
@@ -140,8 +140,8 @@ describe("Reservation Controller Integration Tests", () => {
     jest.clearAllMocks();
   });
 
-  describe("getAllReservations", () => {
-    it("should return all reservations for tenant", async () => {
+  describe('getAllReservations', () => {
+    it('should return all reservations for tenant', async () => {
       const req = {
         query: {},
         tenantId: testTenantId,
@@ -153,7 +153,7 @@ describe("Reservation Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           results: expect.any(Number),
           data: expect.any(Array),
         })
@@ -163,9 +163,9 @@ describe("Reservation Controller Integration Tests", () => {
       expect(responseData.results).toBeGreaterThanOrEqual(3);
     });
 
-    it("should filter by CONFIRMED status", async () => {
+    it('should filter by CONFIRMED status', async () => {
       const req = {
-        query: { status: "CONFIRMED" },
+        query: { status: 'CONFIRMED' },
         tenantId: testTenantId,
       } as unknown as TenantRequest;
       const res = createMockResponse();
@@ -175,13 +175,13 @@ describe("Reservation Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       const responseData = (res.json as jest.Mock).mock.calls[0][0];
       responseData.data.forEach((reservation: any) => {
-        expect(reservation.status).toBe("CONFIRMED");
+        expect(reservation.status).toBe('CONFIRMED');
       });
     });
 
-    it("should filter by PENDING status", async () => {
+    it('should filter by PENDING status', async () => {
       const req = {
-        query: { status: "PENDING" },
+        query: { status: 'PENDING' },
         tenantId: testTenantId,
       } as unknown as TenantRequest;
       const res = createMockResponse();
@@ -191,15 +191,15 @@ describe("Reservation Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       const responseData = (res.json as jest.Mock).mock.calls[0][0];
       responseData.data.forEach((reservation: any) => {
-        expect(reservation.status).toBe("PENDING");
+        expect(reservation.status).toBe('PENDING');
       });
     });
 
-    it("should filter by date range", async () => {
+    it('should filter by date range', async () => {
       const req = {
         query: {
-          startDate: "2025-12-01",
-          endDate: "2025-12-05",
+          startDate: '2025-12-01',
+          endDate: '2025-12-05',
         },
         tenantId: testTenantId,
       } as unknown as TenantRequest;
@@ -212,9 +212,9 @@ describe("Reservation Controller Integration Tests", () => {
       expect(responseData.results).toBeGreaterThanOrEqual(1);
     });
 
-    it("should paginate results", async () => {
+    it('should paginate results', async () => {
       const req = {
-        query: { page: "1", limit: "1" },
+        query: { page: '1', limit: '1' },
         tenantId: testTenantId,
       } as unknown as TenantRequest;
       const res = createMockResponse();
@@ -227,7 +227,7 @@ describe("Reservation Controller Integration Tests", () => {
       expect(responseData.totalPages).toBeGreaterThanOrEqual(1);
     });
 
-    it("should return reservations with startDate field", async () => {
+    it('should return reservations with startDate field', async () => {
       const req = {
         query: {},
         tenantId: testTenantId,
@@ -248,7 +248,7 @@ describe("Reservation Controller Integration Tests", () => {
       }
     });
 
-    it("should include related customer data", async () => {
+    it('should include related customer data', async () => {
       const req = {
         query: {},
         tenantId: testTenantId,
@@ -262,11 +262,11 @@ describe("Reservation Controller Integration Tests", () => {
 
       if (responseData.data.length > 0) {
         const reservation = responseData.data[0];
-        expect(reservation).toHaveProperty("customer");
+        expect(reservation).toHaveProperty('customer');
       }
     });
 
-    it("should include related pet data", async () => {
+    it('should include related pet data', async () => {
       const req = {
         query: {},
         tenantId: testTenantId,
@@ -280,11 +280,11 @@ describe("Reservation Controller Integration Tests", () => {
 
       if (responseData.data.length > 0) {
         const reservation = responseData.data[0];
-        expect(reservation).toHaveProperty("pet");
+        expect(reservation).toHaveProperty('pet');
       }
     });
 
-    it("should include related service data", async () => {
+    it('should include related service data', async () => {
       const req = {
         query: {},
         tenantId: testTenantId,
@@ -298,13 +298,13 @@ describe("Reservation Controller Integration Tests", () => {
 
       if (responseData.data.length > 0) {
         const reservation = responseData.data[0];
-        expect(reservation).toHaveProperty("service");
+        expect(reservation).toHaveProperty('service');
       }
     });
 
-    it("should find reservations overlapping with single date", async () => {
+    it('should find reservations overlapping with single date', async () => {
       const req = {
-        query: { date: "2025-12-02" },
+        query: { date: '2025-12-02' },
         tenantId: testTenantId,
       } as unknown as TenantRequest;
       const res = createMockResponse();
@@ -316,11 +316,11 @@ describe("Reservation Controller Integration Tests", () => {
       expect(responseData.results).toBeGreaterThanOrEqual(1);
     });
 
-    it("should return empty for date range with no reservations", async () => {
+    it('should return empty for date range with no reservations', async () => {
       const req = {
         query: {
-          startDate: "2026-01-01",
-          endDate: "2026-01-31",
+          startDate: '2026-01-01',
+          endDate: '2026-01-31',
         },
         tenantId: testTenantId,
       } as unknown as TenantRequest;

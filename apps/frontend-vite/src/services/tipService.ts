@@ -1,7 +1,7 @@
-import { customerApi as api } from "./api";
+import { customerApi as api } from './api';
 
-export type TipType = "GROOMER" | "GENERAL";
-export type TipCollectionMethod = "ONLINE" | "TERMINAL" | "CASH";
+export type TipType = 'GROOMER' | 'GENERAL';
+export type TipCollectionMethod = 'ONLINE' | 'TERMINAL' | 'CASH';
 
 export interface Tip {
   id: string;
@@ -89,7 +89,7 @@ export const tipService = {
    * Create a new tip
    */
   createTip: async (data: CreateTipData): Promise<Tip> => {
-    const response = await api.post("/api/tips", data);
+    const response = await api.post('/api/tips', data);
     return response.data.data;
   },
 
@@ -122,7 +122,7 @@ export const tipService = {
     page: number;
     totalPages: number;
   }> => {
-    const response = await api.get("/api/tips", { params });
+    const response = await api.get('/api/tips', { params });
     return {
       tips: response.data.data,
       total: response.data.total,
@@ -144,7 +144,7 @@ export const tipService = {
    */
   updateTip: async (
     id: string,
-    data: Partial<Pick<Tip, "amount" | "percentage" | "notes">>
+    data: Partial<Pick<Tip, 'amount' | 'percentage' | 'notes'>>
   ): Promise<Tip> => {
     const response = await api.patch(`/api/tips/${id}`, data);
     return response.data.data;
@@ -177,7 +177,7 @@ export const tipService = {
     startDate?: string;
     endDate?: string;
   }): Promise<GeneralTipPoolSummary> => {
-    const response = await api.get("/api/tips/reports/pool", { params });
+    const response = await api.get('/api/tips/reports/pool', { params });
     return response.data.data;
   },
 
@@ -188,7 +188,7 @@ export const tipService = {
     startDate?: string;
     endDate?: string;
   }): Promise<AllGroomersSummary> => {
-    const response = await api.get("/api/tips/reports/all-groomers", {
+    const response = await api.get('/api/tips/reports/all-groomers', {
       params,
     });
     return response.data.data;

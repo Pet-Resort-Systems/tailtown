@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Formik, Form, Field, FormikHelpers, FormikErrors, FormikTouched } from 'formik';
+import {
+  Formik,
+  Form,
+  Field,
+  FormikHelpers,
+  FormikErrors,
+  FormikTouched,
+} from 'formik';
 import * as Yup from 'yup';
 import {
   Box,
@@ -104,7 +111,8 @@ const ForgotPassword = () => {
             Forgot Password?
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Enter your email address and we'll send you a link to reset your password.
+            Enter your email address and we'll send you a link to reset your
+            password.
           </Typography>
         </Box>
 
@@ -175,12 +183,7 @@ const ForgotPassword = () => {
         {/* After Success - Show Return to Login */}
         {successMessage && (
           <Box sx={{ textAlign: 'center', mt: 3 }}>
-            <Button
-              component={Link}
-              to="/login"
-              variant="outlined"
-              fullWidth
-            >
+            <Button component={Link} to="/login" variant="outlined" fullWidth>
               Return to Sign In
             </Button>
           </Box>
@@ -189,7 +192,8 @@ const ForgotPassword = () => {
         {/* Security Note */}
         <Box sx={{ mt: 3, textAlign: 'center' }}>
           <Typography variant="caption" color="text.secondary">
-            For security reasons, we'll send the reset link even if the email isn't registered.
+            For security reasons, we'll send the reset link even if the email
+            isn't registered.
           </Typography>
         </Box>
       </Paper>

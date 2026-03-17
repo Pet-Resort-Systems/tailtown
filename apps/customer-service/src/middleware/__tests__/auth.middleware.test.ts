@@ -1,5 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import { authenticate, optionalAuth, requireSuperAdmin, AuthRequest } from '../auth.middleware';
+import {
+  authenticate,
+  optionalAuth,
+  requireSuperAdmin,
+  AuthRequest,
+} from '../auth.middleware';
 import * as jwt from '../../utils/jwt';
 
 // Mock JWT utils

@@ -1,6 +1,6 @@
 /**
  * Super Admin Authentication Controller
- * 
+ *
  * Handles login, logout, and token refresh for super admin users.
  * Includes audit logging for all authentication events.
  */
@@ -28,52 +28,61 @@ export const login = async (
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Email and password are required'
+        message: 'Email and password are required',
       });
     }
 
     // Find super admin by email
     const superAdmin = await prisma.superAdmin.findUnique({
-      where: { email: email.toLowerCase() }
+      where: { email: email.toLowerCase() },
     });
 
     if (!superAdmin) {
       // Log failed login attempt (no super admin ID available)
       console.log(`[SuperAdmin] Failed login attempt for ${email}`);
-      
+
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials'
+        message: 'Invalid credentials',
       });
     }
 
     // Check if account is active
     if (!superAdmin.isActive) {
-      await createAuditLog({
-        superAdminId: superAdmin.id,
-        action: AuditAction.LOGIN_FAILED,
-        details: { reason: 'Account inactive' }
-      }, req);
+      await createAuditLog(
+        {
+          superAdminId: superAdmin.id,
+          action: AuditAction.LOGIN_FAILED,
+          details: { reason: 'Account inactive' },
+        },
+        req
+      );
 
       return res.status(401).json({
         success: false,
-        message: 'Account is inactive'
+        message: 'Account is inactive',
       });
     }
 
     // Verify password
-    const isValidPassword = await bcrypt.compare(password, superAdmin.passwordHash);
+    const isValidPassword = await bcrypt.compare(
+      password,
+      superAdmin.passwordHash
+    );
 
     if (!isValidPassword) {
-      await createAuditLog({
-        superAdminId: superAdmin.id,
-        action: AuditAction.LOGIN_FAILED,
-        details: { reason: 'Invalid password' }
-      }, req);
+      await createAuditLog(
+        {
+          superAdminId: superAdmin.id,
+          action: AuditAction.LOGIN_FAILED,
+          details: { reason: 'Invalid password' },
+        },
+        req
+      );
 
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials'
+        message: 'Invalid credentials',
       });
     }
 
@@ -81,20 +90,23 @@ export const login = async (
     const tokens = generateTokenPair({
       id: superAdmin.id,
       email: superAdmin.email,
-      role: superAdmin.role
+      role: superAdmin.role,
     });
 
     // Update last login
     await prisma.superAdmin.update({
       where: { id: superAdmin.id },
-      data: { lastLogin: new Date() }
+      data: { lastLogin: new Date() },
     });
 
     // Log successful login
-    await createAuditLog({
-      superAdminId: superAdmin.id,
-      action: AuditAction.LOGIN
-    }, req);
+    await createAuditLog(
+      {
+        superAdminId: superAdmin.id,
+        action: AuditAction.LOGIN,
+      },
+      req
+    );
 
     // Return tokens and user info
     res.status(200).json({
@@ -105,11 +117,11 @@ export const login = async (
           email: superAdmin.email,
           firstName: superAdmin.firstName,
           lastName: superAdmin.lastName,
-          role: superAdmin.role
+          role: superAdmin.role,
         },
         accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken
-      }
+        refreshToken: tokens.refreshToken,
+      },
     });
   } catch (error) {
     console.error('[SuperAdmin] Login error:', error);
@@ -130,15 +142,18 @@ export const logout = async (
     const superAdminId = (req as any).superAdmin?.id;
 
     if (superAdminId) {
-      await createAuditLog({
-        superAdminId,
-        action: AuditAction.LOGOUT
-      }, req);
+      await createAuditLog(
+        {
+          superAdminId,
+          action: AuditAction.LOGOUT,
+        },
+        req
+      );
     }
 
     res.status(200).json({
       success: true,
-      message: 'Logged out successfully'
+      message: 'Logged out successfully',
     });
   } catch (error) {
     console.error('[SuperAdmin] Logout error:', error);
@@ -161,7 +176,7 @@ export const getCurrentUser = async (
     if (!superAdminId) {
       return res.status(401).json({
         success: false,
-        message: 'Not authenticated'
+        message: 'Not authenticated',
       });
     }
 
@@ -175,20 +190,20 @@ export const getCurrentUser = async (
         role: true,
         isActive: true,
         lastLogin: true,
-        createdAt: true
-      }
+        createdAt: true,
+      },
     });
 
     if (!superAdmin) {
       return res.status(404).json({
         success: false,
-        message: 'User not found'
+        message: 'User not found',
       });
     }
 
     res.status(200).json({
       success: true,
-      data: superAdmin
+      data: superAdmin,
     });
   } catch (error) {
     console.error('[SuperAdmin] Get current user error:', error);
@@ -211,7 +226,7 @@ export const refreshToken = async (
     if (!token) {
       return res.status(400).json({
         success: false,
-        message: 'Refresh token is required'
+        message: 'Refresh token is required',
       });
     }
 
@@ -221,19 +236,19 @@ export const refreshToken = async (
     if (decoded.type !== 'refresh') {
       return res.status(401).json({
         success: false,
-        message: 'Invalid token type'
+        message: 'Invalid token type',
       });
     }
 
     // Get super admin
     const superAdmin = await prisma.superAdmin.findUnique({
-      where: { id: decoded.id }
+      where: { id: decoded.id },
     });
 
     if (!superAdmin || !superAdmin.isActive) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid or inactive account'
+        message: 'Invalid or inactive account',
       });
     }
 
@@ -241,24 +256,27 @@ export const refreshToken = async (
     const tokens = generateTokenPair({
       id: superAdmin.id,
       email: superAdmin.email,
-      role: superAdmin.role
+      role: superAdmin.role,
     });
 
     res.status(200).json({
       success: true,
       data: {
         accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken
-      }
+        refreshToken: tokens.refreshToken,
+      },
     });
   } catch (error) {
-    if (error instanceof Error && (error.message === 'Token expired' || error.message === 'Invalid token')) {
+    if (
+      error instanceof Error &&
+      (error.message === 'Token expired' || error.message === 'Invalid token')
+    ) {
       return res.status(401).json({
         success: false,
-        message: error.message
+        message: error.message,
       });
     }
-    
+
     console.error('[SuperAdmin] Refresh token error:', error);
     next(error);
   }

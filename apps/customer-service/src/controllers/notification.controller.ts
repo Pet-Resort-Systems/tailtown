@@ -5,10 +5,10 @@
  * Called by the reservation service to send customer notifications.
  */
 
-import { Response } from "express";
-import { TenantRequest } from "../middleware/tenant.middleware";
-import { emailService } from "../services/email.service";
-import { prisma } from "../config/prisma";
+import { Response } from 'express';
+import { TenantRequest } from '../middleware/tenant.middleware';
+import { emailService } from '../services/email.service';
+import { prisma } from '../config/prisma';
 
 class NotificationController {
   /**
@@ -19,7 +19,7 @@ class NotificationController {
     try {
       const { reservationId } = req.params;
       const tenantId =
-        req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+        req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
       const reservation = await prisma.reservation.findFirst({
         where: {
@@ -36,18 +36,18 @@ class NotificationController {
       if (!reservation) {
         return res.status(404).json({
           success: false,
-          error: "Reservation not found",
+          error: 'Reservation not found',
         });
       }
 
       if (!reservation.customer.email) {
         return res.status(400).json({
           success: false,
-          error: "Customer email not available",
+          error: 'Customer email not available',
         });
       }
 
-      const businessName = process.env.BUSINESS_NAME || "Tailtown Pet Resort";
+      const businessName = process.env.BUSINESS_NAME || 'Tailtown Pet Resort';
 
       await emailService.sendReservationConfirmation({
         reservation: {
@@ -59,13 +59,13 @@ class NotificationController {
 
       res.json({
         success: true,
-        message: "Confirmation email sent",
+        message: 'Confirmation email sent',
       });
     } catch (error: any) {
-      console.error("Error sending confirmation email:", error);
+      console.error('Error sending confirmation email:', error);
       res.status(500).json({
         success: false,
-        error: error.message || "Failed to send confirmation email",
+        error: error.message || 'Failed to send confirmation email',
       });
     }
   }
@@ -78,7 +78,7 @@ class NotificationController {
     try {
       const { reservationId } = req.params;
       const tenantId =
-        req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+        req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
       const reservation = await prisma.reservation.findFirst({
         where: {
@@ -95,18 +95,18 @@ class NotificationController {
       if (!reservation) {
         return res.status(404).json({
           success: false,
-          error: "Reservation not found",
+          error: 'Reservation not found',
         });
       }
 
       if (!reservation.customer.email) {
         return res.status(400).json({
           success: false,
-          error: "Customer email not available",
+          error: 'Customer email not available',
         });
       }
 
-      const businessName = process.env.BUSINESS_NAME || "Tailtown Pet Resort";
+      const businessName = process.env.BUSINESS_NAME || 'Tailtown Pet Resort';
 
       await emailService.sendReservationStatusChange(
         {
@@ -116,19 +116,19 @@ class NotificationController {
           },
           businessName,
         },
-        reservation.status || "PENDING",
-        "CHECKED_IN"
+        reservation.status || 'PENDING',
+        'CHECKED_IN'
       );
 
       res.json({
         success: true,
-        message: "Check-in email sent",
+        message: 'Check-in email sent',
       });
     } catch (error: any) {
-      console.error("Error sending check-in email:", error);
+      console.error('Error sending check-in email:', error);
       res.status(500).json({
         success: false,
-        error: error.message || "Failed to send check-in email",
+        error: error.message || 'Failed to send check-in email',
       });
     }
   }
@@ -141,7 +141,7 @@ class NotificationController {
     try {
       const { reservationId } = req.params;
       const tenantId =
-        req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+        req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
       const reservation = await prisma.reservation.findFirst({
         where: {
@@ -158,18 +158,18 @@ class NotificationController {
       if (!reservation) {
         return res.status(404).json({
           success: false,
-          error: "Reservation not found",
+          error: 'Reservation not found',
         });
       }
 
       if (!reservation.customer.email) {
         return res.status(400).json({
           success: false,
-          error: "Customer email not available",
+          error: 'Customer email not available',
         });
       }
 
-      const businessName = process.env.BUSINESS_NAME || "Tailtown Pet Resort";
+      const businessName = process.env.BUSINESS_NAME || 'Tailtown Pet Resort';
 
       await emailService.sendReservationStatusChange(
         {
@@ -179,19 +179,19 @@ class NotificationController {
           },
           businessName,
         },
-        reservation.status || "CHECKED_IN",
-        "CHECKED_OUT"
+        reservation.status || 'CHECKED_IN',
+        'CHECKED_OUT'
       );
 
       res.json({
         success: true,
-        message: "Check-out email sent",
+        message: 'Check-out email sent',
       });
     } catch (error: any) {
-      console.error("Error sending check-out email:", error);
+      console.error('Error sending check-out email:', error);
       res.status(500).json({
         success: false,
-        error: error.message || "Failed to send check-out email",
+        error: error.message || 'Failed to send check-out email',
       });
     }
   }
@@ -205,12 +205,12 @@ class NotificationController {
       const { reservationId } = req.params;
       const { oldStatus, newStatus } = req.body;
       const tenantId =
-        req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+        req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
       if (!oldStatus || !newStatus) {
         return res.status(400).json({
           success: false,
-          error: "oldStatus and newStatus are required",
+          error: 'oldStatus and newStatus are required',
         });
       }
 
@@ -229,18 +229,18 @@ class NotificationController {
       if (!reservation) {
         return res.status(404).json({
           success: false,
-          error: "Reservation not found",
+          error: 'Reservation not found',
         });
       }
 
       if (!reservation.customer.email) {
         return res.status(400).json({
           success: false,
-          error: "Customer email not available",
+          error: 'Customer email not available',
         });
       }
 
-      const businessName = process.env.BUSINESS_NAME || "Tailtown Pet Resort";
+      const businessName = process.env.BUSINESS_NAME || 'Tailtown Pet Resort';
 
       await emailService.sendReservationStatusChange(
         {
@@ -256,13 +256,13 @@ class NotificationController {
 
       res.json({
         success: true,
-        message: "Status change email sent",
+        message: 'Status change email sent',
       });
     } catch (error: any) {
-      console.error("Error sending status change email:", error);
+      console.error('Error sending status change email:', error);
       res.status(500).json({
         success: false,
-        error: error.message || "Failed to send status change email",
+        error: error.message || 'Failed to send status change email',
       });
     }
   }
@@ -275,7 +275,7 @@ class NotificationController {
     try {
       const { reservationId } = req.params;
       const tenantId =
-        req.tenantId || (process.env.NODE_ENV !== "production" && "dev");
+        req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
       const reservation = await prisma.reservation.findFirst({
         where: {
@@ -292,18 +292,18 @@ class NotificationController {
       if (!reservation) {
         return res.status(404).json({
           success: false,
-          error: "Reservation not found",
+          error: 'Reservation not found',
         });
       }
 
       if (!reservation.customer.email) {
         return res.status(400).json({
           success: false,
-          error: "Customer email not available",
+          error: 'Customer email not available',
         });
       }
 
-      const businessName = process.env.BUSINESS_NAME || "Tailtown Pet Resort";
+      const businessName = process.env.BUSINESS_NAME || 'Tailtown Pet Resort';
       const businessPhone = process.env.BUSINESS_PHONE;
 
       await emailService.sendReservationReminder({
@@ -317,13 +317,13 @@ class NotificationController {
 
       res.json({
         success: true,
-        message: "Reminder email sent",
+        message: 'Reminder email sent',
       });
     } catch (error: any) {
-      console.error("Error sending reminder email:", error);
+      console.error('Error sending reminder email:', error);
       res.status(500).json({
         success: false,
-        error: error.message || "Failed to send reminder email",
+        error: error.message || 'Failed to send reminder email',
       });
     }
   }

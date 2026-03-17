@@ -25,19 +25,16 @@ import {
   TableRow,
   CircularProgress,
   Alert,
-  Chip
+  Chip,
 } from '@mui/material';
-import {
-  Receipt as TaxIcon,
-  GetApp as ExportIcon
-} from '@mui/icons-material';
+import { Receipt as TaxIcon, GetApp as ExportIcon } from '@mui/icons-material';
 import {
   getTaxMonthlyReport,
   getTaxQuarterlyReport,
   getTaxAnnualReport,
   exportReportCSV,
   formatCurrency,
-  formatPercentage
+  formatPercentage,
 } from '../../services/reportService';
 
 type TaxPeriod = 'monthly' | 'quarterly' | 'annual';
@@ -46,23 +43,27 @@ const TaxReports: React.FC = () => {
   const [period, setPeriod] = useState<TaxPeriod>('monthly');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
-  const [selectedQuarter, setSelectedQuarter] = useState(Math.floor(new Date().getMonth() / 3) + 1);
+  const [selectedQuarter, setSelectedQuarter] = useState(
+    Math.floor(new Date().getMonth() / 3) + 1
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reportData, setReportData] = useState<any>(null);
 
-  useEffect(() => {
+  useEffect(
+    () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      loadReport();
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    loadReport();
-  },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  [period, selectedYear, selectedMonth, selectedQuarter]);
+    [period, selectedYear, selectedMonth, selectedQuarter]
+  );
 
   const loadReport = async () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       let response;
       switch (period) {
         case 'monthly':
@@ -75,7 +76,7 @@ const TaxReports: React.FC = () => {
           response = await getTaxAnnualReport(selectedYear);
           break;
       }
-      
+
       // Extract the actual data from the response
       const data = response?.data || response;
       setReportData(data);
@@ -96,7 +97,14 @@ const TaxReports: React.FC = () => {
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box
+        sx={{
+          mb: 3,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
         <Typography variant="h5">
           <TaxIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
           Tax Reports
@@ -152,7 +160,9 @@ const TaxReports: React.FC = () => {
                 >
                   {Array.from({ length: 12 }, (_, i) => (
                     <MenuItem key={i + 1} value={i + 1}>
-                      {new Date(2000, i).toLocaleDateString('en-US', { month: 'long' })}
+                      {new Date(2000, i).toLocaleDateString('en-US', {
+                        month: 'long',
+                      })}
                     </MenuItem>
                   ))}
                 </Select>
@@ -218,8 +228,8 @@ const TaxReports: React.FC = () => {
                   </Typography>
                   <Typography variant="h5">
                     {formatCurrency(
-                      (reportData.summary?.taxableRevenue || 0) + 
-                      (reportData.summary?.nonTaxableRevenue || 0)
+                      (reportData.summary?.taxableRevenue || 0) +
+                        (reportData.summary?.nonTaxableRevenue || 0)
                     )}
                   </Typography>
                 </CardContent>
@@ -256,7 +266,11 @@ const TaxReports: React.FC = () => {
                     Tax Rate
                   </Typography>
                   <Typography variant="h5">
-                    {formatPercentage(reportData.summary?.taxRate || reportData.summary?.averageTaxRate || 0)}
+                    {formatPercentage(
+                      reportData.summary?.taxRate ||
+                        reportData.summary?.averageTaxRate ||
+                        0
+                    )}
                   </Typography>
                 </CardContent>
               </Card>
@@ -264,105 +278,138 @@ const TaxReports: React.FC = () => {
           </Grid>
 
           {/* Tax Breakdown */}
-          {reportData.data?.breakdown && reportData.data.breakdown.length > 0 && (
-            <Paper sx={{ p: 2, mb: 3 }}>
-              <Typography variant="h6" gutterBottom>
-                Tax Breakdown by Category
-              </Typography>
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Category</TableCell>
-                      <TableCell align="right">Taxable Amount</TableCell>
-                      <TableCell align="right">Non-Taxable Amount</TableCell>
-                      <TableCell align="right">Tax Amount</TableCell>
-                      <TableCell align="right">Tax Rate</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {reportData.data.breakdown.map((item: any, index: number) => (
-                      <TableRow key={index}>
-                        <TableCell>
-                          <Chip label={item.category} size="small" />
-                        </TableCell>
-                        <TableCell align="right">{formatCurrency(item.taxableAmount)}</TableCell>
-                        <TableCell align="right">{formatCurrency(item.nonTaxableAmount)}</TableCell>
-                        <TableCell align="right">{formatCurrency(item.taxAmount)}</TableCell>
-                        <TableCell align="right">{formatPercentage(item.taxRate)}</TableCell>
+          {reportData.data?.breakdown &&
+            reportData.data.breakdown.length > 0 && (
+              <Paper sx={{ p: 2, mb: 3 }}>
+                <Typography variant="h6" gutterBottom>
+                  Tax Breakdown by Category
+                </Typography>
+                <TableContainer>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Category</TableCell>
+                        <TableCell align="right">Taxable Amount</TableCell>
+                        <TableCell align="right">Non-Taxable Amount</TableCell>
+                        <TableCell align="right">Tax Amount</TableCell>
+                        <TableCell align="right">Tax Rate</TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Paper>
-          )}
+                    </TableHead>
+                    <TableBody>
+                      {reportData.data.breakdown.map(
+                        (item: any, index: number) => (
+                          <TableRow key={index}>
+                            <TableCell>
+                              <Chip label={item.category} size="small" />
+                            </TableCell>
+                            <TableCell align="right">
+                              {formatCurrency(item.taxableAmount)}
+                            </TableCell>
+                            <TableCell align="right">
+                              {formatCurrency(item.nonTaxableAmount)}
+                            </TableCell>
+                            <TableCell align="right">
+                              {formatCurrency(item.taxAmount)}
+                            </TableCell>
+                            <TableCell align="right">
+                              {formatPercentage(item.taxRate)}
+                            </TableCell>
+                          </TableRow>
+                        )
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Paper>
+            )}
 
           {/* Monthly Breakdown (for quarterly/annual) */}
-          {reportData.data?.monthlyBreakdown && reportData.data.monthlyBreakdown.length > 0 && (
-            <Paper sx={{ p: 2, mb: 3 }}>
-              <Typography variant="h6" gutterBottom>
-                Monthly Breakdown
-              </Typography>
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Month</TableCell>
-                      <TableCell align="right">Total Revenue</TableCell>
-                      <TableCell align="right">Taxable Revenue</TableCell>
-                      <TableCell align="right">Tax Collected</TableCell>
-                      <TableCell align="right">Tax Rate</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {reportData.data.monthlyBreakdown.map((month: any, index: number) => (
-                      <TableRow key={index}>
-                        <TableCell>{month.monthName}</TableCell>
-                        <TableCell align="right">{formatCurrency(month.totalRevenue)}</TableCell>
-                        <TableCell align="right">{formatCurrency(month.taxableRevenue)}</TableCell>
-                        <TableCell align="right">{formatCurrency(month.taxCollected)}</TableCell>
-                        <TableCell align="right">{formatPercentage(month.taxRate)}</TableCell>
+          {reportData.data?.monthlyBreakdown &&
+            reportData.data.monthlyBreakdown.length > 0 && (
+              <Paper sx={{ p: 2, mb: 3 }}>
+                <Typography variant="h6" gutterBottom>
+                  Monthly Breakdown
+                </Typography>
+                <TableContainer>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Month</TableCell>
+                        <TableCell align="right">Total Revenue</TableCell>
+                        <TableCell align="right">Taxable Revenue</TableCell>
+                        <TableCell align="right">Tax Collected</TableCell>
+                        <TableCell align="right">Tax Rate</TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Paper>
-          )}
+                    </TableHead>
+                    <TableBody>
+                      {reportData.data.monthlyBreakdown.map(
+                        (month: any, index: number) => (
+                          <TableRow key={index}>
+                            <TableCell>{month.monthName}</TableCell>
+                            <TableCell align="right">
+                              {formatCurrency(month.totalRevenue)}
+                            </TableCell>
+                            <TableCell align="right">
+                              {formatCurrency(month.taxableRevenue)}
+                            </TableCell>
+                            <TableCell align="right">
+                              {formatCurrency(month.taxCollected)}
+                            </TableCell>
+                            <TableCell align="right">
+                              {formatPercentage(month.taxRate)}
+                            </TableCell>
+                          </TableRow>
+                        )
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Paper>
+            )}
 
           {/* Quarterly Breakdown (for annual) */}
-          {reportData.data?.quarterlyBreakdown && reportData.data.quarterlyBreakdown.length > 0 && (
-            <Paper sx={{ p: 2 }}>
-              <Typography variant="h6" gutterBottom>
-                Quarterly Breakdown
-              </Typography>
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Quarter</TableCell>
-                      <TableCell align="right">Total Revenue</TableCell>
-                      <TableCell align="right">Taxable Revenue</TableCell>
-                      <TableCell align="right">Tax Collected</TableCell>
-                      <TableCell align="right">Avg Tax Rate</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {reportData.data.quarterlyBreakdown.map((quarter: any, index: number) => (
-                      <TableRow key={index}>
-                        <TableCell>{quarter.quarterName}</TableCell>
-                        <TableCell align="right">{formatCurrency(quarter.totalRevenue)}</TableCell>
-                        <TableCell align="right">{formatCurrency(quarter.taxableRevenue)}</TableCell>
-                        <TableCell align="right">{formatCurrency(quarter.taxCollected)}</TableCell>
-                        <TableCell align="right">{formatPercentage(quarter.averageTaxRate)}</TableCell>
+          {reportData.data?.quarterlyBreakdown &&
+            reportData.data.quarterlyBreakdown.length > 0 && (
+              <Paper sx={{ p: 2 }}>
+                <Typography variant="h6" gutterBottom>
+                  Quarterly Breakdown
+                </Typography>
+                <TableContainer>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Quarter</TableCell>
+                        <TableCell align="right">Total Revenue</TableCell>
+                        <TableCell align="right">Taxable Revenue</TableCell>
+                        <TableCell align="right">Tax Collected</TableCell>
+                        <TableCell align="right">Avg Tax Rate</TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Paper>
-          )}
+                    </TableHead>
+                    <TableBody>
+                      {reportData.data.quarterlyBreakdown.map(
+                        (quarter: any, index: number) => (
+                          <TableRow key={index}>
+                            <TableCell>{quarter.quarterName}</TableCell>
+                            <TableCell align="right">
+                              {formatCurrency(quarter.totalRevenue)}
+                            </TableCell>
+                            <TableCell align="right">
+                              {formatCurrency(quarter.taxableRevenue)}
+                            </TableCell>
+                            <TableCell align="right">
+                              {formatCurrency(quarter.taxCollected)}
+                            </TableCell>
+                            <TableCell align="right">
+                              {formatPercentage(quarter.averageTaxRate)}
+                            </TableCell>
+                          </TableRow>
+                        )
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Paper>
+            )}
         </>
       )}
     </Box>

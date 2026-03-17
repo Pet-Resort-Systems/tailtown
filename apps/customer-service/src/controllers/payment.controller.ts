@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-import { AppError } from "../middleware/error.middleware";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { AppError } from '../middleware/error.middleware';
 
 const prisma = new PrismaClient();
 
@@ -14,7 +14,7 @@ export const getCustomerPayments = async (
     const { customerId } = req.params;
 
     if (!customerId) {
-      return next(new AppError("Customer ID is required", 400));
+      return next(new AppError('Customer ID is required', 400));
     }
 
     const payments = await prisma.payment.findMany({
@@ -30,18 +30,18 @@ export const getCustomerPayments = async (
         },
       },
       orderBy: {
-        paymentDate: "desc",
+        paymentDate: 'desc',
       },
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: payments.length,
       data: payments,
     });
   } catch (error) {
-    console.error("Error fetching customer payments:", error);
-    return next(new AppError("Error fetching customer payments", 500));
+    console.error('Error fetching customer payments:', error);
+    return next(new AppError('Error fetching customer payments', 500));
   }
 };
 
@@ -55,7 +55,7 @@ export const getPaymentById = async (
     const { id } = req.params;
 
     if (!id) {
-      return next(new AppError("Payment ID is required", 400));
+      return next(new AppError('Payment ID is required', 400));
     }
 
     const payment = await prisma.payment.findUnique({
@@ -74,16 +74,16 @@ export const getPaymentById = async (
     });
 
     if (!payment) {
-      return next(new AppError("Payment not found", 404));
+      return next(new AppError('Payment not found', 404));
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: payment,
     });
   } catch (error) {
-    console.error("Error fetching payment:", error);
-    return next(new AppError("Error fetching payment", 500));
+    console.error('Error fetching payment:', error);
+    return next(new AppError('Error fetching payment', 500));
   }
 };
 
@@ -100,7 +100,7 @@ export const createPayment = async (
     if (!invoiceId || !customerId || !amount || !method) {
       return next(
         new AppError(
-          "Invoice ID, Customer ID, Amount, and Payment Method are required",
+          'Invoice ID, Customer ID, Amount, and Payment Method are required',
           400
         )
       );
@@ -113,12 +113,12 @@ export const createPayment = async (
     });
 
     if (!invoice) {
-      return next(new AppError("Invoice not found", 404));
+      return next(new AppError('Invoice not found', 404));
     }
 
     // Calculate how much has been paid already
     const paidAmount = invoice.payments.reduce((sum, payment) => {
-      if (payment.status === "PAID") {
+      if (payment.status === 'PAID') {
         return sum + payment.amount;
       }
       return sum;
@@ -146,7 +146,7 @@ export const createPayment = async (
         customerId,
         amount: paymentAmount, // Already rounded above
         method,
-        status: "PAID", // Assuming payment is successful immediately
+        status: 'PAID', // Assuming payment is successful immediately
         transactionId,
         notes,
       },
@@ -164,22 +164,22 @@ export const createPayment = async (
       where: { id: invoiceId },
       data: {
         status: isFullyPaid
-          ? "PAID"
+          ? 'PAID'
           : newTotalPaid > 0
-          ? "SENT"
-          : invoice.status,
+            ? 'SENT'
+            : invoice.status,
         depositPaid: Math.round(newTotalPaid * 100) / 100,
         balanceDue: newBalanceDue,
       },
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: payment,
     });
   } catch (error) {
-    console.error("Error creating payment:", error);
-    return next(new AppError("Error creating payment", 500));
+    console.error('Error creating payment:', error);
+    return next(new AppError('Error creating payment', 500));
   }
 };
 
@@ -193,12 +193,12 @@ export const recordStoreCredit = async (
     const { customerId, amount, reason } = req.body;
 
     if (!customerId || !amount) {
-      return next(new AppError("Customer ID and Amount are required", 400));
+      return next(new AppError('Customer ID and Amount are required', 400));
     }
 
     // Create a fake invoice for store credit (this tracks the credit balance)
     const date = new Date();
-    const dateStr = date.toISOString().slice(0, 10).replace(/-/g, "");
+    const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
     const randomSuffix = Math.floor(1000 + Math.random() * 9000);
     const invoiceNumber = `CREDIT-${dateStr}-${randomSuffix}`;
 
@@ -209,12 +209,12 @@ export const recordStoreCredit = async (
         dueDate: date,
         subtotal: 0,
         total: 0,
-        status: "PAID",
-        notes: `Store credit: ${reason || "No reason provided"}`,
+        status: 'PAID',
+        notes: `Store credit: ${reason || 'No reason provided'}`,
         lineItems: {
           create: [
             {
-              description: "Store Credit",
+              description: 'Store Credit',
               quantity: 1,
               unitPrice: 0,
               amount: 0,
@@ -231,19 +231,19 @@ export const recordStoreCredit = async (
         invoiceId: invoice.id,
         customerId,
         amount: Math.round(parseFloat(amount as any) * 100) / 100, // Round to the nearest penny
-        method: "STORE_CREDIT",
-        status: "PAID",
-        notes: reason || "Store credit",
+        method: 'STORE_CREDIT',
+        status: 'PAID',
+        notes: reason || 'Store credit',
       },
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: payment,
     });
   } catch (error) {
-    console.error("Error recording store credit:", error);
-    return next(new AppError("Error recording store credit", 500));
+    console.error('Error recording store credit:', error);
+    return next(new AppError('Error recording store credit', 500));
   }
 };
 
@@ -258,7 +258,7 @@ export const applyStoreCredit = async (
 
     if (!invoiceId || !customerId || !amount) {
       return next(
-        new AppError("Invoice ID, Customer ID, and Amount are required", 400)
+        new AppError('Invoice ID, Customer ID, and Amount are required', 400)
       );
     }
 
@@ -266,8 +266,8 @@ export const applyStoreCredit = async (
     const storeCredit = await prisma.payment.aggregate({
       where: {
         customerId,
-        method: "STORE_CREDIT",
-        status: "PAID",
+        method: 'STORE_CREDIT',
+        status: 'PAID',
       },
       _sum: {
         amount: true,
@@ -277,14 +277,14 @@ export const applyStoreCredit = async (
     const storeCreditsUsed = await prisma.payment.aggregate({
       where: {
         customerId,
-        method: "STORE_CREDIT",
-        status: "PAID",
+        method: 'STORE_CREDIT',
+        status: 'PAID',
         OR: [
           {
             amount: { lt: 0 },
           },
           {
-            notes: { contains: "Applied to invoice" },
+            notes: { contains: 'Applied to invoice' },
           },
         ],
       },
@@ -313,8 +313,8 @@ export const applyStoreCredit = async (
         invoiceId,
         customerId,
         amount: -Math.abs(creditAmount), // Negative amount represents credit used
-        method: "STORE_CREDIT",
-        status: "PAID",
+        method: 'STORE_CREDIT',
+        status: 'PAID',
         notes: `Applied to invoice ${invoiceId}`,
       },
     });
@@ -325,9 +325,9 @@ export const applyStoreCredit = async (
         invoiceId,
         customerId,
         amount: creditAmount,
-        method: "STORE_CREDIT",
-        status: "PAID",
-        notes: "Paid with store credit",
+        method: 'STORE_CREDIT',
+        status: 'PAID',
+        notes: 'Paid with store credit',
       },
     });
 
@@ -339,7 +339,7 @@ export const applyStoreCredit = async (
 
     if (invoice) {
       const totalPaid = invoice.payments.reduce((sum, payment) => {
-        if (payment.status === "PAID") {
+        if (payment.status === 'PAID') {
           return sum + payment.amount;
         }
         return sum;
@@ -356,10 +356,10 @@ export const applyStoreCredit = async (
         where: { id: invoiceId },
         data: {
           status: isFullyPaid
-            ? "PAID"
+            ? 'PAID'
             : totalPaid > 0
-            ? "SENT"
-            : invoice.status,
+              ? 'SENT'
+              : invoice.status,
           depositPaid: Math.round(totalPaid * 100) / 100,
           balanceDue: newBalanceDue,
         },
@@ -367,7 +367,7 @@ export const applyStoreCredit = async (
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         creditPayment,
         invoicePayment,
@@ -375,7 +375,7 @@ export const applyStoreCredit = async (
       },
     });
   } catch (error) {
-    console.error("Error applying store credit:", error);
-    return next(new AppError("Error applying store credit", 500));
+    console.error('Error applying store credit:', error);
+    return next(new AppError('Error applying store credit', 500));
   }
 };

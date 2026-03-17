@@ -9,19 +9,19 @@
  * - deleteStaff
  */
 
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-import { AppError } from "../../middleware/error.middleware";
-import bcrypt from "bcrypt";
-import { validatePasswordOrThrow } from "../../utils/passwordValidator";
-import { logger } from "../../utils/logger";
-import { TenantRequest } from "../../middleware/tenant.middleware";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { AppError } from '../../middleware/error.middleware';
+import bcrypt from 'bcrypt';
+import { validatePasswordOrThrow } from '../../utils/passwordValidator';
+import { logger } from '../../utils/logger';
+import { TenantRequest } from '../../middleware/tenant.middleware';
 import {
   tenantAuditLog,
   AuditAction,
   AuditCategory,
   AuditSeverity,
-} from "../../services/tenant-audit-log.service";
+} from '../../services/tenant-audit-log.service';
 
 const prisma = new PrismaClient();
 
@@ -60,11 +60,11 @@ export const getAllStaff = async (
     const skip = (page - 1) * limit;
     const search = req.query.search as string;
     const isActive =
-      req.query.isActive === "true"
+      req.query.isActive === 'true'
         ? true
-        : req.query.isActive === "false"
-        ? false
-        : undefined;
+        : req.query.isActive === 'false'
+          ? false
+          : undefined;
     const role = req.query.role as string;
     const department = req.query.department as string;
 
@@ -83,10 +83,10 @@ export const getAllStaff = async (
     }
     if (search) {
       where.OR = [
-        { firstName: { contains: search, mode: "insensitive" } },
-        { lastName: { contains: search, mode: "insensitive" } },
-        { email: { contains: search, mode: "insensitive" } },
-        { position: { contains: search, mode: "insensitive" } },
+        { firstName: { contains: search, mode: 'insensitive' } },
+        { lastName: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+        { position: { contains: search, mode: 'insensitive' } },
       ];
     }
 
@@ -95,13 +95,13 @@ export const getAllStaff = async (
       skip,
       take: limit,
       select: staffSelectFields,
-      orderBy: { lastName: "asc" },
+      orderBy: { lastName: 'asc' },
     });
 
     const total = await prisma.staff.count({ where });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: staff.length,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
@@ -135,11 +135,11 @@ export const getStaffById = async (
     });
 
     if (!staff) {
-      return next(new AppError("Staff member not found", 404));
+      return next(new AppError('Staff member not found', 404));
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: staff,
     });
   } catch (error) {
@@ -166,12 +166,12 @@ export const createStaff = async (
     });
 
     if (existingStaff) {
-      return next(new AppError("Email already in use", 400));
+      return next(new AppError('Email already in use', 400));
     }
 
     // Validate and hash the password
     if (!staffData.password) {
-      return next(new AppError("Password is required", 400));
+      return next(new AppError('Password is required', 400));
     }
 
     try {
@@ -202,7 +202,7 @@ export const createStaff = async (
     );
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: newStaff,
     });
   } catch (error) {
@@ -228,7 +228,7 @@ export const updateStaff = async (
     });
 
     if (!existingStaff) {
-      return next(new AppError("Staff member not found", 404));
+      return next(new AppError('Staff member not found', 404));
     }
 
     // If updating email, check if it's already in use
@@ -245,7 +245,7 @@ export const updateStaff = async (
 
       if (emailInUse) {
         return next(
-          new AppError("Email already in use by another staff member", 400)
+          new AppError('Email already in use by another staff member', 400)
         );
       }
     }
@@ -278,7 +278,7 @@ export const updateStaff = async (
     );
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: updatedStaff,
     });
   } catch (error) {
@@ -303,7 +303,7 @@ export const deleteStaff = async (
     });
 
     if (!existingStaff) {
-      return next(new AppError("Staff member not found", 404));
+      return next(new AppError('Staff member not found', 404));
     }
 
     // Delete staff member
@@ -317,14 +317,14 @@ export const deleteStaff = async (
       req,
       AuditAction.DELETE,
       AuditCategory.STAFF,
-      "staff",
+      'staff',
       id,
       `${existingStaff.firstName} ${existingStaff.lastName}`,
       { previousValue: sanitizedStaff, severity: AuditSeverity.CRITICAL }
     );
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: null,
     });
   } catch (error) {

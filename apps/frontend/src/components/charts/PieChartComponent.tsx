@@ -5,11 +5,18 @@ import {
   Cell,
   Tooltip,
   Legend,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from 'recharts';
 import { PieChartProps } from './types';
 
-const DEFAULT_COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
+const DEFAULT_COLORS = [
+  '#0088FE',
+  '#00C49F',
+  '#FFBB28',
+  '#FF8042',
+  '#8884D8',
+  '#82CA9D',
+];
 
 /**
  * Actual PieChart component using recharts
@@ -20,7 +27,7 @@ const PieChartComponent: React.FC<PieChartProps> = ({
   dataKey,
   nameKey,
   height = 300,
-  colors = DEFAULT_COLORS
+  colors = DEFAULT_COLORS,
 }) => {
   return (
     <ResponsiveContainer width="100%" height={height}>

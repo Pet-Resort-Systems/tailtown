@@ -7,14 +7,14 @@
  * Usage: node scripts/sync-pet-details.js <tenantId>
  */
 
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
 // Gingr API configuration
-const GINGR_SUBDOMAIN = process.env.GINGR_SUBDOMAIN || "tailtownpetresort";
+const GINGR_SUBDOMAIN = process.env.GINGR_SUBDOMAIN || 'tailtownpetresort';
 const GINGR_API_KEY =
-  process.env.GINGR_API_KEY || "c84c09ecfacdf23a495505d2ae1df533";
+  process.env.GINGR_API_KEY || 'c84c09ecfacdf23a495505d2ae1df533';
 const BASE_URL = `https://${GINGR_SUBDOMAIN}.gingrapp.com/api/v1`;
 
 // Rate limiting
@@ -32,7 +32,7 @@ async function rateLimit() {
 async function gingrGet(endpoint, params = {}) {
   await rateLimit();
   const url = new URL(`${BASE_URL}${endpoint}`);
-  url.searchParams.append("key", GINGR_API_KEY);
+  url.searchParams.append('key', GINGR_API_KEY);
   Object.entries(params).forEach(([k, v]) => {
     if (v !== undefined && v !== null) url.searchParams.append(k, String(v));
   });
@@ -48,13 +48,13 @@ async function gingrGet(endpoint, params = {}) {
 async function gingrPost(endpoint, data = {}) {
   await rateLimit();
   const formData = new URLSearchParams();
-  formData.append("key", GINGR_API_KEY);
+  formData.append('key', GINGR_API_KEY);
   Object.entries(data).forEach(([k, v]) => {
     if (v !== undefined && v !== null) formData.append(k, String(v));
   });
 
   const response = await fetch(`${BASE_URL}${endpoint}`, {
-    method: "POST",
+    method: 'POST',
     body: formData,
   });
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -68,19 +68,19 @@ function stripHtml(html) {
   if (!html) return null;
   return (
     html
-      .replace(/<[^>]*>/g, "")
-      .replace(/&nbsp;/g, " ")
-      .replace(/&amp;/g, "&")
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/\s+/g, " ")
+      .replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/\s+/g, ' ')
       .trim() || null
   );
 }
 
 // Build breed mapping from reservations
 async function buildBreedMapping() {
-  console.log("📚 Building breed mapping from reservations...");
+  console.log('📚 Building breed mapping from reservations...');
   const breedMap = new Map(); // animal_id -> breed_name
 
   // Fetch reservations from last 2 years to get breed names
@@ -95,9 +95,9 @@ async function buildBreedMapping() {
     const chunkEnd = currentEnd > endDate ? endDate : currentEnd;
 
     try {
-      const response = await gingrPost("/reservations", {
-        start_date: currentStart.toISOString().split("T")[0],
-        end_date: chunkEnd.toISOString().split("T")[0],
+      const response = await gingrPost('/reservations', {
+        start_date: currentStart.toISOString().split('T')[0],
+        end_date: chunkEnd.toISOString().split('T')[0],
       });
 
       const reservations = response.data || {};
@@ -124,22 +124,22 @@ async function buildBreedMapping() {
 
 // Main sync function
 async function syncPetDetails(tenantId) {
-  console.log("🐕 Pet Details Sync from Gingr");
-  console.log("================================");
+  console.log('🐕 Pet Details Sync from Gingr');
+  console.log('================================');
   console.log(`Tenant: ${tenantId}`);
-  console.log("");
+  console.log('');
 
   // Step 1: Build breed mapping
   const breedMap = await buildBreedMapping();
 
   // Step 2: Fetch all animals from Gingr
-  console.log("\n📥 Fetching animals from Gingr...");
-  const response = await gingrGet("/animals");
+  console.log('\n📥 Fetching animals from Gingr...');
+  const response = await gingrGet('/animals');
   const animals = response.data || [];
   console.log(`   Found ${animals.length} animals`);
 
   // Step 3: Get existing pets from database
-  console.log("\n🔍 Loading existing pets from database...");
+  console.log('\n🔍 Loading existing pets from database...');
   const existingPets = await prisma.pet.findMany({
     where: { tenantId, externalId: { not: null } },
     select: { id: true, externalId: true, notes: true },
@@ -148,7 +148,7 @@ async function syncPetDetails(tenantId) {
   console.log(`   Found ${existingPets.length} pets with externalId`);
 
   // Step 4: Update pets
-  console.log("\n🔄 Updating pets...");
+  console.log('\n🔄 Updating pets...');
   let updated = 0;
   let skipped = 0;
   let notFound = 0;
@@ -176,8 +176,8 @@ async function syncPetDetails(tenantId) {
       let gender = null;
       if (animal.gender) {
         const g = animal.gender.toLowerCase();
-        if (g === "male" || g === "m") gender = "MALE";
-        else if (g === "female" || g === "f") gender = "FEMALE";
+        if (g === 'male' || g === 'm') gender = 'MALE';
+        else if (g === 'female' || g === 'f') gender = 'FEMALE';
       }
 
       // Parse birthdate
@@ -202,7 +202,7 @@ async function syncPetDetails(tenantId) {
         additionalNotes.push(`Feeding Schedule: ${animal.feeding_schedule}`);
       }
       if (animal.feeding_method) {
-        const methods = { 1: "Bowl", 2: "Slow Feeder", 3: "Hand Fed" };
+        const methods = { 1: 'Bowl', 2: 'Slow Feeder', 3: 'Hand Fed' };
         additionalNotes.push(
           `Feeding Method: ${
             methods[animal.feeding_method] || animal.feeding_method
@@ -210,7 +210,7 @@ async function syncPetDetails(tenantId) {
         );
       }
       if (animal.food_type) {
-        const types = { 1: "Dry", 2: "Wet", 3: "Raw", 4: "Mixed", 5: "Other" };
+        const types = { 1: 'Dry', 2: 'Wet', 3: 'Raw', 4: 'Mixed', 5: 'Other' };
         additionalNotes.push(
           `Food Type: ${types[animal.food_type] || animal.food_type}`
         );
@@ -234,11 +234,11 @@ async function syncPetDetails(tenantId) {
       }
 
       // VIP/Banned status
-      if (animal.vip === "1") {
-        additionalNotes.push("⭐ VIP Pet");
+      if (animal.vip === '1') {
+        additionalNotes.push('⭐ VIP Pet');
       }
-      if (animal.banned === "1") {
-        additionalNotes.push("🚫 BANNED");
+      if (animal.banned === '1') {
+        additionalNotes.push('🚫 BANNED');
       }
 
       // IMPORTANT: Do NOT sync the following fields - they are managed by Tailtown
@@ -255,13 +255,13 @@ async function syncPetDetails(tenantId) {
         weight: weight,
         color: animal.color || null,
         microchipNumber: animal.microchip || null,
-        isNeutered: animal.fixed === "1",
+        isNeutered: animal.fixed === '1',
       };
 
       // Only update fields that have values (don't overwrite with null)
       const filteredUpdate = {};
       for (const [key, value] of Object.entries(updateData)) {
-        if (value !== null && value !== undefined && value !== "") {
+        if (value !== null && value !== undefined && value !== '') {
           filteredUpdate[key] = value;
         }
       }
@@ -280,7 +280,7 @@ async function syncPetDetails(tenantId) {
     }
   }
 
-  console.log("\n✅ Sync complete!");
+  console.log('\n✅ Sync complete!');
   console.log(`   Updated: ${updated}`);
   console.log(`   Skipped (no changes): ${skipped}`);
   console.log(`   Not found in DB: ${notFound}`);
@@ -289,14 +289,14 @@ async function syncPetDetails(tenantId) {
 // Run
 const tenantId = process.argv[2];
 if (!tenantId) {
-  console.error("Usage: node scripts/sync-pet-details.js <tenantId>");
+  console.error('Usage: node scripts/sync-pet-details.js <tenantId>');
   process.exit(1);
 }
 
 syncPetDetails(tenantId)
   .then(() => process.exit(0))
   .catch((error) => {
-    console.error("Fatal error:", error);
+    console.error('Fatal error:', error);
     process.exit(1);
   })
   .finally(() => prisma.$disconnect());

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -24,8 +24,8 @@ import {
   Alert,
   CircularProgress,
   Tooltip,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -33,16 +33,16 @@ import {
   PlayArrow as StartIcon,
   CheckCircle as CompleteIcon,
   Cancel as CancelIcon,
-} from "@mui/icons-material";
-import { DatePicker } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { format } from "date-fns";
-import schedulingService from "../../services/schedulingService";
+} from '@mui/icons-material';
+import { DatePicker } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { format } from 'date-fns';
+import schedulingService from '../../services/schedulingService';
 import {
   GroomerAppointment,
   CreateGroomerAppointmentRequest,
-} from "../../types/scheduling";
+} from '../../types/scheduling';
 
 const GroomerAppointments: React.FC = () => {
   const [appointments, setAppointments] = useState<GroomerAppointment[]>([]);
@@ -54,22 +54,22 @@ const GroomerAppointments: React.FC = () => {
 
   // Form state
   const [formData, setFormData] = useState<CreateGroomerAppointmentRequest>({
-    groomerId: "",
-    serviceId: "",
-    petId: "",
-    customerId: "",
+    groomerId: '',
+    serviceId: '',
+    petId: '',
+    customerId: '',
     scheduledDate: new Date(),
-    scheduledTime: "09:00",
+    scheduledTime: '09:00',
     duration: 60,
-    notes: "",
+    notes: '',
   });
 
   // Filter state
   const [filters, setFilters] = useState({
-    groomerId: "",
-    status: "",
-    startDate: "",
-    endDate: "",
+    groomerId: '',
+    status: '',
+    startDate: '',
+    endDate: '',
   });
 
   useEffect(
@@ -88,7 +88,7 @@ const GroomerAppointments: React.FC = () => {
       setAppointments(data);
       setError(null);
     } catch (err: any) {
-      setError(err.message || "Failed to load appointments");
+      setError(err.message || 'Failed to load appointments');
       console.error(err);
     } finally {
       setLoading(false);
@@ -106,19 +106,19 @@ const GroomerAppointments: React.FC = () => {
         scheduledDate: new Date(appointment.scheduledDate),
         scheduledTime: appointment.scheduledTime,
         duration: appointment.duration,
-        notes: appointment.notes || "",
+        notes: appointment.notes || '',
       });
     } else {
       setEditingAppointment(null);
       setFormData({
-        groomerId: "",
-        serviceId: "",
-        petId: "",
-        customerId: "",
+        groomerId: '',
+        serviceId: '',
+        petId: '',
+        customerId: '',
         scheduledDate: new Date(),
-        scheduledTime: "09:00",
+        scheduledTime: '09:00',
         duration: 60,
-        notes: "",
+        notes: '',
       });
     }
     setOpenDialog(true);
@@ -147,7 +147,7 @@ const GroomerAppointments: React.FC = () => {
       await loadAppointments();
       handleCloseDialog();
     } catch (err: any) {
-      setError(err.message || "Failed to save appointment");
+      setError(err.message || 'Failed to save appointment');
     }
   };
 
@@ -156,7 +156,7 @@ const GroomerAppointments: React.FC = () => {
       await schedulingService.groomerAppointments.start(id);
       await loadAppointments();
     } catch (err: any) {
-      setError(err.message || "Failed to start appointment");
+      setError(err.message || 'Failed to start appointment');
     }
   };
 
@@ -165,49 +165,49 @@ const GroomerAppointments: React.FC = () => {
       await schedulingService.groomerAppointments.complete(id);
       await loadAppointments();
     } catch (err: any) {
-      setError(err.message || "Failed to complete appointment");
+      setError(err.message || 'Failed to complete appointment');
     }
   };
 
   const handleCancel = async (id: string) => {
-    if (window.confirm("Are you sure you want to cancel this appointment?")) {
+    if (window.confirm('Are you sure you want to cancel this appointment?')) {
       try {
         await schedulingService.groomerAppointments.cancel(id);
         await loadAppointments();
       } catch (err: any) {
-        setError(err.message || "Failed to cancel appointment");
+        setError(err.message || 'Failed to cancel appointment');
       }
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this appointment?")) {
+    if (window.confirm('Are you sure you want to delete this appointment?')) {
       try {
         await schedulingService.groomerAppointments.delete(id);
         await loadAppointments();
       } catch (err: any) {
-        setError(err.message || "Failed to delete appointment");
+        setError(err.message || 'Failed to delete appointment');
       }
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "SCHEDULED":
-        return "primary";
-      case "IN_PROGRESS":
-        return "warning";
-      case "COMPLETED":
-        return "success";
-      case "CANCELLED":
-        return "error";
+      case 'SCHEDULED':
+        return 'primary';
+      case 'IN_PROGRESS':
+        return 'warning';
+      case 'COMPLETED':
+        return 'success';
+      case 'CANCELLED':
+        return 'error';
       default:
-        return "default";
+        return 'default';
     }
   };
 
   const getStatusLabel = (status: string) => {
-    return status.replace("_", " ");
+    return status.replace('_', ' ');
   };
 
   if (loading && appointments.length === 0) {
@@ -298,14 +298,14 @@ const GroomerAppointments: React.FC = () => {
               variant="outlined"
               onClick={() =>
                 setFilters({
-                  groomerId: "",
-                  status: "",
-                  startDate: "",
-                  endDate: "",
+                  groomerId: '',
+                  status: '',
+                  startDate: '',
+                  endDate: '',
                 })
               }
               fullWidth
-              sx={{ height: "56px" }}
+              sx={{ height: '56px' }}
             >
               Clear Filters
             </Button>
@@ -345,26 +345,26 @@ const GroomerAppointments: React.FC = () => {
                       <Typography variant="body2">
                         {format(
                           new Date(appointment.scheduledDate),
-                          "MMM dd, yyyy"
+                          'MMM dd, yyyy'
                         )}
                       </Typography>
                       <Typography variant="caption" color="textSecondary">
                         {appointment.scheduledTime}
                       </Typography>
                     </TableCell>
-                    <TableCell>{appointment.pet?.name || "Unknown"}</TableCell>
+                    <TableCell>{appointment.pet?.name || 'Unknown'}</TableCell>
                     <TableCell>
                       {appointment.customer
                         ? `${appointment.customer.firstName} ${appointment.customer.lastName}`
-                        : "Unknown"}
+                        : 'Unknown'}
                     </TableCell>
                     <TableCell>
                       {appointment.groomer
                         ? `${appointment.groomer.firstName} ${appointment.groomer.lastName}`
-                        : "Unknown"}
+                        : 'Unknown'}
                     </TableCell>
                     <TableCell>
-                      {appointment.service?.name || "Unknown"}
+                      {appointment.service?.name || 'Unknown'}
                     </TableCell>
                     <TableCell>{appointment.duration} min</TableCell>
                     <TableCell>
@@ -375,7 +375,7 @@ const GroomerAppointments: React.FC = () => {
                       />
                     </TableCell>
                     <TableCell align="right">
-                      {appointment.status === "SCHEDULED" && (
+                      {appointment.status === 'SCHEDULED' && (
                         <>
                           <Tooltip title="Start">
                             <IconButton
@@ -397,7 +397,7 @@ const GroomerAppointments: React.FC = () => {
                           </Tooltip>
                         </>
                       )}
-                      {appointment.status === "IN_PROGRESS" && (
+                      {appointment.status === 'IN_PROGRESS' && (
                         <Tooltip title="Complete">
                           <IconButton
                             size="small"
@@ -408,8 +408,8 @@ const GroomerAppointments: React.FC = () => {
                           </IconButton>
                         </Tooltip>
                       )}
-                      {(appointment.status === "SCHEDULED" ||
-                        appointment.status === "IN_PROGRESS") && (
+                      {(appointment.status === 'SCHEDULED' ||
+                        appointment.status === 'IN_PROGRESS') && (
                         <Tooltip title="Cancel">
                           <IconButton
                             size="small"
@@ -446,10 +446,10 @@ const GroomerAppointments: React.FC = () => {
         fullWidth
       >
         <DialogTitle>
-          {editingAppointment ? "Edit Appointment" : "New Appointment"}
+          {editingAppointment ? 'Edit Appointment' : 'New Appointment'}
         </DialogTitle>
         <DialogContent>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
                 label="Date"
@@ -512,7 +512,7 @@ const GroomerAppointments: React.FC = () => {
         <DialogActions>
           <Button onClick={handleCloseDialog}>Cancel</Button>
           <Button onClick={handleSave} variant="contained" color="primary">
-            {editingAppointment ? "Update" : "Create"}
+            {editingAppointment ? 'Update' : 'Create'}
           </Button>
         </DialogActions>
       </Dialog>

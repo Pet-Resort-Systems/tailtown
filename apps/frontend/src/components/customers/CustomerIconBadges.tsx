@@ -17,7 +17,7 @@ const CustomerIconBadges: React.FC<CustomerIconBadgesProps> = ({
   iconIds,
   iconNotes = {},
   maxDisplay = 10,
-  size = 'small'
+  size = 'small',
 }) => {
   if (!iconIds || iconIds.length === 0) {
     return null;
@@ -33,7 +33,7 @@ const CustomerIconBadges: React.FC<CustomerIconBadgesProps> = ({
         if (!iconDef) return null;
 
         const hasNote = iconNotes[iconId];
-        const tooltipTitle = hasNote 
+        const tooltipTitle = hasNote
           ? `${iconDef.description}\n\nNote: ${iconNotes[iconId]}`
           : iconDef.description;
 
@@ -42,10 +42,15 @@ const CustomerIconBadges: React.FC<CustomerIconBadgesProps> = ({
             <Chip
               label={
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <span style={{ fontSize: size === 'small' ? '0.9rem' : '1.1rem' }}>
+                  <span
+                    style={{ fontSize: size === 'small' ? '0.9rem' : '1.1rem' }}
+                  >
                     {iconDef.icon}
                   </span>
-                  <Typography variant="caption" sx={{ fontSize: size === 'small' ? '0.7rem' : '0.8rem' }}>
+                  <Typography
+                    variant="caption"
+                    sx={{ fontSize: size === 'small' ? '0.7rem' : '0.8rem' }}
+                  >
                     {iconDef.label}
                   </Typography>
                 </Box>

@@ -13,7 +13,7 @@ import {
   Card,
   CardContent,
   CardActionArea,
-  Chip
+  Chip,
 } from '@mui/material';
 import { usePageHelp } from '../../hooks/usePageHelp';
 import { gettingStartedHelp } from '../../content/help/gettingStartedHelp';
@@ -21,7 +21,6 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 
 const GettingStarted: React.FC = () => {
-  
   // Set page help content
   usePageHelp(gettingStartedHelp);
 
@@ -35,7 +34,11 @@ const GettingStarted: React.FC = () => {
     <Container maxWidth="lg" sx={{ py: 4 }}>
       {/* Header */}
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+        >
           <HelpOutlineIcon fontSize="large" color="primary" />
           Getting Started with Tailtown
         </Typography>
@@ -48,22 +51,29 @@ const GettingStarted: React.FC = () => {
       <Grid container spacing={3}>
         {gettingStartedHelp.articles.map((article) => (
           <Grid item xs={12} sm={6} md={4} key={article.id}>
-            <Card 
-              sx={{ 
+            <Card
+              sx={{
                 height: '100%',
                 transition: 'transform 0.2s, box-shadow 0.2s',
                 '&:hover': {
                   transform: 'translateY(-4px)',
-                  boxShadow: 4
-                }
+                  boxShadow: 4,
+                },
               }}
             >
-              <CardActionArea 
+              <CardActionArea
                 onClick={() => handleArticleClick(article.id)}
                 sx={{ height: '100%' }}
               >
                 <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 1 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 1,
+                      mb: 1,
+                    }}
+                  >
                     <Typography variant="h6" component="h2" sx={{ flex: 1 }}>
                       {article.title}
                     </Typography>
@@ -71,27 +81,27 @@ const GettingStarted: React.FC = () => {
                       <PlayCircleOutlineIcon color="primary" />
                     )}
                   </Box>
-                  
-                  <Typography 
-                    variant="body2" 
-                    color="text.secondary" 
-                    sx={{ 
+
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
                       mb: 2,
                       display: '-webkit-box',
                       WebkitLineClamp: 3,
                       WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden'
+                      overflow: 'hidden',
                     }}
                   >
                     {article.content.substring(0, 150)}...
                   </Typography>
-                  
+
                   <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                    {article.tags.slice(0, 3).map(tag => (
-                      <Chip 
-                        key={tag} 
-                        label={tag} 
-                        size="small" 
+                    {article.tags.slice(0, 3).map((tag) => (
+                      <Chip
+                        key={tag}
+                        label={tag}
+                        size="small"
                         variant="outlined"
                       />
                     ))}
@@ -112,18 +122,14 @@ const GettingStarted: React.FC = () => {
           Can't find what you're looking for? We're here to help!
         </Typography>
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-          <Chip 
-            label="Email: support@tailtown.com" 
+          <Chip
+            label="Email: support@tailtown.com"
             variant="outlined"
             clickable
           />
-          <Chip 
-            label="Phone: 1-800-TAILTOWN" 
-            variant="outlined"
-            clickable
-          />
-          <Chip 
-            label="Live Chat" 
+          <Chip label="Phone: 1-800-TAILTOWN" variant="outlined" clickable />
+          <Chip
+            label="Live Chat"
             variant="outlined"
             color="primary"
             clickable

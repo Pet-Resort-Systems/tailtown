@@ -1,6 +1,6 @@
 /**
  * Reference Data Routes
- * 
+ *
  * Routes for breeds, veterinarians, and temperaments
  */
 
@@ -10,7 +10,7 @@ import {
   getVeterinarians,
   getTemperamentTypes,
   getPetTemperaments,
-  updatePetTemperaments
+  updatePetTemperaments,
 } from '../controllers/referenceData.controller';
 
 const router = express.Router();

@@ -5,45 +5,45 @@
  * Provides enhanced error categorization, analytics, and reporting.
  */
 
-import { AppError, ErrorType, ErrorContext } from "./appError";
-import { logger } from "./logger";
-import { Request } from "express";
-import { prisma } from "../config/prisma";
+import { AppError, ErrorType, ErrorContext } from './appError';
+import { logger } from './logger';
+import { Request } from 'express';
+import { prisma } from '../config/prisma';
 
 /**
  * Reservation error categories
  */
 export enum ReservationErrorCategory {
   // Input validation errors
-  VALIDATION_ERROR = "VALIDATION_ERROR",
+  VALIDATION_ERROR = 'VALIDATION_ERROR',
 
   // Resource allocation errors
-  RESOURCE_UNAVAILABLE = "RESOURCE_UNAVAILABLE",
-  RESOURCE_CONFLICT = "RESOURCE_CONFLICT",
-  RESOURCE_NOT_FOUND = "RESOURCE_NOT_FOUND",
+  RESOURCE_UNAVAILABLE = 'RESOURCE_UNAVAILABLE',
+  RESOURCE_CONFLICT = 'RESOURCE_CONFLICT',
+  RESOURCE_NOT_FOUND = 'RESOURCE_NOT_FOUND',
 
   // Customer/Pet related errors
-  CUSTOMER_NOT_FOUND = "CUSTOMER_NOT_FOUND",
-  PET_NOT_FOUND = "PET_NOT_FOUND",
-  CUSTOMER_VALIDATION = "CUSTOMER_VALIDATION",
+  CUSTOMER_NOT_FOUND = 'CUSTOMER_NOT_FOUND',
+  PET_NOT_FOUND = 'PET_NOT_FOUND',
+  CUSTOMER_VALIDATION = 'CUSTOMER_VALIDATION',
 
   // Date/time errors
-  DATE_RANGE_INVALID = "DATE_RANGE_INVALID",
-  DATE_PARSING_ERROR = "DATE_PARSING_ERROR",
-  DATE_CONFLICT = "DATE_CONFLICT",
+  DATE_RANGE_INVALID = 'DATE_RANGE_INVALID',
+  DATE_PARSING_ERROR = 'DATE_PARSING_ERROR',
+  DATE_CONFLICT = 'DATE_CONFLICT',
 
   // Business rule errors
-  SERVICE_UNAVAILABLE = "SERVICE_UNAVAILABLE",
-  CAPACITY_EXCEEDED = "CAPACITY_EXCEEDED",
-  BUSINESS_RULE_VIOLATION = "BUSINESS_RULE_VIOLATION",
+  SERVICE_UNAVAILABLE = 'SERVICE_UNAVAILABLE',
+  CAPACITY_EXCEEDED = 'CAPACITY_EXCEEDED',
+  BUSINESS_RULE_VIOLATION = 'BUSINESS_RULE_VIOLATION',
 
   // Database errors
-  DB_CONNECTION_ERROR = "DB_CONNECTION_ERROR",
-  DB_CONSTRAINT_ERROR = "DB_CONSTRAINT_ERROR",
-  SCHEMA_ERROR = "SCHEMA_ERROR",
+  DB_CONNECTION_ERROR = 'DB_CONNECTION_ERROR',
+  DB_CONSTRAINT_ERROR = 'DB_CONSTRAINT_ERROR',
+  SCHEMA_ERROR = 'SCHEMA_ERROR',
 
   // Other
-  UNKNOWN = "UNKNOWN",
+  UNKNOWN = 'UNKNOWN',
 }
 
 /**
@@ -102,9 +102,9 @@ export class ReservationErrorTracker {
     });
 
     this.isInitialized = true;
-    this.isEnabled = process.env.DISABLE_ERROR_TRACKING !== "true";
+    this.isEnabled = process.env.DISABLE_ERROR_TRACKING !== 'true';
 
-    logger.info("ReservationErrorTracker initialized", {
+    logger.info('ReservationErrorTracker initialized', {
       isEnabled: this.isEnabled,
       trackingCategories: Object.keys(ReservationErrorCategory).length,
     });
@@ -142,7 +142,7 @@ export class ReservationErrorTracker {
     const details = appError ? appError.details : undefined;
 
     // Add default environment context
-    context.environment = process.env.NODE_ENV || "development";
+    context.environment = process.env.NODE_ENV || 'development';
 
     // Create error record
     const errorRecord: ReservationErrorRecord = {
@@ -192,7 +192,7 @@ export class ReservationErrorTracker {
   ): string | null {
     // Extract reservation context from request
     const context: ReservationErrorContext = {
-      requestId: req.headers["x-request-id"] as string,
+      requestId: req.headers['x-request-id'] as string,
       requestData: {
         body: req.body,
         query: req.query,
@@ -200,7 +200,7 @@ export class ReservationErrorTracker {
         path: req.path,
         method: req.method,
       },
-      tenant: req["tenantId"] || "unknown",
+      tenant: req['tenantId'] || 'unknown',
       reservationId: req.params.id || req.body.id,
       customerId: req.body.customerId,
       petId: req.body.petId,
@@ -249,15 +249,15 @@ export class ReservationErrorTracker {
       }
 
       if (appError.type === ErrorType.RESOURCE_NOT_FOUND) {
-        if (appError.message.includes("Resource")) {
+        if (appError.message.includes('Resource')) {
           return ReservationErrorCategory.RESOURCE_NOT_FOUND;
         }
 
-        if (appError.message.includes("Customer")) {
+        if (appError.message.includes('Customer')) {
           return ReservationErrorCategory.CUSTOMER_NOT_FOUND;
         }
 
-        if (appError.message.includes("Pet")) {
+        if (appError.message.includes('Pet')) {
           return ReservationErrorCategory.PET_NOT_FOUND;
         }
       }
@@ -277,17 +277,17 @@ export class ReservationErrorTracker {
 
     // Check error message patterns
     if (
-      error.message.includes("conflict") ||
-      error.message.includes("overlap")
+      error.message.includes('conflict') ||
+      error.message.includes('overlap')
     ) {
       return ReservationErrorCategory.DATE_CONFLICT;
     }
 
-    if (error.message.includes("capacity") || error.message.includes("full")) {
+    if (error.message.includes('capacity') || error.message.includes('full')) {
       return ReservationErrorCategory.CAPACITY_EXCEEDED;
     }
 
-    if (error.message.includes("date") || error.message.includes("time")) {
+    if (error.message.includes('date') || error.message.includes('time')) {
       return ReservationErrorCategory.DATE_RANGE_INVALID;
     }
 
@@ -354,7 +354,7 @@ export class ReservationErrorTracker {
 
       // Apply resolution status filter
       if (
-        typeof filters?.isResolved === "boolean" &&
+        typeof filters?.isResolved === 'boolean' &&
         error.isResolved !== filters.isResolved
       ) {
         continue;
@@ -374,7 +374,7 @@ export class ReservationErrorTracker {
     }
 
     // If database persistence is enabled, fetch errors from there too
-    if (process.env.DISABLE_ERROR_PERSISTENCE !== "true") {
+    if (process.env.DISABLE_ERROR_PERSISTENCE !== 'true') {
       try {
         // Check if reservation_errors table exists
         const tableExists = await prisma.$queryRaw`
@@ -394,7 +394,7 @@ export class ReservationErrorTracker {
             params.push(filters.category);
           }
 
-          if (typeof filters?.isResolved === "boolean") {
+          if (typeof filters?.isResolved === 'boolean') {
             conditions.push(`is_resolved = $${params.length + 1}`);
             params.push(filters.isResolved);
           }
@@ -410,9 +410,9 @@ export class ReservationErrorTracker {
           }
 
           // Build where clause
-          let whereClause = "";
+          let whereClause = '';
           if (conditions.length > 0) {
-            whereClause = "WHERE " + conditions.join(" AND ");
+            whereClause = 'WHERE ' + conditions.join(' AND ');
           }
 
           // Execute query
@@ -444,7 +444,7 @@ export class ReservationErrorTracker {
                 errorCategory: dbError.error_category,
                 statusCode: dbError.status_code,
                 context:
-                  typeof dbError.context === "string"
+                  typeof dbError.context === 'string'
                     ? JSON.parse(dbError.context)
                     : dbError.context,
                 stack: dbError.stack,
@@ -504,7 +504,7 @@ export class ReservationErrorTracker {
    */
   public resolveError(
     errorId: string,
-    resolvedBy: string = "system",
+    resolvedBy: string = 'system',
     resolution?: string
   ): boolean {
     const errorRecord = this.errorStore.get(errorId);
@@ -536,7 +536,7 @@ export class ReservationErrorTracker {
       this.errorAnalytics.set(category as ReservationErrorCategory, 0);
     });
 
-    logger.debug("All tracked errors have been cleared");
+    logger.debug('All tracked errors have been cleared');
   }
 
   /**
@@ -553,7 +553,7 @@ export class ReservationErrorTracker {
   private async persistError(error: ReservationErrorRecord): Promise<void> {
     try {
       // Skip persistence if disabled or error already has database ID
-      if (process.env.DISABLE_ERROR_PERSISTENCE === "true") {
+      if (process.env.DISABLE_ERROR_PERSISTENCE === 'true') {
         return;
       }
 
@@ -567,7 +567,7 @@ export class ReservationErrorTracker {
 
       if (!tableExists) {
         logger.warn(
-          "reservation_errors table does not exist, skipping persistence"
+          'reservation_errors table does not exist, skipping persistence'
         );
         return;
       }
@@ -612,7 +612,7 @@ export class ReservationErrorTracker {
     error: ReservationErrorRecord
   ): Promise<void> {
     try {
-      if (process.env.DISABLE_ERROR_PERSISTENCE === "true") {
+      if (process.env.DISABLE_ERROR_PERSISTENCE === 'true') {
         return;
       }
 

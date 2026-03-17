@@ -2,9 +2,8 @@
  * Review Step - Final review and launch
  */
 
-import React, { useState } from "react";
-import {
-  getApiBaseUrl } from "../../../services/api";
+import React, { useState } from 'react';
+import { getApiBaseUrl } from '../../../services/api';
 import {
   Box,
   Typography,
@@ -19,8 +18,8 @@ import {
   Alert,
   CircularProgress,
   Chip,
-} from "@mui/material";
-import Grid from "@mui/material/GridLegacy";
+} from '@mui/material';
+import Grid from '@mui/material/GridLegacy';
 import {
   ArrowBack,
   CheckCircle,
@@ -35,9 +34,9 @@ import {
   Palette,
   Policy,
   Launch,
-} from "@mui/icons-material";
-import { useSetupWizard } from "../SetupWizardContext";
-import { WIZARD_STEPS } from "../types";
+} from '@mui/icons-material';
+import { useSetupWizard } from '../SetupWizardContext';
+import { WIZARD_STEPS } from '../types';
 
 export default function ReviewStep() {
   const { state, prevStep, goToStep, isStepComplete } = useSetupWizard();
@@ -45,7 +44,7 @@ export default function ReviewStep() {
   const [error, setError] = useState<string | null>(null);
 
   const requiredSteps = WIZARD_STEPS.filter(
-    (s) => s.required && s.id !== "review"
+    (s) => s.required && s.id !== 'review'
   );
   const allRequiredComplete = requiredSteps.every((s) => isStepComplete(s.id));
 
@@ -58,9 +57,9 @@ export default function ReviewStep() {
 
       // Submit to onboarding API
       const response = await fetch(`${apiUrl}/api/onboarding/complete`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(state),
       });
@@ -68,11 +67,11 @@ export default function ReviewStep() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || "Onboarding failed");
+        throw new Error(result.message || 'Onboarding failed');
       }
 
       // Clear wizard state from localStorage
-      localStorage.removeItem("tailtown_setup_wizard");
+      localStorage.removeItem('tailtown_setup_wizard');
 
       // Show success and redirect
       alert(
@@ -82,18 +81,18 @@ export default function ReviewStep() {
       // Redirect to login for the new tenant
       window.location.href = `/login?tenant=${result.data.subdomain}`;
     } catch (err: any) {
-      setError(err.message || "Failed to complete setup. Please try again.");
+      setError(err.message || 'Failed to complete setup. Please try again.');
       setIsSubmitting(false);
     }
   };
 
   const getSummaryIcon = (stepId: string) => {
     const icons: Record<string, React.ReactNode> = {
-      "business-info": <Business />,
-      "rooms-kennels": <MeetingRoom />,
+      'business-info': <Business />,
+      'rooms-kennels': <MeetingRoom />,
       services: <Pets />,
       pricing: <AttachMoney />,
-      "operating-hours": <Schedule />,
+      'operating-hours': <Schedule />,
       staff: <People />,
       payment: <CreditCard />,
       notifications: <Notifications />,
@@ -133,7 +132,7 @@ export default function ReviewStep() {
                 Business
               </Typography>
               <Typography variant="body1" fontWeight="bold">
-                {state.businessInfo.name || "Not set"}
+                {state.businessInfo.name || 'Not set'}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {state.businessInfo.address &&
@@ -156,16 +155,16 @@ export default function ReviewStep() {
                 Facility
               </Typography>
               <Typography variant="body1">
-                <strong>{state.roomsKennels.rooms.length}</strong> rooms,{" "}
+                <strong>{state.roomsKennels.rooms.length}</strong> rooms,{' '}
                 <strong>
                   {state.roomsKennels.rooms.reduce(
                     (sum, r) => sum + r.kennels.length,
                     0
                   )}
-                </strong>{" "}
+                </strong>{' '}
                 kennels
               </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 1 }}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 1 }}>
                 {state.roomsKennels.rooms.slice(0, 3).map((room) => (
                   <Chip
                     key={room.id}
@@ -191,7 +190,7 @@ export default function ReviewStep() {
               <Typography variant="h6" gutterBottom>
                 Services
               </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                 {state.services.services
                   .filter((s) => s.enabled)
                   .map((service) => (
@@ -217,7 +216,7 @@ export default function ReviewStep() {
               <Typography variant="body1">
                 <strong>{state.staff.members.length}</strong> team members
               </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 1 }}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 1 }}>
                 {state.staff.members.map((member) => (
                   <Chip
                     key={member.id}
@@ -239,27 +238,27 @@ export default function ReviewStep() {
         Setup Progress
       </Typography>
       <List>
-        {WIZARD_STEPS.filter((s) => s.id !== "review").map((step) => {
+        {WIZARD_STEPS.filter((s) => s.id !== 'review').map((step) => {
           const complete = isStepComplete(step.id);
           return (
             <ListItem
               key={step.id}
               secondaryAction={
                 <Button size="small" onClick={() => goToStep(step.id)}>
-                  {complete ? "Edit" : "Complete"}
+                  {complete ? 'Edit' : 'Complete'}
                 </Button>
               }
             >
               <ListItemIcon
-                sx={{ color: complete ? "success.main" : "text.disabled" }}
+                sx={{ color: complete ? 'success.main' : 'text.disabled' }}
               >
                 {complete ? <CheckCircle /> : getSummaryIcon(step.id)}
               </ListItemIcon>
               <ListItemText
                 primary={step.title}
-                secondary={step.required ? "Required" : "Optional"}
+                secondary={step.required ? 'Required' : 'Optional'}
                 primaryTypographyProps={{
-                  color: complete ? "text.primary" : "text.secondary",
+                  color: complete ? 'text.primary' : 'text.secondary',
                 }}
               />
             </ListItem>
@@ -268,7 +267,7 @@ export default function ReviewStep() {
       </List>
 
       {/* Navigation */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button startIcon={<ArrowBack />} onClick={prevStep}>
           Back
         </Button>
@@ -286,7 +285,7 @@ export default function ReviewStep() {
           onClick={handleLaunch}
           disabled={!allRequiredComplete || isSubmitting}
         >
-          {isSubmitting ? "Launching..." : "Launch Your Facility"}
+          {isSubmitting ? 'Launching...' : 'Launch Your Facility'}
         </Button>
       </Box>
     </Box>

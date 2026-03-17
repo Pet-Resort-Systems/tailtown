@@ -3,7 +3,7 @@
  * Allows configuring commission rates for staff members tied to specific services
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -33,20 +33,20 @@ import {
   InputAdornment,
   Autocomplete,
   Checkbox,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
   Percent as PercentIcon,
   AttachMoney as MoneyIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import commissionService, {
   StaffCommission,
   CreateCommissionData,
   UpdateCommissionData,
-} from "../../services/commissionService";
-import { serviceManagement } from "../../services/serviceManagement";
+} from '../../services/commissionService';
+import { serviceManagement } from '../../services/serviceManagement';
 
 interface Service {
   id: string;
@@ -80,17 +80,17 @@ const CommissionSettings: React.FC<CommissionSettingsProps> = ({
   // Form state
   const [formData, setFormData] = useState<{
     name: string;
-    commissionType: "PERCENTAGE" | "FLAT_AMOUNT";
+    commissionType: 'PERCENTAGE' | 'FLAT_AMOUNT';
     commissionValue: number;
     serviceIds: string[];
     notes: string;
     isActive: boolean;
   }>({
-    name: "",
-    commissionType: "PERCENTAGE",
+    name: '',
+    commissionType: 'PERCENTAGE',
     commissionValue: 0,
     serviceIds: [],
-    notes: "",
+    notes: '',
     isActive: true,
   });
 
@@ -109,8 +109,8 @@ const CommissionSettings: React.FC<CommissionSettingsProps> = ({
         setCommissions(commissionsData);
         setServices(servicesData);
       } catch (err: any) {
-        console.error("Error loading commission data:", err);
-        setError("Failed to load commission data");
+        console.error('Error loading commission data:', err);
+        setError('Failed to load commission data');
       } finally {
         setLoading(false);
       }
@@ -129,17 +129,17 @@ const CommissionSettings: React.FC<CommissionSettingsProps> = ({
         commissionType: commission.commissionType,
         commissionValue: commission.commissionValue,
         serviceIds: commission.serviceCommissions.map((sc) => sc.serviceId),
-        notes: commission.notes || "",
+        notes: commission.notes || '',
         isActive: commission.isActive,
       });
     } else {
       setEditingCommission(null);
       setFormData({
-        name: "",
-        commissionType: "PERCENTAGE",
+        name: '',
+        commissionType: 'PERCENTAGE',
         commissionValue: 0,
         serviceIds: [],
-        notes: "",
+        notes: '',
         isActive: true,
       });
     }
@@ -157,12 +157,12 @@ const CommissionSettings: React.FC<CommissionSettingsProps> = ({
       setError(null);
 
       if (!formData.name.trim()) {
-        setError("Commission name is required");
+        setError('Commission name is required');
         return;
       }
 
       if (formData.serviceIds.length === 0) {
-        setError("Please select at least one service");
+        setError('Please select at least one service');
         return;
       }
 
@@ -181,7 +181,7 @@ const CommissionSettings: React.FC<CommissionSettingsProps> = ({
           editingCommission.id,
           updateData
         );
-        setSuccess("Commission updated successfully");
+        setSuccess('Commission updated successfully');
       } else {
         // Create new
         const createData: CreateCommissionData = {
@@ -194,18 +194,17 @@ const CommissionSettings: React.FC<CommissionSettingsProps> = ({
         };
 
         await commissionService.createCommission(createData);
-        setSuccess("Commission created successfully");
+        setSuccess('Commission created successfully');
       }
 
       // Reload commissions
-      const updatedCommissions = await commissionService.getStaffCommissions(
-        staffId
-      );
+      const updatedCommissions =
+        await commissionService.getStaffCommissions(staffId);
       setCommissions(updatedCommissions);
       handleCloseDialog();
     } catch (err: any) {
-      console.error("Error saving commission:", err);
-      setError(err.response?.data?.message || "Failed to save commission");
+      console.error('Error saving commission:', err);
+      setError(err.response?.data?.message || 'Failed to save commission');
     } finally {
       setSaving(false);
     }
@@ -217,18 +216,17 @@ const CommissionSettings: React.FC<CommissionSettingsProps> = ({
     try {
       setSaving(true);
       await commissionService.deleteCommission(commissionToDelete.id);
-      setSuccess("Commission deleted successfully");
+      setSuccess('Commission deleted successfully');
 
       // Reload commissions
-      const updatedCommissions = await commissionService.getStaffCommissions(
-        staffId
-      );
+      const updatedCommissions =
+        await commissionService.getStaffCommissions(staffId);
       setCommissions(updatedCommissions);
       setDeleteConfirmOpen(false);
       setCommissionToDelete(null);
     } catch (err: any) {
-      console.error("Error deleting commission:", err);
-      setError("Failed to delete commission");
+      console.error('Error deleting commission:', err);
+      setError('Failed to delete commission');
     } finally {
       setSaving(false);
     }
@@ -236,13 +234,13 @@ const CommissionSettings: React.FC<CommissionSettingsProps> = ({
 
   const getServiceNames = (serviceIds: string[]): string => {
     return serviceIds
-      .map((id) => services.find((s) => s.id === id)?.name || "Unknown")
-      .join(", ");
+      .map((id) => services.find((s) => s.id === id)?.name || 'Unknown')
+      .join(', ');
   };
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -252,9 +250,9 @@ const CommissionSettings: React.FC<CommissionSettingsProps> = ({
     <Box>
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           mb: 3,
         }}
       >
@@ -287,7 +285,7 @@ const CommissionSettings: React.FC<CommissionSettingsProps> = ({
       )}
 
       {commissions.length === 0 ? (
-        <Paper sx={{ p: 4, textAlign: "center" }}>
+        <Paper sx={{ p: 4, textAlign: 'center' }}>
           <Typography color="text.secondary">
             No commissions configured for this staff member.
           </Typography>
@@ -320,16 +318,16 @@ const CommissionSettings: React.FC<CommissionSettingsProps> = ({
                   <TableCell>
                     <Chip
                       icon={
-                        commission.commissionType === "PERCENTAGE" ? (
+                        commission.commissionType === 'PERCENTAGE' ? (
                           <PercentIcon />
                         ) : (
                           <MoneyIcon />
                         )
                       }
                       label={
-                        commission.commissionType === "PERCENTAGE"
-                          ? "Percentage"
-                          : "Flat Amount"
+                        commission.commissionType === 'PERCENTAGE'
+                          ? 'Percentage'
+                          : 'Flat Amount'
                       }
                       size="small"
                       variant="outlined"
@@ -349,8 +347,8 @@ const CommissionSettings: React.FC<CommissionSettingsProps> = ({
                   </TableCell>
                   <TableCell>
                     <Chip
-                      label={commission.isActive ? "Active" : "Inactive"}
-                      color={commission.isActive ? "success" : "default"}
+                      label={commission.isActive ? 'Active' : 'Inactive'}
+                      color={commission.isActive ? 'success' : 'default'}
                       size="small"
                     />
                   </TableCell>
@@ -387,10 +385,10 @@ const CommissionSettings: React.FC<CommissionSettingsProps> = ({
         fullWidth
       >
         <DialogTitle>
-          {editingCommission ? "Edit Commission" : "Add Commission"}
+          {editingCommission ? 'Edit Commission' : 'Add Commission'}
         </DialogTitle>
         <DialogContent>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
             <TextField
               label="Commission Name"
               value={formData.name}
@@ -410,8 +408,8 @@ const CommissionSettings: React.FC<CommissionSettingsProps> = ({
                   setFormData({
                     ...formData,
                     commissionType: e.target.value as
-                      | "PERCENTAGE"
-                      | "FLAT_AMOUNT",
+                      | 'PERCENTAGE'
+                      | 'FLAT_AMOUNT',
                   })
                 }
                 label="Commission Type"
@@ -423,9 +421,9 @@ const CommissionSettings: React.FC<CommissionSettingsProps> = ({
 
             <TextField
               label={
-                formData.commissionType === "PERCENTAGE"
-                  ? "Percentage"
-                  : "Amount"
+                formData.commissionType === 'PERCENTAGE'
+                  ? 'Percentage'
+                  : 'Amount'
               }
               type="number"
               value={formData.commissionValue}
@@ -438,14 +436,14 @@ const CommissionSettings: React.FC<CommissionSettingsProps> = ({
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    {formData.commissionType === "PERCENTAGE" ? "%" : "$"}
+                    {formData.commissionType === 'PERCENTAGE' ? '%' : '$'}
                   </InputAdornment>
                 ),
               }}
               inputProps={{
                 min: 0,
-                max: formData.commissionType === "PERCENTAGE" ? 100 : undefined,
-                step: formData.commissionType === "PERCENTAGE" ? 1 : 0.01,
+                max: formData.commissionType === 'PERCENTAGE' ? 100 : undefined,
+                step: formData.commissionType === 'PERCENTAGE' ? 1 : 0.01,
               }}
               fullWidth
               required
@@ -518,7 +516,7 @@ const CommissionSettings: React.FC<CommissionSettingsProps> = ({
             disabled={saving}
             startIcon={saving ? <CircularProgress size={16} /> : null}
           >
-            {saving ? "Saving..." : "Save"}
+            {saving ? 'Saving...' : 'Save'}
           </Button>
         </DialogActions>
       </Dialog>
@@ -543,7 +541,7 @@ const CommissionSettings: React.FC<CommissionSettingsProps> = ({
             onClick={handleDelete}
             disabled={saving}
           >
-            {saving ? "Deleting..." : "Delete"}
+            {saving ? 'Deleting...' : 'Delete'}
           </Button>
         </DialogActions>
       </Dialog>

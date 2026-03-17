@@ -8,7 +8,7 @@ import {
   Tabs,
   Tab,
   Alert,
-  CircularProgress
+  CircularProgress,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import checkInService from '../../services/checkInService';
@@ -71,7 +71,7 @@ const CheckInTemplateManager: React.FC = () => {
       description: '',
       isDefault: false,
       isActive: true,
-      sections: []
+      sections: [],
     });
   };
 
@@ -88,7 +88,7 @@ const CheckInTemplateManager: React.FC = () => {
           description: template.description,
           isActive: template.isActive,
           isDefault: template.isDefault,
-          sections: template.sections
+          sections: template.sections,
         };
         console.log('Saving template:', template.id, updateData);
         await checkInService.updateTemplate(template.id, updateData);
@@ -101,7 +101,10 @@ const CheckInTemplateManager: React.FC = () => {
       setError(null);
     } catch (err: any) {
       console.error('Save error:', err);
-      setError('Failed to save template: ' + (err.response?.data?.error || err.message || 'Unknown error'));
+      setError(
+        'Failed to save template: ' +
+          (err.response?.data?.error || err.message || 'Unknown error')
+      );
     }
   };
 
@@ -112,7 +115,14 @@ const CheckInTemplateManager: React.FC = () => {
   return (
     <Container maxWidth="xl">
       <Box sx={{ py: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 3,
+          }}
+        >
           <Typography variant="h4" component="h1">
             Check-In Configuration
           </Typography>
@@ -132,7 +142,11 @@ const CheckInTemplateManager: React.FC = () => {
         )}
 
         <Paper sx={{ width: '100%' }}>
-          <Tabs value={tabValue} onChange={handleTabChange} aria-label="check-in configuration tabs">
+          <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
+            aria-label="check-in configuration tabs"
+          >
             <Tab label="Templates" />
             <Tab label="Pre-populated Options" />
             <Tab label="Settings" />
@@ -156,26 +170,39 @@ const CheckInTemplateManager: React.FC = () => {
                 </Typography>
                 {templates.length === 0 ? (
                   <Alert severity="info">
-                    No templates found. Create your first template to get started.
+                    No templates found. Create your first template to get
+                    started.
                   </Alert>
                 ) : (
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Box
+                    sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+                  >
                     {templates.map((template) => (
                       <Paper
                         key={template.id}
                         sx={{
                           p: 2,
                           cursor: 'pointer',
-                          '&:hover': { bgcolor: 'action.hover' }
+                          '&:hover': { bgcolor: 'action.hover' },
                         }}
                         onClick={() => handleSelectTemplate(template)}
                       >
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
                           <Box>
                             <Typography variant="h6">
                               {template.name}
                               {template.isDefault && (
-                                <Typography component="span" color="primary" sx={{ ml: 1, fontSize: '0.875rem' }}>
+                                <Typography
+                                  component="span"
+                                  color="primary"
+                                  sx={{ ml: 1, fontSize: '0.875rem' }}
+                                >
                                   (Default)
                                 </Typography>
                               )}
@@ -184,7 +211,14 @@ const CheckInTemplateManager: React.FC = () => {
                               {template.description}
                             </Typography>
                           </Box>
-                          <Typography variant="body2" color={template.isActive ? 'success.main' : 'text.disabled'}>
+                          <Typography
+                            variant="body2"
+                            color={
+                              template.isActive
+                                ? 'success.main'
+                                : 'text.disabled'
+                            }
+                          >
                             {template.isActive ? 'Active' : 'Inactive'}
                           </Typography>
                         </Box>

@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from "react";
+import React, { memo, useCallback } from 'react';
 import {
   Box,
   Paper,
@@ -11,12 +11,12 @@ import {
   Typography,
   CircularProgress,
   Alert,
-} from "@mui/material";
-import { ExtendedResource, Reservation } from "../../../hooks/useKennelData";
-import KennelRow from "./KennelRow";
+} from '@mui/material';
+import { ExtendedResource, Reservation } from '../../../hooks/useKennelData';
+import KennelRow from './KennelRow';
 
 // Define the view types
-type ViewType = "month" | "week" | "day";
+type ViewType = 'month' | 'week' | 'day';
 
 interface KennelGridProps {
   kennels: ExtendedResource[];
@@ -74,18 +74,18 @@ const KennelGrid: React.FC<KennelGridProps> = memo(
     const formatDayHeader = useCallback(
       (date: Date) => {
         switch (viewType) {
-          case "day":
-            return date.toLocaleDateString("en-US", {
-              weekday: "long",
-              month: "short",
-              day: "numeric",
+          case 'day':
+            return date.toLocaleDateString('en-US', {
+              weekday: 'long',
+              month: 'short',
+              day: 'numeric',
             });
-          case "week":
-            return date.toLocaleDateString("en-US", {
-              weekday: "short",
-              day: "numeric",
+          case 'week':
+            return date.toLocaleDateString('en-US', {
+              weekday: 'short',
+              day: 'numeric',
             });
-          case "month":
+          case 'month':
             return date.getDate().toString();
           default:
             return date.getDate().toString();
@@ -97,7 +97,7 @@ const KennelGrid: React.FC<KennelGridProps> = memo(
     // Loading state
     if (loading) {
       return (
-        <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
           <CircularProgress />
           <Typography sx={{ ml: 2 }}>Loading kennels...</Typography>
         </Box>
@@ -126,7 +126,7 @@ const KennelGrid: React.FC<KennelGridProps> = memo(
     return (
       <Paper elevation={2}>
         <TableContainer
-          sx={{ maxHeight: "calc(100vh - 300px)", overflowX: "auto" }}
+          sx={{ maxHeight: 'calc(100vh - 300px)', overflowX: 'auto' }}
         >
           <Table stickyHeader size="small">
             {/* Table Header */}
@@ -135,10 +135,10 @@ const KennelGrid: React.FC<KennelGridProps> = memo(
                 <TableCell
                   sx={{
                     minWidth: 120,
-                    fontWeight: "bold",
-                    backgroundColor: "primary.main",
-                    color: "primary.contrastText",
-                    position: "sticky",
+                    fontWeight: 'bold',
+                    backgroundColor: 'primary.main',
+                    color: 'primary.contrastText',
+                    position: 'sticky',
                     left: 0,
                     zIndex: 3,
                   }}
@@ -158,21 +158,21 @@ const KennelGrid: React.FC<KennelGridProps> = memo(
                       key={index}
                       align="center"
                       sx={{
-                        minWidth: viewType === "day" ? 200 : 100,
-                        fontWeight: isToday ? "bold" : "bold",
-                        backgroundColor: "primary.main",
-                        color: "primary.contrastText",
-                        borderLeft: "1px solid rgba(224, 224, 224, 1)",
-                        position: "relative",
-                        "&::after": isToday
+                        minWidth: viewType === 'day' ? 200 : 100,
+                        fontWeight: isToday ? 'bold' : 'bold',
+                        backgroundColor: 'primary.main',
+                        color: 'primary.contrastText',
+                        borderLeft: '1px solid rgba(224, 224, 224, 1)',
+                        position: 'relative',
+                        '&::after': isToday
                           ? {
                               content: '""',
-                              position: "absolute",
+                              position: 'absolute',
                               bottom: 0,
                               left: 0,
                               right: 0,
-                              height: "3px",
-                              backgroundColor: "rgba(255, 255, 255, 0.5)",
+                              height: '3px',
+                              backgroundColor: 'rgba(255, 255, 255, 0.5)',
                             }
                           : {},
                       }}
@@ -191,7 +191,7 @@ const KennelGrid: React.FC<KennelGridProps> = memo(
                   key={`${kennel.id}-${
                     (kennel as any).occupyingReservations
                       ?.map((r: any) => r.id)
-                      .join(",") || "empty"
+                      .join(',') || 'empty'
                   }`}
                   kennel={kennel}
                   days={days}
@@ -212,8 +212,8 @@ const KennelGrid: React.FC<KennelGridProps> = memo(
         <Box
           sx={{
             p: 2,
-            borderTop: "1px solid rgba(224, 224, 224, 1)",
-            backgroundColor: "grey.50",
+            borderTop: '1px solid rgba(224, 224, 224, 1)',
+            backgroundColor: 'grey.50',
           }}
         >
           <Typography variant="body2" color="text.secondary">
@@ -225,6 +225,6 @@ const KennelGrid: React.FC<KennelGridProps> = memo(
   }
 );
 
-KennelGrid.displayName = "KennelGrid";
+KennelGrid.displayName = 'KennelGrid';
 
 export default KennelGrid;

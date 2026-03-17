@@ -5,21 +5,21 @@
  * These tests exercise the full code path to increase coverage.
  */
 
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 import {
   getTestPrismaClient,
   createTestTenant,
   deleteTestData,
   disconnectTestDatabase,
-} from "../../test/setup-test-db";
+} from '../../test/setup-test-db';
 import {
   getCustomerPayments,
   getPaymentById,
   createPayment,
-} from "../payment.controller";
-import { InvoiceStatus } from "@prisma/client";
+} from '../payment.controller';
+import { InvoiceStatus } from '@prisma/client';
 
-describe("Payment Controller Integration Tests", () => {
+describe('Payment Controller Integration Tests', () => {
   const prisma = getTestPrismaClient();
   let testTenantId: string;
   let testCustomerId: string;
@@ -44,10 +44,10 @@ describe("Payment Controller Integration Tests", () => {
     const customer = await prisma.customer.create({
       data: {
         tenantId: testTenantId,
-        firstName: "Payment",
-        lastName: "Test",
+        firstName: 'Payment',
+        lastName: 'Test',
         email: `payment-test-${Date.now()}@example.com`,
-        phone: "555-0100",
+        phone: '555-0100',
       },
     });
     testCustomerId = customer.id;
@@ -83,8 +83,8 @@ describe("Payment Controller Integration Tests", () => {
     jest.clearAllMocks();
   });
 
-  describe("getCustomerPayments", () => {
-    it("should return payments for a valid customer", async () => {
+  describe('getCustomerPayments', () => {
+    it('should return payments for a valid customer', async () => {
       const req = {
         params: { customerId: testCustomerId },
       } as unknown as Request;
@@ -95,14 +95,14 @@ describe("Payment Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           results: expect.any(Number),
           data: expect.any(Array),
         })
       );
     });
 
-    it("should call next with error for missing customerId", async () => {
+    it('should call next with error for missing customerId', async () => {
       const req = {
         params: {},
       } as unknown as Request;
@@ -112,11 +112,11 @@ describe("Payment Controller Integration Tests", () => {
 
       expect(mockNext).toHaveBeenCalled();
       const error = (mockNext as jest.Mock).mock.calls[0][0];
-      expect(error.message).toBe("Customer ID is required");
+      expect(error.message).toBe('Customer ID is required');
     });
   });
 
-  describe("getPaymentById", () => {
+  describe('getPaymentById', () => {
     let createdPaymentId: string;
 
     beforeAll(async () => {
@@ -126,15 +126,15 @@ describe("Payment Controller Integration Tests", () => {
           invoiceId: testInvoiceId,
           customerId: testCustomerId,
           amount: 50,
-          method: "CREDIT_CARD",
-          status: "PAID",
+          method: 'CREDIT_CARD',
+          status: 'PAID',
         },
       });
       createdPaymentId = payment.id;
       testPaymentIds.push(createdPaymentId);
     });
 
-    it("should return payment by ID", async () => {
+    it('should return payment by ID', async () => {
       const req = {
         params: { id: createdPaymentId },
       } as unknown as Request;
@@ -145,7 +145,7 @@ describe("Payment Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           data: expect.objectContaining({
             id: createdPaymentId,
             amount: 50,
@@ -154,9 +154,9 @@ describe("Payment Controller Integration Tests", () => {
       );
     });
 
-    it("should call next with 404 for non-existent payment", async () => {
+    it('should call next with 404 for non-existent payment', async () => {
       const req = {
-        params: { id: "00000000-0000-0000-0000-000000000000" },
+        params: { id: '00000000-0000-0000-0000-000000000000' },
       } as unknown as Request;
       const res = createMockResponse();
 
@@ -164,13 +164,13 @@ describe("Payment Controller Integration Tests", () => {
 
       expect(mockNext).toHaveBeenCalled();
       const error = (mockNext as jest.Mock).mock.calls[0][0];
-      expect(error.message).toBe("Payment not found");
+      expect(error.message).toBe('Payment not found');
       expect(error.statusCode).toBe(404);
     });
   });
 
-  describe("createPayment", () => {
-    it("should create a payment successfully", async () => {
+  describe('createPayment', () => {
+    it('should create a payment successfully', async () => {
       // Create a fresh invoice for this test
       const invoice = await prisma.invoice.create({
         data: {
@@ -189,7 +189,7 @@ describe("Payment Controller Integration Tests", () => {
           invoiceId: invoice.id,
           customerId: testCustomerId,
           amount: 100,
-          method: "CREDIT_CARD",
+          method: 'CREDIT_CARD',
         },
       } as unknown as Request;
       const res = createMockResponse();
@@ -199,11 +199,11 @@ describe("Payment Controller Integration Tests", () => {
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: "success",
+          status: 'success',
           data: expect.objectContaining({
             amount: 100,
-            method: "CREDIT_CARD",
-            status: "PAID",
+            method: 'CREDIT_CARD',
+            status: 'PAID',
           }),
         })
       );
@@ -216,7 +216,7 @@ describe("Payment Controller Integration Tests", () => {
       const updatedInvoice = await prisma.invoice.findUnique({
         where: { id: invoice.id },
       });
-      expect(updatedInvoice?.status).toBe("PAID");
+      expect(updatedInvoice?.status).toBe('PAID');
 
       // Clean up
       await prisma.invoice
@@ -224,7 +224,7 @@ describe("Payment Controller Integration Tests", () => {
         .catch(() => {});
     });
 
-    it("should reject payment exceeding invoice balance", async () => {
+    it('should reject payment exceeding invoice balance', async () => {
       // Create invoice
       const invoice = await prisma.invoice.create({
         data: {
@@ -244,8 +244,8 @@ describe("Payment Controller Integration Tests", () => {
           invoiceId: invoice.id,
           customerId: testCustomerId,
           amount: 80,
-          method: "CREDIT_CARD",
-          status: "PAID",
+          method: 'CREDIT_CARD',
+          status: 'PAID',
         },
       });
       testPaymentIds.push(partialPayment.id);
@@ -255,7 +255,7 @@ describe("Payment Controller Integration Tests", () => {
           invoiceId: invoice.id,
           customerId: testCustomerId,
           amount: 50, // Exceeds remaining $20
-          method: "CREDIT_CARD",
+          method: 'CREDIT_CARD',
         },
       } as unknown as Request;
       const res = createMockResponse();
@@ -264,7 +264,7 @@ describe("Payment Controller Integration Tests", () => {
 
       expect(mockNext).toHaveBeenCalled();
       const error = (mockNext as jest.Mock).mock.calls[0][0];
-      expect(error.message).toContain("exceeds");
+      expect(error.message).toContain('exceeds');
 
       // Clean up
       await prisma.invoice
@@ -272,13 +272,13 @@ describe("Payment Controller Integration Tests", () => {
         .catch(() => {});
     });
 
-    it("should reject payment for non-existent invoice", async () => {
+    it('should reject payment for non-existent invoice', async () => {
       const req = {
         body: {
-          invoiceId: "00000000-0000-0000-0000-000000000000",
+          invoiceId: '00000000-0000-0000-0000-000000000000',
           customerId: testCustomerId,
           amount: 100,
-          method: "CREDIT_CARD",
+          method: 'CREDIT_CARD',
         },
       } as unknown as Request;
       const res = createMockResponse();
@@ -287,10 +287,10 @@ describe("Payment Controller Integration Tests", () => {
 
       expect(mockNext).toHaveBeenCalled();
       const error = (mockNext as jest.Mock).mock.calls[0][0];
-      expect(error.message).toBe("Invoice not found");
+      expect(error.message).toBe('Invoice not found');
     });
 
-    it("should reject payment with missing required fields", async () => {
+    it('should reject payment with missing required fields', async () => {
       const req = {
         body: {
           invoiceId: testInvoiceId,
@@ -303,7 +303,7 @@ describe("Payment Controller Integration Tests", () => {
 
       expect(mockNext).toHaveBeenCalled();
       const error = (mockNext as jest.Mock).mock.calls[0][0];
-      expect(error.message).toContain("required");
+      expect(error.message).toContain('required');
     });
   });
 });

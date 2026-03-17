@@ -1,6 +1,6 @@
 /**
  * Resource Service Pagination Tests
- * 
+ *
  * Tests pagination logic to ensure all resources are fetched
  * Regression tests for pagination bug fix
  */
@@ -24,12 +24,12 @@ describe('Resource Service Pagination', () => {
           status: 'success',
           data: [
             { id: 'res-1', name: 'Resource 1' },
-            { id: 'res-2', name: 'Resource 2' }
+            { id: 'res-2', name: 'Resource 2' },
           ],
           totalPages: 3,
           currentPage: 1,
-          results: 2
-        }
+          results: 2,
+        },
       });
 
       // Mock second page response
@@ -38,32 +38,30 @@ describe('Resource Service Pagination', () => {
           status: 'success',
           data: [
             { id: 'res-3', name: 'Resource 3' },
-            { id: 'res-4', name: 'Resource 4' }
+            { id: 'res-4', name: 'Resource 4' },
           ],
           totalPages: 3,
           currentPage: 2,
-          results: 2
-        }
+          results: 2,
+        },
       });
 
       // Mock third page response
       axios.get.mockResolvedValueOnce({
         data: {
           status: 'success',
-          data: [
-            { id: 'res-5', name: 'Resource 5' }
-          ],
+          data: [{ id: 'res-5', name: 'Resource 5' }],
           totalPages: 3,
           currentPage: 3,
-          results: 1
-        }
+          results: 1,
+        },
       });
 
       const result = await getAllResources();
 
       // Should have called API 3 times (once per page)
       expect(axios.get).toHaveBeenCalledTimes(3);
-      
+
       // Should return all resources combined
       expect(result).toHaveLength(5);
       expect(result[0].id).toBe('res-1');
@@ -76,19 +74,19 @@ describe('Resource Service Pagination', () => {
           status: 'success',
           data: [
             { id: 'res-1', name: 'Resource 1' },
-            { id: 'res-2', name: 'Resource 2' }
+            { id: 'res-2', name: 'Resource 2' },
           ],
           totalPages: 1,
           currentPage: 1,
-          results: 2
-        }
+          results: 2,
+        },
       });
 
       const result = await getAllResources();
 
       // Should only call API once
       expect(axios.get).toHaveBeenCalledTimes(1);
-      
+
       // Should return all resources
       expect(result).toHaveLength(2);
     });
@@ -100,30 +98,28 @@ describe('Resource Service Pagination', () => {
           status: 'success',
           data: [
             { id: 'res-1', type: 'STANDARD_SUITE' },
-            { id: 'res-2', type: 'STANDARD_SUITE' }
+            { id: 'res-2', type: 'STANDARD_SUITE' },
           ],
           totalPages: 2,
-          currentPage: 1
-        }
+          currentPage: 1,
+        },
       });
 
       // Page 2
       axios.get.mockResolvedValueOnce({
         data: {
           status: 'success',
-          data: [
-            { id: 'res-3', type: 'VIP_SUITE' }
-          ],
+          data: [{ id: 'res-3', type: 'VIP_SUITE' }],
           totalPages: 2,
-          currentPage: 2
-        }
+          currentPage: 2,
+        },
       });
 
       const result = await getAllResources();
 
       // Should combine all results
       expect(result).toHaveLength(3);
-      expect(result.map(r => r.id)).toEqual(['res-1', 'res-2', 'res-3']);
+      expect(result.map((r) => r.id)).toEqual(['res-1', 'res-2', 'res-3']);
     });
 
     it('should maintain correct order across pages', async () => {
@@ -133,11 +129,11 @@ describe('Resource Service Pagination', () => {
           status: 'success',
           data: [
             { id: 'res-1', name: 'A' },
-            { id: 'res-2', name: 'B' }
+            { id: 'res-2', name: 'B' },
           ],
           totalPages: 2,
-          currentPage: 1
-        }
+          currentPage: 1,
+        },
       });
 
       // Page 2
@@ -146,11 +142,11 @@ describe('Resource Service Pagination', () => {
           status: 'success',
           data: [
             { id: 'res-3', name: 'C' },
-            { id: 'res-4', name: 'D' }
+            { id: 'res-4', name: 'D' },
           ],
           totalPages: 2,
-          currentPage: 2
-        }
+          currentPage: 2,
+        },
       });
 
       const result = await getAllResources();
@@ -169,8 +165,8 @@ describe('Resource Service Pagination', () => {
           data: [],
           totalPages: 0,
           currentPage: 1,
-          results: 0
-        }
+          results: 0,
+        },
       });
 
       const result = await getAllResources();
@@ -192,8 +188,8 @@ describe('Resource Service Pagination', () => {
           status: 'success',
           data: [{ id: 'res-1' }],
           totalPages: 3,
-          currentPage: 1
-        }
+          currentPage: 1,
+        },
       });
 
       // Page 2
@@ -202,8 +198,8 @@ describe('Resource Service Pagination', () => {
           status: 'success',
           data: [{ id: 'res-2' }],
           totalPages: 3,
-          currentPage: 2
-        }
+          currentPage: 2,
+        },
       });
 
       // Page 3
@@ -212,16 +208,25 @@ describe('Resource Service Pagination', () => {
           status: 'success',
           data: [{ id: 'res-3' }],
           totalPages: 3,
-          currentPage: 3
-        }
+          currentPage: 3,
+        },
       });
 
       await getAllResources();
 
       // Check that correct page numbers were passed
-      expect(axios.get).toHaveBeenNthCalledWith(1, expect.stringContaining('page=1'));
-      expect(axios.get).toHaveBeenNthCalledWith(2, expect.stringContaining('page=2'));
-      expect(axios.get).toHaveBeenNthCalledWith(3, expect.stringContaining('page=3'));
+      expect(axios.get).toHaveBeenNthCalledWith(
+        1,
+        expect.stringContaining('page=1')
+      );
+      expect(axios.get).toHaveBeenNthCalledWith(
+        2,
+        expect.stringContaining('page=2')
+      );
+      expect(axios.get).toHaveBeenNthCalledWith(
+        3,
+        expect.stringContaining('page=3')
+      );
     });
 
     it('should use appropriate page size', async () => {
@@ -230,8 +235,8 @@ describe('Resource Service Pagination', () => {
           status: 'success',
           data: Array(100).fill({ id: 'res' }),
           totalPages: 2,
-          currentPage: 1
-        }
+          currentPage: 1,
+        },
       });
 
       axios.get.mockResolvedValueOnce({
@@ -239,8 +244,8 @@ describe('Resource Service Pagination', () => {
           status: 'success',
           data: Array(73).fill({ id: 'res' }),
           totalPages: 2,
-          currentPage: 2
-        }
+          currentPage: 2,
+        },
       });
 
       await getAllResources();
@@ -256,19 +261,23 @@ describe('Resource Service Pagination', () => {
       axios.get.mockResolvedValueOnce({
         data: {
           status: 'success',
-          data: Array(100).fill(null).map((_, i) => ({ id: `res-${i}` })),
+          data: Array(100)
+            .fill(null)
+            .map((_, i) => ({ id: `res-${i}` })),
           totalPages: 2,
-          currentPage: 1
-        }
+          currentPage: 1,
+        },
       });
 
       axios.get.mockResolvedValueOnce({
         data: {
           status: 'success',
-          data: Array(73).fill(null).map((_, i) => ({ id: `res-${i + 100}` })),
+          data: Array(73)
+            .fill(null)
+            .map((_, i) => ({ id: `res-${i + 100}` })),
           totalPages: 2,
-          currentPage: 2
-        }
+          currentPage: 2,
+        },
       });
 
       const result = await getAllResources();
@@ -280,7 +289,7 @@ describe('Resource Service Pagination', () => {
     it('should handle filters with pagination', async () => {
       const filters = {
         type: 'STANDARD_SUITE',
-        isActive: true
+        isActive: true,
       };
 
       axios.get.mockResolvedValueOnce({
@@ -288,8 +297,8 @@ describe('Resource Service Pagination', () => {
           status: 'success',
           data: [{ id: 'res-1', type: 'STANDARD_SUITE' }],
           totalPages: 1,
-          currentPage: 1
-        }
+          currentPage: 1,
+        },
       });
 
       await getAllResources(filters);
@@ -310,8 +319,8 @@ describe('Resource Service Pagination', () => {
           status: 'success',
           data: [{ id: 'res-1' }],
           totalPages: 5, // Says there are 5 pages
-          currentPage: 1
-        }
+          currentPage: 1,
+        },
       });
 
       const result = await getAllResources();
@@ -325,9 +334,9 @@ describe('Resource Service Pagination', () => {
       axios.get.mockResolvedValueOnce({
         data: {
           status: 'success',
-          data: [{ id: 'res-1' }]
+          data: [{ id: 'res-1' }],
           // Missing totalPages, currentPage
-        }
+        },
       });
 
       const result = await getAllResources();
@@ -344,8 +353,8 @@ describe('Resource Service Pagination', () => {
           status: 'success',
           data: Array(100).fill({ id: 'res' }),
           totalPages: 2,
-          currentPage: 1
-        }
+          currentPage: 1,
+        },
       });
 
       // Page 2: Partial page (23 items)
@@ -354,8 +363,8 @@ describe('Resource Service Pagination', () => {
           status: 'success',
           data: Array(23).fill({ id: 'res' }),
           totalPages: 2,
-          currentPage: 2
-        }
+          currentPage: 2,
+        },
       });
 
       const result = await getAllResources();
@@ -369,19 +378,19 @@ describe('Resource Service Pagination', () => {
           status: 'success',
           data: [{ id: 'res-1' }],
           totalPages: 1,
-          currentPage: 1
-        }
+          currentPage: 1,
+        },
       });
 
       // Make multiple concurrent requests
       const results = await Promise.all([
         getAllResources(),
         getAllResources(),
-        getAllResources()
+        getAllResources(),
       ]);
 
       // Each should get complete results
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result).toHaveLength(1);
       });
     });
@@ -395,8 +404,8 @@ describe('Resource Service Pagination', () => {
           status: 'success',
           data: Array(100).fill({ id: 'res' }),
           totalPages: 2,
-          currentPage: 1
-        }
+          currentPage: 1,
+        },
       });
 
       axios.get.mockResolvedValueOnce({
@@ -404,8 +413,8 @@ describe('Resource Service Pagination', () => {
           status: 'success',
           data: Array(73).fill({ id: 'res' }),
           totalPages: 2,
-          currentPage: 2
-        }
+          currentPage: 2,
+        },
       });
 
       const result = await getAllResources();
@@ -420,29 +429,33 @@ describe('Resource Service Pagination', () => {
       axios.get.mockResolvedValueOnce({
         data: {
           status: 'success',
-          data: Array(100).fill(null).map((_, i) => ({
-            id: `kennel-${i}`,
-            name: `T-${i + 1}`,
-            type: 'STANDARD_SUITE'
-          })),
+          data: Array(100)
+            .fill(null)
+            .map((_, i) => ({
+              id: `kennel-${i}`,
+              name: `T-${i + 1}`,
+              type: 'STANDARD_SUITE',
+            })),
           totalPages: 2,
           currentPage: 1,
-          results: 100
-        }
+          results: 100,
+        },
       });
 
       axios.get.mockResolvedValueOnce({
         data: {
           status: 'success',
-          data: Array(73).fill(null).map((_, i) => ({
-            id: `kennel-${i + 100}`,
-            name: `T-${i + 101}`,
-            type: 'STANDARD_SUITE'
-          })),
+          data: Array(73)
+            .fill(null)
+            .map((_, i) => ({
+              id: `kennel-${i + 100}`,
+              name: `T-${i + 101}`,
+              type: 'STANDARD_SUITE',
+            })),
           totalPages: 2,
           currentPage: 2,
-          results: 73
-        }
+          results: 73,
+        },
       });
 
       const result = await getAllResources();

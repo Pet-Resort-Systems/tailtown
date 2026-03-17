@@ -3,29 +3,29 @@
  * Routes for testing Gingr API connection and data migration
  */
 
-import express, { Request, Response } from "express";
-import { testGingrConnection } from "../controllers/gingr-test.controller";
+import express, { Request, Response } from 'express';
+import { testGingrConnection } from '../controllers/gingr-test.controller';
 import {
   startMigration,
   testConnection,
-} from "../controllers/gingr-migration.controller";
-import { gingrSyncService } from "../services/gingr-sync.service";
+} from '../controllers/gingr-migration.controller';
+import { gingrSyncService } from '../services/gingr-sync.service';
 
 const router = express.Router();
 
 // Test Gingr API connection (quick test)
-router.post("/test", testGingrConnection);
+router.post('/test', testGingrConnection);
 
 // Test connection only (no data fetch)
-router.post("/test-connection", testConnection);
+router.post('/test-connection', testConnection);
 
 // Start full migration
-router.post("/migrate", startMigration);
+router.post('/migrate', startMigration);
 
 // Trigger sync for a specific tenant
-router.post("/sync", async (req: Request, res: Response) => {
+router.post('/sync', async (req: Request, res: Response) => {
   try {
-    const tenantId = (req as any).tenantId || "dev";
+    const tenantId = (req as any).tenantId || 'dev';
     console.log(`🔄 Manual Gingr sync triggered for tenant: ${tenantId}`);
 
     const result = await gingrSyncService.syncTenant(tenantId);
@@ -35,10 +35,10 @@ router.post("/sync", async (req: Request, res: Response) => {
       data: result,
       message: result.success
         ? `Sync completed: ${result.customersSync} customers, ${result.petsSync} pets, ${result.reservationsSync} reservations, ${result.invoicesSync} invoices`
-        : `Sync failed: ${result.errors.join(", ")}`,
+        : `Sync failed: ${result.errors.join(', ')}`,
     });
   } catch (error: any) {
-    console.error("Gingr sync error:", error);
+    console.error('Gingr sync error:', error);
     res.status(500).json({
       success: false,
       error: error.message,
@@ -47,14 +47,13 @@ router.post("/sync", async (req: Request, res: Response) => {
 });
 
 // Link orphaned invoices to reservations
-router.post("/link-invoices", async (req: Request, res: Response) => {
+router.post('/link-invoices', async (req: Request, res: Response) => {
   try {
-    const tenantId = (req as any).tenantId || "dev";
+    const tenantId = (req as any).tenantId || 'dev';
     console.log(`🔗 Manual invoice linking triggered for tenant: ${tenantId}`);
 
-    const linkedCount = await gingrSyncService.linkInvoicesToReservations(
-      tenantId
-    );
+    const linkedCount =
+      await gingrSyncService.linkInvoicesToReservations(tenantId);
 
     res.json({
       success: true,
@@ -62,7 +61,7 @@ router.post("/link-invoices", async (req: Request, res: Response) => {
       message: `Linked ${linkedCount} invoices to reservations`,
     });
   } catch (error: any) {
-    console.error("Invoice linking error:", error);
+    console.error('Invoice linking error:', error);
     res.status(500).json({
       success: false,
       error: error.message,
@@ -71,15 +70,15 @@ router.post("/link-invoices", async (req: Request, res: Response) => {
 });
 
 // Historical sync - backfill data for a custom date range
-router.post("/sync-historical", async (req: Request, res: Response) => {
+router.post('/sync-historical', async (req: Request, res: Response) => {
   try {
-    const tenantId = (req as any).tenantId || "dev";
+    const tenantId = (req as any).tenantId || 'dev';
     const { fromDate, toDate } = req.body;
 
     if (!fromDate || !toDate) {
       return res.status(400).json({
         success: false,
-        error: "fromDate and toDate are required (YYYY-MM-DD format)",
+        error: 'fromDate and toDate are required (YYYY-MM-DD format)',
       });
     }
 
@@ -98,7 +97,7 @@ router.post("/sync-historical", async (req: Request, res: Response) => {
       message: `Historical sync completed: ${result.reservations} reservations, ${result.invoices} invoices, ${result.linked} linked`,
     });
   } catch (error: any) {
-    console.error("Historical sync error:", error);
+    console.error('Historical sync error:', error);
     res.status(500).json({
       success: false,
       error: error.message,

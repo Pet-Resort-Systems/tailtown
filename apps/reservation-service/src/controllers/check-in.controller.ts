@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { prisma } from "../config/prisma";
-import { logger } from "../utils/logger";
+import { Request, Response } from 'express';
+import { prisma } from '../config/prisma';
+import { logger } from '../utils/logger';
 
 /**
  * Check-In Controller
@@ -14,7 +14,7 @@ import { logger } from "../utils/logger";
 export const getAllCheckIns = async (req: Request, res: Response) => {
   try {
     const tenantId =
-      (req as any).tenantId || (req.headers["x-tenant-id"] as string);
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
     const { petId, reservationId, startDate, endDate } = req.query;
 
     const where: any = { tenantId };
@@ -69,22 +69,22 @@ export const getAllCheckIns = async (req: Request, res: Response) => {
         belongings: true,
         agreement: true,
       },
-      orderBy: { checkInTime: "desc" },
+      orderBy: { checkInTime: 'desc' },
     });
 
     res.json({
-      status: "success",
+      status: 'success',
       results: checkIns.length,
       data: checkIns,
     });
   } catch (error: any) {
-    logger.error("Error fetching check-ins", {
-      tenantId: req.headers["x-tenant-id"],
+    logger.error('Error fetching check-ins', {
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to fetch check-ins",
+      status: 'error',
+      message: 'Failed to fetch check-ins',
     });
   }
 };
@@ -97,7 +97,7 @@ export const getCheckInById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const tenantId =
-      (req as any).tenantId || (req.headers["x-tenant-id"] as string);
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
 
     const checkIn = await prisma.checkIn.findFirst({
       where: { id, tenantId },
@@ -109,10 +109,10 @@ export const getCheckInById = async (req: Request, res: Response) => {
             sections: {
               include: {
                 questions: {
-                  orderBy: { order: "asc" },
+                  orderBy: { order: 'asc' },
                 },
               },
-              orderBy: { order: "asc" },
+              orderBy: { order: 'asc' },
             },
           },
         },
@@ -122,38 +122,38 @@ export const getCheckInById = async (req: Request, res: Response) => {
           },
         },
         medications: {
-          orderBy: { medicationName: "asc" },
+          orderBy: { medicationName: 'asc' },
         },
         belongings: {
-          orderBy: { itemType: "asc" },
+          orderBy: { itemType: 'asc' },
         },
         agreement: true,
         activities: {
-          orderBy: { timestamp: "desc" },
+          orderBy: { timestamp: 'desc' },
         },
       },
     });
 
     if (!checkIn) {
       return res.status(404).json({
-        status: "error",
-        message: "Check-in not found",
+        status: 'error',
+        message: 'Check-in not found',
       });
     }
 
     res.json({
-      status: "success",
+      status: 'success',
       data: checkIn,
     });
   } catch (error: any) {
-    logger.error("Error fetching check-in", {
+    logger.error('Error fetching check-in', {
       checkInId: req.params.id,
-      tenantId: req.headers["x-tenant-id"],
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to fetch check-in",
+      status: 'error',
+      message: 'Failed to fetch check-in',
     });
   }
 };
@@ -165,12 +165,12 @@ export const getCheckInById = async (req: Request, res: Response) => {
 // Map frontend medication method values to valid enum values
 const mapMedicationMethod = (method: string): string => {
   const methodMap: Record<string, string> = {
-    ORAL: "ORAL_PILL",
-    oral: "ORAL_PILL",
-    Oral: "ORAL_PILL",
-    PILL: "ORAL_PILL",
-    LIQUID: "ORAL_LIQUID",
-    DROPS: "EYE_DROPS",
+    ORAL: 'ORAL_PILL',
+    oral: 'ORAL_PILL',
+    Oral: 'ORAL_PILL',
+    PILL: 'ORAL_PILL',
+    LIQUID: 'ORAL_LIQUID',
+    DROPS: 'EYE_DROPS',
   };
   return methodMap[method] || method;
 };
@@ -178,7 +178,7 @@ const mapMedicationMethod = (method: string): string => {
 export const createCheckIn = async (req: Request, res: Response) => {
   try {
     const tenantId =
-      (req as any).tenantId || (req.headers["x-tenant-id"] as string);
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
     const {
       petId,
       customerId,
@@ -194,8 +194,8 @@ export const createCheckIn = async (req: Request, res: Response) => {
     // Validate required fields
     if (!petId) {
       return res.status(400).json({
-        status: "error",
-        message: "Pet ID is required",
+        status: 'error',
+        message: 'Pet ID is required',
       });
     }
 
@@ -210,7 +210,7 @@ export const createCheckIn = async (req: Request, res: Response) => {
         checkInBy,
         checkInNotes,
         checkInTime: new Date(),
-        status: "COMPLETED",
+        status: 'COMPLETED',
         currentStep: 5,
         // Create responses
         responses: responses
@@ -268,18 +268,18 @@ export const createCheckIn = async (req: Request, res: Response) => {
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: checkIn,
     });
   } catch (error: any) {
-    logger.error("Error creating check-in", {
+    logger.error('Error creating check-in', {
       petId: req.body.petId,
-      tenantId: req.headers["x-tenant-id"],
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to create check-in",
+      status: 'error',
+      message: 'Failed to create check-in',
     });
   }
 };
@@ -292,7 +292,7 @@ export const updateCheckIn = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const tenantId =
-      (req as any).tenantId || (req.headers["x-tenant-id"] as string);
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
     const {
       checkInNotes,
       checkOutNotes,
@@ -313,8 +313,8 @@ export const updateCheckIn = async (req: Request, res: Response) => {
 
     if (!existing) {
       return res.status(404).json({
-        status: "error",
-        message: "Check-in not found",
+        status: 'error',
+        message: 'Check-in not found',
       });
     }
 
@@ -346,18 +346,18 @@ export const updateCheckIn = async (req: Request, res: Response) => {
     });
 
     res.json({
-      status: "success",
+      status: 'success',
       data: checkIn,
     });
   } catch (error: any) {
-    logger.error("Error updating check-in", {
+    logger.error('Error updating check-in', {
       checkInId: req.params.id,
-      tenantId: req.headers["x-tenant-id"],
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to update check-in",
+      status: 'error',
+      message: 'Failed to update check-in',
     });
   }
 };
@@ -370,7 +370,7 @@ export const addMedication = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const tenantId =
-      (req as any).tenantId || (req.headers["x-tenant-id"] as string);
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
     const medicationData = req.body;
 
     // Verify check-in exists and belongs to tenant
@@ -380,8 +380,8 @@ export const addMedication = async (req: Request, res: Response) => {
 
     if (!checkIn) {
       return res.status(404).json({
-        status: "error",
-        message: "Check-in not found",
+        status: 'error',
+        message: 'Check-in not found',
       });
     }
 
@@ -407,18 +407,18 @@ export const addMedication = async (req: Request, res: Response) => {
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: medication,
     });
   } catch (error: any) {
-    logger.error("Error adding medication", {
+    logger.error('Error adding medication', {
       checkInId: req.params.id,
-      tenantId: req.headers["x-tenant-id"],
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to add medication",
+      status: 'error',
+      message: 'Failed to add medication',
     });
   }
 };
@@ -431,7 +431,7 @@ export const updateMedication = async (req: Request, res: Response) => {
   try {
     const { checkInId, medicationId } = req.params;
     const tenantId =
-      (req as any).tenantId || (req.headers["x-tenant-id"] as string);
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
     const medicationData = req.body;
 
     // Verify check-in exists and belongs to tenant
@@ -441,8 +441,8 @@ export const updateMedication = async (req: Request, res: Response) => {
 
     if (!checkIn) {
       return res.status(404).json({
-        status: "error",
-        message: "Check-in not found",
+        status: 'error',
+        message: 'Check-in not found',
       });
     }
 
@@ -468,19 +468,19 @@ export const updateMedication = async (req: Request, res: Response) => {
     });
 
     res.json({
-      status: "success",
+      status: 'success',
       data: medication,
     });
   } catch (error: any) {
-    logger.error("Error updating medication", {
+    logger.error('Error updating medication', {
       checkInId: req.params.checkInId,
       medicationId: req.params.medicationId,
-      tenantId: req.headers["x-tenant-id"],
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to update medication",
+      status: 'error',
+      message: 'Failed to update medication',
     });
   }
 };
@@ -498,17 +498,17 @@ export const deleteMedication = async (req: Request, res: Response) => {
     });
 
     res.json({
-      status: "success",
-      message: "Medication deleted successfully",
+      status: 'success',
+      message: 'Medication deleted successfully',
     });
   } catch (error: any) {
-    logger.error("Error deleting medication", {
+    logger.error('Error deleting medication', {
       medicationId: req.params.medicationId,
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to delete medication",
+      status: 'error',
+      message: 'Failed to delete medication',
     });
   }
 };
@@ -531,17 +531,17 @@ export const returnBelonging = async (req: Request, res: Response) => {
     });
 
     res.json({
-      status: "success",
+      status: 'success',
       data: belonging,
     });
   } catch (error: any) {
-    logger.error("Error marking belonging as returned", {
+    logger.error('Error marking belonging as returned', {
       belongingId: req.params.belongingId,
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to mark belonging as returned",
+      status: 'error',
+      message: 'Failed to mark belonging as returned',
     });
   }
 };
@@ -554,7 +554,7 @@ export const getRoomPets = async (req: Request, res: Response) => {
   try {
     const { reservationId } = req.params;
     const tenantId =
-      (req as any).tenantId || (req.headers["x-tenant-id"] as string);
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
 
     // Get the reservation to find the resource and date range
     const reservation = await prisma.reservation.findFirst({
@@ -572,15 +572,15 @@ export const getRoomPets = async (req: Request, res: Response) => {
 
     if (!reservation) {
       return res.status(404).json({
-        status: "error",
-        message: "Reservation not found",
+        status: 'error',
+        message: 'Reservation not found',
       });
     }
 
     if (!reservation.resourceId) {
       // No room assigned, return just this reservation
       return res.json({
-        status: "success",
+        status: 'success',
         data: {
           reservations: [reservation],
           totalPets: 1,
@@ -594,7 +594,7 @@ export const getRoomPets = async (req: Request, res: Response) => {
       where: {
         tenantId,
         resourceId: reservation.resourceId,
-        status: { in: ["CONFIRMED", "PENDING", "CHECKED_IN"] },
+        status: { in: ['CONFIRMED', 'PENDING', 'CHECKED_IN'] },
         // Overlapping date range
         AND: [
           { startDate: { lte: reservation.endDate } },
@@ -609,7 +609,7 @@ export const getRoomPets = async (req: Request, res: Response) => {
         endDate: true,
         status: true,
       },
-      orderBy: { startDate: "asc" },
+      orderBy: { startDate: 'asc' },
     });
 
     // Get check-in status for each reservation
@@ -637,7 +637,7 @@ export const getRoomPets = async (req: Request, res: Response) => {
     }));
 
     res.json({
-      status: "success",
+      status: 'success',
       data: {
         reservations: enrichedReservations,
         totalPets: roomReservations.length,
@@ -649,14 +649,14 @@ export const getRoomPets = async (req: Request, res: Response) => {
       },
     });
   } catch (error: any) {
-    logger.error("Error fetching room pets", {
+    logger.error('Error fetching room pets', {
       reservationId: req.params.reservationId,
-      tenantId: req.headers["x-tenant-id"],
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to fetch room pets",
+      status: 'error',
+      message: 'Failed to fetch room pets',
     });
   }
 };
@@ -668,13 +668,13 @@ export const getRoomPets = async (req: Request, res: Response) => {
 export const batchCheckIn = async (req: Request, res: Response) => {
   try {
     const tenantId =
-      (req as any).tenantId || (req.headers["x-tenant-id"] as string);
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
     const { checkIns, sharedData } = req.body;
 
     if (!checkIns || !Array.isArray(checkIns) || checkIns.length === 0) {
       return res.status(400).json({
-        status: "error",
-        message: "At least one check-in is required",
+        status: 'error',
+        message: 'At least one check-in is required',
       });
     }
 
@@ -762,7 +762,7 @@ export const batchCheckIn = async (req: Request, res: Response) => {
         if (reservationId) {
           await prisma.reservation.update({
             where: { id: reservationId },
-            data: { status: "CHECKED_IN" },
+            data: { status: 'CHECKED_IN' },
           });
         }
 
@@ -777,7 +777,7 @@ export const batchCheckIn = async (req: Request, res: Response) => {
     }
 
     res.status(201).json({
-      status: errors.length === 0 ? "success" : "partial",
+      status: errors.length === 0 ? 'success' : 'partial',
       data: {
         successful: results,
         failed: errors,
@@ -787,13 +787,13 @@ export const batchCheckIn = async (req: Request, res: Response) => {
       },
     });
   } catch (error: any) {
-    logger.error("Error in batch check-in", {
-      tenantId: req.headers["x-tenant-id"],
+    logger.error('Error in batch check-in', {
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to process batch check-in",
+      status: 'error',
+      message: 'Failed to process batch check-in',
     });
   }
 };
@@ -805,7 +805,7 @@ export const batchCheckIn = async (req: Request, res: Response) => {
 export const saveDraft = async (req: Request, res: Response) => {
   try {
     const tenantId =
-      (req as any).tenantId || (req.headers["x-tenant-id"] as string);
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
     const {
       checkInId,
       petId,
@@ -821,8 +821,8 @@ export const saveDraft = async (req: Request, res: Response) => {
 
     if (!petId || !reservationId) {
       return res.status(400).json({
-        status: "error",
-        message: "Pet ID and Reservation ID are required",
+        status: 'error',
+        message: 'Pet ID and Reservation ID are required',
       });
     }
 
@@ -835,7 +835,7 @@ export const saveDraft = async (req: Request, res: Response) => {
         data: {
           currentStep: currentStep || 0,
           checkInNotes,
-          status: "IN_PROGRESS",
+          status: 'IN_PROGRESS',
           updatedAt: new Date(),
         },
         include: {
@@ -908,7 +908,7 @@ export const saveDraft = async (req: Request, res: Response) => {
           templateId,
           currentStep: currentStep || 0,
           checkInNotes,
-          status: "DRAFT",
+          status: 'DRAFT',
           checkInTime: new Date(),
           responses: responses
             ? {
@@ -969,17 +969,17 @@ export const saveDraft = async (req: Request, res: Response) => {
     });
 
     res.json({
-      status: "success",
+      status: 'success',
       data: updatedCheckIn,
     });
   } catch (error: any) {
-    logger.error("Error saving draft", {
-      tenantId: req.headers["x-tenant-id"],
+    logger.error('Error saving draft', {
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to save draft",
+      status: 'error',
+      message: 'Failed to save draft',
     });
   }
 };
@@ -992,14 +992,14 @@ export const getDraft = async (req: Request, res: Response) => {
   try {
     const { reservationId } = req.params;
     const tenantId =
-      (req as any).tenantId || (req.headers["x-tenant-id"] as string);
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
 
     // Find existing draft or in-progress check-in for this reservation
     const checkIn = await prisma.checkIn.findFirst({
       where: {
         tenantId,
         reservationId,
-        status: { in: ["DRAFT", "IN_PROGRESS"] },
+        status: { in: ['DRAFT', 'IN_PROGRESS'] },
       },
       include: {
         responses: {
@@ -1008,29 +1008,29 @@ export const getDraft = async (req: Request, res: Response) => {
         medications: true,
         belongings: true,
       },
-      orderBy: { updatedAt: "desc" },
+      orderBy: { updatedAt: 'desc' },
     });
 
     if (!checkIn) {
       return res.json({
-        status: "success",
+        status: 'success',
         data: null,
       });
     }
 
     res.json({
-      status: "success",
+      status: 'success',
       data: checkIn,
     });
   } catch (error: any) {
-    logger.error("Error fetching draft", {
+    logger.error('Error fetching draft', {
       reservationId: req.params.reservationId,
-      tenantId: req.headers["x-tenant-id"],
+      tenantId: req.headers['x-tenant-id'],
       error: error.message,
     });
     res.status(500).json({
-      status: "error",
-      message: "Failed to fetch draft",
+      status: 'error',
+      message: 'Failed to fetch draft',
     });
   }
 };

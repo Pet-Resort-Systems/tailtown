@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
-import { reservationService } from "../services/reservationService";
-import { logger } from "../utils/logger";
-import { enhanceReservationsWithVaccinationIcons } from "../utils/vaccinationIconUtils";
+import { useState, useEffect, useCallback } from 'react';
+import { reservationService } from '../services/reservationService';
+import { logger } from '../utils/logger';
+import { enhanceReservationsWithVaccinationIcons } from '../utils/vaccinationIconUtils';
 
 interface DashboardMetrics {
   inCount: number | null;
@@ -68,8 +68,8 @@ export const useDashboardData = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [appointmentFilter, setAppointmentFilter] = useState<
-    "in" | "out" | "all"
-  >("in"); // Default to check-ins (today's appointments)
+    'in' | 'out' | 'all'
+  >('in'); // Default to check-ins (today's appointments)
   const [selectedDate, setSelectedDate] = useState<Date>(new Date()); // Always default to today
 
   /**
@@ -80,7 +80,7 @@ export const useDashboardData = () => {
   const getLocalDateString = useCallback((dateString: string): string => {
     // Gingr dates are stored as local time but returned with 'Z' suffix
     // Strip the 'Z' and parse as local time (same as parseGingrDate)
-    const localString = dateString.replace("Z", "");
+    const localString = dateString.replace('Z', '');
     const match = localString.match(
       /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/
     );
@@ -89,7 +89,7 @@ export const useDashboardData = () => {
       return `${year}-${month}-${day}`;
     }
     // Fallback: just extract the date portion directly
-    return dateString.split("T")[0];
+    return dateString.split('T')[0];
   }, []);
 
   /**
@@ -102,17 +102,17 @@ export const useDashboardData = () => {
    * @param reservations - Optional array to filter (defaults to allReservations)
    */
   const filterReservations = useCallback(
-    (filter: "in" | "out" | "all", reservations?: any[]) => {
+    (filter: 'in' | 'out' | 'all', reservations?: any[]) => {
       const reservationsToFilter = reservations || allReservations;
 
       // Use selected date for filtering (in local timezone)
       const formattedDate = `${selectedDate.getFullYear()}-${String(
         selectedDate.getMonth() + 1
-      ).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`;
+      ).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
 
       let filtered = reservationsToFilter;
 
-      if (filter === "in") {
+      if (filter === 'in') {
         // Show only check-ins (reservations starting on selected date in local timezone)
         // Exclude pets that have already been checked in (status = CHECKED_IN, CHECKED_OUT, or COMPLETED)
         filtered = reservationsToFilter.filter((res: any) => {
@@ -121,13 +121,13 @@ export const useDashboardData = () => {
           // Hide already checked-in pets and cancelled from the incoming list
           const status = res.status?.toUpperCase();
           return ![
-            "CHECKED_IN",
-            "CHECKED_OUT",
-            "COMPLETED",
-            "CANCELLED",
+            'CHECKED_IN',
+            'CHECKED_OUT',
+            'COMPLETED',
+            'CANCELLED',
           ].includes(status);
         });
-      } else if (filter === "out") {
+      } else if (filter === 'out') {
         // Show only check-outs (reservations ending on selected date in local timezone)
         // Exclude pets that have already been checked out (status = CHECKED_OUT or COMPLETED)
         // Also exclude CANCELLED reservations
@@ -136,9 +136,9 @@ export const useDashboardData = () => {
           if (endDateStr !== formattedDate) return false;
           // Hide already checked-out pets and cancelled from the outgoing list
           const status = res.status?.toUpperCase();
-          return !["CHECKED_OUT", "COMPLETED", "CANCELLED"].includes(status);
+          return !['CHECKED_OUT', 'COMPLETED', 'CANCELLED'].includes(status);
         });
-      } else if (filter === "all") {
+      } else if (filter === 'all') {
         // Show ALL reservations active on selected date (including checked-in/out)
         // This includes: reservations starting, ending, or spanning the selected date
         filtered = reservationsToFilter.filter((res: any) => {
@@ -166,20 +166,20 @@ export const useDashboardData = () => {
       // Use selected date for calculations
       const formattedDate = `${selectedDate.getFullYear()}-${String(
         selectedDate.getMonth() + 1
-      ).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`;
+      ).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
 
-      logger.debug("[Dashboard] Loading data for date:", {
+      logger.debug('[Dashboard] Loading data for date:', {
         date: formattedDate,
       });
 
       // Fetch all statuses including COMPLETED for displaying past reservations
       // We'll filter out COMPLETED when calculating counts to match Gingr's "Expected" totals
       const allStatuses =
-        "PENDING,CONFIRMED,CHECKED_IN,COMPLETED,CANCELLED,NO_SHOW";
+        'PENDING,CONFIRMED,CHECKED_IN,COMPLETED,CANCELLED,NO_SHOW';
 
       // Fetch reservations with pagination (up to 2 pages = 1000 reservations)
       // Include date filter to get reservations for a reasonable window around the selected date
-      logger.debug("[Dashboard] Fetching reservations...");
+      logger.debug('[Dashboard] Fetching reservations...');
       let allReservations: any[] = [];
       for (let page = 1; page <= 2; page++) {
         // Get the user's timezone for accurate date filtering
@@ -187,8 +187,8 @@ export const useDashboardData = () => {
         const pageResponse = await reservationService.getAllReservations(
           page,
           500,
-          "startDate",
-          "asc",
+          'startDate',
+          'asc',
           allStatuses, // Fetch all statuses for display
           formattedDate, // Pass the selected date to filter reservations
           undefined, // checkInDate
@@ -229,11 +229,11 @@ export const useDashboardData = () => {
         // Exclude PENDING, DRAFT, CANCELLED, NO_SHOW statuses
         return (
           status &&
-          !["PENDING", "DRAFT", "CANCELLED", "NO_SHOW"].includes(status)
+          !['PENDING', 'DRAFT', 'CANCELLED', 'NO_SHOW'].includes(status)
         );
       });
 
-      logger.debug("[Dashboard] Total reservations fetched", {
+      logger.debug('[Dashboard] Total reservations fetched', {
         total: allReservations.length,
         confirmed: confirmedReservations.length,
       });
@@ -242,24 +242,24 @@ export const useDashboardData = () => {
       const enhancedReservations = enhanceReservationsWithVaccinationIcons(
         confirmedReservations
       );
-      logger.debug("[Dashboard] Enhanced reservations with vaccination icons");
+      logger.debug('[Dashboard] Enhanced reservations with vaccination icons');
 
       // Calculate metrics using local timezone dates
 
       // Count total expected check-ins for the day (for metric card)
       const checkIns = enhancedReservations.filter((res: any) => {
-        if (res.status === "CANCELLED") return false;
+        if (res.status === 'CANCELLED') return false;
         const startDateStr = getLocalDateString(res.startDate);
         return startDateStr === formattedDate;
       }).length;
 
       const checkOuts = enhancedReservations.filter((res: any) => {
-        if (res.status === "CANCELLED") return false;
+        if (res.status === 'CANCELLED') return false;
         const endDateStr = getLocalDateString(res.endDate);
         return endDateStr === formattedDate;
       }).length;
 
-      logger.debug("[Dashboard] Service data check", {
+      logger.debug('[Dashboard] Service data check', {
         totalReservations: enhancedReservations.length,
         withService: enhancedReservations.filter((r: any) => r.service).length,
         withoutService: enhancedReservations.filter((r: any) => !r.service)
@@ -269,17 +269,17 @@ export const useDashboardData = () => {
       const overnight = enhancedReservations.filter((res: any) => {
         // Count CHECKED_IN and CONFIRMED reservations as overnight (matches Gingr)
         const status = res.status?.toUpperCase();
-        if (!["CHECKED_IN", "CONFIRMED"].includes(status)) return false;
+        if (!['CHECKED_IN', 'CONFIRMED'].includes(status)) return false;
         // Only count boarding reservations as overnight, not day camp
         const serviceCategory = res.service?.serviceCategory;
-        if (serviceCategory !== "BOARDING") return false;
+        if (serviceCategory !== 'BOARDING') return false;
 
         const startDateStr = getLocalDateString(res.startDate);
         const endDateStr = getLocalDateString(res.endDate);
         return startDateStr <= formattedDate && endDateStr > formattedDate;
       }).length;
 
-      logger.debug("[Dashboard] Calculated metrics", {
+      logger.debug('[Dashboard] Calculated metrics', {
         checkIns,
         checkOuts,
         overnight,
@@ -300,12 +300,12 @@ export const useDashboardData = () => {
         const startDateStr = getLocalDateString(res.startDate);
         if (startDateStr !== formattedDate) return false;
         const status = res.status?.toUpperCase();
-        return !["CHECKED_IN", "CHECKED_OUT", "COMPLETED"].includes(status);
+        return !['CHECKED_IN', 'CHECKED_OUT', 'COMPLETED'].includes(status);
       });
       setFilteredReservations(checkInsToday);
     } catch (err: any) {
-      logger.error("Failed to load dashboard data", { error: err.message });
-      setError("Failed to load dashboard data. Please try again.");
+      logger.error('Failed to load dashboard data', { error: err.message });
+      setError('Failed to load dashboard data. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -321,13 +321,13 @@ export const useDashboardData = () => {
   useEffect(() => {
     const handleFocus = () => {
       logger.debug(
-        "Window focused, resetting to today and refreshing dashboard"
+        'Window focused, resetting to today and refreshing dashboard'
       );
       setSelectedDate(new Date()); // Reset to today when returning to dashboard
     };
 
-    window.addEventListener("focus", handleFocus);
-    return () => window.removeEventListener("focus", handleFocus);
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // loadData is stable, no need in deps
 

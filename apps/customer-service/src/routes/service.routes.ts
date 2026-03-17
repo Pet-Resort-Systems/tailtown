@@ -7,7 +7,7 @@ import {
   deleteService,
   deactivateService,
   getServiceAddOns,
-  getServiceReservations
+  getServiceReservations,
 } from '../controllers/service.controller';
 import { CacheStrategies } from '../middleware/cache.middleware';
 

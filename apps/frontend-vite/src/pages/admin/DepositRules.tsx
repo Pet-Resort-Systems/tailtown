@@ -4,7 +4,7 @@
  * Admin interface for configuring flexible deposit rules
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -32,7 +32,7 @@ import {
   TableHead,
   TableRow,
   Divider,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -41,15 +41,15 @@ import {
   DragIndicator as DragIcon,
   AttachMoney as MoneyIcon,
   Policy as PolicyIcon,
-} from "@mui/icons-material";
-import { depositService } from "../../services/depositService";
+} from '@mui/icons-material';
+import { depositService } from '../../services/depositService';
 import {
   DepositConfig,
   DepositRule,
   DepositRuleType,
   DepositAmountType,
   RefundPolicyType,
-} from "../../types/deposit";
+} from '../../types/deposit';
 
 export const DepositRules: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -67,9 +67,9 @@ export const DepositRules: React.FC = () => {
 
   // Form state
   const [ruleFormData, setRuleFormData] = useState<Partial<DepositRule>>({
-    type: "COST_THRESHOLD",
-    depositAmountType: "PERCENTAGE",
-    refundPolicy: "TIERED_REFUND",
+    type: 'COST_THRESHOLD',
+    depositAmountType: 'PERCENTAGE',
+    refundPolicy: 'TIERED_REFUND',
     isActive: true,
     priority: 1,
     conditions: {},
@@ -93,7 +93,7 @@ export const DepositRules: React.FC = () => {
       setRules(rulesData);
     } catch (err: any) {
       setError(
-        err.response?.data?.message || "Failed to load deposit configuration"
+        err.response?.data?.message || 'Failed to load deposit configuration'
       );
     } finally {
       setLoading(false);
@@ -106,10 +106,10 @@ export const DepositRules: React.FC = () => {
       const updated = await depositService.toggleSystem(enabled);
       setConfig(updated);
       setSuccess(
-        `Deposit system ${enabled ? "enabled" : "disabled"} successfully`
+        `Deposit system ${enabled ? 'enabled' : 'disabled'} successfully`
       );
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to toggle system");
+      setError(err.response?.data?.message || 'Failed to toggle system');
     }
   };
 
@@ -120,9 +120,9 @@ export const DepositRules: React.FC = () => {
       setError(null);
       const updated = await depositService.updateConfig(config);
       setConfig(updated);
-      setSuccess("Configuration updated successfully");
+      setSuccess('Configuration updated successfully');
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to update configuration");
+      setError(err.response?.data?.message || 'Failed to update configuration');
     }
   };
 
@@ -132,7 +132,7 @@ export const DepositRules: React.FC = () => {
 
       const validation = depositService.validateRule(ruleFormData);
       if (!validation.isValid) {
-        setError(validation.errors.join(", "));
+        setError(validation.errors.join(', '));
         return;
       }
 
@@ -145,62 +145,62 @@ export const DepositRules: React.FC = () => {
       setShowRuleDialog(false);
       setEditingRule(null);
       setRuleFormData({
-        type: "COST_THRESHOLD",
-        depositAmountType: "PERCENTAGE",
-        refundPolicy: "TIERED_REFUND",
+        type: 'COST_THRESHOLD',
+        depositAmountType: 'PERCENTAGE',
+        refundPolicy: 'TIERED_REFUND',
         isActive: true,
         priority: 1,
         conditions: {},
       });
       loadData();
-      setSuccess("Deposit rule saved successfully");
+      setSuccess('Deposit rule saved successfully');
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to save deposit rule");
+      setError(err.response?.data?.message || 'Failed to save deposit rule');
     }
   };
 
   const handleDeleteRule = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this deposit rule?"))
+    if (!window.confirm('Are you sure you want to delete this deposit rule?'))
       return;
 
     try {
       await depositService.deleteRule(id);
       loadData();
-      setSuccess("Deposit rule deleted successfully");
+      setSuccess('Deposit rule deleted successfully');
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to delete deposit rule");
+      setError(err.response?.data?.message || 'Failed to delete deposit rule');
     }
   };
 
   const getRuleTypeLabel = (type: DepositRuleType): string => {
     const labels: Record<DepositRuleType, string> = {
-      COST_THRESHOLD: "Cost Threshold",
-      SERVICE_TYPE: "Service Type",
-      ADVANCE_BOOKING: "Advance Booking",
-      HOLIDAY_PEAK: "Holiday/Peak Season",
-      DAY_OF_WEEK: "Day of Week",
-      DURATION: "Stay Duration",
-      FIRST_TIME_CUSTOMER: "First-Time Customer",
-      CUSTOM: "Custom Rule",
+      COST_THRESHOLD: 'Cost Threshold',
+      SERVICE_TYPE: 'Service Type',
+      ADVANCE_BOOKING: 'Advance Booking',
+      HOLIDAY_PEAK: 'Holiday/Peak Season',
+      DAY_OF_WEEK: 'Day of Week',
+      DURATION: 'Stay Duration',
+      FIRST_TIME_CUSTOMER: 'First-Time Customer',
+      CUSTOM: 'Custom Rule',
     };
     return labels[type];
   };
 
   const getAmountTypeLabel = (type: DepositAmountType): string => {
     const labels: Record<DepositAmountType, string> = {
-      PERCENTAGE: "Percentage",
-      FIXED: "Fixed Amount",
-      FULL: "Full Payment",
+      PERCENTAGE: 'Percentage',
+      FIXED: 'Fixed Amount',
+      FULL: 'Full Payment',
     };
     return labels[type];
   };
 
   const getRefundPolicyLabel = (policy: RefundPolicyType): string => {
     const labels: Record<RefundPolicyType, string> = {
-      FULL_REFUND: "Fully Refundable",
-      PARTIAL_REFUND: "Partially Refundable",
-      NON_REFUNDABLE: "Non-Refundable",
-      TIERED_REFUND: "Tiered Refund",
+      FULL_REFUND: 'Fully Refundable',
+      PARTIAL_REFUND: 'Partially Refundable',
+      NON_REFUNDABLE: 'Non-Refundable',
+      TIERED_REFUND: 'Tiered Refund',
     };
     return labels[policy];
   };
@@ -251,7 +251,7 @@ export const DepositRules: React.FC = () => {
               color="primary"
             />
           }
-          label={config.isEnabled ? "Enabled" : "Disabled"}
+          label={config.isEnabled ? 'Enabled' : 'Disabled'}
         />
       </Box>
 
@@ -272,7 +272,7 @@ export const DepositRules: React.FC = () => {
       )}
 
       {/* Tabs */}
-      <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
         <Tabs value={activeTab} onChange={(e, v) => setActiveTab(v)}>
           <Tab icon={<PolicyIcon />} label="Deposit Rules" />
           <Tab icon={<MoneyIcon />} label="General Settings" />
@@ -295,9 +295,9 @@ export const DepositRules: React.FC = () => {
               onClick={() => {
                 setEditingRule(null);
                 setRuleFormData({
-                  type: "COST_THRESHOLD",
-                  depositAmountType: "PERCENTAGE",
-                  refundPolicy: "TIERED_REFUND",
+                  type: 'COST_THRESHOLD',
+                  depositAmountType: 'PERCENTAGE',
+                  refundPolicy: 'TIERED_REFUND',
                   isActive: true,
                   priority: rules.length + 1,
                   conditions: {},
@@ -329,7 +329,7 @@ export const DepositRules: React.FC = () => {
                   <TableRow key={rule.id}>
                     <TableCell>
                       <DragIcon
-                        sx={{ color: "text.secondary", cursor: "move" }}
+                        sx={{ color: 'text.secondary', cursor: 'move' }}
                       />
                     </TableCell>
                     <TableCell>{rule.priority}</TableCell>
@@ -343,19 +343,19 @@ export const DepositRules: React.FC = () => {
                     </TableCell>
                     <TableCell>{getRuleTypeLabel(rule.type)}</TableCell>
                     <TableCell>
-                      {rule.depositAmountType === "PERCENTAGE" &&
+                      {rule.depositAmountType === 'PERCENTAGE' &&
                         `${rule.depositPercentage}%`}
-                      {rule.depositAmountType === "FIXED" &&
+                      {rule.depositAmountType === 'FIXED' &&
                         `$${rule.depositFixedAmount}`}
-                      {rule.depositAmountType === "FULL" && "Full Payment"}
+                      {rule.depositAmountType === 'FULL' && 'Full Payment'}
                     </TableCell>
                     <TableCell>
                       {getRefundPolicyLabel(rule.refundPolicy)}
                     </TableCell>
                     <TableCell>
                       <Chip
-                        label={rule.isActive ? "Active" : "Inactive"}
-                        color={rule.isActive ? "success" : "default"}
+                        label={rule.isActive ? 'Active' : 'Inactive'}
+                        color={rule.isActive ? 'success' : 'default'}
                         size="small"
                       />
                     </TableCell>
@@ -415,7 +415,7 @@ export const DepositRules: React.FC = () => {
                     />
                   }
                   label="Require Default Deposit"
-                  sx={{ mb: 2, display: "block" }}
+                  sx={{ mb: 2, display: 'block' }}
                 />
 
                 {config.defaultDepositRequired && (
@@ -424,7 +424,7 @@ export const DepositRules: React.FC = () => {
                       fullWidth
                       select
                       label="Default Deposit Type"
-                      value={config.defaultDepositType || "PERCENTAGE"}
+                      value={config.defaultDepositType || 'PERCENTAGE'}
                       onChange={(e) =>
                         setConfig({
                           ...config,
@@ -443,9 +443,9 @@ export const DepositRules: React.FC = () => {
                       fullWidth
                       type="number"
                       label={
-                        config.defaultDepositType === "PERCENTAGE"
-                          ? "Percentage (%)"
-                          : "Amount ($)"
+                        config.defaultDepositType === 'PERCENTAGE'
+                          ? 'Percentage (%)'
+                          : 'Amount ($)'
                       }
                       value={config.defaultDepositAmount || 0}
                       onChange={(e) =>
@@ -491,7 +491,7 @@ export const DepositRules: React.FC = () => {
                     />
                   }
                   label="Allow Partial Payments"
-                  sx={{ mb: 2, display: "block" }}
+                  sx={{ mb: 2, display: 'block' }}
                 />
 
                 {config.allowPartialPayments && (
@@ -529,7 +529,7 @@ export const DepositRules: React.FC = () => {
                     />
                   }
                   label="Send Deposit Reminders"
-                  sx={{ mb: 2, display: "block" }}
+                  sx={{ mb: 2, display: 'block' }}
                 />
               </CardContent>
             </Card>
@@ -545,7 +545,7 @@ export const DepositRules: React.FC = () => {
         fullWidth
       >
         <DialogTitle>
-          {editingRule ? "Edit Deposit Rule" : "Add Deposit Rule"}
+          {editingRule ? 'Edit Deposit Rule' : 'Add Deposit Rule'}
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
@@ -553,7 +553,7 @@ export const DepositRules: React.FC = () => {
               <TextField
                 fullWidth
                 label="Rule Name"
-                value={ruleFormData.name || ""}
+                value={ruleFormData.name || ''}
                 onChange={(e) =>
                   setRuleFormData({ ...ruleFormData, name: e.target.value })
                 }
@@ -566,7 +566,7 @@ export const DepositRules: React.FC = () => {
                 multiline
                 rows={2}
                 label="Description"
-                value={ruleFormData.description || ""}
+                value={ruleFormData.description || ''}
                 onChange={(e) =>
                   setRuleFormData({
                     ...ruleFormData,
@@ -643,7 +643,7 @@ export const DepositRules: React.FC = () => {
               </TextField>
             </Grid>
 
-            {ruleFormData.depositAmountType === "PERCENTAGE" && (
+            {ruleFormData.depositAmountType === 'PERCENTAGE' && (
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
@@ -660,7 +660,7 @@ export const DepositRules: React.FC = () => {
               </Grid>
             )}
 
-            {ruleFormData.depositAmountType === "FIXED" && (
+            {ruleFormData.depositAmountType === 'FIXED' && (
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth

@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import { PrismaClient, CouponType, CouponStatus } from "@prisma/client";
-import { AppError } from "../middleware/error.middleware";
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient, CouponType, CouponStatus } from '@prisma/client';
+import { AppError } from '../middleware/error.middleware';
 
 const prisma = new PrismaClient();
 
@@ -23,8 +23,8 @@ export const getAllCoupons = async (
     }
     if (search) {
       where.OR = [
-        { code: { contains: search, mode: "insensitive" } },
-        { description: { contains: search, mode: "insensitive" } },
+        { code: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
       ];
     }
 
@@ -41,13 +41,13 @@ export const getAllCoupons = async (
           },
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
 
     const total = await prisma.coupon.count({ where });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: coupons.length,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
@@ -78,17 +78,17 @@ export const getCouponById = async (
             discountAmount: true,
             usedAt: true,
           },
-          orderBy: { usedAt: "desc" },
+          orderBy: { usedAt: 'desc' },
         },
       },
     });
 
     if (!coupon) {
-      return next(new AppError("Coupon not found", 404));
+      return next(new AppError('Coupon not found', 404));
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: coupon,
     });
   } catch (error) {
@@ -109,7 +109,7 @@ export const getCouponByCode = async (
       where: {
         code: {
           equals: code,
-          mode: "insensitive",
+          mode: 'insensitive',
         },
       },
       include: {
@@ -118,11 +118,11 @@ export const getCouponByCode = async (
     });
 
     if (!coupon) {
-      return next(new AppError("Coupon not found", 404));
+      return next(new AppError('Coupon not found', 404));
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: coupon,
     });
   } catch (error) {
@@ -157,19 +157,19 @@ export const createCoupon = async (
 
     // Validate required fields
     if (!code || !description || !type || discountValue === undefined) {
-      return next(new AppError("Missing required fields", 400));
+      return next(new AppError('Missing required fields', 400));
     }
 
     // Validate discount value
-    if (type === "PERCENTAGE" && (discountValue < 0 || discountValue > 100)) {
+    if (type === 'PERCENTAGE' && (discountValue < 0 || discountValue > 100)) {
       return next(
-        new AppError("Percentage discount must be between 0 and 100", 400)
+        new AppError('Percentage discount must be between 0 and 100', 400)
       );
     }
 
-    if (type === "FIXED_AMOUNT" && discountValue <= 0) {
+    if (type === 'FIXED_AMOUNT' && discountValue <= 0) {
       return next(
-        new AppError("Fixed amount discount must be greater than 0", 400)
+        new AppError('Fixed amount discount must be greater than 0', 400)
       );
     }
 
@@ -178,13 +178,13 @@ export const createCoupon = async (
       where: {
         code: {
           equals: code,
-          mode: "insensitive",
+          mode: 'insensitive',
         },
       },
     });
 
     if (existingCoupon) {
-      return next(new AppError("Coupon code already exists", 400));
+      return next(new AppError('Coupon code already exists', 400));
     }
 
     const coupon = await prisma.coupon.create({
@@ -208,7 +208,7 @@ export const createCoupon = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: coupon,
     });
   } catch (error) {
@@ -241,22 +241,22 @@ export const updateCoupon = async (
     const coupon = await prisma.coupon.findUnique({ where: { id } });
 
     if (!coupon) {
-      return next(new AppError("Coupon not found", 404));
+      return next(new AppError('Coupon not found', 404));
     }
 
     // Validate discount value if provided
     if (discountValue !== undefined) {
       if (
-        coupon.type === "PERCENTAGE" &&
+        coupon.type === 'PERCENTAGE' &&
         (discountValue < 0 || discountValue > 100)
       ) {
         return next(
-          new AppError("Percentage discount must be between 0 and 100", 400)
+          new AppError('Percentage discount must be between 0 and 100', 400)
         );
       }
-      if (coupon.type === "FIXED_AMOUNT" && discountValue <= 0) {
+      if (coupon.type === 'FIXED_AMOUNT' && discountValue <= 0) {
         return next(
-          new AppError("Fixed amount discount must be greater than 0", 400)
+          new AppError('Fixed amount discount must be greater than 0', 400)
         );
       }
     }
@@ -279,7 +279,7 @@ export const updateCoupon = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: updatedCoupon,
     });
   } catch (error) {
@@ -299,7 +299,7 @@ export const deleteCoupon = async (
     const coupon = await prisma.coupon.findUnique({ where: { id } });
 
     if (!coupon) {
-      return next(new AppError("Coupon not found", 404));
+      return next(new AppError('Coupon not found', 404));
     }
 
     await prisma.coupon.delete({ where: { id } });
@@ -320,7 +320,7 @@ export const validateCoupon = async (
     const { code, customerId, subtotal, serviceIds } = req.body;
 
     if (!code || !customerId || subtotal === undefined) {
-      return next(new AppError("Missing required fields", 400));
+      return next(new AppError('Missing required fields', 400));
     }
 
     // Find coupon
@@ -328,7 +328,7 @@ export const validateCoupon = async (
       where: {
         code: {
           equals: code,
-          mode: "insensitive",
+          mode: 'insensitive',
         },
       },
       include: {
@@ -342,21 +342,21 @@ export const validateCoupon = async (
 
     if (!coupon) {
       return res.status(200).json({
-        status: "success",
+        status: 'success',
         data: {
           isValid: false,
-          error: "Coupon not found",
+          error: 'Coupon not found',
         },
       });
     }
 
     // Check status
-    if (coupon.status !== "ACTIVE") {
+    if (coupon.status !== 'ACTIVE') {
       return res.status(200).json({
-        status: "success",
+        status: 'success',
         data: {
           isValid: false,
-          error: "Coupon is not active",
+          error: 'Coupon is not active',
         },
       });
     }
@@ -365,10 +365,10 @@ export const validateCoupon = async (
     const now = new Date();
     if (now < new Date(coupon.validFrom) || now > new Date(coupon.validUntil)) {
       return res.status(200).json({
-        status: "success",
+        status: 'success',
         data: {
           isValid: false,
-          error: "Coupon is not valid at this time",
+          error: 'Coupon is not valid at this time',
         },
       });
     }
@@ -376,10 +376,10 @@ export const validateCoupon = async (
     // Check total uses
     if (coupon.maxTotalUses && coupon.currentUses >= coupon.maxTotalUses) {
       return res.status(200).json({
-        status: "success",
+        status: 'success',
         data: {
           isValid: false,
-          error: "Coupon has reached maximum uses",
+          error: 'Coupon has reached maximum uses',
         },
       });
     }
@@ -387,11 +387,11 @@ export const validateCoupon = async (
     // Check customer uses
     if (coupon.usages.length >= coupon.maxUsesPerCustomer) {
       return res.status(200).json({
-        status: "success",
+        status: 'success',
         data: {
           isValid: false,
           error:
-            "You have already used this coupon the maximum number of times",
+            'You have already used this coupon the maximum number of times',
         },
       });
     }
@@ -399,7 +399,7 @@ export const validateCoupon = async (
     // Check minimum purchase
     if (coupon.minimumPurchase && subtotal < coupon.minimumPurchase) {
       return res.status(200).json({
-        status: "success",
+        status: 'success',
         data: {
           isValid: false,
           error: `Minimum purchase of $${coupon.minimumPurchase} required`,
@@ -416,10 +416,10 @@ export const validateCoupon = async (
         );
         if (!hasValidService) {
           return res.status(200).json({
-            status: "success",
+            status: 'success',
             data: {
               isValid: false,
-              error: "Coupon is not valid for selected services",
+              error: 'Coupon is not valid for selected services',
             },
           });
         }
@@ -435,7 +435,7 @@ export const validateCoupon = async (
 
     // Calculate discount
     let discountAmount = 0;
-    if (coupon.type === "PERCENTAGE") {
+    if (coupon.type === 'PERCENTAGE') {
       discountAmount = subtotal * (coupon.discountValue / 100);
     } else {
       discountAmount = Math.min(coupon.discountValue, subtotal);
@@ -444,7 +444,7 @@ export const validateCoupon = async (
     const finalPrice = Math.max(0, subtotal - discountAmount);
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         isValid: true,
         discountAmount,
@@ -478,7 +478,7 @@ export const applyCoupon = async (
       !reservationId ||
       discountAmount === undefined
     ) {
-      return next(new AppError("Missing required fields", 400));
+      return next(new AppError('Missing required fields', 400));
     }
 
     // Create usage record and increment currentUses
@@ -508,12 +508,12 @@ export const applyCoupon = async (
     ) {
       await prisma.coupon.update({
         where: { id: couponId },
-        data: { status: "DEPLETED" },
+        data: { status: 'DEPLETED' },
       });
     }
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: usage,
     });
   } catch (error) {
@@ -543,7 +543,7 @@ export const getCouponStats = async (
     });
 
     if (!coupon) {
-      return next(new AppError("Coupon not found", 404));
+      return next(new AppError('Coupon not found', 404));
     }
 
     const totalDiscountGiven = coupon.usages.reduce(
@@ -554,7 +554,7 @@ export const getCouponStats = async (
       coupon.usages.length > 0 ? totalDiscountGiven / coupon.usages.length : 0;
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         couponId: coupon.id,
         code: coupon.code,
@@ -593,12 +593,12 @@ export const bulkCreateCoupons = async (
     } = req.body;
 
     if (!prefix || !count || !type || discountValue === undefined) {
-      return next(new AppError("Missing required fields", 400));
+      return next(new AppError('Missing required fields', 400));
     }
 
     if (count > 1000) {
       return next(
-        new AppError("Cannot create more than 1000 coupons at once", 400)
+        new AppError('Cannot create more than 1000 coupons at once', 400)
       );
     }
 
@@ -629,7 +629,7 @@ export const bulkCreateCoupons = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: {
         created: created.count,
         coupons: coupons.map((c) => c.code),
@@ -651,15 +651,15 @@ export const getActiveCoupons = async (
 
     const coupons = await prisma.coupon.findMany({
       where: {
-        status: "ACTIVE",
+        status: 'ACTIVE',
         validFrom: { lte: now },
         validUntil: { gte: now },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: coupons.length,
       data: coupons,
     });
@@ -679,7 +679,7 @@ export const updateCouponStatus = async (
     const { status } = req.body;
 
     if (!status) {
-      return next(new AppError("Status is required", 400));
+      return next(new AppError('Status is required', 400));
     }
 
     const coupon = await prisma.coupon.update({
@@ -688,7 +688,7 @@ export const updateCouponStatus = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: coupon,
     });
   } catch (error) {
@@ -713,12 +713,12 @@ export const getCustomerPermanentCouponForCheckout = async (
     });
 
     if (!customer) {
-      return next(new AppError("Customer not found", 404));
+      return next(new AppError('Customer not found', 404));
     }
 
     if (!customer.permanentCoupon) {
       return res.status(200).json({
-        status: "success",
+        status: 'success',
         data: null,
       });
     }
@@ -728,20 +728,20 @@ export const getCustomerPermanentCouponForCheckout = async (
     // Check if coupon is still valid
     const now = new Date();
     const isValid =
-      coupon.status === "ACTIVE" &&
+      coupon.status === 'ACTIVE' &&
       now >= new Date(coupon.validFrom) &&
       now <= new Date(coupon.validUntil);
 
     if (!isValid) {
       return res.status(200).json({
-        status: "success",
+        status: 'success',
         data: null,
-        message: "Permanent coupon is no longer valid",
+        message: 'Permanent coupon is no longer valid',
       });
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         id: coupon.id,
         code: coupon.code,

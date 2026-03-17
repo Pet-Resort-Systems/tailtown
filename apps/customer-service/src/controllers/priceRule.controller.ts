@@ -1,12 +1,12 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 import {
   PrismaClient,
   PriceRuleType,
   DiscountType,
   PriceAdjustmentType,
   ServiceCategory,
-} from "@prisma/client";
-import { AppError } from "../middleware/error.middleware";
+} from '@prisma/client';
+import { AppError } from '../middleware/error.middleware';
 
 const prisma = new PrismaClient();
 
@@ -21,11 +21,11 @@ export const getAllPriceRules = async (
     const limit = Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;
     const isActive =
-      req.query.isActive === "true"
+      req.query.isActive === 'true'
         ? true
-        : req.query.isActive === "false"
-        ? false
-        : undefined;
+        : req.query.isActive === 'false'
+          ? false
+          : undefined;
     const ruleType = req.query.ruleType as PriceRuleType | undefined;
 
     // Build where condition
@@ -49,13 +49,13 @@ export const getAllPriceRules = async (
           },
         },
       },
-      orderBy: { priority: "desc" },
+      orderBy: { priority: 'desc' },
     });
 
     const total = await prisma.priceRule.count({ where });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       results: priceRules.length,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
@@ -88,11 +88,11 @@ export const getPriceRuleById = async (
     });
 
     if (!priceRule) {
-      return next(new AppError("Price rule not found", 404));
+      return next(new AppError('Price rule not found', 404));
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: priceRule,
     });
   } catch (error) {
@@ -127,26 +127,26 @@ export const createPriceRule = async (
 
     // Validate required fields
     if (!name || !ruleType || !discountType || discountValue === undefined) {
-      return next(new AppError("Missing required fields", 400));
+      return next(new AppError('Missing required fields', 400));
     }
 
     // Validate discount value
     if (
-      discountType === "PERCENTAGE" &&
+      discountType === 'PERCENTAGE' &&
       (discountValue < 0 || discountValue > 100)
     ) {
       return next(
-        new AppError("Percentage discount must be between 0 and 100", 400)
+        new AppError('Percentage discount must be between 0 and 100', 400)
       );
     }
 
     // Validate days of week if applicable
     if (
-      ruleType === "DAY_OF_WEEK" &&
+      ruleType === 'DAY_OF_WEEK' &&
       (!daysOfWeek || daysOfWeek.length === 0)
     ) {
       return next(
-        new AppError("Days of week are required for DAY_OF_WEEK rule type", 400)
+        new AppError('Days of week are required for DAY_OF_WEEK rule type', 400)
       );
     }
 
@@ -158,7 +158,7 @@ export const createPriceRule = async (
           name,
           description,
           ruleType,
-          adjustmentType: adjustmentType || "DISCOUNT",
+          adjustmentType: adjustmentType || 'DISCOUNT',
           discountType,
           discountValue,
           minQuantity,
@@ -214,7 +214,7 @@ export const createPriceRule = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: newPriceRule,
     });
   } catch (error) {
@@ -255,17 +255,17 @@ export const updatePriceRule = async (
     });
 
     if (!priceRuleExists) {
-      return next(new AppError("Price rule not found", 404));
+      return next(new AppError('Price rule not found', 404));
     }
 
     // Validate discount value if provided
     if (
-      discountType === "PERCENTAGE" &&
+      discountType === 'PERCENTAGE' &&
       discountValue !== undefined &&
       (discountValue < 0 || discountValue > 100)
     ) {
       return next(
-        new AppError("Percentage discount must be between 0 and 100", 400)
+        new AppError('Percentage discount must be between 0 and 100', 400)
       );
     }
 
@@ -350,7 +350,7 @@ export const updatePriceRule = async (
     });
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: updatedPriceRule,
     });
   } catch (error) {
@@ -374,7 +374,7 @@ export const deletePriceRule = async (
     });
 
     if (!priceRuleExists) {
-      return next(new AppError("Price rule not found", 404));
+      return next(new AppError('Price rule not found', 404));
     }
 
     // Delete price rule (related records will be deleted via cascade)
@@ -398,7 +398,7 @@ export const calculatePrice = async (
     const { serviceId, startDate, endDate, petCount = 1 } = req.body;
 
     if (!serviceId || !startDate || !endDate) {
-      return next(new AppError("Missing required fields", 400));
+      return next(new AppError('Missing required fields', 400));
     }
 
     // Get service details
@@ -407,7 +407,7 @@ export const calculatePrice = async (
     });
 
     if (!service) {
-      return next(new AppError("Service not found", 404));
+      return next(new AppError('Service not found', 404));
     }
 
     const parseDateInput = (value: string) => {
@@ -438,12 +438,12 @@ export const calculatePrice = async (
         OR: [
           {
             // Day of week rules
-            ruleType: "DAY_OF_WEEK",
+            ruleType: 'DAY_OF_WEEK',
             daysOfWeek: { contains: String(dayOfWeek) },
           },
           {
             // Multi-day rules
-            ruleType: "MULTI_DAY",
+            ruleType: 'MULTI_DAY',
             minQuantity: { lte: durationInDays },
             OR: [
               { maxQuantity: { gte: durationInDays } },
@@ -452,13 +452,13 @@ export const calculatePrice = async (
           },
           {
             // Multi-pet rules
-            ruleType: "MULTI_PET",
+            ruleType: 'MULTI_PET',
             minQuantity: { lte: petCount },
             OR: [{ maxQuantity: { gte: petCount } }, { maxQuantity: null }],
           },
           {
             // Seasonal/promotional rules
-            ruleType: { in: ["SEASONAL", "PROMOTIONAL", "CUSTOM"] },
+            ruleType: { in: ['SEASONAL', 'PROMOTIONAL', 'CUSTOM'] },
             startDate: { lte: today },
             OR: [{ endDate: { gte: today } }, { endDate: null }],
           },
@@ -491,7 +491,7 @@ export const calculatePrice = async (
           },
         ],
       },
-      orderBy: { priority: "desc" },
+      orderBy: { priority: 'desc' },
       include: {
         serviceCategories: true,
         services: true,
@@ -506,23 +506,23 @@ export const calculatePrice = async (
     const isRuleApplicable = (rule: any) => {
       if (!rule?.isActive) return false;
 
-      if (rule.ruleType === "DAY_OF_WEEK") {
+      if (rule.ruleType === 'DAY_OF_WEEK') {
         const rawDays = rule.daysOfWeek;
         const parsedDays: number[] = Array.isArray(rawDays)
           ? rawDays
-          : typeof rawDays === "string"
-          ? (() => {
-              try {
-                return JSON.parse(rawDays);
-              } catch {
-                return [];
-              }
-            })()
-          : [];
+          : typeof rawDays === 'string'
+            ? (() => {
+                try {
+                  return JSON.parse(rawDays);
+                } catch {
+                  return [];
+                }
+              })()
+            : [];
         return parsedDays.map(Number).includes(dayOfWeek);
       }
 
-      if (rule.ruleType === "MULTI_DAY") {
+      if (rule.ruleType === 'MULTI_DAY') {
         if (rule.minQuantity != null && durationInDays < rule.minQuantity)
           return false;
         if (rule.maxQuantity != null && durationInDays > rule.maxQuantity)
@@ -530,7 +530,7 @@ export const calculatePrice = async (
         return true;
       }
 
-      if (rule.ruleType === "MULTI_PET") {
+      if (rule.ruleType === 'MULTI_PET') {
         if (rule.minQuantity != null && petCount < rule.minQuantity)
           return false;
         if (rule.maxQuantity != null && petCount > rule.maxQuantity)
@@ -538,7 +538,7 @@ export const calculatePrice = async (
         return true;
       }
 
-      if (["SEASONAL", "PROMOTIONAL", "CUSTOM"].includes(rule.ruleType)) {
+      if (['SEASONAL', 'PROMOTIONAL', 'CUSTOM'].includes(rule.ruleType)) {
         const startOk = !rule.startDate || today >= new Date(rule.startDate);
         const endOk = !rule.endDate || today <= new Date(rule.endDate);
         return startOk && endOk;
@@ -559,7 +559,7 @@ export const calculatePrice = async (
 
       let adjustmentAmount = 0;
 
-      if (rule.discountType === "PERCENTAGE") {
+      if (rule.discountType === 'PERCENTAGE') {
         adjustmentAmount = basePrice * (rule.discountValue / 100);
       } else {
         // FIXED_AMOUNT
@@ -567,7 +567,7 @@ export const calculatePrice = async (
       }
 
       // Apply adjustment based on type (DISCOUNT reduces, SURCHARGE increases)
-      if (rule.adjustmentType === "SURCHARGE") {
+      if (rule.adjustmentType === 'SURCHARGE') {
         finalPrice += adjustmentAmount;
       } else {
         finalPrice -= adjustmentAmount;
@@ -589,7 +589,7 @@ export const calculatePrice = async (
     finalPrice = Math.max(0, finalPrice);
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         basePrice,
         finalPrice,

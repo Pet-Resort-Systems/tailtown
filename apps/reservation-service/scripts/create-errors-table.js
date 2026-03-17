@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 async function createReservationErrorsTable() {
   try {
     console.log('Checking if reservation_errors table exists...');
-    
+
     // Check if the table already exists
     const tableExists = await prisma.$queryRaw`
       SELECT EXISTS (
@@ -14,14 +14,16 @@ async function createReservationErrorsTable() {
         WHERE table_name = 'reservation_errors'
       );
     `;
-    
+
     if (tableExists[0].exists) {
-      console.log('Table reservation_errors already exists. Skipping creation.');
+      console.log(
+        'Table reservation_errors already exists. Skipping creation.'
+      );
       return;
     }
-    
+
     console.log('Creating reservation_errors table...');
-    
+
     // Create the reservation_errors table
     await prisma.$executeRaw`
       CREATE TABLE "reservation_errors" (
@@ -43,14 +45,14 @@ async function createReservationErrorsTable() {
         CONSTRAINT "reservation_errors_pkey" PRIMARY KEY ("id")
       );
     `;
-    
+
     console.log('Creating indexes on reservation_errors table...');
-    
+
     // Create indexes for better query performance
     await prisma.$executeRaw`CREATE INDEX "reservation_errors_timestamp_idx" ON "reservation_errors" ("timestamp");`;
     await prisma.$executeRaw`CREATE INDEX "reservation_errors_error_category_idx" ON "reservation_errors" ("error_category");`;
     await prisma.$executeRaw`CREATE INDEX "reservation_errors_is_resolved_idx" ON "reservation_errors" ("is_resolved");`;
-    
+
     console.log('Reservation errors table and indexes created successfully!');
   } catch (error) {
     console.error('Failed to create reservation_errors table:', error);

@@ -26,7 +26,7 @@ describe('TenantService - Timezone Functionality', () => {
       const mockTenant = {
         id: 'tenant-123',
         timezone: 'America/Chicago',
-        businessName: 'Test Business'
+        businessName: 'Test Business',
       };
 
       mockedAxios.get.mockResolvedValueOnce({ data: { data: mockTenant } });
@@ -34,7 +34,7 @@ describe('TenantService - Timezone Functionality', () => {
       // Mock window.location.hostname
       Object.defineProperty(window, 'location', {
         value: { hostname: 'test.canicloud.com' },
-        writable: true
+        writable: true,
       });
 
       const timezone = await tenantService.getCurrentTenantTimezone();
@@ -51,7 +51,7 @@ describe('TenantService - Timezone Functionality', () => {
 
       Object.defineProperty(window, 'location', {
         value: { hostname: 'test.canicloud.com' },
-        writable: true
+        writable: true,
       });
 
       const timezone = await tenantService.getCurrentTenantTimezone();
@@ -62,7 +62,7 @@ describe('TenantService - Timezone Functionality', () => {
     it('should use default timezone if tenant has no timezone set', async () => {
       const mockTenant = {
         id: 'tenant-123',
-        businessName: 'Test Business'
+        businessName: 'Test Business',
         // No timezone property
       };
 
@@ -70,7 +70,7 @@ describe('TenantService - Timezone Functionality', () => {
 
       Object.defineProperty(window, 'location', {
         value: { hostname: 'test.canicloud.com' },
-        writable: true
+        writable: true,
       });
 
       const timezone = await tenantService.getCurrentTenantTimezone();
@@ -85,7 +85,7 @@ describe('TenantService - Timezone Functionality', () => {
         id: 'tenant-123',
         subdomain: 'test',
         timezone: 'America/Los_Angeles',
-        businessName: 'Test Business'
+        businessName: 'Test Business',
       };
 
       mockedAxios.get.mockResolvedValueOnce({ data: { data: mockTenant } });
@@ -105,7 +105,7 @@ describe('TenantService - Timezone Functionality', () => {
       const mockTenant = {
         id: 'tenant-123',
         subdomain: 'test',
-        timezone: 'America/Phoenix'
+        timezone: 'America/Phoenix',
       };
 
       mockedAxios.get.mockResolvedValueOnce({ data: { data: mockTenant } });
@@ -116,8 +116,8 @@ describe('TenantService - Timezone Functionality', () => {
         expect.any(String),
         expect.objectContaining({
           headers: expect.objectContaining({
-            Authorization: 'Bearer test-token'
-          })
+            Authorization: 'Bearer test-token',
+          }),
         })
       );
     });
@@ -136,14 +136,14 @@ describe('TenantService - Timezone Functionality', () => {
       const mockTenant = {
         id: 'tenant-123',
         timezone: 'America/New_York',
-        businessName: 'Test Business'
+        businessName: 'Test Business',
       };
 
       mockedAxios.get.mockResolvedValueOnce({ data: { data: mockTenant } });
 
       Object.defineProperty(window, 'location', {
         value: { hostname: 'test.canicloud.com' },
-        writable: true
+        writable: true,
       });
 
       // First call - should fetch from API
@@ -165,7 +165,7 @@ describe('TenantService - Timezone Functionality', () => {
         'America/Denver',
         'America/Phoenix',
         'Europe/London',
-        'Asia/Tokyo'
+        'Asia/Tokyo',
       ];
 
       for (const tz of timezones) {
@@ -175,7 +175,7 @@ describe('TenantService - Timezone Functionality', () => {
 
         Object.defineProperty(window, 'location', {
           value: { hostname: 'test.canicloud.com' },
-          writable: true
+          writable: true,
         });
 
         const result = await tenantService.getCurrentTenantTimezone();

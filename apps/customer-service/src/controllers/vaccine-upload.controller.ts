@@ -9,7 +9,11 @@ export class VaccineUploadController {
    * POST /api/pets/:petId/vaccine-records/upload
    * Upload a vaccine record file for a pet
    */
-  async uploadVaccineRecord(req: TenantRequest, res: Response, next: NextFunction) {
+  async uploadVaccineRecord(
+    req: TenantRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { petId } = req.params;
       const tenantId = req.tenantId!;
@@ -76,7 +80,10 @@ export class VaccineUploadController {
         try {
           await deleteFile(req.file.filename);
         } catch (deleteError) {
-          console.error('Error deleting file after upload failure:', deleteError);
+          console.error(
+            'Error deleting file after upload failure:',
+            deleteError
+          );
         }
       }
       next(error);
@@ -87,7 +94,11 @@ export class VaccineUploadController {
    * GET /api/pets/:petId/vaccine-records
    * Get all vaccine record files for a pet
    */
-  async getVaccineRecords(req: TenantRequest, res: Response, next: NextFunction) {
+  async getVaccineRecords(
+    req: TenantRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { petId } = req.params;
       const tenantId = req.tenantId!;
@@ -111,7 +122,7 @@ export class VaccineUploadController {
       const files = (pet.vaccineRecordFiles as any[]) || [];
 
       // Add URLs to each file
-      const filesWithUrls = files.map(file => ({
+      const filesWithUrls = files.map((file) => ({
         ...file,
         url: getFileUrl(file.filename, req),
       }));
@@ -134,7 +145,11 @@ export class VaccineUploadController {
    * DELETE /api/pets/:petId/vaccine-records/:filename
    * Delete a vaccine record file
    */
-  async deleteVaccineRecord(req: TenantRequest, res: Response, next: NextFunction) {
+  async deleteVaccineRecord(
+    req: TenantRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { petId, filename } = req.params;
       const tenantId = req.tenantId!;
@@ -151,14 +166,14 @@ export class VaccineUploadController {
       }
 
       const existingFiles = (pet.vaccineRecordFiles as any[]) || [];
-      const fileToDelete = existingFiles.find(f => f.filename === filename);
+      const fileToDelete = existingFiles.find((f) => f.filename === filename);
 
       if (!fileToDelete) {
         throw new AppError('File not found', 404);
       }
 
       // Remove file from array
-      const updatedFiles = existingFiles.filter(f => f.filename !== filename);
+      const updatedFiles = existingFiles.filter((f) => f.filename !== filename);
 
       // Update pet record
       await prisma.pet.update({
@@ -193,7 +208,11 @@ export class VaccineUploadController {
    * GET /api/pets/:petId/vaccine-records/:filename/download
    * Download a vaccine record file
    */
-  async downloadVaccineRecord(req: TenantRequest, res: Response, next: NextFunction) {
+  async downloadVaccineRecord(
+    req: TenantRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { petId, filename } = req.params;
       const tenantId = req.tenantId!;
@@ -210,7 +229,7 @@ export class VaccineUploadController {
       }
 
       const existingFiles = (pet.vaccineRecordFiles as any[]) || [];
-      const file = existingFiles.find(f => f.filename === filename);
+      const file = existingFiles.find((f) => f.filename === filename);
 
       if (!file) {
         throw new AppError('File not found', 404);
@@ -218,8 +237,12 @@ export class VaccineUploadController {
 
       // Send file for download
       const path = require('path');
-      const filePath = path.join(__dirname, '../../uploads/vaccine-records', filename);
-      
+      const filePath = path.join(
+        __dirname,
+        '../../uploads/vaccine-records',
+        filename
+      );
+
       res.download(filePath, file.originalName, (err) => {
         if (err) {
           console.error('Error downloading file:', err);

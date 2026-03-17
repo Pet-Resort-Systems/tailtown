@@ -5,14 +5,14 @@
  * Per roadmap: "Fix Multi-Pet Room Reservations"
  */
 
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
 // Mock Prisma
-jest.mock("@prisma/client", () => ({
+jest.mock('@prisma/client', () => ({
   PrismaClient: jest.fn().mockImplementation(() => ({})),
 }));
 
-describe("MultiPet Controller", () => {
+describe('MultiPet Controller', () => {
   let mockReq: Partial<Request>;
   let mockRes: Partial<Response>;
   let mockNext: NextFunction;
@@ -27,8 +27,8 @@ describe("MultiPet Controller", () => {
     jest.clearAllMocks();
   });
 
-  describe("Suite Capacity Configuration", () => {
-    it("should have default config structure", () => {
+  describe('Suite Capacity Configuration', () => {
+    it('should have default config structure', () => {
       const config = {
         allowMultiplePets: true,
         requireSameOwner: true,
@@ -42,70 +42,70 @@ describe("MultiPet Controller", () => {
       expect(config.requireSameOwner).toBe(true);
     });
 
-    it("should define suite capacities", () => {
+    it('should define suite capacities', () => {
       const suiteCapacities = [
-        { suiteType: "STANDARD_SUITE", maxPets: 1 },
-        { suiteType: "STANDARD_PLUS_SUITE", maxPets: 2 },
-        { suiteType: "VIP_SUITE", maxPets: 3 },
+        { suiteType: 'STANDARD_SUITE', maxPets: 1 },
+        { suiteType: 'STANDARD_PLUS_SUITE', maxPets: 2 },
+        { suiteType: 'VIP_SUITE', maxPets: 3 },
       ];
 
       const vipCapacity = suiteCapacities.find(
-        (s) => s.suiteType === "VIP_SUITE"
+        (s) => s.suiteType === 'VIP_SUITE'
       );
       expect(vipCapacity?.maxPets).toBe(3);
     });
   });
 
-  describe("Capacity Validation", () => {
-    it("should validate suite can accommodate pets", () => {
+  describe('Capacity Validation', () => {
+    it('should validate suite can accommodate pets', () => {
       const suiteCapacity = 2;
       const numberOfPets = 2;
       const canAccommodate = numberOfPets <= suiteCapacity;
       expect(canAccommodate).toBe(true);
     });
 
-    it("should reject if exceeds capacity", () => {
+    it('should reject if exceeds capacity', () => {
       const suiteCapacity = 2;
       const numberOfPets = 3;
       const canAccommodate = numberOfPets <= suiteCapacity;
       expect(canAccommodate).toBe(false);
     });
 
-    it("should require suiteType for capacity creation", () => {
+    it('should require suiteType for capacity creation', () => {
       const request = { maxPets: 2 };
       const isValid = !!(request as any).suiteType;
       expect(isValid).toBe(false);
     });
 
-    it("should require maxPets for capacity creation", () => {
-      const request = { suiteType: "VIP_SUITE" };
+    it('should require maxPets for capacity creation', () => {
+      const request = { suiteType: 'VIP_SUITE' };
       const isValid = !!(request as any).maxPets;
       expect(isValid).toBe(false);
     });
   });
 
-  describe("Multi-Pet Pricing", () => {
-    it("should calculate flat rate pricing", () => {
+  describe('Multi-Pet Pricing', () => {
+    it('should calculate flat rate pricing', () => {
       const basePrice = 50;
       const numberOfPets = 2;
-      const pricingType = "FLAT_RATE";
+      const pricingType = 'FLAT_RATE';
 
       // Flat rate: same price regardless of pets
       const totalPrice = basePrice;
       expect(totalPrice).toBe(50);
     });
 
-    it("should calculate per-pet pricing", () => {
+    it('should calculate per-pet pricing', () => {
       const basePrice = 50;
       const numberOfPets = 2;
-      const pricingType = "PER_PET";
+      const pricingType = 'PER_PET';
 
       // Per pet: multiply by number of pets
       const totalPrice = basePrice * numberOfPets;
       expect(totalPrice).toBe(100);
     });
 
-    it("should calculate discounted additional pet pricing", () => {
+    it('should calculate discounted additional pet pricing', () => {
       const basePrice = 50;
       const numberOfPets = 3;
       const additionalPetDiscount = 0.2; // 20% off additional pets
@@ -119,24 +119,24 @@ describe("MultiPet Controller", () => {
       expect(totalPrice).toBe(50 + 40 * 2); // 50 + 80 = 130
     });
 
-    it("should require numberOfPets for pricing", () => {
+    it('should require numberOfPets for pricing', () => {
       const request = { basePrice: 50 };
       const isValid = !!(request as any).numberOfPets;
       expect(isValid).toBe(false);
     });
 
-    it("should require basePrice for pricing", () => {
+    it('should require basePrice for pricing', () => {
       const request = { numberOfPets: 2 };
       const isValid = !!(request as any).basePrice;
       expect(isValid).toBe(false);
     });
   });
 
-  describe("Same Owner Validation", () => {
-    it("should validate all pets belong to same owner", () => {
+  describe('Same Owner Validation', () => {
+    it('should validate all pets belong to same owner', () => {
       const pets = [
-        { id: "pet-1", customerId: "cust-1" },
-        { id: "pet-2", customerId: "cust-1" },
+        { id: 'pet-1', customerId: 'cust-1' },
+        { id: 'pet-2', customerId: 'cust-1' },
       ];
 
       const ownerIds = new Set(pets.map((p) => p.customerId));
@@ -144,10 +144,10 @@ describe("MultiPet Controller", () => {
       expect(sameOwner).toBe(true);
     });
 
-    it("should reject pets from different owners", () => {
+    it('should reject pets from different owners', () => {
       const pets = [
-        { id: "pet-1", customerId: "cust-1" },
-        { id: "pet-2", customerId: "cust-2" },
+        { id: 'pet-1', customerId: 'cust-1' },
+        { id: 'pet-2', customerId: 'cust-2' },
       ];
 
       const ownerIds = new Set(pets.map((p) => p.customerId));
@@ -156,58 +156,58 @@ describe("MultiPet Controller", () => {
     });
   });
 
-  describe("Compatibility Checks", () => {
-    it("should check pet compatibility", () => {
-      const pet1 = { type: "DOG", temperament: "FRIENDLY" };
-      const pet2 = { type: "DOG", temperament: "FRIENDLY" };
+  describe('Compatibility Checks', () => {
+    it('should check pet compatibility', () => {
+      const pet1 = { type: 'DOG', temperament: 'FRIENDLY' };
+      const pet2 = { type: 'DOG', temperament: 'FRIENDLY' };
 
       const compatible =
-        pet1.type === pet2.type && pet1.temperament === "FRIENDLY";
+        pet1.type === pet2.type && pet1.temperament === 'FRIENDLY';
       expect(compatible).toBe(true);
     });
 
-    it("should flag incompatible pets", () => {
-      const pet1 = { type: "DOG", temperament: "AGGRESSIVE" };
-      const pet2 = { type: "DOG", temperament: "FRIENDLY" };
+    it('should flag incompatible pets', () => {
+      const pet1 = { type: 'DOG', temperament: 'AGGRESSIVE' };
+      const pet2 = { type: 'DOG', temperament: 'FRIENDLY' };
 
       const compatible =
-        pet1.temperament === "FRIENDLY" && pet2.temperament === "FRIENDLY";
+        pet1.temperament === 'FRIENDLY' && pet2.temperament === 'FRIENDLY';
       expect(compatible).toBe(false);
     });
 
-    it("should check species compatibility", () => {
-      const pet1 = { type: "DOG" };
-      const pet2 = { type: "CAT" };
+    it('should check species compatibility', () => {
+      const pet1 = { type: 'DOG' };
+      const pet2 = { type: 'CAT' };
 
       const sameSpecies = pet1.type === pet2.type;
       expect(sameSpecies).toBe(false);
     });
   });
 
-  describe("Occupancy Display", () => {
-    it("should show current occupancy", () => {
+  describe('Occupancy Display', () => {
+    it('should show current occupancy', () => {
       const suite = {
         capacity: 3,
-        currentPets: [{ name: "Buddy" }, { name: "Max" }],
+        currentPets: [{ name: 'Buddy' }, { name: 'Max' }],
       };
 
       const occupancy = `${suite.currentPets.length}/${suite.capacity}`;
-      expect(occupancy).toBe("2/3");
+      expect(occupancy).toBe('2/3');
     });
 
-    it("should show pet names in suite", () => {
+    it('should show pet names in suite', () => {
       const suite = {
-        currentPets: [{ name: "Buddy" }, { name: "Max" }],
+        currentPets: [{ name: 'Buddy' }, { name: 'Max' }],
       };
 
-      const petNames = suite.currentPets.map((p) => p.name).join(", ");
-      expect(petNames).toBe("Buddy, Max");
+      const petNames = suite.currentPets.map((p) => p.name).join(', ');
+      expect(petNames).toBe('Buddy, Max');
     });
 
-    it("should indicate full suite", () => {
+    it('should indicate full suite', () => {
       const suite = {
         capacity: 2,
-        currentPets: [{ name: "Buddy" }, { name: "Max" }],
+        currentPets: [{ name: 'Buddy' }, { name: 'Max' }],
       };
 
       const isFull = suite.currentPets.length >= suite.capacity;

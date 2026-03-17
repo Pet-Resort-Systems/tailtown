@@ -1,6 +1,6 @@
 /**
  * Training Class Session Generation Tests
- * 
+ *
  * Tests automatic session generation logic including date calculations,
  * multi-day scheduling, and session numbering
  */
@@ -19,7 +19,7 @@ jest.mock('@prisma/client', () => ({
     classSession: {
       createMany: jest.fn(),
     },
-  }))
+  })),
 }));
 
 describe('Training Class Session Generation', () => {
@@ -30,17 +30,17 @@ describe('Training Class Session Generation', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     mockRequest = {
       headers: {
-        'x-tenant-id': 'test-tenant'
+        'x-tenant-id': 'test-tenant',
       },
-      body: {}
+      body: {},
     };
 
     mockResponse = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      json: jest.fn(),
     };
 
     mockNext = jest.fn();
@@ -62,12 +62,12 @@ describe('Training Class Session Generation', () => {
         daysOfWeek: [1], // Monday only
         startTime: '18:00',
         endTime: '19:00',
-        pricePerSeries: 200
+        pricePerSeries: 200,
       };
 
       mockPrisma.trainingClass.create.mockResolvedValue({
         id: 'class-1',
-        ...mockRequest.body
+        ...mockRequest.body,
       });
 
       await createTrainingClass(
@@ -84,8 +84,8 @@ describe('Training Class Session Generation', () => {
           expect.objectContaining({ sessionNumber: 3 }),
           expect.objectContaining({ sessionNumber: 4 }),
           expect.objectContaining({ sessionNumber: 5 }),
-          expect.objectContaining({ sessionNumber: 6 })
-        ])
+          expect.objectContaining({ sessionNumber: 6 }),
+        ]),
       });
     });
 
@@ -101,12 +101,12 @@ describe('Training Class Session Generation', () => {
         daysOfWeek: [1, 3, 5], // Mon, Wed, Fri
         startTime: '18:00',
         endTime: '19:00',
-        pricePerSeries: 300
+        pricePerSeries: 300,
       };
 
       mockPrisma.trainingClass.create.mockResolvedValue({
         id: 'class-1',
-        ...mockRequest.body
+        ...mockRequest.body,
       });
 
       await createTrainingClass(
@@ -132,12 +132,12 @@ describe('Training Class Session Generation', () => {
         daysOfWeek: [2, 4], // Tue, Thu
         startTime: '18:00',
         endTime: '19:00',
-        pricePerSeries: 250
+        pricePerSeries: 250,
       };
 
       mockPrisma.trainingClass.create.mockResolvedValue({
         id: 'class-1',
-        ...mockRequest.body
+        ...mockRequest.body,
       });
 
       await createTrainingClass(
@@ -163,7 +163,7 @@ describe('Training Class Session Generation', () => {
         for (const dayOfWeek of daysOfWeek) {
           const sessionDate = addDays(startDate, week * 7 + dayOfWeek);
           sessions.push({
-            date: format(sessionDate, 'yyyy-MM-dd')
+            date: format(sessionDate, 'yyyy-MM-dd'),
           });
         }
       }
@@ -185,7 +185,7 @@ describe('Training Class Session Generation', () => {
           const sessionDate = addDays(startDate, week * 7 + dayOfWeek);
           sessions.push({
             date: format(sessionDate, 'yyyy-MM-dd'),
-            week: week + 1
+            week: week + 1,
           });
         }
       }
@@ -209,7 +209,7 @@ describe('Training Class Session Generation', () => {
         for (const dayOfWeek of daysOfWeek) {
           const sessionDate = addDays(startDate, week * 7 + dayOfWeek);
           sessions.push({
-            date: format(sessionDate, 'yyyy-MM-dd')
+            date: format(sessionDate, 'yyyy-MM-dd'),
           });
         }
       }
@@ -229,7 +229,7 @@ describe('Training Class Session Generation', () => {
         for (const dayOfWeek of daysOfWeek) {
           const sessionDate = addDays(startDate, week * 7 + dayOfWeek);
           sessions.push({
-            date: format(sessionDate, 'yyyy-MM-dd')
+            date: format(sessionDate, 'yyyy-MM-dd'),
           });
         }
       }
@@ -252,7 +252,7 @@ describe('Training Class Session Generation', () => {
           sessions.push({
             sessionNumber: sessionNumber,
             week: week + 1,
-            day: dayOfWeek
+            day: dayOfWeek,
           });
           sessionNumber++;
         }
@@ -275,7 +275,7 @@ describe('Training Class Session Generation', () => {
         for (const dayOfWeek of daysOfWeek) {
           sessions.push({
             sessionNumber: sessionNumber,
-            week: week + 1
+            week: week + 1,
           });
           sessionNumber++;
         }
@@ -285,7 +285,7 @@ describe('Training Class Session Generation', () => {
       expect(sessions[0].sessionNumber).toBe(1);
       expect(sessions[1].sessionNumber).toBe(2);
       expect(sessions[2].sessionNumber).toBe(3);
-      
+
       // Week 2: sessions 4, 5, 6
       expect(sessions[3].sessionNumber).toBe(4);
       expect(sessions[4].sessionNumber).toBe(5);
@@ -305,18 +305,18 @@ describe('Training Class Session Generation', () => {
           const sessionDate = addDays(startDate, week * 7 + dayOfWeek);
           sessions.push({
             date: format(sessionDate, 'yyyy-MM-dd'),
-            dayName: format(sessionDate, 'EEEE')
+            dayName: format(sessionDate, 'EEEE'),
           });
         }
       }
 
       expect(sessions).toHaveLength(6);
-      
+
       // Week 1
       expect(sessions[0].dayName).toBe('Tuesday');
       expect(sessions[1].dayName).toBe('Thursday');
       expect(sessions[2].dayName).toBe('Saturday');
-      
+
       // Week 2
       expect(sessions[3].dayName).toBe('Tuesday');
       expect(sessions[4].dayName).toBe('Thursday');
@@ -333,7 +333,7 @@ describe('Training Class Session Generation', () => {
         for (const dayOfWeek of daysOfWeek) {
           const sessionDate = addDays(startDate, week * 7 + dayOfWeek);
           sessions.push({
-            date: format(sessionDate, 'yyyy-MM-dd')
+            date: format(sessionDate, 'yyyy-MM-dd'),
           });
         }
       }
@@ -354,7 +354,7 @@ describe('Training Class Session Generation', () => {
           const sessionDate = addDays(startDate, week * 7 + dayOfWeek);
           sessions.push({
             date: format(sessionDate, 'yyyy-MM-dd'),
-            dayName: format(sessionDate, 'EEEE')
+            dayName: format(sessionDate, 'EEEE'),
           });
         }
       }
@@ -378,12 +378,12 @@ describe('Training Class Session Generation', () => {
         daysOfWeek: [1],
         startTime: '18:00',
         endTime: '19:00',
-        pricePerSeries: 200
+        pricePerSeries: 200,
       };
 
       mockPrisma.trainingClass.create.mockResolvedValue({
         id: 'class-1',
-        ...mockRequest.body
+        ...mockRequest.body,
       });
 
       await createTrainingClass(
@@ -400,9 +400,9 @@ describe('Training Class Session Generation', () => {
             sessionNumber: expect.any(Number),
             scheduledDate: expect.any(Date),
             scheduledTime: '18:00',
-            duration: 60
-          })
-        ])
+            duration: 60,
+          }),
+        ]),
       });
     });
 
@@ -419,12 +419,12 @@ describe('Training Class Session Generation', () => {
         startTime: '18:00',
         endTime: '20:00',
         duration: 120, // 2 hours
-        pricePerSeries: 300
+        pricePerSeries: 300,
       };
 
       mockPrisma.trainingClass.create.mockResolvedValue({
         id: 'class-1',
-        ...mockRequest.body
+        ...mockRequest.body,
       });
 
       await createTrainingClass(
@@ -436,9 +436,9 @@ describe('Training Class Session Generation', () => {
       expect(mockPrisma.classSession.createMany).toHaveBeenCalledWith({
         data: expect.arrayContaining([
           expect.objectContaining({
-            duration: 120
-          })
-        ])
+            duration: 120,
+          }),
+        ]),
       });
     });
 
@@ -454,13 +454,13 @@ describe('Training Class Session Generation', () => {
         daysOfWeek: [1],
         startTime: '18:00',
         endTime: '19:00',
-        pricePerSeries: 200
+        pricePerSeries: 200,
         // No duration specified
       };
 
       mockPrisma.trainingClass.create.mockResolvedValue({
         id: 'class-1',
-        ...mockRequest.body
+        ...mockRequest.body,
       });
 
       await createTrainingClass(
@@ -472,9 +472,9 @@ describe('Training Class Session Generation', () => {
       expect(mockPrisma.classSession.createMany).toHaveBeenCalledWith({
         data: expect.arrayContaining([
           expect.objectContaining({
-            duration: 60
-          })
-        ])
+            duration: 60,
+          }),
+        ]),
       });
     });
   });
@@ -510,7 +510,7 @@ describe('Training Class Session Generation', () => {
       }
 
       expect(sessions).toHaveLength(12);
-      
+
       // First and last sessions
       expect(sessions[0].date).toBe('2025-11-04');
       expect(sessions[11].date).toBe('2026-01-20');
@@ -546,12 +546,12 @@ describe('Training Class Session Generation', () => {
         daysOfWeek: [1, 3],
         startTime: '18:00',
         endTime: '19:00',
-        pricePerSeries: 200
+        pricePerSeries: 200,
       };
 
       mockPrisma.trainingClass.create.mockResolvedValue({
         id: 'class-1',
-        ...mockRequest.body
+        ...mockRequest.body,
       });
 
       await createTrainingClass(
@@ -562,10 +562,10 @@ describe('Training Class Session Generation', () => {
 
       // Should create class first
       expect(mockPrisma.trainingClass.create).toHaveBeenCalled();
-      
+
       // Then create sessions
       expect(mockPrisma.classSession.createMany).toHaveBeenCalled();
-      
+
       // Should return success
       expect(mockResponse.status).toHaveBeenCalledWith(201);
     });
