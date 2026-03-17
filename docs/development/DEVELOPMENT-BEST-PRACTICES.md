@@ -16,7 +16,13 @@ Concise reference for building Tailtown safely and consistently. Prefer the exis
 
 ```typescript
 // Wrong: blocks login and password reset
-app.use('/api/staff', requireTenant, authenticate, requireTenantAdmin, staffRoutes);
+app.use(
+    '/api/staff',
+    requireTenant,
+    authenticate,
+    requireTenantAdmin,
+    staffRoutes
+);
 
 // Correct
 app.use('/api/staff', requireTenant, staffRoutes);
@@ -31,7 +37,7 @@ Use route-level auth for mixed public and protected routers.
 
 ```typescript
 const customers = await prisma.customer.findMany({
-  where: { tenantId: req.tenantId },
+    where: { tenantId: req.tenantId },
 });
 ```
 
@@ -45,10 +51,10 @@ Rules:
 
 ```typescript
 await prisma.customer.create({
-  data: {
-    tenantId: tenant.id,
-    name: 'John Doe',
-  },
+    data: {
+        tenantId: tenant.id,
+        name: 'John Doe',
+    },
 });
 ```
 
@@ -60,9 +66,9 @@ await prisma.customer.create({
 
 ```typescript
 const tenantId =
-  localStorage.getItem('tailtown_tenant_id') ||
-  localStorage.getItem('tenantId') ||
-  'dev';
+    localStorage.getItem('tailtown_tenant_id') ||
+    localStorage.getItem('tenantId') ||
+    'dev';
 ```
 
 Hardcoded values like `'dev'` break impersonation, testing, and production behavior.
@@ -111,15 +117,23 @@ router.get('/profile', authenticate, getProfile);
 
 ```typescript
 await prisma.$transaction(async (tx) => {
-  const invoice = await tx.invoice.create({ data: invoiceData });
-  const payment = await tx.payment.create({ data: paymentData });
-  return { invoice, payment };
+    const invoice = await tx.invoice.create({ data: invoiceData });
+    const payment = await tx.payment.create({ data: paymentData });
+    return { invoice, payment };
 });
 ```
 
 If one step failing would leave bad data behind, use a transaction.
 
-### Keep responses and status codes consistent
+### Response consistency
+
+```typescript
+try {
+    // operation
+} catch (error) {
+    next(new AppError('Error message', 400));
+}
+```
 
 - `200` success
 - `201` created
@@ -132,7 +146,14 @@ If one step failing would leave bad data behind, use a transaction.
 
 Let shared error middleware format server failures. Do not leak stack traces or secrets in responses.
 
-## Code Quality
+## React Guidelines
+
+- Use functional components with TypeScript interfaces
+- Prefer custom hooks for reusable logic
+- Use proper TypeScript typing for props and state
+- Follow component organization and naming conventions
+
+## General Code Quality
 
 - Prefer TypeScript types over `any`.
 - Use `async/await` rather than callbacks.
@@ -148,6 +169,29 @@ Run the smallest relevant test scope while developing, then the broader suite be
 ```bash
 pnpm test
 pnpm run build
+```
+
+### Unit Tests
+
+```typescript
+describe('Component', () => {
+  it('should render correctly', () => {
+    const { getByText } = render(<Component />);
+    expect(getByText('Title')).toBeInTheDocument();
+  });
+});
+```
+
+### API Tests
+
+```typescript
+describe('API Endpoint', () => {
+    it('should return correct data', async () => {
+        const response = await request(app).get('/api/endpoint').expect(200);
+
+        expect(response.body).toHaveProperty('status', 'success');
+    });
+});
 ```
 
 For new endpoints or data flows, cover:
