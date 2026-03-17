@@ -1,39 +1,17 @@
 {
   // Editor
   "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.tabSize": 2,
-  "editor.rulers": [80, 120],
-
-  // Files
-  "files.exclude": {
-    "**/.git": true,
-    "**/.DS_Store": true,
-    "**/node_modules": true,
-    "**/dist": true,
-    "**/build": true,
-    "**/.pids": true,
-    "**/.logs": true,
-    "**/.test-results": true,
-    "**/.env-backups": true
-  },
-  "files.watcherExclude": {
-    "**/node_modules/**": true,
-    "**/dist/**": true,
-    "**/build/**": true,
-    "**/.git/objects/**": true
-  },
 
   // TypeScript
   "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.preferences.importModuleSpecifier": "relative",
 
-  // JavaScript/TypeScript
+  // Formatting
   "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[typescript]": {
@@ -43,6 +21,9 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
 
@@ -65,8 +46,13 @@
     "NODE_ENV": "development"
   },
 
-  // Tailtown specific
-  "tailwind.experimental.classRegex": [
-    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+  // Tailwind
+  "tailwindCSS.classFunctions": ["tw", "cva", "cx", "classNames"],
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "ngClass",
+    "class:list",
+    "[a-z0-9]*[Cc]lasses"
   ]
 }
