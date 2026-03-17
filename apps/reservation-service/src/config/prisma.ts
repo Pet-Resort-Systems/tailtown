@@ -1,8 +1,10 @@
+import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 
 /**
  * Prisma Client with Connection Pooling
- * 
+ *
  * Connection pooling configuration:
  * - Reuses database connections instead of creating new ones
  * - Improves performance under load
@@ -11,17 +13,17 @@ import { PrismaClient } from '@prisma/client';
  */
 
 // Global singleton to prevent multiple Prisma instances in development
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
+const globalForPrisma = global as typeof globalThis & { prisma?: PrismaClient };
 
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 export const prisma =
-  globalForPrisma.prisma ||
+  globalForPrisma.prisma ??
   new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-    datasources: {
-      db: {
-        url: process.env.DATABASE_URL,
-      },
-    },
+    adapter,
+    log:
+      process.env.NODE_ENV === 'development'
+        ? ['query', 'error', 'warn']
+        : ['error'],
   });
 
 // Store in global to prevent hot-reload issues in development

@@ -12,6 +12,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -31,6 +32,7 @@
     "prisma": "prisma"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "7.4.2",
     "@prisma/client": "7.4.2",
     "@sendgrid/mail": "8.1.6",
     "@sentry/node": "10.38.0",
@@ -48,6 +50,7 @@
     "morgan": "1.10.1",
     "multer": "2.1.1",
     "node-fetch": "3.3.2",
+    "pg": "8.16.3",
     "redis": "5.11.0",
     "twilio": "5.12.2",
     "uuid": "13.0.0",

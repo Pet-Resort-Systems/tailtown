@@ -11,6 +11,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:unit": "jest --testPathIgnorePatterns=integration",
     "test:integration": "jest --config jest.integration.config.js",
@@ -18,9 +19,11 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "lint": "eslint . --ext .ts",
+    "prisma:migrate": "prisma migrate dev",
     "prisma": "prisma"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "7.4.2",
     "@prisma/client": "7.4.2",
     "@types/compression": "1.8.1",
     "axios": "1.13.6",
@@ -32,6 +35,7 @@
     "helmet": "8.1.0",
     "jsonwebtoken": "9.0.2",
     "morgan": "1.10.1",
+    "pg": "8.16.3",
     "redis": "5.11.0",
     "uuid": "11.1.0",
     "zod": "4.3.6"
