@@ -4,18 +4,17 @@
  * Clone Tenant Data Script
  *
  * Copies all data (customers, pets, staff, services) from one tenant to another.
- * Usage: node clone-tenant-data.js <source-subdomain> <target-subdomain>
- * Example: node clone-tenant-data.js demo-template rainy
+ * Usage: node clone-tenant-data.ts <source-subdomain> <target-subdomain>
+ * Example: node clone-tenant-data.ts demo-template rainy
  */
 
-require('dotenv').config({ path: './apps/customer-service/.env' });
+import type { Prisma } from '@prisma/client';
+import { prisma } from '../src/config/prisma';
 
-const {
-  PrismaClient,
-} = require('../apps/customer-service/node_modules/@prisma/client');
-const prisma = new PrismaClient();
-
-async function cloneTenantData(sourceSubdomain, targetSubdomain) {
+async function cloneTenantData(
+  sourceSubdomain: string,
+  targetSubdomain: string
+) {
   console.log(
     `\n📋 Cloning data from "${sourceSubdomain}" to "${targetSubdomain}"...\n`
   );
@@ -62,25 +61,23 @@ async function cloneTenantData(sourceSubdomain, targetSubdomain) {
 
     // Copy customers
     console.log('1️⃣  Copying customers...');
-    // Try both UUID and subdomain as tenantId (for backward compatibility)
-    let customers = await prisma.customer.findMany({
+    const customers = await prisma.customer.findMany({
       where: { tenantId: sourceTenant.id },
     });
-    if (customers.length === 0) {
-      customers = await prisma.customer.findMany({
-        where: { tenantId: sourceTenant.subdomain },
-      });
-    }
 
-    const customerMap = new Map();
+    const customerMap = new Map<string, string>();
     for (const customer of customers) {
       const { id, tenantId, createdAt, updatedAt, ...data } = customer;
       // Convert null values to undefined for Prisma
       const cleanData = Object.fromEntries(
         Object.entries(data).map(([k, v]) => [k, v === null ? undefined : v])
-      );
+      ) as unknown as Prisma.CustomerUncheckedCreateInput;
+      const customerData: Prisma.CustomerUncheckedCreateInput = {
+        ...cleanData,
+        tenantId: targetTenant.id,
+      };
       const newCustomer = await prisma.customer.create({
-        data: { ...cleanData, tenantId: targetTenant.id },
+        data: customerData,
       });
       customerMap.set(id, newCustomer.id);
     }
@@ -88,14 +85,9 @@ async function cloneTenantData(sourceSubdomain, targetSubdomain) {
 
     // Copy pets
     console.log('2️⃣  Copying pets...');
-    let pets = await prisma.pet.findMany({
+    const pets = await prisma.pet.findMany({
       where: { tenantId: sourceTenant.id },
     });
-    if (pets.length === 0) {
-      pets = await prisma.pet.findMany({
-        where: { tenantId: sourceTenant.subdomain },
-      });
-    }
 
     for (const pet of pets) {
       const { id, tenantId, customerId, createdAt, updatedAt, ...data } = pet;
@@ -103,13 +95,14 @@ async function cloneTenantData(sourceSubdomain, targetSubdomain) {
       if (newCustomerId) {
         const cleanData = Object.fromEntries(
           Object.entries(data).map(([k, v]) => [k, v === null ? undefined : v])
-        );
+        ) as unknown as Prisma.PetUncheckedCreateInput;
+        const petData: Prisma.PetUncheckedCreateInput = {
+          ...cleanData,
+          tenantId: targetTenant.id,
+          customerId: newCustomerId,
+        };
         await prisma.pet.create({
-          data: {
-            ...cleanData,
-            tenantId: targetTenant.id,
-            customerId: newCustomerId,
-          },
+          data: petData,
         });
       }
     }
@@ -117,88 +110,84 @@ async function cloneTenantData(sourceSubdomain, targetSubdomain) {
 
     // Copy staff
     console.log('3️⃣  Copying staff...');
-    let staff = await prisma.staff.findMany({
+    const staff = await prisma.staff.findMany({
       where: { tenantId: sourceTenant.id },
     });
-    if (staff.length === 0) {
-      staff = await prisma.staff.findMany({
-        where: { tenantId: sourceTenant.subdomain },
-      });
-    }
 
     for (const member of staff) {
       const { id, tenantId, createdAt, updatedAt, ...data } = member;
       const cleanData = Object.fromEntries(
         Object.entries(data).map(([k, v]) => [k, v === null ? undefined : v])
-      );
+      ) as unknown as Prisma.StaffUncheckedCreateInput;
+      const staffData: Prisma.StaffUncheckedCreateInput = {
+        ...cleanData,
+        tenantId: targetTenant.id,
+      };
       await prisma.staff.create({
-        data: { ...cleanData, tenantId: targetTenant.id },
+        data: staffData,
       });
     }
     console.log(`   ✓ Copied ${staff.length} staff members\n`);
 
     // Copy services
     console.log('4️⃣  Copying services...');
-    let services = await prisma.service.findMany({
+    const services = await prisma.service.findMany({
       where: { tenantId: sourceTenant.id },
     });
-    if (services.length === 0) {
-      services = await prisma.service.findMany({
-        where: { tenantId: sourceTenant.subdomain },
-      });
-    }
 
     for (const service of services) {
       const { id, tenantId, createdAt, updatedAt, ...data } = service;
       const cleanData = Object.fromEntries(
         Object.entries(data).map(([k, v]) => [k, v === null ? undefined : v])
-      );
+      ) as unknown as Prisma.ServiceUncheckedCreateInput;
+      const serviceData: Prisma.ServiceUncheckedCreateInput = {
+        ...cleanData,
+        tenantId: targetTenant.id,
+      };
       await prisma.service.create({
-        data: { ...cleanData, tenantId: targetTenant.id },
+        data: serviceData,
       });
     }
     console.log(`   ✓ Copied ${services.length} services\n`);
 
     // Copy resources (kennels/suites)
     console.log('5️⃣  Copying resources (kennels)...');
-    let resources = await prisma.resource.findMany({
+    const resources = await prisma.resource.findMany({
       where: { tenantId: sourceTenant.id },
     });
-    if (resources.length === 0) {
-      resources = await prisma.resource.findMany({
-        where: { tenantId: sourceTenant.subdomain },
-      });
-    }
 
     for (const resource of resources) {
       const { id, tenantId, createdAt, updatedAt, ...data } = resource;
       const cleanData = Object.fromEntries(
         Object.entries(data).map(([k, v]) => [k, v === null ? undefined : v])
-      );
+      ) as unknown as Prisma.ResourceUncheckedCreateInput;
+      const resourceData: Prisma.ResourceUncheckedCreateInput = {
+        ...cleanData,
+        tenantId: targetTenant.id,
+      };
       await prisma.resource.create({
-        data: { ...cleanData, tenantId: targetTenant.id },
+        data: resourceData,
       });
     }
     console.log(`   ✓ Copied ${resources.length} resources\n`);
 
     // Copy products
     console.log('6️⃣  Copying products...');
-    let products = await prisma.product.findMany({
+    const products = await prisma.product.findMany({
       where: { tenantId: sourceTenant.id },
     });
-    if (products.length === 0) {
-      products = await prisma.product.findMany({
-        where: { tenantId: sourceTenant.subdomain },
-      });
-    }
 
     for (const product of products) {
       const { id, tenantId, createdAt, updatedAt, ...data } = product;
       const cleanData = Object.fromEntries(
         Object.entries(data).map(([k, v]) => [k, v === null ? undefined : v])
-      );
+      ) as unknown as Prisma.ProductUncheckedCreateInput;
+      const productData: Prisma.ProductUncheckedCreateInput = {
+        ...cleanData,
+        tenantId: targetTenant.id,
+      };
       await prisma.product.create({
-        data: { ...cleanData, tenantId: targetTenant.id },
+        data: productData,
       });
     }
     console.log(`   ✓ Copied ${products.length} products\n`);
@@ -224,9 +213,11 @@ const args = process.argv.slice(2);
 
 if (args.length !== 2) {
   console.log(
-    'Usage: node clone-tenant-data.js <source-subdomain> <target-subdomain>'
+    'Usage: pnpm --filter @tailtown/customer-service exec tsx scripts/clone-tenant-data.ts <source-subdomain> <target-subdomain>'
   );
-  console.log('Example: node clone-tenant-data.js demo-template rainy');
+  console.log(
+    'Example: pnpm --filter @tailtown/customer-service exec tsx scripts/clone-tenant-data.ts demo-template rainy'
+  );
   process.exit(1);
 }
 

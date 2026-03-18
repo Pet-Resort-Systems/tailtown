@@ -7,14 +7,9 @@
  * for testing and demonstrations.
  */
 
-require('dotenv').config({ path: './apps/customer-service/.env' });
-
-const {
-  PrismaClient,
-} = require('../apps/customer-service/node_modules/@prisma/client');
-const bcrypt = require('bcrypt');
-
-const prisma = new PrismaClient();
+import bcrypt from 'bcrypt';
+import { PetType, ServiceCategory } from '@prisma/client';
+import { prisma } from '../src/config/prisma';
 
 async function main() {
   console.log('🎨 Creating demo-template tenant...\n');
@@ -30,12 +25,12 @@ async function main() {
       console.log('   Cleaning up existing data...\n');
 
       // Delete all related data first
-      await prisma.pet.deleteMany({ where: { tenantId: 'demo-template' } });
+      await prisma.pet.deleteMany({ where: { tenantId: existing.id } });
       await prisma.customer.deleteMany({
-        where: { tenantId: 'demo-template' },
+        where: { tenantId: existing.id },
       });
-      await prisma.staff.deleteMany({ where: { tenantId: 'demo-template' } });
-      await prisma.service.deleteMany({ where: { tenantId: 'demo-template' } });
+      await prisma.staff.deleteMany({ where: { tenantId: existing.id } });
+      await prisma.service.deleteMany({ where: { tenantId: existing.id } });
       await prisma.tenant.delete({ where: { subdomain: 'demo-template' } });
 
       console.log('   ✓ Cleaned up existing demo-template\n');
@@ -135,7 +130,7 @@ async function main() {
     for (const name of customerNames) {
       const customer = await prisma.customer.create({
         data: {
-          tenantId: tenant.subdomain,
+          tenantId: tenant.id,
           firstName: name.first,
           lastName: name.last,
           email: name.email,
@@ -154,32 +149,67 @@ async function main() {
 
     // Create sample pets
     console.log('3️⃣  Creating sample pets...');
-    const petData = [
-      { name: 'Max', type: 'DOG', breed: 'Golden Retriever', color: 'Golden' },
-      { name: 'Bella', type: 'DOG', breed: 'Labrador', color: 'Black' },
-      { name: 'Charlie', type: 'DOG', breed: 'Beagle', color: 'Tri-color' },
+    const petData: Array<{
+      name: string;
+      type: PetType;
+      breed: string;
+      color: string;
+    }> = [
+      {
+        name: 'Max',
+        type: PetType.DOG,
+        breed: 'Golden Retriever',
+        color: 'Golden',
+      },
+      { name: 'Bella', type: PetType.DOG, breed: 'Labrador', color: 'Black' },
+      {
+        name: 'Charlie',
+        type: PetType.DOG,
+        breed: 'Beagle',
+        color: 'Tri-color',
+      },
       {
         name: 'Luna',
-        type: 'DOG',
+        type: PetType.DOG,
         breed: 'German Shepherd',
         color: 'Black & Tan',
       },
-      { name: 'Cooper', type: 'DOG', breed: 'Poodle', color: 'White' },
-      { name: 'Daisy', type: 'DOG', breed: 'Bulldog', color: 'Brindle' },
-      { name: 'Rocky', type: 'DOG', breed: 'Boxer', color: 'Fawn' },
-      { name: 'Sadie', type: 'DOG', breed: 'Husky', color: 'Gray & White' },
-      { name: 'Tucker', type: 'DOG', breed: 'Corgi', color: 'Red & White' },
-      { name: 'Molly', type: 'DOG', breed: 'Dachshund', color: 'Brown' },
+      { name: 'Cooper', type: PetType.DOG, breed: 'Poodle', color: 'White' },
+      { name: 'Daisy', type: PetType.DOG, breed: 'Bulldog', color: 'Brindle' },
+      { name: 'Rocky', type: PetType.DOG, breed: 'Boxer', color: 'Fawn' },
+      {
+        name: 'Sadie',
+        type: PetType.DOG,
+        breed: 'Husky',
+        color: 'Gray & White',
+      },
+      {
+        name: 'Tucker',
+        type: PetType.DOG,
+        breed: 'Corgi',
+        color: 'Red & White',
+      },
+      { name: 'Molly', type: PetType.DOG, breed: 'Dachshund', color: 'Brown' },
       {
         name: 'Whiskers',
-        type: 'CAT',
+        type: PetType.CAT,
         breed: 'Domestic Shorthair',
         color: 'Tabby',
       },
-      { name: 'Shadow', type: 'CAT', breed: 'Siamese', color: 'Seal Point' },
-      { name: 'Mittens', type: 'CAT', breed: 'Maine Coon', color: 'Orange' },
-      { name: 'Felix', type: 'CAT', breed: 'Persian', color: 'White' },
-      { name: 'Cleo', type: 'CAT', breed: 'Bengal', color: 'Spotted' },
+      {
+        name: 'Shadow',
+        type: PetType.CAT,
+        breed: 'Siamese',
+        color: 'Seal Point',
+      },
+      {
+        name: 'Mittens',
+        type: PetType.CAT,
+        breed: 'Maine Coon',
+        color: 'Orange',
+      },
+      { name: 'Felix', type: PetType.CAT, breed: 'Persian', color: 'White' },
+      { name: 'Cleo', type: PetType.CAT, breed: 'Bengal', color: 'Spotted' },
     ];
 
     let petCount = 0;
@@ -189,7 +219,7 @@ async function main() {
 
       await prisma.pet.create({
         data: {
-          tenantId: tenant.subdomain,
+          tenantId: tenant.id,
           customerId: customers[customerIndex].id,
           name: pet.name,
           type: pet.type,
@@ -244,7 +274,7 @@ async function main() {
     for (const staff of staffMembers) {
       await prisma.staff.create({
         data: {
-          tenantId: tenant.subdomain,
+          tenantId: tenant.id,
           firstName: staff.firstName,
           lastName: staff.lastName,
           email: staff.email,
@@ -259,43 +289,63 @@ async function main() {
 
     // Create sample services
     console.log('5️⃣  Creating sample services...');
-    const services = [
+    const services: Array<{
+      name: string;
+      category: ServiceCategory;
+      price: number;
+      duration: number;
+    }> = [
       {
         name: 'Boarding - Standard Suite',
-        category: 'BOARDING',
+        category: ServiceCategory.BOARDING,
         price: 45.0,
         duration: 1440,
       },
       {
         name: 'Boarding - VIP Suite',
-        category: 'BOARDING',
+        category: ServiceCategory.BOARDING,
         price: 75.0,
         duration: 1440,
       },
       {
         name: 'Daycare - Full Day',
-        category: 'DAYCARE',
+        category: ServiceCategory.DAYCARE,
         price: 35.0,
         duration: 480,
       },
       {
         name: 'Daycare - Half Day',
-        category: 'DAYCARE',
+        category: ServiceCategory.DAYCARE,
         price: 20.0,
         duration: 240,
       },
-      { name: 'Bath & Brush', category: 'GROOMING', price: 50.0, duration: 60 },
-      { name: 'Full Groom', category: 'GROOMING', price: 85.0, duration: 120 },
-      { name: 'Nail Trim', category: 'GROOMING', price: 15.0, duration: 15 },
+      {
+        name: 'Bath & Brush',
+        category: ServiceCategory.GROOMING,
+        price: 50.0,
+        duration: 60,
+      },
+      {
+        name: 'Full Groom',
+        category: ServiceCategory.GROOMING,
+        price: 85.0,
+        duration: 120,
+      },
+      {
+        name: 'Nail Trim',
+        category: ServiceCategory.GROOMING,
+        price: 15.0,
+        duration: 15,
+      },
       {
         name: 'Basic Obedience',
-        category: 'TRAINING',
+        category: ServiceCategory.TRAINING,
         price: 100.0,
         duration: 60,
       },
       {
         name: 'Puppy Training',
-        category: 'TRAINING',
+        category: ServiceCategory.TRAINING,
         price: 120.0,
         duration: 60,
       },
@@ -304,7 +354,7 @@ async function main() {
     for (const service of services) {
       await prisma.service.create({
         data: {
-          tenantId: tenant.subdomain,
+          tenantId: tenant.id,
           name: service.name,
           serviceCategory: service.category,
           price: service.price,
