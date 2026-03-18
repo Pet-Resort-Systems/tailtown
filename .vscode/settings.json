@@ -2,6 +2,12 @@
   // Editor
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#126f9f",
+    "titleBar.activeForeground": "#ffffff",
+    "titleBar.inactiveBackground": "#0e5a7f",
+    "titleBar.inactiveForeground": "#888888"
+  },
 
   // TypeScript
   "typescript.tsdk": "node_modules/typescript/lib",
