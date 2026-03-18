@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/prisma';
 import bcrypt from 'bcrypt';
-
-const prisma = new PrismaClient();
 
 async function createSuperAdmin() {
   const email = 'rob@tailtownpetresort.com';

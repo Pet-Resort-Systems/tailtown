@@ -3,11 +3,9 @@
  * Sends automated email reminders for expiring vaccinations
  */
 
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/prisma';
 import { EmailService } from './email.service';
 import { logger } from '../utils/logger';
-
-const prisma = new PrismaClient();
 const emailService = new EmailService();
 
 interface ExpiringVaccine {

@@ -3,9 +3,7 @@
  * Projects future revenue from confirmed reservations
  */
 
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 interface DailyForecast {
   date: string;

@@ -1,6 +1,5 @@
-import { PrismaClient, PetType, Gender } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { PetType, Gender } from '@prisma/client';
+import { prisma } from '../src/config/prisma';
 
 async function main() {
   // Create some test customers

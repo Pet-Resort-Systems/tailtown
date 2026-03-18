@@ -6,10 +6,8 @@
  * Uses raw SQL to bypass any Prisma schema validation issues.
  */
 
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/prisma';
 import { v4 as uuidv4 } from 'uuid';
-
-const prisma = new PrismaClient();
 
 async function createTestResources() {
   console.log('Creating test kennel resources...');

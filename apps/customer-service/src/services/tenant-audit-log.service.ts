@@ -12,10 +12,8 @@
  * - Supports 7-year retention for compliance
  */
 
-import { PrismaClient } from '@prisma/client';
 import { Request } from 'express';
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 // ============================================
 // TYPES AND INTERFACES

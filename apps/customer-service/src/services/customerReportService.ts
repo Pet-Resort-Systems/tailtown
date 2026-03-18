@@ -3,7 +3,7 @@
  * Generates customer analytics and insights
  */
 
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/prisma';
 import {
   CustomerAcquisitionData,
   CustomerRetentionData,
@@ -11,8 +11,6 @@ import {
   CustomerDemographics,
   InactiveCustomer,
 } from '../types/reports.types';
-
-const prisma = new PrismaClient();
 
 /**
  * Get customer acquisition report

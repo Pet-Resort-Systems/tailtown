@@ -1,4 +1,5 @@
-import { PrismaClient, ResourceType } from '@prisma/client';
+import { ResourceType } from '@prisma/client';
+import { prisma } from '../src/config/prisma';
 
 // Suite types stored in attributes
 // Duplicated from suite.controller.ts for CLI use
@@ -7,8 +8,6 @@ enum SuiteType {
   STANDARD_PLUS = 'STANDARD_PLUS',
   VIP = 'VIP',
 }
-
-const prisma = new PrismaClient();
 
 async function main() {
   // Get existing suites to avoid duplicates

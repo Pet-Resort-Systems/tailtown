@@ -4,10 +4,7 @@
  * Tracks all tenant actions for compliance and debugging
  */
 
-import { PrismaClient } from '@prisma/client';
 import { Request } from 'express';
-
-const prisma = new PrismaClient();
 
 export enum AuditAction {
   // Customer actions

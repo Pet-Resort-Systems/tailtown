@@ -10,9 +10,7 @@
  * - Corresponding services
  */
 
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../src/config/prisma';
 
 const TENANT_ID = process.env.TENANT_ID || 'dev';
 

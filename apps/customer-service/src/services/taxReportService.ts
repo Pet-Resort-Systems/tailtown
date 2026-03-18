@@ -3,15 +3,13 @@
  * Generates tax reports for compliance and filing
  */
 
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/prisma';
 import {
   MonthlyTaxData,
   QuarterlyTaxData,
   AnnualTaxData,
   TaxBreakdown,
 } from '../types/reports.types';
-
-const prisma = new PrismaClient();
 
 /**
  * Get monthly tax report

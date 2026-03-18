@@ -3,7 +3,7 @@
  * Generates sales analytics and reports
  */
 
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/prisma';
 import {
   DailySalesData,
   WeeklySalesData,
@@ -14,8 +14,6 @@ import {
   TopCustomer,
   ReportFilters,
 } from '../types/reports.types';
-
-const prisma = new PrismaClient();
 
 /**
  * Get daily sales report

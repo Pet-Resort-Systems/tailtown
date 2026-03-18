@@ -1,6 +1,5 @@
-import { PrismaClient, ServiceCategory } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { ServiceCategory } from '@prisma/client';
+import { prisma } from '../config/prisma';
 
 async function addGroomingAddOns() {
   try {

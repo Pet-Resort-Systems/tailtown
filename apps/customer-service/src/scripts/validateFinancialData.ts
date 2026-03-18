@@ -10,11 +10,9 @@
 
 import financialService from '../services/financialService';
 import financialTests from '../tests/financialService.test';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/prisma';
 import fs from 'fs';
 import path from 'path';
-
-const prisma = new PrismaClient();
 
 async function validateFinancialData() {
   console.log('Starting financial data validation...');

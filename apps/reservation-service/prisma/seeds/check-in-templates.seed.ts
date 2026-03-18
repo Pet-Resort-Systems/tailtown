@@ -1,6 +1,5 @@
-import { PrismaClient, QuestionType } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { QuestionType } from '@prisma/client';
+import { prisma } from '../../src/config/prisma';
 
 export async function seedCheckInTemplates() {
   console.log('🌱 Seeding check-in templates...');

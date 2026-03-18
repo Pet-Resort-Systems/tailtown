@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
-const localPrisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 const prodTenants = [
   {
@@ -42,7 +40,7 @@ const prodTenants = [
 async function syncTenants() {
   try {
     for (const tenant of prodTenants) {
-      const existing = await localPrisma.tenant.findUnique({
+      const existing = await prisma.tenant.findUnique({
         where: { id: tenant.id },
       });
 
@@ -51,7 +49,7 @@ async function syncTenants() {
         continue;
       }
 
-      await localPrisma.tenant.create({
+      await prisma.tenant.create({
         data: tenant,
       });
 
@@ -64,7 +62,7 @@ async function syncTenants() {
   } catch (error) {
     console.error('Error syncing tenants:', error);
   } finally {
-    await localPrisma.$disconnect();
+    await prisma.$disconnect();
   }
 }
 

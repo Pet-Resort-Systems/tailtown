@@ -9,9 +9,7 @@
  * database if needed, or update to use customerServiceClient.
  */
 
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 async function createPaidInvoices() {
   console.log('Starting invoice and payment creation...');

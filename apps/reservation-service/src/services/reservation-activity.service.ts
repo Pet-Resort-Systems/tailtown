@@ -7,10 +7,8 @@
  * - When the changes occurred
  */
 
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/prisma';
 import { logger } from '../utils/logger';
-
-const prisma = new PrismaClient();
 
 export type ReservationActivityType =
   | 'CREATED'

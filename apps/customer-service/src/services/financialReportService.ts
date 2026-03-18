@@ -3,7 +3,7 @@
  * Generates financial reports for business analysis
  */
 
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/prisma';
 import {
   RevenueData,
   ProfitLossData,
@@ -12,8 +12,6 @@ import {
   ReconciliationData,
   ReconciliationTransaction,
 } from '../types/reports.types';
-
-const prisma = new PrismaClient();
 
 /**
  * Get revenue report for date range

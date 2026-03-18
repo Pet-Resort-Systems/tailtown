@@ -5,10 +5,8 @@
  * Automatically captures IP address, user agent, and action details.
  */
 
-import { PrismaClient } from '@prisma/client';
 import { Request } from 'express';
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 export interface AuditLogData {
   superAdminId: string;

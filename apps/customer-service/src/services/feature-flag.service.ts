@@ -10,11 +10,10 @@
  * - Gradual rollout (percentage-based)
  */
 
-import { PrismaClient, FeatureFlagCategory } from '@prisma/client';
+import { FeatureFlagCategory } from '@prisma/client';
+import { prisma } from '../config/prisma';
 import { getCache, setCache, deleteCache } from '../utils/redis';
 import { logger } from '../utils/logger';
-
-const prisma = new PrismaClient();
 
 // Cache TTL in seconds
 const CACHE_TTL = 300; // 5 minutes

@@ -1,11 +1,9 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/prisma';
 
 /**
  * This script generates sample data for testing the analytics dashboard
  * It creates invoices, reservations, and add-on services with realistic data
  */
-
-const prisma = new PrismaClient();
 
 async function main() {
   console.log('Generating sample analytics data...');

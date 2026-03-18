@@ -1,13 +1,11 @@
 import {
-  PrismaClient,
   Tenant,
   TenantStatus,
   TenantUser,
   UserRole,
 } from '@prisma/client';
+import { prisma } from '../config/prisma';
 import bcrypt from 'bcrypt';
-
-const prisma = new PrismaClient();
 
 export interface CreateTenantDto {
   businessName: string;

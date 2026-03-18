@@ -5,13 +5,11 @@
  * Run with: npx ts-node src/scripts/import-gingr-invoices.ts
  */
 
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/prisma';
 import GingrApiClient from '../services/gingr-api.service';
 import dotenv from 'dotenv';
 
 dotenv.config();
-
-const prisma = new PrismaClient();
 
 interface ImportStats {
   total: number;

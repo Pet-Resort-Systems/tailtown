@@ -5,7 +5,7 @@
  * Runs on a schedule (every 8 hours) to sync customers, pets, reservations, and invoices.
  */
 
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/prisma';
 import { GingrApiClient } from './gingr-api.service';
 import {
   extractGingrLodging,
@@ -13,8 +13,6 @@ import {
   getServiceNameForResourceType,
 } from './gingr-resource-mapper.service';
 import { lookupBreedName } from './gingr-transform.service';
-
-const prisma = new PrismaClient();
 
 interface SyncResult {
   tenantId: string;

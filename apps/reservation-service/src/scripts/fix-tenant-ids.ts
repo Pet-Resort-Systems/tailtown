@@ -1,9 +1,7 @@
 // @ts-nocheck
 // NOTE: This script references Customer/Pet models that have been removed from
 // the reservation service schema. Run against customer service database if needed.
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 async function fixTenantIds() {
   console.log('Checking tenant IDs in database...\n');

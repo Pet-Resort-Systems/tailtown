@@ -3,15 +3,13 @@
  * Generates operational metrics and efficiency reports
  */
 
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/prisma';
 import {
   StaffPerformance,
   ResourceUtilization,
   BookingPattern,
   CapacityAnalysis,
 } from '../types/reports.types';
-
-const prisma = new PrismaClient();
 
 /**
  * Get staff performance report
