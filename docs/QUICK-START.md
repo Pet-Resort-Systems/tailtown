@@ -69,11 +69,22 @@ pnpm run dev
 
 ### 5. Verify Local Development Works
 
-- **Frontend:** http://localhost:3000
+- **Frontend:** http://localhost:3001
 - **Customer API:** http://localhost:4004/health
 - **Reservation API:** http://localhost:4003/health
 
 **Note:** These are LOCAL development URLs. Production uses https://canicloud.com
+
+### 6. Create a Super Admin (Development Only)
+
+```bash
+pnpm --filter @tailtown/customer-service exec tsx src/scripts/create-super-admin.ts
+```
+
+**Note:** Use this script only in local development. Do not run it against production.
+
+1. Check the credentials in the script [`create-super-admin.ts`](../apps/customer-service/src/scripts/create-super-admin.ts).
+2. Login in by going to http://localhost:3001/admin-portal/login
 
 ---
 
