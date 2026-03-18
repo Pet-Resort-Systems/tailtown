@@ -13,7 +13,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
  */
 
 // Global singleton to prevent multiple Prisma instances in development
-const globalForPrisma = global as typeof globalThis & { prisma?: PrismaClient };
+const globalForPrisma = globalThis as typeof globalThis & { prisma?: PrismaClient };
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 export const prisma =
