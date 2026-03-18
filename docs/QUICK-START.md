@@ -69,7 +69,7 @@ pnpm run dev
 
 ### 5. Verify Local Development Works
 
-- **Frontend:** http://localhost:3001
+- **Frontend:** http://localhost:3000
 - **Customer API:** http://localhost:4004/health
 - **Reservation API:** http://localhost:4003/health
 
