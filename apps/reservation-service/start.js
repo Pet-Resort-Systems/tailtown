@@ -10,15 +10,11 @@ console.log('Starting reservation service on port 4003...');
 
 // Run the service using ts-node to bypass TypeScript build issues
 // Added --transpile-only flag to skip type checking
-const serviceProcess = spawn(
-  'npx',
-  ['ts-node', '--transpile-only', 'src/index.ts'],
-  {
-    env: { ...process.env, PORT: 4003 },
-    stdio: 'inherit',
-    cwd: __dirname,
-  }
-);
+const serviceProcess = spawn('npx', ['tsx', 'src/index.ts'], {
+  env: { ...process.env, PORT: 4003 },
+  stdio: 'inherit',
+  cwd: __dirname,
+});
 
 console.log('Reservation service started!');
 
