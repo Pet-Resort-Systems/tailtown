@@ -11,12 +11,11 @@
  */
 
 import { Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
+
 import AppError from '../../utils/appError';
 import { TenantRequest } from '../../middleware/tenant.middleware';
 import { logger } from '../../utils/logger';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../config/prisma';
 
 /**
  * Create availability slot

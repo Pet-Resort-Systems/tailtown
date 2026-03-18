@@ -6,12 +6,11 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient, ResourceType, ServiceCategory } from '@prisma/client';
+import { ResourceType, ServiceCategory } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import AppError from '../utils/appError';
+import { prisma } from '../config/prisma';
 // uuid not needed - Prisma generates IDs
-
-const prisma = new PrismaClient();
 
 // ============================================================================
 // Types matching the frontend wizard

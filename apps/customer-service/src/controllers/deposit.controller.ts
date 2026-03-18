@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
-import { AppError } from '../middleware/error.middleware';
 
-const prisma = new PrismaClient();
+import { AppError } from '../middleware/error.middleware';
+import { prisma } from '../config/prisma';
 
 // Note: Deposit configuration is stored as JSON in a simple config table
 // This is a lightweight implementation focused on CRUD operations

@@ -6,10 +6,9 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient, MealTime } from '@prisma/client';
+import { MealTime } from '@prisma/client';
 import { AppError } from '../middleware/error.middleware';
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 // Extended request with tenantId and user
 interface TenantRequest extends Request {

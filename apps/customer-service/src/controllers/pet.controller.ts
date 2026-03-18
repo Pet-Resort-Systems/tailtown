@@ -1,12 +1,11 @@
 import { Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
+
 import { AppError } from '../middleware/error.middleware';
 import { TenantRequest } from '../middleware/tenant.middleware';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 // Configure multer for file upload
 const storage = multer.diskStorage({

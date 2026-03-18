@@ -13,16 +13,15 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient, ReservationStatus } from '@prisma/client';
+import { ReservationStatus } from '@prisma/client';
 import { AppError } from '../../middleware/error.middleware';
 import { logger } from '../../utils/logger';
+import { prisma } from '../../config/prisma';
 import {
   reservationSelectForList,
   reservationSelectFull,
   petSelectMinimal,
 } from '../../utils/prisma-optimized';
-
-const prisma = new PrismaClient();
 
 /**
  * Get all reservations with pagination and filtering

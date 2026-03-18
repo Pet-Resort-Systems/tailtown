@@ -1,12 +1,9 @@
+import { prisma } from '../../../config/prisma';
 /**
  * Order Number Generator
  *
  * Generates unique order numbers for reservations in format: RES-YYYYMMDD-XXX
  */
-
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
 
 /**
  * Generate a unique order number for a reservation

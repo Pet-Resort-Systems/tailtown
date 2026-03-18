@@ -8,11 +8,10 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
+
 import { AppError } from '../../middleware/error.middleware';
 import { logger } from '../../utils/logger';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../config/prisma';
 
 interface AuthenticatedRequest extends Request {
   user?: { id: string; role?: string };

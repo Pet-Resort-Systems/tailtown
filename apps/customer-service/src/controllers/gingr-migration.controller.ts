@@ -4,9 +4,10 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
+
 // Use native fetch (Node 18+) instead of node-fetch
 import GingrApiClient from '../services/gingr-api.service';
+import { prisma } from '../config/prisma';
 import {
   transformOwnerToCustomer,
   transformAnimalToPet,
@@ -17,8 +18,6 @@ import {
   findOrCreateResource,
   extractGingrLodging,
 } from '../services/gingr-resource-mapper.service';
-
-const prisma = new PrismaClient();
 
 interface MigrationProgress {
   phase: string;

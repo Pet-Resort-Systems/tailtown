@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient, DaycarePassStatus } from '@prisma/client';
+import { DaycarePassStatus } from '@prisma/client';
 import { AppError } from '../middleware/error.middleware';
 import { logger } from '../utils/logger';
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 // Extended request with tenantId
 interface TenantRequest extends Request {

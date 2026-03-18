@@ -1,14 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import {
-  PrismaClient,
-  PriceRuleType,
-  DiscountType,
-  PriceAdjustmentType,
-  ServiceCategory,
-} from '@prisma/client';
+import { PriceRuleType, DiscountType, PriceAdjustmentType, ServiceCategory } from '@prisma/client';
 import { AppError } from '../middleware/error.middleware';
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 // Get all price rules
 export const getAllPriceRules = async (

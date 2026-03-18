@@ -6,11 +6,10 @@
  */
 
 import { Response, NextFunction } from 'express';
-import { PrismaClient, RecurrenceFrequency } from '@prisma/client';
+import { RecurrenceFrequency } from '@prisma/client';
 import { AppError } from '../middleware/error.middleware';
 import { TenantRequest } from '../middleware/tenant.middleware';
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 /**
  * Get all standing reservations for a tenant

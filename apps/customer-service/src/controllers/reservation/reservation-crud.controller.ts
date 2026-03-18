@@ -8,7 +8,7 @@
  */
 
 import { Response, NextFunction } from 'express';
-import { PrismaClient, ReservationStatus } from '@prisma/client';
+import { ReservationStatus } from '@prisma/client';
 import { TenantRequest } from '../../middleware/tenant.middleware';
 import { AppError } from '../../middleware/error.middleware';
 import { logger } from '../../utils/logger';
@@ -18,8 +18,7 @@ import {
   AuditSeverity,
 } from '../../services/tenant-audit-log.service';
 import { generateOrderNumber } from './utils/order-number';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../config/prisma';
 
 // Valid resource types
 const VALID_RESOURCE_TYPES = [

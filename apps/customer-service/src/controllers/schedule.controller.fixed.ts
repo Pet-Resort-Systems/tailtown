@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/prisma';
 
 // Define interfaces for raw SQL query results
 interface CountResult {
@@ -37,10 +37,6 @@ interface StaffRow {
   position: string;
 }
 
-const prisma = new PrismaClient({
-  // Add logging to debug Prisma operations
-  log: ['query', 'error', 'warn'],
-});
 
 // Get all schedules
 export const getAllSchedules = async (

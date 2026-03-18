@@ -1,13 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import {
-  PrismaClient,
-  PointEarningType,
-  RedemptionType,
-  TierLevel,
-} from '@prisma/client';
+import { PointEarningType, RedemptionType, TierLevel } from '@prisma/client';
 import { AppError } from '../middleware/error.middleware';
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 // Get or create loyalty member
 export const getMember = async (

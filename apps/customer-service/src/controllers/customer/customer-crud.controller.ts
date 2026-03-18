@@ -12,10 +12,11 @@
  */
 
 import { Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
+
 import { AppError } from '../../middleware/error.middleware';
 import { TenantRequest } from '../../middleware/tenant.middleware';
 import { logger } from '../../utils/logger';
+import { prisma } from '../../config/prisma';
 import {
   getCache,
   setCache,
@@ -32,8 +33,6 @@ import {
   petSelectMinimal,
   petSelectFull,
 } from '../../utils/prisma-optimized';
-
-const prisma = new PrismaClient();
 
 /**
  * Get all customers with pagination and filtering

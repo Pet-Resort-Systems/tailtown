@@ -7,12 +7,11 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
+
 import { createAuditLog, AuditAction } from '../../services/audit-log.service';
 import { SuperAdminRequest } from '../../middleware/require-super-admin.middleware';
 import jwt from 'jsonwebtoken';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../config/prisma';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const IMPERSONATION_TIMEOUT_MINUTES = 30;

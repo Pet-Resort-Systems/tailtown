@@ -9,7 +9,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
+
 import { AppError } from '../../middleware/error.middleware';
 import bcrypt from 'bcrypt';
 import { validatePasswordOrThrow } from '../../utils/passwordValidator';
@@ -20,12 +20,11 @@ import {
 } from '../../utils/jwt';
 import { logger } from '../../utils/logger';
 import { TenantRequest } from '../../middleware/tenant.middleware';
+import { prisma } from '../../config/prisma';
 import {
   tenantAuditLog,
   AuditAction,
 } from '../../services/tenant-audit-log.service';
-
-const prisma = new PrismaClient();
 
 /**
  * Authenticate staff member (login)

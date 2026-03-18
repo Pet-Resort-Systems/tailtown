@@ -1,10 +1,9 @@
 import { TenantRequest } from '../middleware/tenant.middleware';
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
+
 import { AppError } from '../middleware/error.middleware';
 import { addDays, addWeeks, format, parse } from 'date-fns';
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 /**
  * Training Class Controller

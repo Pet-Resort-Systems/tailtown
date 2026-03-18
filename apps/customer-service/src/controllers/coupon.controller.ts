@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient, CouponType, CouponStatus } from '@prisma/client';
+import { CouponType, CouponStatus } from '@prisma/client';
 import { AppError } from '../middleware/error.middleware';
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 // Get all coupons
 export const getAllCoupons = async (

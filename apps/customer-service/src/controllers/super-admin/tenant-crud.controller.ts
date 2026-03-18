@@ -6,12 +6,11 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
+
 import { createAuditLog, AuditAction } from '../../services/audit-log.service';
 import { SuperAdminRequest } from '../../middleware/require-super-admin.middleware';
 import bcrypt from 'bcrypt';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../config/prisma';
 
 /**
  * GET /api/super-admin/tenants

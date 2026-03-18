@@ -10,20 +10,19 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
+
 import { AppError } from '../../middleware/error.middleware';
 import bcrypt from 'bcrypt';
 import { validatePasswordOrThrow } from '../../utils/passwordValidator';
 import { logger } from '../../utils/logger';
 import { TenantRequest } from '../../middleware/tenant.middleware';
+import { prisma } from '../../config/prisma';
 import {
   tenantAuditLog,
   AuditAction,
   AuditCategory,
   AuditSeverity,
 } from '../../services/tenant-audit-log.service';
-
-const prisma = new PrismaClient();
 
 // Standard staff select fields (excludes sensitive data)
 const staffSelectFields = {

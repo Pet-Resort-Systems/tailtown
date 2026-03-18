@@ -9,6 +9,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../middleware/error.middleware';
 import financialService from '../services/financialService';
+import { prisma } from '../config/prisma';
 
 /**
  * Get sales data by service type
@@ -367,5 +368,4 @@ const getDateFilter = (
 };
 
 // Missing import for prisma client in this controller
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+

@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient, TipType, TipCollectionMethod } from '@prisma/client';
+import { TipType, TipCollectionMethod } from '@prisma/client';
 import { AppError } from '../middleware/error.middleware';
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 /**
  * Create a new tip

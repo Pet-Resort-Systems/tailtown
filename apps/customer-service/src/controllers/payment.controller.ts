@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
-import { AppError } from '../middleware/error.middleware';
 
-const prisma = new PrismaClient();
+import { AppError } from '../middleware/error.middleware';
+import { prisma } from '../config/prisma';
 
 // Get all payments for a specific customer
 export const getCustomerPayments = async (

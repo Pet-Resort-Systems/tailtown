@@ -6,11 +6,10 @@
  */
 
 import { Response, NextFunction } from 'express';
-import { PrismaClient, CommissionType } from '@prisma/client';
+import { CommissionType } from '@prisma/client';
 import { AppError } from '../middleware/error.middleware';
 import { TenantRequest } from '../middleware/tenant.middleware';
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 /**
  * Get all commissions for a staff member

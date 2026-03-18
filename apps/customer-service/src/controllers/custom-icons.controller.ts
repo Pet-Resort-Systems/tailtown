@@ -1,10 +1,9 @@
 import { TenantRequest } from '../middleware/tenant.middleware';
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+
 import path from 'path';
 import fs from 'fs/promises';
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 // Get all custom icons for tenant
 export const getAllCustomIcons = async (req: TenantRequest, res: Response) => {

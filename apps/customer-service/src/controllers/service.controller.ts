@@ -1,8 +1,9 @@
 import { Response, NextFunction } from 'express';
-import { PrismaClient, ServiceCategory } from '@prisma/client';
+import { ServiceCategory } from '@prisma/client';
 import { AppError } from '../middleware/error.middleware';
 import { TenantRequest } from '../middleware/tenant.middleware';
 import { logger } from '../utils/logger';
+import { prisma } from '../config/prisma';
 import {
   getCache,
   setCache,
@@ -10,8 +11,6 @@ import {
   getCacheKey,
   deleteCachePattern,
 } from '../utils/redis';
-
-const prisma = new PrismaClient();
 
 // Get all services with filtering options
 export const getAllServices = async (

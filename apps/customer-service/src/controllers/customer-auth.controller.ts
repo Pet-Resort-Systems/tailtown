@@ -9,13 +9,12 @@
  */
 
 import { Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import { emailService } from '../services/email.service';
 import { TenantRequest } from '../middleware/tenant.middleware';
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 // Password reset token expiry (24 hours)
 const RESET_TOKEN_EXPIRY_HOURS = 24;

@@ -1,14 +1,13 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+
 import { TenantRequest } from '../middleware/tenant.middleware';
+import { prisma } from '../config/prisma';
 import {
   getCache,
   setCache,
   getCacheKey,
   deleteCachePattern,
 } from '../utils/redis';
-
-const prisma = new PrismaClient();
 
 // ============================================
 // PRODUCT CRUD

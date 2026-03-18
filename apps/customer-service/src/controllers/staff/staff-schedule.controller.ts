@@ -12,9 +12,10 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
+
 import { AppError } from '../../middleware/error.middleware';
 import { logger } from '../../utils/logger';
+import { prisma } from '../../config/prisma';
 
 // Extend the Express Request type for authenticated requests
 interface AuthenticatedRequest extends Request {
@@ -24,8 +25,6 @@ interface AuthenticatedRequest extends Request {
   };
   tenantId?: string;
 }
-
-const prisma = new PrismaClient();
 
 /**
  * Helper to detect overlapping schedules for a staff member on a given day

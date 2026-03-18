@@ -1,8 +1,7 @@
 import { Response } from 'express';
-import { PrismaClient } from '@prisma/client';
-import { AuthRequest } from '../middleware/auth.middleware';
 
-const prisma = new PrismaClient();
+import { AuthRequest } from '../middleware/auth.middleware';
+import { prisma } from '../config/prisma';
 
 interface TenantRequest extends AuthRequest {
   tenantId?: string;

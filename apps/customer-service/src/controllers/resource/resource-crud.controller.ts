@@ -10,10 +10,11 @@
  */
 
 import { Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
+
 import AppError from '../../utils/appError';
 import { TenantRequest } from '../../middleware/tenant.middleware';
 import { logger } from '../../utils/logger';
+import { prisma } from '../../config/prisma';
 import {
   getCache,
   setCache,
@@ -21,8 +22,6 @@ import {
   getCacheKey,
   deleteCachePattern,
 } from '../../utils/redis';
-
-const prisma = new PrismaClient();
 
 // Valid resource types and aliases
 const validTypeMap: Record<string, string> = {

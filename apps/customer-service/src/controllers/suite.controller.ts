@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient, ResourceType } from '@prisma/client';
+import { ResourceType } from '@prisma/client';
 import AppError from '../utils/appError';
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 // Suite types stored in attributes
 enum SuiteType {

@@ -1,9 +1,8 @@
 import { Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
+
 import { AuthRequest } from '../middleware/auth.middleware';
 import { AppError, ErrorType } from '../middleware/error.middleware';
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 /**
  * Get all channels for the current staff member

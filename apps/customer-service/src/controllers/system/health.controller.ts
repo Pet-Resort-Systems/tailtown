@@ -6,10 +6,9 @@
  */
 
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
-import os from 'os';
 
-const prisma = new PrismaClient();
+import os from 'os';
+import { prisma } from '../../config/prisma';
 
 // Track service start time for uptime calculation
 const SERVICE_START_TIME = Date.now();

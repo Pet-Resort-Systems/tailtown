@@ -8,11 +8,10 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
+
 import { createAuditLog, AuditAction } from '../../services/audit-log.service';
 import { SuperAdminRequest } from '../../middleware/require-super-admin.middleware';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../config/prisma';
 
 /**
  * POST /api/super-admin/tenants/:id/suspend

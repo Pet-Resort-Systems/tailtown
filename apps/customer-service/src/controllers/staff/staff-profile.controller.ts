@@ -7,12 +7,11 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
+
 import { AppError } from '../../middleware/error.middleware';
 import fs from 'fs';
 import path from 'path';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../config/prisma';
 
 /**
  * Upload profile photo

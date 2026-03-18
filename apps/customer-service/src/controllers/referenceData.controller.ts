@@ -6,9 +6,7 @@ import { TenantRequest } from '../middleware/tenant.middleware';
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma';
 
 /**
  * Get all breeds, optionally filtered by species
