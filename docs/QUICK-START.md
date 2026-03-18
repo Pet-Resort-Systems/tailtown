@@ -84,7 +84,8 @@ pnpm --filter @tailtown/customer-service exec tsx src/scripts/create-super-admin
 **Note:** Use this script only in local development. Do not run it against production.
 
 1. Check the credentials in the script [`create-super-admin.ts`](../apps/customer-service/src/scripts/create-super-admin.ts).
-2. Login in by going to http://localhost:3001/admin-portal/login
+2. Login in by going to http://localhost:3000/admin-portal/login
+3. (Optional) You could continue by setting up a demo tenant using [DEMO-TEST-DATA-SETUP.md](DEMO-TEST-DATA-SETUP.md)
 
 ---
 
@@ -102,6 +103,7 @@ pnpm --filter @tailtown/customer-service test -- --testPathPattern=security
 
 ## 📚 Next Steps
 
+- **Demo test data:** [DEMO-TEST-DATA-SETUP.md](DEMO-TEST-DATA-SETUP.md)
 - **Best practices:** [development/DEVELOPMENT-BEST-PRACTICES.md](development/DEVELOPMENT-BEST-PRACTICES.md)
 - **Security:** [security/SECURITY.md](security/SECURITY.md)
 - **Testing:** [testing/TESTING.md](testing/TESTING.md)
