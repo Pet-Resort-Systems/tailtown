@@ -23,6 +23,7 @@ dist
 
 # Debug logs
 npm-debug.log*
+package-lock.json
 yarn-debug.log*
 yarn-error.log*
 *.log
@@ -36,7 +37,9 @@ reservation.log
 
 # IDE
 .idea
-.vscode
+/.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 *.swp
 
 # Backup files
@@ -119,3 +122,7 @@ test-results/
 # Large SQL backup files
 *.sql.gz
 *.sql
+
+
+# Turborepo
+.turbo/

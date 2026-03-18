@@ -75,7 +75,7 @@ UPDATE resources SET "maxPets" = 3 WHERE type = 'VIP_SUITE';
 
 ### 2. Frontend Changes
 
-**File**: `frontend/src/components/reservations/ReservationForm.tsx`
+**File**: `apps/frontend/src/components/reservations/ReservationForm.tsx`
 
 **Change 1: Update getOptionDisabled logic** (lines ~1402-1411):
 
@@ -138,7 +138,7 @@ renderOption={(props, option) => {
 
 ### 3. Backend Changes
 
-**File**: `services/reservation-service/src/controllers/reservation/create-reservation.controller.ts`
+**File**: `apps/reservation-service/src/controllers/reservation/create-reservation.controller.ts`
 
 **Add capacity validation**:
 
@@ -183,7 +183,7 @@ if (resourceId) {
 
 ### 4. Resource Service Changes
 
-**File**: `services/reservation-service/src/controllers/resource/get-resource.controller.ts`
+**File**: `apps/reservation-service/src/controllers/resource/get-resource.controller.ts`
 
 **Include maxPets in resource responses**:
 
@@ -221,21 +221,21 @@ select: {
 ## Files to Modify
 
 1. **Database**:
-   - `services/reservation-service/prisma/schema.prisma`
+   - `apps/reservation-service/prisma/schema.prisma`
    - Create migration for `maxPets` field
 
 2. **Backend**:
-   - `services/reservation-service/src/controllers/reservation/create-reservation.controller.ts`
-   - `services/reservation-service/src/controllers/reservation/update-reservation.controller.ts`
-   - `services/reservation-service/src/controllers/resource/get-resource.controller.ts`
+   - `apps/reservation-service/src/controllers/reservation/create-reservation.controller.ts`
+   - `apps/reservation-service/src/controllers/reservation/update-reservation.controller.ts`
+   - `apps/reservation-service/src/controllers/resource/get-resource.controller.ts`
 
 3. **Frontend**:
-   - `frontend/src/components/reservations/ReservationForm.tsx`
-   - `frontend/src/types/resource.ts` (add maxPets field)
+   - `apps/frontend/src/components/reservations/ReservationForm.tsx`
+   - `apps/frontend/src/types/resource.ts` (add maxPets field)
 
 4. **Documentation**:
    - `docs/testing/MULTI-PET-TESTING-PLAN.md`
-   - `services/reservation-service/docs/README.md`
+   - `apps/reservation-service/docs/README.md`
 
 ---
 

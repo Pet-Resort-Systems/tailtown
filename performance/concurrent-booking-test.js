@@ -1,7 +1,7 @@
 /**
  * Concurrent Booking Stress Test
  * Tests double-booking prevention under high concurrency
- * 
+ *
  * Run with: k6 run concurrent-booking-test.js
  */
 
@@ -63,36 +63,38 @@ export default function () {
     status: 'CONFIRMED',
   });
 
-  const response = http.post(
-    `${BASE_URL}/api/reservations`,
-    payload,
-    { headers, timeout: '10s' }
-  );
+  const response = http.post(`${BASE_URL}/api/reservations`, payload, {
+    headers,
+    timeout: '10s',
+  });
 
   // Check response
   const success = check(response, {
     'response received': (r) => r.status !== 0,
-    'valid status code': (r) => r.status === 201 || r.status === 409 || r.status === 400,
+    'valid status code': (r) =>
+      r.status === 201 || r.status === 409 || r.status === 400,
   });
 
   if (response.status === 201) {
     // Successful booking
     successfulBookings.add(1);
-    
+
     // Verify it's actually saved by checking again
     const verifyResponse = http.get(
       `${BASE_URL}/api/reservations?resourceId=${testResourceId}&startDate=${tomorrow.toISOString().split('T')[0]}`,
       { headers }
     );
-    
+
     if (verifyResponse.status === 200) {
       const body = JSON.parse(verifyResponse.body);
       const count = body.data ? body.data.length : 0;
-      
+
       // If more than 1 reservation for same resource/date, we have a double booking!
       if (count > 1) {
         doubleBookings.add(1);
-        console.error(`⚠️  DOUBLE BOOKING DETECTED! ${count} reservations for same resource/date`);
+        console.error(
+          `⚠️  DOUBLE BOOKING DETECTED! ${count} reservations for same resource/date`
+        );
       }
     }
   } else if (response.status === 409) {
@@ -134,11 +136,17 @@ export function handleSummary(data) {
   console.log(`✅ Successful Bookings: ${summary.metrics.successfulBookings}`);
   console.log(`🚫 Rejected Bookings: ${summary.metrics.rejectedBookings}`);
   console.log(`⚠️  Double Bookings: ${summary.metrics.doubleBookings}`);
-  console.log(`❌ Error Rate: ${(summary.metrics.errorRate * 100).toFixed(2)}%`);
-  console.log(`⏱️  Avg Response Time: ${summary.metrics.avgDuration.toFixed(2)}ms`);
-  console.log(`⏱️  P95 Response Time: ${summary.metrics.p95Duration.toFixed(2)}ms`);
+  console.log(
+    `❌ Error Rate: ${(summary.metrics.errorRate * 100).toFixed(2)}%`
+  );
+  console.log(
+    `⏱️  Avg Response Time: ${summary.metrics.avgDuration.toFixed(2)}ms`
+  );
+  console.log(
+    `⏱️  P95 Response Time: ${summary.metrics.p95Duration.toFixed(2)}ms`
+  );
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  
+
   if (summary.result === 'PASS') {
     console.log('✅ TEST PASSED: No double bookings detected!');
   } else {
@@ -147,6 +155,10 @@ export function handleSummary(data) {
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
   return {
-    'performance/results/concurrent-booking-test-summary.json': JSON.stringify(summary, null, 2),
+    'performance/results/concurrent-booking-test-summary.json': JSON.stringify(
+      summary,
+      null,
+      2
+    ),
   };
 }

@@ -3,11 +3,21 @@
   "project_root": "/Users/robweinstein/CascadeProjects/tailtown",
   "index_patterns": {
     "documentation": ["docs/**/*.md", "README.md", "services/*/README.md"],
-    "code": ["services/*/src/**/*.ts", "frontend/src/**/*.tsx", "frontend/src/**/*.ts"],
+    "code": [
+      "services/*/src/**/*.ts",
+      "frontend/src/**/*.tsx",
+      "frontend/src/**/*.ts"
+    ],
     "schemas": ["services/*/prisma/schema.prisma"],
     "config": ["package.json", "services/*/package.json"]
   },
-  "exclude_patterns": ["**/node_modules/**", "**/dist/**", "**/build/**", "**/coverage/**", "**/*.test.ts"],
+  "exclude_patterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/coverage/**",
+    "**/*.test.ts"
+  ],
   "chunk_size": 1000,
   "chunk_overlap": 200,
   "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",

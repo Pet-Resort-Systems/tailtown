@@ -4,7 +4,7 @@ This document describes the environment variables used in the Tailtown Pet Resor
 
 ## Backend Environment Variables
 
-Location: `/services/customer/.env`
+Location: `/apps/customer-service/.env`
 
 ### Database Configuration
 - `DATABASE_URL`: PostgreSQL connection string
@@ -151,7 +151,7 @@ Location: `/services/customer/.env`
 
 ## Frontend Environment Variables
 
-Location: `/frontend/.env`
+Location: `/apps/frontend/.env`
 
 ### Build Configuration
 - `NODE_ENV`: Environment mode
@@ -247,8 +247,8 @@ Location: `/frontend/.env`
 
 1. Copy the example files:
    ```bash
-   cp services/customer/.env.example services/customer/.env
-   cp frontend/.env.example frontend/.env
+   cp apps/customer-service/.env.example apps/customer-service/.env
+   cp apps/frontend/.env.example apps/frontend/.env
    ```
 
 2. Update the values in both .env files with your specific configuration
@@ -268,15 +268,15 @@ To safely backup your environment configuration:
 1. Create a secure backup of your .env files:
    ```bash
    # Backup
-   cp services/customer/.env services/customer/.env.backup
-   cp frontend/.env frontend/.env.backup
+   cp apps/customer-service/.env apps/customer-service/.env.backup
+   cp apps/frontend/.env apps/frontend/.env.backup
    ```
 
 2. To restore from backup:
    ```bash
    # Restore
-   cp services/customer/.env.backup services/customer/.env
-   cp frontend/.env.backup frontend/.env
+   cp apps/customer-service/.env.backup apps/customer-service/.env
+   cp apps/frontend/.env.backup apps/frontend/.env
    ```
 
 3. Store backups in a secure location outside of version control

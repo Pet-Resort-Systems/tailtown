@@ -371,7 +371,7 @@ npm test
 
 - [DEPLOYMENT-FIX-SESSION-NOV-16-2025.md](./DEPLOYMENT-FIX-SESSION-NOV-16-2025.md) - Incident report
 - [TESTING-STRATEGY.md](./TESTING-STRATEGY.md) - Overall testing approach
-- [DEVELOPMENT-BEST-PRACTICES.md](./DEVELOPMENT-BEST-PRACTICES.md) - Coding standards
+- [DEVELOPMENT-BEST-PRACTICES.md](../development/DEVELOPMENT-BEST-PRACTICES.md) - Coding standards
 
 ---
 

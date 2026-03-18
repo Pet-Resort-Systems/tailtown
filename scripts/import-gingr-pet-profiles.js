@@ -2,7 +2,7 @@
 
 /**
  * Gingr Pet Profiles Import Tool - Phase 2 (HIGH VALUE)
- * 
+ *
  * Imports high-value operational data from Gingr:
  * - Grooming notes (special instructions, preferences)
  * - General pet notes (behavioral notes, special instructions)
@@ -11,9 +11,9 @@
  * - Temperament (temperament classification)
  * - VIP status (VIP flag)
  * - Fixed status (spayed/neutered)
- * 
+ *
  * Time Savings: ~450 hours of manual data entry
- * 
+ *
  * Usage:
  *   node scripts/import-gingr-pet-profiles.js <subdomain> <api-key>
  */
@@ -28,9 +28,13 @@ const args = process.argv.slice(2);
 if (args.length < 2) {
   console.error('❌ Error: Missing required arguments');
   console.log('\nUsage:');
-  console.log('  node scripts/import-gingr-pet-profiles.js <subdomain> <api-key>');
+  console.log(
+    '  node scripts/import-gingr-pet-profiles.js <subdomain> <api-key>'
+  );
   console.log('\nExample:');
-  console.log('  node scripts/import-gingr-pet-profiles.js tailtownpetresort abc123xyz456');
+  console.log(
+    '  node scripts/import-gingr-pet-profiles.js tailtownpetresort abc123xyz456'
+  );
   process.exit(1);
 }
 
@@ -40,7 +44,9 @@ const BASE_URL = `https://${subdomain}.gingrapp.com/api/v1`;
 console.log('\n🐕 Gingr Pet Profiles Import Tool - Phase 2 (HIGH VALUE)');
 console.log('═══════════════════════════════════════════════════════════');
 console.log(`Subdomain: ${subdomain}`);
-console.log('Importing: Grooming Notes, Pet Notes, Weight, Temperament, VIP Status');
+console.log(
+  'Importing: Grooming Notes, Pet Notes, Weight, Temperament, VIP Status'
+);
 console.log('');
 
 /**
@@ -49,17 +55,21 @@ console.log('');
 async function makeGingrRequest(endpoint, params = {}) {
   const urlParams = new URLSearchParams();
   urlParams.append('key', apiKey);
-  
+
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
       urlParams.append(key, String(value));
     }
   });
-  
-  const response = await fetch(`${BASE_URL}${endpoint}?${urlParams.toString()}`);
+
+  const response = await fetch(
+    `${BASE_URL}${endpoint}?${urlParams.toString()}`
+  );
 
   if (!response.ok) {
-    throw new Error(`Gingr API error: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `Gingr API error: ${response.status} ${response.statusText}`
+    );
   }
 
   return response.json();
@@ -94,23 +104,23 @@ async function getAnimalData(animalId) {
  */
 async function importPetProfiles() {
   console.log('📋 Fetching pets from local database...');
-  
+
   try {
     // Get all active pets with their external IDs
     const localPets = await prisma.pet.findMany({
-      where: { 
+      where: {
         isActive: true,
-        externalId: { not: null }
+        externalId: { not: null },
       },
-      select: { 
-        id: true, 
-        name: true, 
-        externalId: true
-      }
+      select: {
+        id: true,
+        name: true,
+        externalId: true,
+      },
     });
-    
+
     console.log(`✅ Found ${localPets.length} active pets with Gingr IDs`);
-    
+
     let petsUpdated = 0;
     let petsSkipped = 0;
     let petsWithGroomingNotes = 0;
@@ -120,26 +130,28 @@ async function importPetProfiles() {
     let petsWithTemperament = 0;
     let vipPets = 0;
     let errorCount = 0;
-    
+
     console.log('\n🔄 Processing pet profile data...');
-    console.log('This may take a while as we fetch data for each pet individually...\n');
-    
+    console.log(
+      'This may take a while as we fetch data for each pet individually...\n'
+    );
+
     for (let i = 0; i < localPets.length; i++) {
       const pet = localPets[i];
-      
+
       try {
         // Fetch animal data
         const animalData = await getAnimalData(pet.externalId);
-        
+
         if (!animalData) {
           petsSkipped++;
           continue;
         }
-        
+
         // Process the data
         const updateData = {};
         let hasUpdates = false;
-        
+
         // Grooming notes - store in behaviorNotes
         const groomingNotes = stripHtml(animalData.grooming_notes);
         if (groomingNotes) {
@@ -147,7 +159,7 @@ async function importPetProfiles() {
           petsWithGroomingNotes++;
           hasUpdates = true;
         }
-        
+
         // General notes - store in specialNeeds
         const generalNotes = stripHtml(animalData.notes);
         if (generalNotes) {
@@ -155,7 +167,7 @@ async function importPetProfiles() {
           petsWithGeneralNotes++;
           hasUpdates = true;
         }
-        
+
         // Evaluation notes - append to behaviorNotes if grooming notes don't exist
         const evaluationNotes = stripHtml(animalData.evaluation_notes);
         if (evaluationNotes && !groomingNotes) {
@@ -163,62 +175,64 @@ async function importPetProfiles() {
           petsWithEvaluationNotes++;
           hasUpdates = true;
         }
-        
+
         // Weight
         if (animalData.weight && animalData.weight !== '0') {
           updateData.weight = parseFloat(animalData.weight);
           petsWithWeight++;
           hasUpdates = true;
         }
-        
+
         // Temperament - store in idealPlayGroup as JSON
         if (animalData.temperment) {
           updateData.idealPlayGroup = animalData.temperment;
           petsWithTemperament++;
           hasUpdates = true;
         }
-        
+
         // VIP status - store in petIcons as JSON
         if (animalData.vip === '1' || animalData.vip === 1) {
           updateData.petIcons = JSON.stringify(['vip']);
           vipPets++;
           hasUpdates = true;
         }
-        
+
         // Fixed status (spayed/neutered)
         if (animalData.fixed !== undefined && animalData.fixed !== null) {
-          updateData.isNeutered = animalData.fixed === '1' || animalData.fixed === 1;
+          updateData.isNeutered =
+            animalData.fixed === '1' || animalData.fixed === 1;
           hasUpdates = true;
         }
-        
+
         // Update pet if we have any data
         if (hasUpdates) {
           await prisma.pet.update({
             where: { id: pet.id },
             data: {
               ...updateData,
-              updatedAt: new Date()
-            }
+              updatedAt: new Date(),
+            },
           });
-          
+
           petsUpdated++;
         } else {
           petsSkipped++;
         }
-        
+
         if (petsUpdated % 100 === 0 && petsUpdated > 0) {
-          console.log(`  📝 Updated ${petsUpdated} pets... (${Math.round((i + 1) / localPets.length * 100)}% complete)`);
+          console.log(
+            `  📝 Updated ${petsUpdated} pets... (${Math.round(((i + 1) / localPets.length) * 100)}% complete)`
+          );
         }
-        
+
         // Rate limiting
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
+        await new Promise((resolve) => setTimeout(resolve, 100));
       } catch (error) {
         console.error(`❌ Error processing pet ${pet.name}:`, error.message);
         errorCount++;
       }
     }
-    
+
     // Final statistics
     console.log('\n📈 Import Results:');
     console.log('═══════════════════════════════════════════════════════════');
@@ -232,7 +246,7 @@ async function importPetProfiles() {
     console.log(`⚠️  Pets skipped (no data): ${petsSkipped}`);
     console.log(`❌ Errors: ${errorCount}`);
     console.log(`📊 Total pets processed: ${localPets.length}`);
-    
+
     // Show some examples
     const examples = await prisma.pet.findMany({
       where: {
@@ -240,9 +254,9 @@ async function importPetProfiles() {
           { behaviorNotes: { not: null } },
           { specialNeeds: { not: null } },
           { weight: { not: null } },
-          { idealPlayGroup: { not: null } }
+          { idealPlayGroup: { not: null } },
         ],
-        isActive: true
+        isActive: true,
       },
       select: {
         name: true,
@@ -250,21 +264,25 @@ async function importPetProfiles() {
         specialNeeds: true,
         weight: true,
         idealPlayGroup: true,
-        petIcons: true
+        petIcons: true,
       },
-      take: 3
+      take: 3,
     });
-    
+
     console.log('\n🐕 Examples of Imported Profile Data:');
-    examples.forEach(pet => {
+    examples.forEach((pet) => {
       const isVip = pet.petIcons && pet.petIcons.includes('vip');
       console.log(`\n🐕 ${pet.name}${isVip ? ' ⭐ VIP' : ''}:`);
-      if (pet.behaviorNotes) console.log(`  ✂️  Grooming/Behavior: ${pet.behaviorNotes.substring(0, 50)}...`);
-      if (pet.specialNeeds) console.log(`  📝 Notes: ${pet.specialNeeds.substring(0, 50)}...`);
+      if (pet.behaviorNotes)
+        console.log(
+          `  ✂️  Grooming/Behavior: ${pet.behaviorNotes.substring(0, 50)}...`
+        );
+      if (pet.specialNeeds)
+        console.log(`  📝 Notes: ${pet.specialNeeds.substring(0, 50)}...`);
       if (pet.weight) console.log(`  ⚖️  Weight: ${pet.weight} lbs`);
-      if (pet.idealPlayGroup) console.log(`  🎭 Temperament: ${pet.idealPlayGroup}`);
+      if (pet.idealPlayGroup)
+        console.log(`  🎭 Temperament: ${pet.idealPlayGroup}`);
     });
-    
   } catch (error) {
     console.error('❌ Error during import:', error);
     process.exit(1);
@@ -279,18 +297,19 @@ async function importPetProfiles() {
 async function main() {
   try {
     await importPetProfiles();
-    
+
     console.log('\n🎉 Phase 2 Pet Profiles Import Complete!');
     console.log('💡 High-Value Operational Data Imported:');
     console.log('✅ Grooming Notes - Staff instructions and preferences');
-    console.log('✅ General Pet Notes - Behavioral context and special instructions');
+    console.log(
+      '✅ General Pet Notes - Behavioral context and special instructions'
+    );
     console.log('✅ Evaluation Notes - Assessment information for training');
     console.log('✅ Weight - Current weight for medical records');
     console.log('✅ Temperament - Behavioral classification');
     console.log('✅ VIP Status - Premium service identification');
     console.log('✅ Fixed Status - Spayed/neutered information');
     console.log('\n⏱️  Estimated Time Saved: ~450 hours of manual data entry');
-    
   } catch (error) {
     console.error('❌ Fatal error:', error);
     process.exit(1);

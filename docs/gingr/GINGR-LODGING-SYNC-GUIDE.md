@@ -91,7 +91,7 @@ Dumbo,Barragan,Tuesday 12/16/2025 12:00 pm,Friday 12/19/2025 12:00 pm,Boarding |
 ### Step 2: Import into Tailtown
 
 ```bash
-cd /Users/robweinstein/CascadeProjects/tailtown/services/customer
+cd /Users/danielgutierrezmunoz/dev/code/companies/tailtown-pet-resort/tailtown-project/codex-implement-pnpm-monorepo-migration-plan_tailtown-daguttt/apps/customer-service
 
 # Run the import script
 node scripts/import-gingr-lodging-csv.js /path/to/gingr-calendar-2025-12-16.csv
@@ -112,7 +112,7 @@ node scripts/import-gingr-lodging-csv.js /path/to/gingr-calendar-2025-12-16.csv
 
 ### Location
 
-`/services/customer/scripts/import-gingr-lodging-csv.js`
+`/apps/customer-service/scripts/import-gingr-lodging-csv.js`
 
 ### Usage
 
@@ -210,7 +210,7 @@ Errors:
 ssh -i ~/ttkey root@129.212.178.244
 
 # 2. Navigate to customer service
-cd /opt/tailtown/services/customer
+cd /opt/tailtown/apps/customer-service
 
 # 3. Upload CSV file (from local machine)
 scp -i ~/ttkey gingr-calendar-2025-12-16.csv root@129.212.178.244:/tmp/

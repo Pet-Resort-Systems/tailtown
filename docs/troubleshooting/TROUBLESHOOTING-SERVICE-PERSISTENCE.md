@@ -12,7 +12,7 @@ docker ps | grep postgres
 # xxxxxxxxxx     postgres:14   0.0.0.0:5433->5432/tcp   tailtown-postgres
 
 # Verify DATABASE_URL in .env
-cat services/customer/.env | grep DATABASE_URL
+cat apps/customer-service/.env | grep DATABASE_URL
 # Should be: postgresql://postgres:postgres@localhost:5433/customer
 ```
 
@@ -171,7 +171,7 @@ kill -9 <PID>
 lsof -ti:4004 | xargs kill -9
 
 # Then restart
-npm run dev
+pnpm run dev
 ```
 
 ## Prevention Best Practices
@@ -179,8 +179,8 @@ npm run dev
 ### 1. Always Use Prisma Migrations
 ```bash
 # After changing schema.prisma
-cd services/customer
-npx prisma migrate dev --name add_new_field
+cd apps/customer-service
+pnpm exec prisma migrate dev --name add_new_field
 
 # Never manually ALTER TABLE unless in emergency
 ```
@@ -188,8 +188,8 @@ npx prisma migrate dev --name add_new_field
 ### 2. Run Integration Tests
 ```bash
 # Run service persistence tests
-cd services/customer
-npm test -- service-persistence.test.ts
+cd apps/customer-service
+pnpm test -- service-persistence.test.ts
 ```
 
 ### 3. Verify After Deployment
@@ -247,9 +247,9 @@ UPDATE services SET "tenantId" = 'dev' WHERE "tenantId" IS NULL;
 
 5. **Restart Services**:
 ```bash
-cd services/customer
+cd apps/customer-service
 lsof -ti:4004 | xargs kill -9
-npm run dev
+pnpm run dev
 ```
 
 6. **Test**:

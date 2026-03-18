@@ -10,7 +10,7 @@ echo "========================"
 echo ""
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$PROJECT_ROOT/frontend"
+cd "$PROJECT_ROOT/apps/frontend"
 
 # Colors
 GREEN='\033[0;32m'
@@ -18,7 +18,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m'
 
 echo -e "${YELLOW}Phase 1: Running tests to establish baseline...${NC}"
-npm test -- --watchAll=false --silent 2>&1 | grep -E "Test Suites:|Tests:" | tail -2
+pnpm test -- --watchAll=false --silent 2>&1 | grep -E "Test Suites:|Tests:" | tail -2
 
 echo ""
 echo -e "${YELLOW}Phase 2: Applying automated fixes...${NC}"
@@ -41,7 +41,7 @@ echo -e "${GREEN}✓ Automated fixes applied${NC}"
 echo ""
 
 echo -e "${YELLOW}Phase 3: Running tests again...${NC}"
-npm test -- --watchAll=false --silent 2>&1 | grep -E "Test Suites:|Tests:" | tail -2
+pnpm test -- --watchAll=false --silent 2>&1 | grep -E "Test Suites:|Tests:" | tail -2
 
 echo ""
 echo "✅ Test fix script complete!"

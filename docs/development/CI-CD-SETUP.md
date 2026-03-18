@@ -14,7 +14,7 @@ Tailtown uses GitHub Actions for automated testing and continuous integration. T
 - Only runs when frontend files change
 
 **What it does:**
-1. Sets up Node.js 18.x environment
+1. Sets up Node.js 24.x environment
 2. Installs dependencies with `npm ci`
 3. Runs timezone handling tests
 4. Runs dashboard-calendar sync tests
@@ -170,10 +170,10 @@ npx husky add .husky/pre-commit "cd frontend && npm test"
    - Solution: Tests should work in any timezone
    - Check: Date object usage, not string splitting
 
-2. **Node version mismatch**: CI uses Node 18.x
+2. **Node version mismatch**: CI uses Node 24.x
    - Solution: Use same version locally with nvm
    ```bash
-   nvm use 18
+   nvm use 24
    ```
 
 3. **Dependency issues**: CI uses `npm ci` (clean install)

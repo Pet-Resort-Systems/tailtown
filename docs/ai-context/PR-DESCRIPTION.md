@@ -100,8 +100,8 @@ JWT_REFRESH_SECRET=your-refresh-secret-key-change-in-production
 
 ### Run Security Tests
 ```bash
-cd services/customer
-npm test -- --testPathPattern=security --forceExit
+cd apps/customer-service
+pnpm test -- --testPathPattern=security --forceExit
 ```
 
 ### Expected Results

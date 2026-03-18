@@ -91,18 +91,18 @@ mkdir -p logs
 rm -f logs/*.pid logs/*.log
 
 # 1. Start Customer Service
-start_service "services/customer" "Customer Service" 4004 "npm run dev"
+start_service "apps/customer-service" "Customer Service" 4004 "pnpm run dev"
 
 # 2. Start Reservation Service  
-start_service "services/reservation-service" "Reservation Service" 4003 "npm run dev"
+start_service "apps/reservation-service" "Reservation Service" 4003 "pnpm run dev"
 
 # 3. Start Payment Service (optional)
 if [ "$1" = "--with-payment" ]; then
-    start_service "services/payment-service" "Payment Service" 4005 "npm run dev"
+    start_service "apps/payment-service" "Payment Service" 4005 "pnpm run dev"
 fi
 
 # 4. Start Frontend
-start_service "frontend" "Frontend" 3000 "npm start"
+start_service "apps/frontend" "Frontend" 3000 "pnpm start"
 
 # 5. Start MCP RAG Server
 echo -e "${BLUE}🔧 Starting RAG MCP Server...${NC}"

@@ -433,7 +433,7 @@ VALUES
 
 ---
 
-## 📝 Implementation Scripts
+## Implementation Scripts
 
 ### Quick Start: Import Breeds
 
@@ -442,7 +442,7 @@ VALUES
 node scripts/create-breeds-migration.js
 
 # 2. Run migration
-npm run migrate
+pnpm run migrate
 
 # 3. Verify import
 psql -U postgres -d tailtown -c "SELECT species, COUNT(*) FROM breeds GROUP BY species;"
@@ -455,7 +455,7 @@ psql -U postgres -d tailtown -c "SELECT species, COUNT(*) FROM breeds GROUP BY s
 node scripts/create-vets-migration.js
 
 # 2. Run migration
-npm run migrate
+pnpm run migrate
 
 # 3. Verify import
 psql -U postgres -d tailtown -c "SELECT COUNT(*) FROM veterinarians;"

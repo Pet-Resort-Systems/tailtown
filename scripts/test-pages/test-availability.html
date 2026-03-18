@@ -1,141 +1,166 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Resource Availability Test</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        pre {
-            background-color: #f5f5f5;
-            padding: 10px;
-            border-radius: 5px;
-            overflow: auto;
-        }
-        button {
-            padding: 10px 15px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-        .error {
-            color: red;
-        }
-        .success {
-            color: green;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      pre {
+        background-color: #f5f5f5;
+        padding: 10px;
+        border-radius: 5px;
+        overflow: auto;
+      }
+      button {
+        padding: 10px 15px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 10px;
+      }
+      .error {
+        color: red;
+      }
+      .success {
+        color: green;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Resource Availability Test</h1>
-    
+
     <div>
-        <h2>Test Configuration</h2>
-        <div>
-            <label for="apiUrl">API Base URL:</label>
-            <input type="text" id="apiUrl" value="http://localhost:4004" style="width: 300px;">
-        </div>
-        <div style="margin-top: 10px;">
-            <label for="resourceType">Resource Type:</label>
-            <input type="text" id="resourceType" value="suite">
-        </div>
-        <div style="margin-top: 10px;">
-            <label for="date">Date (YYYY-MM-DD):</label>
-            <input type="text" id="date" value="2025-08-03">
-        </div>
+      <h2>Test Configuration</h2>
+      <div>
+        <label for="apiUrl">API Base URL:</label>
+        <input
+          type="text"
+          id="apiUrl"
+          value="http://localhost:4004"
+          style="width: 300px"
+        />
+      </div>
+      <div style="margin-top: 10px">
+        <label for="resourceType">Resource Type:</label>
+        <input type="text" id="resourceType" value="suite" />
+      </div>
+      <div style="margin-top: 10px">
+        <label for="date">Date (YYYY-MM-DD):</label>
+        <input type="text" id="date" value="2025-08-03" />
+      </div>
     </div>
-    
-    <div style="margin-top: 20px;">
-        <button id="testGet">Test GET Availability</button>
-        <button id="testPost">Test POST Batch Availability</button>
+
+    <div style="margin-top: 20px">
+      <button id="testGet">Test GET Availability</button>
+      <button id="testPost">Test POST Batch Availability</button>
     </div>
-    
-    <div style="margin-top: 20px;">
-        <h2>Results</h2>
-        <div id="status"></div>
-        <pre id="result"></pre>
+
+    <div style="margin-top: 20px">
+      <h2>Results</h2>
+      <div id="status"></div>
+      <pre id="result"></pre>
     </div>
-    
+
     <script>
-        document.getElementById('testGet').addEventListener('click', async () => {
-            const apiUrl = document.getElementById('apiUrl').value;
-            const resourceType = document.getElementById('resourceType').value;
-            const date = document.getElementById('date').value;
-            
-            document.getElementById('status').innerHTML = 'Testing...';
-            document.getElementById('result').innerHTML = '';
-            
-            try {
-                console.log(`Testing GET ${apiUrl}/api/resources/availability?resourceType=${resourceType}&date=${date}`);
-                
-                const response = await fetch(`${apiUrl}/api/resources/availability?resourceType=${resourceType}&date=${date}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                const data = await response.json();
-                
-                document.getElementById('status').innerHTML = 
-                    `<span class="${response.ok ? 'success' : 'error'}">
+      document.getElementById('testGet').addEventListener('click', async () => {
+        const apiUrl = document.getElementById('apiUrl').value;
+        const resourceType = document.getElementById('resourceType').value;
+        const date = document.getElementById('date').value;
+
+        document.getElementById('status').innerHTML = 'Testing...';
+        document.getElementById('result').innerHTML = '';
+
+        try {
+          console.log(
+            `Testing GET ${apiUrl}/api/resources/availability?resourceType=${resourceType}&date=${date}`
+          );
+
+          const response = await fetch(
+            `${apiUrl}/api/resources/availability?resourceType=${resourceType}&date=${date}`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+
+          const data = await response.json();
+
+          document.getElementById('status').innerHTML =
+            `<span class="${response.ok ? 'success' : 'error'}">
                         Status: ${response.status} ${response.statusText}
                     </span>`;
-                document.getElementById('result').textContent = JSON.stringify(data, null, 2);
-                
-                console.log('Response:', data);
-            } catch (error) {
-                document.getElementById('status').innerHTML = 
-                    `<span class="error">Error: ${error.message}</span>`;
-                console.error('Error:', error);
-            }
-        });
-        
-        document.getElementById('testPost').addEventListener('click', async () => {
-            const apiUrl = document.getElementById('apiUrl').value;
-            const date = document.getElementById('date').value;
-            
-            document.getElementById('status').innerHTML = 'Testing...';
-            document.getElementById('result').innerHTML = '';
-            
-            try {
-                console.log(`Testing POST ${apiUrl}/api/resources/availability/batch`);
-                
-                const response = await fetch(`${apiUrl}/api/resources/availability/batch`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        resourceIds: ['sample-id-1', 'sample-id-2'],
-                        startDate: date,
-                        endDate: date
-                    })
-                });
-                
-                const data = await response.json();
-                
-                document.getElementById('status').innerHTML = 
-                    `<span class="${response.ok ? 'success' : 'error'}">
+          document.getElementById('result').textContent = JSON.stringify(
+            data,
+            null,
+            2
+          );
+
+          console.log('Response:', data);
+        } catch (error) {
+          document.getElementById('status').innerHTML =
+            `<span class="error">Error: ${error.message}</span>`;
+          console.error('Error:', error);
+        }
+      });
+
+      document
+        .getElementById('testPost')
+        .addEventListener('click', async () => {
+          const apiUrl = document.getElementById('apiUrl').value;
+          const date = document.getElementById('date').value;
+
+          document.getElementById('status').innerHTML = 'Testing...';
+          document.getElementById('result').innerHTML = '';
+
+          try {
+            console.log(
+              `Testing POST ${apiUrl}/api/resources/availability/batch`
+            );
+
+            const response = await fetch(
+              `${apiUrl}/api/resources/availability/batch`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  resourceIds: ['sample-id-1', 'sample-id-2'],
+                  startDate: date,
+                  endDate: date,
+                }),
+              }
+            );
+
+            const data = await response.json();
+
+            document.getElementById('status').innerHTML =
+              `<span class="${response.ok ? 'success' : 'error'}">
                         Status: ${response.status} ${response.statusText}
                     </span>`;
-                document.getElementById('result').textContent = JSON.stringify(data, null, 2);
-                
-                console.log('Response:', data);
-            } catch (error) {
-                document.getElementById('status').innerHTML = 
-                    `<span class="error">Error: ${error.message}</span>`;
-                console.error('Error:', error);
-            }
+            document.getElementById('result').textContent = JSON.stringify(
+              data,
+              null,
+              2
+            );
+
+            console.log('Response:', data);
+          } catch (error) {
+            document.getElementById('status').innerHTML =
+              `<span class="error">Error: ${error.message}</span>`;
+            console.error('Error:', error);
+          }
         });
     </script>
-</body>
+  </body>
 </html>

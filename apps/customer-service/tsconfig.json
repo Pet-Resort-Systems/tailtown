@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.node.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "strict": false,
+    "noImplicitAny": false,
+    "skipDefaultLibCheck": true,
+    "forceConsistentCasingInFileNames": false,
+    "sourceMap": true,
+    "noEmitOnError": false
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts",
+    "src/tests/**/*",
+    "**/__tests__/**/*",
+    "src/scripts/**/*",
+    "src/controllers/exampleController.ts"
+  ]
+}

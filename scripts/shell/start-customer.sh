@@ -1,4 +1,4 @@
 #!/bin/bash
-cd /Users/robweinstein/CascadeProjects/tailtown/services/customer
+cd /Users/robweinstein/CascadeProjects/tailtown/apps/customer-service
 source ~/.nvm/nvm.sh
-npm run dev
+pnpm run dev

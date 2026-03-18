@@ -57,16 +57,16 @@ cd "$PROJECT_ROOT" || error "Failed to change to project directory"
 
 # Check for required files
 log "Checking environment configuration..."
-if [ ! -f ".env.production" ]; then
-    error ".env.production not found. Copy from .env.production.example and configure."
+if [ ! -f "apps/frontend/.env" ]; then
+    error "apps/frontend/.env not found. Copy from apps/frontend/.env.example and configure."
 fi
 
-if [ ! -f "frontend/.env.production" ]; then
-    error "frontend/.env.production not found"
+if [ ! -f "apps/customer-service/.env" ]; then
+    error "apps/customer-service/.env not found. Copy from apps/customer-service/.env.example and configure."
 fi
 
-if [ ! -f "services/customer/.env.production" ]; then
-    error "services/customer/.env.production not found"
+if [ ! -f "apps/reservation-service/.env" ]; then
+    error "apps/reservation-service/.env not found. Copy from apps/reservation-service/.env.example and configure."
 fi
 
 # Git status check
@@ -85,33 +85,20 @@ git pull origin main || error "Git pull failed"
 
 # Install dependencies
 log "Installing dependencies..."
-
-log "  → Customer service dependencies..."
-cd services/customer
-npm ci --production || error "Customer service npm install failed"
-
-log "  → Reservation service dependencies..."
-cd ../reservation-service
-npm ci --production || error "Reservation service npm install failed"
-
-log "  → Frontend dependencies..."
-cd ../../frontend
-npm ci --production || error "Frontend npm install failed"
-
-cd "$PROJECT_ROOT"
+pnpm install --frozen-lockfile --prod || error "Root pnpm install failed"
 
 # Run database migrations
 log "Running database migrations..."
 
 log "  → Customer database migrations..."
-cd services/customer
-npx prisma generate
-npx prisma migrate deploy || error "Customer database migration failed"
+cd apps/customer-service
+pnpm exec prisma generate
+pnpm exec prisma migrate deploy || error "Customer database migration failed"
 
 log "  → Reservation database migrations..."
 cd ../reservation-service
-npx prisma generate
-npx prisma migrate deploy || error "Reservation database migration failed"
+pnpm exec prisma generate
+pnpm exec prisma migrate deploy || error "Reservation database migration failed"
 
 cd "$PROJECT_ROOT"
 
@@ -119,22 +106,22 @@ cd "$PROJECT_ROOT"
 log "Building applications..."
 
 log "  → Building customer service..."
-cd services/customer
-npm run build || error "Customer service build failed"
+cd apps/customer-service
+pnpm run build || error "Customer service build failed"
 
 log "  → Building reservation service..."
 cd ../reservation-service
-npm run build || error "Reservation service build failed"
+pnpm run build || error "Reservation service build failed"
 
-log "  → Building frontend..."
-cd ../../frontend
-npm run build || error "Frontend build failed"
+log "  → Building apps/frontend..."
+cd ../../apps/frontend
+pnpm run build || error "Frontend build failed"
 
 cd "$PROJECT_ROOT"
 
-# Zero-downtime deployment for frontend
-log "Deploying frontend (zero-downtime)..."
-cd "$PROJECT_ROOT/frontend"
+# Zero-downtime deployment for apps/frontend
+log "Deploying apps/frontend (zero-downtime)..."
+cd "$PROJECT_ROOT/apps/frontend"
 if [ -d "build-new" ]; then
     rm -rf build-new
 fi
@@ -179,7 +166,7 @@ else
     error "Reservation service health check failed"
 fi
 
-# Check frontend
+# Check apps/frontend
 if curl -f http://localhost > /dev/null 2>&1; then
     log "  ✓ Frontend is accessible"
 else

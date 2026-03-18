@@ -50,7 +50,7 @@ The Gingr MySQL backup contains an `animals` table with the following key fields
 
 ### 1. Photo Import Script
 
-**Location:** `/opt/tailtown/services/customer/scripts/import-photos-from-sql-backup.js`
+**Location:** `/opt/tailtown/apps/customer-service/scripts/import-photos-from-sql-backup.js`
 
 **Purpose:** Extracts pet photos from SQL backup and updates database
 
@@ -65,14 +65,14 @@ The Gingr MySQL backup contains an `animals` table with the following key fields
 **Usage:**
 
 ```bash
-cd /opt/tailtown/services/customer
+cd /opt/tailtown/apps/customer-service
 DATABASE_URL="postgresql://postgres:PASSWORD@localhost:5432/customer" \
   node scripts/import-photos-from-sql-backup.js
 ```
 
 ### 2. Batch Pet Data Import Script (RECOMMENDED)
 
-**Location:** `/opt/tailtown/services/customer/scripts/import-pet-data-batch.js`
+**Location:** `/opt/tailtown/apps/customer-service/scripts/import-pet-data-batch.js`
 
 **Purpose:** Efficiently imports feeding notes, medications, allergies, and special requirements
 
@@ -87,14 +87,14 @@ DATABASE_URL="postgresql://postgres:PASSWORD@localhost:5432/customer" \
 **Usage:**
 
 ```bash
-cd /opt/tailtown/services/customer
+cd /opt/tailtown/apps/customer-service
 DATABASE_URL="postgresql://postgres:PASSWORD@localhost:5432/customer" \
   node scripts/import-pet-data-batch.js
 ```
 
 ### 3. Individual Pet Data Import Script (DEPRECATED)
 
-**Location:** `/opt/tailtown/services/customer/scripts/import-all-pet-data-from-sql.js`
+**Location:** `/opt/tailtown/apps/customer-service/scripts/import-all-pet-data-from-sql.js`
 
 **Note:** This script processes pets individually and is very slow (20+ minutes for 18,000 pets). Use the batch version instead.
 

@@ -12,7 +12,7 @@ const client = new Client({
   port: 5433,
   user: 'postgres',
   password: 'postgres',
-  database: 'customer'
+  database: 'customer',
 });
 
 async function runFixes() {
@@ -59,14 +59,15 @@ async function runFixes() {
         ON CONFLICT DO NOTHING
         RETURNING id, name
       `);
-      
+
       if (insertResult.rowCount > 0) {
         console.log(`✅ Created template: ${insertResult.rows[0].name}\n`);
       } else {
         console.log('ℹ️  Template already exists\n');
       }
     } catch (err) {
-      if (err.code === '23505') { // Unique constraint violation
+      if (err.code === '23505') {
+        // Unique constraint violation
         console.log('ℹ️  Template already exists\n');
       } else {
         throw err;
@@ -80,7 +81,7 @@ async function runFixes() {
       FROM services 
       WHERE name LIKE '%Day Camp%'
     `);
-    servicesResult.rows.forEach(row => {
+    servicesResult.rows.forEach((row) => {
       console.log(`  - ${row.name}: ${row.serviceCategory}`);
     });
     console.log('');
@@ -92,14 +93,15 @@ async function runFixes() {
       FROM check_in_templates 
       WHERE "tenantId" = 'dev'
     `);
-    templatesResult.rows.forEach(row => {
-      console.log(`  - ${row.name} (Default: ${row.isDefault}, Active: ${row.isActive})`);
+    templatesResult.rows.forEach((row) => {
+      console.log(
+        `  - ${row.name} (Default: ${row.isDefault}, Active: ${row.isActive})`
+      );
     });
     console.log('');
 
     console.log('✨ All fixes applied successfully!');
     console.log('📱 Please refresh your browser (Cmd+Shift+R)\n');
-
   } catch (error) {
     console.error('❌ Error:', error.message);
     console.error('\nFull error:', error);

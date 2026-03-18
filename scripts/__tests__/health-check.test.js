@@ -1,7 +1,7 @@
 /**
  * Tests for Health Check Script
- * 
- * Run with: npm test -- scripts/__tests__/health-check.test.js
+ *
+ * Run with: pnpm test -- scripts/__tests__/health-check.test.js
  */
 
 const { exec } = require('child_process');
@@ -12,7 +12,9 @@ describe('Health Check Script', () => {
   const healthCheckScript = './scripts/health-check.js';
 
   it('should be executable', async () => {
-    const { stdout } = await execPromise(`test -x ${healthCheckScript} && echo "executable" || echo "not executable"`);
+    const { stdout } = await execPromise(
+      `test -x ${healthCheckScript} && echo "executable" || echo "not executable"`
+    );
     expect(stdout.trim()).toBe('executable');
   });
 
@@ -58,7 +60,7 @@ describe('Zombie Process Detection', () => {
 describe('Port Availability', () => {
   const ports = [3000, 4003, 4004];
 
-  ports.forEach(port => {
+  ports.forEach((port) => {
     it(`should check if port ${port} is available`, async () => {
       try {
         const { stdout } = await execPromise(`lsof -ti :${port}`);
@@ -79,7 +81,7 @@ describe('CPU Usage Monitoring', () => {
     );
     const count = parseInt(stdout.trim(), 10);
     expect(count).toBeGreaterThanOrEqual(0);
-    
+
     // Alert if we find high CPU processes
     if (count > 0) {
       console.warn(`⚠️  Found ${count} processes using >50% CPU`);
@@ -91,11 +93,11 @@ describe('CPU Usage Monitoring', () => {
       'ps aux | grep -E "(ts-node-dev|react-scripts)" | grep -v grep | wc -l'
     );
     const count = parseInt(stdout.trim(), 10);
-    
+
     if (count > 5) {
       console.warn(`⚠️  Found ${count} zombie processes - cleanup recommended`);
     }
-    
+
     expect(count).toBeGreaterThanOrEqual(0);
   });
 });

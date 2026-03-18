@@ -57,17 +57,17 @@ Complete multi-tenancy management system for SaaS deployment. Allows platform ad
 
 **Routes**: `/api/tenants`
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/` | List all tenants (with filtering) |
-| GET | `/:id` | Get tenant by ID |
-| GET | `/subdomain/:subdomain` | Get tenant by subdomain |
-| GET | `/:id/usage` | Get usage statistics |
-| POST | `/` | Create new tenant |
-| PUT | `/:id` | Update tenant |
-| POST | `/:id/pause` | Pause tenant |
-| POST | `/:id/reactivate` | Reactivate tenant |
-| DELETE | `/:id` | Soft delete tenant |
+| Method | Endpoint                | Description                       |
+| ------ | ----------------------- | --------------------------------- |
+| GET    | `/`                     | List all tenants (with filtering) |
+| GET    | `/:id`                  | Get tenant by ID                  |
+| GET    | `/subdomain/:subdomain` | Get tenant by subdomain           |
+| GET    | `/:id/usage`            | Get usage statistics              |
+| POST   | `/`                     | Create new tenant                 |
+| PUT    | `/:id`                  | Update tenant                     |
+| POST   | `/:id/pause`            | Pause tenant                      |
+| POST   | `/:id/reactivate`       | Reactivate tenant                 |
+| DELETE | `/:id`                  | Soft delete tenant                |
 
 **Auto-Provisioning**:
 When a new tenant is created, the system automatically:
@@ -346,19 +346,19 @@ All existing models already have `tenantId` field:
 ## Files Modified/Created
 
 ### Backend
-- ✅ `services/customer/prisma/schema.prisma` - Added Tenant and TenantUser models
-- ✅ `services/customer/prisma/migrations/20251023_add_tenant_management/migration.sql` - Migration
-- ✅ `services/customer/src/services/tenant.service.ts` - Tenant service (NEW)
-- ✅ `services/customer/src/controllers/tenant.controller.ts` - Tenant controller (NEW)
-- ✅ `services/customer/src/routes/tenant.routes.ts` - Tenant routes (NEW)
-- ✅ `services/customer/src/index.ts` - Added tenant routes
+- `apps/customer-service/prisma/schema.prisma` - Added Tenant and TenantUser models
+- `apps/customer-service/prisma/migrations/20251023_add_tenant_management/migration.sql` - Migration
+- `apps/customer-service/src/services/tenant.service.ts` - Tenant service (NEW)
+- `apps/customer-service/src/controllers/tenant.controller.ts` - Tenant controller (NEW)
+- `apps/customer-service/src/routes/tenant.routes.ts` - Tenant routes (NEW)
+- `apps/customer-service/src/index.ts` - Added tenant routes
 
 ### Frontend
-- ✅ `frontend/src/services/tenantService.ts` - Tenant API service (NEW)
-- ✅ `frontend/src/pages/admin/TenantList.tsx` - Tenant list page (NEW)
-- ✅ `frontend/src/pages/admin/CreateTenant.tsx` - Create tenant page (NEW)
-- ✅ `frontend/src/App.tsx` - Added tenant routes
-- ✅ `frontend/src/pages/settings/Settings.tsx` - Added tenant management link
+- `apps/frontend/src/services/tenantService.ts` - Tenant API service (NEW)
+- `apps/frontend/src/pages/admin/TenantList.tsx` - Tenant list page (NEW)
+- `apps/frontend/src/pages/admin/CreateTenant.tsx` - Create tenant page (NEW)
+- `apps/frontend/src/App.tsx` - Added tenant routes
+- `apps/frontend/src/pages/settings/Settings.tsx` - Added tenant management link
 
 ---
 

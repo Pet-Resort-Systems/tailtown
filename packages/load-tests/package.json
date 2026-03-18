@@ -1,0 +1,20 @@
+{
+  "name": "tailtown-load-tests",
+  "version": "1.0.0",
+  "description": "Load tests for Tailtown API",
+  "scripts": {
+    "test:rate-limit-single": "k6 run rate-limiting-single.js",
+    "test:rate-limit-multi": "k6 run rate-limiting-multi.js",
+    "test:connection-pool": "k6 run connection-pool.js",
+    "test:all": "npm run test:rate-limit-single && npm run test:rate-limit-multi && npm run test:connection-pool",
+    "test:prod": "API_URL=http://129.212.178.244:4004 k6 run --vus 10 --duration 1m",
+    "install-k6": "echo 'Run: brew install k6'"
+  },
+  "keywords": [
+    "load-testing",
+    "k6",
+    "performance"
+  ],
+  "author": "",
+  "license": "ISC"
+}

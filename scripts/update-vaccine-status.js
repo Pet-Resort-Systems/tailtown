@@ -9,19 +9,20 @@ const DOG_VACCINES = [
   'DHPP (Distemper, Hepatitis, Parvovirus, Parainfluenza)',
   'Bordetella',
   'Leptospirosis',
-  'Canine Influenza'
+  'Canine Influenza',
 ];
 
 const CAT_VACCINES = [
   'Rabies',
   'FVRCP (Feline Viral Rhinotracheitis, Calicivirus, Panleukopenia)',
   'FeLV (Feline Leukemia)',
-  'Bordetella'
+  'Bordetella',
 ];
 
 function getRandomFutureDate(minMonths = 3, maxMonths = 18) {
   const now = new Date();
-  const months = Math.floor(Math.random() * (maxMonths - minMonths + 1)) + minMonths;
+  const months =
+    Math.floor(Math.random() * (maxMonths - minMonths + 1)) + minMonths;
   const futureDate = new Date(now);
   futureDate.setMonth(futureDate.getMonth() + months);
   return futureDate.toISOString().split('T')[0]; // YYYY-MM-DD format
@@ -29,7 +30,8 @@ function getRandomFutureDate(minMonths = 3, maxMonths = 18) {
 
 function getRandomPastDate(minMonths = 1, maxMonths = 12) {
   const now = new Date();
-  const months = Math.floor(Math.random() * (maxMonths - minMonths + 1)) + minMonths;
+  const months =
+    Math.floor(Math.random() * (maxMonths - minMonths + 1)) + minMonths;
   const pastDate = new Date(now);
   pastDate.setMonth(pastDate.getMonth() - months);
   return pastDate.toISOString().split('T')[0];
@@ -37,12 +39,14 @@ function getRandomPastDate(minMonths = 1, maxMonths = 12) {
 
 async function updateVaccineStatus(tenantSubdomain, percentCurrent = 90) {
   try {
-    console.log(`\n💉 Updating vaccine status for ${tenantSubdomain} tenant...\n`);
+    console.log(
+      `\n💉 Updating vaccine status for ${tenantSubdomain} tenant...\n`
+    );
     console.log(`Setting ${percentCurrent}% of pets as current on vaccines\n`);
 
     // Get tenant
     const tenant = await prisma.tenant.findUnique({
-      where: { subdomain: tenantSubdomain }
+      where: { subdomain: tenantSubdomain },
     });
 
     if (!tenant) {
@@ -53,7 +57,7 @@ async function updateVaccineStatus(tenantSubdomain, percentCurrent = 90) {
     // Get all pets for this tenant
     const pets = await prisma.pet.findMany({
       where: { tenantId: tenant.id },
-      orderBy: { name: 'asc' }
+      orderBy: { name: 'asc' },
     });
 
     console.log(`Found ${pets.length} pets\n`);
@@ -63,17 +67,20 @@ async function updateVaccineStatus(tenantSubdomain, percentCurrent = 90) {
     for (const pet of pets) {
       // Determine if this pet should be current (based on percentage)
       const isCurrent = Math.random() * 100 < percentCurrent;
-      
+
       // Select appropriate vaccines based on pet type
-      const vaccines = pet.type === 'DOG' ? DOG_VACCINES : 
-                      pet.type === 'CAT' ? CAT_VACCINES : 
-                      ['Rabies']; // Default for other types
+      const vaccines =
+        pet.type === 'DOG'
+          ? DOG_VACCINES
+          : pet.type === 'CAT'
+            ? CAT_VACCINES
+            : ['Rabies']; // Default for other types
 
       // Create vaccination status and expirations with correct logic
       const vaccinationStatus = {};
       const vaccineExpirations = {};
-      
-      vaccines.forEach(vaccine => {
+
+      vaccines.forEach((vaccine) => {
         if (isCurrent) {
           // Future date = current status
           vaccineExpirations[vaccine] = getRandomFutureDate(3, 18);
@@ -98,25 +105,26 @@ async function updateVaccineStatus(tenantSubdomain, percentCurrent = 90) {
         where: { id: pet.id },
         data: {
           vaccinationStatus,
-          vaccineExpirations
-        }
+          vaccineExpirations,
+        },
       });
 
       const status = isCurrent ? '✅ CURRENT' : '⚠️  EXPIRED';
-      const nextExpiry = isCurrent ? 
-        `expires ${vaccineExpirations[vaccines[0]]}` : 
-        `expired ${vaccineExpirations[vaccines[0]]}`;
-      
-      console.log(`${status} ${pet.name} (${pet.type}): ${vaccines.length} vaccines, ${nextExpiry}`);
+      const nextExpiry = isCurrent
+        ? `expires ${vaccineExpirations[vaccines[0]]}`
+        : `expired ${vaccineExpirations[vaccines[0]]}`;
+
+      console.log(
+        `${status} ${pet.name} (${pet.type}): ${vaccines.length} vaccines, ${nextExpiry}`
+      );
       updated++;
     }
 
-    const currentCount = Math.round(pets.length * percentCurrent / 100);
+    const currentCount = Math.round((pets.length * percentCurrent) / 100);
     const expiredCount = pets.length - currentCount;
 
     console.log(`\n✅ Updated ${updated} pets!`);
     console.log(`   📊 ~${currentCount} current, ~${expiredCount} expired`);
-
   } catch (error) {
     console.error('❌ Error:', error);
     process.exit(1);
@@ -129,7 +137,9 @@ async function updateVaccineStatus(tenantSubdomain, percentCurrent = 90) {
 const args = process.argv.slice(2);
 
 if (args.length < 1 || args.length > 2) {
-  console.log('Usage: node update-vaccine-status.js <tenant-subdomain> [percent-current]');
+  console.log(
+    'Usage: node update-vaccine-status.js <tenant-subdomain> [percent-current]'
+  );
   console.log('Example: node update-vaccine-status.js rainy 90');
   console.log('Default: 90% current');
   process.exit(1);

@@ -264,13 +264,13 @@ curl -X POST http://localhost:4004/api/staff/refresh \
 
 ### Run Security Test Suite
 ```bash
-cd services/customer
-npm test -- --testPathPattern=security --forceExit
+cd apps/customer-service
+pnpm test -- --testPathPattern=security --forceExit
 ```
 
 ---
 
-## 📝 Environment Variables Needed
+## Environment Variables Needed
 
 Add to `.env`:
 ```env

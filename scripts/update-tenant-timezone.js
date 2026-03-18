@@ -1,6 +1,6 @@
 /**
  * Update tenant timezone
- * 
+ *
  * Usage: node scripts/update-tenant-timezone.js <subdomain> <timezone>
  * Example: node scripts/update-tenant-timezone.js tailtown America/Denver
  */
@@ -14,8 +14,12 @@ async function updateTenantTimezone() {
   const timezone = process.argv[3];
 
   if (!subdomain || !timezone) {
-    console.log('❌ Usage: node scripts/update-tenant-timezone.js <subdomain> <timezone>');
-    console.log('\nExample: node scripts/update-tenant-timezone.js tailtown America/Denver');
+    console.log(
+      '❌ Usage: node scripts/update-tenant-timezone.js <subdomain> <timezone>'
+    );
+    console.log(
+      '\nExample: node scripts/update-tenant-timezone.js tailtown America/Denver'
+    );
     console.log('\nCommon timezones:');
     console.log('  - America/New_York (Eastern)');
     console.log('  - America/Chicago (Central)');
@@ -26,9 +30,9 @@ async function updateTenantTimezone() {
 
   try {
     console.log(`🔍 Looking for tenant: ${subdomain}...\n`);
-    
+
     const tenant = await prisma.tenant.findFirst({
-      where: { subdomain }
+      where: { subdomain },
     });
 
     if (!tenant) {
@@ -42,12 +46,13 @@ async function updateTenantTimezone() {
 
     const updated = await prisma.tenant.update({
       where: { id: tenant.id },
-      data: { timezone }
+      data: { timezone },
     });
 
     console.log(`✅ Successfully updated timezone to: ${updated.timezone}`);
-    console.log('\n💡 The frontend will use this timezone on next page load!');
-
+    console.log(
+      '\n💡 The apps/frontend will use this timezone on next page load!'
+    );
   } catch (error) {
     console.error('❌ Error:', error.message);
     process.exit(1);

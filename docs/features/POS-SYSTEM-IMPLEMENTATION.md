@@ -265,7 +265,7 @@ Create new category.
 
 ### Products Page (`/products`)
 
-**Location**: `frontend/src/pages/products/Products.tsx`
+**Location**: `apps/frontend/src/pages/products/Products.tsx`
 
 **Features**:
 - ✅ Complete product list with search
@@ -333,7 +333,7 @@ Create new category.
 
 ### Admin Panel Integration
 
-**Location**: `frontend/src/pages/settings/Settings.tsx`
+**Location**: `apps/frontend/src/pages/settings/Settings.tsx`
 
 **Added Card**:
 ```tsx
@@ -353,7 +353,7 @@ Create new category.
 ## 🔄 Integration Points
 
 ### Routes
-**File**: `frontend/src/App.tsx`
+**File**: `apps/frontend/src/App.tsx`
 
 ```tsx
 <Route path="/products" element={<Products />} />
@@ -470,7 +470,7 @@ curl http://localhost:4004/api/products/low-stock \
 
 ## 📊 Database Migration
 
-**File**: `services/customer/prisma/migrations/20251025_add_retail_pos_system/migration.sql`
+**File**: `apps/customer-service/prisma/migrations/20251025_add_retail_pos_system/migration.sql`
 
 **Safe Migration**:
 - Uses `IF NOT EXISTS` for all tables
@@ -480,9 +480,9 @@ curl http://localhost:4004/api/products/low-stock \
 
 **To Apply**:
 ```bash
-cd services/customer
-npx prisma db push
-npx prisma generate
+cd apps/customer-service
+pnpm exec prisma db push
+pnpm exec prisma generate
 ```
 
 ---

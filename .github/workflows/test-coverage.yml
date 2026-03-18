@@ -14,27 +14,31 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: "20.19.0"
-          cache: "npm"
-          cache-dependency-path: frontend/package-lock.json
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        working-directory: frontend
-        run: npm ci
+        working-directory: apps/frontend
+        run: pnpm install --frozen-lockfile
 
       - name: Run tests with coverage
-        working-directory: frontend
-        run: npm run test:coverage -- --watchAll=false
+        working-directory: apps/frontend
+        run: pnpm run test:coverage -- --watchAll=false
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          files: ./frontend/coverage/lcov.info
-          flags: frontend
-          name: frontend-coverage
+          files: ./apps/frontend/coverage/lcov.info
+          flags: apps/frontend
+          name: apps/frontend-coverage
 
       - name: Generate coverage badge
         uses: cicirello/jacoco-badge-generator@v2
@@ -46,7 +50,7 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: romeovs/lcov-reporter-action@v0.3.1
         with:
-          lcov-file: ./frontend/coverage/lcov.info
+          lcov-file: ./apps/frontend/coverage/lcov.info
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   backend-coverage:
@@ -71,33 +75,37 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: "20.19.0"
-          cache: "npm"
-          cache-dependency-path: services/reservation-service/package-lock.json
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        working-directory: services/reservation-service
-        run: npm ci
+        working-directory: apps/reservation-service
+        run: pnpm install --frozen-lockfile
 
       - name: Run Prisma migrations
-        working-directory: services/reservation-service
-        run: npx prisma migrate deploy
+        working-directory: apps/reservation-service
+        run: pnpm exec prisma migrate deploy
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/reservation
 
       - name: Run unit tests with coverage
-        working-directory: services/reservation-service
-        run: npm run test:coverage
+        working-directory: apps/reservation-service
+        run: pnpm run test:coverage
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/reservation
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          files: ./services/reservation-service/coverage/lcov.info
+          files: ./apps/reservation-service/coverage/lcov.info
           flags: backend
           name: backend-coverage
 
@@ -105,7 +113,7 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: romeovs/lcov-reporter-action@v0.3.1
         with:
-          lcov-file: ./services/reservation-service/coverage/lcov.info
+          lcov-file: ./apps/reservation-service/coverage/lcov.info
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   e2e-coverage:
@@ -130,28 +138,33 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: "20.19.0"
-          cache: "npm"
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+        run: pnpm exec playwright install --with-deps
 
       - name: Start services
         run: |
-          cd services/reservation-service && npm start &
-          cd frontend && npm start &
+          cd apps/reservation-service && pnpm start &
+          cd apps/frontend && pnpm start &
           sleep 30
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/reservation
 
       - name: Run E2E tests
-        run: npm run test:e2e
+        run: pnpm run test:e2e
 
       - name: Upload test results
         if: always()

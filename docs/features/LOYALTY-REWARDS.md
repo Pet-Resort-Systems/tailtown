@@ -59,7 +59,7 @@ The Loyalty Rewards System is a comprehensive, multi-tenant configurable loyalty
 ### Components
 
 ```
-frontend/src/
+apps/frontend/src/
 ├── types/
 │   └── loyalty.ts                    # Type definitions
 ├── services/
@@ -334,13 +334,13 @@ points = Math.floor(purchaseAmount * pointsPerDollar * tierMultiplier)
 
 ### Tier Levels
 
-| Tier | Min Points | Multiplier | Discount | Benefits |
-|------|-----------|------------|----------|----------|
-| Bronze | 0 | 1.0x | 0% | Earn 1x points, Birthday bonus |
-| Silver | 1,000 | 1.25x | 5% | Earn 1.25x points, Birthday bonus, 5% off services |
-| Gold | 2,500 | 1.5x | 10% | Earn 1.5x points, Birthday bonus, 10% off services, Priority booking |
-| Platinum | 5,000 | 1.75x | 15% | Earn 1.75x points, Birthday bonus, 15% off services, Priority booking, Free upgrades |
-| Diamond | 10,000 | 2.0x | 20% | Earn 2x points, Birthday bonus, 20% off services, Priority booking, Free upgrades, VIP treatment |
+| Tier     | Min Points | Multiplier | Discount | Benefits                                                                                         |
+| -------- | ---------- | ---------- | -------- | ------------------------------------------------------------------------------------------------ |
+| Bronze   | 0          | 1.0x       | 0%       | Earn 1x points, Birthday bonus                                                                   |
+| Silver   | 1,000      | 1.25x      | 5%       | Earn 1.25x points, Birthday bonus, 5% off services                                               |
+| Gold     | 2,500      | 1.5x       | 10%      | Earn 1.5x points, Birthday bonus, 10% off services, Priority booking                             |
+| Platinum | 5,000      | 1.75x      | 15%      | Earn 1.75x points, Birthday bonus, 15% off services, Priority booking, Free upgrades             |
+| Diamond  | 10,000     | 2.0x       | 20%      | Earn 2x points, Birthday bonus, 20% off services, Priority booking, Free upgrades, VIP treatment |
 
 ### Tier Calculation
 
@@ -516,7 +516,7 @@ GET    /api/loyalty/activity
 
 Run tests:
 ```bash
-npm test -- loyaltyService.test
+pnpm test -- loyaltyService.test
 ```
 
 **Test Coverage (31 passing tests):**

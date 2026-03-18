@@ -39,8 +39,8 @@ Import from structured data:
 
 ### Install Dependencies
 ```bash
-cd /Users/robweinstein/CascadeProjects/tailtown
-npm install node-fetch csv-parse bcrypt
+cd /Users/danielgutierrezmunoz/dev/code/companies/tailtown-pet-resort/tailtown-project/codex-implement-pnpm-monorepo-migration-plan_tailtown-daguttt
+pnpm install
 ```
 
 ### Basic Usage Examples
@@ -71,33 +71,33 @@ node scripts/import-staff-data.js hash-password
 
 ### Staff Data Fields
 
-| Field | Required | Description | Example |
-|-------|----------|-------------|---------|
-| firstName | ✅ | First name | "John" |
-| lastName | ✅ | Last name | "Smith" |
-| email | ✅ | Email address (unique) | "john@tailtown.com" |
-| phone | ❌ | Phone number | "(555) 123-4567" |
-| role | ❌ | Role title | "Manager" |
-| title | ❌ | Job title | "General Manager" |
-| department | ❌ | Department | "Management" |
-| position | ❌ | Position | "General Manager" |
-| isActive | ❌ | Employment status | true |
-| address | ❌ | Street address | "123 Main St" |
-| city | ❌ | City | "Anytown" |
-| state | ❌ | State | "ST" |
-| zipCode | ❌ | ZIP code | "12345" |
-| specialties | ❌ | Array of specialties | ["Leadership", "Operations"] |
+| Field       | Required | Description            | Example                      |
+| ----------- | -------- | ---------------------- | ---------------------------- |
+| firstName   | ✅        | First name             | "John"                       |
+| lastName    | ✅        | Last name              | "Smith"                      |
+| email       | ✅        | Email address (unique) | "john@tailtown.com"          |
+| phone       | ❌        | Phone number           | "(555) 123-4567"             |
+| role        | ❌        | Role title             | "Manager"                    |
+| title       | ❌        | Job title              | "General Manager"            |
+| department  | ❌        | Department             | "Management"                 |
+| position    | ❌        | Position               | "General Manager"            |
+| isActive    | ❌        | Employment status      | true                         |
+| address     | ❌        | Street address         | "123 Main St"                |
+| city        | ❌        | City                   | "Anytown"                    |
+| state       | ❌        | State                  | "ST"                         |
+| zipCode     | ❌        | ZIP code               | "12345"                      |
+| specialties | ❌        | Array of specialties   | ["Leadership", "Operations"] |
 
 ### Availability Data Fields
 
-| Field | Required | Description | Example |
-|-------|----------|-------------|---------|
-| email | ✅ | Staff member email | "john@tailtown.com" |
-| dayOfWeek | ✅ | Day (0=Sunday, 6=Saturday) | 1 |
-| startTime | ✅ | Start time (HH:MM) | "09:00" |
-| endTime | ✅ | End time (HH:MM) | "17:00" |
-| isAvailable | ❌ | Available for work | true |
-| isRecurring | ❌ | Recurring schedule | true |
+| Field       | Required | Description                | Example             |
+| ----------- | -------- | -------------------------- | ------------------- |
+| email       | ✅        | Staff member email         | "john@tailtown.com" |
+| dayOfWeek   | ✅        | Day (0=Sunday, 6=Saturday) | 1                   |
+| startTime   | ✅        | Start time (HH:MM)         | "09:00"             |
+| endTime     | ✅        | End time (HH:MM)           | "17:00"             |
+| isAvailable | ❌        | Available for work         | true                |
+| isRecurring | ❌        | Recurring schedule         | true                |
 
 ---
 
@@ -106,33 +106,33 @@ node scripts/import-staff-data.js hash-password
 ### Automatic Role Detection
 The system automatically maps roles based on title/keywords:
 
-| Gingr Role/Title | Tailtown Role | Department |
-|------------------|---------------|------------|
-| Owner, Director | Administrator | Management |
-| Manager, Admin | Manager | Management |
-| Trainer, Instructor | Instructor | Training |
-| Groomer, Lead Groomer | Staff | Grooming |
-| Kennel Tech, Attendant | Staff | Kennel |
-| Front Desk, Reception | Staff | Front Desk |
-| Vet, Veterinarian | Staff | Veterinary |
+| Gingr Role/Title       | Tailtown Role | Department |
+| ---------------------- | ------------- | ---------- |
+| Owner, Director        | Administrator | Management |
+| Manager, Admin         | Manager       | Management |
+| Trainer, Instructor    | Instructor    | Training   |
+| Groomer, Lead Groomer  | Staff         | Grooming   |
+| Kennel Tech, Attendant | Staff         | Kennel     |
+| Front Desk, Reception  | Staff         | Front Desk |
+| Vet, Veterinarian      | Staff         | Veterinary |
 
 ### Permission Matrix
 
-| Role | Manage Staff | Manage Customers | Manage Billing | Manage Reports | Manage Schedule |
-|------|--------------|------------------|---------------|---------------|----------------|
-| Administrator | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Manager | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Instructor | ❌ | ✅ | ❌ | ✅ | ✅ |
-| Staff | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Role          | Manage Staff | Manage Customers | Manage Billing | Manage Reports | Manage Schedule |
+| ------------- | ------------ | ---------------- | -------------- | -------------- | --------------- |
+| Administrator | ✅            | ✅                | ✅              | ✅              | ✅               |
+| Manager       | ✅            | ✅                | ✅              | ✅              | ✅               |
+| Instructor    | ❌            | ✅                | ❌              | ✅              | ✅               |
+| Staff         | ❌            | ❌                | ❌              | ❌              | ❌               |
 
 ### Department Permissions
 
 | Department | Can Manage Grooming | Can Manage Training | Can Manage Kennels |
-|------------|-------------------|-------------------|------------------|
-| Grooming | ✅ | ❌ | ❌ |
-| Training | ❌ | ✅ | ❌ |
-| Kennel | ❌ | ❌ | ✅ |
-| Management | ✅ | ✅ | ✅ |
+| ---------- | ------------------- | ------------------- | ------------------ |
+| Grooming   | ✅                   | ❌                   | ❌                  |
+| Training   | ❌                   | ✅                   | ❌                  |
+| Kennel     | ❌                   | ❌                   | ✅                  |
+| Management | ✅                   | ✅                   | ✅                  |
 
 ---
 
@@ -239,13 +239,13 @@ node scripts/import-staff-data.js csv my-staff.csv
 
 ### Common Issues
 
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| "No employees found" | Gingr API permissions | Check API key has staff access |
-| "Invalid CSV format" | Missing headers | Use provided templates |
-| "Email already exists" | Duplicate staff | ON CONFLICT clause handles this |
-| "Invalid day of week" | Wrong day format | Use 0-6 (Sunday-Saturday) |
-| "Missing password hash" | Security requirement | Hash password before importing |
+| Issue                   | Cause                 | Solution                        |
+| ----------------------- | --------------------- | ------------------------------- |
+| "No employees found"    | Gingr API permissions | Check API key has staff access  |
+| "Invalid CSV format"    | Missing headers       | Use provided templates          |
+| "Email already exists"  | Duplicate staff       | ON CONFLICT clause handles this |
+| "Invalid day of week"   | Wrong day format      | Use 0-6 (Sunday-Saturday)       |
+| "Missing password hash" | Security requirement  | Hash password before importing  |
 
 ### Gingr API Issues
 1. **Check API Key**: Ensure key has staff/employee permissions

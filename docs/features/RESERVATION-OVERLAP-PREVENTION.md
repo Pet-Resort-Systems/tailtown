@@ -43,7 +43,7 @@ docker exec -i tailtown-postgres psql -U postgres -d customer < scripts/validate
 
 ### 3. Automated Tests
 
-#### `services/reservation-service/src/__tests__/reservation-overlap.test.ts`
+#### `apps/reservation-service/src/__tests__/reservation-overlap.test.ts`
 
 Comprehensive test suite that validates:
 
@@ -54,8 +54,8 @@ Comprehensive test suite that validates:
 
 **Run tests:**
 ```bash
-cd services/reservation-service
-npm test -- reservation-overlap.test.ts
+cd apps/reservation-service
+pnpm test -- reservation-overlap.test.ts
 ```
 
 ## Overlap Detection Logic
@@ -71,11 +71,11 @@ reservation1.endDate > reservation2.startDate
 
 **Examples:**
 
-| Reservation 1 | Reservation 2 | Overlaps? |
-|--------------|---------------|-----------|
-| Jan 1-5 | Jan 3-7 | ✅ Yes |
-| Jan 1-5 | Jan 5-10 | ❌ No (consecutive) |
-| Jan 1-5 | Jan 6-10 | ❌ No (separate) |
+| Reservation 1 | Reservation 2 | Overlaps?          |
+| ------------- | ------------- | ------------------ |
+| Jan 1-5       | Jan 3-7       | ✅ Yes              |
+| Jan 1-5       | Jan 5-10      | ❌ No (consecutive) |
+| Jan 1-5       | Jan 6-10      | ❌ No (separate)    |
 
 ## Utility Function
 
@@ -145,6 +145,6 @@ Consider adding:
 - `scripts/reorganize-reservations-simple.sql` - Initial distribution
 - `scripts/fix-overlapping-reservations.sql` - Overlap resolution
 - `scripts/validate-no-overlaps.sql` - Validation check
-- `services/reservation-service/src/__tests__/reservation-overlap.test.ts` - Test suite
+- `apps/reservation-service/src/__tests__/reservation-overlap.test.ts` - Test suite
 - `scripts/reorganize-reservations.ts` - TypeScript version (not used)
 - `scripts/reorganize-reservations.sql` - Complex SQL version (not used)

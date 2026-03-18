@@ -12,33 +12,33 @@
  * IMPORTANT: Uses "E2E Test" customer - ensure this customer exists with a pet
  */
 
-import { test, expect } from "@playwright/test";
+import { test, expect } from '@playwright/test';
 
-const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
+const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 const TEST_TIMEOUT = 120000; // 2 minutes for longer workflows
 
-const TEST_EMAIL = process.env.TEST_EMAIL || "";
-const TEST_PASSWORD = process.env.TEST_PASSWORD || "";
+const TEST_EMAIL = process.env.TEST_EMAIL || '';
+const TEST_PASSWORD = process.env.TEST_PASSWORD || '';
 
 // Test customer name to search for - should be a real customer in production
-const TEST_CUSTOMER_NAME = "E2E Test";
+const TEST_CUSTOMER_NAME = 'E2E Test';
 
-test.describe.configure({ mode: "serial" }); // Run tests sequentially
+test.describe.configure({ mode: 'serial' }); // Run tests sequentially
 
-test.describe("Production Workflow Tests", () => {
+test.describe('Production Workflow Tests', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(BASE_URL);
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState('networkidle');
 
     // Login
     const loginButton = page.locator('button:has-text("Sign In")');
     if (await loginButton.isVisible({ timeout: 3000 }).catch(() => false)) {
       if (TEST_EMAIL && TEST_PASSWORD) {
-        await page.getByLabel("Email Address").fill(TEST_EMAIL);
-        await page.getByLabel("Password").fill(TEST_PASSWORD);
+        await page.getByLabel('Email Address').fill(TEST_EMAIL);
+        await page.getByLabel('Password').fill(TEST_PASSWORD);
         await loginButton.click();
-        await page.waitForSelector("text=Dashboard", { timeout: 30000 });
-        await page.waitForLoadState("networkidle");
+        await page.waitForSelector('text=Dashboard', { timeout: 30000 });
+        await page.waitForLoadState('networkidle');
         await page.waitForTimeout(2000);
       } else {
         test.skip();
@@ -46,20 +46,20 @@ test.describe("Production Workflow Tests", () => {
     }
   });
 
-  test("should create a daycare reservation for test customer", async ({
+  test('should create a daycare reservation for test customer', async ({
     page,
   }) => {
     test.setTimeout(TEST_TIMEOUT);
 
     // Step 1: Navigate to Boarding & Daycare calendar
-    await test.step("Navigate to calendar", async () => {
-      await page.click("text=Boarding & Daycare");
+    await test.step('Navigate to calendar', async () => {
+      await page.click('text=Boarding & Daycare');
       await expect(page).toHaveURL(/.*calendar/);
       await page.waitForTimeout(3000);
     });
 
     // Step 2: Click on tomorrow's date to create reservation
-    await test.step("Click on date to create reservation", async () => {
+    await test.step('Click on date to create reservation', async () => {
       // Find and click the "New Reservation" or "+" button
       const newReservationBtn = page
         .locator('button:has-text("New")')
@@ -68,7 +68,7 @@ test.describe("Production Workflow Tests", () => {
         await newReservationBtn.first().click();
       } else {
         // Click on a calendar cell
-        const calendarCell = page.locator(".fc-daygrid-day").first();
+        const calendarCell = page.locator('.fc-daygrid-day').first();
         await calendarCell.click();
       }
 
@@ -76,7 +76,7 @@ test.describe("Production Workflow Tests", () => {
     });
 
     // Step 3: Search and select test customer
-    await test.step("Select test customer", async () => {
+    await test.step('Select test customer', async () => {
       // Find customer search input
       const customerInput = page
         .locator('input[placeholder*="customer"]')
@@ -100,14 +100,14 @@ test.describe("Production Workflow Tests", () => {
     });
 
     // Step 4: Select pet
-    await test.step("Select pet", async () => {
+    await test.step('Select pet', async () => {
       // Wait for pets to load
       await page.waitForTimeout(1000);
 
       // Click pet dropdown
       const petSelect = page
         .locator('label:has-text("Pet")')
-        .or(page.locator("text=Select Pet"));
+        .or(page.locator('text=Select Pet'));
       if (await petSelect.isVisible()) {
         await petSelect.click();
         await page.waitForTimeout(500);
@@ -121,7 +121,7 @@ test.describe("Production Workflow Tests", () => {
     });
 
     // Step 5: Select Day Camp service
-    await test.step("Select Day Camp service", async () => {
+    await test.step('Select Day Camp service', async () => {
       const serviceSelect = page.locator('label:has-text("Service")');
       if (await serviceSelect.isVisible()) {
         await serviceSelect.click();
@@ -129,8 +129,8 @@ test.describe("Production Workflow Tests", () => {
 
         // Look for Day Camp or Daycare option
         const daycareOption = page
-          .locator("text=Day Camp")
-          .or(page.locator("text=Daycare"))
+          .locator('text=Day Camp')
+          .or(page.locator('text=Daycare'))
           .first();
         if (await daycareOption.isVisible()) {
           await daycareOption.click();
@@ -139,9 +139,9 @@ test.describe("Production Workflow Tests", () => {
     });
 
     // Step 6: Set dates (today for daycare)
-    await test.step("Set reservation dates", async () => {
+    await test.step('Set reservation dates', async () => {
       // For daycare, start and end date are usually the same
-      const today = new Date().toISOString().split("T")[0];
+      const today = new Date().toISOString().split('T')[0];
 
       const startDateInput = page.locator('input[type="date"]').first();
       if (await startDateInput.isVisible()) {
@@ -150,7 +150,7 @@ test.describe("Production Workflow Tests", () => {
     });
 
     // Step 7: Submit reservation
-    await test.step("Submit reservation", async () => {
+    await test.step('Submit reservation', async () => {
       const submitBtn = page
         .locator('button:has-text("Create")')
         .or(page.locator('button:has-text("Save")'));
@@ -161,38 +161,38 @@ test.describe("Production Workflow Tests", () => {
 
       // Verify success - dialog should close or success message
       const successMsg = page
-        .locator("text=created")
-        .or(page.locator("text=success"));
+        .locator('text=created')
+        .or(page.locator('text=success'));
       // Don't fail if no success message - reservation might have been created
     });
 
     // Step 8: Verify reservation appears
-    await test.step("Verify reservation created", async () => {
+    await test.step('Verify reservation created', async () => {
       // Go to dashboard to see if reservation appears
-      await page.click("text=Dashboard");
+      await page.click('text=Dashboard');
       await page.waitForTimeout(3000);
 
       // Look for test customer name in today's arrivals
       const customerInList = page.locator(`text=${TEST_CUSTOMER_NAME}`);
       // This is informational - don't fail the test
       if (await customerInList.isVisible()) {
-        console.log("✅ Test customer reservation visible on dashboard");
+        console.log('✅ Test customer reservation visible on dashboard');
       }
     });
   });
 
-  test("should perform check-in for test customer", async ({ page }) => {
+  test('should perform check-in for test customer', async ({ page }) => {
     test.setTimeout(TEST_TIMEOUT);
 
     // Step 1: Go to Dashboard
-    await test.step("Navigate to Dashboard", async () => {
-      await page.click("text=Dashboard");
+    await test.step('Navigate to Dashboard', async () => {
+      await page.click('text=Dashboard');
       await expect(page).toHaveURL(/.*dashboard/);
       await page.waitForTimeout(3000);
     });
 
     // Step 2: Find test customer's reservation
-    await test.step("Find test customer reservation", async () => {
+    await test.step('Find test customer reservation', async () => {
       // Search for test customer
       const searchInput = page.locator('input[placeholder*="Search"]');
       if (await searchInput.isVisible()) {
@@ -202,7 +202,7 @@ test.describe("Production Workflow Tests", () => {
     });
 
     // Step 3: Click Start Check-In
-    await test.step("Start check-in", async () => {
+    await test.step('Start check-in', async () => {
       const checkInBtn = page
         .locator('button:has-text("Start Check-In")')
         .first();
@@ -212,16 +212,16 @@ test.describe("Production Workflow Tests", () => {
 
         // Should navigate to check-in workflow
         await expect(
-          page.locator("text=Check-In").or(page.locator("text=Pet Summary"))
+          page.locator('text=Check-In').or(page.locator('text=Pet Summary'))
         ).toBeVisible({ timeout: 10000 });
       } else {
-        console.log("No check-in available for test customer today");
+        console.log('No check-in available for test customer today');
         test.skip();
       }
     });
 
     // Step 4: Complete Pet Summary step
-    await test.step("Review Pet Summary", async () => {
+    await test.step('Review Pet Summary', async () => {
       // Click Next to proceed
       const nextBtn = page.locator('button:has-text("Next")');
       if (await nextBtn.isVisible()) {
@@ -231,7 +231,7 @@ test.describe("Production Workflow Tests", () => {
     });
 
     // Step 5: Complete remaining steps quickly
-    await test.step("Complete check-in steps", async () => {
+    await test.step('Complete check-in steps', async () => {
       // Keep clicking Next until we reach the end
       for (let i = 0; i < 5; i++) {
         const nextBtn = page.locator('button:has-text("Next")');
@@ -245,7 +245,7 @@ test.describe("Production Workflow Tests", () => {
     });
 
     // Step 6: Complete check-in
-    await test.step("Submit check-in", async () => {
+    await test.step('Submit check-in', async () => {
       const completeBtn = page
         .locator('button:has-text("Complete")')
         .or(page.locator('button:has-text("Submit")'));
@@ -256,25 +256,25 @@ test.describe("Production Workflow Tests", () => {
 
       // Verify completion
       const successIndicator = page
-        .locator("text=Complete")
-        .or(page.locator("text=Success"))
-        .or(page.locator("text=checked in"));
+        .locator('text=Complete')
+        .or(page.locator('text=Success'))
+        .or(page.locator('text=checked in'));
       await expect(successIndicator.first()).toBeVisible({ timeout: 15000 });
     });
   });
 
-  test("should perform check-out for test customer", async ({ page }) => {
+  test('should perform check-out for test customer', async ({ page }) => {
     test.setTimeout(TEST_TIMEOUT);
 
     // Step 1: Go to Dashboard
-    await test.step("Navigate to Dashboard", async () => {
-      await page.click("text=Dashboard");
+    await test.step('Navigate to Dashboard', async () => {
+      await page.click('text=Dashboard');
       await expect(page).toHaveURL(/.*dashboard/);
       await page.waitForTimeout(3000);
     });
 
     // Step 2: Switch to Check-Outs view
-    await test.step("View check-outs", async () => {
+    await test.step('View check-outs', async () => {
       const checkOutsTab = page.locator('button:has-text("Check-Outs")');
       if (await checkOutsTab.isVisible()) {
         await checkOutsTab.click();
@@ -283,7 +283,7 @@ test.describe("Production Workflow Tests", () => {
     });
 
     // Step 3: Find test customer
-    await test.step("Find test customer", async () => {
+    await test.step('Find test customer', async () => {
       const searchInput = page.locator('input[placeholder*="Search"]');
       if (await searchInput.isVisible()) {
         await searchInput.fill(TEST_CUSTOMER_NAME);
@@ -292,7 +292,7 @@ test.describe("Production Workflow Tests", () => {
     });
 
     // Step 4: Click Check-Out button
-    await test.step("Start check-out", async () => {
+    await test.step('Start check-out', async () => {
       const checkOutBtn = page
         .locator('button:has-text("Check Out")')
         .or(page.locator('button:has-text("Check-Out")'));
@@ -300,13 +300,13 @@ test.describe("Production Workflow Tests", () => {
         await checkOutBtn.first().click();
         await page.waitForTimeout(3000);
       } else {
-        console.log("No check-out available for test customer");
+        console.log('No check-out available for test customer');
         test.skip();
       }
     });
 
     // Step 5: Complete check-out
-    await test.step("Complete check-out", async () => {
+    await test.step('Complete check-out', async () => {
       // Mark belongings as returned if visible
       const checkboxes = page.locator('input[type="checkbox"]');
       const count = await checkboxes.count();
@@ -326,8 +326,8 @@ test.describe("Production Workflow Tests", () => {
 
       // Verify completion
       const successIndicator = page
-        .locator("text=Complete")
-        .or(page.locator("text=COMPLETED"));
+        .locator('text=Complete')
+        .or(page.locator('text=COMPLETED'));
       await expect(successIndicator.first()).toBeVisible({ timeout: 15000 });
     });
   });

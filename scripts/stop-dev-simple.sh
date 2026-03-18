@@ -33,7 +33,7 @@ echo ""
 remaining=$(ps aux | grep -E "(ts-node-dev|react-scripts)" | grep -v grep | wc -l | tr -d ' ')
 if [ "$remaining" -gt 0 ]; then
     echo "⚠️  Warning: $remaining processes still running"
-    echo "Run again if needed: npm run dev:stop"
+    echo "Run again if needed: pnpm run dev:stop"
 else
     echo "✓ No zombie processes remaining"
 fi

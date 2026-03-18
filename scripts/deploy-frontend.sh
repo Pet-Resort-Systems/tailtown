@@ -1,6 +1,6 @@
 #!/bin/bash
 # Frontend Deployment Script for Tailtown
-# This script builds and deploys the frontend to production
+# This script builds and deploys the apps/frontend to production
 
 set -e
 
@@ -8,34 +8,27 @@ set -e
 REMOTE_HOST="129.212.178.244"
 REMOTE_USER="root"
 SSH_KEY="~/ttkey"
-REMOTE_BUILD_DIR="/opt/tailtown/frontend/build"
-FRONTEND_DIR="$(dirname "$0")/../frontend"
+REMOTE_BUILD_DIR="/opt/tailtown/apps/frontend/build"
+FRONTEND_DIR="$(dirname "$0")/../apps/frontend"
 
 echo "🚀 Tailtown Frontend Deployment"
 echo "================================"
 
-# Change to frontend directory
+# Change to apps/frontend directory
 cd "$FRONTEND_DIR"
 
 # Step 1: Build with production environment
 echo ""
-echo "📦 Building frontend for production..."
-echo "   (Temporarily removing .env.development to prevent localhost URLs)"
+echo "📦 Building apps/frontend for production..."
+echo "   (using apps/frontend/.env)"
 
-# CRITICAL: Temporarily rename .env.development so it doesn't get loaded
-# CRA loads .env.development even during production builds if it exists
-if [ -f .env.development ]; then
-    mv .env.development .env.development.bak
-    RESTORE_ENV=true
+if [ ! -f .env ]; then
+    echo "❌ Error: apps/frontend/.env missing. Copy from .env.example and configure."
+    exit 1
 fi
 
 # Build for production
-npm run build
-
-# Restore .env.development
-if [ "$RESTORE_ENV" = true ]; then
-    mv .env.development.bak .env.development
-fi
+pnpm run build
 
 # Verify build was created
 if ls build/static/js/*.js 1> /dev/null 2>&1; then
@@ -62,11 +55,11 @@ scp -i $SSH_KEY -r build/* ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_BUILD_DIR}/
 
 # Step 3: Restart serve process
 echo ""
-echo "🔄 Restarting frontend server..."
+echo "🔄 Restarting apps/frontend server..."
 
 ssh -i $SSH_KEY ${REMOTE_USER}@${REMOTE_HOST} << 'ENDSSH'
 pkill -f "serve -s build" || true
-cd /opt/tailtown/frontend
+cd /opt/tailtown/apps/frontend
 nohup serve -s build -l 3000 > /var/log/frontend.log 2>&1 &
 sleep 2
 

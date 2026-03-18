@@ -21,14 +21,14 @@ echo "🔄 Running migration: $(basename $MIGRATION_FILE)"
 echo ""
 
 # Load DATABASE_URL from .env if it exists
-if [ -f "services/customer/.env" ]; then
-    export $(grep -v '^#' services/customer/.env | xargs)
+if [ -f "apps/customer-service/.env" ]; then
+    export $(grep -v '^#' apps/customer-service/.env | xargs)
 fi
 
 # Check if DATABASE_URL is set
 if [ -z "$DATABASE_URL" ]; then
     echo "Error: DATABASE_URL not set"
-    echo "Set it in services/customer/.env or as an environment variable"
+    echo "Set it in apps/customer-service/.env or as an environment variable"
     exit 1
 fi
 

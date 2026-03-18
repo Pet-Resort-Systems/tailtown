@@ -13,19 +13,19 @@ source ~/.nvm/nvm.sh
 2. Starting Services
 ```bash
 # Start customer service (Terminal 1)
-cd services/customer
+cd apps/customer-service
 source ~/.nvm/nvm.sh
-npm run dev
+pnpm run dev
 
 # Start reservation service (Terminal 2)
-cd services/reservation-service
+cd apps/reservation-service
 source ~/.nvm/nvm.sh
-PORT=4003 npm run dev
+PORT=4003 pnpm run dev
 
 # Start frontend (Terminal 3)
-cd frontend
+cd apps/frontend
 source ~/.nvm/nvm.sh
-npm start
+pnpm start
 ```
 
 ### Process Management

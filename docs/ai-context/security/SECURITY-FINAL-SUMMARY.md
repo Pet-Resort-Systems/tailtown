@@ -258,12 +258,12 @@
 
 ---
 
-## 🧪 TESTING RESULTS
+## TESTING RESULTS
 
 ### Security Test Execution
 ```bash
-cd services/customer
-npm test -- --testPathPattern=security --forceExit
+cd apps/customer-service
+pnpm test -- --testPathPattern=security --forceExit
 ```
 
 **Expected Results:**

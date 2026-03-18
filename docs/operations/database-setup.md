@@ -35,14 +35,14 @@ Both microservices share a single PostgreSQL database:
 
 ### 2. Configure Environment Variables
 
-**Customer Service** (`services/customer/.env`):
+**Customer Service** (`apps/customer-service/.env`):
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5433/customer"
 PORT=4004
 NODE_ENV=development
 ```
 
-**Reservation Service** (`services/reservation-service/.env`):
+**Reservation Service** (`apps/reservation-service/.env`):
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5433/customer"
 PORT=4003
@@ -56,24 +56,24 @@ Both services need to push their schemas to the shared database:
 
 ```bash
 # Customer Service
-cd services/customer
-npx prisma db push
+cd apps/customer-service
+pnpm exec prisma db push
 
 # Reservation Service  
-cd services/reservation-service
-npx prisma db push
+cd apps/reservation-service
+pnpm exec prisma db push
 ```
 
 ### 4. Seed Data
 
 ```bash
 # Customer Service (customers, pets, services)
-cd services/customer
-npx ts-node prisma/seed.ts
+cd apps/customer-service
+pnpm exec ts-node prisma/seed.ts
 
 # Reservation Service (check-in templates, agreement templates)
-cd services/reservation-service
-npx ts-node src/scripts/seed-check-in-templates.ts
+cd apps/reservation-service
+pnpm exec ts-node src/scripts/seed-check-in-templates.ts
 ```
 
 ---
@@ -88,8 +88,8 @@ npx ts-node src/scripts/seed-check-in-templates.ts
 
 **Solution**:
 ```bash
-cd services/reservation-service
-npx prisma db push --skip-generate
+cd apps/reservation-service
+pnpm exec prisma db push --skip-generate
 ```
 
 ### Issue: Type Already Exists
@@ -100,7 +100,7 @@ npx prisma db push --skip-generate
 
 **Solution**: Use `db push` instead of `migrate deploy`
 ```bash
-npx prisma db push --skip-generate
+pnpm exec prisma db push --skip-generate
 ```
 
 ### Issue: Reservations Disappeared
@@ -119,8 +119,8 @@ npx prisma db push --skip-generate
 
 **Solution**:
 ```bash
-cd services/reservation-service
-npx ts-node src/scripts/seed-check-in-templates.ts
+cd apps/reservation-service
+pnpm exec ts-node src/scripts/seed-check-in-templates.ts
 ```
 
 ---
@@ -139,21 +139,21 @@ Sync schemas when:
 
 **Option 1: Push Schema (Recommended for Development)**
 ```bash
-cd services/[service-name]
-npx prisma db push
+cd apps/[service-name]
+pnpm exec prisma db push
 ```
 
 **Option 2: Run Migrations (Production)**
 ```bash
-cd services/[service-name]
-npx prisma migrate deploy
+cd apps/[service-name]
+pnpm exec prisma migrate deploy
 ```
 
 ### Verify Schema
 
 ```bash
-cd services/reservation-service
-npx prisma studio --port 5556
+cd apps/reservation-service
+pnpm exec prisma studio --port 5556
 ```
 
 ---
@@ -168,8 +168,8 @@ Creates default boarding check-in template with:
 - Medical & Behavioral section (4 questions)
 
 ```bash
-cd services/reservation-service
-npx ts-node src/scripts/seed-check-in-templates.ts
+cd apps/reservation-service
+pnpm exec ts-node src/scripts/seed-check-in-templates.ts
 ```
 
 ### Service Agreement Templates
@@ -185,8 +185,8 @@ Creates default boarding service agreement template.
 Seeds sample customers, pets, and services.
 
 ```bash
-cd services/customer
-npx ts-node prisma/seed.ts
+cd apps/customer-service
+pnpm exec ts-node prisma/seed.ts
 ```
 
 ---
@@ -198,8 +198,8 @@ npx ts-node prisma/seed.ts
 **⚠️ Warning: This deletes all data!**
 
 ```bash
-cd services/reservation-service
-npx prisma migrate reset
+cd apps/reservation-service
+pnpm exec prisma migrate reset
 ```
 
 ### Regenerate Prisma Client
@@ -207,15 +207,15 @@ npx prisma migrate reset
 After schema changes:
 
 ```bash
-cd services/[service-name]
-npx prisma generate
+cd apps/reservation-service
+pnpm exec prisma generate
 ```
 
 ### View Database
 
 ```bash
-cd services/reservation-service
-npx prisma studio --port 5556
+cd apps/reservation-service
+pnpm exec prisma studio --port 5556
 ```
 
 ---
@@ -235,10 +235,10 @@ In production, use migrations instead of `db push`:
 
 ```bash
 # Create migration
-npx prisma migrate dev --name description
+pnpm exec prisma migrate dev --name description
 
 # Deploy to production
-npx prisma migrate deploy
+pnpm exec prisma migrate deploy
 ```
 
 ### Backups
@@ -264,38 +264,38 @@ DATABASE_URL="postgresql://postgres:postgres@localhost:5433/customer?connection_
 ### Check Database Connection
 
 ```bash
-cd services/reservation-service
-npx prisma db execute --stdin <<< "SELECT 1;"
+cd apps/reservation-service
+pnpm exec prisma db execute --stdin <<< "SELECT 1;"
 ```
 
 ### List All Tables
 
 ```bash
-npx prisma db execute --stdin <<< "SELECT tablename FROM pg_tables WHERE schemaname = 'public';"
+pnpm exec prisma db execute --stdin <<< "SELECT tablename FROM pg_tables WHERE schemaname = 'public';"
 ```
 
 ### Check Tenant Data
 
 ```bash
-npx prisma db execute --stdin <<< "SELECT DISTINCT \"tenantId\" FROM reservations;"
+pnpm exec prisma db execute --stdin <<< "SELECT DISTINCT \"tenantId\" FROM reservations;"
 ```
 
 ---
 
 ## Quick Reference
 
-| Task | Command |
-|------|---------|
-| Sync schema | `npx prisma db push` |
-| Seed templates | `npx ts-node src/scripts/seed-check-in-templates.ts` |
-| View database | `npx prisma studio --port 5556` |
-| Generate client | `npx prisma generate` |
-| Reset database | `npx prisma migrate reset` |
+| Task            | Command                                                    |
+| --------------- | ---------------------------------------------------------- |
+| Sync schema     | `pnpm exec prisma db push`                                 |
+| Seed templates  | `pnpm exec ts-node src/scripts/seed-check-in-templates.ts` |
+| View database   | `pnpm exec prisma studio --port 5556`                      |
+| Generate client | `pnpm exec prisma generate`                                |
+| Reset database  | `pnpm exec prisma migrate reset`                           |
 
 ---
 
 ## Related Documentation
 
 - [Shared Database Pattern](../architecture/database-architecture.md)
-- [Prisma Schema](../../services/reservation-service/prisma/schema.prisma)
-- [Seed Scripts](../../services/reservation-service/src/scripts/)
+- [Prisma Schema](../../apps/reservation-service/prisma/schema.prisma)
+- [Seed Scripts](../../apps/reservation-service/src/scripts/)

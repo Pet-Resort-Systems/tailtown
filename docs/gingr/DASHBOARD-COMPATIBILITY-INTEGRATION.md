@@ -1,7 +1,7 @@
 # Dashboard Compatibility Integration
 
 **Date:** December 15, 2025  
-**Status:** ✅ Deployed to Production
+**Status:** Deployed to Production
 
 ## Overview
 
@@ -11,17 +11,17 @@ Successfully integrated pet compatibility information from Gingr into the Tailto
 
 ### 1. Dashboard Reservation List Enhancements
 
-**File:** `/frontend/src/components/dashboard/ReservationList.tsx`
+**File:** `/apps/frontend/src/components/dashboard/ReservationList.tsx`
 
 **Visual Indicators Added:**
 
 - **Playgroup Size Badges** - Color-coded chips displaying:
 
-  - 🟢 Green = Large Dog (`LARGE_DOG`)
-  - 🟣 Purple = Medium Dog (`MEDIUM_DOG`)
-  - 🔵 Blue = Small Dog (`SMALL_DOG`)
-  - 🩷 Pink = Solo Only (`NON_COMPATIBLE`)
-  - 🟡 Yellow = Senior Staff Required (`SENIOR_STAFF_REQUIRED`)
+  - Green = Large Dog (`LARGE_DOG`)
+  - Purple = Medium Dog (`MEDIUM_DOG`)
+  - Blue = Small Dog (`SMALL_DOG`)
+  - Pink = Solo Only (`NON_COMPATIBLE`)
+  - Yellow = Senior Staff Required (`SENIOR_STAFF_REQUIRED`)
 
 - **Aggression Warning Icon** - Red ⚠️ icon when pet has aggression flags
 
@@ -34,7 +34,7 @@ Successfully integrated pet compatibility information from Gingr into the Tailto
 
 ### 2. Backend API Updates
 
-**File:** `/services/customer/src/utils/prisma-optimized.ts`
+**File:** `/apps/customer-service/src/utils/prisma-optimized.ts`
 
 Updated `petSelectMinimal` to include:
 
@@ -46,7 +46,7 @@ This ensures the API returns compatibility data with every reservation query.
 
 ### 3. TypeScript Interface Updates
 
-**File:** `/frontend/src/components/dashboard/ReservationList.tsx`
+**File:** `/apps/frontend/src/components/dashboard/ReservationList.tsx`
 
 Extended the `Reservation` interface to include pet compatibility fields:
 
@@ -122,7 +122,7 @@ pet?: {
 
 ### Cleanup Script Details
 
-**File:** `/services/customer/scripts/cleanup-duplicate-pets.js`
+**File:** `/apps/customer-service/scripts/cleanup-duplicate-pets.js`
 
 **Execution Results:**
 
@@ -138,13 +138,13 @@ pet?: {
 
 ### Backend
 
-- `/services/customer/src/utils/prisma-optimized.ts`
+- `/apps/customer-service/src/utils/prisma-optimized.ts`
 
 ### Frontend
 
-- `/frontend/src/components/dashboard/ReservationList.tsx`
-- `/frontend/src/components/compatibility/PlaygroupBadge.tsx` (created previously)
-- `/frontend/src/components/compatibility/CompatibilityFlags.tsx` (created previously)
+- `/apps/frontend/src/components/dashboard/ReservationList.tsx`
+- `/apps/frontend/src/components/compatibility/PlaygroupBadge.tsx` (created previously)
+- `/apps/frontend/src/components/compatibility/CompatibilityFlags.tsx` (created previously)
 
 ## Related Documentation
 

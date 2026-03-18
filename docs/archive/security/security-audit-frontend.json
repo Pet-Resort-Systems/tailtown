@@ -5,14 +5,10 @@
       "name": "@craco/craco",
       "severity": "moderate",
       "isDirect": true,
-      "via": [
-        "react-scripts"
-      ],
+      "via": ["react-scripts"],
       "effects": [],
       "range": "<=2.2.3 || >=6.0.0",
-      "nodes": [
-        "frontend/node_modules/@craco/craco"
-      ],
+      "nodes": ["frontend/node_modules/@craco/craco"],
       "fixAvailable": {
         "name": "@craco/craco",
         "version": "5.9.0",
@@ -23,16 +19,10 @@
       "name": "@svgr/plugin-svgo",
       "severity": "high",
       "isDirect": false,
-      "via": [
-        "svgo"
-      ],
-      "effects": [
-        "@svgr/webpack"
-      ],
+      "via": ["svgo"],
+      "effects": ["@svgr/webpack"],
       "range": "<=5.5.0",
-      "nodes": [
-        "node_modules/@svgr/plugin-svgo"
-      ],
+      "nodes": ["node_modules/@svgr/plugin-svgo"],
       "fixAvailable": {
         "name": "react-scripts",
         "version": "0.0.0",
@@ -43,16 +33,10 @@
       "name": "@svgr/webpack",
       "severity": "high",
       "isDirect": false,
-      "via": [
-        "@svgr/plugin-svgo"
-      ],
-      "effects": [
-        "react-scripts"
-      ],
+      "via": ["@svgr/plugin-svgo"],
+      "effects": ["react-scripts"],
       "range": "4.0.0 - 5.5.0",
-      "nodes": [
-        "node_modules/@svgr/webpack"
-      ],
+      "nodes": ["node_modules/@svgr/webpack"],
       "fixAvailable": {
         "name": "react-scripts",
         "version": "0.0.0",
@@ -71,9 +55,7 @@
           "title": "brace-expansion Regular Expression Denial of Service vulnerability",
           "url": "https://github.com/advisories/GHSA-v6h2-p8h4-qcjw",
           "severity": "low",
-          "cwe": [
-            "CWE-400"
-          ],
+          "cwe": ["CWE-400"],
           "cvss": {
             "score": 3.1,
             "vectorString": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:L"
@@ -87,9 +69,7 @@
           "title": "brace-expansion Regular Expression Denial of Service vulnerability",
           "url": "https://github.com/advisories/GHSA-v6h2-p8h4-qcjw",
           "severity": "low",
-          "cwe": [
-            "CWE-400"
-          ],
+          "cwe": ["CWE-400"],
           "cvss": {
             "score": 3.1,
             "vectorString": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:L"
@@ -110,16 +90,10 @@
       "name": "css-select",
       "severity": "high",
       "isDirect": false,
-      "via": [
-        "nth-check"
-      ],
-      "effects": [
-        "svgo"
-      ],
+      "via": ["nth-check"],
+      "effects": ["svgo"],
       "range": "<=3.1.0",
-      "nodes": [
-        "node_modules/svgo/node_modules/css-select"
-      ],
+      "nodes": ["node_modules/svgo/node_modules/css-select"],
       "fixAvailable": {
         "name": "react-scripts",
         "version": "0.0.0",
@@ -138,9 +112,7 @@
           "title": "form-data uses unsafe random function in form-data for choosing boundary",
           "url": "https://github.com/advisories/GHSA-fjxv-7rqg-78g4",
           "severity": "critical",
-          "cwe": [
-            "CWE-330"
-          ],
+          "cwe": ["CWE-330"],
           "cvss": {
             "score": 0,
             "vectorString": null
@@ -150,9 +122,7 @@
       ],
       "effects": [],
       "range": "3.0.0 - 3.0.3",
-      "nodes": [
-        "node_modules/jsdom/node_modules/form-data"
-      ],
+      "nodes": ["node_modules/jsdom/node_modules/form-data"],
       "fixAvailable": true
     },
     "nth-check": {
@@ -167,9 +137,7 @@
           "title": "Inefficient Regular Expression Complexity in nth-check",
           "url": "https://github.com/advisories/GHSA-rp65-9cf3-cjxr",
           "severity": "high",
-          "cwe": [
-            "CWE-1333"
-          ],
+          "cwe": ["CWE-1333"],
           "cvss": {
             "score": 7.5,
             "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
@@ -177,13 +145,9 @@
           "range": "<2.0.1"
         }
       ],
-      "effects": [
-        "css-select"
-      ],
+      "effects": ["css-select"],
       "range": "<2.0.1",
-      "nodes": [
-        "node_modules/svgo/node_modules/nth-check"
-      ],
+      "nodes": ["node_modules/svgo/node_modules/nth-check"],
       "fixAvailable": {
         "name": "react-scripts",
         "version": "0.0.0",
@@ -202,10 +166,7 @@
           "title": "PostCSS line return parsing error",
           "url": "https://github.com/advisories/GHSA-7fh5-64p2-3v2j",
           "severity": "moderate",
-          "cwe": [
-            "CWE-74",
-            "CWE-144"
-          ],
+          "cwe": ["CWE-74", "CWE-144"],
           "cvss": {
             "score": 5.3,
             "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N"
@@ -213,13 +174,9 @@
           "range": "<8.4.31"
         }
       ],
-      "effects": [
-        "resolve-url-loader"
-      ],
+      "effects": ["resolve-url-loader"],
       "range": "<8.4.31",
-      "nodes": [
-        "node_modules/resolve-url-loader/node_modules/postcss"
-      ],
+      "nodes": ["node_modules/resolve-url-loader/node_modules/postcss"],
       "fixAvailable": {
         "name": "react-scripts",
         "version": "0.0.0",
@@ -230,18 +187,10 @@
       "name": "react-scripts",
       "severity": "high",
       "isDirect": true,
-      "via": [
-        "@svgr/webpack",
-        "resolve-url-loader",
-        "webpack-dev-server"
-      ],
-      "effects": [
-        "@craco/craco"
-      ],
+      "via": ["@svgr/webpack", "resolve-url-loader", "webpack-dev-server"],
+      "effects": ["@craco/craco"],
       "range": ">=0.1.0",
-      "nodes": [
-        "frontend/node_modules/react-scripts"
-      ],
+      "nodes": ["frontend/node_modules/react-scripts"],
       "fixAvailable": {
         "name": "react-scripts",
         "version": "0.0.0",
@@ -252,16 +201,10 @@
       "name": "resolve-url-loader",
       "severity": "moderate",
       "isDirect": false,
-      "via": [
-        "postcss"
-      ],
-      "effects": [
-        "react-scripts"
-      ],
+      "via": ["postcss"],
+      "effects": ["react-scripts"],
       "range": "0.0.1-experiment-postcss || 3.0.0-alpha.1 - 4.0.0",
-      "nodes": [
-        "node_modules/resolve-url-loader"
-      ],
+      "nodes": ["node_modules/resolve-url-loader"],
       "fixAvailable": {
         "name": "react-scripts",
         "version": "0.0.0",
@@ -272,16 +215,10 @@
       "name": "svgo",
       "severity": "high",
       "isDirect": false,
-      "via": [
-        "css-select"
-      ],
-      "effects": [
-        "@svgr/plugin-svgo"
-      ],
+      "via": ["css-select"],
+      "effects": ["@svgr/plugin-svgo"],
       "range": "1.0.0 - 1.3.2",
-      "nodes": [
-        "node_modules/svgo"
-      ],
+      "nodes": ["node_modules/svgo"],
       "fixAvailable": {
         "name": "react-scripts",
         "version": "0.0.0",
@@ -300,9 +237,7 @@
           "title": "webpack-dev-server users' source code may be stolen when they access a malicious web site with non-Chromium based browser",
           "url": "https://github.com/advisories/GHSA-9jgg-88mc-972h",
           "severity": "moderate",
-          "cwe": [
-            "CWE-346"
-          ],
+          "cwe": ["CWE-346"],
           "cvss": {
             "score": 6.5,
             "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:N"
@@ -316,9 +251,7 @@
           "title": "webpack-dev-server users' source code may be stolen when they access a malicious web site",
           "url": "https://github.com/advisories/GHSA-4v9v-hfq4-rm2v",
           "severity": "moderate",
-          "cwe": [
-            "CWE-749"
-          ],
+          "cwe": ["CWE-749"],
           "cvss": {
             "score": 5.3,
             "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N"
@@ -326,13 +259,9 @@
           "range": "<=5.2.0"
         }
       ],
-      "effects": [
-        "react-scripts"
-      ],
+      "effects": ["react-scripts"],
       "range": "<=5.2.0",
-      "nodes": [
-        "node_modules/webpack-dev-server"
-      ],
+      "nodes": ["node_modules/webpack-dev-server"],
       "fixAvailable": {
         "name": "react-scripts",
         "version": "0.0.0",
