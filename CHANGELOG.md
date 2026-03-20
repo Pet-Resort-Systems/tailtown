@@ -7,6 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **pnpm/Turborepo Monorepo Workspace**
+
+  - Added a root `pnpm` workspace with `apps/*` and `packages/*`
+  - Added shared TypeScript catalogs/configs plus pinned Node.js and pnpm versions
+  - Added workspace-aware root scripts for builds, tests, and Prisma tasks
+
+- **Vite Frontend Workspace**
+
+  - Added a new Vite-based frontend app workspace
+  - Merged the admin portal into the frontend under `/admin-portal`
+  - Switched embedded admin flows to super-admin JWT authentication
+
+### Changed
+
+- **Repository Layout Migration**
+
+  - Reorganized the repo from legacy standalone folders into `apps/` and `packages/`
+  - Renamed backend service paths to the new monorepo layout, including `apps/customer-service`
+  - Moved customer-service clone/demo utilities into typed ESM/TypeScript scripts
+
+- **Tooling, CI/CD, and Local Dev**
+
+  - Migrated Dockerfiles, GitHub Actions, and shell scripts from `npm` to workspace-aware `pnpm` commands
+  - Standardized environment examples to per-service `.env` files and updated documentation for the new paths
+  - Removed committed `package-lock.json` files in favor of the monorepo lockfile
+
+- **Service Runtime and Database Access**
+
+  - Migrated backend service dev execution from `ts-node` to `tsx`
+  - Updated customer and reservation services to Prisma 7 adapter-based singleton clients using `@prisma/adapter-pg`
+  - Replaced one-off Prisma client creation with shared singleton usage across controllers and scripts
+
+### Fixed
+
+- **Monorepo Migration Follow-ups**
+
+  - Corrected broken workflow/script paths after moving apps and services
+  - Fixed Docker build contexts, cache paths, PM2 log paths, and service volume references
+  - Restored frontend/test environment wiring and cleaned up coverage/test commands for the new layout
+
 ## [1.7.0] - 2026-01-11
 
 ### Added
