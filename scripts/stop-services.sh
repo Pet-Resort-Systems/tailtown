@@ -62,8 +62,6 @@ force_cleanup() {
     pkill -f "react-scripts.*tailtown" 2>/dev/null || true
     pkill -f "craco.*tailtown" 2>/dev/null || true
     
-    # Kill MCP server
-    pkill -f "python3.*server.py" 2>/dev/null || true
     
     echo -e "${GREEN}   ✅ Force cleanup completed${NC}"
 }
@@ -73,7 +71,6 @@ stop_service "Customer Service"
 stop_service "Reservation Service"
 stop_service "Payment Service"
 stop_service "Frontend"
-stop_service "mcp-server"
 
 # Force cleanup any remaining processes
 force_cleanup
@@ -98,9 +95,3 @@ else
     echo -e "${GREEN}✅ No remaining Tailtown processes found${NC}"
 fi
 
-mcp_processes=$(ps aux | grep "python3.*server.py" | grep -v grep | wc -l)
-if [ "$mcp_processes" -gt 0 ]; then
-    echo -e "${YELLOW}⚠️  Found $mcp_processes MCP server processes${NC}"
-else
-    echo -e "${GREEN}✅ No MCP server processes found${NC}"
-fi

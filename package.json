@@ -51,7 +51,6 @@
     "test:integration": "jest tests/integration --detectOpenHandles",
     "test:unit": "jest tests/unit --detectOpenHandles",
     "test:services": "jest tests/integration/service-health.test.js --detectOpenHandles",
-    "test:mcp": "jest tests/unit/mcp-server.test.js --detectOpenHandles",
     "test:builds": "bash scripts/test-builds.sh",
     "test:typescript": "bash scripts/test-typescript.sh",
     "test:builds:full": "bash scripts/test-builds.sh --include-frontend",

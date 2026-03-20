@@ -77,16 +77,6 @@ describe('Service Health Tests', () => {
       expect(processCount).toBeLessThan(20);
       console.log(`Found ${processCount} Node.js processes (threshold: 20)`);
     });
-
-    it('should have MCP RAG server running', async () => {
-      const mcpRunning = await new Promise((resolve) => {
-        exec('pgrep -f "python3.*server.py" > /dev/null 2>&1', (error) => {
-          resolve(!error);
-        });
-      });
-
-      expect(mcpRunning).toBe(true);
-    });
   });
 
   describe('Database Connectivity', () => {
