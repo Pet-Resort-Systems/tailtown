@@ -9,15 +9,15 @@
 
 ```bash
 # Find all console.log
-grep -r "console.log" services/*/src --include="*.ts"
+grep -r "console.log" apps/*/src --include="*.ts"
 
 # Replace with proper logging
-npm install winston
+pnpm add winston
 ```
 
 **Implementation**:
 ```typescript
-// services/shared/logger.ts
+// packages/shared/logger.ts
 import winston from 'winston';
 
 export const logger = winston.createLogger({
@@ -37,8 +37,8 @@ if (process.env.NODE_ENV !== 'production') {
 ```
 
 **Files to Update**:
-- `services/customer/src/controllers/customer.controller.ts`
-- `services/customer/src/controllers/staff.controller.ts`
+- `apps/customer-service/src/controllers/customer.controller.ts`
+- `apps/customer-service/src/controllers/staff.controller.ts`
 - All other controllers
 
 ---
@@ -47,7 +47,7 @@ if (process.env.NODE_ENV !== 'production') {
 **Impact**: 50-80% query performance improvement
 
 ```prisma
-// services/customer/prisma/schema.prisma
+// apps/customer-service/prisma/schema.prisma
 
 model Reservation {
   // Add these indexes
@@ -71,9 +71,9 @@ model Pet {
 
 **Deploy**:
 ```bash
-cd services/customer
-npx prisma migrate dev --name add_performance_indexes
-npx prisma migrate deploy
+cd apps/customer-service
+pnpm exec prisma migrate dev --name add_performance_indexes
+pnpm exec prisma migrate deploy
 ```
 
 ---
@@ -82,7 +82,7 @@ npx prisma migrate deploy
 **Impact**: Better resource utilization
 
 ```typescript
-// services/customer/src/config/prisma.ts
+// apps/customer-service/src/config/prisma.ts
 import { PrismaClient } from '@prisma/client';
 
 export const prisma = new PrismaClient({
@@ -111,7 +111,7 @@ DATABASE_URL="postgresql://user:pass@host:5432/db?connection_limit=20&pool_timeo
 **Impact**: Better debugging and monitoring
 
 ```typescript
-// services/customer/src/middleware/requestId.middleware.ts
+// apps/customer-service/src/middleware/requestId.middleware.ts
 import { v4 as uuidv4 } from 'uuid';
 import { Request, Response, NextFunction } from 'express';
 
@@ -225,7 +225,7 @@ if (!tenant) {
 **Impact**: Prevent tenant abuse
 
 ```typescript
-// services/customer/src/middleware/rateLimiter.ts
+// apps/customer-service/src/middleware/rateLimiter.ts
 import rateLimit from 'express-rate-limit';
 import RedisStore from 'rate-limit-redis';
 import { redis } from '../config/redis';
@@ -265,20 +265,20 @@ app.use('/api', tenantRateLimiter);
 # Start using migrations
 
 # Create migration
-npx prisma migrate dev --name descriptive_name
+pnpm exec prisma migrate dev --name descriptive_name
 
 # Deploy to production
-npx prisma migrate deploy
+pnpm exec prisma migrate deploy
 
 # Rollback if needed
-npx prisma migrate resolve --rolled-back migration_name
+pnpm exec prisma migrate resolve --rolled-back migration_name
 ```
 
 **Update deploy script**:
 ```bash
 # deploy.sh
-npm run build
-npx prisma migrate deploy  # Instead of db push
+pnpm run build
+pnpm exec prisma migrate deploy  # Instead of db push
 pm2 reload ecosystem.config.js
 ```
 
@@ -288,7 +288,7 @@ pm2 reload ecosystem.config.js
 **Impact**: Better monitoring
 
 ```typescript
-// services/customer/src/routes/health.ts
+// apps/customer-service/src/routes/health.ts
 import express from 'express';
 import { prisma } from '../config/prisma';
 import { redis } from '../config/redis';
@@ -454,7 +454,7 @@ aws s3 cp "$BACKUP_DIR/backup_$DATE.sql.gz" s3://tailtown-backups/
 ### Development Workflow:
 ```bash
 # Start with caching
-npm run dev:start
+pnpm run dev:start
 
 # Check health
 curl http://localhost:4004/health
@@ -469,10 +469,10 @@ redis-cli info stats
 ### Production Deployment:
 ```bash
 # 1. Run migrations
-npx prisma migrate deploy
+pnpm exec prisma migrate deploy
 
 # 2. Build services
-npm run build
+pnpm run build
 
 # 3. Reload PM2
 pm2 reload ecosystem.config.js

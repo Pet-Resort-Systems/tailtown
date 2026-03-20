@@ -2,7 +2,7 @@
 
 /**
  * Create Customer-Veterinarian Associations Script
- * 
+ *
  * Creates customer-veterinarian relationships based on:
  * 1. Existing pet-veterinarian associations
  * 2. Most common veterinarian per customer
@@ -53,7 +53,9 @@ async function createCustomerVeterinarianAssociations() {
       ORDER BY pet_count DESC
     `;
 
-    console.log(`Found ${customersWithPetVets.length} customers with pets that have veterinarian associations`);
+    console.log(
+      `Found ${customersWithPetVets.length} customers with pets that have veterinarian associations`
+    );
 
     let updatedCount = 0;
 
@@ -66,14 +68,16 @@ async function createCustomerVeterinarianAssociations() {
         WHERE id = ${customer.customer_id}
       `;
 
-      console.log(`✅ Updated: ${customer.firstName} ${customer.lastName} → ${customer.vet_name} (${customer.pet_count} pets)`);
+      console.log(
+        `✅ Updated: ${customer.firstName} ${customer.lastName} → ${customer.vet_name} (${customer.pet_count} pets)`
+      );
       updatedCount++;
     }
 
     console.log('\n📊 Results Summary:');
     console.log(`═══════════════════════════════════════════════════`);
     console.log(`✅ Customers updated: ${updatedCount}`);
-    
+
     // Now let's update all pets for these customers to use the same veterinarian
     if (updatedCount > 0) {
       const petsUpdated = await prisma.$executeRaw`
@@ -103,11 +107,17 @@ async function createCustomerVeterinarianAssociations() {
 
     console.log('\n📈 Final Statistics:');
     console.log(`═══════════════════════════════════════════════════`);
-    console.log(`Customers with veterinarian: ${stats[0].customers_with_vet} / ${stats[0].total_customers}`);
-    console.log(`Pets with veterinarian: ${stats[0].pets_with_vet} / ${stats[0].total_pets}`);
-
+    console.log(
+      `Customers with veterinarian: ${stats[0].customers_with_vet} / ${stats[0].total_customers}`
+    );
+    console.log(
+      `Pets with veterinarian: ${stats[0].pets_with_vet} / ${stats[0].total_pets}`
+    );
   } catch (error) {
-    console.error('❌ Error creating customer-veterinarian associations:', error);
+    console.error(
+      '❌ Error creating customer-veterinarian associations:',
+      error
+    );
     process.exit(1);
   } finally {
     await prisma.$disconnect();

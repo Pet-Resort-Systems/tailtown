@@ -2,12 +2,12 @@
 
 /**
  * Gingr Employee Import Tool
- * 
+ *
  * Fetches employees from Gingr API and generates SQL to import them into Tailtown
- * 
+ *
  * Usage:
  *   node scripts/import-gingr-employees.js <subdomain> <api-key>
- * 
+ *
  * Example:
  *   node scripts/import-gingr-employees.js tailtown abc123xyz456
  */
@@ -39,26 +39,28 @@ console.log('');
 async function makeGingrRequest(endpoint, data = {}) {
   const formData = new URLSearchParams();
   formData.append('key', apiKey);
-  
+
   Object.entries(data).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
       formData.append(key, String(value));
     }
   });
-  
+
   const response = await fetch(`${BASE_URL}${endpoint}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: formData.toString()
+    body: formData.toString(),
   });
-  
+
   if (!response.ok) {
     const text = await response.text();
-    throw new Error(`Gingr API error: ${response.status} ${response.statusText}\n${text}`);
+    throw new Error(
+      `Gingr API error: ${response.status} ${response.statusText}\n${text}`
+    );
   }
-  
+
   return response.json();
 }
 
@@ -67,9 +69,9 @@ async function makeGingrRequest(endpoint, data = {}) {
  */
 function mapRole(gingrRole) {
   if (!gingrRole) return 'Staff';
-  
+
   const role = gingrRole.toLowerCase();
-  
+
   if (role.includes('manager') || role.includes('admin')) {
     return 'Manager';
   }
@@ -79,7 +81,7 @@ function mapRole(gingrRole) {
   if (role.includes('trainer') || role.includes('instructor')) {
     return 'Instructor';
   }
-  
+
   return 'Staff';
 }
 
@@ -88,13 +90,17 @@ function mapRole(gingrRole) {
  */
 function mapDepartmentAndPosition(gingrEmployee) {
   const role = (gingrEmployee.role || '').toLowerCase();
-  const title = (gingrEmployee.title || gingrEmployee.position || '').toLowerCase();
+  const title = (
+    gingrEmployee.title ||
+    gingrEmployee.position ||
+    ''
+  ).toLowerCase();
   const combined = `${role} ${title}`.toLowerCase();
-  
+
   // Department mapping
   let department = 'Management';
   let position = 'Staff';
-  
+
   if (combined.includes('groom')) {
     department = 'Grooming';
     if (combined.includes('lead') || combined.includes('manager')) {
@@ -112,7 +118,11 @@ function mapDepartmentAndPosition(gingrEmployee) {
     } else {
       position = 'Kennel Technician';
     }
-  } else if (combined.includes('front') || combined.includes('desk') || combined.includes('reception')) {
+  } else if (
+    combined.includes('front') ||
+    combined.includes('desk') ||
+    combined.includes('reception')
+  ) {
     department = 'Front Desk';
     if (combined.includes('manager')) {
       position = 'Front Desk Manager';
@@ -130,7 +140,7 @@ function mapDepartmentAndPosition(gingrEmployee) {
     department = 'Management';
     position = 'General Manager';
   }
-  
+
   return { department, position };
 }
 
@@ -139,14 +149,14 @@ function mapDepartmentAndPosition(gingrEmployee) {
  */
 function generateSQL(employees) {
   const sqlStatements = [];
-  
-  employees.forEach(emp => {
+
+  employees.forEach((emp) => {
     const { department, position } = mapDepartmentAndPosition(emp);
     const role = mapRole(emp.role);
-    
+
     // Generate a temporary password (they'll need to reset it)
     const tempPassword = 'TempPass@2024!';
-    
+
     const sql = `
 -- ${emp.firstName} ${emp.lastName}${emp.email ? ` (${emp.email})` : ''}
 INSERT INTO staff (
@@ -181,10 +191,10 @@ VALUES (
 )
 ON CONFLICT (email, "tenantId") DO NOTHING;
 `;
-    
+
     sqlStatements.push(sql.trim());
   });
-  
+
   return sqlStatements.join('\n\n');
 }
 
@@ -194,18 +204,20 @@ ON CONFLICT (email, "tenantId") DO NOTHING;
 async function main() {
   try {
     console.log('📥 Fetching employees from Gingr...\n');
-    
+
     // Try different API endpoints that Gingr might use
     let employees = [];
     let endpoint = '';
-    
+
     try {
       // Try /get_staff endpoint (common Gingr pattern)
       endpoint = '/get_staff';
       const response = await makeGingrRequest(endpoint);
       employees = response.staff || response.data || response;
       if (Array.isArray(employees)) {
-        console.log(`✅ Found ${employees.length} employees using ${endpoint} endpoint\n`);
+        console.log(
+          `✅ Found ${employees.length} employees using ${endpoint} endpoint\n`
+        );
       } else {
         throw new Error('Response is not an array');
       }
@@ -216,7 +228,9 @@ async function main() {
         const response = await makeGingrRequest(endpoint);
         employees = response.staff || response.data || response;
         if (Array.isArray(employees)) {
-          console.log(`✅ Found ${employees.length} employees using ${endpoint} endpoint\n`);
+          console.log(
+            `✅ Found ${employees.length} employees using ${endpoint} endpoint\n`
+          );
         } else {
           throw new Error('Response is not an array');
         }
@@ -227,7 +241,9 @@ async function main() {
           const response = await makeGingrRequest(endpoint);
           employees = response.employees || response.data || response;
           if (Array.isArray(employees)) {
-            console.log(`✅ Found ${employees.length} employees using ${endpoint} endpoint\n`);
+            console.log(
+              `✅ Found ${employees.length} employees using ${endpoint} endpoint\n`
+            );
           } else {
             throw new Error('Response is not an array');
           }
@@ -236,33 +252,37 @@ async function main() {
           console.error('   Tried: /get_staff, /staff, /get_employees');
           console.error(`   Last error: ${error3.message}`);
           console.error('\n💡 Gingr might not expose employee data via API,');
-          console.error('   or your API key may not have permission to access it.');
+          console.error(
+            '   or your API key may not have permission to access it.'
+          );
           process.exit(1);
         }
       }
     }
-    
+
     if (!employees || employees.length === 0) {
       console.log('⚠️  No employees found in Gingr');
       console.log('   This might mean:');
       console.log('   - No employees are set up in Gingr');
       console.log('   - The API endpoint structure is different');
-      console.log('   - Your API key doesn\'t have permission to access employee data');
+      console.log(
+        "   - Your API key doesn't have permission to access employee data"
+      );
       process.exit(0);
     }
-    
+
     // Display employee summary
     console.log('📊 EMPLOYEE SUMMARY');
     console.log('═══════════════════════════════\n');
     console.log(`Total Employees: ${employees.length}\n`);
-    
+
     console.log('👥 EMPLOYEES FOUND:');
     console.log('─────────────────────────────\n');
-    
+
     employees.forEach((emp, index) => {
       const { department, position } = mapDepartmentAndPosition(emp);
       const role = mapRole(emp.role);
-      
+
       console.log(`${index + 1}. ${emp.firstName} ${emp.lastName}`);
       if (emp.email) console.log(`   Email: ${emp.email}`);
       if (emp.phone) console.log(`   Phone: ${emp.phone}`);
@@ -270,31 +290,40 @@ async function main() {
       console.log(`   → Tailtown Role: ${role}`);
       console.log(`   → Department: ${department}`);
       console.log(`   → Position: ${position}`);
-      console.log(`   Status: ${emp.isActive !== false ? 'Active' : 'Inactive'}`);
+      console.log(
+        `   Status: ${emp.isActive !== false ? 'Active' : 'Inactive'}`
+      );
       console.log('');
     });
-    
+
     // Generate SQL
     console.log('\n💾 SQL TO IMPORT EMPLOYEES:');
     console.log('═══════════════════════════════\n');
-    console.log('-- IMPORTANT: Passwords must be hashed with bcrypt before inserting');
-    console.log('-- The default password "TempPass@2024!" meets all security requirements');
+    console.log(
+      '-- IMPORTANT: Passwords must be hashed with bcrypt before inserting'
+    );
+    console.log(
+      '-- The default password "TempPass@2024!" meets all security requirements'
+    );
     console.log('-- Employees should change their password on first login\n');
-    
+
     const sql = generateSQL(employees);
     console.log(sql);
-    
+
     console.log('\n\n📝 NEXT STEPS:');
     console.log('═══════════════════════════════');
     console.log('1. Review the employee list above');
     console.log('2. Hash the password "TempPass@2024!" with bcrypt');
     console.log('   Example: const bcrypt = require("bcrypt");');
-    console.log('           const hash = await bcrypt.hash("TempPass@2024!", 10);');
-    console.log('3. Replace "$2b$10$YourHashedPasswordHere" with the actual hash');
+    console.log(
+      '           const hash = await bcrypt.hash("TempPass@2024!", 10);'
+    );
+    console.log(
+      '3. Replace "$2b$10$YourHashedPasswordHere" with the actual hash'
+    );
     console.log('4. Run the SQL in your PostgreSQL database');
     console.log('5. Notify employees to log in and change their password');
     console.log('\n✅ Import complete!');
-    
   } catch (error) {
     console.error('\n❌ Error:', error.message);
     process.exit(1);

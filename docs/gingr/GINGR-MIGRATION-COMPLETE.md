@@ -146,15 +146,15 @@ All October 2025 data has been successfully migrated from Gingr to Tailtown!
 
 ---
 
-## 📝 Migration Files & Scripts
+## Migration Files & Scripts
 
 ### **Created Files**:
-1. `services/customer/src/services/gingr-api.service.ts` - API client
-2. `services/customer/src/services/gingr-transform.service.ts` - Data transformation
-3. `services/customer/src/controllers/gingr-migration.controller.ts` - Migration logic
-4. `services/customer/src/routes/gingr.routes.ts` - API endpoints
-5. `services/customer/check-migration.js` - Verification script
-6. `services/reservation-service/fix-imported-reservations.js` - Resource fix script
+1. `apps/customer-service/src/services/gingr-api.service.ts` - API client
+2. `apps/customer-service/src/services/gingr-transform.service.ts` - Data transformation
+3. `apps/customer-service/src/controllers/gingr-migration.controller.ts` - Migration logic
+4. `apps/customer-service/src/routes/gingr.routes.ts` - API endpoints
+5. `apps/customer-service/check-migration.js` - Verification script
+6. `apps/reservation-service/fix-imported-reservations.js` - Resource fix script
 
 ### **Migration Endpoints**:
 - `POST /api/gingr/test-connection` - Test Gingr API connection

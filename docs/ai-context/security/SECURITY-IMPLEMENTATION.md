@@ -93,7 +93,7 @@ GET    /health
 - **Expiration:** Token includes expiration time, frontend checks `tokenTimestamp`
 
 ### API Service Configuration
-**File:** `/frontend/src/services/api.ts`
+**File:** `/apps/frontend/src/services/api.ts`
 
 ```typescript
 // Token is automatically attached to all requests
@@ -195,9 +195,9 @@ localStorage.setItem('accessToken', 'YOUR_JWT_TOKEN')
 
 ## Documentation
 
-- **Auth Middleware:** `/services/customer/src/middleware/auth.middleware.ts`
-- **Tenant Middleware:** `/services/customer/src/middleware/tenant.middleware.ts`
-- **Security Middleware:** `/services/customer/src/middleware/security.middleware.ts`
-- **Route Configuration:** `/services/customer/src/index.ts`
-- **Frontend API Service:** `/frontend/src/services/api.ts`
-- **Auth Context:** `/frontend/src/contexts/AuthContext.tsx`
+- **Auth Middleware:** `/apps/customer-service/src/middleware/auth.middleware.ts`
+- **Tenant Middleware:** `/apps/customer-service/src/middleware/tenant.middleware.ts`
+- **Security Middleware:** `/apps/customer-service/src/middleware/security.middleware.ts`
+- **Route Configuration:** `/apps/customer-service/src/index.ts`
+- **Frontend API Service:** `/apps/frontend/src/services/api.ts`
+- **Auth Context:** `/apps/frontend/src/contexts/AuthContext.tsx`

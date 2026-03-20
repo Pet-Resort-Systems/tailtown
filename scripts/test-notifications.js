@@ -2,7 +2,7 @@
 
 /**
  * Test Notification Services
- * 
+ *
  * This script tests Twilio SMS and SendGrid email configuration
  * Run: node scripts/test-notifications.js
  */
@@ -11,7 +11,7 @@ const readline = require('readline');
 
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout
+  output: process.stdout,
 });
 
 function question(prompt) {
@@ -22,7 +22,9 @@ function question(prompt) {
 
 async function main() {
   console.log('\n🔔 Tailtown Notification Services Test\n');
-  console.log('This script will test your Twilio and SendGrid configuration.\n');
+  console.log(
+    'This script will test your Twilio and SendGrid configuration.\n'
+  );
 
   // Check environment variables
   console.log('📋 Checking configuration...\n');
@@ -34,11 +36,17 @@ async function main() {
     process.env.TWILIO_PHONE_NUMBER
   );
 
-  console.log(`SendGrid: ${sendgridConfigured ? '✅ Configured' : '❌ Not configured'}`);
-  console.log(`Twilio: ${twilioConfigured ? '✅ Configured' : '❌ Not configured'}\n`);
+  console.log(
+    `SendGrid: ${sendgridConfigured ? '✅ Configured' : '❌ Not configured'}`
+  );
+  console.log(
+    `Twilio: ${twilioConfigured ? '✅ Configured' : '❌ Not configured'}\n`
+  );
 
   if (!sendgridConfigured && !twilioConfigured) {
-    console.log('❌ No services configured. Please add credentials to .env file.');
+    console.log(
+      '❌ No services configured. Please add credentials to .env file.'
+    );
     console.log('See docs/TWILIO-SENDGRID-SETUP.md for instructions.\n');
     rl.close();
     return;
@@ -51,8 +59,10 @@ async function main() {
 
     if (testEmail && testEmail.includes('@')) {
       try {
-        const { emailService } = require('../services/customer/dist/services/email.service');
-        
+        const {
+          emailService,
+        } = require('../apps/customer-service/dist/services/email.service');
+
         await emailService.sendEmail({
           to: testEmail,
           subject: 'Test Email from Tailtown',
@@ -65,14 +75,16 @@ async function main() {
               Tailtown Pet Resort Management System<br>
               Notification Service Test
             </p>
-          `
+          `,
         });
 
         console.log('✅ Email sent successfully!');
         console.log(`   Check ${testEmail} for the test message.\n`);
       } catch (error) {
         console.error('❌ Email failed:', error.message);
-        console.log('   Check your SendGrid API key and sender verification.\n');
+        console.log(
+          '   Check your SendGrid API key and sender verification.\n'
+        );
       }
     } else {
       console.log('⏭️  Skipping email test (invalid email)\n');
@@ -82,15 +94,19 @@ async function main() {
   // Test Twilio
   if (twilioConfigured) {
     console.log('📱 Testing Twilio SMS...\n');
-    const testPhone = await question('Enter phone number to test (format: +1234567890): ');
+    const testPhone = await question(
+      'Enter phone number to test (format: +1234567890): '
+    );
 
     if (testPhone && testPhone.match(/^\+?\d{10,15}$/)) {
       try {
-        const { smsService } = require('../services/customer/dist/services/sms.service');
-        
+        const {
+          smsService,
+        } = require('../apps/customer-service/dist/services/sms.service');
+
         const result = await smsService.sendSMS({
           to: testPhone,
-          message: `✅ Tailtown SMS Test: Twilio is configured correctly! Sent at ${new Date().toLocaleTimeString()}`
+          message: `✅ Tailtown SMS Test: Twilio is configured correctly! Sent at ${new Date().toLocaleTimeString()}`,
         });
 
         if (result.success) {
@@ -113,8 +129,12 @@ async function main() {
   // Summary
   console.log('📊 Test Summary\n');
   console.log('Configuration Status:');
-  console.log(`  SendGrid: ${sendgridConfigured ? '✅ Ready' : '❌ Needs setup'}`);
-  console.log(`  Twilio: ${twilioConfigured ? '✅ Ready' : '❌ Needs setup'}\n`);
+  console.log(
+    `  SendGrid: ${sendgridConfigured ? '✅ Ready' : '❌ Needs setup'}`
+  );
+  console.log(
+    `  Twilio: ${twilioConfigured ? '✅ Ready' : '❌ Needs setup'}\n`
+  );
 
   if (!sendgridConfigured || !twilioConfigured) {
     console.log('📖 Next Steps:');
@@ -129,7 +149,7 @@ async function main() {
   rl.close();
 }
 
-main().catch(error => {
+main().catch((error) => {
   console.error('❌ Test failed:', error);
   rl.close();
   process.exit(1);

@@ -90,9 +90,9 @@ show_usage() {
 sync_reservations() {
     print_msg "Syncing reservations from Gingr..."
     
-    # Load environment variables if .env exists
-    if [ -f ".env.production" ]; then
-        export $(cat .env.production | grep -v '^#' | xargs)
+    # Load customer-service environment variables if available
+    if [ -f "apps/customer-service/.env" ]; then
+        export $(grep -v '^#' apps/customer-service/.env | xargs)
     fi
     
     node scripts/sync-gingr-reservations-prod.mjs

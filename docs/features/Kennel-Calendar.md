@@ -93,6 +93,6 @@ Potential improvements for future iterations:
 The Kennel Calendar implementation is available in the [Tailtown GitHub repository](https://github.com/moosecreates/tailtown).
 
 Key files:
-- [KennelCalendar.tsx](https://github.com/moosecreates/tailtown/blob/main/frontend/src/components/calendar/KennelCalendar.tsx)
-- [CalendarPage.tsx](https://github.com/moosecreates/tailtown/blob/main/frontend/src/pages/calendar/CalendarPage.tsx)
-- [ReservationForm.tsx](https://github.com/moosecreates/tailtown/blob/main/frontend/src/components/reservations/ReservationForm.tsx)
+- [KennelCalendar.tsx](https://github.com/moosecreates/tailtown/blob/main/apps/frontend/src/components/calendar/KennelCalendar.tsx)
+- [CalendarPage.tsx](https://github.com/moosecreates/tailtown/blob/main/apps/frontend/src/pages/calendar/CalendarPage.tsx)
+- [ReservationForm.tsx](https://github.com/moosecreates/tailtown/blob/main/apps/frontend/src/components/reservations/ReservationForm.tsx)

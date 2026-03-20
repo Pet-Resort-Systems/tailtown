@@ -39,7 +39,7 @@ Your system already has:
 ssh -i ~/ttkey root@129.212.178.244
 
 # Edit environment file
-nano /opt/tailtown/services/customer/.env
+nano /opt/tailtown/apps/customer-service/.env
 
 # Add these lines:
 SENDGRID_API_KEY=SG.xxxxxxxxxx
@@ -56,7 +56,7 @@ TWILIO_PHONE_NUMBER=+1234567890
 pm2 restart customer-service
 
 # Test it
-npm run test:notifications
+pnpm run test:notifications
 ```
 
 ---
@@ -102,10 +102,10 @@ npm run test:notifications
 
 ```bash
 # Test both services
-npm run test:notifications
+pnpm run test:notifications
 
 # Or test manually
-cd /opt/tailtown/services/customer
+cd /opt/tailtown/apps/customer-service
 
 # Test email
 node -e "require('./dist/services/email.service').emailService.sendEmail({to:'your@email.com',subject:'Test',html:'<p>It works!</p>'})"
@@ -149,7 +149,7 @@ Your API keys are:
 For detailed instructions, see:
 - **Complete Guide**: `docs/TWILIO-SENDGRID-SETUP.md`
 - **Troubleshooting**: Included in complete guide
-- **Customization**: Edit templates in `services/customer/src/services/`
+- **Customization**: Edit templates in `apps/customer-service/src/services/`
 
 ---
 

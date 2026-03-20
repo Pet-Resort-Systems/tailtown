@@ -32,7 +32,7 @@ However, Gingr's API does not expose icon/flag data. This information is only vi
 
 ```bash
 # On production server
-cd /opt/tailtown/services/customer
+cd /opt/tailtown/apps/customer-service
 
 # Upload CSV from local machine
 scp -i ~/.ssh/github_ed25519 "Reservations For Saturday, 12_20_2025.csv" root@129.212.178.244:/tmp/gingr-playgroups.csv
@@ -144,7 +144,7 @@ After importing, verify playgroup assignments:
 ssh -i ~/.ssh/github_ed25519 root@129.212.178.244
 
 # Query playgroup distribution
-cd /opt/tailtown/services/customer
+cd /opt/tailtown/apps/customer-service
 node -e "
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
@@ -193,8 +193,8 @@ Pets without playgroup flags in Gingr will be skipped during import. Their `play
 ### Error: "Module 'csv-parser' not found"
 
 ```bash
-cd /opt/tailtown/services/customer
-npm install csv-parser
+cd /opt/tailtown/apps/customer-service
+pnpm add csv-parser
 ```
 
 ### Error: "Pet not found"

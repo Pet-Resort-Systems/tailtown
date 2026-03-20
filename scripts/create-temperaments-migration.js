@@ -2,7 +2,7 @@
 
 /**
  * Create Temperaments Migration Script
- * 
+ *
  * Generates SQL migration to add temperaments from Gingr data
  */
 
@@ -12,7 +12,13 @@ const path = require('path');
 console.log('\n😊 Creating Temperaments Migration\n');
 
 // Load temperaments data
-const temperamentsPath = path.join(__dirname, '..', 'data', 'gingr-reference', 'temperaments.json');
+const temperamentsPath = path.join(
+  __dirname,
+  '..',
+  'data',
+  'gingr-reference',
+  'temperaments.json'
+);
 const temperaments = JSON.parse(fs.readFileSync(temperamentsPath, 'utf8'));
 
 console.log(`Found ${temperaments.length} temperament types\n`);
@@ -20,7 +26,15 @@ console.log(`Found ${temperaments.length} temperament types\n`);
 // Generate SQL migration
 const timestamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0];
 const migrationName = `${timestamp}_add_temperaments`;
-const migrationPath = path.join(__dirname, '..', 'services', 'customer', 'prisma', 'migrations', migrationName);
+const migrationPath = path.join(
+  __dirname,
+  '..',
+  'services',
+  'customer',
+  'prisma',
+  'migrations',
+  migrationName
+);
 
 // Create migration directory
 if (!fs.existsSync(migrationPath)) {
@@ -70,9 +84,9 @@ INSERT INTO temperament_types (name, "gingrId", "tenantId") VALUES
 temperaments.forEach((temp, index) => {
   const name = temp.label.replace(/'/g, "''");
   const gingrId = temp.value;
-  
+
   sql += `  ('${name}', '${gingrId}', 'dev')`;
-  
+
   if (index < temperaments.length - 1) {
     sql += ',\n';
   } else {
@@ -92,7 +106,7 @@ fs.writeFileSync(migrationFile, sql);
 console.log(`✅ Migration created: ${migrationName}`);
 console.log(`📁 Location: ${migrationFile}`);
 console.log(`\n📊 Temperament Types:`);
-temperaments.forEach(temp => {
+temperaments.forEach((temp) => {
   console.log(`   • ${temp.label}`);
 });
 

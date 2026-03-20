@@ -1,7 +1,7 @@
 /**
  * Database Query Performance Test
  * Tests database query performance with large datasets
- * 
+ *
  * Run with: k6 run database-query-test.js
  */
 
@@ -18,14 +18,14 @@ const errorRate = new Rate('errors');
 // Test configuration
 export const options = {
   stages: [
-    { duration: '30s', target: 20 },  // Ramp up
-    { duration: '2m', target: 20 },   // Sustained load
-    { duration: '30s', target: 0 },   // Ramp down
+    { duration: '30s', target: 20 }, // Ramp up
+    { duration: '2m', target: 20 }, // Sustained load
+    { duration: '30s', target: 0 }, // Ramp down
   ],
   thresholds: {
     pagination_query_time: ['p(95)<300'], // Pagination should be fast
-    filter_query_time: ['p(95)<500'],     // Filtering a bit slower
-    complex_query_time: ['p(95)<1000'],   // Complex queries can be slower
+    filter_query_time: ['p(95)<500'], // Filtering a bit slower
+    complex_query_time: ['p(95)<1000'], // Complex queries can be slower
   },
 };
 
@@ -62,10 +62,9 @@ export default function () {
 function testLargePagination(headers) {
   const startTime = new Date();
 
-  const response = http.get(
-    `${BASE_URL}/api/reservations?limit=250&page=1`,
-    { headers }
-  );
+  const response = http.get(`${BASE_URL}/api/reservations?limit=250&page=1`, {
+    headers,
+  });
 
   const duration = new Date() - startTime;
   paginationQueryTime.add(duration);
@@ -152,11 +151,11 @@ function testComplexQuery(headers) {
     'complex query returns sorted data': (r) => {
       const body = JSON.parse(r.body);
       if (!body.data || body.data.length < 2) return true;
-      
+
       // Verify sorting
-      const dates = body.data.map(r => new Date(r.startDate));
+      const dates = body.data.map((r) => new Date(r.startDate));
       for (let i = 1; i < dates.length; i++) {
-        if (dates[i] > dates[i-1]) return false;
+        if (dates[i] > dates[i - 1]) return false;
       }
       return true;
     },
@@ -194,12 +193,15 @@ export function handleSummary(data) {
     timestamp: new Date().toISOString(),
     metrics: {
       totalRequests: data.metrics.http_reqs.values.count,
-      paginationQueryAvg: data.metrics.pagination_query_time.values.avg.toFixed(2),
-      paginationQueryP95: data.metrics.pagination_query_time.values['p(95)'].toFixed(2),
+      paginationQueryAvg:
+        data.metrics.pagination_query_time.values.avg.toFixed(2),
+      paginationQueryP95:
+        data.metrics.pagination_query_time.values['p(95)'].toFixed(2),
       filterQueryAvg: data.metrics.filter_query_time.values.avg.toFixed(2),
       filterQueryP95: data.metrics.filter_query_time.values['p(95)'].toFixed(2),
       complexQueryAvg: data.metrics.complex_query_time.values.avg.toFixed(2),
-      complexQueryP95: data.metrics.complex_query_time.values['p(95)'].toFixed(2),
+      complexQueryP95:
+        data.metrics.complex_query_time.values['p(95)'].toFixed(2),
       errorRate: (data.metrics.errors.values.rate * 100).toFixed(2),
     },
   };
@@ -225,6 +227,10 @@ export function handleSummary(data) {
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
   return {
-    'performance/results/database-query-test-summary.json': JSON.stringify(summary, null, 2),
+    'performance/results/database-query-test-summary.json': JSON.stringify(
+      summary,
+      null,
+      2
+    ),
   };
 }

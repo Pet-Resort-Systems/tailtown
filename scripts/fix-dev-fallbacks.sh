@@ -70,8 +70,8 @@ echo ""
 
 # Rebuild TypeScript
 echo "Rebuilding TypeScript..."
-cd services/customer && npm run build > /dev/null 2>&1
-cd ../reservation-service && npm run build > /dev/null 2>&1
+cd apps/customer-service && pnpm run build > /dev/null 2>&1
+cd ../reservation-service && pnpm run build > /dev/null 2>&1
 cd ../..
 echo "✅ Build complete"
 echo ""
@@ -93,7 +93,7 @@ echo ""
 echo "Next steps:"
 echo "1. Review the changes with: git diff"
 echo "2. Add validation: if (!tenantId) throw new Error('Tenant ID required')"
-echo "3. Run tests: npm test"
+echo "3. Run tests: pnpm test"
 echo "4. Commit: git add -A && git commit -m 'security: Remove dev fallbacks'"
 echo ""
 echo "Backups saved in: $BACKUP_DIR"

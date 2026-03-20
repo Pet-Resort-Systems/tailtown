@@ -34,7 +34,7 @@ The Tailtown Pet Resort Management System includes SMS notification capabilities
 
 ### 2. Configure Environment Variables
 
-Add the following to `services/customer/.env`:
+Add the following to `apps/customer-service/.env`:
 
 ```bash
 # SMS Configuration (Twilio)
@@ -50,9 +50,9 @@ BUSINESS_PHONE=+1234567890
 ### 3. Restart the Service
 
 ```bash
-cd services/customer
+cd apps/customer-service
 source ~/.nvm/nvm.sh
-npm run dev
+pnpm run dev
 ```
 
 ## API Endpoints

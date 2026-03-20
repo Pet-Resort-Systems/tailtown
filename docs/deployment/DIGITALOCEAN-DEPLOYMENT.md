@@ -99,7 +99,7 @@
    ```
 
    This installs:
-   - Node.js 18
+   - Node.js 24
    - Nginx
    - PM2
    - Certbot
@@ -261,29 +261,29 @@ s3cmd sync /var/backups/tailtown/ s3://your-space-name/backups/
 ## 💰 Cost Breakdown
 
 ### **Starter Plan ($33/month)**
-| Service | Specs | Cost |
-|---------|-------|------|
-| Droplet | 2GB RAM, 1 vCPU | $18 |
-| Database | 1GB RAM, 10GB | $15 |
-| **Total** | | **$33** |
+| Service   | Specs           | Cost    |
+| --------- | --------------- | ------- |
+| Droplet   | 2GB RAM, 1 vCPU | $18     |
+| Database  | 1GB RAM, 10GB   | $15     |
+| **Total** |                 | **$33** |
 
 ### **Production Plan ($60/month)**
-| Service | Specs | Cost |
-|---------|-------|------|
-| Droplet | 4GB RAM, 2 vCPU | $36 |
-| Database | 1GB RAM, 10GB | $15 |
-| Spaces | 250GB storage | $5 |
-| Backups | Droplet snapshots | $4 |
-| **Total** | | **$60** |
+| Service   | Specs             | Cost    |
+| --------- | ----------------- | ------- |
+| Droplet   | 4GB RAM, 2 vCPU   | $36     |
+| Database  | 1GB RAM, 10GB     | $15     |
+| Spaces    | 250GB storage     | $5      |
+| Backups   | Droplet snapshots | $4      |
+| **Total** |                   | **$60** |
 
 ### **Enterprise Plan ($150/month)**
-| Service | Specs | Cost |
-|---------|-------|------|
-| Droplet | 8GB RAM, 4 vCPU | $84 |
-| Database | 4GB RAM, 25GB | $60 |
-| Load Balancer | High availability | $12 |
-| Spaces | 250GB storage | $5 |
-| **Total** | | **$161** |
+| Service       | Specs             | Cost     |
+| ------------- | ----------------- | -------- |
+| Droplet       | 8GB RAM, 4 vCPU   | $84      |
+| Database      | 4GB RAM, 25GB     | $60      |
+| Load Balancer | High availability | $12      |
+| Spaces        | 250GB storage     | $5       |
+| **Total**     |                   | **$161** |
 
 ---
 

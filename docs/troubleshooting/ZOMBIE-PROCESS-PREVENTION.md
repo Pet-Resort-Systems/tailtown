@@ -140,7 +140,7 @@ done
 
 ### Run Health Check Tests
 ```bash
-npm test -- scripts/__tests__/health-check.test.js
+pnpm test -- scripts/__tests__/health-check.test.js
 ```
 
 ### Manual Testing Checklist

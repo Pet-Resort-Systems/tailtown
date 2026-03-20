@@ -20,13 +20,13 @@ ERRORS_FOUND=0
 
 # Check Customer Service
 echo -e "${BLUE}Checking Customer Service...${NC}"
-cd services/customer
-ERROR_COUNT=$(npx tsc --noEmit 2>&1 | grep "error TS" | wc -l | xargs)
+cd apps/customer-service
+ERROR_COUNT=$(pnpm exec tsc --noEmit 2>&1 | grep "error TS" | wc -l | xargs)
 if [ "$ERROR_COUNT" -eq "0" ]; then
     echo -e "${GREEN}✅ Customer Service: No TypeScript errors${NC}"
 else
     echo -e "${RED}❌ Customer Service: Found $ERROR_COUNT TypeScript errors${NC}"
-    npx tsc --noEmit 2>&1 | grep "error TS" | head -10
+    pnpm exec tsc --noEmit 2>&1 | grep "error TS" | head -10
     ERRORS_FOUND=1
 fi
 cd ../..
@@ -35,13 +35,13 @@ echo ""
 
 # Check Reservation Service
 echo -e "${BLUE}Checking Reservation Service...${NC}"
-cd services/reservation-service
-ERROR_COUNT=$(npx tsc --noEmit 2>&1 | grep "error TS" | wc -l | xargs)
+cd apps/reservation-service
+ERROR_COUNT=$(pnpm exec tsc --noEmit 2>&1 | grep "error TS" | wc -l | xargs)
 if [ "$ERROR_COUNT" -eq "0" ]; then
     echo -e "${GREEN}✅ Reservation Service: No TypeScript errors${NC}"
 else
     echo -e "${RED}❌ Reservation Service: Found $ERROR_COUNT TypeScript errors${NC}"
-    npx tsc --noEmit 2>&1 | grep "error TS" | head -10
+    pnpm exec tsc --noEmit 2>&1 | grep "error TS" | head -10
     ERRORS_FOUND=1
 fi
 cd ../..
@@ -51,8 +51,8 @@ echo ""
 # Check Frontend (optional)
 if [ "$1" == "--with-frontend" ]; then
     echo -e "${BLUE}Checking Frontend...${NC}"
-    cd frontend
-    ERROR_COUNT=$(npx tsc --noEmit 2>&1 | grep "error TS" | wc -l | xargs)
+    cd apps/frontend
+    ERROR_COUNT=$(pnpm exec tsc --noEmit 2>&1 | grep "error TS" | wc -l | xargs)
     if [ "$ERROR_COUNT" -eq "0" ]; then
         echo -e "${GREEN}✅ Frontend: No TypeScript errors${NC}"
     else

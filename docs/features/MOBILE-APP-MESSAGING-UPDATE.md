@@ -34,22 +34,20 @@ Major update to the Tailtown mobile app to make messaging fully functional with 
 ### 4. **Real Data Integration**
 - ✅ Dashboard connected to actual reservations and check-ins
 - ✅ Schedule pulls from staff scheduling system
-- ✅ Task counts from real checklists
-- ✅ Unread message counts from messaging API
 
 ---
 
-## 📁 Files Created/Modified
+## Files Created/Modified
 
 ### New Files
-1. **`frontend/src/services/messagingService.ts`** (367 lines)
+1. **`apps/frontend/src/services/messagingService.ts`** (367 lines)
    - Complete messaging service with all API calls
    - Channel management, message sending, direct messages
    - Staff directory integration
    - Mock data fallbacks for development
 
 ### Modified Files
-1. **`frontend/src/pages/mobile/TeamChat.tsx`** (475 lines)
+1. **`apps/frontend/src/pages/mobile/TeamChat.tsx`** (475 lines)
    - Complete rewrite with real API integration
    - Added tabs for Channels vs Direct messages
    - Employee directory dialog
@@ -57,16 +55,16 @@ Major update to the Tailtown mobile app to make messaging fully functional with 
    - Proper message formatting with timestamps
    - Unread badges and channel colors
 
-2. **`frontend/src/services/mobileService.ts`** (195 lines)
+2. **`apps/frontend/src/services/mobileService.ts`** (195 lines)
    - Updated to use real API endpoints
    - Fallback logic for missing endpoints
    - Aggregates data from multiple sources
    - Connected to messaging unread count API
 
 ### Existing Backend (Already in Place)
-- **`services/customer/src/controllers/messaging.controller.ts`** - Messaging API
-- **`services/customer/src/routes/messaging.routes.ts`** - Messaging routes
-- Routes registered in `services/customer/src/index.ts` at line 441
+- **`apps/customer-service/src/controllers/messaging.controller.ts`** - Messaging API
+- **`apps/customer-service/src/routes/messaging.routes.ts`** - Messaging routes
+- Routes registered in `apps/customer-service/src/index.ts` at line 441
 
 ---
 
@@ -206,10 +204,10 @@ GET    /api/announcements                         - Announcements
 
 ### 1. Commit Changes
 ```bash
-cd /Users/robweinstein/CascadeProjects/tailtown
-git add frontend/src/services/messagingService.ts
-git add frontend/src/pages/mobile/TeamChat.tsx
-git add frontend/src/services/mobileService.ts
+cd /Users/danielgutierrezmunoz/dev/code/companies/tailtown-pet-resort/tailtown-project/codex-implement-pnpm-monorepo-migration-plan_tailtown-daguttt
+git add apps/frontend/src/services/messagingService.ts
+git add apps/frontend/src/pages/mobile/TeamChat.tsx
+git add apps/frontend/src/services/mobileService.ts
 git add docs/MOBILE-APP-MESSAGING-UPDATE.md
 git commit -m "feat: mobile app messaging with real data and employee directory"
 ```
@@ -224,7 +222,7 @@ gh pr create --title "Mobile App: Real Messaging & Employee Directory" \
 
 ### 3. Deploy
 - Merge PR to main
-- Deploy frontend: `npm run build` in frontend/
+- Deploy frontend: `pnpm run build` in `apps/frontend/`
 - No backend changes needed (messaging API already deployed)
 
 ### 4. Verify
@@ -298,8 +296,8 @@ gh pr create --title "Mobile App: Real Messaging & Employee Directory" \
 
 ## 🔗 Related Documentation
 - [Mobile App MVP Documentation](./changelog/2025-11-14-mobile-web-app-mvp.md)
-- [Messaging API Documentation](../services/customer/src/controllers/messaging.controller.ts)
-- [Staff Service Documentation](../frontend/src/services/staffService.ts)
+- [Messaging API Documentation](../../apps/customer-service/src/controllers/messaging.controller.ts)
+- [Staff Service Documentation](../../apps/frontend/src/services/staffService.ts)
 
 ---
 

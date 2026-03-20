@@ -29,29 +29,33 @@ jobs:
 
     defaults:
       run:
-        working-directory: services/customer
+        working-directory: apps/customer-service
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: "20.19.0"
-          cache: "npm"
-          cache-dependency-path: services/customer/package-lock.json
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Setup test database
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/customer_test
         run: |
           echo "Setting up test database..."
-          npx prisma generate
-          npx prisma migrate deploy
+          pnpm exec prisma generate
+          pnpm exec prisma migrate deploy
           echo "Test database ready"
 
       - name: Run tenant isolation tests
@@ -61,7 +65,7 @@ jobs:
           JWT_SECRET: test-secret-key-for-ci
         run: |
           echo "Running comprehensive tenant isolation tests..."
-          npm test -- tenant-isolation-comprehensive --watchAll=false --verbose --forceExit
+          pnpm test -- tenant-isolation-comprehensive --watchAll=false --verbose --forceExit
 
       - name: Run middleware tests
         env:
@@ -69,7 +73,7 @@ jobs:
           NODE_ENV: test
         run: |
           echo "Running tenant middleware tests..."
-          npm test -- tenant.middleware.test --watchAll=false --verbose
+          pnpm test -- tenant.middleware.test --watchAll=false --verbose
         continue-on-error: true
 
       - name: Generate test coverage report
@@ -79,7 +83,7 @@ jobs:
           JWT_SECRET: test-secret-key-for-ci
         run: |
           echo "Generating coverage report for tenant isolation..."
-          npm test -- tenant-isolation --coverage --watchAll=false --collectCoverageFrom='src/middleware/tenant.middleware.ts' --collectCoverageFrom='src/controllers/**/*.ts'
+          pnpm test -- tenant-isolation --coverage --watchAll=false --collectCoverageFrom='src/middleware/tenant.middleware.ts' --collectCoverageFrom='src/controllers/**/*.ts'
         continue-on-error: true
 
       - name: Upload coverage to artifacts
@@ -87,7 +91,7 @@ jobs:
         if: always()
         with:
           name: tenant-isolation-coverage
-          path: services/customer/coverage/
+          path: apps/customer-service/coverage/
           retention-days: 30
         continue-on-error: true
 

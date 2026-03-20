@@ -1,0 +1,3258 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "darwin-arm64"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Customer {
+  id               String                  @id @default(uuid())
+  tenantId         String                  @default("dev")
+  email            String
+  firstName        String
+  lastName         String
+  phone            String?
+  alternatePhone   String?
+  address          String?
+  city             String?
+  state            String?
+  zipCode          String?
+  notes            String?
+  portalEnabled    Boolean                 @default(true)
+  // Customer portal authentication
+  passwordHash     String?                 @map("password_hash") // Hashed password for booking portal login
+  resetToken       String?                 @map("reset_token") // Password reset token
+  resetTokenExpiry DateTime?               @map("reset_token_expiry") // Token expiration time
+  lastPortalLogin  DateTime?               @map("last_portal_login") // Last successful portal login
+  preferredContact ContactMethod            @default(EMAIL)
+  emergencyContact String?
+  emergencyPhone   String?
+  vatTaxId         String?
+  referralSource   String?
+  tags             String[]                @default([])
+  icon             String?                 // Customer avatar icon (person, face, smile, etc.)
+  iconColor        String?                 // Customer avatar color (blue, green, purple, etc.)
+  customerIcons    Json?                   // Array of icon IDs for quick visual reference (VIP, payment issues, etc.)
+  iconNotes        Json?                   // Custom notes for generic flag icons
+  externalId       String?                 // ID from external system (Gingr, etc.) for migration tracking
+  veterinarianId   String?                 // Link to preferred veterinarian
+  permanentCouponId String?                // Link to permanent discount coupon (military, senior, etc.)
+  permanentCoupon   Coupon?                @relation("CustomerPermanentCoupon", fields: [permanentCouponId], references: [id], onDelete: SetNull)
+  isActive         Boolean                 @default(true)
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+  documents        Document[]
+  invoices         Invoice[]
+  notifications    NotificationPreference?
+  payments         Payment[]
+  pets             Pet[]
+  reservations     Reservation[]
+  groomerAppointments GroomerAppointment[] @relation("CustomerGroomerAppointments")
+  groomerPreferences  GroomerPreference[]  @relation("CustomerGroomerPreferences")
+  classEnrollments    ClassEnrollment[]    @relation("CustomerClassEnrollments")
+  classWaitlist       ClassWaitlist[]      @relation("CustomerClassWaitlist")
+  waitlistEntries     WaitlistEntry[]
+  reportCards         ReportCard[]
+  tips                Tip[]
+  standingReservations StandingReservation[]
+  paymentMethods       CustomerPaymentMethod[]
+
+  @@index([firstName, lastName], map: "customers_name_search_idx")
+  @@index([email], map: "customers_email_search_idx")
+  @@index([phone], map: "customers_phone_search_idx")
+  @@unique([tenantId, email], map: "customers_tenant_email_unique")
+  @@index([tenantId, lastName, firstName], map: "customers_tenant_name_idx")
+  @@index([tenantId, email], map: "customers_tenant_email_idx")
+  @@unique([tenantId, id], map: "customers_tenant_id_unique")
+  @@map("customers")
+}
+
+model Pet {
+  id                 String          @id @default(uuid())
+  tenantId           String          @default("dev")
+  name               String
+  type               PetType
+  breed              String?
+  color              String?
+  birthdate          DateTime?
+  weight             Float?
+  gender             Gender?
+  isNeutered         Boolean         @default(false)
+  microchipNumber    String?
+  rabiesTagNumber    String?
+  specialNeeds       String?
+  notes              String?         // General notes from Gingr
+  foodNotes          String?
+  medicationNotes    String?
+  behaviorNotes      String?
+  allergies          String?
+  idealPlayGroup     PlayGroupType?
+  
+  // Comprehensive Compatibility System (from Gingr flags)
+  playgroupCompatibility PlaygroupCompatibility?
+  specialRequirements    SpecialRequirement[]    @default([])
+  compatibilityNotes     String?
+  healthFlags            Json?                    // Array of health flag objects from Gingr
+  behaviorFlags          Json?                    // Array of behavior flag objects from Gingr
+  aggressionFlags        Json?                    // Array of aggression flag objects from Gingr
+  groomingPreferences    Json?                    // Grooming preferences from Gingr
+  staffRequirements      Json?                    // Staff requirements from Gingr
+  
+  vaccinationStatus  Json?
+  vaccineExpirations Json?
+  vaccineRecordFiles Json?           // Array of uploaded vaccine record files
+  vetName            String?         // Legacy field - kept for backward compatibility
+  vetPhone           String?         // Legacy field - kept for backward compatibility
+  veterinarianId     String?         // Link to veterinarians table
+  
+  // Emergency contact (separate from owner, e.g., spouse, pet sitter, neighbor)
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  emergencyContactRelation String?   // e.g., "Spouse", "Pet Sitter", "Neighbor"
+  
+  profilePhoto       String?
+  petIcons           Json?           // Array of icon IDs for quick visual reference
+  iconNotes          Json?           // Custom notes for generic flag icons
+  externalId         String?         // ID from external system (Gingr, etc.) for migration tracking
+  
+  // Additional Gingr fields
+  isVip              Boolean         @default(false) // VIP status from Gingr
+  temperament        String?         // Temperament description (Playful, Shy, Aggressive, etc.)
+  feedingSchedule    String?         // Feeding schedule (AM/PM times and amounts)
+  feedingMethod      String?         // How to feed (bowl, slow feeder, hand feed, etc.)
+  foodType           String?         // Type of food (dry, wet, raw, prescription, etc.)
+  nextVaccineDate    DateTime?       // Next immunization expiration date
+  evaluationCategories String?       // Behavior evaluation categories
+  evaluationNotes    String?         // Behavior evaluation notes
+  incidentCount      Int             @default(0) // Number of behavioral incidents
+  createdBy          String?         // Staff member who created the record
+  
+  isActive           Boolean         @default(true)
+  isPickyEater       Boolean         @default(false) // Flag for picky eater tracking
+  deactivatedAt      DateTime?       // Date when pet was deactivated (e.g., passed away)
+  deactivationReason String?         // Optional reason for deactivation
+  lastCheckIn        DateTime?
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  customerId         String
+  checkIns           CheckIn[]
+  medicalRecords     MedicalRecord[]
+  owner              Customer        @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  reservations       Reservation[]
+  groomerAppointments GroomerAppointment[] @relation("PetGroomerAppointments")
+  groomerPreferences  GroomerPreference[]  @relation("PetGroomerPreferences")
+  classEnrollments    ClassEnrollment[]    @relation("PetClassEnrollments")
+  sessionAttendance   SessionAttendance[]  @relation("PetSessionAttendance")
+  classWaitlist       ClassWaitlist[]      @relation("PetClassWaitlist")
+  waitlistEntries     WaitlistEntry[]
+  reportCards         ReportCard[]
+  standingReservations StandingReservation[]
+  feedingLogs         FeedingLog[]
+  medicationLogs      MedicationLog[]
+  medications         PetMedication[]
+  incidents           Incident[]
+
+  @@index([customerId], map: "pets_customer_id_idx")
+  @@index([isActive, type], map: "pets_active_type_idx")
+  @@index([lastCheckIn], map: "pets_last_checkin_idx")
+  @@index([tenantId, customerId], map: "pets_tenant_customer_idx")
+  @@index([veterinarianId], map: "pets_veterinarian_id_idx")
+  @@unique([tenantId, externalId], map: "pets_tenant_external_id_unique")
+  @@map("pets")
+}
+
+model Reservation {
+  id                 String             @id @default(uuid())
+  tenantId           String             @default("dev")
+  orderNumber        String?
+  startDate          DateTime
+  endDate            DateTime
+  status             ReservationStatus  @default(PENDING)
+  notes              String?
+  staffNotes         String?
+  checkInWindow      Int?
+  isRecurring        Boolean            @default(false)
+  recurringPattern   String?
+  preChecked         Boolean            @default(false)
+  checkInDate        DateTime?
+  checkOutDate       DateTime?
+  earlyDropOff       Boolean            @default(false)
+  latePickup         Boolean            @default(false)
+  customPickupPerson String?
+  confirmedBy        String?
+  cancelReason       String?
+  cancelDate         DateTime?
+  externalId         String?            // ID from external system (Gingr, etc.) for migration tracking
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  customerId         String
+  petId              String
+  serviceId          String
+  resourceId         String?
+  staffAssignedId    String?
+  checkIns           CheckIn[]
+  invoice            Invoice?
+  addOnServices      ReservationAddOn[]
+  customer           Customer           @relation(fields: [customerId], references: [id])
+  pet                Pet                @relation(fields: [petId], references: [id])
+  resource           Resource?          @relation(fields: [resourceId], references: [id])
+  service            Service            @relation(fields: [serviceId], references: [id])
+  staffAssigned      Staff?             @relation(fields: [staffAssignedId], references: [id])
+  waitlistConversions WaitlistEntry[]   @relation("ConvertedReservation")
+  reportCards        ReportCard[]
+
+  @@index([startDate, endDate], map: "reservations_date_range_idx")
+  @@index([status, startDate], map: "reservations_status_date_idx")
+  @@index([customerId, status], map: "reservations_customer_status_idx")
+  @@unique([tenantId, orderNumber], map: "reservations_tenant_order_unique")
+  @@index([tenantId, startDate, endDate], map: "reservations_tenant_date_range_idx")
+  @@index([tenantId, status, startDate], map: "reservations_tenant_status_date_idx")
+  @@index([tenantId, customerId, status], map: "reservations_tenant_customer_status_idx")
+  @@unique([tenantId, id], map: "reservations_tenant_id_unique")
+  @@map("reservations")
+}
+
+// ============================================
+// STANDING RESERVATIONS (Recurring Templates)
+// ============================================
+
+enum RecurrenceFrequency {
+  DAILY
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
+}
+
+model StandingReservation {
+  id                String              @id @default(uuid())
+  tenantId          String              @default("dev")
+  customerId        String
+  customer          Customer            @relation(fields: [customerId], references: [id])
+  petId             String
+  pet               Pet                 @relation(fields: [petId], references: [id])
+  serviceId         String
+  service           Service             @relation(fields: [serviceId], references: [id])
+  resourceId        String?
+  resource          Resource?           @relation(fields: [resourceId], references: [id])
+  staffAssignedId   String?
+  staffAssigned     Staff?              @relation(fields: [staffAssignedId], references: [id])
+  
+  // Recurrence settings
+  name              String              // e.g., "Weekly Daycare - Buddy"
+  frequency         RecurrenceFrequency
+  daysOfWeek        Int[]               // 0=Sunday, 1=Monday, etc. For weekly/biweekly
+  dayOfMonth        Int?                // For monthly (1-31)
+  startTime         String              // e.g., "09:00"
+  endTime           String              // e.g., "17:00"
+  
+  // Date range
+  effectiveFrom     DateTime            // When this standing reservation starts
+  effectiveUntil    DateTime?           // Optional end date (null = indefinite)
+  
+  // Options
+  notes             String?
+  isActive          Boolean             @default(true)
+  autoConfirm       Boolean             @default(false) // Auto-confirm generated reservations
+  generateAheadDays Int                 @default(30)    // How many days ahead to generate
+  
+  // Tracking
+  lastGeneratedDate DateTime?           // Last date reservations were generated up to
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  // Generated reservations link
+  generatedReservations StandingReservationInstance[]
+
+  @@index([tenantId, customerId], map: "standing_reservations_tenant_customer_idx")
+  @@index([tenantId, isActive], map: "standing_reservations_tenant_active_idx")
+  @@index([tenantId, effectiveFrom, effectiveUntil], map: "standing_reservations_tenant_dates_idx")
+  @@map("standing_reservations")
+}
+
+model StandingReservationInstance {
+  id                    String              @id @default(uuid())
+  tenantId              String              @default("dev")
+  standingReservationId String
+  standingReservation   StandingReservation @relation(fields: [standingReservationId], references: [id], onDelete: Cascade)
+  reservationId         String?             // Link to actual reservation (null if skipped/cancelled)
+  scheduledDate         DateTime            // The date this instance was scheduled for
+  status                String              @default("PENDING") // PENDING, GENERATED, SKIPPED, CANCELLED
+  skipReason            String?             // Reason if skipped
+  createdAt             DateTime            @default(now())
+
+  @@unique([standingReservationId, scheduledDate], map: "standing_instance_unique")
+  @@index([tenantId, scheduledDate], map: "standing_instances_tenant_date_idx")
+  @@map("standing_reservation_instances")
+}
+
+// ============================================
+// FEEDING & MEDICATION TRACKING
+// ============================================
+
+enum MealTime {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+}
+
+// Feeding log for tracking meal consumption (0-4 rating)
+model FeedingLog {
+  id            String    @id @default(uuid())
+  tenantId      String    @default("dev")
+  petId         String
+  pet           Pet       @relation(fields: [petId], references: [id], onDelete: Cascade)
+  reservationId String?   // Optional link to reservation
+  date          DateTime  // Date of the meal
+  mealTime      MealTime  // BREAKFAST, LUNCH, DINNER, SNACK
+  rating        Int       // 0=didn't eat, 1=ate little, 2=ate half, 3=ate most, 4=ate all
+  notes         String?   // Optional notes about the meal
+  foodType      String?   // What food was given
+  staffId       String    // Who logged this
+  staff         Staff     @relation(fields: [staffId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([petId, date, mealTime], map: "feeding_log_unique")
+  @@index([tenantId, date], map: "feeding_logs_tenant_date_idx")
+  @@index([tenantId, petId, date], map: "feeding_logs_tenant_pet_date_idx")
+  @@index([staffId], map: "feeding_logs_staff_idx")
+  @@map("feeding_logs")
+}
+
+// Pet medication schedule (what medications a pet needs)
+model PetMedication {
+  id                   String              @id @default(uuid())
+  tenantId             String              @default("dev")
+  petId                String
+  pet                  Pet                 @relation(fields: [petId], references: [id], onDelete: Cascade)
+  medicationName       String
+  dosage               String
+  frequency            String              // e.g., "twice daily", "every 8 hours"
+  administrationMethod String              // e.g., "oral", "topical", "injection"
+  timeOfDay            String[]            // e.g., ["08:00", "20:00"]
+  withFood             Boolean             @default(false)
+  specialInstructions  String?
+  startDate            DateTime?
+  endDate              DateTime?
+  prescribingVet       String?
+  isActive             Boolean             @default(true)
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  logs                 MedicationLog[]
+
+  @@index([tenantId, petId, isActive], map: "pet_medications_tenant_pet_active_idx")
+  @@map("pet_medications")
+}
+
+// Medication administration log
+model MedicationLog {
+  id              String        @id @default(uuid())
+  tenantId        String        @default("dev")
+  petId           String
+  pet             Pet           @relation(fields: [petId], references: [id], onDelete: Cascade)
+  medicationId    String
+  medication      PetMedication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+  reservationId   String?       // Optional link to reservation
+  scheduledTime   DateTime      // When medication was supposed to be given
+  administeredAt  DateTime?     // When medication was actually given (null if missed)
+  wasAdministered Boolean       @default(false)
+  staffId         String        // Who administered or logged this
+  staff           Staff         @relation(fields: [staffId], references: [id])
+  notes           String?       // Any notes about administration
+  skippedReason   String?       // Reason if medication was skipped
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([tenantId, scheduledTime], map: "medication_logs_tenant_time_idx")
+  @@index([tenantId, petId, scheduledTime], map: "medication_logs_tenant_pet_time_idx")
+  @@index([staffId], map: "medication_logs_staff_idx")
+  @@index([medicationId], map: "medication_logs_medication_idx")
+  @@map("medication_logs")
+}
+
+// Incident/Injury reporting
+model Incident {
+  id              String          @id @default(uuid())
+  tenantId        String          @default("dev")
+  petId           String
+  pet             Pet             @relation(fields: [petId], references: [id], onDelete: Cascade)
+  reservationId   String?
+  
+  // Incident details
+  incidentType    IncidentType
+  severity        IncidentSeverity
+  occurredAt      DateTime
+  location        String?         // Where in facility
+  description     String          // Detailed description
+  
+  // Parties involved
+  reportedById    String          // Staff who reported
+  reportedBy      Staff           @relation("IncidentReporter", fields: [reportedById], references: [id])
+  witnessedById   String?         // Optional witness
+  witnessedBy     Staff?          @relation("IncidentWitness", fields: [witnessedById], references: [id])
+  otherPetId      String?         // If another pet was involved
+  
+  // Injury specifics (if applicable)
+  injuryType      String?         // Bite, scratch, fall, etc.
+  bodyPart        String?         // Where on pet
+  treatmentGiven  String?         // First aid, vet visit, etc.
+  vetVisitRequired Boolean        @default(false)
+  vetNotified     Boolean         @default(false)
+  
+  // Owner notification
+  ownerNotified   Boolean         @default(false)
+  ownerNotifiedAt DateTime?
+  ownerNotifiedBy String?
+  ownerResponse   String?         // Owner's reaction/instructions
+  
+  // Photos
+  photos          Json?           // Array of photo URLs
+  
+  // Resolution
+  status          IncidentStatus  @default(OPEN)
+  resolutionNotes String?
+  resolvedAt      DateTime?
+  resolvedById    String?
+  
+  // Follow-up
+  followUpRequired Boolean        @default(false)
+  followUpNotes   String?
+  followUpDate    DateTime?
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([tenantId, occurredAt], map: "incidents_tenant_date_idx")
+  @@index([tenantId, petId], map: "incidents_tenant_pet_idx")
+  @@index([tenantId, status], map: "incidents_tenant_status_idx")
+  @@map("incidents")
+}
+
+enum IncidentType {
+  INJURY
+  ILLNESS
+  BEHAVIOR
+  ESCAPE_ATTEMPT
+  PROPERTY_DAMAGE
+  ALTERCATION
+  OTHER
+}
+
+enum IncidentSeverity {
+  LOW       // Minor, no treatment needed
+  MEDIUM    // Some treatment, monitor
+  HIGH      // Vet visit recommended
+  CRITICAL  // Immediate vet attention
+}
+
+enum IncidentStatus {
+  OPEN
+  INVESTIGATING
+  OWNER_NOTIFIED
+  RESOLVED
+  CLOSED
+}
+
+// Daily staff handoff notes between shifts
+model ShiftNote {
+  id              String          @id @default(uuid())
+  tenantId        String          @default("dev")
+  
+  // Shift info
+  shiftDate       DateTime        // Date of shift
+  shiftType       ShiftType       // MORNING, AFTERNOON, EVENING, OVERNIGHT
+  
+  // Author
+  staffId         String
+  staff           Staff           @relation("ShiftNoteAuthor", fields: [staffId], references: [id])
+  
+  // Content
+  generalNotes    String?         // General notes for next shift
+  urgentItems     String?         // Urgent items that need immediate attention
+  petUpdates      Json?           // Array of {petId, petName, note} for specific pet updates
+  maintenanceItems String?        // Facility maintenance notes
+  supplyNotes     String?         // Supplies running low, etc.
+  
+  // Acknowledgment
+  acknowledgedById String?
+  acknowledgedBy   Staff?         @relation("ShiftNoteAcknowledger", fields: [acknowledgedById], references: [id])
+  acknowledgedAt   DateTime?
+  
+  // Status
+  isUrgent        Boolean         @default(false)
+  isRead          Boolean         @default(false)
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([tenantId, shiftDate], map: "shift_notes_tenant_date_idx")
+  @@index([tenantId, shiftType, shiftDate], map: "shift_notes_tenant_type_date_idx")
+  @@unique([tenantId, shiftDate, shiftType, staffId], map: "shift_notes_unique")
+  @@map("shift_notes")
+}
+
+enum ShiftType {
+  MORNING
+  AFTERNOON
+  EVENING
+  OVERNIGHT
+}
+
+model Service {
+  id              String             @id @default(uuid())
+  tenantId        String             @default("dev")
+  name            String
+  description     String?
+  duration        Int
+  price           Float
+  taxable         Boolean            @default(true)
+  color           String?
+  serviceCategory ServiceCategory
+  isActive        Boolean            @default(true)
+  requiresStaff   Boolean            @default(false)
+  notes           String?
+  externalId      String?            // ID from external system (Gingr, etc.) for migration tracking
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  capacityLimit   Int                @default(0)
+  availableAddOns AddOnService[]
+  priceRules      PriceRuleService[]
+  reservations    Reservation[]
+  groomerAppointments GroomerAppointment[]
+  waitlistEntries WaitlistEntry[]
+  standingReservations StandingReservation[]
+
+  @@index([tenantId, isActive], map: "services_tenant_active_idx")
+  @@index([tenantId, name], map: "services_tenant_name_idx")
+  @@map("services")
+}
+
+model AddOnService {
+  id                String             @id @default(uuid())
+  tenantId          String             @default("dev")
+  name              String
+  description       String?
+  price             Float
+  taxable           Boolean            @default(true)
+  duration          Int?
+  serviceId         String
+  isActive          Boolean            @default(true)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  service           Service            @relation(fields: [serviceId], references: [id])
+  reservationAddOns ReservationAddOn[]
+
+  @@index([tenantId, serviceId, isActive], map: "addon_services_tenant_service_active_idx")
+  @@map("addon_services")
+}
+
+model ReservationAddOn {
+  id            String       @id @default(uuid())
+  tenantId      String       @default("dev")
+  reservationId String
+  addOnId       String
+  price         Float
+  notes         String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  addOn         AddOnService @relation(fields: [addOnId], references: [id])
+  reservation   Reservation  @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, reservationId], map: "reservation_addons_tenant_reservation_idx")
+  @@map("reservation_addons")
+}
+
+model Resource {
+  id                  String                 @id @default(uuid())
+  tenantId            String                 @default("dev")
+  name                String
+  type                ResourceType
+  description         String?
+  capacity            Int                    @default(1)
+  price               Float?                 // Nightly/daily rate for this resource
+  taxable             Boolean                @default(true)
+  isActive            Boolean                @default(true)
+  notes               String?
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+  attributes          Json?
+  availability        String?
+  location            String?
+  maintenanceSchedule String?
+  lastCleanedAt       DateTime?
+  maintenanceStatus   String?
+  suiteNumber         Int?
+  reservations        Reservation[]
+  waitlistEntries     WaitlistEntry[]
+  availabilitySlots   ResourceAvailability[]
+  standingReservations StandingReservation[]
+
+  @@index([tenantId, type, isActive], map: "resources_tenant_type_active_idx")
+  @@index([tenantId, name], map: "resources_tenant_name_idx")
+  @@map("resources")
+}
+
+model ResourceAvailability {
+  id         String             @id @default(uuid())
+  tenantId   String             @default("dev")
+  resourceId String
+  startTime  DateTime
+  endTime    DateTime
+  status     AvailabilityStatus
+  reason     String?
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+  resource   Resource           @relation(fields: [resourceId], references: [id])
+
+  @@index([tenantId, resourceId, startTime, endTime], map: "resource_availability_tenant_range_idx")
+  @@map("resource_availability")
+}
+
+model Staff {
+  id                   String              @id @default(uuid())
+  tenantId             String              @default("dev")
+  firstName            String
+  lastName             String
+  email                String
+  phone                String?
+  role                 String
+  workSchedule         Json?
+  specialties          String[]            @default([])
+  isActive             Boolean             @default(true)
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  department           String?
+  hireDate             DateTime?
+  lastLogin            DateTime?
+  password             String
+  position             String?
+  resetToken           String?
+  resetTokenExpiry     DateTime?
+  profilePhoto         String?
+  failedLoginAttempts  Int                 @default(0)
+  lockedUntil          DateTime?
+  lastFailedLogin      DateTime?
+  address              String?
+  city                 String?
+  state                String?
+  zipCode              String?
+  groomingSkills       Json?    @map("grooming_skills")
+  maxAppointmentsPerDay Int?    @map("max_appointments_per_day")
+  averageServiceTime   Int?    @map("average_service_time")
+  assignedReservations Reservation[]
+  availability         StaffAvailability[]
+  schedules            StaffSchedule[]
+  timeOff              StaffTimeOff[]
+  groomerAppointments  GroomerAppointment[] @relation("GroomerAppointments")
+  groomerPreferences   GroomerPreference[]  @relation("GroomerPreferences")
+  groomerBreaks        GroomerBreak[]       @relation("GroomerBreaks")
+  instructorClasses    TrainingClass[]      @relation("InstructorClasses")
+  refreshTokens        RefreshToken[]       @relation("StaffRefreshTokens")
+  
+  // Communication relations
+  channelMemberships   ChannelMember[]
+  dmParticipations     DMParticipant[]
+  sentChannelMessages  ChannelMessage[]     @relation("SentChannelMessages")
+  sentDirectMessages   DirectMessage[]      @relation("SentDirectMessages")
+  messageReactions     MessageReaction[]
+  messageMentions      MessageMention[]
+  uploadedAttachments  MessageAttachment[]
+  messageReadReceipts  MessageReadReceipt[]
+  pinnedMessages       PinnedMessage[]
+  typingIndicators     TypingIndicator[]
+  communicationPrefs   CommunicationNotificationPreference?
+  groomerWaitlist      WaitlistEntry[]      @relation("GroomerWaitlist")
+  createdReportCards   ReportCard[]         @relation("StaffCreatedReportCards")
+  uploadedPhotos       ReportCardPhoto[]    @relation("StaffUploadedPhotos")
+  groomerTips          Tip[]                @relation("GroomerTips")
+  commissions          StaffCommission[]    @relation("StaffCommissions")
+  standingReservations StandingReservation[]
+  scheduleTemplates    ScheduleTemplate[]   @relation("StaffScheduleTemplates")
+  feedingLogs          FeedingLog[]
+  medicationLogs       MedicationLog[]
+  incidentsReported    Incident[]           @relation("IncidentReporter")
+  incidentsWitnessed   Incident[]           @relation("IncidentWitness")
+  shiftNotesAuthored   ShiftNote[]          @relation("ShiftNoteAuthor")
+  shiftNotesAcknowledged ShiftNote[]        @relation("ShiftNoteAcknowledger")
+
+  @@unique([tenantId, email], map: "staff_tenant_email_unique")
+  @@index([tenantId, isActive], map: "staff_tenant_active_idx")
+  @@map("staff")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  staffId   String
+  staff     Staff    @relation("StaffRefreshTokens", fields: [staffId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  isRevoked Boolean  @default(false)
+  
+  @@index([staffId], map: "refresh_tokens_staff_id_idx")
+  @@index([token], map: "refresh_tokens_token_idx")
+  @@index([expiresAt], map: "refresh_tokens_expires_at_idx")
+  @@map("refresh_tokens")
+}
+
+model StaffAvailability {
+  id             String    @id @default(uuid())
+  tenantId       String    @default("dev")
+  staffId        String
+  dayOfWeek      Int
+  startTime      String
+  endTime        String
+  isRecurring    Boolean   @default(true)
+  effectiveFrom  DateTime?
+  effectiveUntil DateTime?
+  isAvailable    Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  staff          Staff     @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@index([staffId, dayOfWeek], map: "staff_availability_staff_day_idx")
+  @@index([dayOfWeek, isAvailable], map: "staff_availability_day_status_idx")
+  @@index([tenantId, staffId, dayOfWeek], map: "staff_availability_tenant_staff_day_idx")
+  @@map("staff_availability")
+}
+
+model StaffTimeOff {
+  id           String        @id @default(uuid())
+  tenantId     String        @default("dev")
+  staffId      String
+  startDate    DateTime
+  endDate      DateTime
+  type         TimeOffType
+  status       TimeOffStatus @default(PENDING)
+  reason       String?
+  notes        String?
+  approvedById String?
+  approvedDate DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  staff        Staff         @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@index([staffId, status], map: "staff_time_off_staff_status_idx")
+  @@index([startDate, endDate], map: "staff_time_off_date_range_idx")
+  @@index([tenantId, staffId, status], map: "staff_time_off_tenant_staff_status_idx")
+  @@map("staff_time_off")
+}
+
+model StaffSchedule {
+  id               String         @id @default(uuid())
+  tenantId         String         @default("dev")
+  staffId          String
+  date             DateTime
+  startTime        String
+  endTime          String
+  status           ScheduleStatus @default(SCHEDULED)
+  notes            String?
+  location         String?
+  startingLocation String?
+  role             String?
+  createdById      String?
+  updatedById      String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  staff            Staff          @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@index([staffId, date], map: "staff_schedules_staff_date_idx")
+  @@index([date, status])
+  @@index([tenantId, staffId, date], map: "staff_schedules_tenant_staff_date_idx")
+  @@map("staff_schedules")
+}
+
+// ============================================
+// RECURRING SCHEDULE TEMPLATES
+// ============================================
+
+enum ScheduleRotationType {
+  WEEKLY       // Same schedule every week
+  BIWEEKLY     // Alternates every 2 weeks
+  MONTHLY      // Same schedule every month
+  CUSTOM       // Custom rotation pattern
+}
+
+model ScheduleTemplate {
+  id                String               @id @default(uuid())
+  tenantId          String               @default("dev")
+  staffId           String
+  staff             Staff                @relation("StaffScheduleTemplates", fields: [staffId], references: [id], onDelete: Cascade)
+  name              String               // e.g., "Regular Week", "Week A", "Week B"
+  rotationType      ScheduleRotationType @default(WEEKLY)
+  rotationWeeks     Int                  @default(1) // For BIWEEKLY/CUSTOM: number of weeks in rotation
+  currentRotation   Int                  @default(0) // Which week of rotation we're on (0-indexed)
+  isActive          Boolean              @default(true)
+  effectiveFrom     DateTime             // When this template starts being used
+  effectiveUntil    DateTime?            // Optional end date
+  generateAheadDays Int                  @default(14) // How many days ahead to generate schedules
+  lastGeneratedDate DateTime?            // Last date schedules were generated to
+  skipHolidays      Boolean              @default(true) // Skip generating on holidays
+  notes             String?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  entries           ScheduleTemplateEntry[]
+
+  @@index([tenantId, staffId, isActive], map: "schedule_templates_tenant_staff_active_idx")
+  @@map("schedule_templates")
+}
+
+model ScheduleTemplateEntry {
+  id           String           @id @default(uuid())
+  templateId   String
+  template     ScheduleTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  dayOfWeek    Int              // 0=Sunday, 1=Monday, ... 6=Saturday
+  rotationWeek Int              @default(0) // Which week of rotation (0 for weekly, 0-1 for biweekly, etc.)
+  startTime    String           // e.g., "09:00"
+  endTime      String           // e.g., "17:00"
+  location     String?
+  role         String?
+  notes        String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([templateId, dayOfWeek], map: "schedule_template_entries_template_day_idx")
+  @@map("schedule_template_entries")
+}
+
+model BusinessHoliday {
+  id          String   @id @default(uuid())
+  tenantId    String   @default("dev")
+  name        String   // e.g., "Christmas Day", "Thanksgiving"
+  date        DateTime // Specific date of the holiday
+  isRecurring Boolean  @default(false) // If true, repeats yearly on same month/day
+  isClosed    Boolean  @default(true) // If true, business is closed (skip schedules)
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([tenantId, date], map: "business_holidays_tenant_date_unique")
+  @@index([tenantId, date], map: "business_holidays_tenant_date_idx")
+  @@map("business_holidays")
+}
+
+// ============================================
+// STAFF COMMISSION SYSTEM
+// ============================================
+
+enum CommissionType {
+  PERCENTAGE
+  FLAT_AMOUNT
+}
+
+model StaffCommission {
+  id              String         @id @default(uuid())
+  tenantId        String         @default("dev")
+  staffId         String
+  staff           Staff          @relation("StaffCommissions", fields: [staffId], references: [id], onDelete: Cascade)
+  name            String         // e.g., "Grooming Commission", "Training Commission"
+  commissionType  CommissionType
+  commissionValue Float          // Percentage (0-100) or flat dollar amount
+  isActive        Boolean        @default(true)
+  notes           String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  
+  // Services this commission applies to
+  serviceCommissions StaffCommissionService[]
+
+  @@index([tenantId, staffId], map: "staff_commissions_tenant_staff_idx")
+  @@index([tenantId, isActive], map: "staff_commissions_tenant_active_idx")
+  @@map("staff_commissions")
+}
+
+model StaffCommissionService {
+  id           String          @id @default(uuid())
+  tenantId     String          @default("dev")
+  commissionId String
+  commission   StaffCommission @relation(fields: [commissionId], references: [id], onDelete: Cascade)
+  serviceId    String
+  createdAt    DateTime        @default(now())
+
+  @@unique([commissionId, serviceId], map: "staff_commission_service_unique")
+  @@index([tenantId, serviceId], map: "staff_commission_service_tenant_service_idx")
+  @@map("staff_commission_services")
+}
+
+model Invoice {
+  id            String            @id @default(uuid())
+  tenantId      String            @default("dev")
+  invoiceNumber String
+  customerId    String
+  reservationId String?
+  issueDate     DateTime          @default(now())
+  dueDate       DateTime
+  status        InvoiceStatus     @default(DRAFT)
+  subtotal      Float
+  taxRate       Float             @default(0)
+  taxAmount     Float             @default(0)
+  discount      Float             @default(0)
+  total         Float
+  depositAmount Float             @default(0)
+  depositPaid   Float             @default(0)
+  balanceDue    Float             @default(0)
+  notes         String?
+  externalId    String?           // ID from external system (Gingr, etc.) for migration tracking
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  lineItems     InvoiceLineItem[]
+  customer      Customer          @relation(fields: [customerId], references: [id])
+  reservation   Reservation?      @relation(fields: [tenantId, reservationId], references: [tenantId, id])
+  payments      Payment[]
+
+  @@unique([tenantId, invoiceNumber], map: "invoices_tenant_number_unique")
+  @@unique([tenantId, reservationId], map: "invoices_tenant_reservation_unique")
+  @@index([tenantId, customerId, issueDate], map: "invoices_tenant_customer_issue_idx")
+  @@index([tenantId, status, issueDate], map: "invoices_tenant_status_issue_idx")
+  @@map("invoices")
+}
+
+model InvoiceLineItem {
+  id          String              @id @default(uuid())
+  tenantId    String              @default("dev")
+  invoiceId   String
+  type        InvoiceLineItemType @default(SERVICE)
+  description String
+  quantity    Int                 @default(1)
+  unitPrice   Float
+  amount      Float
+  taxable     Boolean             @default(true)
+  serviceId   String?
+  productId   String?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  invoice     Invoice             @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, invoiceId], map: "invoice_line_items_tenant_invoice_idx")
+  @@map("invoice_line_items")
+}
+
+model Payment {
+  id              String        @id @default(uuid())
+  tenantId        String        @default("dev")
+  invoiceId       String
+  customerId      String
+  amount          Float
+  method          PaymentMethod
+  status          PaymentStatus @default(PENDING)
+  transactionId   String?
+  paymentDate     DateTime      @default(now())
+  gatewayResponse Json?
+  refundedAmount  Float         @default(0)
+  refundReason    String?
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  customer        Customer      @relation(fields: [customerId], references: [id])
+  invoice         Invoice       @relation(fields: [invoiceId], references: [id])
+
+  @@index([customerId, paymentDate], map: "payments_customer_date_idx")
+  @@index([status, paymentDate], map: "payments_status_date_idx")
+  @@index([tenantId, customerId, paymentDate], map: "payments_tenant_customer_date_idx")
+  @@index([tenantId, status, paymentDate], map: "payments_tenant_status_date_idx")
+  @@map("payments")
+}
+
+// Stored payment methods (card on file) for customers
+model CustomerPaymentMethod {
+  id              String    @id @default(uuid())
+  tenantId        String    @default("dev")
+  customerId      String
+  
+  // Card details (tokenized - never store raw card numbers)
+  token           String    // CardConnect token for future transactions
+  cardBrand       String    // VISA, MASTERCARD, AMEX, DISCOVER
+  lastFour        String    // Last 4 digits for display (e.g., "4242")
+  expiryMonth     Int       // MM
+  expiryYear      Int       // YYYY
+  cardholderName  String?   // Name on card
+  
+  // Billing address (optional, for AVS)
+  billingAddress  String?
+  billingCity     String?
+  billingState    String?
+  billingZip      String?
+  
+  // Status and preferences
+  isDefault       Boolean   @default(false)
+  isActive        Boolean   @default(true)
+  nickname        String?   // Customer-friendly name like "Personal Visa"
+  
+  // Audit
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  lastUsedAt      DateTime?
+  
+  // Relations
+  customer        Customer  @relation(fields: [tenantId, customerId], references: [tenantId, id], onDelete: Cascade)
+  
+  @@unique([tenantId, customerId, token], map: "customer_payment_methods_unique_token")
+  @@index([tenantId, customerId], map: "customer_payment_methods_tenant_customer_idx")
+  @@index([tenantId, customerId, isDefault], map: "customer_payment_methods_default_idx")
+  @@map("customer_payment_methods")
+}
+
+model Document {
+  id          String   @id @default(uuid())
+  tenantId    String   @default("dev")
+  customerId  String
+  title       String
+  description String?
+  fileUrl     String
+  fileType    String
+  fileSize    Int
+  tags        String[] @default([])
+  uploaded    DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  customer    Customer @relation(fields: [customerId], references: [id])
+
+  @@index([tenantId, customerId], map: "documents_tenant_customer_idx")
+  @@map("documents")
+}
+
+model NotificationPreference {
+  id                   String   @id @default(uuid())
+  tenantId             String   @default("dev")
+  customerId           String
+  emailNotifications   Boolean  @default(true)
+  smsNotifications     Boolean  @default(false)
+  pushNotifications    Boolean  @default(false)
+  marketingEmails      Boolean  @default(true)
+  appointmentReminders Boolean  @default(true)
+  checkinNotifications Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  customer             Customer @relation(fields: [tenantId, customerId], references: [tenantId, id], onDelete: Cascade)
+
+  @@unique([tenantId, customerId], map: "notification_preferences_tenant_customer_unique")
+  @@map("notification_preferences")
+}
+
+model CheckIn {
+  id                  String       @id @default(uuid())
+  tenantId            String       @default("dev")
+  petId               String
+  reservationId       String?
+  checkInTime         DateTime     @default(now())
+  checkOutTime        DateTime?
+  checkInNotes        String?
+  checkOutNotes       String?
+  checkInBy           String?
+  checkOutBy          String?
+  belongingsChecklist Json?
+  foodProvided        Boolean      @default(false)
+  medicationGiven     Boolean      @default(false)
+  medicationNotes     String?
+  behaviorDuringStay  String?
+  photosTaken         Boolean      @default(false)
+  photosShared        Boolean      @default(false)
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+  activities          Activity[]
+  pet                 Pet          @relation(fields: [petId], references: [id])
+  reservation         Reservation? @relation(fields: [reservationId], references: [id])
+  serviceAgreement    ServiceAgreement?
+
+  @@index([checkInTime], map: "check_ins_time_idx")
+  @@index([petId, checkInTime], map: "check_ins_pet_time_idx")
+  @@index([tenantId, petId, checkInTime], map: "check_ins_tenant_pet_time_idx")
+  @@map("check_ins")
+}
+
+model Activity {
+  id           String   @id @default(uuid())
+  tenantId     String   @default("dev")
+  checkInId    String
+  activityType String
+  notes        String?
+  timestamp    DateTime @default(now())
+  recordedBy   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  checkIn      CheckIn  @relation(fields: [checkInId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, checkInId, timestamp], map: "activities_tenant_checkin_time_idx")
+  @@map("activities")
+}
+
+model MedicalRecord {
+  id             String    @id @default(uuid())
+  tenantId       String    @default("dev")
+  petId          String
+  recordType     String
+  recordDate     DateTime
+  expirationDate DateTime?
+  description    String
+  veterinarian   String?
+  fileUrl        String?
+  verified       Boolean   @default(false)
+  verifiedBy     String?
+  verifiedDate   DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  pet            Pet       @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, petId, recordType], map: "medical_records_tenant_pet_type_idx")
+  @@map("medical_records")
+}
+
+model PriceRule {
+  id                String                     @id @default(uuid())
+  tenantId          String                     @default("dev")
+  name              String
+  description       String?
+  ruleType          PriceRuleType
+  adjustmentType    PriceAdjustmentType        @default(DISCOUNT)
+  discountType      DiscountType
+  discountValue     Float
+  minQuantity       Int?
+  maxQuantity       Int?
+  startDate         DateTime?
+  endDate           DateTime?
+  daysOfWeek        String?
+  isActive          Boolean                    @default(true)
+  priority          Int                        @default(10)
+  createdAt         DateTime                   @default(now())
+  updatedAt         DateTime                   @updatedAt
+  serviceCategories PriceRuleServiceCategory[]
+  services          PriceRuleService[]
+
+  @@index([ruleType, isActive], map: "price_rules_type_active_idx")
+  @@index([tenantId, ruleType, isActive], map: "price_rules_tenant_type_active_idx")
+  @@map("price_rules")
+}
+
+model PriceRuleServiceCategory {
+  id              String          @id @default(uuid())
+  tenantId        String          @default("dev")
+  priceRuleId     String
+  serviceCategory ServiceCategory
+  priceRule       PriceRule       @relation(fields: [priceRuleId], references: [id], onDelete: Cascade)
+
+  @@unique([priceRuleId, serviceCategory])
+  @@index([tenantId, priceRuleId, serviceCategory], map: "price_rule_svc_cat_tenant_idx")
+  @@map("price_rule_service_categories")
+}
+
+model PriceRuleService {
+  id          String    @id @default(uuid())
+  tenantId    String    @default("dev")
+  priceRuleId String
+  serviceId   String
+  priceRule   PriceRule @relation(fields: [priceRuleId], references: [id], onDelete: Cascade)
+  service     Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([priceRuleId, serviceId])
+  @@index([tenantId, priceRuleId, serviceId], map: "price_rule_services_tenant_idx")
+  @@map("price_rule_services")
+}
+
+enum PetType {
+  DOG
+  CAT
+  BIRD
+  RABBIT
+  REPTILE
+  OTHER
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  UNKNOWN
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CHECKED_IN
+  CHECKED_OUT
+  CANCELLED
+  NO_SHOW
+  COMPLETED
+}
+
+enum PlayGroupType {
+  SMALL_DOGS
+  MEDIUM_DOGS
+  LARGE_DOGS
+  HIGH_ENERGY
+  LOW_ENERGY
+  PUPPIES
+  SENIOR_DOGS
+  SPECIAL_NEEDS
+}
+
+enum PlaygroupCompatibility {
+  LARGE_DOG
+  MEDIUM_DOG
+  SMALL_DOG
+  NON_COMPATIBLE
+  SENIOR_STAFF_REQUIRED
+  UNKNOWN
+}
+
+enum SpecialRequirement {
+  HAS_MEDICATION
+  MEDICAL_MONITORING
+  ALLERGIES
+  HEAT_SENSITIVE
+  NO_POOL
+  NO_LEASH_ON_NECK
+  BLIND
+  DEAF
+  SPECIAL_NEEDS
+  SEIZURE_WATCH
+  HEART_ISSUE
+  CONTROLLED_SUBSTANCE
+  NEEDS_EXTRA_BEDDING
+  SEPARATE_FEEDING
+  POOP_EATER
+  STRONG_PULLER
+  CHEWER
+  NO_BEDDING
+  EXCESSIVE_MOUNTER
+  LOVES_POOL
+  RUNNER
+  NO_COT
+  EXCESSIVE_DRINKER
+  TOY_AGGRESSIVE
+  LEASH_AGGRESSIVE
+  BITER
+  USE_CAUTION
+  FENCE_FIGHTER
+  ROOM_AGGRESSIVE
+  MALE_AGGRESSIVE
+  GENERAL_AGGRESSION
+  PREFERRED_GROOMER
+  GROOMING_NOTES
+  SENSITIVE_SKIN
+  PERMANENT_RUN_CARD
+  SENIOR_DISCOUNT
+  DO_NOT_BOOK
+}
+
+enum ContactMethod {
+  EMAIL
+  SMS
+  BOTH
+  NONE
+}
+
+enum InvoiceLineItemType {
+  SERVICE
+  ADD_ON
+  PRODUCT
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  DEBIT_CARD
+  CASH
+  CHECK
+  BANK_TRANSFER
+  STORE_CREDIT
+  GIFT_CARD
+}
+
+enum TipType {
+  GROOMER   // Goes directly to the assigned groomer
+  GENERAL   // Goes to the team tip pool
+}
+
+enum TipCollectionMethod {
+  ONLINE    // Collected during online checkout
+  TERMINAL  // Collected via card terminal in-person
+  CASH      // Cash tip recorded by staff
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+  REFUNDED
+}
+
+enum ResourceType {
+  // Dog Boarding Kennels
+  JUNIOR_KENNEL      // Maps to Indoor Suite service
+  QUEEN_KENNEL       // Maps to Indoor Suite service
+  KING_KENNEL        // Maps to King Suite service
+  VIP_ROOM           // Maps to VIP Suite service
+  
+  // Cat Boarding
+  CAT_CONDO          // Maps to Cat Boarding service
+  
+  // Daycare
+  DAY_CAMP_FULL      // Maps to Day Camp Full Day service
+  DAY_CAMP_HALF      // Maps to Day Camp Half Day service
+  
+  // Legacy types (kept for backward compatibility)
+  KENNEL
+  RUN
+  SUITE
+  STANDARD_SUITE
+  STANDARD_PLUS_SUITE
+  VIP_SUITE
+  PLAY_AREA
+  OUTDOOR_PLAY_YARD
+  PRIVATE_PLAY_AREA
+  GROOMING_TABLE
+  BATHING_STATION
+  DRYING_STATION
+  TRAINING_ROOM
+  AGILITY_COURSE
+  GROOMER
+  TRAINER
+  ATTENDANT
+  BATHER
+  OTHER
+}
+
+enum AvailabilityStatus {
+  AVAILABLE
+  RESERVED
+  MAINTENANCE
+  OUT_OF_SERVICE
+}
+
+enum TimeOffType {
+  VACATION
+  SICK
+  PERSONAL
+  BEREAVEMENT
+  JURY_DUTY
+  OTHER
+}
+
+enum TimeOffStatus {
+  PENDING
+  APPROVED
+  DENIED
+  CANCELLED
+}
+
+enum ScheduleStatus {
+  SCHEDULED
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum ServiceCategory {
+  DAYCARE
+  BOARDING
+  GROOMING
+  TRAINING
+  OTHER
+}
+
+enum PriceRuleType {
+  DAY_OF_WEEK
+  MULTI_DAY
+  MULTI_PET
+  SEASONAL
+  PROMOTIONAL
+  CUSTOM
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
+
+enum PriceAdjustmentType {
+  DISCOUNT    // Reduces price
+  SURCHARGE   // Increases price
+}
+
+enum CouponType {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
+
+enum CouponStatus {
+  ACTIVE
+  INACTIVE
+  EXPIRED
+  DEPLETED
+}
+
+enum PointEarningType {
+  DOLLARS_SPENT
+  VISIT
+  REFERRAL
+  BIRTHDAY
+  ANNIVERSARY
+  REVIEW
+  SOCIAL_SHARE
+  SERVICE_SPECIFIC
+}
+
+enum RedemptionType {
+  DISCOUNT_PERCENTAGE
+  DISCOUNT_FIXED
+  FREE_SERVICE
+  FREE_ADDON
+  UPGRADE
+}
+
+enum TierLevel {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+  DIAMOND
+}
+
+// ============================================
+// COUPON SYSTEM MODELS
+// ============================================
+
+model Coupon {
+  id                     String        @id @default(uuid())
+  tenantId               String        @default("dev")
+  code                   String
+  description            String
+  type                   CouponType
+  discountValue          Float
+  minimumPurchase        Float?
+  serviceIds             String?       // JSON array of service IDs
+  firstTimeCustomersOnly Boolean       @default(false)
+  validFrom              DateTime
+  validUntil             DateTime
+  maxTotalUses           Int?
+  maxUsesPerCustomer     Int           @default(1)
+  currentUses            Int           @default(0)
+  status                 CouponStatus  @default(ACTIVE)
+  isReferralCoupon       Boolean       @default(false)
+  referralCustomerId     String?
+  notes                  String?
+  createdBy              String?
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+  usages                 CouponUsage[]
+  permanentCustomers     Customer[]    @relation("CustomerPermanentCoupon") // Customers with this as permanent discount
+
+  @@unique([tenantId, code], map: "coupons_tenant_code_unique")
+  @@index([tenantId, status], map: "coupons_tenant_status_idx")
+  @@index([tenantId, validFrom, validUntil], map: "coupons_tenant_dates_idx")
+  @@map("coupons")
+}
+
+model CouponUsage {
+  id             String   @id @default(uuid())
+  tenantId       String   @default("dev")
+  couponId       String
+  coupon         Coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  customerId     String
+  reservationId  String
+  discountAmount Float
+  usedAt         DateTime @default(now())
+
+  @@index([tenantId, couponId], map: "coupon_usage_tenant_coupon_idx")
+  @@index([tenantId, customerId], map: "coupon_usage_tenant_customer_idx")
+  @@map("coupon_usages")
+}
+
+// ============================================
+// LOYALTY REWARDS SYSTEM MODELS
+// ============================================
+
+model LoyaltyMember {
+  id                String              @id @default(uuid())
+  tenantId          String              @default("dev")
+  customerId        String              @unique
+  currentPoints     Int                 @default(0)
+  lifetimePoints    Int                 @default(0)
+  currentTier       TierLevel           @default(BRONZE)
+  joinedAt          DateTime            @default(now())
+  lastActivityAt    DateTime            @default(now())
+  transactions      PointTransaction[]
+  redemptions       PointRedemption[]
+
+  @@index([tenantId, customerId], map: "loyalty_member_tenant_customer_idx")
+  @@map("loyalty_members")
+}
+
+model PointTransaction {
+  id              String            @id @default(uuid())
+  tenantId        String            @default("dev")
+  memberId        String
+  member          LoyaltyMember     @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  points          Int
+  type            PointEarningType
+  description     String
+  referenceId     String?           // Reservation ID, etc.
+  createdAt       DateTime          @default(now())
+
+  @@index([tenantId, memberId], map: "point_transaction_tenant_member_idx")
+  @@map("point_transactions")
+}
+
+model PointRedemption {
+  id              String            @id @default(uuid())
+  tenantId        String            @default("dev")
+  memberId        String
+  member          LoyaltyMember     @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  pointsRedeemed  Int
+  redemptionType  RedemptionType
+  value           Float
+  description     String
+  reservationId   String?
+  redeemedAt      DateTime          @default(now())
+
+  @@index([tenantId, memberId], map: "point_redemption_tenant_member_idx")
+  @@map("point_redemptions")
+}
+
+// ============================================
+// CHECKLIST SYSTEM MODELS
+// ============================================
+
+model ChecklistTemplate {
+  id                  String              @id @default(uuid())
+  tenantId            String              @default("dev")
+  name                String
+  description         String
+  area                String              // KENNEL_CHECKIN, GROOMING, etc.
+  isActive            Boolean             @default(true)
+  items               String              // JSON array of template items
+  requiredForCompletion String?           // JSON array of required item IDs
+  estimatedMinutes    Int                 @default(15)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  instances           ChecklistInstance[]
+
+  @@index([tenantId, area], map: "checklist_template_tenant_area_idx")
+  @@map("checklist_templates")
+}
+
+model ChecklistInstance {
+  id                  String              @id @default(uuid())
+  tenantId            String              @default("dev")
+  templateId          String
+  template            ChecklistTemplate   @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  reservationId       String?
+  petId               String?
+  resourceId          String?
+  customerId          String?
+  assignedToStaffId   String?
+  assignedToStaffName String?
+  status              String              @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED, SKIPPED
+  startedAt           DateTime?
+  completedAt         DateTime?
+  items               String              // JSON array of instance items with values
+  notes               String?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  @@index([tenantId, status], map: "checklist_instance_tenant_status_idx")
+  @@index([tenantId, reservationId], map: "checklist_instance_tenant_reservation_idx")
+  @@index([tenantId, assignedToStaffId], map: "checklist_instance_tenant_staff_idx")
+  @@map("checklist_instances")
+}
+
+// ============================================
+// MULTI-TENANCY MANAGEMENT MODELS
+// ============================================
+
+model Tenant {
+  id                    String       @id @default(uuid())
+  
+  // Business Information
+  businessName          String
+  subdomain             String       @unique  // e.g., "pawsinn" for pawsinn.tailtown.com
+  contactName           String
+  contactEmail          String       @unique
+  contactPhone          String?
+  address               String?
+  city                  String?
+  state                 String?
+  zipCode               String?
+  country               String       @default("US")
+  
+  // Account Status
+  status                TenantStatus @default(TRIAL)
+  isActive              Boolean      @default(true)
+  isPaused              Boolean      @default(false)
+  
+  // Subscription & Billing
+  planType              String       @default("STARTER")  // STARTER, PROFESSIONAL, ENTERPRISE
+  billingEmail          String?
+  maxEmployees          Int          @default(50)
+  maxLocations          Int          @default(1)
+  
+  // Dates
+  trialEndsAt           DateTime?
+  subscriptionStartDate DateTime?
+  subscriptionEndDate   DateTime?
+  pausedAt              DateTime?
+  deletedAt             DateTime?    // Soft delete
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+  
+  // Super Admin Management (Phase 2)
+  suspendedAt           DateTime?    @map("suspended_at")
+  suspendedReason       String?      @map("suspended_reason")
+  suspendedBy           String?      @map("suspended_by")
+  deletedBy             String?      @map("deleted_by")
+  suspendedByAdmin      SuperAdmin?  @relation("TenantSuspensions", fields: [suspendedBy], references: [id], onDelete: SetNull)
+  deletedByAdmin        SuperAdmin?  @relation("TenantDeletions", fields: [deletedBy], references: [id], onDelete: SetNull)
+  
+  // Tenant Management Flags
+  isProduction          Boolean      @default(false)  @map("is_production")  // Protect from resets/deletes
+  isTemplate            Boolean      @default(false)  @map("is_template")    // Can be cloned to create new tenants
+  gingrSyncEnabled      Boolean      @default(false)  @map("gingr_sync_enabled")  // Enable Gingr data sync
+  lastGingrSyncAt       DateTime?    @map("last_gingr_sync_at")  // Last successful sync
+  clonedFromId          String?      @map("cloned_from_id")  // Source tenant if cloned (no FK for simplicity)
+  
+  // Settings
+  timezone              String       @default("America/New_York")
+  currency              String       @default("USD")
+  dateFormat            String       @default("MM/DD/YYYY")
+  timeFormat            String       @default("12h")
+  logoUrl               String?      @map("logo_url")  // Custom business logo
+  
+  // Usage Tracking
+  employeeCount         Int          @default(0)
+  customerCount         Int          @default(0)
+  reservationCount      Int          @default(0)
+  storageUsedMB         Int          @default(0)
+  
+  // Relations
+  users                 TenantUser[]
+  
+  @@index([subdomain])
+  @@index([status, isActive])
+  @@index([contactEmail])
+  @@map("tenants")
+}
+
+enum TenantStatus {
+  TRIAL           // Free trial period
+  ACTIVE          // Paid and active
+  PAUSED          // Temporarily suspended
+  CANCELLED       // Subscription cancelled
+  DELETED         // Soft deleted
+  PENDING         // Awaiting activation
+}
+
+// Tenant Users (employees/staff who access the system)
+model TenantUser {
+  id          String   @id @default(uuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  email       String
+  password    String   // Hashed password
+  firstName   String
+  lastName    String
+  role        UserRole @default(STAFF)
+  
+  isActive    Boolean  @default(true)
+  lastLoginAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([tenantId, email])
+  @@index([tenantId, role])
+  @@index([email])
+  @@map("tenant_users")
+}
+
+enum UserRole {
+  SUPER_ADMIN    // Platform admin (you)
+  TENANT_ADMIN   // Tenant owner/admin
+  MANAGER        // Location manager
+  STAFF          // Regular employee
+  CUSTOMER       // Customer with login
+}
+
+// ============================================
+// ADVANCED SCHEDULING MODELS
+// ============================================
+
+// Groomer-Specific Scheduling
+model GroomerAppointment {
+  id              String   @id @default(uuid())
+  tenantId        String   @default("dev") @map("tenant_id")
+  reservationId   String   @map("reservation_id")
+  groomerId       String   @map("groomer_id")
+  serviceId       String   @map("service_id")
+  petId           String   @map("pet_id")
+  customerId      String   @map("customer_id")
+  scheduledDate   DateTime @map("scheduled_date")
+  scheduledTime   String   @map("scheduled_time")
+  duration        Int
+  status          String   @default("SCHEDULED")
+  actualStartTime DateTime? @map("actual_start_time")
+  actualEndTime   DateTime? @map("actual_end_time")
+  notes           String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  groomer         Staff    @relation("GroomerAppointments", fields: [groomerId], references: [id], onDelete: Cascade)
+  service         Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  pet             Pet      @relation("PetGroomerAppointments", fields: [petId], references: [id], onDelete: Cascade)
+  customer        Customer @relation("CustomerGroomerAppointments", fields: [customerId], references: [id], onDelete: Cascade)
+  
+  @@index([groomerId, scheduledDate], map: "groomer_appointments_groomer_date_idx")
+  @@index([tenantId, groomerId, status], map: "groomer_appointments_tenant_groomer_status_idx")
+  @@index([reservationId], map: "groomer_appointments_reservation_idx")
+  @@map("groomer_appointments")
+}
+
+model GroomerPreference {
+  id         String   @id @default(uuid())
+  tenantId   String   @default("dev") @map("tenant_id")
+  customerId String   @map("customer_id")
+  groomerId  String   @map("groomer_id")
+  petId      String?  @map("pet_id")
+  priority   Int      @default(1)
+  notes      String?
+  createdAt  DateTime @default(now()) @map("created_at")
+  
+  customer   Customer @relation("CustomerGroomerPreferences", fields: [customerId], references: [id], onDelete: Cascade)
+  groomer    Staff    @relation("GroomerPreferences", fields: [groomerId], references: [id], onDelete: Cascade)
+  pet        Pet?     @relation("PetGroomerPreferences", fields: [petId], references: [id], onDelete: Cascade)
+  
+  @@unique([tenantId, customerId, groomerId, petId], map: "groomer_preference_unique")
+  @@index([customerId], map: "groomer_preferences_customer_idx")
+  @@index([groomerId], map: "groomer_preferences_groomer_idx")
+  @@map("groomer_preferences")
+}
+
+model GroomerBreak {
+  id        String   @id @default(uuid())
+  tenantId  String   @default("dev") @map("tenant_id")
+  groomerId String   @map("groomer_id")
+  date      DateTime
+  startTime String   @map("start_time")
+  endTime   String   @map("end_time")
+  type      String
+  notes     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  groomer   Staff    @relation("GroomerBreaks", fields: [groomerId], references: [id], onDelete: Cascade)
+  
+  @@index([groomerId, date], map: "groomer_breaks_groomer_date_idx")
+  @@map("groomer_breaks")
+}
+
+// Multi-Week Training Classes
+model TrainingClass {
+  id              String   @id @default(uuid())
+  tenantId        String   @default("dev") @map("tenant_id")
+  name            String
+  description     String?
+  level           String
+  category        String
+  instructorId    String   @map("instructor_id")
+  maxCapacity     Int      @map("max_capacity")
+  currentEnrolled Int      @default(0) @map("current_enrolled")
+  
+  startDate       DateTime @map("start_date")
+  endDate         DateTime @map("end_date")
+  totalWeeks      Int      @map("total_weeks")
+  daysOfWeek      Int[]    @map("days_of_week")
+  startTime       String   @map("start_time")
+  endTime         String   @map("end_time")
+  duration        Int
+  
+  pricePerSeries  Float    @map("price_per_series")
+  pricePerSession Float?   @map("price_per_session")
+  depositRequired Float?   @map("deposit_required")
+  
+  status          String   @default("SCHEDULED")
+  isActive        Boolean  @default(true) @map("is_active")
+  
+  minAge          Int?     @map("min_age")
+  maxAge          Int?     @map("max_age")
+  prerequisites   String[]
+  
+  notes           String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  instructor      Staff           @relation("InstructorClasses", fields: [instructorId], references: [id], onDelete: Cascade)
+  sessions        ClassSession[]
+  enrollments     ClassEnrollment[]
+  classWaitlist   ClassWaitlist[]
+  waitlistEntries WaitlistEntry[]
+  
+  @@index([tenantId, startDate], map: "training_class_tenant_start_idx")
+  @@index([startDate, endDate], map: "training_classes_dates_idx")
+  @@index([instructorId], map: "training_classes_instructor_idx")
+  @@map("training_classes")
+}
+
+model ClassSession {
+  id              String   @id @default(uuid())
+  tenantId        String   @default("dev") @map("tenant_id")
+  classId         String   @map("class_id")
+  sessionNumber   Int      @map("session_number")
+  scheduledDate   DateTime @map("scheduled_date")
+  scheduledTime   String   @map("scheduled_time")
+  duration        Int
+  
+  status          String   @default("SCHEDULED")
+  actualStartTime DateTime? @map("actual_start_time")
+  actualEndTime   DateTime? @map("actual_end_time")
+  
+  topic           String?
+  objectives      String[]
+  materials       String[]
+  homework        String?
+  
+  notes           String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  class           TrainingClass      @relation(fields: [classId], references: [id], onDelete: Cascade)
+  attendance      SessionAttendance[]
+  
+  @@index([classId, sessionNumber], map: "class_sessions_class_number_idx")
+  @@index([scheduledDate, status], map: "class_sessions_date_status_idx")
+  @@map("class_sessions")
+}
+
+model ClassEnrollment {
+  id              String   @id @default(uuid())
+  tenantId        String   @default("dev") @map("tenant_id")
+  classId         String   @map("class_id")
+  petId           String   @map("pet_id")
+  customerId      String   @map("customer_id")
+  
+  enrollmentDate  DateTime @default(now()) @map("enrollment_date")
+  status          String   @default("ENROLLED")
+  
+  amountPaid      Float    @default(0) @map("amount_paid")
+  amountDue       Float    @map("amount_due")
+  paymentStatus   String   @default("PENDING") @map("payment_status")
+  
+  sessionsAttended Int     @default(0) @map("sessions_attended")
+  totalSessions   Int      @map("total_sessions")
+  completionRate  Float    @default(0) @map("completion_rate")
+  
+  certificateIssued Boolean @default(false) @map("certificate_issued")
+  certificateDate   DateTime? @map("certificate_date")
+  
+  notes           String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  class           TrainingClass      @relation(fields: [classId], references: [id], onDelete: Cascade)
+  pet             Pet                @relation("PetClassEnrollments", fields: [petId], references: [id], onDelete: Cascade)
+  customer        Customer           @relation("CustomerClassEnrollments", fields: [customerId], references: [id], onDelete: Cascade)
+  attendance      SessionAttendance[]
+  
+  @@unique([classId, petId], map: "class_enrollment_unique")
+  @@index([tenantId, status], map: "class_enrollments_tenant_status_idx")
+  @@index([classId], map: "class_enrollments_class_idx")
+  @@index([customerId], map: "class_enrollments_customer_idx")
+  @@index([petId], map: "class_enrollments_pet_idx")
+  @@map("class_enrollments")
+}
+
+model SessionAttendance {
+  id              String   @id @default(uuid())
+  tenantId        String   @default("dev") @map("tenant_id")
+  sessionId       String   @map("session_id")
+  enrollmentId    String   @map("enrollment_id")
+  petId           String   @map("pet_id")
+  
+  status          String
+  arrivalTime     DateTime? @map("arrival_time")
+  departureTime   DateTime? @map("departure_time")
+  
+  participationLevel String? @map("participation_level")
+  behaviorRating     Int?    @map("behavior_rating")
+  progressNotes      String? @map("progress_notes")
+  
+  homeworkCompleted  Boolean @default(false) @map("homework_completed")
+  homeworkNotes      String? @map("homework_notes")
+  
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  session         ClassSession    @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  enrollment      ClassEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  pet             Pet             @relation("PetSessionAttendance", fields: [petId], references: [id], onDelete: Cascade)
+  
+  @@unique([sessionId, enrollmentId], map: "session_attendance_unique")
+  @@index([sessionId, status], map: "session_attendance_session_status_idx")
+  @@index([enrollmentId], map: "session_attendance_enrollment_idx")
+  @@map("session_attendance")
+}
+
+model ClassWaitlist {
+  id           String   @id @default(uuid())
+  tenantId     String   @default("dev") @map("tenant_id")
+  classId      String   @map("class_id")
+  petId        String   @map("pet_id")
+  customerId   String   @map("customer_id")
+  position     Int
+  addedDate    DateTime @default(now()) @map("added_date")
+  notified     Boolean  @default(false)
+  notifiedDate DateTime? @map("notified_date")
+  status       String   @default("WAITING")
+  
+  class        TrainingClass @relation(fields: [classId], references: [id], onDelete: Cascade)
+  pet          Pet           @relation("PetClassWaitlist", fields: [petId], references: [id], onDelete: Cascade)
+  customer     Customer      @relation("CustomerClassWaitlist", fields: [customerId], references: [id], onDelete: Cascade)
+  
+  @@unique([classId, petId], map: "class_waitlist_unique")
+  @@index([classId, position], map: "class_waitlist_class_position_idx")
+  @@index([customerId], map: "class_waitlist_customer_idx")
+  @@map("class_waitlist")
+}
+
+// ============================================
+// VACCINE REQUIREMENT MANAGEMENT
+// ============================================
+
+model VaccineRequirement {
+  id          String   @id @default(uuid())
+  tenantId    String   @default("dev") @map("tenant_id")
+  name        String   // e.g., "Rabies", "DHPP", "Bordetella"
+  description String?
+  
+  // Applicability
+  petType     String?  @map("pet_type") // null = all types, or "DOG", "CAT"
+  serviceType String?  @map("service_type") // null = all services, or "DAYCARE", "BOARDING", "GROOMING"
+  
+  // Requirements
+  isRequired  Boolean  @default(true) @map("is_required")
+  validityPeriodMonths Int? @map("validity_period_months") // How many months vaccine is valid
+  reminderDaysBefore   Int? @default(30) @map("reminder_days_before") // Days before expiration to send reminder
+  
+  // Status
+  isActive    Boolean  @default(true) @map("is_active")
+  displayOrder Int     @default(0) @map("display_order")
+  
+  notes       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  @@unique([tenantId, name, petType, serviceType], map: "vaccine_requirement_unique")
+  @@index([tenantId, isActive], map: "vaccine_requirements_tenant_active_idx")
+  @@index([petType, serviceType], map: "vaccine_requirements_type_idx")
+  @@map("vaccine_requirements")
+}
+
+// ============================================
+// CUSTOM ICON MANAGEMENT
+// ============================================
+
+model CustomIcon {
+  id          String   @id @default(uuid())
+  tenantId    String   @default("dev") @map("tenant_id")
+  
+  // Icon identification
+  name        String   // Unique identifier (e.g., "custom_vip", "custom_special")
+  label       String   // Display name (e.g., "VIP Customer")
+  description String   // Tooltip text
+  
+  // Categorization
+  category    String   @default("custom") // status, payment, communication, service, flag, custom
+  
+  // Image storage
+  imageUrl    String   @map("image_url") // URL or path to uploaded image
+  fileName    String   @map("file_name") // Original filename
+  fileSize    Int      @map("file_size") // File size in bytes
+  mimeType    String   @map("mime_type") // image/png, image/jpeg, image/svg+xml
+  
+  // Metadata
+  isActive    Boolean  @default(true) @map("is_active")
+  displayOrder Int     @default(0) @map("display_order")
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  @@unique([tenantId, name], map: "custom_icon_unique")
+  @@index([tenantId, isActive], map: "custom_icons_tenant_active_idx")
+  @@index([category], map: "custom_icons_category_idx")
+  @@map("custom_icons")
+}
+
+// ============================================
+// RETAIL POS SYSTEM
+// ============================================
+
+model ProductCategory {
+  id          String    @id @default(uuid())
+  tenantId    String    @default("dev") @map("tenant_id")
+  name        String
+  description String?
+  displayOrder Int      @default(0) @map("display_order")
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  
+  products    Product[]
+  
+  @@unique([tenantId, name], map: "product_category_unique")
+  @@index([tenantId, isActive], map: "product_categories_tenant_active_idx")
+  @@map("product_categories")
+}
+
+model Product {
+  id              String    @id @default(uuid())
+  tenantId        String    @default("dev") @map("tenant_id")
+  
+  // Basic Info
+  sku             String?   // Stock Keeping Unit
+  name            String
+  description     String?
+  categoryId      String?   @map("category_id")
+  
+  // Pricing
+  price           Decimal   @db.Decimal(10, 2)
+  cost            Decimal?  @db.Decimal(10, 2) // Cost to business
+  taxable         Boolean   @default(true)
+  
+  // Inventory
+  trackInventory  Boolean   @default(true) @map("track_inventory")
+  currentStock    Int       @default(0) @map("current_stock")
+  lowStockAlert   Int?      @map("low_stock_alert") // Alert when stock below this
+  reorderPoint    Int?      @map("reorder_point")
+  reorderQuantity Int?      @map("reorder_quantity")
+  
+  // Product Type
+  isService       Boolean   @default(false) @map("is_service") // Service vs physical product
+  isPackage       Boolean   @default(false) @map("is_package") // Bundle/package deal
+  
+  // Status
+  isActive        Boolean   @default(true) @map("is_active")
+  isFeatured      Boolean   @default(false) @map("is_featured")
+  
+  // Metadata
+  imageUrl        String?   @map("image_url")
+  barcode         String?
+  notes           String?
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  
+  category        ProductCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  inventoryLogs   InventoryLog[]
+  packageItems    PackageItem[] @relation("PackageProduct")
+  packageContents PackageItem[] @relation("PackageContents")
+  
+  @@unique([tenantId, sku], map: "product_sku_unique")
+  @@index([tenantId, isActive], map: "products_tenant_active_idx")
+  @@index([categoryId], map: "products_category_idx")
+  @@index([currentStock], map: "products_stock_idx")
+  @@map("products")
+}
+
+model PackageItem {
+  id          String   @id @default(uuid())
+  tenantId    String   @default("dev") @map("tenant_id")
+  
+  packageId   String   @map("package_id")
+  productId   String   @map("product_id")
+  quantity    Int      @default(1)
+  
+  package     Product  @relation("PackageProduct", fields: [packageId], references: [id], onDelete: Cascade)
+  product     Product  @relation("PackageContents", fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@unique([packageId, productId], map: "package_item_unique")
+  @@map("package_items")
+}
+
+model InventoryLog {
+  id          String   @id @default(uuid())
+  tenantId    String   @default("dev") @map("tenant_id")
+  
+  productId   String   @map("product_id")
+  changeType  String   @map("change_type") // PURCHASE, SALE, ADJUSTMENT, RETURN, DAMAGE, RESTOCK
+  quantity    Int      // Positive for additions, negative for subtractions
+  previousStock Int    @map("previous_stock")
+  newStock    Int      @map("new_stock")
+  
+  reason      String?
+  reference   String?  // Order ID, Invoice ID, etc.
+  performedBy String?  @map("performed_by") // Staff ID
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@index([tenantId, productId], map: "inventory_logs_tenant_product_idx")
+  @@index([createdAt], map: "inventory_logs_date_idx")
+  @@map("inventory_logs")
+}
+
+model MessageTemplate {
+  id          String   @id @default(uuid())
+  tenantId    String   @default("dev") @map("tenant_id")
+  
+  name        String
+  type        String   // SMS, EMAIL
+  category    String   // APPOINTMENT_REMINDER, MARKETING, CONFIRMATION, FOLLOW_UP, PROMOTIONAL
+  subject     String?  // For email only
+  body        String   @db.Text
+  variables   String[] @default([])
+  
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  @@index([tenantId, isActive], map: "message_templates_tenant_active_idx")
+  @@index([type], map: "message_templates_type_idx")
+  @@index([category], map: "message_templates_category_idx")
+  @@map("message_templates")
+}
+
+model Announcement {
+  id          String   @id @default(uuid())
+  tenantId    String   @default("dev") @map("tenant_id")
+  
+  title       String
+  message     String   @db.Text
+  priority    String   @default("NORMAL") // LOW, NORMAL, HIGH, URGENT
+  type        String   @default("INFO") // INFO, WARNING, SUCCESS, ERROR
+  
+  startDate   DateTime @default(now()) @map("start_date")
+  endDate     DateTime? @map("end_date") // Optional expiration
+  
+  isActive    Boolean  @default(true) @map("is_active")
+  createdBy   String?  @map("created_by") // Staff ID who created it
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  dismissals  AnnouncementDismissal[]
+  
+  @@index([tenantId, isActive, startDate], map: "announcements_tenant_active_date_idx")
+  @@index([priority], map: "announcements_priority_idx")
+  @@map("announcements")
+}
+
+model AnnouncementDismissal {
+  id             String   @id @default(uuid())
+  tenantId       String   @default("dev") @map("tenant_id")
+  
+  announcementId String   @map("announcement_id")
+  userId         String   @map("user_id") // Staff member who dismissed it
+  
+  dismissedAt    DateTime @default(now()) @map("dismissed_at")
+  
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  
+  @@unique([announcementId, userId], map: "announcement_dismissal_unique")
+  @@index([tenantId, userId], map: "announcement_dismissals_tenant_user_idx")
+  @@map("announcement_dismissals")
+}
+
+// Super Admin Models - Phase 1: Authentication
+
+model SuperAdmin {
+  id            String      @id @default(uuid())
+  email         String      @unique
+  passwordHash  String      @map("password_hash")
+  firstName     String?     @map("first_name")
+  lastName      String?     @map("last_name")
+  role          String      @default("SUPER_ADMIN") // SUPER_ADMIN, SUPPORT, DEVELOPER
+  isActive      Boolean     @default(true) @map("is_active")
+  require2fa    Boolean     @default(false) @map("require_2fa")
+  lastLogin     DateTime?   @map("last_login")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+  
+  auditLogs              AuditLog[]
+  suspendedTenants       Tenant[]              @relation("TenantSuspensions")
+  deletedTenants         Tenant[]              @relation("TenantDeletions")
+  impersonationSessions  ImpersonationSession[]
+  
+  @@index([email], map: "idx_super_admins_email")
+  @@index([isActive], map: "idx_super_admins_active")
+  @@index([role], map: "idx_super_admins_role")
+  @@map("super_admins")
+}
+
+model AuditLog {
+  id            String      @id @default(uuid())
+  superAdminId  String?     @map("super_admin_id")
+  action        String      // LOGIN, LOGOUT, CREATE_TENANT, DELETE_TENANT, IMPERSONATE, etc.
+  entityType    String?     @map("entity_type") // TENANT, USER, RESERVATION, etc.
+  entityId      String?     @map("entity_id")
+  tenantId      String?     @map("tenant_id")
+  details       Json?       // Additional context
+  ipAddress     String?     @map("ip_address")
+  userAgent     String?     @map("user_agent")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  
+  superAdmin    SuperAdmin? @relation(fields: [superAdminId], references: [id], onDelete: SetNull)
+  
+  @@index([superAdminId], map: "idx_audit_logs_admin")
+  @@index([action], map: "idx_audit_logs_action")
+  @@index([tenantId], map: "idx_audit_logs_tenant")
+  @@index([createdAt], map: "idx_audit_logs_created")
+  @@index([entityType, entityId], map: "idx_audit_logs_entity")
+  @@map("audit_logs")
+}
+
+// ============================================
+// TENANT AUDIT LOGS (Per-tenant activity tracking)
+// ============================================
+
+// Tracks all sensitive operations within a tenant for compliance
+// Retention: 7 years per GDPR/compliance requirements
+model TenantAuditLog {
+  id            String      @id @default(uuid())
+  tenantId      String      @map("tenant_id")
+  
+  // Who performed the action
+  userId        String?     @map("user_id")        // Staff user ID
+  userEmail     String?     @map("user_email")     // Denormalized for historical record
+  userName      String?     @map("user_name")      // Denormalized for historical record
+  userRole      String?     @map("user_role")      // Role at time of action
+  
+  // What action was performed
+  action        String                              // CREATE, UPDATE, DELETE, VIEW, LOGIN, etc.
+  category      String                              // CUSTOMER, PET, RESERVATION, PAYMENT, AUTH, SETTINGS
+  
+  // What resource was affected
+  entityType    String      @map("entity_type")    // customer, pet, reservation, payment, etc.
+  entityId      String?     @map("entity_id")      // ID of affected resource
+  entityName    String?     @map("entity_name")    // Denormalized name for readability
+  
+  // Change details
+  previousValue Json?       @map("previous_value") // State before change (for updates/deletes)
+  newValue      Json?       @map("new_value")      // State after change (for creates/updates)
+  changedFields String[]    @map("changed_fields") // List of fields that changed
+  
+  // Request context
+  ipAddress     String?     @map("ip_address")
+  userAgent     String?     @map("user_agent")
+  requestMethod String?     @map("request_method") // GET, POST, PUT, DELETE
+  requestPath   String?     @map("request_path")   // API endpoint
+  
+  // Additional metadata
+  metadata      Json?                              // Any additional context
+  severity      String      @default("INFO")       // INFO, WARNING, CRITICAL
+  
+  // Timestamps
+  createdAt     DateTime    @default(now()) @map("created_at")
+  
+  // Indexes for efficient querying
+  @@index([tenantId], map: "idx_tenant_audit_tenant")
+  @@index([tenantId, createdAt], map: "idx_tenant_audit_tenant_date")
+  @@index([tenantId, userId], map: "idx_tenant_audit_user")
+  @@index([tenantId, category], map: "idx_tenant_audit_category")
+  @@index([tenantId, action], map: "idx_tenant_audit_action")
+  @@index([tenantId, entityType, entityId], map: "idx_tenant_audit_entity")
+  @@index([createdAt], map: "idx_tenant_audit_created")
+  @@index([severity], map: "idx_tenant_audit_severity")
+  @@map("tenant_audit_logs")
+}
+
+model ImpersonationSession {
+  id            String      @id @default(uuid())
+  superAdminId  String      @map("super_admin_id")
+  tenantId      String      @map("tenant_id")
+  reason        String      // Why impersonating
+  startedAt     DateTime    @default(now()) @map("started_at")
+  expiresAt     DateTime    @map("expires_at")
+  endedAt       DateTime?   @map("ended_at")
+  ipAddress     String?     @map("ip_address")
+  userAgent     String?     @map("user_agent")
+  isActive      Boolean     @default(true) @map("is_active")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  
+  superAdmin    SuperAdmin  @relation(fields: [superAdminId], references: [id], onDelete: Cascade)
+  
+  @@index([superAdminId], map: "idx_impersonation_super_admin")
+  @@index([tenantId], map: "idx_impersonation_tenant")
+  @@index([isActive, expiresAt], map: "idx_impersonation_active")
+  @@index([startedAt], map: "idx_impersonation_started")
+  @@map("impersonation_sessions")
+}
+
+// ============================================
+// INTERNAL COMMUNICATIONS (Slack-like)
+// ============================================
+
+// Communication channels (like Slack channels)
+model CommunicationChannel {
+  id                String                    @id @default(uuid())
+  tenantId          String
+  name              String                    // e.g., "general", "announcements", "shift-handoff"
+  displayName       String                    // e.g., "General Discussion", "Announcements"
+  description       String?
+  type              ChannelType               @default(PUBLIC)
+  icon              String?                   // emoji or icon name
+  color             String?                   // hex color for channel
+  isArchived        Boolean                   @default(false)
+  isDefault         Boolean                   @default(false)  // Auto-join for new staff
+  allowThreads      Boolean                   @default(true)
+  allowReactions    Boolean                   @default(true)
+  allowFileUploads  Boolean                   @default(true)
+  createdById       String
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+  archivedAt        DateTime?
+  archivedById      String?
+  
+  // Relations
+  members           ChannelMember[]
+  messages          ChannelMessage[]
+  pinnedMessages    PinnedMessage[]
+  
+  @@unique([tenantId, name], map: "channel_tenant_name_unique")
+  @@index([tenantId, isArchived], map: "idx_channels_tenant_archived")
+  @@index([tenantId, type], map: "idx_channels_tenant_type")
+  @@index([createdAt], map: "idx_channels_created")
+  @@map("communication_channels")
+}
+
+// Channel membership
+model ChannelMember {
+  id                String                @id @default(uuid())
+  channelId         String
+  staffId           String
+  role              ChannelMemberRole     @default(MEMBER)
+  isMuted           Boolean               @default(false)
+  mutedUntil        DateTime?
+  notificationLevel NotificationLevel     @default(ALL)
+  lastReadAt        DateTime?             // Last time user read messages
+  lastReadMessageId String?               // Last message user read
+  joinedAt          DateTime              @default(now())
+  leftAt            DateTime?
+  
+  // Relations
+  channel           CommunicationChannel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  staff             Staff                 @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  
+  @@unique([channelId, staffId], map: "channel_member_unique")
+  @@index([staffId], map: "idx_channel_members_staff")
+  @@index([channelId, leftAt], map: "idx_channel_members_active")
+  @@map("channel_members")
+}
+
+// Direct messages (1-on-1 or group DMs)
+model DirectMessageConversation {
+  id                String                @id @default(uuid())
+  tenantId          String
+  name              String?               // Optional name for group DMs
+  isGroup           Boolean               @default(false)
+  createdById       String
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+  
+  // Relations
+  participants      DMParticipant[]
+  messages          DirectMessage[]
+  
+  @@index([tenantId], map: "idx_dm_conversations_tenant")
+  @@index([createdAt], map: "idx_dm_conversations_created")
+  @@map("dm_conversations")
+}
+
+// Direct message participants
+model DMParticipant {
+  id                String                      @id @default(uuid())
+  conversationId    String
+  staffId           String
+  isMuted           Boolean                     @default(false)
+  mutedUntil        DateTime?
+  notificationLevel NotificationLevel           @default(ALL)
+  lastReadAt        DateTime?
+  lastReadMessageId String?
+  joinedAt          DateTime                    @default(now())
+  leftAt            DateTime?
+  
+  // Relations
+  conversation      DirectMessageConversation   @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  staff             Staff                       @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  
+  @@unique([conversationId, staffId], map: "dm_participant_unique")
+  @@index([staffId], map: "idx_dm_participants_staff")
+  @@index([conversationId, leftAt], map: "idx_dm_participants_active")
+  @@map("dm_participants")
+}
+
+// Channel messages
+model ChannelMessage {
+  id                String                @id @default(uuid())
+  channelId         String
+  senderId          String
+  content           String                @db.Text
+  contentType       MessageContentType    @default(TEXT)
+  parentMessageId   String?               // For threaded replies
+  isEdited          Boolean               @default(false)
+  editedAt          DateTime?
+  isDeleted         Boolean               @default(false)
+  deletedAt         DateTime?
+  deletedById       String?
+  isPinned          Boolean               @default(false)
+  metadata          Json?                 // For rich content (links, code blocks, etc.)
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+  
+  // Relations
+  channel           CommunicationChannel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  sender            Staff                 @relation("SentChannelMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  parentMessage     ChannelMessage?       @relation("MessageThread", fields: [parentMessageId], references: [id], onDelete: Cascade)
+  replies           ChannelMessage[]      @relation("MessageThread")
+  reactions         MessageReaction[]
+  mentions          MessageMention[]
+  attachments       MessageAttachment[]
+  readReceipts      MessageReadReceipt[]
+  
+  @@index([channelId, createdAt], map: "idx_channel_messages_channel_time")
+  @@index([senderId], map: "idx_channel_messages_sender")
+  @@index([parentMessageId], map: "idx_channel_messages_thread")
+  @@index([channelId, isPinned], map: "idx_channel_messages_pinned")
+  @@index([createdAt], map: "idx_channel_messages_created")
+  @@map("channel_messages")
+}
+
+// Direct messages
+model DirectMessage {
+  id                String                      @id @default(uuid())
+  conversationId    String
+  senderId          String
+  content           String                      @db.Text
+  contentType       MessageContentType          @default(TEXT)
+  isEdited          Boolean                     @default(false)
+  editedAt          DateTime?
+  isDeleted         Boolean                     @default(false)
+  deletedAt         DateTime?
+  deletedById       String?
+  metadata          Json?                       // For rich content
+  createdAt         DateTime                    @default(now())
+  updatedAt         DateTime                    @updatedAt
+  
+  // Relations
+  conversation      DirectMessageConversation   @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender            Staff                       @relation("SentDirectMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  reactions         MessageReaction[]
+  mentions          MessageMention[]
+  attachments       MessageAttachment[]
+  readReceipts      MessageReadReceipt[]
+  
+  @@index([conversationId, createdAt], map: "idx_dm_messages_conversation_time")
+  @@index([senderId], map: "idx_dm_messages_sender")
+  @@index([createdAt], map: "idx_dm_messages_created")
+  @@map("direct_messages")
+}
+
+// Message reactions (emoji reactions)
+model MessageReaction {
+  id                String          @id @default(uuid())
+  channelMessageId  String?
+  directMessageId   String?
+  staffId           String
+  emoji             String          // emoji unicode or shortcode
+  createdAt         DateTime        @default(now())
+  
+  // Relations
+  channelMessage    ChannelMessage? @relation(fields: [channelMessageId], references: [id], onDelete: Cascade)
+  directMessage     DirectMessage?  @relation(fields: [directMessageId], references: [id], onDelete: Cascade)
+  staff             Staff           @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  
+  @@unique([channelMessageId, staffId, emoji], map: "channel_message_reaction_unique")
+  @@unique([directMessageId, staffId, emoji], map: "dm_reaction_unique")
+  @@index([channelMessageId], map: "idx_reactions_channel_message")
+  @@index([directMessageId], map: "idx_reactions_dm")
+  @@index([staffId], map: "idx_reactions_staff")
+  @@map("message_reactions")
+}
+
+// Message mentions (@username)
+model MessageMention {
+  id                String          @id @default(uuid())
+  channelMessageId  String?
+  directMessageId   String?
+  mentionedStaffId  String
+  mentionType       MentionType     @default(USER)
+  isRead            Boolean         @default(false)
+  readAt            DateTime?
+  createdAt         DateTime        @default(now())
+  
+  // Relations
+  channelMessage    ChannelMessage? @relation(fields: [channelMessageId], references: [id], onDelete: Cascade)
+  directMessage     DirectMessage?  @relation(fields: [directMessageId], references: [id], onDelete: Cascade)
+  mentionedStaff    Staff           @relation(fields: [mentionedStaffId], references: [id], onDelete: Cascade)
+  
+  @@index([mentionedStaffId, isRead], map: "idx_mentions_staff_unread")
+  @@index([channelMessageId], map: "idx_mentions_channel_message")
+  @@index([directMessageId], map: "idx_mentions_dm")
+  @@map("message_mentions")
+}
+
+// Message attachments (files, images, etc.)
+model MessageAttachment {
+  id                String          @id @default(uuid())
+  channelMessageId  String?
+  directMessageId   String?
+  fileName          String
+  fileSize          Int             // bytes
+  fileType          String          // MIME type
+  fileUrl           String
+  thumbnailUrl      String?
+  uploadedById      String
+  createdAt         DateTime        @default(now())
+  
+  // Relations
+  channelMessage    ChannelMessage? @relation(fields: [channelMessageId], references: [id], onDelete: Cascade)
+  directMessage     DirectMessage?  @relation(fields: [directMessageId], references: [id], onDelete: Cascade)
+  uploadedBy        Staff           @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+  
+  @@index([channelMessageId], map: "idx_attachments_channel_message")
+  @@index([directMessageId], map: "idx_attachments_dm")
+  @@index([uploadedById], map: "idx_attachments_uploader")
+  @@map("message_attachments")
+}
+
+// Read receipts (who read what message)
+model MessageReadReceipt {
+  id                String          @id @default(uuid())
+  channelMessageId  String?
+  directMessageId   String?
+  staffId           String
+  readAt            DateTime        @default(now())
+  
+  // Relations
+  channelMessage    ChannelMessage? @relation(fields: [channelMessageId], references: [id], onDelete: Cascade)
+  directMessage     DirectMessage?  @relation(fields: [directMessageId], references: [id], onDelete: Cascade)
+  staff             Staff           @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  
+  @@unique([channelMessageId, staffId], map: "channel_message_read_unique")
+  @@unique([directMessageId, staffId], map: "dm_read_unique")
+  @@index([staffId], map: "idx_read_receipts_staff")
+  @@map("message_read_receipts")
+}
+
+// Pinned messages in channels
+model PinnedMessage {
+  id                String                @id @default(uuid())
+  channelId         String
+  messageId         String
+  pinnedById        String
+  pinnedAt          DateTime              @default(now())
+  
+  // Relations
+  channel           CommunicationChannel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  pinnedBy          Staff                 @relation(fields: [pinnedById], references: [id], onDelete: Cascade)
+  
+  @@unique([channelId, messageId], map: "pinned_message_unique")
+  @@index([channelId], map: "idx_pinned_messages_channel")
+  @@map("pinned_messages")
+}
+
+// Typing indicators (who is typing)
+model TypingIndicator {
+  id                String          @id @default(uuid())
+  channelId         String?
+  conversationId    String?
+  staffId           String
+  startedAt         DateTime        @default(now())
+  expiresAt         DateTime        // Auto-expire after 5 seconds
+  
+  // Relations
+  staff             Staff           @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  
+  @@index([channelId, expiresAt], map: "idx_typing_channel")
+  @@index([conversationId, expiresAt], map: "idx_typing_conversation")
+  @@index([expiresAt], map: "idx_typing_expires")
+  @@map("typing_indicators")
+}
+
+// Notification preferences for communications
+model CommunicationNotificationPreference {
+  id                String                @id @default(uuid())
+  staffId           String                @unique
+  desktopEnabled    Boolean               @default(true)
+  mobileEnabled     Boolean               @default(true)
+  emailEnabled      Boolean               @default(false)
+  soundEnabled      Boolean               @default(true)
+  mutedChannels     String[]              @default([])  // Array of channel IDs
+  mutedConversations String[]             @default([])  // Array of conversation IDs
+  doNotDisturbStart String?               // HH:MM format
+  doNotDisturbEnd   String?               // HH:MM format
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+  
+  // Relations
+  staff             Staff                 @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  
+  @@map("communication_notification_preferences")
+}
+
+// Enums for communications
+enum ChannelType {
+  PUBLIC          // Anyone in tenant can join
+  PRIVATE         // Invite-only
+  ANNOUNCEMENT    // Only admins/managers can post
+  ARCHIVED        // No longer active
+}
+
+enum ChannelMemberRole {
+  OWNER           // Can delete channel, manage all settings
+  ADMIN           // Can manage members, settings
+  MEMBER          // Regular member
+}
+
+enum NotificationLevel {
+  ALL             // Notify for all messages
+  MENTIONS        // Only @mentions and DMs
+  NONE            // No notifications
+}
+
+enum MessageContentType {
+  TEXT            // Plain text
+  MARKDOWN        // Markdown formatted
+  CODE            // Code snippet
+  SYSTEM          // System message (user joined, etc.)
+}
+
+enum MentionType {
+  USER            // @username
+  CHANNEL         // @channel (notify all)
+  HERE            // @here (notify online users)
+}
+
+// ============================================================================
+// WAITLIST SYSTEM
+// ============================================================================
+
+// Waitlist entry for fully booked services
+model WaitlistEntry {
+  id                        String                @id @default(uuid())
+  tenantId                  String                @default("dev")
+  customerId                String
+  petId                     String
+  serviceType               WaitlistServiceType
+  
+  // Date/Time
+  requestedStartDate        DateTime
+  requestedEndDate          DateTime?             // For boarding/daycare
+  requestedTime             String?               // For grooming (HH:MM format)
+  flexibleDates             Boolean               @default(false)
+  dateFlexibilityDays       Int?                  // ±N days
+  
+  // Service Details
+  serviceId                 String?               // Specific service
+  resourceId                String?               // Specific suite/room
+  groomerId                 String?               // Specific groomer
+  classId                   String?               // Specific training class
+  
+  // Preferences (JSON)
+  preferences               String                @default("{}")  // JSON: suiteType, groomerPreference, timePreference
+  
+  // Status & Priority
+  status                    WaitlistStatus        @default(ACTIVE)
+  priority                  BigInt                // Timestamp-based (earlier = lower number = higher priority)
+  position                  Int                   // Current position in queue
+  
+  // Metadata
+  notes                     String?               // Staff notes
+  customerNotes             String?               // Customer notes/requirements
+  notificationsSent         Int                   @default(0)
+  lastNotifiedAt            DateTime?
+  
+  // Conversion
+  convertedToReservationId  String?
+  convertedAt               DateTime?
+  
+  // Expiration
+  expiresAt                 DateTime?             // Auto-expire after N days
+  
+  // Timestamps
+  createdAt                 DateTime              @default(now())
+  updatedAt                 DateTime              @updatedAt
+  
+  // Relations
+  customer                  Customer              @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  pet                       Pet                   @relation(fields: [petId], references: [id], onDelete: Cascade)
+  service                   Service?              @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  resource                  Resource?             @relation(fields: [resourceId], references: [id], onDelete: SetNull)
+  groomer                   Staff?                @relation("GroomerWaitlist", fields: [groomerId], references: [id], onDelete: SetNull)
+  trainingClass             TrainingClass?        @relation(fields: [classId], references: [id], onDelete: SetNull)
+  convertedReservation      Reservation?          @relation("ConvertedReservation", fields: [convertedToReservationId], references: [id], onDelete: SetNull)
+  notifications             WaitlistNotification[]
+  
+  @@index([tenantId, status], map: "idx_waitlist_tenant_status")
+  @@index([tenantId, serviceType, status], map: "idx_waitlist_service_status")
+  @@index([tenantId, requestedStartDate], map: "idx_waitlist_start_date")
+  @@index([priority], map: "idx_waitlist_priority")
+  @@index([position], map: "idx_waitlist_position")
+  @@index([expiresAt], map: "idx_waitlist_expires")
+  @@index([customerId], map: "idx_waitlist_customer")
+  @@map("waitlist_entries")
+}
+
+// Notifications sent for waitlist entries
+model WaitlistNotification {
+  id                  String                      @id @default(uuid())
+  waitlistEntryId     String
+  notificationType    WaitlistNotificationType
+  recipientType       WaitlistRecipientType
+  recipientId         String                      // Staff ID or Customer ID
+  channel             NotificationChannel
+  status              NotificationStatus          @default(PENDING)
+  
+  // Message
+  subject             String?
+  message             String
+  
+  // Metadata
+  sentAt              DateTime?
+  readAt              DateTime?
+  actionTaken         WaitlistAction?
+  actionTakenAt       DateTime?
+  errorMessage        String?
+  
+  // Expiration (for spot available notifications)
+  expiresAt           DateTime?
+  
+  // Timestamps
+  createdAt           DateTime                    @default(now())
+  updatedAt           DateTime                    @updatedAt
+  
+  // Relations
+  waitlistEntry       WaitlistEntry               @relation(fields: [waitlistEntryId], references: [id], onDelete: Cascade)
+  
+  @@index([waitlistEntryId], map: "idx_waitlist_notif_entry")
+  @@index([recipientId, status], map: "idx_waitlist_notif_recipient")
+  @@index([status, sentAt], map: "idx_waitlist_notif_status")
+  @@index([expiresAt], map: "idx_waitlist_notif_expires")
+  @@map("waitlist_notifications")
+}
+
+// Waitlist configuration per tenant
+model WaitlistConfig {
+  id                                String    @id @default(uuid())
+  tenantId                          String    @unique
+  
+  // Feature flags
+  enabled                           Boolean   @default(true)
+  boardingEnabled                   Boolean   @default(true)
+  daycareEnabled                    Boolean   @default(true)
+  groomingEnabled                   Boolean   @default(true)
+  trainingEnabled                   Boolean   @default(true)
+  
+  // Expiration settings
+  entryExpirationDays               Int       @default(30)
+  notificationExpirationHours       Int       @default(24)
+  
+  // Notification settings
+  maxNotificationsPerAvailability   Int       @default(3)
+  autoNotifyOnCancellation          Boolean   @default(true)
+  customerNotificationChannels      String[]  @default(["SMS", "EMAIL"])
+  staffNotificationChannels         String[]  @default(["IN_APP", "EMAIL"])
+  
+  // Flexible dates
+  flexibleDatesEnabled              Boolean   @default(true)
+  maxFlexibilityDays                Int       @default(7)
+  
+  // Priority algorithm
+  useLoyaltyBonus                   Boolean   @default(false)
+  useFlexibilityBonus               Boolean   @default(true)
+  
+  // Timestamps
+  createdAt                         DateTime  @default(now())
+  updatedAt                         DateTime  @updatedAt
+  
+  @@map("waitlist_config")
+}
+
+// Waitlist enums
+
+enum WaitlistServiceType {
+  BOARDING
+  DAYCARE
+  GROOMING
+  TRAINING
+}
+
+enum WaitlistStatus {
+  ACTIVE          // Waiting for availability
+  NOTIFIED        // Customer notified of availability
+  CONVERTED       // Converted to reservation
+  EXPIRED         // Entry expired
+  CANCELLED       // Cancelled by customer or staff
+}
+
+enum WaitlistNotificationType {
+  SPOT_AVAILABLE      // Spot opened up
+  POSITION_UPDATE     // Moved up in queue
+  EXPIRING_SOON       // Entry expiring soon
+  CONVERTED           // Successfully converted to reservation
+  CANCELLED           // Entry cancelled
+}
+
+enum WaitlistRecipientType {
+  STAFF
+  CUSTOMER
+}
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+  IN_APP
+  PUSH
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+  READ
+}
+
+enum WaitlistAction {
+  BOOKED          // Customer booked the spot
+  DECLINED        // Customer declined the spot
+  EXPIRED         // Notification expired
+  NO_RESPONSE     // No response from customer
+}
+
+// ============================================================================
+// REPORT CARD SYSTEM
+// ============================================================================
+
+model ReportCard {
+  id                String                    @id @default(uuid())
+  tenantId          String
+  
+  // Relationships
+  petId             String
+  pet               Pet                       @relation(fields: [petId], references: [id])
+  customerId        String
+  customer          Customer                  @relation(fields: [customerId], references: [id])
+  reservationId     String?
+  reservation       Reservation?              @relation(fields: [reservationId], references: [id])
+  createdByStaffId  String
+  createdByStaff    Staff                     @relation("StaffCreatedReportCards", fields: [createdByStaffId], references: [id])
+  
+  // Report Details
+  reportDate        DateTime                  @default(now())
+  serviceType       ReportCardServiceType
+  templateType      ReportCardTemplate?
+  
+  // Content
+  title             String?
+  summary           String?
+  
+  // Activity Ratings (1-5 scale)
+  moodRating        Int?
+  energyRating      Int?
+  appetiteRating    Int?
+  socialRating      Int?
+  
+  // Activity Details
+  activities        String[]                  @default([])
+  mealsEaten        String[]                  @default([])
+  bathroomBreaks    Int?
+  medicationGiven   Boolean                   @default(false)
+  medicationNotes   String?
+  
+  // Behavioral Notes
+  behaviorNotes     String?
+  highlights        String[]                  @default([])
+  concerns          String[]                  @default([])
+  
+  // Photos
+  photos            ReportCardPhoto[]
+  photoCount        Int                       @default(0)
+  
+  // Delivery
+  status            ReportCardStatus          @default(DRAFT)
+  sentAt            DateTime?
+  sentViaEmail      Boolean                   @default(false)
+  sentViaSMS        Boolean                   @default(false)
+  emailDeliveredAt  DateTime?
+  smsDeliveredAt    DateTime?
+  viewedAt          DateTime?
+  viewCount         Int                       @default(0)
+  
+  // Metadata
+  isTemplate        Boolean                   @default(false)
+  tags              String[]                  @default([])
+  notes             String?
+  
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+  
+  @@index([tenantId, reportDate])
+  @@index([petId, reportDate])
+  @@index([customerId, reportDate])
+  @@index([reservationId])
+  @@index([status])
+  @@index([createdByStaffId])
+  @@map("report_cards")
+}
+
+model ReportCardPhoto {
+  id                String        @id @default(uuid())
+  reportCardId      String
+  reportCard        ReportCard    @relation(fields: [reportCardId], references: [id], onDelete: Cascade)
+  
+  // Photo Details
+  url               String
+  thumbnailUrl      String?
+  caption           String?
+  order             Int           @default(0)
+  
+  // Metadata
+  uploadedByStaffId String?
+  uploadedByStaff   Staff?        @relation("StaffUploadedPhotos", fields: [uploadedByStaffId], references: [id])
+  fileSize          Int?
+  width             Int?
+  height            Int?
+  mimeType          String?
+  
+  createdAt         DateTime      @default(now())
+  
+  @@index([reportCardId, order])
+  @@map("report_card_photos")
+}
+
+enum ReportCardServiceType {
+  BOARDING
+  DAYCARE
+  GROOMING
+  TRAINING
+  GENERAL
+}
+
+enum ReportCardTemplate {
+  DAYCARE_DAILY
+  BOARDING_DAILY
+  BOARDING_CHECKOUT
+  GROOMING_COMPLETE
+  TRAINING_SESSION
+  CUSTOM
+}
+
+enum ReportCardStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  SENT
+  VIEWED
+  ARCHIVED
+}
+
+// ============================================
+// DAYCARE PASS SYSTEM MODELS
+// ============================================
+
+// Tenant-configurable pass packages (settings per tenant)
+model DaycarePassPackage {
+  id                  String                @id @default(uuid())
+  tenantId            String
+  name                String                // e.g., "5-Day Pass", "10-Day Pass", "20-Day Pass"
+  description         String?
+  passCount           Int                   // Number of daycare days included (5, 10, 20)
+  price               Float                 // Total package price (e.g., $135 for 5 passes at 10% off)
+  regularPricePerDay  Float                 // Reference: what single daycare costs (for display)
+  discountPercent     Float                 // e.g., 10.0 for 10% discount
+  validityDays        Int                   // Days until expiration from purchase (e.g., 90, 180, 365)
+  isActive            Boolean               @default(true)
+  sortOrder           Int                   @default(0)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  
+  // Relations
+  customerPasses      CustomerDaycarePass[]
+
+  @@unique([tenantId, name], map: "daycare_pass_packages_tenant_name_unique")
+  @@index([tenantId, isActive], map: "daycare_pass_packages_tenant_active_idx")
+  @@map("daycare_pass_packages")
+}
+
+// Customer's purchased pass with balance tracking
+model CustomerDaycarePass {
+  id                  String                  @id @default(uuid())
+  tenantId            String
+  customerId          String
+  packageId           String
+  package             DaycarePassPackage      @relation(fields: [packageId], references: [id])
+  
+  // Balance tracking
+  passesPurchased     Int                     // Original number of passes (e.g., 10)
+  passesRemaining     Int                     // Current balance (decrements on use)
+  passesUsed          Int                     @default(0) // For quick reference
+  
+  // Pricing at time of purchase (in case package prices change)
+  purchasePrice       Float                   // What customer paid
+  pricePerPass        Float                   // purchasePrice / passesPurchased
+  
+  // Dates
+  purchasedAt         DateTime                @default(now())
+  expiresAt           DateTime                // purchasedAt + package.validityDays
+  
+  // Status
+  status              DaycarePassStatus       @default(ACTIVE)
+  
+  // Payment reference (optional - links to invoice/payment)
+  invoiceId           String?
+  paymentId           String?
+  notes               String?
+  
+  // Audit
+  createdBy           String?                 // Staff who sold the pass
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+  
+  // Relations
+  redemptions         DaycarePassRedemption[]
+
+  @@index([tenantId, customerId], map: "customer_daycare_passes_tenant_customer_idx")
+  @@index([tenantId, customerId, status], map: "customer_daycare_passes_tenant_customer_status_idx")
+  @@index([tenantId, expiresAt], map: "customer_daycare_passes_tenant_expires_idx")
+  @@map("customer_daycare_passes")
+}
+
+// Audit trail for pass usage
+model DaycarePassRedemption {
+  id                  String              @id @default(uuid())
+  tenantId            String
+  customerPassId      String
+  customerPass        CustomerDaycarePass @relation(fields: [customerPassId], references: [id])
+  
+  // What was redeemed
+  petId               String              // Which pet used the pass
+  reservationId       String?             // Link to daycare reservation if applicable
+  checkInId           String?             // Link to check-in record if applicable
+  
+  // Snapshot at redemption time
+  passesBeforeUse     Int                 // Balance before this redemption
+  passesAfterUse      Int                 // Balance after (passesBeforeUse - 1)
+  
+  // Metadata
+  redeemedAt          DateTime            @default(now())
+  redeemedBy          String?             // Staff who processed the redemption
+  notes               String?
+  
+  // For refunds/reversals
+  isReversed          Boolean             @default(false)
+  reversedAt          DateTime?
+  reversedBy          String?
+  reversalReason      String?
+
+  @@index([tenantId, customerPassId], map: "daycare_pass_redemptions_tenant_pass_idx")
+  @@index([tenantId, petId], map: "daycare_pass_redemptions_tenant_pet_idx")
+  @@index([tenantId, redeemedAt], map: "daycare_pass_redemptions_tenant_date_idx")
+  @@map("daycare_pass_redemptions")
+}
+
+enum DaycarePassStatus {
+  ACTIVE      // Has remaining balance and not expired
+  EXHAUSTED   // All passes used
+  EXPIRED     // Past expiration date with unused passes
+  CANCELLED   // Manually cancelled (refund scenario)
+}
+
+// ============================================
+// FEATURE FLAGS & SERVICE MODULES
+// ============================================
+
+// Global feature flag definitions (system-wide)
+model FeatureFlag {
+  id              String              @id @default(uuid())
+  
+  // Flag identification
+  key             String              @unique  // e.g., "grooming_services", "ai_recommendations"
+  name            String                       // Human-readable name
+  description     String?                      // What this flag controls
+  
+  // Flag type and category
+  category        FeatureFlagCategory @default(FEATURE)
+  
+  // Default state (can be overridden per tenant)
+  defaultEnabled  Boolean             @default(false)
+  
+  // Rollout configuration
+  rolloutPercent  Int                 @default(0)  // 0-100 for gradual rollout
+  
+  // Metadata
+  isActive        Boolean             @default(true)  // Can disable flag entirely
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  
+  // Relations
+  tenantOverrides TenantFeatureFlag[]
+  
+  @@index([key])
+  @@index([category, isActive])
+  @@map("feature_flags")
+}
+
+// Per-tenant feature flag overrides
+model TenantFeatureFlag {
+  id              String      @id @default(uuid())
+  tenantId        String
+  featureFlagId   String
+  featureFlag     FeatureFlag @relation(fields: [featureFlagId], references: [id], onDelete: Cascade)
+  
+  // Override state
+  enabled         Boolean     @default(true)
+  
+  // Optional: per-user overrides (JSON array of user IDs)
+  userOverrides   Json?       // { "enabled": ["userId1"], "disabled": ["userId2"] }
+  
+  // Audit
+  enabledBy       String?     // Staff ID who enabled
+  enabledAt       DateTime?
+  disabledBy      String?     // Staff ID who disabled
+  disabledAt      DateTime?
+  
+  // Metadata
+  notes           String?     // Why this was enabled/disabled
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  @@unique([tenantId, featureFlagId])
+  @@index([tenantId])
+  @@index([featureFlagId])
+  @@map("tenant_feature_flags")
+}
+
+enum FeatureFlagCategory {
+  SERVICE_MODULE  // Core service modules (grooming, training, etc.)
+  FEATURE         // General features (AI, reports, etc.)
+  BETA            // Beta/experimental features
+  INTEGRATION     // Third-party integrations
+}
+
+// ============================================
+// SERVICE AGREEMENTS
+// ============================================
+
+model ServiceAgreementTemplate {
+  id          String                    @id @default(uuid())
+  tenantId    String                    @default("dev")
+  name        String
+  content     String                    // Rich text content (HTML)
+  version     Int                       @default(1)
+  isActive    Boolean                   @default(true)
+  isDefault   Boolean                   @default(false)
+  requiresInitials Boolean              @default(true)  // Require initials on each section
+  requiresSignature Boolean             @default(true)  // Require signature at end
+  questions   Json?                     // Array of custom questions: [{id, question, type, required, options?}]
+  effectiveDate DateTime?               // When this version becomes effective
+  expiresAt   DateTime?                 // Optional expiration date
+  createdBy   String?                   // Staff ID who created
+  updatedBy   String?                   // Staff ID who last updated
+  createdAt   DateTime                  @default(now())
+  updatedAt   DateTime                  @updatedAt
+  versions    ServiceAgreementVersion[]
+  agreements  ServiceAgreement[]        @relation("TemplateAgreements")
+
+  @@unique([tenantId, name], map: "service_agreement_templates_tenant_name_unique")
+  @@index([tenantId, isActive], map: "service_agreement_templates_tenant_active_idx")
+  @@index([tenantId, isDefault], map: "service_agreement_templates_tenant_default_idx")
+  @@map("service_agreement_templates")
+}
+
+model ServiceAgreementVersion {
+  id          String                   @id @default(uuid())
+  tenantId    String                   @default("dev")
+  templateId  String
+  version     Int
+  content     String                   // Snapshot of content at this version
+  changeNotes String?                  // Description of changes
+  createdBy   String?                  // Staff ID who created this version
+  createdAt   DateTime                 @default(now())
+  template    ServiceAgreementTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@unique([templateId, version], map: "service_agreement_versions_template_version_unique")
+  @@index([tenantId, templateId], map: "service_agreement_versions_tenant_template_idx")
+  @@map("service_agreement_versions")
+}
+
+model ServiceAgreement {
+  id              String                    @id @default(uuid())
+  tenantId        String                    @default("dev")
+  checkInId       String?                   @unique // Optional - can be signed without check-in
+  customerId      String                    // Customer who signed
+  petId           String?                   // Optional - specific pet if applicable
+  templateId      String?                   // Reference to template used
+  templateVersion Int?                      // Version of template at time of signing
+  agreementText   String                    // Full text at time of signing (snapshot)
+  initials        Json                      // Array of {section, initials, timestamp}
+  signature       String                    // Base64 signature image
+  signatureMethod String?                   // How signature was captured: 'device', 'terminal', 'paper'
+  signedBy        String                    // Name of person who signed
+  signedAt        DateTime
+  ipAddress       String?
+  userAgent       String?                   // Browser/device info
+  questionResponses Json?                   // Responses to custom questions: {questionId: response}
+  acknowledgedAt  DateTime?                 // When customer acknowledged (if separate from signing)
+  expiresAt       DateTime?                 // When this agreement expires (for renewals)
+  isValid         Boolean                   @default(true) // Can be invalidated if needed
+  invalidatedAt   DateTime?
+  invalidatedBy   String?
+  invalidReason   String?
+  createdAt       DateTime                  @default(now())
+  updatedAt       DateTime                  @updatedAt
+  checkIn         CheckIn?                  @relation(fields: [checkInId], references: [id], onDelete: SetNull)
+  template        ServiceAgreementTemplate? @relation("TemplateAgreements", fields: [templateId], references: [id])
+
+  @@index([tenantId], map: "service_agreements_tenant_idx")
+  @@index([tenantId, customerId], map: "service_agreements_tenant_customer_idx")
+  @@index([tenantId, customerId, signedAt], map: "service_agreements_tenant_customer_signed_idx")
+  @@index([tenantId, isValid], map: "service_agreements_tenant_valid_idx")
+  @@map("service_agreements")
+}
+
+// ============================================
+// TIPPING SYSTEM
+// ============================================
+
+model Tip {
+  id                String              @id @default(uuid())
+  tenantId          String              @default("dev")
+  type              TipType             // GROOMER or GENERAL
+  amount            Decimal             @db.Decimal(10, 2)
+  percentage        Int?                // Preset percentage used (15, 20, 25, etc.) - null if custom
+  collectionMethod  TipCollectionMethod // ONLINE, TERMINAL, or CASH
+  
+  // Relationships
+  customerId        String              // Customer who gave the tip
+  reservationId     String?             // Optional - linked reservation
+  invoiceId         String?             // Optional - linked invoice/payment
+  groomerId         String?             // Only for GROOMER type tips
+  
+  // Metadata
+  notes             String?             // Optional notes (e.g., "Great job with Fluffy!")
+  recordedBy        String?             // Staff ID who recorded the tip (for CASH tips)
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  // Relations
+  customer          Customer            @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  groomer           Staff?              @relation("GroomerTips", fields: [groomerId], references: [id], onDelete: SetNull)
+  
+  @@index([tenantId], map: "tips_tenant_idx")
+  @@index([tenantId, customerId], map: "tips_tenant_customer_idx")
+  @@index([tenantId, groomerId], map: "tips_tenant_groomer_idx")
+  @@index([tenantId, type], map: "tips_tenant_type_idx")
+  @@index([tenantId, createdAt], map: "tips_tenant_created_idx")
+  @@index([tenantId, reservationId], map: "tips_tenant_reservation_idx")
+  @@index([tenantId, invoiceId], map: "tips_tenant_invoice_idx")
+  @@map("tips")
+}

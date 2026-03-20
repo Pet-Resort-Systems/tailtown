@@ -9,7 +9,7 @@ const DOG_ICONS = [
   ['🐶', '🏃', '🦴'],
   ['🐕‍🦺', '😊', '🎯'],
   ['🦮', '🍖', '💊'],
-  ['🐩', '🎨', '✨']
+  ['🐩', '🎨', '✨'],
 ];
 
 const CAT_ICONS = [
@@ -17,7 +17,7 @@ const CAT_ICONS = [
   ['😸', '🎀', '💤'],
   ['😻', '🧶', '🐭'],
   ['😼', '🌙', '🎵'],
-  ['😽', '🦋', '💕']
+  ['😽', '🦋', '💕'],
 ];
 
 async function addPetIcons(tenantSubdomain) {
@@ -26,7 +26,7 @@ async function addPetIcons(tenantSubdomain) {
 
     // Get tenant
     const tenant = await prisma.tenant.findUnique({
-      where: { subdomain: tenantSubdomain }
+      where: { subdomain: tenantSubdomain },
     });
 
     if (!tenant) {
@@ -37,7 +37,7 @@ async function addPetIcons(tenantSubdomain) {
     // Get all pets for this tenant
     const pets = await prisma.pet.findMany({
       where: { tenantId: tenant.id },
-      orderBy: { name: 'asc' }
+      orderBy: { name: 'asc' },
     });
 
     console.log(`Found ${pets.length} pets\n`);
@@ -48,7 +48,7 @@ async function addPetIcons(tenantSubdomain) {
 
     for (const pet of pets) {
       let icons;
-      
+
       if (pet.type === 'DOG') {
         icons = DOG_ICONS[dogIndex % DOG_ICONS.length];
         dogIndex++;
@@ -62,7 +62,7 @@ async function addPetIcons(tenantSubdomain) {
 
       await prisma.pet.update({
         where: { id: pet.id },
-        data: { petIcons: icons }
+        data: { petIcons: icons },
       });
 
       console.log(`✓ ${pet.name} (${pet.type}): ${icons.join(' ')}`);
@@ -70,7 +70,6 @@ async function addPetIcons(tenantSubdomain) {
     }
 
     console.log(`\n✅ Updated ${updated} pets with icons!`);
-
   } catch (error) {
     console.error('❌ Error:', error);
     process.exit(1);

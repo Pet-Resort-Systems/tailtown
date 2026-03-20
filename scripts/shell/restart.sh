@@ -8,9 +8,9 @@ source ~/.nvm/nvm.sh
 
 # Directories
 ROOT_DIR="$(pwd)"
-RESERVATION_DIR="$ROOT_DIR/services/reservation-service"
-CUSTOMER_DIR="$ROOT_DIR/services/customer"
-FRONTEND_DIR="$ROOT_DIR/frontend"
+RESERVATION_DIR="$ROOT_DIR/apps/reservation-service"
+CUSTOMER_DIR="$ROOT_DIR/apps/customer-service"
+FRONTEND_DIR="$ROOT_DIR/apps/frontend"
 
 # Colors
 GREEN='\033[0;32m'
@@ -25,13 +25,13 @@ echo -e "${GREEN}Setting up environment...${NC}"
 # kill -9 $(lsof -ti tcp:4004) 2>/dev/null || echo "No process on port 4004"
 
 echo -e "${GREEN}Opening terminal for reservation service (port 4003)${NC}"
-echo "cd $RESERVATION_DIR && source ~/.nvm/nvm.sh && npm run dev"
+echo "cd $RESERVATION_DIR && source ~/.nvm/nvm.sh && pnpm run dev"
 
 echo -e "${GREEN}Opening terminal for customer service (port 4004)${NC}"
-echo "cd $CUSTOMER_DIR && source ~/.nvm/nvm.sh && npm run dev"
+echo "cd $CUSTOMER_DIR && source ~/.nvm/nvm.sh && pnpm run dev"
 
-echo -e "${GREEN}Opening terminal for frontend (port 3000)${NC}"
-echo "cd $FRONTEND_DIR && source ~/.nvm/nvm.sh && npm start"
+echo -e "${GREEN}Opening terminal for apps/frontend (port 3000)${NC}"
+echo "cd $FRONTEND_DIR && source ~/.nvm/nvm.sh && pnpm start"
 
 echo
 echo -e "${RED}IMPORTANT: Remember to check that tenant ID is set in browser:${NC}"

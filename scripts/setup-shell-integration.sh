@@ -51,12 +51,12 @@ tailtown_cleanup_on_exit() {
 
 # Tailtown aliases
 alias tt-health='node ~/CascadeProjects/tailtown/scripts/health-check.js'
-alias tt-start='cd ~/CascadeProjects/tailtown && npm run dev:start'
-alias tt-stop='cd ~/CascadeProjects/tailtown && npm run dev:stop'
-alias tt-restart='cd ~/CascadeProjects/tailtown && npm run dev:restart'
-alias tt-status='cd ~/CascadeProjects/tailtown && npm run dev:status'
-alias tt-cleanup='cd ~/CascadeProjects/tailtown && npm run dev:cleanup'
-alias tt-logs='cd ~/CascadeProjects/tailtown && npm run dev:logs'
+alias tt-start='cd ~/CascadeProjects/tailtown && pnpm run dev:start'
+alias tt-stop='cd ~/CascadeProjects/tailtown && pnpm run dev:stop'
+alias tt-restart='cd ~/CascadeProjects/tailtown && pnpm run dev:restart'
+alias tt-status='cd ~/CascadeProjects/tailtown && pnpm run dev:status'
+alias tt-cleanup='cd ~/CascadeProjects/tailtown && pnpm run dev:cleanup'
+alias tt-logs='cd ~/CascadeProjects/tailtown && pnpm run dev:logs'
 alias tt-zombies='ps aux | grep -E "(ts-node-dev|react-scripts)" | grep -v grep | wc -l'
 
 # Quick check function

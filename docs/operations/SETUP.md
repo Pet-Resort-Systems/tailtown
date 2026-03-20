@@ -6,7 +6,7 @@ This document provides step-by-step instructions for setting up the Tailtown pet
 
 These tools must be installed on your system:
 
-1. **Node.js and npm** (v14+ recommended)
+1. **Node.js and pnpm** (v24+ recommended)
    ```bash
    # Install via nvm (recommended)
    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
@@ -33,26 +33,28 @@ These tools must be installed on your system:
 
 1. **Install dependencies**:
    ```bash
-   cd services/customer
-   npm install
+   cd /path/to/tailtown
+   pnpm install
    ```
 
 2. **Database setup**:
    ```bash
    # Generate Prisma client
-   npx prisma generate
+   cd apps/customer-service
+   pnpm exec prisma generate
    
    # Run migrations to set up database schema
-   npx prisma migrate dev --name init
+   pnpm exec prisma migrate dev --name init
    
    # Optional: Seed the database with test data
-   npx ts-node src/tests/scripts/seed-services.ts
+   pnpm exec ts-node src/tests/scripts/seed-services.ts
    ```
 
 3. **Start the customer service**:
    ```bash
+   cd apps/customer-service
    source ~/.nvm/nvm.sh
-   npm run dev
+   pnpm run dev
    ```
    The server should start on http://localhost:4004
 
@@ -60,23 +62,25 @@ These tools must be installed on your system:
 
 1. **Install dependencies**:
    ```bash
-   cd services/reservation-service
-   npm install
+   cd /path/to/tailtown
+   pnpm install
    ```
 
 2. **Database setup**:
    ```bash
    # Generate Prisma client
-   npx prisma generate
+   cd apps/reservation-service
+   pnpm exec prisma generate
    
    # Run migrations
-   npx prisma migrate deploy
+   pnpm exec prisma migrate deploy
    ```
 
 3. **Start the reservation service**:
    ```bash
+   cd apps/reservation-service
    source ~/.nvm/nvm.sh
-   PORT=4003 npm run dev
+   PORT=4003 pnpm run dev
    ```
    The server should start on http://localhost:4003
 
@@ -84,14 +88,15 @@ These tools must be installed on your system:
 
 1. **Install dependencies**:
    ```bash
-   cd frontend
-   npm install
+   cd /path/to/tailtown
+   pnpm install
    ```
 
 2. **Start the development server**:
    ```bash
+   cd apps/frontend
    source ~/.nvm/nvm.sh
-   npm start
+   pnpm start
    ```
    The frontend should start on http://localhost:3000
 
@@ -132,31 +137,32 @@ See [MCP Server README](../../mcp-server/README.md) for complete documentation.
 
 1. **Run all tests**:
    ```bash
-   cd services/customer
-   npm test
+   cd /path/to/tailtown
+   pnpm test
    ```
 
 2. **Run specific tests**:
    ```bash
+   cd apps/customer-service
    # Test the service controller
-   npm test -- src/tests/controllers/service.controller.test.ts
+   pnpm test -- src/tests/controllers/service.controller.test.ts
    
    # Run integration tests
-   npm test -- src/tests/integration
+   pnpm test -- src/tests/integration
    
    # Run validation tests
-   npm test -- src/tests/api-validation
+   pnpm test -- src/tests/api-validation
    ```
 
 3. **Generate test coverage report**:
    ```bash
-   npm test -- --coverage
+   pnpm test -- --coverage
    ```
 
 ## Testing with Postman
 
 1. Import the Postman collection from:
-   `services/customer/src/tests/postman/tailtown-services-api.postman_collection.json`
+   `apps/customer-service/src/tests/postman/tailtown-services-api.postman_collection.json`
 
 2. Configure a Postman environment with:
    - `baseUrl`: `http://localhost:4004`
@@ -166,7 +172,7 @@ See [MCP Server README](../../mcp-server/README.md) for complete documentation.
 ## Manual Testing Steps
 
 For manual testing without Postman, follow the test plan at:
-`services/customer/src/tests/manual-test-plan.md`
+`apps/customer-service/src/tests/manual-test-plan.md`
 
 ## Troubleshooting
 
@@ -176,9 +182,9 @@ For manual testing without Postman, follow the test plan at:
    - Ensure the database exists
 
 2. **Missing modules errors**:
-   - Run `npm install` again
-   - Delete node_modules folder and run `npm install`
+   - Run `pnpm install` again from the repo root
+   - Delete node_modules folders and run `pnpm install`
 
 3. **TypeScript errors**:
-   - Run `npm install --save-dev @types/node @types/express`
-   - Ensure typescript is installed: `npm install --save-dev typescript`
+   - Add missing types with `pnpm add -D @types/node @types/express`
+   - Ensure TypeScript is available in the workspace dependencies

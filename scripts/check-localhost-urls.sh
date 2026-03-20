@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script to check for hardcoded localhost URLs in frontend code
+# Script to check for hardcoded localhost URLs in apps/frontend code
 # This prevents localhost references from being deployed to production
 
 set -e
@@ -14,10 +14,10 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Search for localhost URLs in frontend source code
+# Search for localhost URLs in apps/frontend source code
 # Exclude node_modules, build, test files, config files, and setupProxy
 # Also exclude lines that use environment variables as fallbacks (|| 'http://localhost')
-LOCALHOST_MATCHES=$(grep -r "localhost:[0-9]" frontend/src \
+LOCALHOST_MATCHES=$(grep -r "localhost:[0-9]" apps/frontend/src \
   --include="*.ts" \
   --include="*.tsx" \
   --include="*.js" \
@@ -56,7 +56,7 @@ fi
 echo "Checking for common localhost variations..."
 
 # Check for http://localhost (without port)
-LOCALHOST_NO_PORT=$(grep -r "http://localhost[^:]" frontend/src \
+LOCALHOST_NO_PORT=$(grep -r "http://localhost[^:]" apps/frontend/src \
   --include="*.ts" \
   --include="*.tsx" \
   --include="*.js" \
@@ -76,7 +76,7 @@ if [ -n "$LOCALHOST_NO_PORT" ]; then
 fi
 
 # Check for 127.0.0.1
-LOCALHOST_IP=$(grep -r "127\.0\.0\.1:[0-9]" frontend/src \
+LOCALHOST_IP=$(grep -r "127\.0\.0\.1:[0-9]" apps/frontend/src \
   --include="*.ts" \
   --include="*.tsx" \
   --include="*.js" \

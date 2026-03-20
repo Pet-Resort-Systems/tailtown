@@ -40,8 +40,8 @@ ALTER TABLE services ADD COLUMN "tenantId" VARCHAR(255) DEFAULT 'dev';
 
 **Prevention**: Always run Prisma migrations after schema changes:
 ```bash
-cd services/customer
-npx prisma migrate dev --name descriptive_migration_name
+cd apps/customer-service
+pnpm exec prisma migrate dev --name descriptive_migration_name
 ```
 
 ### 3. Missing Default Value for updatedAt
@@ -73,21 +73,21 @@ ALTER TABLE services ALTER COLUMN "updatedAt" SET DEFAULT CURRENT_TIMESTAMP;
 ## Files Modified
 
 ### Backend Changes
-1. `/services/customer/src/controllers/service.controller.ts`
+1. `/apps/customer-service/src/controllers/service.controller.ts`
    - Added `tenantId` to service creation data
    - Removed problematic `findUnique` query inside transaction
    - Added debug logging for troubleshooting
 
-2. `/services/customer/prisma/schema.prisma`
+2. `/apps/customer-service/prisma/schema.prisma`
    - Verified `tenantId` field exists on Service model
    - Confirmed `@updatedAt` directive on updatedAt field
 
 ### Frontend Changes
-1. `/frontend/src/services/serviceManagement.ts`
+1. `/apps/frontend/src/services/serviceManagement.ts`
    - Updated `getAllServices` to accept `params?: { category?: string; limit?: number; page?: number }`
    - Allows filtering by category and increasing result limit
 
-2. `/frontend/src/pages/services/Services.tsx`
+2. `/apps/frontend/src/pages/services/Services.tsx`
    - Updated to call `getAllServices({ limit: 100 })`
    - Ensures all services are fetched, not just first 10
 
@@ -104,7 +104,7 @@ ALTER TABLE services ALTER COLUMN "updatedAt" SET DEFAULT CURRENT_TIMESTAMP;
 docker ps | grep postgres
 
 # Verify DATABASE_URL in .env matches the correct container
-cat services/customer/.env | grep DATABASE_URL
+cat apps/customer-service/.env | grep DATABASE_URL
 # Should be: postgresql://postgres:postgres@localhost:5433/customer
 ```
 
@@ -136,8 +136,8 @@ docker exec tailtown-postgres psql -U postgres customer -c \
 Never manually alter the database schema. Always use Prisma migrations:
 ```bash
 # After changing schema.prisma
-cd services/customer
-npx prisma migrate dev --name descriptive_name
+cd apps/customer-service
+pnpm exec prisma migrate dev --name descriptive_name
 ```
 
 ### 2. Verify Database Connection
@@ -174,7 +174,7 @@ Watch for these logs to confirm successful creation.
 **Solution**:
 1. Check backend logs for transaction errors
 2. Verify all required columns have default values
-3. Run `npx prisma db push` to sync schema
+3. Run `pnpm exec prisma db push` to sync schema
 
 ### Issue: Multiple PostgreSQL containers causing confusion
 **Cause**: Docker containers from different development sessions

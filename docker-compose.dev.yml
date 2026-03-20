@@ -10,7 +10,7 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
-    command: npm run dev
+    command: pnpm run dev
 
   auth:
     build:
@@ -20,7 +20,7 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
-    command: npm run dev
+    command: pnpm run dev
     ports:
       - "3001:3001"
 
@@ -28,11 +28,11 @@ services:
     build:
       target: development
     volumes:
-      - ./services/customer:/app
+      - ./apps/customer-service:/app
       - /app/node_modules
     environment:
       - NODE_ENV=development
-    command: npm run dev
+    command: pnpm run dev
     ports:
       - "3002:3002"
 
@@ -40,11 +40,11 @@ services:
     build:
       target: development
     volumes:
-      - ./services/reservation:/app
+      - ./apps/reservation-service:/app
       - /app/node_modules
     environment:
       - NODE_ENV=development
-    command: npm run dev
+    command: pnpm run dev
     ports:
       - "3003:3003"
 
@@ -56,7 +56,7 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
-    command: npm run dev
+    command: pnpm run dev
     ports:
       - "3004:3004"
 
@@ -68,7 +68,7 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
-    command: npm run dev
+    command: pnpm run dev
     ports:
       - "3005:3005"
 
@@ -76,11 +76,11 @@ services:
     build:
       target: development
     volumes:
-      - ./frontend:/app
+      - ./apps/frontend:/app
       - /app/node_modules
     environment:
       - NODE_ENV=development
       - REACT_APP_API_URL=http://localhost:3000
-    command: npm start
+    command: pnpm start
     ports:
       - "8080:3000"

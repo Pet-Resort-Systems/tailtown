@@ -5,14 +5,14 @@ async function seedMobileData() {
   console.log('🔧 Seeding mobile test data (simple)...\n');
 
   const tenantId = '06d09e08-fe1f-4feb-89f8-c3b619026ba9'; // Rainy Day's Inn
-  
+
   try {
     // Get staff member
     const staff = await prisma.staff.findFirst({
-      where: { 
+      where: {
         tenantId,
-        email: 'sarah.mitchell@rainytest.com'
-      }
+        email: 'sarah.mitchell@rainytest.com',
+      },
     });
 
     if (!staff) {
@@ -33,8 +33,8 @@ async function seedMobileData() {
       where: {
         tenantId,
         staffId: staff.id,
-        date: today
-      }
+        date: today,
+      },
     });
 
     // Morning shift
@@ -47,8 +47,8 @@ async function seedMobileData() {
         endTime: '12:00',
         role: 'Kennel Attendant',
         location: 'Main Building',
-        status: 'SCHEDULED'
-      }
+        status: 'SCHEDULED',
+      },
     });
 
     // Lunch break
@@ -61,8 +61,8 @@ async function seedMobileData() {
         endTime: '13:00',
         role: 'Break',
         location: '',
-        status: 'SCHEDULED'
-      }
+        status: 'SCHEDULED',
+      },
     });
 
     // Afternoon shift
@@ -75,8 +75,8 @@ async function seedMobileData() {
         endTime: '17:00',
         role: 'Kennel Attendant',
         location: 'Main Building',
-        status: 'SCHEDULED'
-      }
+        status: 'SCHEDULED',
+      },
     });
 
     console.log('✅ Created 3 schedule entries\n');
@@ -86,7 +86,6 @@ async function seedMobileData() {
     console.log(`   Staff: ${staff.firstName} ${staff.lastName}`);
     console.log(`   Schedule Entries: 3 (today)`);
     console.log(`\n✅ Login as sarah.mitchell@rainytest.com to test!`);
-
   } catch (error) {
     console.error('❌ Error seeding data:', error);
     throw error;
@@ -95,8 +94,7 @@ async function seedMobileData() {
   }
 }
 
-seedMobileData()
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+seedMobileData().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

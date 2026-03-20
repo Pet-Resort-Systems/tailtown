@@ -45,13 +45,13 @@
 
 ## 📊 **Final Statistics**
 
-| Category | Attempted | Successful | Failed | Success Rate |
-|----------|-----------|------------|--------|--------------|
-| Customers | 11,810 | 11,785 | 25 | 99.8% |
-| Pets | 18,390 | 18,390 | 0 | 100% |
-| Services | 35 | 35 | 0 | 100% |
-| Reservations | 1,308 | 1,199 | 109 | 91.7% |
-| **TOTAL** | **31,543** | **31,409** | **134** | **99.6%** |
+| Category     | Attempted  | Successful | Failed  | Success Rate |
+| ------------ | ---------- | ---------- | ------- | ------------ |
+| Customers    | 11,810     | 11,785     | 25      | 99.8%        |
+| Pets         | 18,390     | 18,390     | 0       | 100%         |
+| Services     | 35         | 35         | 0       | 100%         |
+| Reservations | 1,308      | 1,199      | 109     | 91.7%        |
+| **TOTAL**    | **31,543** | **31,409** | **134** | **99.6%**    |
 
 ---
 
@@ -170,7 +170,7 @@
 
 **Option B: Auto-Assignment Script**
 ```bash
-cd /Users/robweinstein/CascadeProjects/tailtown/services/reservation-service
+cd /Users/danielgutierrezmunoz/dev/code/companies/tailtown-pet-resort/tailtown-project/codex-implement-pnpm-monorepo-migration-plan_tailtown-daguttt/apps/reservation-service
 node assign-kennels-by-service.js --dryRun  # Preview
 node assign-kennels-by-service.js            # Apply
 ```
@@ -235,10 +235,10 @@ node assign-kennels-by-service.js            # Apply
 ## 🎓 **Knowledge Transfer**
 
 ### **Key Files to Know:**
-- **Migration Controller:** `services/customer/src/controllers/gingr-migration.controller.ts`
-- **API Client:** `services/customer/src/services/gingr-api.service.ts`
-- **Transformations:** `services/customer/src/services/gingr-transform.service.ts`
-- **Resource Mapper:** `services/customer/src/services/gingr-resource-mapper.service.ts`
+- **Migration Controller:** `apps/customer-service/src/controllers/gingr-migration.controller.ts`
+- **API Client:** `apps/customer-service/src/services/gingr-api.service.ts`
+- **Transformations:** `apps/customer-service/src/services/gingr-transform.service.ts`
+- **Resource Mapper:** `apps/customer-service/src/services/gingr-resource-mapper.service.ts`
 
 ### **How to Re-run Migration:**
 ```bash

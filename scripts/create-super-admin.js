@@ -1,7 +1,7 @@
 /**
  * Create Super Admin Account
  * Run this script to create the initial super admin user in production
- * 
+ *
  * Usage: node scripts/create-super-admin.js
  */
 
@@ -13,16 +13,18 @@ const prisma = new PrismaClient();
 
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout
+  output: process.stdout,
 });
 
 function question(query) {
-  return new Promise(resolve => rl.question(query, resolve));
+  return new Promise((resolve) => rl.question(query, resolve));
 }
 
 async function createSuperAdmin() {
   console.log('\n🔐 Create Super Admin Account\n');
-  console.log('This will create the initial super admin user for your production system.\n');
+  console.log(
+    'This will create the initial super admin user for your production system.\n'
+  );
 
   try {
     // Get user input
@@ -50,7 +52,7 @@ async function createSuperAdmin() {
 
     // Check if super admin already exists
     const existing = await prisma.superAdmin.findUnique({
-      where: { email }
+      where: { email },
     });
 
     if (existing) {
@@ -71,8 +73,8 @@ async function createSuperAdmin() {
         lastName,
         passwordHash,
         role: 'SUPER_ADMIN',
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     console.log('\n✅ Super admin account created successfully!');
@@ -82,7 +84,6 @@ async function createSuperAdmin() {
     console.log(`  Name: ${superAdmin.firstName} ${superAdmin.lastName}`);
     console.log(`  Role: ${superAdmin.role}`);
     console.log('\n🎉 You can now login at /super-admin/login\n');
-
   } catch (error) {
     console.error('\n❌ Error creating super admin:', error.message);
     process.exit(1);

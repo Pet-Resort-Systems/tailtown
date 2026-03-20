@@ -8,27 +8,27 @@ This document describes the automated tests for the Tailtown frontend applicatio
 
 ### Run all tests
 ```bash
-npm test
+pnpm test
 ```
 
 ### Run tests in watch mode (recommended for development)
 ```bash
-npm test -- --watch
+pnpm test -- --watch
 ```
 
 ### Run tests with coverage report
 ```bash
-npm run test:coverage
+pnpm run test:coverage
 ```
 
 ### Run specific test file
 ```bash
-npm test -- KennelCardPrint.test
+pnpm test -- KennelCardPrint.test
 ```
 
 ### Run tests matching a pattern
 ```bash
-npm test -- --testNamePattern="timezone"
+pnpm test -- --testNamePattern="timezone"
 ```
 
 ## Test Coverage
@@ -48,7 +48,7 @@ Tests cover:
 
 **Run these tests:**
 ```bash
-npm test -- KennelCardPrint.test
+pnpm test -- KennelCardPrint.test
 ```
 
 ### Timezone Management Feature
@@ -67,7 +67,7 @@ Tests cover:
 
 **Run these tests:**
 ```bash
-npm test -- tenantService.timezone.test
+pnpm test -- tenantService.timezone.test
 ```
 
 ## Test Structure
@@ -101,7 +101,7 @@ These tests should be run automatically in CI/CD pipeline before deployment:
 
 ```bash
 # In CI pipeline
-npm run test:coverage -- --watchAll=false --ci
+pnpm run test:coverage -- --watchAll=false --ci
 ```
 
 ## Adding New Tests
@@ -124,12 +124,12 @@ Then open `chrome://inspect` in Chrome and click "inspect"
 
 ### View test output
 ```bash
-npm test -- --verbose
+pnpm test -- --verbose
 ```
 
 ### Update snapshots (if using snapshot tests)
 ```bash
-npm test -- -u
+pnpm test -- -u
 ```
 
 ## Known Issues

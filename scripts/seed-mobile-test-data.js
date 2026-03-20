@@ -5,29 +5,33 @@ async function seedMobileTestData() {
   console.log('🔧 Seeding mobile app test data...\n');
 
   const tenantId = '06d09e08-fe1f-4feb-89f8-c3b619026ba9'; // Rainy Day's Inn
-  
+
   try {
     // Get or create a staff member
     let staff = await prisma.staff.findFirst({
-      where: { 
+      where: {
         tenantId,
-        email: 'sarah.mitchell@rainytest.com'
-      }
+        email: 'sarah.mitchell@rainytest.com',
+      },
     });
 
     if (!staff) {
-      console.log('❌ Staff member not found. Please run seed-rainy-test-data.js first.');
+      console.log(
+        '❌ Staff member not found. Please run seed-rainy-test-data.js first.'
+      );
       return;
     }
 
-    console.log(`✅ Using staff: ${staff.firstName} ${staff.lastName} (${staff.id})\n`);
+    console.log(
+      `✅ Using staff: ${staff.firstName} ${staff.lastName} (${staff.id})\n`
+    );
 
     // Create checklist templates if they don't exist
     console.log('📋 Creating checklist templates...');
-    
+
     const openingTemplate = await prisma.checklistTemplate.upsert({
-      where: { 
-        id: 'opening-checklist-template'
+      where: {
+        id: 'opening-checklist-template',
       },
       update: {},
       create: {
@@ -47,16 +51,24 @@ async function seedMobileTestData() {
           { id: '7', text: 'Stock supplies', required: false },
           { id: '8', text: 'Clean lobby area', required: true },
           { id: '9', text: 'Turn on music/TV', required: false },
-          { id: '10', text: 'Check emergency equipment', required: true }
+          { id: '10', text: 'Check emergency equipment', required: true },
         ]),
-        requiredForCompletion: JSON.stringify(['1', '2', '3', '5', '6', '8', '10']),
-        estimatedMinutes: 30
-      }
+        requiredForCompletion: JSON.stringify([
+          '1',
+          '2',
+          '3',
+          '5',
+          '6',
+          '8',
+          '10',
+        ]),
+        estimatedMinutes: 30,
+      },
     });
 
     const medicationTemplate = await prisma.checklistTemplate.upsert({
-      where: { 
-        id: 'medication-round-template'
+      where: {
+        id: 'medication-round-template',
       },
       update: {},
       create: {
@@ -71,16 +83,16 @@ async function seedMobileTestData() {
           { id: '2', text: 'Prepare medications', required: true },
           { id: '3', text: 'Administer morning meds', required: true },
           { id: '4', text: 'Document administration', required: true },
-          { id: '5', text: 'Clean medication area', required: true }
+          { id: '5', text: 'Clean medication area', required: true },
         ]),
         requiredForCompletion: JSON.stringify(['1', '2', '3', '4', '5']),
-        estimatedMinutes: 20
-      }
+        estimatedMinutes: 20,
+      },
     });
 
     const feedingTemplate = await prisma.checklistTemplate.upsert({
-      where: { 
-        id: 'feeding-schedule-template'
+      where: {
+        id: 'feeding-schedule-template',
       },
       update: {},
       create: {
@@ -96,11 +108,11 @@ async function seedMobileTestData() {
           { id: '3', text: 'Feed morning meals', required: true },
           { id: '4', text: 'Monitor eating', required: true },
           { id: '5', text: 'Clean feeding area', required: true },
-          { id: '6', text: 'Refill water bowls', required: true }
+          { id: '6', text: 'Refill water bowls', required: true },
         ]),
         requiredForCompletion: JSON.stringify(['1', '2', '3', '6']),
-        estimatedMinutes: 45
-      }
+        estimatedMinutes: 45,
+      },
     });
 
     console.log('✅ Created 3 checklist templates\n');
@@ -119,17 +131,52 @@ async function seedMobileTestData() {
         items: JSON.stringify([
           { id: '1', text: 'Unlock facility', required: true, completed: true },
           { id: '2', text: 'Turn on lights', required: true, completed: true },
-          { id: '3', text: 'Check temperature controls', required: true, completed: true },
-          { id: '4', text: 'Prepare feeding stations', required: false, completed: true },
-          { id: '5', text: 'Check water systems', required: true, completed: true },
-          { id: '6', text: 'Review daily schedule', required: true, completed: true },
+          {
+            id: '3',
+            text: 'Check temperature controls',
+            required: true,
+            completed: true,
+          },
+          {
+            id: '4',
+            text: 'Prepare feeding stations',
+            required: false,
+            completed: true,
+          },
+          {
+            id: '5',
+            text: 'Check water systems',
+            required: true,
+            completed: true,
+          },
+          {
+            id: '6',
+            text: 'Review daily schedule',
+            required: true,
+            completed: true,
+          },
           { id: '7', text: 'Stock supplies', required: false, completed: true },
-          { id: '8', text: 'Clean lobby area', required: true, completed: true },
-          { id: '9', text: 'Turn on music/TV', required: false, completed: false },
-          { id: '10', text: 'Check emergency equipment', required: true, completed: false }
+          {
+            id: '8',
+            text: 'Clean lobby area',
+            required: true,
+            completed: true,
+          },
+          {
+            id: '9',
+            text: 'Turn on music/TV',
+            required: false,
+            completed: false,
+          },
+          {
+            id: '10',
+            text: 'Check emergency equipment',
+            required: true,
+            completed: false,
+          },
         ]),
-        startedAt: new Date()
-      }
+        startedAt: new Date(),
+      },
     });
 
     // Medication round - not started
@@ -141,13 +188,38 @@ async function seedMobileTestData() {
         assignedToStaffName: `${staff.firstName} ${staff.lastName}`,
         status: 'PENDING',
         items: JSON.stringify([
-          { id: '1', text: 'Review medication schedule', required: true, completed: false },
-          { id: '2', text: 'Prepare medications', required: true, completed: false },
-          { id: '3', text: 'Administer morning meds', required: true, completed: false },
-          { id: '4', text: 'Document administration', required: true, completed: false },
-          { id: '5', text: 'Clean medication area', required: true, completed: false }
-        ])
-      }
+          {
+            id: '1',
+            text: 'Review medication schedule',
+            required: true,
+            completed: false,
+          },
+          {
+            id: '2',
+            text: 'Prepare medications',
+            required: true,
+            completed: false,
+          },
+          {
+            id: '3',
+            text: 'Administer morning meds',
+            required: true,
+            completed: false,
+          },
+          {
+            id: '4',
+            text: 'Document administration',
+            required: true,
+            completed: false,
+          },
+          {
+            id: '5',
+            text: 'Clean medication area',
+            required: true,
+            completed: false,
+          },
+        ]),
+      },
     });
 
     // Feeding schedule - partially completed
@@ -159,15 +231,40 @@ async function seedMobileTestData() {
         assignedToStaffName: `${staff.firstName} ${staff.lastName}`,
         status: 'IN_PROGRESS',
         items: JSON.stringify([
-          { id: '1', text: 'Prepare food bowls', required: true, completed: true },
-          { id: '2', text: 'Check dietary restrictions', required: true, completed: true },
-          { id: '3', text: 'Feed morning meals', required: true, completed: true },
+          {
+            id: '1',
+            text: 'Prepare food bowls',
+            required: true,
+            completed: true,
+          },
+          {
+            id: '2',
+            text: 'Check dietary restrictions',
+            required: true,
+            completed: true,
+          },
+          {
+            id: '3',
+            text: 'Feed morning meals',
+            required: true,
+            completed: true,
+          },
           { id: '4', text: 'Monitor eating', required: true, completed: true },
-          { id: '5', text: 'Clean feeding area', required: true, completed: false },
-          { id: '6', text: 'Refill water bowls', required: true, completed: false }
+          {
+            id: '5',
+            text: 'Clean feeding area',
+            required: true,
+            completed: false,
+          },
+          {
+            id: '6',
+            text: 'Refill water bowls',
+            required: true,
+            completed: false,
+          },
         ]),
-        startedAt: new Date()
-      }
+        startedAt: new Date(),
+      },
     });
 
     console.log('✅ Created 3 checklist instances\n');
@@ -188,8 +285,8 @@ async function seedMobileTestData() {
         endTime: '12:00',
         role: 'Kennel Attendant',
         location: 'Main Building',
-        status: 'SCHEDULED'
-      }
+        status: 'SCHEDULED',
+      },
     });
 
     // Lunch break
@@ -202,8 +299,8 @@ async function seedMobileTestData() {
         endTime: '13:00',
         role: 'Break',
         location: '',
-        status: 'SCHEDULED'
-      }
+        status: 'SCHEDULED',
+      },
     });
 
     // Afternoon shift
@@ -216,8 +313,8 @@ async function seedMobileTestData() {
         endTime: '17:00',
         role: 'Kennel Attendant',
         location: 'Main Building',
-        status: 'SCHEDULED'
-      }
+        status: 'SCHEDULED',
+      },
     });
 
     console.log('✅ Created 3 schedule entries\n');
@@ -232,7 +329,6 @@ async function seedMobileTestData() {
     console.log(`   - Feeding Schedule: 4/6 completed`);
     console.log(`   Schedule Entries: 3`);
     console.log(`\n✅ Login as sarah.mitchell@rainytest.com to test!`);
-
   } catch (error) {
     console.error('❌ Error seeding data:', error);
     throw error;
@@ -241,8 +337,7 @@ async function seedMobileTestData() {
   }
 }
 
-seedMobileTestData()
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+seedMobileTestData().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

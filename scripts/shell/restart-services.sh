@@ -13,22 +13,22 @@ sleep 2
 
 # Start Customer Service (Terminal 1)
 echo "Starting Customer Service on port 4004..."
-osascript -e 'tell app "Terminal" to do script "cd /Users/robweinstein/CascadeProjects/tailtown/services/customer && source ~/.nvm/nvm.sh && echo \"Starting Customer Service...\" && npm run dev"'
+osascript -e 'tell app "Terminal" to do script "cd /Users/robweinstein/CascadeProjects/tailtown/apps/customer-service && source ~/.nvm/nvm.sh && echo \"Starting Customer Service...\" && pnpm run dev"'
 sleep 3
 
 # Start Reservation Service (Terminal 2)
 echo "Starting Reservation Service on port 4003..."
-osascript -e 'tell app "Terminal" to do script "cd /Users/robweinstein/CascadeProjects/tailtown/services/reservation-service && source ~/.nvm/nvm.sh && echo \"Starting Reservation Service...\" && npm run dev"'
+osascript -e 'tell app "Terminal" to do script "cd /Users/robweinstein/CascadeProjects/tailtown/apps/reservation-service && source ~/.nvm/nvm.sh && echo \"Starting Reservation Service...\" && pnpm run dev"'
 sleep 3
 
 # Start Frontend (Terminal 3)
 echo "Starting Frontend on port 3000..."
-osascript -e 'tell app "Terminal" to do script "cd /Users/robweinstein/CascadeProjects/tailtown/frontend && source ~/.nvm/nvm.sh && echo \"Starting Frontend...\" && npm start"'
+osascript -e 'tell app "Terminal" to do script "cd /Users/robweinstein/CascadeProjects/tailtown/apps/frontend && source ~/.nvm/nvm.sh && echo \"Starting Frontend...\" && pnpm start"'
 sleep 3
 
 # Start Admin Portal (Terminal 4)
 echo "Starting Admin Portal on port 3001..."
-osascript -e 'tell app "Terminal" to do script "cd /Users/robweinstein/CascadeProjects/tailtown/admin-portal && source ~/.nvm/nvm.sh && echo \"Starting Admin Portal...\" && npm start"'
+osascript -e 'tell app "Terminal" to do script "cd /Users/robweinstein/CascadeProjects/tailtown/admin-portal && source ~/.nvm/nvm.sh && echo \"Starting Admin Portal...\" && pnpm start"'
 
 echo ""
 echo "✅ All services starting in separate terminal windows!"

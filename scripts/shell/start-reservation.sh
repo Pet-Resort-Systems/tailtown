@@ -1,4 +1,4 @@
 #!/bin/bash
-cd /Users/robweinstein/CascadeProjects/tailtown/services/reservation-service
+cd /Users/robweinstein/CascadeProjects/tailtown/apps/reservation-service
 source ~/.nvm/nvm.sh
-npm run dev
+pnpm run dev

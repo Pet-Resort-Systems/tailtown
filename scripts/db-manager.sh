@@ -186,7 +186,7 @@ list_backups() {
         echo "Location: $BACKUP_DIR"
         echo ""
         echo "Create a backup with:"
-        echo "  npm run db:backup"
+        echo "  pnpm run db:backup"
         return 0
     fi
     
@@ -262,7 +262,7 @@ restore_backup() {
         echo -e "${GREEN}✅ Database restored successfully${NC}"
         echo ""
         echo -e "${YELLOW}⚠️  You should restart services to pick up the changes:${NC}"
-        echo "  npm run dev:restart"
+        echo "  pnpm run dev:restart"
     else
         echo -e "${RED}✗ Restore failed${NC}"
         exit 1
@@ -304,13 +304,13 @@ reset_database() {
     
     # Reset customer service database
     echo "  Resetting customer service..."
-    cd "$PROJECT_ROOT/services/customer"
-    npx prisma migrate reset --force --skip-seed
+    cd "$PROJECT_ROOT/apps/customer-service"
+    pnpm exec prisma migrate reset --force --skip-seed
     
     # Reset reservation service database
     echo "  Resetting reservation service..."
-    cd "$PROJECT_ROOT/services/reservation-service"
-    npx prisma migrate reset --force --skip-seed
+    cd "$PROJECT_ROOT/apps/reservation-service"
+    pnpm exec prisma migrate reset --force --skip-seed
     
     echo ""
     echo -e "${GREEN}✅ Database reset complete${NC}"
@@ -325,7 +325,7 @@ reset_database() {
     
     echo ""
     echo -e "${YELLOW}⚠️  Restart services to pick up changes:${NC}"
-    echo "  npm run dev:restart"
+    echo "  pnpm run dev:restart"
     echo ""
 }
 
@@ -333,16 +333,16 @@ seed_database() {
     echo -e "${CYAN}Seeding database with sample data...${NC}"
     
     # Check for seed scripts
-    if [ -f "$PROJECT_ROOT/services/customer/prisma/seed.ts" ]; then
+    if [ -f "$PROJECT_ROOT/apps/customer-service/prisma/seed.ts" ]; then
         echo "  Running customer service seed..."
-        cd "$PROJECT_ROOT/services/customer"
-        npx prisma db seed
+        cd "$PROJECT_ROOT/apps/customer-service"
+        pnpm exec prisma db seed
     fi
     
-    if [ -f "$PROJECT_ROOT/services/reservation-service/prisma/seed.ts" ]; then
+    if [ -f "$PROJECT_ROOT/apps/reservation-service/prisma/seed.ts" ]; then
         echo "  Running reservation service seed..."
-        cd "$PROJECT_ROOT/services/reservation-service"
-        npx prisma db seed
+        cd "$PROJECT_ROOT/apps/reservation-service"
+        pnpm exec prisma db seed
     fi
     
     echo -e "${GREEN}✓ Seeding complete${NC}"
@@ -363,22 +363,22 @@ run_migrations() {
     
     # Customer service migrations
     echo "Customer Service:"
-    cd "$PROJECT_ROOT/services/customer"
-    npx prisma migrate deploy
-    npx prisma generate
+    cd "$PROJECT_ROOT/apps/customer-service"
+    pnpm exec prisma migrate deploy
+    pnpm exec prisma generate
     echo ""
     
     # Reservation service migrations
     echo "Reservation Service:"
-    cd "$PROJECT_ROOT/services/reservation-service"
-    npx prisma migrate deploy
-    npx prisma generate
+    cd "$PROJECT_ROOT/apps/reservation-service"
+    pnpm exec prisma migrate deploy
+    pnpm exec prisma generate
     echo ""
     
     echo -e "${GREEN}✅ Migrations complete${NC}"
     echo ""
     echo -e "${YELLOW}⚠️  Restart services to pick up changes:${NC}"
-    echo "  npm run dev:restart"
+    echo "  pnpm run dev:restart"
     echo ""
 }
 
@@ -409,22 +409,22 @@ create_migration() {
     case $service_choice in
         1)
             echo -e "${CYAN}Creating migration for customer service...${NC}"
-            cd "$PROJECT_ROOT/services/customer"
-            npx prisma migrate dev --name "$migration_name"
+            cd "$PROJECT_ROOT/apps/customer-service"
+            pnpm exec prisma migrate dev --name "$migration_name"
             ;;
         2)
             echo -e "${CYAN}Creating migration for reservation service...${NC}"
-            cd "$PROJECT_ROOT/services/reservation-service"
-            npx prisma migrate dev --name "$migration_name"
+            cd "$PROJECT_ROOT/apps/reservation-service"
+            pnpm exec prisma migrate dev --name "$migration_name"
             ;;
         3)
             echo -e "${CYAN}Creating migration for customer service...${NC}"
-            cd "$PROJECT_ROOT/services/customer"
-            npx prisma migrate dev --name "$migration_name"
+            cd "$PROJECT_ROOT/apps/customer-service"
+            pnpm exec prisma migrate dev --name "$migration_name"
             echo ""
             echo -e "${CYAN}Creating migration for reservation service...${NC}"
-            cd "$PROJECT_ROOT/services/reservation-service"
-            npx prisma migrate dev --name "$migration_name"
+            cd "$PROJECT_ROOT/apps/reservation-service"
+            pnpm exec prisma migrate dev --name "$migration_name"
             ;;
         *)
             echo -e "${RED}Invalid choice${NC}"
@@ -506,12 +506,12 @@ case "${1:-}" in
         echo "  console, psql    - Open PostgreSQL console"
         echo ""
         echo "npm shortcuts:"
-        echo "  npm run db:status"
-        echo "  npm run db:backup"
-        echo "  npm run db:restore"
-        echo "  npm run db:reset"
-        echo "  npm run db:migrate"
-        echo "  npm run db:console"
+        echo "  pnpm run db:status"
+        echo "  pnpm run db:backup"
+        echo "  pnpm run db:restore"
+        echo "  pnpm run db:reset"
+        echo "  pnpm run db:migrate"
+        echo "  pnpm run db:console"
         echo ""
         echo "Examples:"
         echo "  $0 status"

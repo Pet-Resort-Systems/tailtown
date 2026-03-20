@@ -268,4 +268,4 @@ curl https://tailtown.canicloud.com/api/metrics/health
 
 - [NGINX-ROUTING.md](../NGINX-ROUTING.md) - Nginx configuration details
 - [CURRENT-SYSTEM-ARCHITECTURE.md](../CURRENT-SYSTEM-ARCHITECTURE.md) - Overall architecture
-- [DEVELOPMENT-BEST-PRACTICES.md](../DEVELOPMENT-BEST-PRACTICES.md) - Development guidelines
+- [DEVELOPMENT-BEST-PRACTICES.md](../development/DEVELOPMENT-BEST-PRACTICES.md) - Development guidelines

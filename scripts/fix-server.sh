@@ -14,13 +14,13 @@ echo ""
 
 # 2. Regenerate Prisma clients
 echo "🔄 Regenerating Prisma clients..."
-cd /opt/tailtown/services/customer
-npx prisma generate
+cd /opt/tailtown/apps/customer-service
+pnpm exec prisma generate
 echo "✅ Customer service Prisma client regenerated"
 echo ""
 
-cd /opt/tailtown/services/reservation-service
-npx prisma generate
+cd /opt/tailtown/apps/reservation-service
+pnpm exec prisma generate
 echo "✅ Reservation service Prisma client regenerated"
 echo ""
 
@@ -29,7 +29,7 @@ echo "🚀 Starting services..."
 cd /opt/tailtown
 pm2 start ecosystem.config.js --only customer-service
 pm2 start ecosystem.config.js --only reservation-service
-pm2 start ecosystem.config.js --only frontend
+pm2 start ecosystem.config.js --only apps/frontend
 pm2 save
 echo ""
 

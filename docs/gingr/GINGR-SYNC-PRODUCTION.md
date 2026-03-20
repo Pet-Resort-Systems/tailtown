@@ -32,9 +32,9 @@ sudo apt-get install -y nodejs
 # Install PostgreSQL client
 sudo apt-get install -y postgresql-client
 
-# Install required npm packages
+# Install project dependencies
 cd /opt/tailtown
-npm install node-fetch pg
+pnpm install
 ```
 
 ### 2. Configure Environment Variables
@@ -231,7 +231,7 @@ RUN apk add --no-cache postgresql-client
 
 # Copy package files
 COPY package*.json ./
-RUN npm install --production
+RUN pnpm install --prod --frozen-lockfile
 
 # Copy scripts
 COPY scripts/ ./scripts/

@@ -240,15 +240,15 @@ start_all() {
     kill_zombies
     
     # Start backend services first
-    start_service "Customer Service" "services/customer" "$CUSTOMER_PID" "$CUSTOMER_LOG" 4004 "npm run dev"
-    start_service "Reservation Service" "services/reservation-service" "$RESERVATION_PID" "$RESERVATION_LOG" 4003 "npm run dev"
+    start_service "Customer Service" "apps/customer-service" "$CUSTOMER_PID" "$CUSTOMER_LOG" 4004 "pnpm run dev"
+    start_service "Reservation Service" "apps/reservation-service" "$RESERVATION_PID" "$RESERVATION_LOG" 4003 "pnpm run dev"
     
-    # Then start frontend
-    start_service "Frontend" "frontend" "$FRONTEND_PID" "$FRONTEND_LOG" 3000 "npm start"
+    # Then start apps/frontend
+    start_service "Frontend" "apps/frontend" "$FRONTEND_PID" "$FRONTEND_LOG" 3000 "pnpm start"
     
     # Optionally start admin portal
     if [ -d "$PROJECT_ROOT/admin-portal" ]; then
-        start_service "Admin Portal" "admin-portal" "$ADMIN_PID" "$ADMIN_LOG" 3001 "npm start"
+        start_service "Admin Portal" "admin-portal" "$ADMIN_PID" "$ADMIN_LOG" 3001 "pnpm start"
     fi
     
     echo ""

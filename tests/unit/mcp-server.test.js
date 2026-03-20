@@ -18,16 +18,17 @@ describe('MCP RAG Server Tests', () => {
       env: {
         ...process.env,
         PYTHONPATH: path.join(projectRoot, 'mcp-server'),
-        TAILTOWN_ROOT: projectRoot
+        TAILTOWN_ROOT: projectRoot,
       },
-      stdio: ['pipe', 'pipe', 'pipe']
+      stdio: ['pipe', 'pipe', 'pipe'],
     });
 
     // Wait for server to be ready
     await new Promise((resolve, reject) => {
       let ready = false;
       const timeout = setTimeout(() => {
-        if (!ready) reject(new Error('MCP server failed to start within 30 seconds'));
+        if (!ready)
+          reject(new Error('MCP server failed to start within 30 seconds'));
       }, 30000);
 
       serverProcess.stderr.on('data', (data) => {
@@ -51,7 +52,7 @@ describe('MCP RAG Server Tests', () => {
   afterAll(async () => {
     if (serverProcess) {
       serverProcess.kill();
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         serverProcess.on('exit', resolve);
         setTimeout(resolve, 5000); // Force resolve after 5 seconds
       });
@@ -75,7 +76,7 @@ describe('MCP RAG Server Tests', () => {
       // This test verifies the indexing process works
       // In a real test, we would check the indexed file count
       const indexPath = path.join(projectRoot, 'mcp-server', 'index.faiss');
-      
+
       // Index file should exist after successful indexing
       expect(fs.existsSync(indexPath)).toBe(true);
     });
@@ -86,10 +87,10 @@ describe('MCP RAG Server Tests', () => {
         'services/customer/src',
         'services/reservation-service/src',
         'docs',
-        'README.md'
+        'README.md',
       ];
 
-      projectFiles.forEach(file => {
+      projectFiles.forEach((file) => {
         const filePath = path.join(projectRoot, file);
         expect(fs.existsSync(filePath)).toBe(true);
       });
@@ -101,8 +102,12 @@ describe('MCP RAG Server Tests', () => {
     // For now, we test the prerequisites
 
     it('should have searchable content available', () => {
-      const vectorStorePath = path.join(projectRoot, 'mcp-server', 'vector_store.pkl');
-      
+      const vectorStorePath = path.join(
+        projectRoot,
+        'mcp-server',
+        'vector_store.pkl'
+      );
+
       // Vector store should exist after successful indexing
       expect(fs.existsSync(vectorStorePath)).toBe(true);
     });
@@ -130,10 +135,10 @@ describe('MCP RAG Server Tests', () => {
     it('should complete indexing within reasonable time', async () => {
       // Indexing should complete within 5 minutes for a project of this size
       const startTime = Date.now();
-      
+
       // This would be measured during actual server startup
       const indexingTime = Date.now() - startTime;
-      
+
       expect(indexingTime).toBeLessThan(300000); // 5 minutes
     });
 
@@ -141,7 +146,7 @@ describe('MCP RAG Server Tests', () => {
       // Check that the server doesn't consume excessive memory
       const memoryUsage = process.memoryUsage();
       const heapUsedMB = memoryUsage.heapUsed / 1024 / 1024;
-      
+
       // Server should use less than 1GB of heap memory
       expect(heapUsedMB).toBeLessThan(1024);
     });
@@ -153,9 +158,9 @@ describe('MCP Server Configuration', () => {
 
   it('should have valid configuration', () => {
     expect(fs.existsSync(configPath)).toBe(true);
-    
+
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-    
+
     expect(config).toHaveProperty('chunk_size');
     expect(config).toHaveProperty('chunk_overlap');
     expect(config).toHaveProperty('model_name');
@@ -164,7 +169,7 @@ describe('MCP Server Configuration', () => {
 
   it('should have reasonable configuration values', () => {
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-    
+
     expect(config.chunk_size).toBeGreaterThan(0);
     expect(config.chunk_overlap).toBeGreaterThan(0);
     expect(config.chunk_overlap).toBeLessThan(config.chunk_size);

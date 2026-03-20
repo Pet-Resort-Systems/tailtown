@@ -1,42 +1,56 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
+  <head>
     <title>Debug Calendar API Calls</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Debug Calendar API Calls</h1>
     <button onclick="testReservations()">Test Reservations API</button>
     <button onclick="testResources()">Test Resources API</button>
     <div id="results"></div>
 
     <script>
-        async function testReservations() {
-            try {
-                const response = await fetch('http://localhost:4003/api/reservations?startDate=2025-09-01&endDate=2025-09-30&status=PENDING,CONFIRMED,CHECKED_IN', {
-                    headers: {
-                        'x-tenant-id': 'dev'
-                    }
-                });
-                const data = await response.json();
-                document.getElementById('results').innerHTML = '<h3>Reservations:</h3><pre>' + JSON.stringify(data, null, 2) + '</pre>';
-            } catch (error) {
-                document.getElementById('results').innerHTML = '<h3>Error:</h3><pre>' + error.message + '</pre>';
+      async function testReservations() {
+        try {
+          const response = await fetch(
+            'http://localhost:4003/api/reservations?startDate=2025-09-01&endDate=2025-09-30&status=PENDING,CONFIRMED,CHECKED_IN',
+            {
+              headers: {
+                'x-tenant-id': 'dev',
+              },
             }
+          );
+          const data = await response.json();
+          document.getElementById('results').innerHTML =
+            '<h3>Reservations:</h3><pre>' +
+            JSON.stringify(data, null, 2) +
+            '</pre>';
+        } catch (error) {
+          document.getElementById('results').innerHTML =
+            '<h3>Error:</h3><pre>' + error.message + '</pre>';
         }
+      }
 
-        async function testResources() {
-            try {
-                const response = await fetch('http://localhost:4003/api/resources?type=STANDARD_SUITE,STANDARD_PLUS_SUITE,VIP_SUITE,SUITE', {
-                    headers: {
-                        'x-tenant-id': 'dev'
-                    }
-                });
-                const data = await response.json();
-                document.getElementById('results').innerHTML = '<h3>Resources:</h3><pre>' + JSON.stringify(data.data.slice(0, 3), null, 2) + '</pre>';
-            } catch (error) {
-                document.getElementById('results').innerHTML = '<h3>Error:</h3><pre>' + error.message + '</pre>';
+      async function testResources() {
+        try {
+          const response = await fetch(
+            'http://localhost:4003/api/resources?type=STANDARD_SUITE,STANDARD_PLUS_SUITE,VIP_SUITE,SUITE',
+            {
+              headers: {
+                'x-tenant-id': 'dev',
+              },
             }
+          );
+          const data = await response.json();
+          document.getElementById('results').innerHTML =
+            '<h3>Resources:</h3><pre>' +
+            JSON.stringify(data.data.slice(0, 3), null, 2) +
+            '</pre>';
+        } catch (error) {
+          document.getElementById('results').innerHTML =
+            '<h3>Error:</h3><pre>' + error.message + '</pre>';
         }
+      }
     </script>
-</body>
+  </body>
 </html>

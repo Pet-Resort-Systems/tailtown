@@ -2,7 +2,7 @@
 
 /**
  * Extract User Names and Emails from Gingr HTML Options
- * 
+ *
  * This script parses HTML option elements to extract user data
  * and generates SQL for importing them into Tailtown.
  */
@@ -66,22 +66,22 @@ function parseHTMLOptions(html) {
   const users = [];
   const optionRegex = /<option value="([^"]+)">\s*([^<]+)\s*<\/option>/g;
   let match;
-  
+
   while ((match = optionRegex.exec(html)) !== null) {
     const email = match[1].trim();
     const fullName = match[2].trim();
-    
+
     // Skip if email is empty or invalid
     if (!email || !email.includes('@')) {
       console.log(`⚠️  Skipping invalid email: ${email}`);
       continue;
     }
-    
+
     // Parse name into first and last name
-    const nameParts = fullName.split(' ').filter(part => part.length > 0);
+    const nameParts = fullName.split(' ').filter((part) => part.length > 0);
     let firstName = nameParts[0] || '';
     let lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : '';
-    
+
     // Handle special cases
     if (fullName.toLowerCase().includes('gingr support')) {
       firstName = 'Gingr';
@@ -90,15 +90,15 @@ function parseHTMLOptions(html) {
       firstName = 'Rio';
       lastName = 'Groomer';
     }
-    
+
     users.push({
       email,
       firstName,
       lastName,
-      fullName
+      fullName,
     });
   }
-  
+
   return users;
 }
 
@@ -108,21 +108,26 @@ function parseHTMLOptions(html) {
 function determineRole(email, name) {
   const emailDomain = email.toLowerCase().split('@')[1];
   const nameLower = name.toLowerCase();
-  
+
   // Management/Owners
   if (emailDomain === 'tailtownpetresort.com') {
-    if (nameLower.includes('rob') || nameLower.includes('antonia') || 
-        nameLower.includes('jeannine') || nameLower.includes('heather') ||
-        nameLower.includes('mich') || nameLower.includes('sadie')) {
+    if (
+      nameLower.includes('rob') ||
+      nameLower.includes('antonia') ||
+      nameLower.includes('jeannine') ||
+      nameLower.includes('heather') ||
+      nameLower.includes('mich') ||
+      nameLower.includes('sadie')
+    ) {
       return 'MANAGER';
     }
   }
-  
+
   // Gingr support
   if (emailDomain === 'gingrapp.com') {
     return 'STAFF';
   }
-  
+
   // Default to staff for everyone else
   return 'STAFF';
 }
@@ -133,16 +138,16 @@ function determineRole(email, name) {
 function determineDepartment(email, name, role) {
   const nameLower = name.toLowerCase();
   const emailLower = email.toLowerCase();
-  
+
   if (role === 'MANAGER') {
     return 'MANAGEMENT';
   }
-  
+
   // Look for grooming indicators
   if (nameLower.includes('groomer') || emailLower.includes('groom')) {
     return 'GROOMING';
   }
-  
+
   // Default to front desk for general staff
   return 'FRONT DESK';
 }
@@ -154,15 +159,15 @@ function determinePosition(email, name, role, department) {
   if (role === 'MANAGER') {
     return 'GENERAL MANAGER';
   }
-  
+
   if (department === 'GROOMING') {
     return 'GROOMER';
   }
-  
+
   if (department === 'FRONT DESK') {
     return 'FRONT DESK ASSOCIATE';
   }
-  
+
   return 'STAFF';
 }
 
@@ -180,11 +185,18 @@ function generatePermissions(role, department) {
     canViewReports: true,
     canCheckInPets: true,
     canManageInventory: role === 'ADMINISTRATOR' || role === 'MANAGER',
-    canManageGrooming: department === 'GROOMING' || role === 'ADMINISTRATOR' || role === 'MANAGER',
-    canManageTraining: department === 'TRAINING' || role === 'ADMINISTRATOR' || role === 'MANAGER',
-    canManageKennels: department === 'KENNEL' || role === 'ADMINISTRATOR' || role === 'MANAGER'
+    canManageGrooming:
+      department === 'GROOMING' ||
+      role === 'ADMINISTRATOR' ||
+      role === 'MANAGER',
+    canManageTraining:
+      department === 'TRAINING' ||
+      role === 'ADMINISTRATOR' ||
+      role === 'MANAGER',
+    canManageKennels:
+      department === 'KENNEL' || role === 'ADMINISTRATOR' || role === 'MANAGER',
   };
-  
+
   return permissions;
 }
 
@@ -193,13 +205,18 @@ function generatePermissions(role, department) {
  */
 function generateUserSQL(users) {
   const sqlStatements = [];
-  
-  users.forEach(user => {
+
+  users.forEach((user) => {
     const role = determineRole(user.email, user.fullName);
     const department = determineDepartment(user.email, user.fullName, role);
-    const position = determinePosition(user.email, user.fullName, role, department);
+    const position = determinePosition(
+      user.email,
+      user.fullName,
+      role,
+      department
+    );
     const permissions = generatePermissions(role, department);
-    
+
     const sql = `
 -- ${user.fullName} (${user.email})
 INSERT INTO staff (
@@ -246,10 +263,10 @@ VALUES (
 )
 ON CONFLICT (email, "tenantId") DO NOTHING;
 `;
-    
+
     sqlStatements.push(sql.trim());
   });
-  
+
   return sqlStatements.join('\n\n');
 }
 
@@ -259,40 +276,46 @@ ON CONFLICT (email, "tenantId") DO NOTHING;
 function main() {
   // Parse the HTML options
   const users = parseHTMLOptions(htmlOptions);
-  
+
   console.log(`✅ Extracted ${users.length} users from HTML options\n`);
-  
+
   // Display summary
   console.log('📊 USER SUMMARY:');
   console.log('═══════════════════════════════\n');
-  
+
   users.forEach((user, index) => {
     const role = determineRole(user.email, user.fullName);
     const department = determineDepartment(user.email, user.fullName, role);
     console.log(`${index + 1}. ${user.fullName} - ${user.email}`);
     console.log(`   Role: ${role} | Department: ${department}\n`);
   });
-  
+
   // Generate SQL
   const sql = generateUserSQL(users);
-  
+
   console.log('💾 GENERATED SQL:');
   console.log('═══════════════════════════════\n');
-  console.log('-- IMPORTANT: Passwords must be hashed with bcrypt before inserting');
-  console.log('-- The default password "TempPass@2024!" meets all security requirements');
+  console.log(
+    '-- IMPORTANT: Passwords must be hashed with bcrypt before inserting'
+  );
+  console.log(
+    '-- The default password "TempPass@2024!" meets all security requirements'
+  );
   console.log('-- Users should change their password on first login\n');
   console.log(sql);
-  
+
   // Save SQL to file
   const sqlFileName = 'gingr-users-import.sql';
   fs.writeFileSync(sqlFileName, sql);
-  
+
   console.log(`\n💾 SQL saved to: ${sqlFileName}`);
-  
+
   console.log('\n📝 NEXT STEPS:');
   console.log('═══════════════════════════════');
-  console.log('1. Hash the default password: npm run hash:password');
-  console.log('2. Replace "$2b$10$YourHashedPasswordHere" with the actual hash');
+  console.log('1. Hash the default password: pnpm run hash:password');
+  console.log(
+    '2. Replace "$2b$10$YourHashedPasswordHere" with the actual hash'
+  );
   console.log('3. Run the SQL in your PostgreSQL database:');
   console.log(`   psql -U postgres -d customer -f ${sqlFileName}`);
   console.log('4. Verify users appear in Tailtown Admin → Users');

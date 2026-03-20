@@ -1,0 +1,70 @@
+# Multi-stage build for production
+FROM node:24.14.0-alpine AS builder
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+RUN corepack enable
+
+WORKDIR /app
+
+# Copy workspace metadata and the target app manifest first for cached installs.
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/customer-service/package.json ./apps/customer-service/package.json
+
+# Install all dependencies needed to build the service.
+# `...` means this package and its dependencies https://pnpm.io/filtering#--filter-package_name-1
+RUN pnpm install --filter @tailtown/customer-service... --frozen-lockfile
+
+# Copy source code
+COPY apps/customer-service/src ./apps/customer-service/src
+COPY apps/customer-service/prisma ./apps/customer-service/prisma
+COPY apps/customer-service/tsconfig.json ./apps/customer-service/tsconfig.json
+
+# Generate Prisma client and build TypeScript
+WORKDIR /app/apps/customer-service
+RUN pnpm run prisma:generate
+RUN pnpm run build
+
+# Production stage
+FROM node:24.14.0-alpine
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+RUN corepack enable
+
+WORKDIR /app
+
+# Copy workspace metadata and the target app manifest first for cached installs.
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/customer-service/package.json ./apps/customer-service/package.json
+
+# Install runtime dependencies plus Prisma CLI used for client generation.
+# `...` means this package and its dependencies https://pnpm.io/filtering#--filter-package_name-1
+RUN pnpm install --filter @tailtown/customer-service... --frozen-lockfile
+
+# Copy Prisma schema and generate runtime client
+COPY apps/customer-service/prisma ./apps/customer-service/prisma
+WORKDIR /app/apps/customer-service
+RUN pnpm run prisma:generate
+
+# Copy built files from builder
+COPY --from=builder /app/apps/customer-service/dist ./dist
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+# Change ownership
+RUN chown -R nodejs:nodejs /app
+
+USER nodejs
+
+EXPOSE 4004
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:4004/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
+
+CMD ["node", "dist/index.js"]

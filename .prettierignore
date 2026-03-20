@@ -1,0 +1,17 @@
+# Common
+dist/
+build/
+pnpm-lock.yaml
+package-lock.json
+
+# Angular
+.angular/
+
+# Astro
+.astro
+public/
+
+
+# Cloudflare
+.wrangler
+worker-configuration.d.ts

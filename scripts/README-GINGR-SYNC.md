@@ -178,7 +178,7 @@ Shows:
 - `scripts/README-GINGR-SYNC.md` - This file
 
 ### Tests
-- `services/reservation-service/src/__tests__/reservation-overlap.test.ts` - Overlap tests
+- `apps/reservation-service/src/__tests__/reservation-overlap.test.ts` - Overlap tests
 
 ## Examples
 
