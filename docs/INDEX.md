@@ -2,6 +2,43 @@
 
 Project-wide documentation for the Tailtown Pet Resort Management System.
 
+## For Developers (Quick Guides)
+
+- **[Quick Start](./QUICK-START.md)** - Get running in 10 minutes
+- **[Git Setup](./GIT-SETUP.md)** - Git workflow and rules
+- **[Best Practices](./development/DEVELOPMENT-BEST-PRACTICES.md)** - Code standards and patterns
+- **[Security](./security/SECURITY.md)** - Security features and how to use them
+- **[Roadmap](./ROADMAP.md)** - What's next for Tailtown
+
+## For Technical Leadership
+
+- **[Senior Dev Review](./archive/SENIOR-DEV-REVIEW.md)** - ⭐ Architecture review & scaling roadmap (4/5 stars)
+- **[System Architecture](./CURRENT-SYSTEM-ARCHITECTURE.md)** - Complete architecture overview
+- **[Disaster Recovery](./operations/DISASTER-RECOVERY-PLAN.md)** - Backup & recovery procedures
+
+## For AI Assistants (Complete Context)
+
+- **[Security Implementation](./ai-context/security/)** - Complete security details
+- **[Testing](./ai-context/testing/)** - Test analysis and maintenance
+- **[Documentation Strategy](./DOCUMENTATION-STRATEGY.md)** - How we organize docs
+
+## Reference
+
+- **[Security Checklist](./security/SECURITY-CHECKLIST.md)** - Security verification
+- **[Development Best Practices](./development/DEVELOPMENT-BEST-PRACTICES.md)** - Code standards
+
+## Essential Reading
+
+- **[Development Best Practices](./development/DEVELOPMENT-BEST-PRACTICES.md)** - ⭐ Common patterns & pitfalls
+- **[Deployment Guide](./deployment/PRODUCTION-DEPLOYMENT.md)** - How to deploy to production
+- **[Product Roadmap](./ROADMAP.md)** - Feature roadmap and priorities
+
+## By Audience
+
+- **For Developers:** [Development Guides](./development/)
+- **For DevOps:** [Operations Guides](./operations/)
+- **For Product:** [Feature Overview](./SYSTEM-FEATURES-OVERVIEW.md)
+
 ## Quick Links
 
 | Document                                                | Description              |
@@ -10,12 +47,13 @@ Project-wide documentation for the Tailtown Pet Resort Management System.
 | [System Architecture](./CURRENT-SYSTEM-ARCHITECTURE.md) | Current system design    |
 | [Features Overview](./SYSTEM-FEATURES-OVERVIEW.md)      | Complete feature list    |
 | [Roadmap](./ROADMAP.md)                                 | Future development plans |
+| [Git Setup](./GIT-SETUP.md)                             | Git workflow and rules   |
 
 ## Directory Structure
 
 ```
 docs/
-├── README.md                      # This file
+├── INDEX.md                       # This file
 ├── QUICK-START.md                 # 5-minute setup guide
 ├── ROADMAP.md                     # Future plans
 ├── CURRENT-SYSTEM-ARCHITECTURE.md # System design
@@ -108,5 +146,5 @@ When adding new documentation:
 
 1. Place it in the appropriate directory based on its scope and purpose
 2. Follow the naming conventions
-3. Update this README.md file if adding a new major document
+3. Update this INDEX.md file if adding a new major document
 4. Update the main project README.md if the document should be featured there
