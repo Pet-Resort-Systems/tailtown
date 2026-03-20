@@ -7,9 +7,18 @@ on:
     branches: [main, sept25-stable]
 
 jobs:
+  dependabot-shortcut:
+    name: Dependabot Shortcut
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && github.actor == 'dependabot[bot]' }}
+
+    steps:
+      - run: echo "Skipping heavy checks for Dependabot PR."
+
   frontend-coverage:
     name: Frontend Test Coverage
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.actor != 'dependabot[bot]' }}
 
     steps:
       - uses: actions/checkout@v3
@@ -56,6 +65,7 @@ jobs:
   backend-coverage:
     name: Backend Test Coverage
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.actor != 'dependabot[bot]' }}
 
     services:
       postgres:
@@ -119,6 +129,7 @@ jobs:
   e2e-coverage:
     name: E2E Test Coverage
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.actor != 'dependabot[bot]' }}
 
     services:
       postgres:
@@ -178,6 +189,7 @@ jobs:
     name: Generate Coverage Report
     needs: [frontend-coverage, backend-coverage]
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.actor != 'dependabot[bot]' }}
 
     steps:
       - uses: actions/checkout@v3

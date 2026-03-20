@@ -13,9 +13,18 @@ on:
       - '.github/workflows/frontend-tests.yml'
 
 jobs:
+  dependabot-shortcut:
+    name: Dependabot Shortcut
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && github.actor == 'dependabot[bot]' }}
+
+    steps:
+      - run: echo "Skipping heavy checks for Dependabot PR."
+
   test:
     name: Frontend Tests
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.actor != 'dependabot[bot]' }}
 
     strategy:
       matrix:

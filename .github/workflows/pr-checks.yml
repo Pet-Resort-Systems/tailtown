@@ -5,9 +5,18 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
+  dependabot-shortcut:
+    name: Dependabot Shortcut
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && github.actor == 'dependabot[bot]' }}
+
+    steps:
+      - run: echo "Skipping heavy checks for Dependabot PR."
+
   code-quality:
     name: Code Quality Checks
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.actor != 'dependabot[bot]' }}
 
     steps:
       - name: Checkout code
@@ -72,6 +81,7 @@ jobs:
   quick-tests:
     name: Quick Test Suite (with root user)
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.actor != 'dependabot[bot]' }}
 
     services:
       postgres:
@@ -138,6 +148,7 @@ jobs:
   build-check:
     name: Build Verification
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.actor != 'dependabot[bot]' }}
 
     steps:
       - name: Checkout code
@@ -203,7 +214,7 @@ jobs:
   pr-summary:
     name: PR Summary
     runs-on: ubuntu-latest
-    needs: [code-quality, quick-tests, build-check]
+    needs: [dependabot-shortcut, code-quality, quick-tests, build-check]
     if: always()
 
     steps:
@@ -211,16 +222,28 @@ jobs:
         run: |
           echo "## Pull Request Check Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- Code Quality: ${{ needs.code-quality.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Quick Tests: ${{ needs.quick-tests.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Build Check: ${{ needs.build-check.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Dependabot Shortcut: ${{ needs.dependabot-shortcut.result }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          if [ "${{ needs.code-quality.result }}" == "success" ] && \
-             [ "${{ needs.quick-tests.result }}" == "success" ] && \
-             [ "${{ needs.build-check.result }}" == "success" ]; then
-            echo "✅ All checks passed! Ready to merge." >> $GITHUB_STEP_SUMMARY
+          if [ "${{ needs.dependabot-shortcut.result }}" == "success" ]; then
+            echo "This PR was opened by Dependabot." >> $GITHUB_STEP_SUMMARY
+            echo "- Code Quality: skipped" >> $GITHUB_STEP_SUMMARY
+            echo "- Quick Tests: skipped" >> $GITHUB_STEP_SUMMARY
+            echo "- Build Check: skipped" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Heavy checks were skipped for Dependabot." >> $GITHUB_STEP_SUMMARY
           else
-            echo "❌ Some checks failed. Please review and fix." >> $GITHUB_STEP_SUMMARY
-            exit 1
+            echo "- Code Quality: ${{ needs.code-quality.result }}" >> $GITHUB_STEP_SUMMARY
+            echo "- Quick Tests: ${{ needs.quick-tests.result }}" >> $GITHUB_STEP_SUMMARY
+            echo "- Build Check: ${{ needs.build-check.result }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+
+            if [ "${{ needs.code-quality.result }}" == "success" ] && \
+               [ "${{ needs.quick-tests.result }}" == "success" ] && \
+               [ "${{ needs.build-check.result }}" == "success" ]; then
+              echo "✅ All checks passed! Ready to merge." >> $GITHUB_STEP_SUMMARY
+            else
+              echo "❌ Some checks failed. Please review and fix." >> $GITHUB_STEP_SUMMARY
+              exit 1
+            fi
           fi

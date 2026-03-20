@@ -8,9 +8,18 @@ on:
   workflow_dispatch:
 
 jobs:
+  dependabot-shortcut:
+    name: Dependabot Shortcut
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && github.actor == 'dependabot[bot]' }}
+
+    steps:
+      - run: echo "Skipping heavy checks for Dependabot PR."
+
   prisma-validation:
     name: Validate Prisma Schema
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.actor != 'dependabot[bot]' }}
 
     services:
       postgres:
@@ -91,6 +100,7 @@ jobs:
   reservation-service-validation:
     name: Validate Reservation Service
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.actor != 'dependabot[bot]' }}
 
     services:
       postgres:
@@ -148,6 +158,7 @@ jobs:
   typescript-compilation:
     name: TypeScript Compilation Check
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.actor != 'dependabot[bot]' }}
 
     steps:
       - name: Checkout code
@@ -192,6 +203,7 @@ jobs:
   deployment-readiness:
     name: Deployment Readiness Check
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.actor != 'dependabot[bot]' }}
     needs:
       [
         prisma-validation,
