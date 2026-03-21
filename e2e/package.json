@@ -1,0 +1,23 @@
+{
+  "name": "@tailtown/e2e",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.14.0"
+  },
+  "scripts": {
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui",
+    "e2e:headed": "playwright test --headed",
+    "e2e:debug": "playwright test --debug",
+    "e2e:report": "playwright show-report",
+    "test:data:setup": "tsx setup/test-data.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.54.2",
+    "@types/node": "25.3.5",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
+  }
+}

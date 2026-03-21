@@ -245,18 +245,17 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Install Playwright
-        working-directory: apps/frontend
         run: |
           pnpm install --frozen-lockfile
-          pnpm exec playwright install --with-deps chromium
+          pnpm run test:e2e --install-deps
 
       - name: Run Critical Path E2E Tests
-        working-directory: apps/frontend
         run: |
-          # These tests require a running server
+          # Run E2E tests using the new workspace command
+           # These tests require a running server
           # Skip for now, but log that they should be run
           echo "⚠️ E2E tests require running services"
-          echo "Run locally with: pnpm exec playwright test calendar-dashboard-critical.spec.ts"
+          echo "Run locally with: pnpm run test:e2e"
         continue-on-error: true
 
   # Deployment gate - only passes if all tests pass

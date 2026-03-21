@@ -1,10 +1,9 @@
-/**
- * Test Data Setup
- * Creates consistent test data for E2E tests
- */
+import { createRequire } from 'node:module';
 
-import { PrismaClient } from '@prisma/client';
-
+const require = createRequire(import.meta.url);
+const {
+  PrismaClient,
+} = require('../../apps/customer-service/node_modules/@prisma/client');
 const prisma = new PrismaClient();
 
 export interface TestCustomer {
@@ -38,13 +37,9 @@ export interface TestResource {
   capacity: number;
 }
 
-/**
- * Setup test data before running E2E tests
- */
 export async function setupTestData() {
   const tenantId = 'dev';
 
-  // 1. Create test customer
   const testCustomer = await prisma.customer.upsert({
     where: {
       tenantId_email: {
@@ -67,7 +62,6 @@ export async function setupTestData() {
     },
   });
 
-  // 2. Create test pets
   const buddy = await prisma.pet.upsert({
     where: { id: 'test-pet-buddy' },
     update: {},
@@ -104,7 +98,6 @@ export async function setupTestData() {
     },
   });
 
-  // 3. Create test services
   const boardingService = await prisma.service.upsert({
     where: { id: 'test-service-boarding' },
     update: {},
@@ -113,8 +106,8 @@ export async function setupTestData() {
       tenantId,
       name: 'Standard Boarding',
       serviceCategory: 'BOARDING',
-      price: 50.0,
-      duration: 1440, // 24 hours
+      price: 50,
+      duration: 1440,
       isActive: true,
     },
   });
@@ -127,8 +120,8 @@ export async function setupTestData() {
       tenantId,
       name: 'Full Day Daycare',
       serviceCategory: 'DAYCARE',
-      price: 30.0,
-      duration: 480, // 8 hours
+      price: 30,
+      duration: 480,
       isActive: true,
     },
   });
@@ -141,13 +134,12 @@ export async function setupTestData() {
       tenantId,
       name: 'Full Groom',
       serviceCategory: 'GROOMING',
-      price: 75.0,
-      duration: 120, // 2 hours
+      price: 75,
+      duration: 120,
       isActive: true,
     },
   });
 
-  // 4. Create test resources (suites)
   const standardSuite = await prisma.resource.upsert({
     where: { id: 'test-resource-suite-1' },
     update: {},
@@ -174,7 +166,6 @@ export async function setupTestData() {
     },
   });
 
-  // 5. Create test staff (groomer)
   const groomer = await prisma.staff.upsert({
     where: {
       tenantId_email: {
@@ -191,11 +182,10 @@ export async function setupTestData() {
       phone: '555-0200',
       role: 'GROOMER',
       isActive: true,
-      password: 'hashed_password_here', // Not used in tests
+      password: 'hashed_password_here',
     } as any,
   });
 
-  // 6. Create test training class
   const trainingClass = await prisma.trainingClass.upsert({
     where: { id: 'test-training-class-1' },
     update: {},
@@ -206,10 +196,10 @@ export async function setupTestData() {
       description: 'Learn basic commands and good behavior',
       instructorId: groomer.id,
       maxCapacity: 8,
-      pricePerSession: 25.0,
+      pricePerSession: 25,
       totalSessions: 6,
       sessionDuration: 60,
-      startDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
+      startDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       dayOfWeek: 'SATURDAY',
       startTime: '10:00',
       status: 'SCHEDULED',
@@ -221,10 +211,10 @@ export async function setupTestData() {
     `Customer: ${testCustomer.firstName} ${testCustomer.lastName} (${testCustomer.id})`
   );
   console.log(`Pets: Buddy (${buddy.id}), Max (${max.id})`);
-  console.log(`Services: Boarding, Daycare, Grooming`);
-  console.log(`Resources: 2 test suites`);
-  console.log(`Staff: Sarah Johnson (Groomer)`);
-  console.log(`Training: Basic Obedience class`);
+  console.log('Services: Boarding, Daycare, Grooming');
+  console.log('Resources: 2 test suites');
+  console.log('Staff: Sarah Johnson (Groomer)');
+  console.log('Training: Basic Obedience class');
 
   return {
     customer: testCustomer,
@@ -240,13 +230,9 @@ export async function setupTestData() {
   };
 }
 
-/**
- * Cleanup test data after running E2E tests
- */
 export async function cleanupTestData() {
   const tenantId = 'dev';
 
-  // Delete in reverse order of dependencies
   await prisma.reservation.deleteMany({
     where: {
       tenantId,
@@ -275,14 +261,12 @@ export async function cleanupTestData() {
     },
   });
 
-  // Clean up test resources
   await prisma.resource.deleteMany({
     where: {
       id: { in: ['test-resource-suite-1', 'test-resource-suite-2'] },
     },
   });
 
-  // Clean up test services
   await prisma.service.deleteMany({
     where: {
       id: {
@@ -295,7 +279,6 @@ export async function cleanupTestData() {
     },
   });
 
-  // Clean up test training class
   await prisma.trainingClass.deleteMany({
     where: {
       id: 'test-training-class-1',
@@ -305,9 +288,6 @@ export async function cleanupTestData() {
   console.log('✅ Test data cleanup complete');
 }
 
-/**
- * Reset test data - cleanup and setup fresh
- */
 export async function resetTestData() {
   await cleanupTestData();
   return await setupTestData();
