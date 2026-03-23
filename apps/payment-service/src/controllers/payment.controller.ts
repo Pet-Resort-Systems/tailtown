@@ -311,7 +311,7 @@ export async function inquireTransaction(req: Request, res: Response) {
   try {
     const { retref } = req.params;
 
-    if (!retref) {
+    if (!retref || Array.isArray(retref)) {
       return res.status(400).json({
         status: 'error',
         message: 'Transaction reference is required',

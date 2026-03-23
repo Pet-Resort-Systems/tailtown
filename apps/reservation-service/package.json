@@ -23,8 +23,8 @@
     "prisma": "prisma"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "7.4.2",
-    "@prisma/client": "7.4.2",
+    "@prisma/adapter-pg": "catalog:",
+    "@prisma/client": "catalog:",
     "@types/compression": "1.8.1",
     "axios": "1.13.6",
     "compression": "1.8.1",
@@ -55,7 +55,7 @@
     "@typescript-eslint/parser": "8.56.1",
     "eslint": "10.0.3",
     "jest": "30.2.0",
-    "prisma": "7.4.2",
+    "prisma": "catalog:",
     "supertest": "7.2.2",
     "ts-jest": "29.1.0",
     "tsx": "catalog:",
