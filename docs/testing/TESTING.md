@@ -5,31 +5,28 @@ This document describes the automated testing setup for Tailtown.
 ## Overview
 
 Tailtown uses a comprehensive testing strategy covering:
+
 - **Unit Tests**: Individual function and component testing
 - **Integration Tests**: API endpoint and database testing
-- **End-to-End Tests**: Full user flow testing (planned)
+- **End-to-End Tests**: Full user flow testing through the isolated `e2e` workspace package, targeting `apps/frontend-vite` as the app under test
 - **Automated CI/CD**: Tests run on every push and PR
 
 ## Test Structure
 
 ```
 tailtown/
-├── frontend/
-│   ├── src/
-│   │   └── __tests__/          # Frontend component tests
-│   └── package.json             # Test scripts
-├── services/
-│   ├── customer/
-│   │   ├── __tests__/           # Backend API tests
-│   │   │   ├── messaging.api.test.ts
-│   │   │   ├── api.integration.test.ts
-│   │   │   └── ...
-│   │   └── package.json
-│   └── reservation-service/
-│       ├── __tests__/
-│       └── package.json
-└── scripts/
-    └── run-tests.sh             # Automated test runner
+├── apps/
+│   ├── frontend/                # Frontend unit/component tests
+│   ├── frontend-vite/           # App under test for Playwright E2E flows
+│   ├── customer-service/        # Backend API tests
+│   └── reservation-service/     # Backend and integration tests
+├── e2e/                         # Isolated Playwright workspace package for apps/frontend-vite
+│   ├── package.json
+│   ├── playwright.config.ts
+│   ├── *.spec.ts
+│   └── setup/
+├── package.json                 # Root test orchestration scripts
+└── pnpm-workspace.yaml          # Workspace includes the e2e package
 ```
 
 ## Running Tests
@@ -37,55 +34,62 @@ tailtown/
 ### Quick Start
 
 Run all tests:
+
 ```bash
-./scripts/run-tests.sh
+pnpm test
 ```
+
+Run the isolated E2E suite:
+
+```bash
+pnpm run test:e2e
+```
+
+This Playwright suite runs against `apps/frontend-vite` as the app under test through the isolated `e2e/` workspace package.
 
 ### Individual Test Suites
 
-**Frontend Tests**:
-```bash
-cd frontend
-npm test
-```
-
 **Customer Service Tests**:
+
 ```bash
-cd services/customer
-npm test
+pnpm --dir apps/customer-service test
 ```
 
 **Messaging API Tests** (specific):
+
 ```bash
-cd services/customer
-npm test -- messaging.api.test.ts
+pnpm --dir apps/customer-service test -- messaging.api.test.ts
 ```
 
 **Reservation Service Tests**:
+
 ```bash
-cd services/reservation-service
-npm test
+pnpm --dir apps/reservation-service test
+```
+
+**E2E Tests**:
+
+```bash
+pnpm run test:e2e
+pnpm run test:e2e:ui
+pnpm run test:e2e:headed
+pnpm run test:e2e:debug
 ```
 
 ### Watch Mode (Development)
 
 Run tests in watch mode for active development:
+
 ```bash
-cd frontend
-npm test -- --watch
+pnpm --dir apps/frontend test -- --watch
 ```
 
 ## Test Coverage
 
 Generate coverage reports:
-```bash
-cd services/customer
-npm run test:coverage
-```
 
-View coverage:
 ```bash
-open coverage/lcov-report/index.html
+pnpm run test:coverage
 ```
 
 ## Messaging API Tests
@@ -95,46 +99,46 @@ The messaging system has comprehensive test coverage:
 ### Test Categories
 
 1. **Channel Management**
-   - List channels for authenticated staff
-   - Filter archived channels
-   - Calculate unread counts
-   - Channel membership validation
+    - List channels for authenticated staff
+    - Filter archived channels
+    - Calculate unread counts
+    - Channel membership validation
 
 2. **Message Operations**
-   - Send messages
-   - Fetch messages with pagination
-   - Message editing and deletion
-   - Soft delete functionality
+    - Send messages
+    - Fetch messages with pagination
+    - Message editing and deletion
+    - Soft delete functionality
 
 3. **Read Receipts**
-   - Mark channels as read
-   - Track last read message
-   - Update read timestamps
+    - Mark channels as read
+    - Track last read message
+    - Update read timestamps
 
 4. **Unread Counts**
-   - Total unread across channels
-   - Exclude own messages
-   - Per-channel unread counts
+    - Total unread across channels
+    - Exclude own messages
+    - Per-channel unread counts
 
 5. **Authorization**
-   - Require authentication
-   - Prevent non-member access
-   - Validate channel membership
+    - Require authentication
+    - Prevent non-member access
+    - Validate channel membership
 
 6. **Message Features**
-   - Mentions (@user)
-   - Reactions (emoji)
-   - Attachments (planned)
-   - Threading (planned)
+    - Mentions (@user)
+    - Reactions (emoji)
+    - Attachments (planned)
+    - Threading (planned)
 
 ### Running Messaging Tests
 
 ```bash
-cd services/customer
-npm test -- messaging.api.test.ts
+pnpm --dir apps/customer-service test -- messaging.api.test.ts
 ```
 
 Expected output:
+
 ```
  PASS  __tests__/messaging.api.test.ts
   Messaging API Tests
@@ -156,28 +160,24 @@ Expected output:
 ## Continuous Integration
 
 Tests run automatically on:
+
 - Every push to `main` or `development`
 - Every pull request
 - Manual workflow dispatch
 
 ### GitHub Actions Workflow
 
-Location: `.github/workflows/test.yml`
+Primary locations: `.github/workflows/test-coverage.yml` and `.github/workflows/test-gate.yml`
 
 The CI pipeline:
-1. Sets up Node.js (16.x and 18.x)
-2. Installs dependencies
-3. Sets up PostgreSQL test database
-4. Runs Prisma migrations
-5. Runs all test suites
-6. Generates coverage reports
-7. Uploads to Codecov
 
-### Viewing CI Results
-
-1. Go to GitHub Actions tab
-2. Click on latest workflow run
-3. View test results and logs
+1. Sets up Node.js and pnpm
+2. Installs workspace dependencies
+3. Sets up service dependencies and required databases
+4. Runs unit and integration suites
+5. Runs E2E through the isolated `@tailtown/e2e` workspace package
+6. Generates coverage and test artifacts where applicable
+7. Uploads reports and logs for inspection
 
 ## Writing Tests
 
@@ -185,18 +185,18 @@ The CI pipeline:
 
 ```typescript
 describe('API Endpoint', () => {
-  beforeAll(async () => {
-    // Setup test data
-  });
+    beforeAll(async () => {
+        // Setup test data
+    });
 
-  afterAll(async () => {
-    // Cleanup
-  });
+    afterAll(async () => {
+        // Cleanup
+    });
 
-  it('should do something', async () => {
-    const result = await prisma.model.findMany();
-    expect(result).toBeDefined();
-  });
+    it('should do something', async () => {
+        const result = await prisma.model.findMany();
+        expect(result).toBeDefined();
+    });
 });
 ```
 
@@ -219,17 +219,19 @@ describe('MyComponent', () => {
 Tests use a separate test database to avoid affecting development data.
 
 **Setup**:
+
 ```bash
 # Create test database
 createdb customer_test
 
 # Run migrations
-cd services/customer
+cd apps/customer-service
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/customer_test" \
-  npx prisma migrate deploy
+  pnpm exec prisma migrate deploy
 ```
 
 **Environment Variables**:
+
 ```bash
 export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/customer_test"
 export NODE_ENV="test"
@@ -238,6 +240,7 @@ export NODE_ENV="test"
 ## Best Practices
 
 ### DO:
+
 - ✅ Write tests for all new features
 - ✅ Test both success and error cases
 - ✅ Use descriptive test names
@@ -247,6 +250,7 @@ export NODE_ENV="test"
 - ✅ Keep tests fast and isolated
 
 ### DON'T:
+
 - ❌ Depend on test execution order
 - ❌ Use production database for tests
 - ❌ Leave test data in database
@@ -259,27 +263,28 @@ export NODE_ENV="test"
 ### Run Single Test
 
 ```bash
-npm test -- -t "test name"
+pnpm --dir apps/frontend test -- -t "test name"
 ```
 
 ### Run with Verbose Output
 
 ```bash
-npm test -- --verbose
+pnpm --dir apps/frontend test -- --verbose
 ```
 
 ### Debug in VS Code
 
 Add to `.vscode/launch.json`:
+
 ```json
 {
-  "type": "node",
-  "request": "launch",
-  "name": "Jest Debug",
-  "program": "${workspaceFolder}/node_modules/.bin/jest",
-  "args": ["--runInBand", "--no-cache"],
-  "console": "integratedTerminal",
-  "internalConsoleOptions": "neverOpen"
+    "type": "node",
+    "request": "launch",
+    "name": "Jest Debug",
+    "program": "${workspaceFolder}/node_modules/.bin/jest",
+    "args": ["--runInBand", "--no-cache"],
+    "console": "integratedTerminal",
+    "internalConsoleOptions": "neverOpen"
 }
 ```
 
@@ -288,13 +293,14 @@ Add to `.vscode/launch.json`:
 ### Prisma Client Not Generated
 
 ```bash
-cd services/customer
-npx prisma generate
+# Replace "apps/customer-service" with the service you want to generate the client for
+pnpm --dir apps/customer-service exec prisma generate
 ```
 
 ### Database Connection Errors
 
 Check:
+
 1. PostgreSQL is running
 2. DATABASE_URL is correct
 3. Test database exists
@@ -303,33 +309,35 @@ Check:
 ### Test Timeouts
 
 Increase timeout in jest.config.js:
+
 ```javascript
 module.exports = {
-  testTimeout: 30000 // 30 seconds
+    testTimeout: 30000, // 30 seconds
 };
 ```
 
 ## Coverage Goals
 
 Target coverage levels:
+
 - **Statements**: >80%
 - **Branches**: >75%
 - **Functions**: >80%
 - **Lines**: >80%
 
 Current coverage:
+
 - Customer Service: ~75%
 - Frontend: ~60%
 - Reservation Service: ~70%
 
 ## Future Enhancements
 
-- [ ] E2E tests with Playwright
-- [ ] Visual regression testing
-- [ ] Performance testing
-- [ ] Load testing
-- [ ] Security testing
-- [ ] Accessibility testing
+For a comprehensive list of planned testing improvements and future enhancements, refer to the centralized roadmap:
+
+**[Testing Future Enhancements](./FUTURE-ENHANCEMENTS.md)**
+
+This document consolidates all planned improvements across the Tailtown testing strategy, including E2E expansion, visual regression testing, performance testing, and CI/CD enhancements.
 
 ## Resources
 
@@ -337,11 +345,3 @@ Current coverage:
 - [React Testing Library](https://testing-library.com/react)
 - [Supertest](https://github.com/visionmedia/supertest)
 - [Prisma Testing](https://www.prisma.io/docs/guides/testing)
-
-## Support
-
-For testing questions or issues:
-1. Check this documentation
-2. Review existing tests for examples
-3. Ask in #engineering Slack channel
-4. Create an issue in GitHub
