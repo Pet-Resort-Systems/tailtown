@@ -27,15 +27,6 @@ const SERVICES = [
   { name: 'Payment Service', port: 4005, path: '/health', expectedStatus: 200 },
 ];
 
-const MCP_SERVER = {
-  name: 'RAG MCP Server',
-  script: path.join(__dirname, '../mcp-server/server.py'),
-  env: {
-    PYTHONPATH: path.join(__dirname, '../mcp-server'),
-    TAILTOWN_ROOT: path.join(__dirname, '..'),
-  },
-};
-
 function checkService(service) {
   return new Promise((resolve) => {
     const options = {
@@ -79,24 +70,6 @@ function checkService(service) {
   });
 }
 
-function checkMcpServer() {
-  return new Promise((resolve) => {
-    exec(
-      `ps aux | grep -v grep | grep "${MCP_SERVER.script}"`,
-      (error, stdout) => {
-        resolve({
-          name: MCP_SERVER.name,
-          status: stdout.trim() ? '✅ RUNNING' : '❌ STOPPED',
-          processCount: stdout
-            .trim()
-            .split('\n')
-            .filter((line) => line.trim()).length,
-        });
-      }
-    );
-  });
-}
-
 function checkNodeProcesses() {
   return new Promise((resolve) => {
     exec(
@@ -120,7 +93,6 @@ async function main() {
   // Check all services
   const results = await Promise.all([
     ...SERVICES.map(checkService),
-    checkMcpServer(),
     checkNodeProcesses(),
   ]);
 
@@ -155,11 +127,6 @@ async function main() {
           '• Run: pkill -f "ts-node-dev" && pkill -f "react-scripts"'
         );
       }
-      if (result.name === 'RAG MCP Server' && result.status.includes('❌')) {
-        console.log(
-          `• Run: cd mcp-server && PYTHONPATH=${MCP_SERVER.env.PYTHONPATH} TAILTOWN_ROOT=${MCP_SERVER.env.TAILTOWN_ROOT} python3 server.py`
-        );
-      }
       if (result.name.includes('Service') && result.status.includes('❌')) {
         const port = SERVICES.find((s) => s.name === result.name)?.port;
         if (port) {
@@ -179,4 +146,4 @@ if (require.main === module) {
   main().catch(console.error);
 }
 
-module.exports = { checkService, checkMcpServer, checkNodeProcesses };
+module.exports = { checkService, checkNodeProcesses };

@@ -104,13 +104,6 @@ fi
 # 4. Start Frontend
 start_service "apps/frontend" "Frontend" 3000 "pnpm start"
 
-# 5. Start MCP RAG Server
-echo -e "${BLUE}🔧 Starting RAG MCP Server...${NC}"
-cd "$PROJECT_ROOT/mcp-server"
-PYTHONPATH="$PROJECT_ROOT/mcp-server" TAILTOWN_ROOT="$PROJECT_ROOT" python3 server.py > "$PROJECT_ROOT/logs/mcp-server.log" 2>&1 &
-echo $! > "$PROJECT_ROOT/logs/mcp-server.pid"
-echo "   Started MCP Server with PID: $!"
-cd "$PROJECT_ROOT"
 
 # Wait for services to be ready
 echo ""
@@ -120,13 +113,6 @@ wait_for_service "http://localhost:4004/api/customers" "Customer Service"
 wait_for_service "http://localhost:4003/health" "Reservation Service"
 wait_for_service "http://localhost:3000" "Frontend"
 
-# Check MCP Server
-sleep 5
-if pgrep -f "python3.*server.py" > /dev/null; then
-    echo -e "${GREEN}✅ MCP Server is running!${NC}"
-else
-    echo -e "${RED}❌ MCP Server failed to start${NC}"
-fi
 
 echo ""
 echo -e "${GREEN}🎉 All services started successfully!${NC}"
@@ -143,6 +129,5 @@ echo "📋 Logs:"
 echo "   Customer Service:    logs/Customer Service.log"
 echo "   Reservation Service: logs/Reservation Service.log"
 echo "   Frontend:            logs/Frontend.log"
-echo "   MCP Server:          logs/mcp-server.log"
 echo ""
 echo "🛑 To stop all services: ./scripts/stop-services.sh"

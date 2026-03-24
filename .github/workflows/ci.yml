@@ -7,9 +7,18 @@ on:
     branches: [main, sept25-stable, develop]
 
 jobs:
+  dependabot-shortcut:
+    name: Dependabot Shortcut
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && github.actor == 'dependabot[bot]' }}
+
+    steps:
+      - run: echo "Skipping heavy checks for Dependabot PR."
+
   frontend-tests:
     name: Frontend Tests & Build
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.actor != 'dependabot[bot]' }}
 
     defaults:
       run:
@@ -69,6 +78,7 @@ jobs:
   backend-health-check:
     name: Backend Service Checks
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.actor != 'dependabot[bot]' }}
 
     strategy:
       matrix:

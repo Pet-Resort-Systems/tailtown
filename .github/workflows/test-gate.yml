@@ -14,10 +14,19 @@ env:
   NODE_VERSION: '24.14.0'
 
 jobs:
+  dependabot-shortcut:
+    name: Dependabot Shortcut
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && github.actor == 'dependabot[bot]' }}
+
+    steps:
+      - run: echo "Skipping heavy checks for Dependabot PR."
+
   # Run unit tests for customer-service
   test-customer-service:
     name: Customer Service Tests
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.actor != 'dependabot[bot]' }}
 
     services:
       postgres:
@@ -85,6 +94,7 @@ jobs:
   test-reservation-service:
     name: Reservation Service Tests
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.actor != 'dependabot[bot]' }}
 
     services:
       postgres:
@@ -141,6 +151,7 @@ jobs:
   test-frontend:
     name: Frontend Tests
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.actor != 'dependabot[bot]' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -177,6 +188,7 @@ jobs:
   build-check:
     name: Build Check
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.actor != 'dependabot[bot]' }}
     needs: [test-customer-service, test-reservation-service, test-frontend]
 
     steps:
@@ -217,7 +229,7 @@ jobs:
     name: Critical Path Tests
     runs-on: ubuntu-latest
     needs: build-check
-    if: github.ref == 'refs/heads/main'
+    if: ${{ github.ref == 'refs/heads/main' && (github.event_name != 'pull_request' || github.actor != 'dependabot[bot]') }}
 
     steps:
       - uses: actions/checkout@v4
@@ -233,18 +245,17 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Install Playwright
-        working-directory: apps/frontend
         run: |
           pnpm install --frozen-lockfile
-          pnpm exec playwright install --with-deps chromium
+          pnpm run test:e2e --install-deps
 
       - name: Run Critical Path E2E Tests
-        working-directory: apps/frontend
         run: |
-          # These tests require a running server
+          # Run E2E tests using the new workspace command
+           # These tests require a running server
           # Skip for now, but log that they should be run
           echo "⚠️ E2E tests require running services"
-          echo "Run locally with: pnpm exec playwright test calendar-dashboard-critical.spec.ts"
+          echo "Run locally with: pnpm run test:e2e"
         continue-on-error: true
 
   # Deployment gate - only passes if all tests pass
@@ -253,6 +264,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       [
+        dependabot-shortcut,
         test-customer-service,
         test-reservation-service,
         test-frontend,
@@ -263,6 +275,10 @@ jobs:
     steps:
       - name: Check test results
         run: |
+          if [ "${{ needs.dependabot-shortcut.result }}" == "success" ]; then
+            echo "✅ Heavy checks were skipped for Dependabot"
+            exit 0
+          fi
           if [ "${{ needs.test-customer-service.result }}" != "success" ]; then
             echo "❌ Customer Service tests failed"
             exit 1

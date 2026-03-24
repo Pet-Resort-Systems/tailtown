@@ -13,6 +13,7 @@ Comprehensive testing suite for the check-in system covering backend API, fronte
 **Location**: `/apps/reservation-service/src/tests/check-in.test.ts`
 
 **Coverage**:
+
 - ✅ Check-In Template CRUD operations
 - ✅ Check-In creation with nested data
 - ✅ Medication management
@@ -25,6 +26,7 @@ Comprehensive testing suite for the check-in system covering backend API, fronte
 **Test Count**: 20+ test cases
 
 **Run Tests**:
+
 ```bash
 cd apps/reservation-service
 pnpm test -- check-in.test.ts
@@ -37,10 +39,12 @@ pnpm test -- check-in.test.ts
 **Location**: `/apps/frontend/src/components/check-in/__tests__/`
 
 **Files**:
+
 1. `MedicationForm.test.tsx` - Medication form component
 2. `BelongingsForm.test.tsx` - Belongings form component
 
 **Coverage**:
+
 - ✅ Component rendering
 - ✅ User interactions
 - ✅ Form validation
@@ -51,6 +55,7 @@ pnpm test -- check-in.test.ts
 **Test Count**: 15+ test cases per component
 
 **Run Tests**:
+
 ```bash
 cd apps/frontend
 pnpm test -- MedicationForm
@@ -65,54 +70,54 @@ pnpm test -- BelongingsForm
 
 ```typescript
 describe('Check-In Templates', () => {
-  it('should create a check-in template')
-  it('should get all templates')
-  it('should get template by ID')
-  it('should get default template')
-  it('should update a template')
-  it('should clone a template')
-})
+    it('should create a check-in template');
+    it('should get all templates');
+    it('should get template by ID');
+    it('should get default template');
+    it('should update a template');
+    it('should clone a template');
+});
 ```
 
 ### Check-Ins
 
 ```typescript
 describe('Check-Ins', () => {
-  it('should create a check-in with medications and belongings')
-  it('should get all check-ins')
-  it('should get check-in by ID')
-  it('should filter check-ins by reservation')
-  it('should update a check-in')
-})
+    it('should create a check-in with medications and belongings');
+    it('should get all check-ins');
+    it('should get check-in by ID');
+    it('should filter check-ins by reservation');
+    it('should update a check-in');
+});
 ```
 
 ### Medications
 
 ```typescript
 describe('Medications', () => {
-  it('should add a medication to check-in')
-  it('should validate required medication fields')
-})
+    it('should add a medication to check-in');
+    it('should validate required medication fields');
+});
 ```
 
 ### Service Agreements
 
 ```typescript
 describe('Service Agreements', () => {
-  it('should create a service agreement template')
-  it('should create a signed service agreement')
-  it('should get agreement by check-in ID')
-  it('should prevent duplicate agreements for same check-in')
-})
+    it('should create a service agreement template');
+    it('should create a signed service agreement');
+    it('should get agreement by check-in ID');
+    it('should prevent duplicate agreements for same check-in');
+});
 ```
 
 ### Multi-Tenant Isolation
 
 ```typescript
 describe('Multi-tenant Isolation', () => {
-  it('should not access templates from different tenant')
-  it('should not access check-ins from different tenant')
-})
+    it('should not access templates from different tenant');
+    it('should not access check-ins from different tenant');
+});
 ```
 
 ---
@@ -122,6 +127,7 @@ describe('Multi-tenant Isolation', () => {
 ### MedicationForm Tests
 
 **Test Cases**:
+
 1. Renders empty state correctly
 2. Adds new medication when button clicked
 3. Displays existing medications
@@ -132,10 +138,11 @@ describe('Multi-tenant Isolation', () => {
 8. Handles multiple medications correctly
 
 **Example**:
+
 ```typescript
 it('adds a new medication when button is clicked', async () => {
   render(<MedicationForm medications={[]} onChange={mockOnChange} />);
-  
+
   const addButton = screen.getByText('Add Medication');
   fireEvent.click(addButton);
 
@@ -156,6 +163,7 @@ it('adds a new medication when button is clicked', async () => {
 ### BelongingsForm Tests
 
 **Test Cases**:
+
 1. Renders empty state correctly
 2. Displays quick-add buttons for common items
 3. Adds item when quick-add button clicked
@@ -209,11 +217,11 @@ The backend tests automatically create and clean up test data:
 
 ```typescript
 beforeAll(async () => {
-  // Create test customer, pet, reservation
+    // Create test customer, pet, reservation
 });
 
 afterAll(async () => {
-  // Clean up all test data
+    // Clean up all test data
 });
 ```
 
@@ -223,13 +231,13 @@ Frontend tests use mock data:
 
 ```typescript
 const mockMedications: CheckInMedication[] = [
-  {
-    medicationName: 'Prednisone',
-    dosage: '10mg',
-    frequency: 'Twice daily',
-    administrationMethod: 'ORAL_PILL',
-    withFood: true
-  }
+    {
+        medicationName: 'Prednisone',
+        dosage: '10mg',
+        frequency: 'Twice daily',
+        administrationMethod: 'ORAL_PILL',
+        withFood: true,
+    },
 ];
 ```
 
@@ -245,23 +253,23 @@ name: Check-In Tests
 on: [push, pull_request]
 
 jobs:
-  backend-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Run backend tests
-        run: |
-          cd apps/reservation-service
-          pnpm test -- check-in.test.ts
+    backend-tests:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: Run backend tests
+              run: |
+                  cd apps/reservation-service
+                  pnpm test -- check-in.test.ts
 
-  frontend-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Run frontend tests
-        run: |
-          cd apps/frontend
-          pnpm test -- check-in
+    frontend-tests:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: Run frontend tests
+              run: |
+                  cd apps/frontend
+                  pnpm test -- check-in
 ```
 
 ---
@@ -269,10 +277,12 @@ jobs:
 ## Test Coverage Goals
 
 **Current Coverage**:
+
 - Backend API: ~80% (20+ tests)
 - Frontend Components: ~70% (30+ tests)
 
 **Target Coverage**:
+
 - Backend API: 90%+
 - Frontend Components: 85%+
 - Integration Tests: 75%+
@@ -285,15 +295,15 @@ jobs:
 
 ```typescript
 describe('New Feature', () => {
-  it('should perform expected behavior', async () => {
-    const response = await request(app)
-      .post('/api/endpoint')
-      .set('x-tenant-id', 'test')
-      .send({ data });
+    it('should perform expected behavior', async () => {
+        const response = await request(app)
+            .post('/api/endpoint')
+            .set('x-tenant-id', 'test')
+            .send({ data });
 
-    expect(response.status).toBe(201);
-    expect(response.body.data).toBeDefined();
-  });
+        expect(response.status).toBe(201);
+        expect(response.body.data).toBeDefined();
+    });
 });
 ```
 
@@ -303,7 +313,7 @@ describe('New Feature', () => {
 describe('NewComponent', () => {
   it('renders correctly', () => {
     render(<NewComponent prop={value} />);
-    
+
     expect(screen.getByText('Expected Text')).toBeInTheDocument();
   });
 });
@@ -341,7 +351,7 @@ describe('NewComponent', () => {
 ## Future Test Additions
 
 - [ ] Integration tests for complete check-in workflow
-- [ ] E2E tests with Playwright
+- [ ] Expand check-in coverage in the isolated `e2e/` Playwright workspace targeting `apps/frontend-vite`
 - [ ] Performance tests for large datasets
 - [ ] Accessibility tests
 - [ ] Visual regression tests

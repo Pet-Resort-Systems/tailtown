@@ -5,6 +5,7 @@ This guide covers managing Tailtown services, startup, shutdown, and health moni
 ## Quick Start
 
 ### Start All Services
+
 ```bash
 # Start core services (frontend, customer, reservation, MCP)
 npm run start:services
@@ -14,11 +15,13 @@ npm run start:services:full
 ```
 
 ### Stop All Services
+
 ```bash
 npm run stop:services
 ```
 
 ### Check Service Health
+
 ```bash
 # One-time health check
 npm run health:check
@@ -32,6 +35,7 @@ npm run health:watch
 ### Individual Service Startup
 
 **Frontend (port 3000):**
+
 ```bash
 cd frontend
 source ~/.nvm/nvm.sh
@@ -39,6 +43,7 @@ npm start
 ```
 
 **Customer Service (port 4004):**
+
 ```bash
 cd services/customer
 source ~/.nvm/nvm.sh
@@ -46,6 +51,7 @@ npm run dev
 ```
 
 **Reservation Service (port 4003):**
+
 ```bash
 cd services/reservation-service
 source ~/.nvm/nvm.sh
@@ -53,29 +59,24 @@ npm run dev
 ```
 
 **Payment Service (port 4005) - Optional:**
+
 ```bash
 cd services/payment-service
 source ~/.nvm/nvm.sh
 npm run dev
 ```
 
-**MCP RAG Server:**
-```bash
-cd mcp-server
-PYTHONPATH=./ TAILTOWN_ROOT=.. python3 server.py
-```
-
 ### Service Dependencies
 
 1. **Database**: PostgreSQL must be running on port 5433
 2. **Order**: Start backend services before frontend
-3. **MCP Server**: Can be started independently of other services
 
 ## Health Monitoring
 
 ### Automated Health Monitor
 
 The `health-monitor.js` script checks:
+
 - Service availability (HTTP responses)
 - Process counts (detects hangs)
 - Port conflicts
@@ -105,12 +106,15 @@ pgrep -f "python3.*server.py"
 ### Common Issues
 
 #### 1. Service Hang (Too Many Processes)
+
 **Symptoms:**
+
 - Slow performance
 - Services not responding
 - High memory/CPU usage
 
 **Solution:**
+
 ```bash
 # Force cleanup all Node processes
 pkill -f "ts-node-dev" && pkill -f "react-scripts"
@@ -121,11 +125,14 @@ npm run start:services
 ```
 
 #### 2. Port Conflicts
+
 **Symptoms:**
+
 - Service fails to start
 - "Port already in use" errors
 
 **Solution:**
+
 ```bash
 # Find what's using the port
 lsof -i :3000  # Frontend
@@ -137,31 +144,15 @@ npm run stop:services
 npm run start:services
 ```
 
-#### 3. MCP Server Not Running
-**Symptoms:**
-- RAG search not working in Windsurf
-- "tailtown-rag not found" errors
-
-**Solution:**
-```bash
-# Check if running
-pgrep -f "python3.*server.py"
-
-# Start manually
-cd mcp-server
-PYTHONPATH=./ TAILTOWN_ROOT=.. python3 server.py
-
-# Or restart all services
-npm run stop:services
-npm run start:services
-```
-
 #### 4. Database Connection Issues
+
 **Symptoms:**
+
 - Services return 500 errors
 - "Connection refused" from PostgreSQL
 
 **Solution:**
+
 ```bash
 # Check PostgreSQL container
 docker ps | grep postgres
@@ -180,14 +171,12 @@ All services write logs to the `logs/` directory when started via scripts:
 ```bash
 # View service logs
 tail -f logs/Frontend.log
-tail -f logs/Customer\ Service.log
-tail -f logs/Reservation\ Service.log
-tail -f logs/mcp-server.log
 ```
 
 ### Process Management
 
 #### Check Running Processes
+
 ```bash
 # All Tailtown processes
 ps aux | grep tailtown | grep -v grep
@@ -200,6 +189,7 @@ ps aux | grep "python3.*server.py"
 ```
 
 #### Clean Shutdown
+
 ```bash
 # Graceful stop using PID files
 npm run stop:services
@@ -212,6 +202,7 @@ pkill -f "server.py"
 ## Testing Service Health
 
 ### Automated Tests
+
 ```bash
 # Run service health tests
 npm run test:services
@@ -238,6 +229,7 @@ npm run test:integration
 ### Required Environment Variables
 
 **Frontend (.env):**
+
 ```bash
 REACT_APP_API_URL=http://localhost:3002/api
 REACT_APP_RESERVATION_API_URL=http://localhost:4003
@@ -245,12 +237,14 @@ REACT_APP_CUSTOMER_API_URL=http://localhost:4004
 ```
 
 **Customer Service (.env):**
+
 ```bash
 DATABASE_URL="postgresql://postgres:postgres@localhost:5433/customer"
 PORT=4004
 ```
 
 **Reservation Service (.env):**
+
 ```bash
 DATABASE_URL="postgresql://postgres:postgres@localhost:5433/customer"
 PORT=4003
@@ -259,6 +253,7 @@ PORT=4003
 ### Node Version Management
 
 Always use NVM to ensure consistent Node versions:
+
 ```bash
 source ~/.nvm/nvm.sh
 nvm use 16.20.2
@@ -267,6 +262,7 @@ nvm use 16.20.2
 ## Performance Monitoring
 
 ### Memory Usage
+
 ```bash
 # Check Node.js process memory
 ps aux | grep node | awk '{print $4, $11}' | sort -nr
@@ -276,6 +272,7 @@ free -h
 ```
 
 ### Response Times
+
 ```bash
 # Test API response times
 time curl -s http://localhost:4004/api/customers > /dev/null
@@ -295,6 +292,7 @@ time curl -s http://localhost:4003/health > /dev/null
 ## Recovery Procedures
 
 ### Full System Recovery
+
 ```bash
 # 1. Stop everything
 npm run stop:services
@@ -314,6 +312,7 @@ npm run health:check
 ```
 
 ### Partial Service Recovery
+
 ```bash
 # Restart specific service
 npm run stop:services

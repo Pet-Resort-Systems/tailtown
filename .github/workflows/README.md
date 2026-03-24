@@ -116,6 +116,8 @@ Go to Settings → Branches → Add rule for `main`:
 4. Generate PR summary
 ```
 
+For pull requests opened by Dependabot, the heavy application test/build jobs are skipped and replaced by lightweight shortcut jobs. Human-authored workflow changes still run the full PR validation flow.
+
 ### On Push to Main
 ```
 1. Run all tests

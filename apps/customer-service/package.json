@@ -32,8 +32,8 @@
     "prisma": "prisma"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "7.4.2",
-    "@prisma/client": "7.4.2",
+    "@prisma/adapter-pg": "catalog:",
+    "@prisma/client": "catalog:",
     "@sendgrid/mail": "8.1.6",
     "@sentry/node": "10.38.0",
     "@sentry/profiling-node": "10.42.0",
@@ -75,7 +75,7 @@
     "@typescript-eslint/parser": "8.56.1",
     "eslint": "10.0.3",
     "jest": "30.2.0",
-    "prisma": "7.4.2",
+    "prisma": "catalog:",
     "supertest": "7.2.2",
     "ts-jest": "29.1.0",
     "tsx": "catalog:",

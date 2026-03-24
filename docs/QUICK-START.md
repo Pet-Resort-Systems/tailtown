@@ -143,7 +143,6 @@ pnpm --filter @tailtown/customer-service test -- --testPathPattern=security
 - **[Architecture Overview](architecture/OVERVIEW.md)** - System design
 - **[API Documentation](api/README.md)** - API endpoints
 - **[Development Guide](development/GUIDE.md)** - Development workflow
-- **[MCP Server Setup](../mcp-server/README.md)** - AI-enhanced code search
 
 ---
 

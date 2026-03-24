@@ -1,8 +1,50 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "build/**"]
+    },
     "dev": {
       "persistent": true,
+      "cache": false
+    },
+    "e2e": {
+      "dependsOn": [
+        "@tailtown/frontend#build",
+        "@tailtown/customer-service#build",
+        "@tailtown/reservation-service#build"
+      ],
+      "cache": false,
+      "outputs": ["test-results/**", "playwright-report/**"]
+    },
+    "e2e:ui": {
+      "dependsOn": [
+        "@tailtown/frontend#build",
+        "@tailtown/customer-service#build",
+        "@tailtown/reservation-service#build"
+      ],
+      "cache": false,
+      "persistent": true
+    },
+    "e2e:headed": {
+      "dependsOn": [
+        "@tailtown/frontend#build",
+        "@tailtown/customer-service#build",
+        "@tailtown/reservation-service#build"
+      ],
+      "cache": false
+    },
+    "e2e:debug": {
+      "dependsOn": [
+        "@tailtown/frontend#build",
+        "@tailtown/customer-service#build",
+        "@tailtown/reservation-service#build"
+      ],
+      "cache": false,
+      "persistent": true
+    },
+    "e2e:report": {
       "cache": false
     }
   }

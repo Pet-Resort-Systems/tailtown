@@ -2,307 +2,183 @@
 
 ## Overview
 
-End-to-end tests that simulate real user interactions with the Tailtown application. These tests validate complete user flows from start to finish across the entire application stack.
+End-to-end tests live in the dedicated `e2e/` pnpm workspace package. This package is the source of truth for Playwright coverage in Tailtown and replaces the old frontend-local Playwright layout.
 
-## Test Suites
+The suite exercises complete user flows across the application stack and is configured to run against the current app and services defined in `e2e/playwright.config.ts`.
 
-### 1. `reservation-flow.spec.ts` (5 tests)
+## Workspace Package Layout
 
-Tests complete reservation workflows:
+The `e2e/` package currently contains:
 
-- ✅ **Create boarding reservation with kennel assignment**
+- `package.json` with the package-local Playwright scripts
+- `playwright.config.ts` with browser, reporter, timeout, and `webServer` configuration
+- `setup/test-data.ts` for E2E data setup helpers
+- Playwright specs for critical paths, booking, dashboard, check-in, checkout, kennel management, and production smoke flows
 
-  - Navigate to kennel calendar
-  - Select customer and pet
-  - Choose boarding service
-  - Assign kennel (with availability indicators)
-  - Submit and verify on calendar/dashboard
+## Current Spec Files
 
-- ✅ **Prevent double-booking same kennel**
+Current spec files in this isolated package include:
 
-  - Attempt to book occupied kennel
-  - Verify occupied kennels show red indicator
-  - Verify occupied kennels are disabled
+- `booking-portal.spec.ts`
+- `calendar-dashboard-critical.spec.ts`
+- `check-in-flow.spec.ts`
+- `checkout-flow.spec.ts`
+- `critical-paths.spec.ts`
+- `dashboard-flow.spec.ts`
+- `kennel-management.spec.ts`
+- `online-booking.spec.ts`
+- `production-smoke.spec.ts`
+- `production-workflow.spec.ts`
+- `reservation-flow.spec.ts`
 
-- ✅ **Edit existing reservation and change kennel**
+## Coverage Areas
 
-  - Open reservation from list
-  - Edit kennel assignment
-  - Verify current kennel shows as available
-  - Save changes
+The isolated `e2e` package currently covers flows such as:
 
-- ✅ **Create grooming reservation without kennel**
-
-  - Select grooming service
-  - Verify kennel selector does NOT appear
-  - Submit successfully
-
-- ✅ **Multi-pet reservation with kennel assignments**
-  - Select multiple pets
-  - Verify individual kennel selectors per pet
-  - Assign different kennels to each pet
-  - Submit successfully
-
-### 2. `check-in-flow.spec.ts` (3 tests)
-
-Tests complete check-in workflows:
-
-- ✅ **Complete full check-in workflow**
-
-  - Navigate from dashboard to check-in
-  - Review pet summary with vaccination status
-  - Complete questionnaire
-  - Add medications (optional)
-  - Add belongings with quick-add
-  - Sign service agreement with signature capture
-  - Review and submit
-  - Verify completion
-
-- ✅ **Edit belongings after check-in completion**
-
-  - Navigate to completed check-in
-  - Open belongings edit dialog
-  - Add/remove items
-  - Save changes
-
-- ✅ **Show pet history in check-in workflow**
-  - View Previous Visits section
-  - Verify history loads on expand
-
-### 3. `checkout-flow.spec.ts` (3 tests)
-
-Tests complete check-out workflows:
-
-- ✅ **Complete full check-out workflow**
-
-  - Find checked-in reservation
-  - Verify belongings returned
-  - Add checkout notes
-  - Complete checkout
-  - Verify status change
-
-- ✅ **Handle checkout with unpaid balance**
-
-  - Check for balance due
-  - Verify payment warning or proceed
-
-- ✅ **Update reservation status after checkout**
-  - Track completed reservation count
-  - Perform checkout
-  - Verify count increased
-
-### 4. `dashboard-flow.spec.ts` (6 tests)
-
-Tests dashboard functionality:
-
-- ✅ **Display dashboard with key metrics**
-
-  - Verify arrivals/departures sections
-  - Verify numeric counts displayed
-
-- ✅ **Navigate to check-in from dashboard**
-
-  - Click check-in action
-  - Verify navigation works
-
-- ✅ **Filter dashboard by date**
-
-  - Change date picker
-  - Verify data refreshes
-
-- ✅ **Display announcements on dashboard**
-
-  - Check announcements section
-
-- ✅ **Show occupancy information**
-
-  - Verify occupancy/capacity display
-
-- ✅ **Navigate to reservation details from dashboard**
-  - Click reservation item
-  - Verify details page
-
-### 5. `kennel-management.spec.ts` (10 tests)
-
-Tests kennel board and print functionality:
-
-- ✅ **Display kennel board with all kennels**
-
-  - Verify summary cards (Total, Available, Occupied)
-  - Verify kennel cards show alphanumeric IDs (A01, not just 0)
-  - Verify status indicators
-
-- ✅ **Filter kennels by type**
-
-  - Apply suite type filter
-  - Verify filtered results
-
-- ✅ **Filter kennels by status**
-
-  - Apply status filter (Available/Occupied)
-  - Verify filtered results
-
-- ✅ **Search for specific kennel**
-
-  - Use search functionality
-  - Verify search results
-
-- ✅ **Refresh kennel board data**
-
-  - Click refresh button
-  - Verify data reloads
-
-- ✅ **Navigate to print kennel cards**
-
-  - Navigate to print page
-  - Verify page loads
-
-- ✅ **Display full kennel identifiers for printing**
-
-  - Verify "Kennel #A01" format (not "Kennel #3")
-  - Verify pet information displays
-
-- ✅ **Filter print cards by date**
-
-  - Change date filter
-  - Verify cards update
-
-- ✅ **Trigger print dialog**
-
-  - Click print button
-  - Verify print dialog appears
-
-- ✅ **Color-coded availability**
-  - Verify green for available
-  - Verify different styling for occupied
-
-**Total: 27 E2E tests**
+- Reservation creation and edits
+- Booking portal and online booking flows
+- Calendar and dashboard critical paths
+- Check-in and checkout workflows
+- Kennel management and print flows
+- Production-oriented smoke and workflow checks
 
 ## Setup
 
 ### Prerequisites
 
-1. **Node.js and npm installed**
-2. **Frontend running on port 3000**
-3. **Backend services running**
-4. **Database populated with test data**
+1. **Node.js and pnpm installed**
+2. **Workspace dependencies installed from the repo root**
+3. **Required services available locally, or allow Playwright `webServer` to start them**
+4. **Database populated with the data required by your target scenarios**
 
-### Install Playwright
+Install workspace dependencies from the repo root:
 
 ```bash
-# Install Playwright and browsers
-npm install --save-dev @playwright/test
-npx playwright install
+pnpm install --frozen-lockfile
 ```
 
-### Install Browsers
+Install Playwright browsers for the isolated package:
 
 ```bash
-# Install all browsers
-npx playwright install
+pnpm --dir e2e exec playwright install
+```
 
-# Or install specific browsers
-npx playwright install chromium
-npx playwright install firefox
-npx playwright install webkit
+For CI environments that also need browser system dependencies:
+
+```bash
+pnpm --dir e2e exec playwright install --with-deps
 ```
 
 ## Running Tests
 
-### Run All E2E Tests
+Run the isolated suite from the repo root:
 
 ```bash
-npx playwright test
+pnpm run test:e2e
 ```
 
-### Run Specific Test File
+This suite targets `apps/frontend-vite` as the app under test through `e2e/playwright.config.ts`.
+
+Run package-local Playwright directly:
 
 ```bash
-npx playwright test reservation-flow
-npx playwright test kennel-management
+pnpm --dir e2e exec playwright test
 ```
 
-### Run in UI Mode (Interactive)
+Run a specific spec file:
 
 ```bash
-npx playwright test --ui
+pnpm --dir e2e exec playwright test reservation-flow.spec.ts
+pnpm --dir e2e exec playwright test critical-paths.spec.ts
 ```
 
-### Run in Headed Mode (See Browser)
+Open Playwright UI mode:
 
 ```bash
-npx playwright test --headed
+pnpm run test:e2e:ui
 ```
 
-### Run Specific Browser
+Run in headed mode:
 
 ```bash
-npx playwright test --project=chromium
-npx playwright test --project=firefox
-npx playwright test --project=webkit
+pnpm run test:e2e:headed
 ```
 
-### Debug Tests
+Debug interactively:
 
 ```bash
-npx playwright test --debug
+pnpm run test:e2e:debug
 ```
 
-### Generate Test Report
+Open the HTML report:
 
 ```bash
-npx playwright show-report
+pnpm run test:e2e:report
+```
+
+Run a specific browser project:
+
+```bash
+pnpm --dir e2e exec playwright test --project=chromium
+pnpm --dir e2e exec playwright test --project=firefox
+pnpm --dir e2e exec playwright test --project=webkit
 ```
 
 ## Configuration
 
-### `playwright.config.ts`
+### `e2e/playwright.config.ts`
 
-Key settings:
+Key settings in the isolated workspace config:
 
-- **Base URL**: `http://localhost:3000`
+- **Base URL**: `http://localhost:3000` by default
+- **Test directory**: the `e2e/` package root
 - **Timeout**: 60 seconds per test
 - **Retries**: 2 on CI, 0 locally
-- **Parallel**: Yes (except on CI)
-- **Screenshots**: On failure
-- **Videos**: On failure
-- **Trace**: On first retry
+- **Reporters**: HTML, list, and JUnit
+- **Artifacts**: screenshots, videos, and traces on failure or retry
+- **Projects**: Chromium, Firefox, WebKit, mobile browsers, Edge, and Chrome
 
-### Browsers Tested
+### Managed Services
 
-- ✅ Chromium (Desktop)
-- ✅ Firefox (Desktop)
-- ✅ WebKit (Desktop Safari)
-- ✅ Mobile Chrome (Pixel 5)
-- ✅ Mobile Safari (iPhone 12)
-- ✅ Microsoft Edge
-- ✅ Google Chrome
+The isolated config starts the required apps and services through Playwright `webServer` entries:
+
+- `apps/frontend-vite` on `http://localhost:3000`
+- `apps/customer-service` on `http://localhost:4004/health`
+- `apps/reservation-service` on `http://localhost:4003/health`
+
+### Output Locations
+
+Generated artifacts are written under the `e2e/` package:
+
+- HTML report: `e2e/playwright-report/`
+- Test artifacts: `e2e/test-results/`
+- JUnit report: `e2e/test-results/junit.xml`
 
 ## Test Structure
 
 ### Test Organization
 
 ```typescript
-test.describe("Feature Name", () => {
-  test.beforeEach(async ({ page }) => {
-    // Setup before each test
-  });
-
-  test("should do something", async ({ page }) => {
-    await test.step("Step 1", async () => {
-      // Test step 1
+test.describe('Feature Name', () => {
+    test.beforeEach(async ({ page }) => {
+        // Setup before each test
     });
 
-    await test.step("Step 2", async () => {
-      // Test step 2
+    test('should do something', async ({ page }) => {
+        await test.step('Step 1', async () => {
+            // Test step 1
+        });
+
+        await test.step('Step 2', async () => {
+            // Test step 2
+        });
     });
-  });
 });
 ```
 
 ### Best Practices
 
-#### ✅ DO
+#### DO
 
 - Use `test.step()` for clear test organization
 - Wait for elements before interacting
@@ -312,7 +188,7 @@ test.describe("Feature Name", () => {
 - Use appropriate timeouts
 - Clean up test data if needed
 
-#### ❌ DON'T
+#### DON'T
 
 - Use fixed waits (`waitForTimeout`) unless necessary
 - Assume element positions
@@ -326,144 +202,93 @@ test.describe("Feature Name", () => {
 ### Debug Mode
 
 ```bash
-# Run with debugger
-npx playwright test --debug
-
-# Debug specific test
-npx playwright test reservation-flow --debug
+pnpm run test:e2e:debug
+pnpm --dir e2e exec playwright test reservation-flow.spec.ts --debug
 ```
 
 ### Inspect Element
 
 ```bash
-# Open Playwright Inspector
-npx playwright codegen http://localhost:3000
+pnpm --dir e2e exec playwright codegen http://localhost:3000
 ```
 
 ### View Trace
 
 ```bash
-# View trace for failed test
-npx playwright show-trace trace.zip
+pnpm --dir e2e exec playwright show-trace trace.zip
 ```
 
 ### Screenshots and Videos
 
 After test failures:
 
-- Screenshots: `test-results/*/test-failed-*.png`
-- Videos: `test-results/*/video.webm`
-- Traces: `test-results/*/trace.zip`
+- Screenshots: `e2e/test-results/*/test-failed-*.png`
+- Videos: `e2e/test-results/*/video.webm`
+- Traces: `e2e/test-results/*/trace.zip`
 
 ## CI/CD Integration
+
+E2E runs are wired through the root workspace scripts, which delegate into `@tailtown/e2e`. CI should use the root command surface instead of invoking Playwright from the repo root against a deleted root config.
 
 ### GitHub Actions Example
 
 ```yaml
-name: E2E Tests
+- uses: pnpm/action-setup@v5
+  with:
+      run_install: false
 
-on: [push, pull_request]
+- uses: actions/setup-node@v4
+  with:
+      node-version: 24.14.0
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+- name: Install dependencies
+  run: pnpm install --frozen-lockfile
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18"
+- name: Install Playwright browsers
+  run: pnpm --dir e2e exec playwright install --with-deps
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-
-      - name: Run E2E tests
-        run: npx playwright test
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: playwright-report
-          path: playwright-report/
+- name: Run isolated e2e suite
+  run: pnpm run test:e2e
 ```
 
 ### Environment Variables
 
 ```bash
-# Set base URL
 BASE_URL=http://localhost:3000
-
-# Enable CI mode
+CUSTOMER_SERVICE_URL=http://localhost:4004/health
+RESERVATION_SERVICE_URL=http://localhost:4003/health
 CI=true
-
-# Set specific browser
-BROWSER=chromium
 ```
 
 ## Troubleshooting
 
 ### Tests Timing Out
 
-```bash
-# Increase timeout in playwright.config.ts
-timeout: 120000 // 2 minutes
+Update the timeout in `e2e/playwright.config.ts` if a flow needs a longer budget:
+
+```typescript
+timeout: 120000;
 ```
 
 ### Element Not Found
 
 ```typescript
-// Use proper waits
-await page.waitForSelector("text=Element", { timeout: 10000 });
-
-// Or use auto-waiting actions
-await page.click("button"); // Automatically waits
-```
-
-### Flaky Tests
-
-```typescript
-// Add retries
-test.describe.configure({ retries: 2 });
-
-// Or use better selectors
-await page.locator('[data-testid="submit"]').click();
+await page.waitForSelector('text=Element', { timeout: 10000 });
+await page.click('button');
 ```
 
 ### Browser Not Installed
 
 ```bash
-# Reinstall browsers
-npx playwright install --force
+pnpm --dir e2e exec playwright install --force
 ```
 
 ## Test Data Management
 
-### Using Existing Data
+Use `setup/test-data.ts` for E2E-oriented data setup tasks when a scenario needs controlled fixtures:
 
-Tests use existing data in the database:
-
-- Customers
-- Pets
-- Services
-- Resources (kennels)
-
-### Creating Test Data
-
-If needed, create test data before running:
-
-```typescript
-test.beforeAll(async () => {
-  // Create test customer, pets, etc.
-});
-
-test.afterAll(async () => {
-  // Clean up test data
-});
+```bash
+pnpm --dir e2e test:data:setup
 ```
 
 ## Performance
@@ -471,20 +296,16 @@ test.afterAll(async () => {
 ### Parallel Execution
 
 ```bash
-# Run tests in parallel (default)
-npx playwright test
-
-# Run sequentially
-npx playwright test --workers=1
+pnpm --dir e2e exec playwright test
+pnpm --dir e2e exec playwright test --workers=1
 ```
 
 ### Sharding
 
 ```bash
-# Split tests across machines
-npx playwright test --shard=1/3
-npx playwright test --shard=2/3
-npx playwright test --shard=3/3
+pnpm --dir e2e exec playwright test --shard=1/3
+pnpm --dir e2e exec playwright test --shard=2/3
+pnpm --dir e2e exec playwright test --shard=3/3
 ```
 
 ## Reporting
@@ -492,41 +313,23 @@ npx playwright test --shard=3/3
 ### HTML Report
 
 ```bash
-# Generate and open HTML report
-npx playwright show-report
+pnpm run test:e2e:report
 ```
 
 ### JUnit Report
 
 ```bash
-# Generate JUnit XML
-npx playwright test --reporter=junit
-```
-
-### Custom Reporter
-
-```typescript
-// In playwright.config.ts
-reporter: [
-  ["html"],
-  ["json", { outputFile: "test-results.json" }],
-  ["junit", { outputFile: "junit.xml" }],
-];
+cat e2e/test-results/junit.xml
 ```
 
 ## Next Steps
 
-- [ ] Add more E2E test scenarios
-- [ ] Add visual regression tests
-- [ ] Add API mocking for isolated tests
-- [ ] Add performance testing
-- [ ] Integrate with CI/CD pipeline
-- [ ] Add accessibility tests
-- [ ] Add mobile-specific tests
+For more information on future enhancements and planned improvements, refer to the centralized roadmap:
+
+**[Testing Future Enhancements](../docs/testing/FUTURE-ENHANCEMENTS.md)**
 
 ## Related Documentation
 
 - [Playwright Documentation](https://playwright.dev)
-- [Integration Tests](../services/reservation-service/src/tests/integration/README.md)
-- [Unit Tests](../services/reservation-service/src/tests/README.md)
-- [Frontend Tests](../frontend/src/components/reservations/__tests__/README.md)
+- [`../docs/testing/TESTING.md`](../docs/testing/TESTING.md)
+- [`../docs/development/CI-CD-SETUP.md`](../docs/development/CI-CD-SETUP.md)

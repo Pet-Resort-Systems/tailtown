@@ -102,13 +102,6 @@ ENV/
 env/
 .env
 
-# MCP Server
-mcp-server/.venv/
-mcp-server/__pycache__/
-mcp-server/*.pyc
-mcp-server/vector_store_index/
-mcp-server/.faiss_index
-
 # Development logs
 *.log
 

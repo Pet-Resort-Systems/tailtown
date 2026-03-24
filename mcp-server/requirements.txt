@@ -1,7 +1,0 @@
-mcp>=0.9.0
-sentence-transformers>=2.2.2
-faiss-cpu>=1.7.4
-numpy>=1.24.0
-watchdog>=3.0.0
-gitignore-parser>=0.1.9
-markdown>=3.4.0

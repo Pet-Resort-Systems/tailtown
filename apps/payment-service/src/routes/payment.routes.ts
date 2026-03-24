@@ -2,7 +2,7 @@
  * Payment Routes
  */
 
-import { Router } from 'express';
+import { Router, type Router as ExpressRouter } from 'express';
 import {
   authorizePayment,
   capturePayment,
@@ -13,7 +13,7 @@ import {
   chargeToken,
 } from '../controllers/payment.controller';
 
-const router = Router();
+const router: ExpressRouter = Router();
 
 /**
  * @route   POST /api/payments/authorize
