@@ -10,7 +10,6 @@
  * Then edit the SUITES array below with your actual suite names.
  */
 
-const fetch = require('node-fetch');
 
 // ============================================================================
 // EDIT THIS SECTION WITH YOUR SUITE NAMES

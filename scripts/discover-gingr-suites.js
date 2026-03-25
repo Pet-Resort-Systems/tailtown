@@ -11,7 +11,6 @@
  *   node scripts/discover-gingr-suites.js mykennel abc123key 2024-01-01 2024-12-31
  */
 
-const fetch = require('node-fetch');
 
 // Parse command line arguments
 const args = process.argv.slice(2);

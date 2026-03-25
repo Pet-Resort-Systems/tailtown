@@ -12,7 +12,6 @@
  * - Configurable batch size
  */
 
-const fetch = require('node-fetch');
 const { PrismaClient } = require('@prisma/client');
 const fs = require('fs');
 const path = require('path');

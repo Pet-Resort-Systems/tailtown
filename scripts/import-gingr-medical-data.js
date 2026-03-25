@@ -15,7 +15,6 @@
  *   node scripts/import-gingr-medical-data.js <subdomain> <api-key>
  */
 
-const fetch = require('node-fetch');
 const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();

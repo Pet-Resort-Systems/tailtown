@@ -13,7 +13,6 @@
  *   node scripts/discover-suites-from-whiteboard.js tailtownpetresort abc123 90
  */
 
-const fetch = require('node-fetch');
 
 // Parse arguments
 const [subdomain, apiKey, daysBack = 90] = process.argv.slice(2);

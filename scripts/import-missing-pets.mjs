@@ -3,7 +3,6 @@
  * Fetches all pets from Gingr and imports only those not already in database
  */
 
-import fetch from 'node-fetch';
 import { createWriteStream } from 'fs';
 import { promisify } from 'util';
 import { exec } from 'child_process';

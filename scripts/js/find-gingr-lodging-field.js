@@ -2,7 +2,6 @@
  * Find lodging/kennel field in Gingr API response
  */
 
-const fetch = require('node-fetch');
 
 const GINGR_CONFIG = {
   subdomain: 'tailtownpetresort',

@@ -3,7 +3,6 @@
  * Fast import that generates SQL directly instead of using API
  */
 
-import fetch from 'node-fetch';
 import { createWriteStream } from 'fs';
 import { promisify } from 'util';
 import { exec } from 'child_process';

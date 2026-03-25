@@ -19,7 +19,6 @@
  *   node scripts/import-gingr-reference-data.js tailtown abc123xyz456
  */
 
-const fetch = require('node-fetch');
 const fs = require('fs');
 const path = require('path');
 

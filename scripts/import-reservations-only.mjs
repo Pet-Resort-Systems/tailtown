@@ -4,7 +4,6 @@
  * since we already have 11,793 customers and 3,280 pets in the database
  */
 
-import fetch from 'node-fetch';
 
 const GINGR_CONFIG = {
   subdomain: 'tailtownpetresort',

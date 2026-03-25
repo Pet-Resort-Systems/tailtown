@@ -7,7 +7,6 @@
  * and creates import script if vaccination data is available
  */
 
-const fetch = require('node-fetch');
 
 const GINGR_CONFIG = {
   subdomain: 'tailtownpetresort',

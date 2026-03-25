@@ -2,7 +2,6 @@
  * Inspect actual Gingr reservation structure to find lodging field
  */
 
-const fetch = require('node-fetch');
 
 const GINGR_CONFIG = {
   subdomain: 'tailtownpetresort',
