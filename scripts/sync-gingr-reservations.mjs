@@ -8,7 +8,6 @@
  * - Preserves existing suite assignments when possible
  */
 
-import fetch from 'node-fetch';
 import { promisify } from 'util';
 import { exec } from 'child_process';
 

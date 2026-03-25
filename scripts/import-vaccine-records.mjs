@@ -3,7 +3,6 @@
  * Fetches immunization records for all pets and imports into medical_records table
  */
 
-import fetch from 'node-fetch';
 import { createWriteStream } from 'fs';
 import { promisify } from 'util';
 import { exec } from 'child_process';

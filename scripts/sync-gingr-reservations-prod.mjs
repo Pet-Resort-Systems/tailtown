@@ -5,7 +5,6 @@
  * Uses environment variables for configuration and connects directly to PostgreSQL.
  */
 
-import fetch from 'node-fetch';
 import pg from 'pg';
 const { Pool } = pg;
 

@@ -12,7 +12,6 @@
  *   node scripts/import-gingr-employees.js tailtown abc123xyz456
  */
 
-const fetch = require('node-fetch');
 
 // Parse command line arguments
 const args = process.argv.slice(2);

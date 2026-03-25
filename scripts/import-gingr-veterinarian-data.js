@@ -12,7 +12,6 @@
  *   node scripts/import-gingr-veterinarian-data.js tailtown abc123xyz456
  */
 
-const fetch = require('node-fetch');
 const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();

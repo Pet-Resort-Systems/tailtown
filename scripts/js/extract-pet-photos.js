@@ -5,7 +5,6 @@
  * "https://storage.googleapis.com/gingr-app-user-uploads/2020/05/15/c2ed8720-96f2-11ea-a7d5-ef010b7ec138-Screen Shot 2020-05-15 at 2.48.06 PM.png"
  */
 
-const fetch = require('node-fetch');
 const fs = require('fs');
 const path = require('path');
 
