@@ -33,11 +33,20 @@ Project-wide documentation for the Tailtown Pet Resort Management System.
 - **[Deployment Guide](./deployment/PRODUCTION-DEPLOYMENT.md)** - How to deploy to production
 - **[Product Roadmap](./ROADMAP.md)** - Feature roadmap and priorities
 
+## For End Users
+
+- **[Help Center](./help-center/)** - User guides, FAQs, and support documentation
+    - Getting started guide
+    - Customer and pet management
+    - Reservations and billing
+    - Troubleshooting and support
+
 ## By Audience
 
 - **For Developers:** [Development Guides](./development/)
 - **For DevOps:** [Operations Guides](./operations/)
 - **For Product:** [Feature Overview](./SYSTEM-FEATURES-OVERVIEW.md)
+- **For End Users:** [Help Center](./help-center/)
 
 ## Quick Links
 
@@ -60,6 +69,9 @@ docs/
 ├── SYSTEM-FEATURES-OVERVIEW.md    # Feature documentation
 ├── CRITICAL-DOCS-REGISTRY.md      # Doc update tracking
 ├── DOCUMENTATION-STRATEGY.md      # AI vs Human docs strategy
+├── help-center/                   # User guides and support
+│   ├── README.md                  # Main help center index
+│   └── getting-started.md         # New user guide
 │
 ├── architecture/                  # System design docs
 │   ├── API-GATEWAY-DESIGN.md
