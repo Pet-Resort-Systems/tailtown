@@ -41,13 +41,15 @@ process_env_files() {
             ((SKIPPED++))
         else
             if cp "$env_example_file" "$env_file"; then
-                echo "  ✅ Copied: $env_example_file → $env_file"
+                echo "  ✅ Copied: $env_example_file into:" 
+                echo "    → $env_file"
                 ((COPIED++))
             else
                 echo "  ❌ Failed: Could not copy $env_example_file"
                 ((FAILED++))
             fi
         fi
+        echo ""
     done < <(find "$search_dir" -name ".env.example" -type f)
 }
 
