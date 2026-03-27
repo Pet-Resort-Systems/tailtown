@@ -5,7 +5,9 @@
   "private": true,
   "scripts": {
     "dev": "turbo dev --ui tui",
+    "build": "pnpm -r run build",
     "env:setup": "./scripts/create-env-files-based-on-examples.sh",
+    "env:copy": "./scripts/copy-main-worktree-env-files.sh",
     "db:setup": "pnpm run prisma:migrate && pnpm run prisma:generate",
     "prisma:migrate": "pnpm -r --filter \"./apps/*-service\" run --if-present prisma:migrate",
     "prisma:generate": "pnpm -r --filter \"./apps/*-service\" run --if-present prisma:generate",
@@ -69,7 +71,6 @@
     "coverage": "./scripts/generate-coverage-report.sh",
     "coverage:badge": "node scripts/coverage-badge.js",
     "coverage:open": "open apps/frontend/coverage/lcov-report/index.html && open apps/reservation-service/coverage/lcov-report/index.html",
-    "build": "pnpm -r run build",
     "import:staff": "node scripts/import-staff-data.js",
     "import:staff:gingr": "node scripts/import-staff-data.js gingr",
     "import:staff:csv": "node scripts/import-staff-data.js csv",

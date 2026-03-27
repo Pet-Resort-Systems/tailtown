@@ -4,4 +4,9 @@ A modern, full-featured SaaS management system for pet resorts, providing compre
 
 ## Development Environment
 
-- Use `pnpm` instead of `npm`
+- Use `pnpm` instead of `npm`.
+
+### Worktrees
+
+- Ensure dependencies are installed before running any `pnpm` command like `pnpm run typecheck` or `pnpm run tsc`.
+- Copy env files from main worktree by running `pnpm run env:copy` if `.env` files are missing.
