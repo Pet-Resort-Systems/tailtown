@@ -205,9 +205,6 @@ const TrainingClasses: React.FC = () => {
           : undefined,
       };
 
-      console.log('Creating training class with data:', apiData);
-      console.log('Start date formatted as:', apiData.startDate);
-
       if (editingClass) {
         await schedulingService.trainingClasses.update(
           editingClass.id,
@@ -778,12 +775,6 @@ const TrainingClasses: React.FC = () => {
                   // Automatically set daysOfWeek based on the selected start date
                   const dayOfWeek =
                     newDate instanceof Date ? newDate.getDay() : 0; // 0 = Sunday, 1 = Monday, etc.
-                  console.log(
-                    'Start date changed to:',
-                    newDate,
-                    'Day of week:',
-                    dayOfWeek
-                  );
                   setFormData({
                     ...formData,
                     startDate: newDate,

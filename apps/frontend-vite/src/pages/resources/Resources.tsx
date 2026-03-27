@@ -102,19 +102,6 @@ const Resources: React.FC = () => {
 
       // Direct response from the service should already be the data array
       if (Array.isArray(response)) {
-        // Debug: Log first resource to see what fields are available
-        if (response.length > 0) {
-          console.log(
-            '[Resources] First resource data:',
-            JSON.stringify(response[0], null, 2)
-          );
-          console.log(
-            '[Resources] maxPets:',
-            response[0].maxPets,
-            'location:',
-            response[0].location
-          );
-        }
         // Sort resources by room letter then number (A1, A2, B1, B2, etc.)
         setResources(sortByRoomAndNumber(response));
       } else {

@@ -27,9 +27,6 @@ const ApiTester: React.FC = () => {
     setResult(null);
 
     try {
-      console.log('Testing API connectivity...');
-      console.log('API URL:', apiUrl);
-
       // Test the API connection
       const response = await reservationApi.get('/api/resources/availability', {
         params: {
@@ -38,7 +35,6 @@ const ApiTester: React.FC = () => {
         },
       });
 
-      console.log('API response:', response);
       setResult({
         status: response.status,
         data: response.data,

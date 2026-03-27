@@ -48,10 +48,6 @@ export const useOnlineStatus = (): OnlineStatus => {
     const handleOnline = () => {
       setIsOnline(true);
       setLastOnline(new Date());
-      if (wasOffline) {
-        // Connection restored - could trigger sync here
-        console.log('Connection restored');
-      }
     };
 
     const handleOffline = () => {

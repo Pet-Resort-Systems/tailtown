@@ -76,22 +76,34 @@ class Logger {
     return parts.join(' ');
   }
 
+  private getConsoleMethod(method: 'info' | 'debug') {
+    const consoleMethod = console[method];
+    if (typeof consoleMethod === 'function') {
+      return consoleMethod.bind(console);
+    }
+
+    return console.info.bind(console);
+  }
+
   /**
    * Log with color in browser console
    */
-  private logWithColor(
+  private logWithMethod(
+    method: 'info' | 'debug',
     level: keyof typeof colors,
     message: string,
     context?: any
   ): void {
+    const log = this.getConsoleMethod(method);
+
     if (this.config.enableColors && typeof window !== 'undefined') {
-      console.log(
+      log(
         `%c${message}`,
         `color: ${colors[level]}; font-weight: bold`,
         context !== undefined ? context : ''
       );
     } else {
-      console.log(message, context !== undefined ? context : '');
+      log(message, context !== undefined ? context : '');
     }
   }
 
@@ -137,7 +149,7 @@ class Logger {
   info(message: string, context?: any): void {
     if (this.config.level >= LogLevel.INFO) {
       const formattedMessage = this.formatMessage('INFO', message, context);
-      this.logWithColor('INFO', formattedMessage, context);
+      this.logWithMethod('info', 'INFO', formattedMessage, context);
     }
   }
 
@@ -147,7 +159,7 @@ class Logger {
   success(message: string, context?: any): void {
     if (this.config.level >= LogLevel.SUCCESS) {
       const formattedMessage = this.formatMessage('SUCCESS', message, context);
-      this.logWithColor('SUCCESS', formattedMessage, context);
+      this.logWithMethod('info', 'SUCCESS', formattedMessage, context);
     }
   }
 
@@ -157,7 +169,7 @@ class Logger {
   debug(message: string, context?: any): void {
     if (this.config.level >= LogLevel.DEBUG) {
       const formattedMessage = this.formatMessage('DEBUG', message, context);
-      this.logWithColor('DEBUG', formattedMessage, context);
+      this.logWithMethod('debug', 'DEBUG', formattedMessage, context);
     }
   }
 

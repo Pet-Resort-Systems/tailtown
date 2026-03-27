@@ -175,7 +175,6 @@ const ResourceDetails: React.FC = () => {
         });
         setTimeout(() => navigate('/resources'), 1500);
       } else {
-        console.log('Updating resource:', id);
         await resourceManagement.updateResource(id, {
           name: resource.name,
           type: resource.type,

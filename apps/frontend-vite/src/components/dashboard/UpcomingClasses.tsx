@@ -233,9 +233,6 @@ const UpcomingClasses: React.FC = () => {
       handleCloseEnrollDialog();
       setCreditCardDialogOpen(false);
       setError(null);
-
-      // Optional: Show success message
-      console.log('Enrollment successful!');
     } catch (err: any) {
       setError(
         err.response?.data?.message || err.message || 'Failed to enroll pet'

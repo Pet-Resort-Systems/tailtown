@@ -45,7 +45,6 @@ const Login = () => {
     if (tenant) {
       localStorage.setItem('tailtown_tenant_id', tenant);
       setTenantName(tenant);
-      console.log('Set tenant ID from URL:', tenant);
     }
   }, [searchParams]);
 

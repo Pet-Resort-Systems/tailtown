@@ -87,14 +87,9 @@ const PrintKennelCards: React.FC = () => {
 
         const formattedDate = format(today, 'yyyy-MM-dd');
 
-        console.log(
-          `Initial load: Loading kennel cards for check-in date: ${formattedDate}`
-        );
-
         // Fetch tenant timezone from tenant settings
         const timezone = await tenantService.getCurrentTenantTimezone();
         setTenantTimezone(timezone);
-        console.log(`Using tenant timezone: ${timezone}`);
 
         const response = await reservationService.getAllReservations(
           1,
@@ -167,9 +162,6 @@ const PrintKennelCards: React.FC = () => {
 
       // Format date for API
       const formattedDate = format(selectedDate, 'yyyy-MM-dd');
-
-      console.log(`Loading kennel cards for check-in date: ${formattedDate}`);
-      console.log(`Using tenant timezone: ${tenantTimezone}`);
 
       // Fetch reservations checking in on the selected date
       // Use checkInDate parameter to get only dogs checking in on this specific day in tenant's timezone
@@ -250,12 +242,6 @@ const PrintKennelCards: React.FC = () => {
       setPetData(petsTemp);
       setCustomerData(customersTemp);
 
-      console.log(
-        `Extracted ${Object.keys(petsTemp).length} pets and ${
-          Object.keys(customersTemp).length
-        } customers from reservations`
-      );
-
       // Return the extracted data so we can use it immediately
       return { pets: petsTemp, customers: customersTemp };
     } catch (err) {
@@ -282,33 +268,20 @@ const PrintKennelCards: React.FC = () => {
         return;
       }
 
-      console.log(
-        `Filtering ${reservationsData.length} reservations with ${
-          Object.keys(pets).length
-        } pets and ${Object.keys(customers).length} customers`
-      );
-
       // For kennel cards, we want to show all reservations that have pet and customer data
       // We'll be more lenient with resource requirements
       const filtered = reservationsData.filter((res) => {
         // Check if reservation has pet and customer IDs
         if (!res.petId || !res.customerId) {
-          console.log(`Reservation ${res.id} missing petId or customerId`);
           return false;
         }
 
         // Check if we have the pet and customer data
         if (!pets[res.petId]) {
-          console.log(
-            `Reservation ${res.id} missing pet data for petId: ${res.petId}`
-          );
           return false;
         }
 
         if (!customers[res.customerId]) {
-          console.log(
-            `Reservation ${res.id} missing customer data for customerId: ${res.customerId}`
-          );
           return false;
         }
 
@@ -318,7 +291,6 @@ const PrintKennelCards: React.FC = () => {
         return true;
       });
 
-      console.log(`Filtered to ${filtered.length} reservations`);
       setFilteredReservations(filtered);
     },
     [reservations, petData, customerData]

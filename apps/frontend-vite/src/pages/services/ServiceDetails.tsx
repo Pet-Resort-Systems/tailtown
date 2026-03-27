@@ -180,8 +180,6 @@ const ServiceDetails: React.FC = () => {
   const handleSave = async () => {
     try {
       setSaving(true);
-      console.log('Saving service:', service);
-
       // Always ensure isActive is set to true when saving
       const serviceToSave = {
         ...service,
