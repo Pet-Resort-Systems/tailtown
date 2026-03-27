@@ -118,13 +118,11 @@ const PetSelection: React.FC<PetSelectionProps> = ({
       >
         Select Your Pets
       </Typography>
-
       {error && (
         <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>
           {error}
         </Alert>
       )}
-
       {/* Customer Info */}
       {customer && (
         <Card
@@ -148,7 +146,6 @@ const PetSelection: React.FC<PetSelectionProps> = ({
           </CardContent>
         </Card>
       )}
-
       {/* Pet Selection */}
       {customer && (
         <Box>
@@ -172,7 +169,13 @@ const PetSelection: React.FC<PetSelectionProps> = ({
           ) : (
             <Grid container spacing={2}>
               {customerPets.map((pet) => (
-                <Grid item xs={12} sm={6} md={4} key={pet.id}>
+                <Grid
+                  key={pet.id}
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                    md: 4
+                  }}>
                   <Card
                     elevation={selectedPetIds.includes(pet.id) ? 8 : 2}
                     sx={{
@@ -266,7 +269,6 @@ const PetSelection: React.FC<PetSelectionProps> = ({
           )}
         </Box>
       )}
-
       {/* Navigation Buttons - Fixed on mobile */}
       <Box
         sx={{
@@ -303,7 +305,6 @@ const PetSelection: React.FC<PetSelectionProps> = ({
           Continue to Add-Ons
         </Button>
       </Box>
-
       {/* Spacer for fixed button on mobile */}
       {customer && (
         <Box sx={{ display: { xs: 'block', sm: 'none' }, height: 80 }} />

@@ -393,17 +393,19 @@ const TrainingClasses: React.FC = () => {
           New Class
         </Button>
       </Box>
-
       {error && (
         <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
-
       {/* Filters */}
       <Paper sx={{ p: 2, mb: 2 }}>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3
+            }}>
             <FormControl fullWidth>
               <InputLabel>Status</InputLabel>
               <Select
@@ -421,7 +423,11 @@ const TrainingClasses: React.FC = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3
+            }}>
             <FormControl fullWidth>
               <InputLabel>Category</InputLabel>
               <Select
@@ -439,7 +445,11 @@ const TrainingClasses: React.FC = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3
+            }}>
             <FormControl fullWidth>
               <InputLabel>Level</InputLabel>
               <Select
@@ -456,7 +466,11 @@ const TrainingClasses: React.FC = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3
+            }}>
             <Button
               variant="outlined"
               onClick={() =>
@@ -475,7 +489,6 @@ const TrainingClasses: React.FC = () => {
           </Grid>
         </Grid>
       </Paper>
-
       <Paper>
         <TableContainer>
           <Table>
@@ -617,7 +630,6 @@ const TrainingClasses: React.FC = () => {
           </Table>
         </TableContainer>
       </Paper>
-
       {/* Add/Edit Dialog */}
       <Dialog
         open={openDialog}
@@ -661,7 +673,7 @@ const TrainingClasses: React.FC = () => {
             />
 
             <Grid container spacing={2}>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <FormControl fullWidth>
                   <InputLabel>Category</InputLabel>
                   <Select
@@ -681,7 +693,7 @@ const TrainingClasses: React.FC = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <FormControl fullWidth>
                   <InputLabel>Level</InputLabel>
                   <Select
@@ -721,7 +733,7 @@ const TrainingClasses: React.FC = () => {
             </FormControl>
 
             <Grid container spacing={2}>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <TextField
                   label="Max Capacity"
                   type="number"
@@ -735,7 +747,7 @@ const TrainingClasses: React.FC = () => {
                   fullWidth
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <TextField
                   label="Total Weeks"
                   type="number"
@@ -783,7 +795,7 @@ const TrainingClasses: React.FC = () => {
             </LocalizationProvider>
 
             <Grid container spacing={2}>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <TextField
                   label="Start Time"
                   type="time"
@@ -795,7 +807,7 @@ const TrainingClasses: React.FC = () => {
                   fullWidth
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <TextField
                   label="End Time"
                   type="time"
@@ -841,7 +853,6 @@ const TrainingClasses: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Enrollment Dialog */}
       <Dialog
         open={enrollDialogOpen}

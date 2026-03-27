@@ -279,7 +279,11 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
     <Paper sx={{ p: 3 }}>
       {/* Header with Photo and Basic Info */}
       <Grid container spacing={3}>
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <Box
             sx={{
               display: 'flex',
@@ -323,7 +327,11 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
           </Box>
         </Grid>
 
-        <Grid item xs={12} md={8}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 8
+          }}>
           {/* Alerts Section */}
           {(hasExpiredVaccines ||
             hasExpiringVaccines ||
@@ -446,7 +454,12 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
                         const isExpiring = exp < thirtyDays && !isExpired;
 
                         return (
-                          <Grid item xs={6} sm={4} key={vaccine}>
+                          <Grid
+                            key={vaccine}
+                            size={{
+                              xs: 6,
+                              sm: 4
+                            }}>
                             <Chip
                               icon={
                                 isExpired ? (
@@ -484,9 +497,7 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
           </Paper>
         </Grid>
       </Grid>
-
       <Divider sx={{ my: 3 }} />
-
       {/* Notes Sections */}
       <Grid container spacing={2}>
         {/* Food & Feeding - Always show if any feeding info exists */}
@@ -495,7 +506,11 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
           pet.feedingMethod ||
           pet.foodType ||
           pet.isPickyEater) && (
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <Paper
               variant="outlined"
               sx={{
@@ -545,7 +560,11 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
 
         {/* Behavior */}
         {pet.behaviorNotes && (
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <Paper variant="outlined" sx={{ p: 2, height: '100%' }}>
               <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
                 <BehaviorIcon
@@ -560,7 +579,11 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
 
         {/* Medical/Allergies */}
         {(pet.allergies || pet.medicationNotes) && (
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <Paper
               variant="outlined"
               sx={{ p: 2, height: '100%', bgcolor: 'error.50' }}
@@ -592,7 +615,11 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
 
         {/* Special Needs */}
         {pet.specialNeeds && (
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <Paper variant="outlined" sx={{ p: 2, height: '100%' }}>
               <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
                 Special Needs
@@ -604,7 +631,7 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
 
         {/* General Notes */}
         {pet.notes && (
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Paper variant="outlined" sx={{ p: 2 }}>
               <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
                 General Notes
@@ -614,7 +641,6 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
           </Grid>
         )}
       </Grid>
-
       {/* Play Group */}
       {pet.idealPlayGroup && (
         <Box sx={{ mt: 2 }}>
@@ -625,7 +651,6 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
           />
         </Box>
       )}
-
       {/* Emergency Contact Section */}
       <Box sx={{ mt: 2 }}>
         <Box
@@ -700,7 +725,6 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
           </Box>
         </Collapse>
       </Box>
-
       {/* Vaccine Quick-Add Section */}
       {showEditButtons && onUpdatePet && (
         <Box sx={{ mt: 2 }}>
@@ -714,7 +738,6 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
           </Button>
         </Box>
       )}
-
       {/* Pet History Section */}
       <Box sx={{ mt: 2 }}>
         <Box
@@ -789,7 +812,6 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
           </Box>
         </Collapse>
       </Box>
-
       {/* Edit Vet Dialog */}
       <Dialog open={editingVet} onClose={() => setEditingVet(false)}>
         <DialogTitle>Edit Veterinarian Information</DialogTitle>
@@ -815,7 +837,6 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Edit Emergency Contact Dialog */}
       <Dialog
         open={editingEmergency}
@@ -844,7 +865,6 @@ const PetSummaryCard: React.FC<PetSummaryCardProps> = ({
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Add Vaccine Dialog */}
       <Dialog open={addingVaccine} onClose={() => setAddingVaccine(false)}>
         <DialogTitle>Add Vaccine Record</DialogTitle>

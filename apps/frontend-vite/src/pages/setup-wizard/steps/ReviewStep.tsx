@@ -110,22 +110,23 @@ export default function ReviewStep() {
       <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
         Review your settings before launching your facility.
       </Typography>
-
       {!allRequiredComplete && (
         <Alert severity="warning" sx={{ mb: 3 }}>
           Please complete all required steps before launching.
         </Alert>
       )}
-
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
           {error}
         </Alert>
       )}
-
       <Grid container spacing={3}>
         {/* Summary Cards */}
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <Card variant="outlined">
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -148,7 +149,11 @@ export default function ReviewStep() {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <Card variant="outlined">
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -184,7 +189,11 @@ export default function ReviewStep() {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <Card variant="outlined">
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -207,7 +216,11 @@ export default function ReviewStep() {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <Card variant="outlined">
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -230,9 +243,7 @@ export default function ReviewStep() {
           </Card>
         </Grid>
       </Grid>
-
       <Divider sx={{ my: 4 }} />
-
       {/* Step Completion Status */}
       <Typography variant="h6" gutterBottom>
         Setup Progress
@@ -265,7 +276,6 @@ export default function ReviewStep() {
           );
         })}
       </List>
-
       {/* Navigation */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button startIcon={<ArrowBack />} onClick={prevStep}>

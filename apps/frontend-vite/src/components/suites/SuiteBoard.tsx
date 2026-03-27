@@ -513,19 +513,26 @@ const SuiteBoard: React.FC<SuiteBoardProps> = ({
           />
         </LocalizationProvider>
       </Box>
-
       <Grid container spacing={2}>
         {loading ? (
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Typography>Loading suites...</Typography>
           </Grid>
         ) : filteredSuites.length === 0 ? (
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Typography>No suites match your filter criteria.</Typography>
           </Grid>
         ) : (
           filteredSuites.map((suite) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={suite.id}>
+            <Grid
+              key={suite.id}
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 4,
+                lg: 3,
+                xl: 2
+              }}>
               {renderSuiteCard(suite)}
             </Grid>
           ))

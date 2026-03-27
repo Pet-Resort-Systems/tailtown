@@ -5,6 +5,7 @@ import {
   Paper,
   List,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   Checkbox,
@@ -66,44 +67,48 @@ const ReturnBelongings: React.FC<ReturnBelongingsProps> = ({
         <Paper elevation={0} sx={{ mt: 3, bgcolor: 'grey.50' }}>
           <List>
             {belongings.map((item, index) => (
-              <ListItem
-                key={item.id || index}
-                dense
-                button
-                onClick={() => handleToggle(item.id || index.toString())}
-                sx={{
-                  borderBottom:
-                    index < belongings.length - 1 ? '1px solid' : 'none',
-                  borderColor: 'divider',
-                  '&:hover': {
-                    bgcolor: 'action.hover',
-                  },
-                }}
-              >
-                <ListItemIcon>
-                  <Checkbox
-                    edge="start"
-                    checked={checkedItems[item.id || index.toString()] || false}
-                    tabIndex={-1}
-                    disableRipple
+              <ListItem key={item.id || index} disablePadding>
+                <ListItemButton
+                  dense
+                  onClick={() => handleToggle(item.id || index.toString())}
+                  sx={{
+                    borderBottom:
+                      index < belongings.length - 1 ? '1px solid' : 'none',
+                    borderColor: 'divider',
+                    '&:hover': {
+                      bgcolor: 'action.hover',
+                    },
+                  }}
+                >
+                  <ListItemIcon>
+                    <Checkbox
+                      edge="start"
+                      checked={
+                        checkedItems[item.id || index.toString()] || false
+                      }
+                      tabIndex={-1}
+                      disableRipple
+                    />
+                  </ListItemIcon>
+                  <ListItemIcon>
+                    <InventoryIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      <Box
+                        sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                      >
+                        <Typography variant="body1">
+                          {item.item || item.name || 'Unknown Item'}
+                        </Typography>
+                        {item.quantity > 1 && (
+                          <Chip label={`×${item.quantity}`} size="small" />
+                        )}
+                      </Box>
+                    }
+                    secondary={item.notes || item.description}
                   />
-                </ListItemIcon>
-                <ListItemIcon>
-                  <InventoryIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography variant="body1">
-                        {item.item || item.name || 'Unknown Item'}
-                      </Typography>
-                      {item.quantity > 1 && (
-                        <Chip label={`×${item.quantity}`} size="small" />
-                      )}
-                    </Box>
-                  }
-                  secondary={item.notes || item.description}
-                />
+                </ListItemButton>
               </ListItem>
             ))}
           </List>

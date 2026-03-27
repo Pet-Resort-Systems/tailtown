@@ -101,7 +101,6 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
           Add Medication
         </Button>
       </Box>
-
       {localMedications.length === 0 && (
         <Paper sx={{ p: 3, textAlign: 'center', bgcolor: 'grey.50' }}>
           <Typography color="text.secondary">
@@ -109,7 +108,6 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
           </Typography>
         </Paper>
       )}
-
       {localMedications.map((medication, index) => (
         <Paper key={index} sx={{ p: 3, mb: 2 }}>
           <Box
@@ -135,7 +133,11 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
           </Box>
 
           <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <TextField
                 fullWidth
                 label="Medication Name *"
@@ -152,7 +154,11 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <TextField
                 fullWidth
                 label="Dosage *"
@@ -165,7 +171,11 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <TextField
                 fullWidth
                 label="Frequency *"
@@ -178,7 +188,11 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <FormControl fullWidth required>
                 <InputLabel id={`administration-method-label-${index}`}>
                   Administration Method
@@ -211,7 +225,11 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
               </FormControl>
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <TextField
                 fullWidth
                 label="Time(s) of Day"
@@ -224,7 +242,11 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -242,11 +264,15 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Divider sx={{ my: 1 }} />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <TextField
                 fullWidth
                 label="Prescribing Veterinarian"
@@ -262,7 +288,11 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <Box sx={{ display: 'flex', gap: 2 }}>
                 <TextField
                   fullWidth
@@ -287,7 +317,7 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
               </Box>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 multiline
@@ -305,7 +335,7 @@ const MedicationForm: React.FC<MedicationFormProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 multiline

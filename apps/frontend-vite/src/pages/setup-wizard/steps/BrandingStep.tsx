@@ -34,16 +34,19 @@ export default function BrandingStep() {
         Customize the look and feel of your booking portal. This step is
         optional.
       </Typography>
-
       <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <Card variant="outlined">
             <CardContent>
               <Typography variant="h6" gutterBottom>
                 Colors
               </Typography>
               <Grid container spacing={2}>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <input
                       type="color"
@@ -71,7 +74,7 @@ export default function BrandingStep() {
                     </Box>
                   </Box>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <input
                       type="color"
@@ -106,7 +109,11 @@ export default function BrandingStep() {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <Card variant="outlined" sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -153,7 +160,6 @@ export default function BrandingStep() {
           </Card>
         </Grid>
       </Grid>
-
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button startIcon={<ArrowBack />} onClick={prevStep}>
           Back

@@ -94,7 +94,13 @@ const MarketingHub: React.FC = () => {
         <Paper sx={{ p: 3, mt: 3 }}>
           <Grid container spacing={3}>
             {marketingSections.map((section, index) => (
-              <Grid item xs={12} md={6} lg={4} key={index}>
+              <Grid
+                key={index}
+                size={{
+                  xs: 12,
+                  md: 6,
+                  lg: 4
+                }}>
                 <Card
                   sx={{
                     height: '100%',

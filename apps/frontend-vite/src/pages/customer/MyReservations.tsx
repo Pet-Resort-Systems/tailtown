@@ -155,11 +155,15 @@ export const MyReservations: React.FC = () => {
           Manage your pet boarding reservations
         </Typography>
       </Box>
-
       {/* Summary Cards */}
       {dashboard && (
         <Grid container spacing={3} mb={4}>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 3
+            }}>
             <Card>
               <CardContent>
                 <Typography color="text.secondary" gutterBottom>
@@ -169,7 +173,12 @@ export const MyReservations: React.FC = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 3
+            }}>
             <Card>
               <CardContent>
                 <Typography color="text.secondary" gutterBottom>
@@ -181,7 +190,12 @@ export const MyReservations: React.FC = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 3
+            }}>
             <Card>
               <CardContent>
                 <Typography color="text.secondary" gutterBottom>
@@ -193,7 +207,12 @@ export const MyReservations: React.FC = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 3
+            }}>
             <Card>
               <CardContent>
                 <Button
@@ -209,7 +228,6 @@ export const MyReservations: React.FC = () => {
           </Grid>
         </Grid>
       )}
-
       {/* Tabs */}
       <Box mb={3}>
         <Tabs
@@ -223,7 +241,6 @@ export const MyReservations: React.FC = () => {
           <Tab label="All" value="ALL" />
         </Tabs>
       </Box>
-
       {/* Reservations List */}
       {reservations.length === 0 ? (
         <Card>
@@ -254,12 +271,12 @@ export const MyReservations: React.FC = () => {
       ) : (
         <Grid container spacing={3}>
           {reservations.map((reservation) => (
-            <Grid item xs={12} key={reservation.id}>
+            <Grid key={reservation.id} size={12}>
               <Card>
                 <CardContent>
                   <Grid container spacing={2}>
                     {/* Status and Order Number */}
-                    <Grid item xs={12}>
+                    <Grid size={12}>
                       <Box
                         display="flex"
                         justifyContent="space-between"
@@ -283,7 +300,12 @@ export const MyReservations: React.FC = () => {
                     </Grid>
 
                     {/* Dates */}
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6,
+                        md: 3
+                      }}>
                       <Stack direction="row" spacing={1} alignItems="center">
                         <CalendarIcon color="action" />
                         <Box>
@@ -297,7 +319,12 @@ export const MyReservations: React.FC = () => {
                       </Stack>
                     </Grid>
 
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6,
+                        md: 3
+                      }}>
                       <Stack direction="row" spacing={1} alignItems="center">
                         <CalendarIcon color="action" />
                         <Box>
@@ -312,7 +339,12 @@ export const MyReservations: React.FC = () => {
                     </Grid>
 
                     {/* Pet and Service */}
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6,
+                        md: 3
+                      }}>
                       <Stack direction="row" spacing={1} alignItems="center">
                         <PetsIcon color="action" />
                         <Box>
@@ -326,7 +358,12 @@ export const MyReservations: React.FC = () => {
                       </Stack>
                     </Grid>
 
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6,
+                        md: 3
+                      }}>
                       <Stack direction="row" spacing={1} alignItems="center">
                         <MoneyIcon color="action" />
                         <Box>
@@ -341,7 +378,7 @@ export const MyReservations: React.FC = () => {
                     </Grid>
 
                     {/* Service Name */}
-                    <Grid item xs={12}>
+                    <Grid size={12}>
                       <Divider sx={{ my: 1 }} />
                       <Typography variant="body2" color="text.secondary">
                         {reservation.serviceName}

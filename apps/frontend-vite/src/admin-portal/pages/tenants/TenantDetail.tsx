@@ -224,16 +224,18 @@ const TenantDetail: React.FC = () => {
           Delete
         </Button>
       </Box>
-
       {error && (
         <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>
           {error}
         </Alert>
       )}
-
       {/* Usage Stats */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={3}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 3
+          }}>
           <Card>
             <CardContent>
               <Box
@@ -256,7 +258,11 @@ const TenantDetail: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 3
+          }}>
           <Card>
             <CardContent>
               <Box
@@ -279,7 +285,11 @@ const TenantDetail: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 3
+          }}>
           <Card>
             <CardContent>
               <Box
@@ -302,7 +312,11 @@ const TenantDetail: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 3
+          }}>
           <Card>
             <CardContent>
               <Box
@@ -326,7 +340,6 @@ const TenantDetail: React.FC = () => {
           </Card>
         </Grid>
       </Grid>
-
       {/* Business Information */}
       <Card sx={{ mb: 3 }}>
         <CardContent>
@@ -335,7 +348,11 @@ const TenantDetail: React.FC = () => {
           </Typography>
           <Divider sx={{ mb: 2 }} />
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <BusinessIcon sx={{ mr: 1, color: 'text.secondary' }} />
                 <Box>
@@ -366,7 +383,11 @@ const TenantDetail: React.FC = () => {
                 </Box>
               </Box>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <LocationIcon sx={{ mr: 1, color: 'text.secondary' }} />
                 <Box>
@@ -394,10 +415,13 @@ const TenantDetail: React.FC = () => {
           </Grid>
         </CardContent>
       </Card>
-
       {/* Subscription & Settings */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -435,7 +459,11 @@ const TenantDetail: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -470,7 +498,6 @@ const TenantDetail: React.FC = () => {
           </Card>
         </Grid>
       </Grid>
-
       {/* Important Dates */}
       <Card sx={{ mb: 3 }}>
         <CardContent>
@@ -479,7 +506,11 @@ const TenantDetail: React.FC = () => {
           </Typography>
           <Divider sx={{ mb: 2 }} />
           <Grid container spacing={3}>
-            <Grid item xs={12} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 3
+              }}>
               <Typography variant="caption" color="textSecondary">
                 Created
               </Typography>
@@ -487,7 +518,11 @@ const TenantDetail: React.FC = () => {
                 {formatDate(tenant.createdAt)}
               </Typography>
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 3
+              }}>
               <Typography variant="caption" color="textSecondary">
                 Last Updated
               </Typography>
@@ -496,7 +531,11 @@ const TenantDetail: React.FC = () => {
               </Typography>
             </Grid>
             {tenant.subscriptionStartDate && (
-              <Grid item xs={12} md={3}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 3
+                }}>
                 <Typography variant="caption" color="textSecondary">
                   Subscription Start
                 </Typography>
@@ -506,7 +545,11 @@ const TenantDetail: React.FC = () => {
               </Grid>
             )}
             {tenant.pausedAt && (
-              <Grid item xs={12} md={3}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 3
+                }}>
                 <Typography variant="caption" color="textSecondary">
                   Paused At
                 </Typography>
@@ -518,7 +561,6 @@ const TenantDetail: React.FC = () => {
           </Grid>
         </CardContent>
       </Card>
-
       {/* Admin Users */}
       {tenant.users && tenant.users.length > 0 && (
         <Card>
@@ -568,7 +610,6 @@ const TenantDetail: React.FC = () => {
           </CardContent>
         </Card>
       )}
-
       {/* Confirm Dialog */}
       <Dialog
         open={confirmDialog.open}

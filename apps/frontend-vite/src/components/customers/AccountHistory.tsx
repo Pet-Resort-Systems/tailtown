@@ -277,7 +277,6 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({
           {error}
         </Alert>
       )}
-
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs
           value={tabValue}
@@ -300,7 +299,6 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({
           />
         </Tabs>
       </Box>
-
       {/* Account Summary Tab */}
       <TabPanel value={tabValue} index={0}>
         <Paper elevation={3} sx={{ p: 3, mb: 2 }}>
@@ -311,19 +309,31 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({
 
           {accountBalance ? (
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <Typography variant="subtitle1">Total Invoiced:</Typography>
                 <Typography variant="h6" color="text.secondary">
                   {formatCurrency(accountBalance.totalInvoiced)}
                 </Typography>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <Typography variant="subtitle1">Total Paid:</Typography>
                 <Typography variant="h6" color="text.secondary">
                   {formatCurrency(accountBalance.totalPaid)}
                 </Typography>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <Typography variant="subtitle1">Current Balance:</Typography>
                 <Typography
                   variant="h6"
@@ -338,13 +348,17 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({
                   {accountBalance.accountBalance < 0 && ' (Overpaid)'}
                 </Typography>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <Typography variant="subtitle1">Store Credit:</Typography>
                 <Typography variant="h6" color="primary.main">
                   {formatCurrency(accountBalance.storeCredit)}
                 </Typography>
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Typography variant="subtitle1">Net Balance:</Typography>
                 <Typography
                   variant="h4"
@@ -421,7 +435,6 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({
           </Box>
         </Paper>
       </TabPanel>
-
       {/* Invoices Tab */}
       <TabPanel value={tabValue} index={1}>
         <Box
@@ -502,7 +515,6 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({
           </Table>
         </TableContainer>
       </TabPanel>
-
       {/* Payments Tab */}
       <TabPanel value={tabValue} index={2}>
         <Box
@@ -571,7 +583,6 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({
           </Table>
         </TableContainer>
       </TabPanel>
-
       {/* Store Credit Tab */}
       <TabPanel value={tabValue} index={3}>
         <Box sx={{ mb: 3 }}>
@@ -663,7 +674,6 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({
           </TableContainer>
         </Box>
       </TabPanel>
-
       {/* Payment Modal */}
       <Dialog
         open={openNewPaymentModal}
@@ -762,7 +772,6 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Store Credit Modal */}
       <Dialog
         open={openStoreCreditModal}
@@ -817,7 +826,6 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Apply Credit Modal */}
       <Dialog
         open={openApplyCreditModal}
@@ -892,7 +900,6 @@ const AccountHistory: React.FC<AccountHistoryProps> = ({
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Invoice Details Dialog */}
       <InvoiceDetailsDialog
         open={openInvoiceDetailsDialog}

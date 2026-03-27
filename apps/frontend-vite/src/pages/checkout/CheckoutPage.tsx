@@ -521,16 +521,14 @@ const CheckoutPage: React.FC = () => {
           Checkout
         </Typography>
       </Box>
-
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
           {error}
         </Alert>
       )}
-
       {/* Order Summary - Full width at top */}
       <Grid container spacing={3}>
-        <Grid item xs={12}>
+        <Grid size={12}>
           <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
             <Typography variant="h6" gutterBottom>
               Order Summary
@@ -566,10 +564,9 @@ const CheckoutPage: React.FC = () => {
           </Paper>
         </Grid>
       </Grid>
-
       {/* Coupon Code Section */}
       <Grid container spacing={3}>
-        <Grid item xs={12}>
+        <Grid size={12}>
           <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
             <Typography variant="h6" gutterBottom>
               Promo Code
@@ -591,10 +588,9 @@ const CheckoutPage: React.FC = () => {
           </Paper>
         </Grid>
       </Grid>
-
       {/* Payment Information - Full width below */}
       <Grid container spacing={3}>
-        <Grid item xs={12}>
+        <Grid size={12}>
           <Paper elevation={2} sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
               Payment Information
@@ -612,7 +608,11 @@ const CheckoutPage: React.FC = () => {
               />
 
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -624,7 +624,11 @@ const CheckoutPage: React.FC = () => {
                     label="Save payment information for future bookings"
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <Button
                     type="submit"
                     variant="contained"

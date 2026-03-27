@@ -312,13 +312,11 @@ export const LoyaltyProgram: React.FC = () => {
           label={config.isEnabled ? 'Enabled' : 'Disabled'}
         />
       </Box>
-
       {error && (
         <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 3 }}>
           {error}
         </Alert>
       )}
-
       {success && (
         <Alert
           severity="success"
@@ -328,7 +326,6 @@ export const LoyaltyProgram: React.FC = () => {
           {success}
         </Alert>
       )}
-
       {/* Tabs */}
       <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
         <Tabs value={activeTab} onChange={(e, v) => setActiveTab(v)}>
@@ -338,11 +335,14 @@ export const LoyaltyProgram: React.FC = () => {
           <Tab icon={<GiftIcon />} label="Redemptions" />
         </Tabs>
       </Box>
-
       {/* General Settings Tab */}
       {activeTab === 0 && (
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
@@ -431,7 +431,11 @@ export const LoyaltyProgram: React.FC = () => {
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
@@ -474,7 +478,6 @@ export const LoyaltyProgram: React.FC = () => {
           </Grid>
         </Grid>
       )}
-
       {/* Earning Rules Tab */}
       {activeTab === 1 && (
         <Box>
@@ -555,7 +558,6 @@ export const LoyaltyProgram: React.FC = () => {
           </Table>
         </Box>
       )}
-
       {/* Tiers Tab */}
       {activeTab === 2 && (
         <Box>
@@ -568,7 +570,13 @@ export const LoyaltyProgram: React.FC = () => {
 
           <Grid container spacing={3}>
             {tiers.map((tier) => (
-              <Grid item xs={12} md={6} lg={4} key={tier.level}>
+              <Grid
+                key={tier.level}
+                size={{
+                  xs: 12,
+                  md: 6,
+                  lg: 4
+                }}>
                 <Card sx={{ borderTop: `4px solid ${tier.color}` }}>
                   <CardContent>
                     <Box display="flex" alignItems="center" mb={2}>
@@ -615,7 +623,6 @@ export const LoyaltyProgram: React.FC = () => {
           </Grid>
         </Box>
       )}
-
       {/* Redemptions Tab */}
       {activeTab === 3 && (
         <Box>
@@ -644,7 +651,13 @@ export const LoyaltyProgram: React.FC = () => {
 
           <Grid container spacing={3}>
             {redemptionOptions.map((option) => (
-              <Grid item xs={12} md={6} lg={4} key={option.id}>
+              <Grid
+                key={option.id}
+                size={{
+                  xs: 12,
+                  md: 6,
+                  lg: 4
+                }}>
                 <Card>
                   <CardContent>
                     <Box
@@ -704,7 +717,6 @@ export const LoyaltyProgram: React.FC = () => {
           </Grid>
         </Box>
       )}
-
       {/* Earning Rule Dialog */}
       <Dialog
         open={showEarningDialog}
@@ -717,7 +729,7 @@ export const LoyaltyProgram: React.FC = () => {
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 select
@@ -742,7 +754,7 @@ export const LoyaltyProgram: React.FC = () => {
             </Grid>
 
             {earningFormData.type === 'DOLLARS_SPENT' && (
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   fullWidth
                   type="number"
@@ -759,7 +771,7 @@ export const LoyaltyProgram: React.FC = () => {
             )}
 
             {earningFormData.type === 'VISIT' && (
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   fullWidth
                   type="number"
@@ -777,7 +789,7 @@ export const LoyaltyProgram: React.FC = () => {
 
             {earningFormData.type === 'REFERRAL' && (
               <>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <TextField
                     fullWidth
                     type="number"
@@ -791,7 +803,7 @@ export const LoyaltyProgram: React.FC = () => {
                     }
                   />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <TextField
                     fullWidth
                     type="number"
@@ -810,7 +822,7 @@ export const LoyaltyProgram: React.FC = () => {
 
             {(earningFormData.type === 'BIRTHDAY' ||
               earningFormData.type === 'ANNIVERSARY') && (
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   fullWidth
                   type="number"
@@ -826,7 +838,7 @@ export const LoyaltyProgram: React.FC = () => {
               </Grid>
             )}
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <FormControlLabel
                 control={
                   <Switch
@@ -851,7 +863,6 @@ export const LoyaltyProgram: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Redemption Dialog */}
       <Dialog
         open={showRedemptionDialog}
@@ -866,7 +877,7 @@ export const LoyaltyProgram: React.FC = () => {
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 label="Name"
@@ -880,7 +891,7 @@ export const LoyaltyProgram: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 multiline
@@ -896,7 +907,7 @@ export const LoyaltyProgram: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 select
@@ -919,7 +930,7 @@ export const LoyaltyProgram: React.FC = () => {
               </TextField>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 type="number"
@@ -935,7 +946,7 @@ export const LoyaltyProgram: React.FC = () => {
             </Grid>
 
             {redemptionFormData.type === 'DISCOUNT_FIXED' && (
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   fullWidth
                   type="number"
@@ -952,7 +963,7 @@ export const LoyaltyProgram: React.FC = () => {
             )}
 
             {redemptionFormData.type === 'DISCOUNT_PERCENTAGE' && (
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   fullWidth
                   type="number"
@@ -968,7 +979,7 @@ export const LoyaltyProgram: React.FC = () => {
               </Grid>
             )}
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <FormControlLabel
                 control={
                   <Switch

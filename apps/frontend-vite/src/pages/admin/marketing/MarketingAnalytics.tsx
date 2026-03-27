@@ -200,7 +200,12 @@ const MarketingAnalytics: React.FC = () => {
 
         {/* Overview Stats */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 3
+            }}>
             <StatCard
               title="Total Customers"
               value={analytics.customers.total}
@@ -209,7 +214,12 @@ const MarketingAnalytics: React.FC = () => {
               subtitle="In your database"
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 3
+            }}>
             <StatCard
               title="Email Reachable"
               value={`${analytics.engagement.emailReachRate}%`}
@@ -218,7 +228,12 @@ const MarketingAnalytics: React.FC = () => {
               subtitle={`${analytics.customers.withEmail} customers`}
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 3
+            }}>
             <StatCard
               title="SMS Reachable"
               value={`${analytics.engagement.smsReachRate}%`}
@@ -227,7 +242,12 @@ const MarketingAnalytics: React.FC = () => {
               subtitle={`${analytics.customers.withPhone} customers`}
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 3
+            }}>
             <StatCard
               title="Active (30 days)"
               value={analytics.customers.recentlyActive}
@@ -246,7 +266,11 @@ const MarketingAnalytics: React.FC = () => {
           <Divider sx={{ mb: 2 }} />
 
           <Grid container spacing={3}>
-            <Grid item xs={12} md={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 4
+              }}>
               <Box sx={{ textAlign: 'center', p: 2 }}>
                 <TemplateIcon
                   sx={{ fontSize: 48, color: 'text.secondary', mb: 1 }}
@@ -259,7 +283,11 @@ const MarketingAnalytics: React.FC = () => {
                 </Typography>
               </Box>
             </Grid>
-            <Grid item xs={12} md={8}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 8
+              }}>
               <List dense>
                 <ListItem>
                   <ListItemIcon>
@@ -325,7 +353,11 @@ const MarketingAnalytics: React.FC = () => {
           <Divider sx={{ mb: 2 }} />
 
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <Box
                 sx={{
                   p: 2,
@@ -350,7 +382,11 @@ const MarketingAnalytics: React.FC = () => {
                 </Box>
               </Box>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <Box
                 sx={{
                   p: 2,

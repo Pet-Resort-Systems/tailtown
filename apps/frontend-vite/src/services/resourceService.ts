@@ -549,7 +549,7 @@ export const resourceService = {
         )
         .map(
           (r: any) =>
-            ({
+            (({
               id: r.id || r.resourceId,
               name: r.name || r.resourceName || 'Resource',
               type: r.type || r.resourceType || 'OTHER',
@@ -557,8 +557,8 @@ export const resourceService = {
               attributes: 'attributes' in r ? r.attributes : undefined,
               isActive: true,
               createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-            }) as Resource
+              updatedAt: new Date().toISOString()
+            }) as Resource)
         );
 
       return { status: 'success', data: normalized };

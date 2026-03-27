@@ -55,7 +55,6 @@ export default function PricingStep() {
       <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
         Set your rates for each kennel size. You can adjust these anytime.
       </Typography>
-
       {/* Daily Rates by Size */}
       <Typography variant="h6" gutterBottom>
         Daily Rates
@@ -66,14 +65,20 @@ export default function PricingStep() {
             (s) => s.size === tier.kennelSize
           );
           return (
-            <Grid item xs={12} sm={6} md={4} key={tier.kennelSize}>
+            <Grid
+              key={tier.kennelSize}
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 4
+              }}>
               <Card variant="outlined">
                 <CardContent>
                   <Typography variant="subtitle1" fontWeight="bold">
                     {sizeConfig?.label} (up to {sizeConfig?.maxWeight} lbs)
                   </Typography>
                   <Grid container spacing={2} sx={{ mt: 1 }}>
-                    <Grid item xs={6}>
+                    <Grid size={6}>
                       <TextField
                         fullWidth
                         label="Daily"
@@ -94,7 +99,7 @@ export default function PricingStep() {
                         size="small"
                       />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid size={6}>
                       <TextField
                         fullWidth
                         label="Half Day"
@@ -122,13 +127,16 @@ export default function PricingStep() {
           );
         })}
       </Grid>
-
       {/* Discounts & Surcharges */}
       <Typography variant="h6" gutterBottom>
         Discounts & Surcharges
       </Typography>
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <Card variant="outlined">
             <CardContent>
               <Typography variant="subtitle2" gutterBottom>
@@ -154,7 +162,11 @@ export default function PricingStep() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <Card variant="outlined">
             <CardContent>
               <Typography variant="subtitle2" gutterBottom>
@@ -181,7 +193,6 @@ export default function PricingStep() {
           </Card>
         </Grid>
       </Grid>
-
       {/* Deposit Settings */}
       <Typography variant="h6" gutterBottom>
         Deposit Requirements
@@ -201,7 +212,11 @@ export default function PricingStep() {
           />
           {pricing.depositRequired && (
             <Grid container spacing={2} sx={{ mt: 1 }}>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Deposit Type</InputLabel>
                   <Select
@@ -223,7 +238,11 @@ export default function PricingStep() {
                 </FormControl>
               </Grid>
               {pricing.depositType !== 'first_night' && (
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <TextField
                     fullWidth
                     label={
@@ -251,7 +270,6 @@ export default function PricingStep() {
           )}
         </CardContent>
       </Card>
-
       {/* Navigation */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button startIcon={<ArrowBack />} onClick={prevStep}>

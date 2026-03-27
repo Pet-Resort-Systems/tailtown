@@ -160,10 +160,14 @@ const TenantList: React.FC = () => {
           Create New Tenant
         </Button>
       </Box>
-
       {/* Stats Cards */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 3
+          }}>
           <Card>
             <CardContent>
               <Box
@@ -184,7 +188,12 @@ const TenantList: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 3
+          }}>
           <Card>
             <CardContent>
               <Box
@@ -207,7 +216,12 @@ const TenantList: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 3
+          }}>
           <Card>
             <CardContent>
               <Box
@@ -230,7 +244,12 @@ const TenantList: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 3
+          }}>
           <Card>
             <CardContent>
               <Box
@@ -254,11 +273,14 @@ const TenantList: React.FC = () => {
           </Card>
         </Grid>
       </Grid>
-
       {/* Filters */}
       <Paper sx={{ p: 2, mb: 3 }}>
         <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <TextField
               fullWidth
               label="Search"
@@ -267,7 +289,11 @@ const TenantList: React.FC = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3
+            }}>
             <FormControl fullWidth>
               <InputLabel>Status</InputLabel>
               <Select
@@ -283,14 +309,17 @@ const TenantList: React.FC = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3
+            }}>
             <Button fullWidth variant="outlined" onClick={loadTenants}>
               Refresh
             </Button>
           </Grid>
         </Grid>
       </Paper>
-
       {/* Tenants Table */}
       <TableContainer component={Paper}>
         <Table>
@@ -430,7 +459,6 @@ const TenantList: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
-
       {/* Confirm Dialog */}
       <Dialog
         open={confirmDialog.open}

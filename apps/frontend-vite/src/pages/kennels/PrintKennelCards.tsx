@@ -417,7 +417,11 @@ const PrintKennelCards: React.FC = () => {
             </Box>
 
             <Grid container spacing={3}>
-              <Grid item xs={12} md={4}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 4
+                }}>
                 <DatePicker
                   label="Date"
                   value={selectedDate}
@@ -432,7 +436,11 @@ const PrintKennelCards: React.FC = () => {
                 />
               </Grid>
 
-              <Grid item xs={12} md={4}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 4
+                }}>
                 <FormControl fullWidth>
                   <InputLabel id="status-select-label">Status</InputLabel>
                   <Select
@@ -455,7 +463,11 @@ const PrintKennelCards: React.FC = () => {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12} md={4}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 4
+                }}>
                 <Button
                   variant="contained"
                   color="primary"

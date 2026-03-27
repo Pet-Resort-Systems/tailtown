@@ -59,7 +59,12 @@ const Dashboard: React.FC = () => {
 
         <Grid container spacing={4} sx={{ mt: 4 }}>
           {sections.map((section, index) => (
-            <Grid item xs={12} md={4} key={index}>
+            <Grid
+              key={index}
+              size={{
+                xs: 12,
+                md: 4
+              }}>
               <Card
                 sx={{
                   height: '100%',
@@ -111,19 +116,31 @@ const Dashboard: React.FC = () => {
             Quick Stats
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Typography variant="body2" color="text.secondary">
                 Total Tenants
               </Typography>
               <Typography variant="h4">-</Typography>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Typography variant="body2" color="text.secondary">
                 Active Subscriptions
               </Typography>
               <Typography variant="h4">-</Typography>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Typography variant="body2" color="text.secondary">
                 Platform Status
               </Typography>

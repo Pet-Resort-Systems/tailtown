@@ -193,10 +193,13 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
           {success}
         </Alert>
       )}
-
       {/* Summary Cards */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid item xs={12} sm={4}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 4
+          }}>
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
               <Typography variant="h3" color="primary">
@@ -208,7 +211,11 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={4}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 4
+          }}>
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
               <Typography variant="h3" color="success.main">
@@ -220,7 +227,11 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={4}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 4
+          }}>
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
               <Typography
@@ -238,7 +249,6 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
           </Card>
         </Grid>
       </Grid>
-
       {/* Action Button */}
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
         <Button
@@ -250,7 +260,6 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
           Purchase Pass
         </Button>
       </Box>
-
       {/* Passes List */}
       {passes.length === 0 ? (
         <Paper sx={{ p: 4, textAlign: 'center' }}>
@@ -414,7 +423,6 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
           </Table>
         </TableContainer>
       )}
-
       {/* Purchase Dialog */}
       <Dialog
         open={purchaseDialogOpen}
@@ -477,12 +485,12 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
                           Package Details
                         </Typography>
                         <Grid container spacing={1}>
-                          <Grid item xs={6}>
+                          <Grid size={6}>
                             <Typography variant="body2">
                               Regular price:
                             </Typography>
                           </Grid>
-                          <Grid item xs={6}>
+                          <Grid size={6}>
                             <Typography
                               variant="body2"
                               sx={{ textDecoration: 'line-through' }}
@@ -492,12 +500,12 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
                               )}
                             </Typography>
                           </Grid>
-                          <Grid item xs={6}>
+                          <Grid size={6}>
                             <Typography variant="body2">
                               Package price:
                             </Typography>
                           </Grid>
-                          <Grid item xs={6}>
+                          <Grid size={6}>
                             <Typography
                               variant="body2"
                               fontWeight="bold"
@@ -506,21 +514,21 @@ const CustomerDaycarePasses: React.FC<CustomerDaycarePassesProps> = ({
                               {formatCurrency(pkg.price)}
                             </Typography>
                           </Grid>
-                          <Grid item xs={6}>
+                          <Grid size={6}>
                             <Typography variant="body2">
                               Customer saves:
                             </Typography>
                           </Grid>
-                          <Grid item xs={6}>
+                          <Grid size={6}>
                             <Typography variant="body2" color="success.main">
                               {formatCurrency(savings.amount)} (
                               {savings.percentage}%)
                             </Typography>
                           </Grid>
-                          <Grid item xs={6}>
+                          <Grid size={6}>
                             <Typography variant="body2">Valid for:</Typography>
                           </Grid>
-                          <Grid item xs={6}>
+                          <Grid size={6}>
                             <Typography variant="body2">
                               {pkg.validityDays} days
                             </Typography>

@@ -113,7 +113,11 @@ const CustomerReports: React.FC = () => {
       case 'acquisition':
         return (
           <>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -125,7 +129,11 @@ const CustomerReports: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -137,7 +145,11 @@ const CustomerReports: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -155,7 +167,11 @@ const CustomerReports: React.FC = () => {
       case 'retention':
         return (
           <>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -167,7 +183,11 @@ const CustomerReports: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -179,7 +199,11 @@ const CustomerReports: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -197,7 +221,11 @@ const CustomerReports: React.FC = () => {
       case 'lifetime-value':
         return (
           <>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -211,7 +239,11 @@ const CustomerReports: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -223,7 +255,11 @@ const CustomerReports: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -241,7 +277,11 @@ const CustomerReports: React.FC = () => {
       case 'inactive':
         return (
           <>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -253,7 +293,11 @@ const CustomerReports: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -263,7 +307,11 @@ const CustomerReports: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -280,7 +328,7 @@ const CustomerReports: React.FC = () => {
 
       default:
         return (
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Card>
               <CardContent>
                 <Typography color="textSecondary">
@@ -317,11 +365,14 @@ const CustomerReports: React.FC = () => {
           Export CSV
         </Button>
       </Box>
-
       {/* Filters */}
       <Paper sx={{ p: 2, mb: 3 }}>
         <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 3
+            }}>
             <FormControl fullWidth size="small">
               <InputLabel>Report Type</InputLabel>
               <Select
@@ -340,7 +391,11 @@ const CustomerReports: React.FC = () => {
 
           {(reportType === 'acquisition' || reportType === 'retention') && (
             <>
-              <Grid item xs={12} sm={3}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 3
+                }}>
                 <TextField
                   fullWidth
                   size="small"
@@ -351,7 +406,11 @@ const CustomerReports: React.FC = () => {
                   InputLabelProps={{ shrink: true }}
                 />
               </Grid>
-              <Grid item xs={12} sm={3}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 3
+                }}>
                 <TextField
                   fullWidth
                   size="small"
@@ -366,7 +425,11 @@ const CustomerReports: React.FC = () => {
           )}
 
           {reportType === 'lifetime-value' && (
-            <Grid item xs={12} sm={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 3
+              }}>
               <TextField
                 fullWidth
                 size="small"
@@ -380,7 +443,11 @@ const CustomerReports: React.FC = () => {
           )}
 
           {reportType === 'inactive' && (
-            <Grid item xs={12} sm={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 3
+              }}>
               <TextField
                 fullWidth
                 size="small"
@@ -393,7 +460,11 @@ const CustomerReports: React.FC = () => {
             </Grid>
           )}
 
-          <Grid item xs={12} sm={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 3
+            }}>
             <Button
               fullWidth
               variant="contained"
@@ -405,21 +476,18 @@ const CustomerReports: React.FC = () => {
           </Grid>
         </Grid>
       </Paper>
-
       {/* Error */}
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
           {error}
         </Alert>
       )}
-
       {/* Loading */}
       {loading && (
         <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
           <CircularProgress />
         </Box>
       )}
-
       {/* Report Data */}
       {!loading && reportData && (
         <>
@@ -515,7 +583,6 @@ const CustomerReports: React.FC = () => {
           </Paper>
         </>
       )}
-
       {/* Instructions */}
       {!loading && !reportData && !error && (
         <Paper sx={{ p: 4, textAlign: 'center' }}>

@@ -14,6 +14,7 @@ import {
   Button,
   List,
   ListItem,
+  ListItemButton,
   ListItemText,
   ListItemAvatar,
   Avatar,
@@ -172,21 +173,19 @@ const ReportCards: React.FC = () => {
                 {todaysPets
                   .filter((p) => !p.hasReport)
                   .map((pet) => (
-                    <ListItem
-                      key={pet.id}
-                      button
-                      onClick={() => setShowCreateForm(true)}
-                    >
-                      <ListItemAvatar>
-                        <Avatar>
-                          <PetIcon />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={pet.name}
-                        secondary="No report yet"
-                      />
-                      <PhotoIcon color="action" />
+                    <ListItem key={pet.id} disablePadding>
+                      <ListItemButton onClick={() => setShowCreateForm(true)}>
+                        <ListItemAvatar>
+                          <Avatar>
+                            <PetIcon />
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary={pet.name}
+                          secondary="No report yet"
+                        />
+                        <PhotoIcon color="action" />
+                      </ListItemButton>
                     </ListItem>
                   ))}
               </List>

@@ -125,7 +125,11 @@ const WaitlistDashboard: React.FC = () => {
     <Card key={entry.id} sx={{ mb: 2 }}>
       <CardContent>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
               <Box sx={{ mr: 1 }}>{getServiceIcon(entry.serviceType)}</Box>
               <Typography variant="h6">
@@ -146,7 +150,11 @@ const WaitlistDashboard: React.FC = () => {
             </Typography>
           </Grid>
 
-          <Grid item xs={12} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3
+            }}>
             <Box sx={{ textAlign: 'center' }}>
               <Typography variant="h4" color="primary">
                 #{entry.position}
@@ -157,7 +165,11 @@ const WaitlistDashboard: React.FC = () => {
             </Box>
           </Grid>
 
-          <Grid item xs={12} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3
+            }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               <Chip
                 label={waitlistService.formatStatus(entry.status)}
@@ -283,7 +295,6 @@ const WaitlistDashboard: React.FC = () => {
           )}
         </TabPanel>
       </Card>
-
       {/* Details Dialog */}
       <Dialog
         open={detailsOpen}
@@ -296,7 +307,7 @@ const WaitlistDashboard: React.FC = () => {
           {selectedEntry && (
             <Box>
               <Grid container spacing={2}>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Typography variant="subtitle2" color="text.secondary">
                     Customer
                   </Typography>
@@ -312,7 +323,7 @@ const WaitlistDashboard: React.FC = () => {
                   </Typography>
                 </Grid>
 
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Typography variant="subtitle2" color="text.secondary">
                     Pet
                   </Typography>
@@ -324,11 +335,11 @@ const WaitlistDashboard: React.FC = () => {
                   </Typography>
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Divider sx={{ my: 2 }} />
                 </Grid>
 
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Typography variant="subtitle2" color="text.secondary">
                     Service Type
                   </Typography>
@@ -339,7 +350,7 @@ const WaitlistDashboard: React.FC = () => {
                   </Typography>
                 </Grid>
 
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Typography variant="subtitle2" color="text.secondary">
                     Status
                   </Typography>
@@ -350,7 +361,7 @@ const WaitlistDashboard: React.FC = () => {
                   />
                 </Grid>
 
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Typography variant="subtitle2" color="text.secondary">
                     Requested Dates
                   </Typography>
@@ -367,7 +378,7 @@ const WaitlistDashboard: React.FC = () => {
                   </Typography>
                 </Grid>
 
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Typography variant="subtitle2" color="text.secondary">
                     Position
                   </Typography>
@@ -376,7 +387,7 @@ const WaitlistDashboard: React.FC = () => {
                   </Typography>
                 </Grid>
 
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Typography variant="subtitle2" color="text.secondary">
                     Flexible Dates
                   </Typography>
@@ -387,7 +398,7 @@ const WaitlistDashboard: React.FC = () => {
                   </Typography>
                 </Grid>
 
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Typography variant="subtitle2" color="text.secondary">
                     Notifications Sent
                   </Typography>
@@ -397,7 +408,7 @@ const WaitlistDashboard: React.FC = () => {
                 </Grid>
 
                 {selectedEntry.customerNotes && (
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <Typography variant="subtitle2" color="text.secondary">
                       Customer Notes
                     </Typography>
@@ -408,7 +419,7 @@ const WaitlistDashboard: React.FC = () => {
                 )}
 
                 {selectedEntry.notes && (
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <Typography variant="subtitle2" color="text.secondary">
                       Staff Notes
                     </Typography>
@@ -448,7 +459,6 @@ const WaitlistDashboard: React.FC = () => {
           )}
         </DialogActions>
       </Dialog>
-
       {/* Notify Dialog */}
       <Dialog
         open={notifyDialogOpen}

@@ -184,14 +184,22 @@ const EmailMarketing: React.FC = () => {
 
         <Grid container spacing={3}>
           {/* Email Composer */}
-          <Grid item xs={12} lg={8}>
+          <Grid
+            size={{
+              xs: 12,
+              lg: 8
+            }}>
             <Paper sx={{ p: 3 }}>
               <Typography variant="h6" gutterBottom>
                 Create Email Campaign
               </Typography>
 
               <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 6
+                  }}>
                   <FormControl fullWidth sx={{ mb: 2 }}>
                     <InputLabel>Email Template</InputLabel>
                     <Select
@@ -213,7 +221,11 @@ const EmailMarketing: React.FC = () => {
                   </FormControl>
                 </Grid>
 
-                <Grid item xs={12} md={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 6
+                  }}>
                   <FormControl fullWidth sx={{ mb: 2 }}>
                     <InputLabel>Contact List</InputLabel>
                     <Select
@@ -230,7 +242,7 @@ const EmailMarketing: React.FC = () => {
                   </FormControl>
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <TextField
                     fullWidth
                     label="Subject Line"
@@ -241,7 +253,7 @@ const EmailMarketing: React.FC = () => {
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs value={tabValue} onChange={handleTabChange}>
                       <Tab icon={<VisualIcon />} label="Visual Editor" />
@@ -277,7 +289,7 @@ const EmailMarketing: React.FC = () => {
                   </TabPanel>
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
                     <Button
                       variant="contained"
@@ -304,7 +316,11 @@ const EmailMarketing: React.FC = () => {
           </Grid>
 
           {/* Quick Stats */}
-          <Grid item xs={12} lg={4}>
+          <Grid
+            size={{
+              xs: 12,
+              lg: 4
+            }}>
             <Paper sx={{ p: 3, mb: 3 }}>
               <Typography variant="h6" gutterBottom>
                 Email Statistics
@@ -386,7 +402,7 @@ const EmailMarketing: React.FC = () => {
           </Grid>
 
           {/* Available Templates */}
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Paper sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Typography variant="h6" sx={{ flexGrow: 1 }}>

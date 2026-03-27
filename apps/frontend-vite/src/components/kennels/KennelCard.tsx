@@ -227,11 +227,10 @@ const KennelCard: React.FC<KennelCardProps> = React.memo(
             {formattedDates.startTime} - {formattedSuiteType}
           </Typography>
         </CardHeader>
-
         <CardContent sx={{ p: 0 }}>
           <Grid container spacing={4} sx={{ mt: 2 }}>
             {/* Left column */}
-            <Grid item xs={7}>
+            <Grid size={7}>
               <SectionTitle variant="h5" sx={{ fontSize: '1.5rem', mb: 2 }}>
                 Pet Information
               </SectionTitle>
@@ -289,7 +288,7 @@ const KennelCard: React.FC<KennelCardProps> = React.memo(
             </Grid>
 
             {/* Right column */}
-            <Grid item xs={5}>
+            <Grid size={5}>
               <SectionTitle variant="h5" sx={{ fontSize: '1.5rem', mb: 2 }}>
                 Pet Characteristics
               </SectionTitle>

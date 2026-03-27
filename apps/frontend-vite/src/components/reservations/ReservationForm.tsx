@@ -1272,7 +1272,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
               What type of stay is this?
             </Typography>
             <Grid container spacing={2}>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <Paper
                   elevation={stayType === 'boarding' ? 3 : 1}
                   onClick={() => {
@@ -1341,7 +1341,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                   </Typography>
                 </Paper>
               </Grid>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <Paper
                   elevation={stayType === 'daycamp' ? 3 : 1}
                   onClick={() => {
@@ -2095,7 +2095,11 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
             Start Date & Time
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <DatePicker
                 label="Start Date"
                 value={startDate}
@@ -2143,7 +2147,11 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TimePicker
                 label="Start Time"
                 value={startDate}
@@ -2196,7 +2204,11 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
             End Date & Time
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <DatePicker
                 label="End Date"
                 value={endDate}
@@ -2221,7 +2233,11 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                 minDate={startDate || undefined}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TimePicker
                 label="End Time"
                 value={endDate}
@@ -2387,7 +2403,6 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
           </Box>
         </Box>
       </Paper>
-
       {/* Add-Ons Dialog - only shown after successful reservation creation when showAddOns is true */}
       <AddOnSelectionDialogEnhanced
         open={addOnsDialogOpen && !!newReservationId && !!selectedServiceId}
@@ -2404,7 +2419,6 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
         serviceId={selectedServiceId}
         onAddOnsAdded={handleAddOnsAdded}
       />
-
       {/* Delete Confirmation Dialog */}
       <Dialog
         open={deleteConfirmOpen}

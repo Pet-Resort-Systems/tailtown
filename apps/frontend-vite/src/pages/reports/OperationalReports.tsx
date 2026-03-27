@@ -105,7 +105,11 @@ const OperationalReports: React.FC = () => {
       case 'staff':
         return (
           <>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -117,7 +121,11 @@ const OperationalReports: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -129,7 +137,11 @@ const OperationalReports: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -147,7 +159,11 @@ const OperationalReports: React.FC = () => {
       case 'resources':
         return (
           <>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -159,7 +175,11 @@ const OperationalReports: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -173,7 +193,11 @@ const OperationalReports: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -191,7 +215,11 @@ const OperationalReports: React.FC = () => {
       case 'bookings':
         return (
           <>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -203,7 +231,11 @@ const OperationalReports: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -215,7 +247,11 @@ const OperationalReports: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -233,7 +269,11 @@ const OperationalReports: React.FC = () => {
       case 'capacity':
         return (
           <>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -245,7 +285,11 @@ const OperationalReports: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -257,7 +301,11 @@ const OperationalReports: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -312,7 +360,6 @@ const OperationalReports: React.FC = () => {
           </Box>
         </CardContent>
       </Card>
-
       {/* Header */}
       <Box
         sx={{
@@ -335,11 +382,14 @@ const OperationalReports: React.FC = () => {
           Export CSV
         </Button>
       </Box>
-
       {/* Filters */}
       <Paper sx={{ p: 2, mb: 3 }}>
         <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 3
+            }}>
             <FormControl fullWidth size="small">
               <InputLabel>Report Type</InputLabel>
               <Select
@@ -355,7 +405,11 @@ const OperationalReports: React.FC = () => {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 3
+            }}>
             <TextField
               fullWidth
               size="small"
@@ -367,7 +421,11 @@ const OperationalReports: React.FC = () => {
             />
           </Grid>
 
-          <Grid item xs={12} sm={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 3
+            }}>
             <TextField
               fullWidth
               size="small"
@@ -379,7 +437,11 @@ const OperationalReports: React.FC = () => {
             />
           </Grid>
 
-          <Grid item xs={12} sm={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 3
+            }}>
             <Button
               fullWidth
               variant="contained"
@@ -391,21 +453,18 @@ const OperationalReports: React.FC = () => {
           </Grid>
         </Grid>
       </Paper>
-
       {/* Error */}
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
           {error}
         </Alert>
       )}
-
       {/* Loading */}
       {loading && (
         <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
           <CircularProgress />
         </Box>
       )}
-
       {/* Report Data */}
       {!loading && reportData && (
         <>
@@ -592,7 +651,6 @@ const OperationalReports: React.FC = () => {
           </Paper>
         </>
       )}
-
       {/* Instructions */}
       {!loading && !reportData && !error && (
         <Paper sx={{ p: 4, textAlign: 'center' }}>

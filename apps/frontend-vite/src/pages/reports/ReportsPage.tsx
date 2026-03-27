@@ -163,7 +163,11 @@ const ReportsPage: React.FC = () => {
             Report Settings
           </Typography>
           <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 3
+              }}>
               <FormControl fullWidth size="small">
                 <InputLabel>Date Range</InputLabel>
                 <Select
@@ -181,7 +185,11 @@ const ReportsPage: React.FC = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 3
+              }}>
               <FormControl fullWidth size="small">
                 <InputLabel>Export Format</InputLabel>
                 <Select
@@ -195,7 +203,11 @@ const ReportsPage: React.FC = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 3
+              }}>
               <TextField
                 fullWidth
                 size="small"
@@ -205,7 +217,11 @@ const ReportsPage: React.FC = () => {
                 disabled={dateRange !== 'custom'}
               />
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 3
+              }}>
               <TextField
                 fullWidth
                 size="small"
@@ -273,7 +289,12 @@ const ReportsPage: React.FC = () => {
         {/* Pet Reports */}
         <TabPanel value={tabValue} index={4}>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 4
+              }}>
               <ReportCard
                 title="Pet Demographics"
                 description="Pet population analysis by breed, age, size, and type distribution."
@@ -283,7 +304,12 @@ const ReportsPage: React.FC = () => {
                 onExport={() => handleExport('Pet Demographics')}
               />
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 4
+              }}>
               <ReportCard
                 title="Breed Analysis"
                 description="Popular breeds, breed-specific service preferences, and health trends."
@@ -293,7 +319,12 @@ const ReportsPage: React.FC = () => {
                 onExport={() => handleExport('Breed Analysis')}
               />
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 4
+              }}>
               <ReportCard
                 title="Health & Vaccination Tracking"
                 description="Vaccination status, health records, and compliance reporting."
@@ -303,7 +334,12 @@ const ReportsPage: React.FC = () => {
                 onExport={() => handleExport('Health Tracking')}
               />
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 4
+              }}>
               <ReportCard
                 title="Service Preferences by Pet"
                 description="Service usage patterns based on pet characteristics and preferences."
@@ -313,7 +349,12 @@ const ReportsPage: React.FC = () => {
                 onExport={() => handleExport('Service Preferences')}
               />
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 4
+              }}>
               <ReportCard
                 title="Feeding Reports"
                 description="Picky eater tracking, meal consumption ratings (0-4), and feeding patterns by pet."
@@ -325,7 +366,12 @@ const ReportsPage: React.FC = () => {
                 onExport={() => handleExport('Feeding Reports')}
               />
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 4
+              }}>
               <ReportCard
                 title="Medication Reports"
                 description="Medication administration logs, missed doses, and staff sign-off tracking."
@@ -343,7 +389,12 @@ const ReportsPage: React.FC = () => {
         {/* Marketing Reports */}
         <TabPanel value={tabValue} index={5}>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 4
+              }}>
               <ReportCard
                 title="Campaign Effectiveness"
                 description="Marketing campaign performance, ROI analysis, and conversion tracking."
@@ -353,7 +404,12 @@ const ReportsPage: React.FC = () => {
                 onExport={() => handleExport('Campaign Effectiveness')}
               />
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 4
+              }}>
               <ReportCard
                 title="Referral Source Analysis"
                 description="Customer referral sources, referral program performance, and attribution."
@@ -363,7 +419,12 @@ const ReportsPage: React.FC = () => {
                 onExport={() => handleExport('Referral Analysis')}
               />
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 4
+              }}>
               <ReportCard
                 title="Seasonal Trends"
                 description="Seasonal booking patterns, demand forecasting, and capacity planning."
@@ -373,7 +434,12 @@ const ReportsPage: React.FC = () => {
                 onExport={() => handleExport('Seasonal Trends')}
               />
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 4
+              }}>
               <ReportCard
                 title="Promotional Analysis"
                 description="Coupon usage, discount effectiveness, and promotional campaign results."
@@ -394,7 +460,12 @@ const ReportsPage: React.FC = () => {
         {/* Service Reports */}
         <TabPanel value={tabValue} index={7}>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 4
+              }}>
               <ReportCard
                 title="Popular Services"
                 description="Most requested services, service popularity trends, and demand analysis."
@@ -404,7 +475,12 @@ const ReportsPage: React.FC = () => {
                 onExport={() => handleExport('Popular Services')}
               />
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 4
+              }}>
               <ReportCard
                 title="Add-On Performance"
                 description="Add-on service uptake, revenue contribution, and upselling effectiveness."
@@ -414,7 +490,12 @@ const ReportsPage: React.FC = () => {
                 onExport={() => handleExport('Add-On Performance')}
               />
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 4
+              }}>
               <ReportCard
                 title="Pricing Analysis"
                 description="Service pricing optimization, price sensitivity analysis, and revenue per service."
@@ -424,7 +505,12 @@ const ReportsPage: React.FC = () => {
                 onExport={() => handleExport('Pricing Analysis')}
               />
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 4
+              }}>
               <ReportCard
                 title="Service Duration Trends"
                 description="Average service durations, efficiency metrics, and time optimization opportunities."
