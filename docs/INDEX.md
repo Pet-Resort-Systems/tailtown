@@ -6,6 +6,7 @@ Project-wide documentation for the Tailtown Pet Resort Management System.
 
 - **[Quick Start](./QUICK-START.md)** - Get running in 10 minutes
 - **[Git Setup](./GIT-SETUP.md)** - Git workflow and rules
+- **[GitHub Workflows](/.github/workflows/README.md)** - CI/CD pipelines, PR checks, and deployment workflows
 - **[Best Practices](./development/DEVELOPMENT-BEST-PRACTICES.md)** - Code standards and patterns
 - **[Security](./security/SECURITY.md)** - Security features and how to use them
 - **[Roadmap](./ROADMAP.md)** - What's next for Tailtown
