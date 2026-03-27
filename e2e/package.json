@@ -8,6 +8,8 @@
   },
   "scripts": {
     "e2e": "playwright test",
+    "smoke": "playwright test smoke/service-health.spec.ts --project=chromium",
+    "smoke:headed": "playwright test smoke/service-health.spec.ts --project=chromium --headed",
     "e2e:ui": "playwright test --ui",
     "e2e:headed": "playwright test --headed",
     "e2e:debug": "playwright test --debug",
