@@ -27,7 +27,6 @@ const GettingStarted: React.FC = () => {
   const handleArticleClick = (articleId: string) => {
     // Open help modal with specific article
     // This would integrate with your HelpContext
-    console.log('Open article:', articleId);
   };
 
   return (

@@ -124,7 +124,7 @@ const Services: React.FC = () => {
           (deleteErr.message.includes('active reservations') ||
             deleteErr.message.includes('deactivate'))
         ) {
-          console.log(
+          console.warn(
             'Service could not be deleted, automatically deactivating instead'
           );
 

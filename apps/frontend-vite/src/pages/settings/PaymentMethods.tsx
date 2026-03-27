@@ -89,9 +89,6 @@ const PaymentMethods: React.FC = () => {
 
   const handleSaveSettings = () => {
     // In production, this would save to the backend
-    console.log('Saving payment methods:', paymentMethods);
-    console.log('CardConnect config:', cardConnectConfig);
-
     setSaveSuccess(true);
     setTimeout(() => setSaveSuccess(false), 3000);
   };

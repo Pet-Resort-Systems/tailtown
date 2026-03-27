@@ -20,7 +20,7 @@ const SENTRY_RELEASE =
  */
 export function initSentry(): void {
   if (!SENTRY_ENABLED) {
-    console.log('📊 Sentry error tracking is disabled');
+    console.info('📊 Sentry error tracking is disabled');
     return;
   }
 
@@ -86,7 +86,7 @@ export function initSentry(): void {
       },
     });
 
-    console.log('✅ Sentry error tracking initialized');
+    console.info('✅ Sentry error tracking initialized');
   } catch (error) {
     console.error('❌ Failed to initialize Sentry:', error);
   }

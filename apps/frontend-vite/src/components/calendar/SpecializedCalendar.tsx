@@ -100,12 +100,6 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
         ? responseData
         : responseData?.reservations;
 
-      console.log('SpecializedCalendar loadReservations response:', {
-        status: response?.status,
-        dataIsArray: Array.isArray(responseData),
-        reservationsCount: reservationsArray?.length,
-      });
-
       if (
         response?.status === 'success' &&
         reservationsArray &&
@@ -116,16 +110,6 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
 
         // Filter by service category
         if (serviceCategories && serviceCategories.length > 0) {
-          console.log('Filtering by serviceCategories:', serviceCategories);
-          console.log(
-            'Sample reservations before filter:',
-            reservationsArray.slice(0, 3).map((r: any) => ({
-              id: r.id,
-              serviceCategory: r.service?.serviceCategory,
-              serviceName: r.service?.name,
-            }))
-          );
-
           filteredReservations = filteredReservations.filter(
             (reservation: any) => {
               // Check if the reservation's service category matches any of the specified categories
@@ -147,37 +131,16 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
             }
           );
 
-          console.log(
-            'After service category filter:',
-            filteredReservations.length
-          );
         }
 
         // Filter by staff ID if specified
         // Note: Also shows unassigned appointments (staffAssignedId is null/undefined)
         // so groomers can see and claim them
         if (staffId) {
-          console.log('Filtering by staffId:', staffId);
-          console.log(
-            'All reservations:',
-            filteredReservations.map((r: any) => ({
-              id: r.id,
-              pet: r.pet?.name,
-              staffAssignedId: r.staffAssignedId,
-              service: r.service?.name,
-            }))
-          );
-
           filteredReservations = filteredReservations.filter(
             (reservation: any) =>
               reservation.staffAssignedId === staffId ||
               !reservation.staffAssignedId
-          );
-
-          console.log(
-            'After filtering:',
-            filteredReservations.length,
-            'reservations'
           );
         }
 
@@ -217,37 +180,22 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
         serviceCategories &&
         serviceCategories.includes(ServiceCategory.TRAINING)
       ) {
-        console.log('Loading training classes for calendar...');
         try {
           const classesResponse =
             await schedulingService.trainingClasses.getAll({
               isActive: true,
             });
 
-          console.log('Training classes response:', classesResponse);
-
           if (classesResponse && Array.isArray(classesResponse)) {
-            console.log(`Found ${classesResponse.length} training classes`);
             // For each class, get its sessions
             for (const trainingClass of classesResponse) {
               try {
-                console.log(
-                  `Loading sessions for class: ${trainingClass.name} (${trainingClass.id})`
-                );
                 const sessionsResponse =
                   await schedulingService.trainingClasses.getSessions(
                     trainingClass.id
                   );
 
-                console.log(
-                  `Sessions for ${trainingClass.name}:`,
-                  sessionsResponse
-                );
-
                 if (sessionsResponse && Array.isArray(sessionsResponse)) {
-                  console.log(
-                    `Creating ${sessionsResponse.length} session events`
-                  );
                   const sessionEvents = sessionsResponse.map((session: any) => {
                     // The scheduledDate comes from the backend as an ISO string in UTC
                     // e.g., "2024-11-04T00:00:00.000Z" which represents midnight UTC on Nov 4
@@ -280,12 +228,6 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
                       endDate.getMinutes() + (session.duration || 60)
                     );
 
-                    console.log(
-                      `Session ${session.sessionNumber}: ${dateStr} ${
-                        session.scheduledTime
-                      } -> ${sessionDate.toLocaleString()}`
-                    );
-
                     return {
                       id: `class-session-${session.id}`,
                       title: `${trainingClass.name} - Session ${session.sessionNumber}`,
@@ -302,7 +244,6 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
                     };
                   });
 
-                  console.log('Session events created:', sessionEvents);
                   allEvents.push(...sessionEvents);
                 }
               } catch (sessionError) {
@@ -318,7 +259,6 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
         }
       }
 
-      console.log('Total events to display:', allEvents.length, allEvents);
       setEvents(allEvents);
       return allEvents;
     } catch (error) {
@@ -446,7 +386,6 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
       // Reload reservations to ensure we have the latest data
       await loadReservations();
 
-      console.log('Reservation updated successfully after drag');
     } catch (error) {
       console.error('Error updating reservation after drag:', error);
       // Revert the event to its original position if the update failed
@@ -484,7 +423,6 @@ const SpecializedCalendar: React.FC<SpecializedCalendarProps> = ({
       // Reload reservations to ensure we have the latest data
       await loadReservations();
 
-      console.log('Reservation updated successfully after resize');
     } catch (error) {
       console.error('Error updating reservation after resize:', error);
       // Revert the event to its original size if the update failed

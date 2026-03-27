@@ -34,26 +34,10 @@ const getTenantId = (): string | undefined => {
   return fromEnv && fromEnv.trim() ? fromEnv.trim() : undefined;
 };
 
-// Only log API requests/responses in development
-const isDev = process.env.NODE_ENV === 'development';
-
 // Add request interceptor for logging and auth token
 const addRequestInterceptor = (instance: AxiosInstance) => {
   instance.interceptors.request.use(
     (config) => {
-      // Only log in development to reduce console noise in production
-      if (isDev) {
-        console.log(
-          `API Request: ${config.method?.toUpperCase()} ${config.baseURL}${
-            config.url
-          }`,
-          {
-            params: config.params,
-            data: config.data,
-          }
-        );
-      }
-
       // Add JWT token to requests if available
       try {
         const token = localStorage.getItem('token');
@@ -77,17 +61,7 @@ const addRequestInterceptor = (instance: AxiosInstance) => {
 // Add response interceptor for logging
 const addResponseInterceptor = (instance: AxiosInstance) => {
   instance.interceptors.response.use(
-    (response) => {
-      // Only log in development to reduce console noise in production
-      if (isDev) {
-        console.log(
-          `API Response: ${
-            response.status
-          } ${response.config.method?.toUpperCase()} ${response.config.url}`
-        );
-      }
-      return response;
-    },
+    (response) => response,
     (error: AxiosError) => {
       // If auth fails, clear session so UI can prompt for login again
       if (error.response?.status === 401) {

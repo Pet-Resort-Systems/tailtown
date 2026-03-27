@@ -90,9 +90,7 @@ const CheckoutWorkflow: React.FC = () => {
           const checkIns =
             await checkInService.getCheckInsByReservation(reservationId);
           checkInData = checkIns && checkIns.length > 0 ? checkIns[0] : null;
-        } catch (err) {
-          console.log('No check-in data found, continuing without it');
-        }
+        } catch (err) {}
 
         // Check if this is a grooming service and get groomer info
         const serviceData = reservation.service as any;
@@ -114,9 +112,7 @@ const CheckoutWorkflow: React.FC = () => {
           try {
             permanentCoupon =
               await couponService.getCustomerPermanentCoupon(customerId);
-          } catch (err) {
-            console.log('No permanent coupon found for customer');
-          }
+          } catch (err) {}
         }
 
         setCheckoutData({
