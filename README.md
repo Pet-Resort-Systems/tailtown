@@ -29,44 +29,7 @@ A modern, full-featured SaaS management system for pet resorts, providing compre
 
 ## 📚 Documentation
 
-### For Developers (Quick Guides)
-
-- **[Quick Start](docs/QUICK-START.md)** - Get running in 10 minutes
-- **[Best Practices](docs/development/DEVELOPMENT-BEST-PRACTICES.md)** - Code standards and patterns
-- **[Security](docs/security/SECURITY.md)** - Security features and how to use them
-- **[Roadmap](docs/ROADMAP.md)** - What's next for Tailtown
-
-### For Technical Leadership
-
-- **[Senior Dev Review](docs/archive/SENIOR-DEV-REVIEW.md)** - ⭐ Architecture review & scaling roadmap (4/5 stars)
-- **[System Architecture](docs/CURRENT-SYSTEM-ARCHITECTURE.md)** - Complete architecture overview
-- **[Disaster Recovery](docs/operations/DISASTER-RECOVERY-PLAN.md)** - Backup & recovery procedures
-
-### For AI Assistants (Complete Context)
-
-- **[Security Implementation](docs/ai-context/security/)** - Complete security details
-- **[Testing](docs/ai-context/testing/)** - Test analysis and maintenance
-- **[Documentation Strategy](docs/DOCUMENTATION-STRATEGY.md)** - How we organize docs
-
-### Reference
-
-- **[Security Checklist](docs/security/SECURITY-CHECKLIST.md)** - Security verification
-- **[Development Best Practices](docs/development/DEVELOPMENT-BEST-PRACTICES.md)** - Code standards
-
-## 📚 Documentation
-
-### Essential Reading
-
-- **[Documentation Index](docs/README.md)** - Master index of all documentation
-- **[Development Best Practices](docs/development/DEVELOPMENT-BEST-PRACTICES.md)** - ⭐ Common patterns & pitfalls
-- **[Deployment Guide](docs/deployment/DEPLOYMENT-GUIDE.md)** - How to deploy to production
-- **[Product Roadmap](docs/ROADMAP.md)** - Feature roadmap and priorities
-
-### By Audience
-
-- **For Developers:** [Development Guides](docs/development/)
-- **For DevOps:** [Operations Guides](docs/operations/)
-- **For Product:** [Feature Overview](docs/SYSTEM-FEATURES-OVERVIEW.md)
+See [Documentation Index](/docs/INDEX.md) for complete documentation.
 
 ---
 
@@ -91,26 +54,6 @@ A modern, full-featured SaaS management system for pet resorts, providing compre
 - **Loyalty & Coupons** - Rewards and promotional campaigns
 - **🆕 Daycare Passes** - Multi-day pass packages with discounts and expiration tracking
 
-### 🆕 In Development (Q2 2026 - Q4 2026)
-
-- **📱 Mobile Web App (PWA)** - Mobile-optimized staff portal
-    - Daily checklists with photo upload
-    - Pet health notes with camera integration
-    - Real-time team communication
-    - Personal schedule viewing
-    - Quick pet lookup
-    - Works on iOS, Android, tablets
-    - Installable as PWA (no app store needed)
-- **💬 Internal Communications (Slack-like)** - Team collaboration platform
-    - Public and private channels
-    - Direct messages (1-on-1 and group)
-    - Threaded replies and reactions
-    - File attachments and @mentions
-    - Read receipts and typing indicators
-    - Customizable notifications
-    - Real-time WebSocket messaging
-    - **Status**: Database schema complete ✅
-
 ---
 
 ## 🏗️ Architecture
@@ -121,8 +64,8 @@ A modern, full-featured SaaS management system for pet resorts, providing compre
 - **Backend:** Node.js, Express, TypeScript
 - **Database:** PostgreSQL with Prisma ORM
 - **Authentication:** JWT with bcrypt, automatic token management
-- **Deployment:** PM2 (cluster mode), Nginx, Let's Encrypt SSL
-- **Testing:** Jest with 18+ test cases for critical middleware
+- **Deployment:** PM2 (cluster mode), Nginx, Let's Encrypt SSL. **Migrating to Dokploy. See [DOKPLOY-MIGRATION.md](/docs/DOKPLOY-MIGRATION.md)**
+- **Testing:** Jest + Playwright
 
 ### Services
 
@@ -141,98 +84,15 @@ For detailed architecture, see [CURRENT-SYSTEM-ARCHITECTURE.md](docs/CURRENT-SYS
 
 ---
 
-## 🧪 Testing
-
-### Run Tests
-
-```bash
-# All tests
-pnpm run test
-
-# Specific service
-pnpm --filter @tailtown/customer-service test
-
-# Reservation service
-pnpm --filter @tailtown/reservation-service test
-
-# Frontend tests
-pnpm --filter @tailtown/frontend test
-
-# Integration tests
-pnpm run test:integration
-```
-
-### Test Coverage
-
-... in progress
-
----
-
-## 🚢 Deployment
-
-### Production Deployment
-
-See [PRODUCTION-DEPLOYMENT-NOV-2025.md](PRODUCTION-DEPLOYMENT-NOV-2025.md) for the latest deployment summary.
-
-### Quick Deploy
-
-```bash
-# Build frontend
-cd apps/frontend && NODE_ENV=production pnpm run build
-
-# Deploy to server
-scp -i ~/ttkey build.tar.gz root@129.212.178.244:/opt/tailtown/frontend/
-ssh -i ~/ttkey root@129.212.178.244 "cd /opt/tailtown/frontend && tar -xzf build.tar.gz && pm2 restart frontend"
-
-# Deploy backend
-ssh -i ~/ttkey root@129.212.178.244 "cd /opt/tailtown && git pull && cd apps/customer-service && pnpm run build && pm2 restart customer-service"
-```
-
-For detailed deployment instructions, see [docs/deployment/DEPLOYMENT-GUIDE.md](docs/deployment/DEPLOYMENT-GUIDE.md).
-
----
-
-## 🛠️ Development
-
-### Common Commands
-
-```bash
-# Start all services
-pnpm run start:services
-
-# Stop all services
-pnpm run stop:services
-
-# Check service health
-pnpm run health:check
-
-# Kill zombie processes
-pnpm run kill:zombies
-
-# Run database migrations
-cd apps/customer-service && npx prisma migrate dev
-```
-
-See [docs/development/](docs/development/) for development guides.
-
-### Code Quality
-
-```bash
-# Lint
-pnpm run lint
-
-# Format
-pnpm run format
-
-# Type check
-pnpm run type-check
-```
-
----
-
 ## 📊 Production Status
 
-### Current Deployment (November 7, 2025)
+### New Domain (`petresortsystems.com`)
+
+We're migrating to the new domain `petresortsystems.com` which still doesn't have HTTPS configured. The Dokploy migration will handle this. Refer to [DOKPLOY-MIGRATION.md](/docs/DOKPLOY-MIGRATION.md) for details.
+
+However, you can access it via HTTP at http://petresortsystems.com. The same tenant configuration below applies. ⬇️
+
+### Current HTTPS Deployment (November 7, 2025)
 
 **Production Tenant**: Tailtown (https://tailtown.canicloud.com)
 
@@ -265,26 +125,6 @@ For tenant strategy details, see [docs/features/TENANT-STRATEGY.md](docs/feature
 
 ---
 
-## 🤝 Contributing
-
-### Development Workflow
-
-1. Create a feature branch from `main`
-2. Make your changes with tests
-3. Run `pnpm test` to verify
-4. Commit with descriptive messages
-5. Push and create a pull request
-
-### Code Standards
-
-- **TypeScript** for type safety
-- **ESLint** for code quality
-- **Prettier** for formatting
-- **Jest** for testing
-- **Conventional Commits** for commit messages
-
----
-
 ## 📝 License
 
 Proprietary - All rights reserved
@@ -293,7 +133,7 @@ Proprietary - All rights reserved
 
 ## 📞 Support
 
-- **Documentation:** [docs/README.md](docs/README.md)
+- **Documentation:** [docs/INDEX.md](/docs/INDEX.md)
 - **Issues:** GitHub Issues
 - **Email:** rob@tailtownpetresort.com
 
@@ -301,45 +141,15 @@ Proprietary - All rights reserved
 
 ## Recent Updates
 
-### December 9, 2025 - Check-in Workflow Enhancements
+### March 27, 2026 - Monorepo Migration & Vite Frontend
 
-- **Quick-add for missing info**: Inline editing for vet, emergency contact, and vaccines during check-in
-- **Pet history access**: View previous visits and check-in notes directly from pet summary
-- **Belongings quick-edit**: Edit inventory after check-in completion
-- **Multi-pet check-in**: Enhanced support for checking in multiple pets sharing a room
-- **Step validation**: Visual indicators showing completion status of each check-in step
+- **pnpm/Turborepo Workspace**: Reorganized repository into `apps/` and `packages/` with shared TypeScript configs
+- **Vite Frontend**: New Vite-based frontend with admin portal integrated under `/admin-portal` route
+- **Tooling Migration**: Migrated from npm to pnpm workspace commands across Dockerfiles, GitHub Actions, and scripts
+- **Database Updates**: Updated to Prisma 7 adapter-based singleton clients using `@prisma/adapter-pg`
+- **Service Runtime**: Migrated backend services from `ts-node` to `tsx` for improved performance
 
-### November 24, 2025 - Multi-Day Passes & Service Architecture
-
-- **Daycare Passes**: Complete multi-day pass system with packages, balance tracking, and auto-redemption
-- **Service-to-Service APIs**: Proper microservices architecture between reservation and customer services
-- **Customer Profile**: New "Daycare Passes" tab showing pass balance and purchase history
-- **Admin Settings**: Package management UI under Business Setup
-
-### November 7, 2025 - Documentation & Operations
-
-- **Senior Dev Review**: Comprehensive architecture review (4/5 stars, top 20% of startups)
-- **Backup Strategy**: Enabled DigitalOcean daily automated backups
-- **Disaster Recovery**: Updated recovery plan for production setup
-- **Documentation**: Added scaling roadmap and immediate action items
-
-### November 5, 2025 - Major Cleanup & Testing
-
-- ✅ **Code Cleanup**: Fixed 13 controllers (86+ functions) for proper tenant context
-- ✅ **Authentication**: Implemented proper JWT flow, removed 'default-user' fallback
-- ✅ **Testing**: Created comprehensive test suite (18 test cases)
-- ✅ **Bug Fixes**: Profile photo display, login API URLs, announcement persistence
-- ✅ **POS**: Added 5 template products for BranGro tenant
-- ✅ **Deployments**: 11 frontend + 5 backend deployments, all successful
-
-### November 4, 2025
-
-- ✅ Production deployment to canicloud.com
-- ✅ Brangro tenant fully configured
-- ✅ Fixed 11 critical bugs
-- ✅ Populated with test data
-
-See [docs/changelog/CHANGELOG.md](docs/changelog/CHANGELOG.md) for complete history.
+See [CHANGELOG.md](CHANGELOG.md) for complete history.
 
 ---
 
