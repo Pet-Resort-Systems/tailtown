@@ -216,7 +216,12 @@ const SuitesPage: React.FC = () => {
 
         <Box sx={{ mb: 4 }}>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={4} lg={2}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 4,
+                lg: 2
+              }}>
               <Paper
                 sx={{
                   p: 2,
@@ -229,13 +234,23 @@ const SuitesPage: React.FC = () => {
                 <Typography variant="h3">{stats.total}</Typography>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={4} lg={2.5}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 4,
+                lg: 2.5
+              }}>
               <Paper sx={{ p: 2, height: '100%', bgcolor: '#81C784' }}>
                 <Typography variant="h6">Available</Typography>
                 <Typography variant="h3">{stats.available}</Typography>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={4} lg={2.5}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 4,
+                lg: 2.5
+              }}>
               <Paper
                 sx={{
                   p: 2,
@@ -248,13 +263,23 @@ const SuitesPage: React.FC = () => {
                 <Typography variant="h3">{stats.occupied}</Typography>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={6} lg={2.5}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 2.5
+              }}>
               <Paper sx={{ p: 2, height: '100%', bgcolor: '#FFB74D' }}>
                 <Typography variant="h6">Reserved</Typography>
                 <Typography variant="h3">{stats.reserved || 0}</Typography>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={6} lg={2.5}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 2.5
+              }}>
               <Paper
                 sx={{
                   p: 2,
@@ -292,7 +317,6 @@ const SuitesPage: React.FC = () => {
           />
         </Paper>
       </Box>
-
       {/* Suite Details Dialog */}
       <Dialog
         open={Boolean(selectedSuiteId)}

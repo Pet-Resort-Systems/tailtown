@@ -67,7 +67,6 @@ const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
           Thank you for booking with Tailtown Pet Resort
         </Typography>
       </Box>
-
       {/* Confirmation Alert */}
       <Alert severity="success" icon={<EmailIcon />} sx={{ mb: 4 }}>
         <Typography variant="body1" fontWeight={600}>
@@ -77,7 +76,6 @@ const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
           Please check your inbox for booking details and next steps.
         </Typography>
       </Alert>
-
       {/* Booking Details */}
       <Card sx={{ mb: 4 }}>
         <CardContent>
@@ -88,7 +86,7 @@ const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
 
           <Grid container spacing={2}>
             {bookingData.reservationId && (
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Typography variant="body2" color="text.secondary">
                     Confirmation Number:
@@ -100,7 +98,7 @@ const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
               </Grid>
             )}
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant="body2" color="text.secondary">
                   Service:
@@ -112,7 +110,7 @@ const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
             </Grid>
 
             {bookingData.startDate && (
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Typography variant="body2" color="text.secondary">
                     Date:
@@ -126,7 +124,7 @@ const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
               </Grid>
             )}
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant="body2" color="text.secondary">
                   Pets:
@@ -138,7 +136,7 @@ const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
             </Grid>
 
             {bookingData.addOnIds && bookingData.addOnIds.length > 0 && (
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Typography variant="body2" color="text.secondary">
                     Add-Ons:
@@ -151,7 +149,7 @@ const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
             )}
 
             {bookingData.paymentTransactionId && (
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Divider sx={{ my: 2 }} />
                 <Box
                   sx={{
@@ -180,7 +178,6 @@ const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
           </Grid>
         </CardContent>
       </Card>
-
       {/* Next Steps */}
       <Card sx={{ mb: 4, bgcolor: 'primary.50' }}>
         <CardContent>
@@ -203,10 +200,13 @@ const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
           </Box>
         </CardContent>
       </Card>
-
       {/* Action Buttons */}
       <Grid container spacing={2} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Button
             variant="outlined"
             fullWidth
@@ -218,7 +218,11 @@ const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
             Print Confirmation
           </Button>
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Button
             variant="outlined"
             fullWidth
@@ -230,7 +234,7 @@ const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
             Book Another
           </Button>
         </Grid>
-        <Grid item xs={12}>
+        <Grid size={12}>
           <Button
             variant="contained"
             fullWidth
@@ -243,7 +247,6 @@ const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
           </Button>
         </Grid>
       </Grid>
-
       {/* Contact Information */}
       <Card>
         <CardContent sx={{ textAlign: 'center' }}>

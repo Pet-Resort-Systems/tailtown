@@ -124,10 +124,15 @@ export default function StaffStep() {
       <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
         Add your team members. At least one administrator is required.
       </Typography>
-
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {staff.members.map((member) => (
-          <Grid item xs={12} sm={6} md={4} key={member.id}>
+          <Grid
+            key={member.id}
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 4
+            }}>
             <Card variant="outlined">
               <CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -171,7 +176,12 @@ export default function StaffStep() {
             </Card>
           </Grid>
         ))}
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 4
+          }}>
           <Card
             variant="outlined"
             sx={{
@@ -193,7 +203,6 @@ export default function StaffStep() {
           </Card>
         </Grid>
       </Grid>
-
       <Dialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
@@ -205,7 +214,7 @@ export default function StaffStep() {
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <TextField
                 fullWidth
                 label="First Name"
@@ -216,7 +225,7 @@ export default function StaffStep() {
                 required
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <TextField
                 fullWidth
                 label="Last Name"
@@ -225,7 +234,7 @@ export default function StaffStep() {
                 required
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 label="Email"
@@ -235,7 +244,7 @@ export default function StaffStep() {
                 required
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <TextField
                 fullWidth
                 label="Phone"
@@ -243,7 +252,7 @@ export default function StaffStep() {
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <FormControl fullWidth>
                 <InputLabel>Role</InputLabel>
                 <Select
@@ -274,7 +283,6 @@ export default function StaffStep() {
           </Button>
         </DialogActions>
       </Dialog>
-
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button startIcon={<ArrowBack />} onClick={prevStep}>
           Back

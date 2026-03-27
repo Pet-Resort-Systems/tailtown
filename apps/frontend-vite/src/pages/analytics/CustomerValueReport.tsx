@@ -109,7 +109,11 @@ const ExpandableRow = ({ customer, theme }: ExpandableRowProps) => {
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 2 }}>
               <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 6
+                  }}>
                   <Typography variant="h6" gutterBottom component="div">
                     Service Breakdown
                   </Typography>
@@ -163,7 +167,11 @@ const ExpandableRow = ({ customer, theme }: ExpandableRowProps) => {
                     </Table>
                   </TableContainer>
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 6
+                  }}>
                   <Typography variant="h6" gutterBottom component="div">
                     Add-On Breakdown
                   </Typography>
@@ -212,7 +220,7 @@ const ExpandableRow = ({ customer, theme }: ExpandableRowProps) => {
                     </Table>
                   </TableContainer>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Box sx={{ height: 250 }}>
                     <ResponsiveContainer
                       width="100%"
@@ -435,11 +443,14 @@ const CustomerValueReport = () => {
           </FormControl>
         </Box>
       </Box>
-
       <Paper elevation={3} sx={{ borderRadius: 2, mb: 4 }}>
         <Box sx={{ p: 3 }}>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 3
+              }}>
               <Card>
                 <CardContent>
                   <Typography variant="subtitle2" color="text.secondary">
@@ -466,7 +477,11 @@ const CustomerValueReport = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 3
+              }}>
               <Card>
                 <CardContent>
                   <Typography variant="subtitle2" color="text.secondary">
@@ -488,7 +503,11 @@ const CustomerValueReport = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 3
+              }}>
               <Card>
                 <CardContent>
                   <Typography variant="subtitle2" color="text.secondary">
@@ -517,7 +536,11 @@ const CustomerValueReport = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 3
+              }}>
               <Card>
                 <CardContent>
                   <Typography variant="subtitle2" color="text.secondary">
@@ -549,7 +572,6 @@ const CustomerValueReport = () => {
           </Grid>
         </Box>
       </Paper>
-
       <Paper elevation={3} sx={{ borderRadius: 2 }}>
         <Box sx={{ p: 3 }}>
           <Box

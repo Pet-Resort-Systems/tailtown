@@ -228,14 +228,17 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({
           <Typography color="error">{error}</Typography>
         </Box>
       )}
-
       <Paper sx={{ p: 2, mb: 3 }}>
         <Typography variant="subtitle1" gutterBottom>
           {editingTimeOff ? 'Edit Time Off Request' : 'Request Time Off'}
         </Typography>
 
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6
+            }}>
             <TextField
               name="startDate"
               label="Start Date"
@@ -249,7 +252,11 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6
+            }}>
             <TextField
               name="endDate"
               label="End Date"
@@ -263,7 +270,11 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6
+            }}>
             <FormControl fullWidth size="small">
               <InputLabel>Type</InputLabel>
               <Select
@@ -283,7 +294,11 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6
+            }}>
             <FormControl fullWidth size="small">
               <InputLabel>Status</InputLabel>
               <Select
@@ -302,7 +317,7 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({
             </FormControl>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <TextField
               name="reason"
               label="Reason (Optional)"
@@ -317,7 +332,11 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({
 
           {formData.status === 'APPROVED' && (
             <>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <TextField
                   name="approvedById"
                   label="Approved By ID"
@@ -329,7 +348,11 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <TextField
                   name="approvedDate"
                   label="Approved Date"
@@ -344,11 +367,7 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({
             </>
           )}
 
-          <Grid
-            item
-            xs={12}
-            sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}
-          >
+          <Grid sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }} size={12}>
             {editingTimeOff ? (
               <>
                 <Button
@@ -380,11 +399,9 @@ const StaffTimeOffForm: React.FC<StaffTimeOffFormProps> = ({
           </Grid>
         </Grid>
       </Paper>
-
       <Typography variant="subtitle1" gutterBottom>
         Time Off Requests
       </Typography>
-
       {loading && !editingTimeOff ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
           <CircularProgress />

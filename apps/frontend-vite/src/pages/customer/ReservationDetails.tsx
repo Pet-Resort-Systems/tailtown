@@ -141,7 +141,6 @@ export const ReservationDetails: React.FC = () => {
           />
         </Box>
       </Box>
-
       {/* Warning for upcoming check-in */}
       {reservation.daysUntilCheckIn > 0 &&
         reservation.daysUntilCheckIn <= 3 && (
@@ -151,10 +150,13 @@ export const ReservationDetails: React.FC = () => {
             {!reservation.canModify && ' Modifications are no longer allowed.'}
           </Alert>
         )}
-
       <Grid container spacing={3}>
         {/* Main Information */}
-        <Grid item xs={12} md={8}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 8
+          }}>
           <Card sx={{ mb: 3 }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -163,7 +165,11 @@ export const ReservationDetails: React.FC = () => {
               <Divider sx={{ mb: 2 }} />
 
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <Typography variant="caption" color="text.secondary">
                     Check-in Date
                   </Typography>
@@ -171,7 +177,11 @@ export const ReservationDetails: React.FC = () => {
                     {formatDate(reservation.startDate)}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <Typography variant="caption" color="text.secondary">
                     Check-out Date
                   </Typography>
@@ -179,7 +189,11 @@ export const ReservationDetails: React.FC = () => {
                     {formatDate(reservation.endDate)}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <Typography variant="caption" color="text.secondary">
                     Pet
                   </Typography>
@@ -187,7 +201,11 @@ export const ReservationDetails: React.FC = () => {
                     {reservation.pet?.name} ({reservation.pet?.breed})
                   </Typography>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <Typography variant="caption" color="text.secondary">
                     Service
                   </Typography>
@@ -196,7 +214,11 @@ export const ReservationDetails: React.FC = () => {
                   </Typography>
                 </Grid>
                 {reservation.resource && (
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <Typography variant="caption" color="text.secondary">
                       Suite/Kennel
                     </Typography>
@@ -206,7 +228,7 @@ export const ReservationDetails: React.FC = () => {
                   </Grid>
                 )}
                 {reservation.notes && (
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <Typography variant="caption" color="text.secondary">
                       Notes
                     </Typography>
@@ -296,7 +318,11 @@ export const ReservationDetails: React.FC = () => {
         </Grid>
 
         {/* Sidebar */}
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           {/* Pricing */}
           <Card sx={{ mb: 3 }}>
             <CardContent>
@@ -436,7 +462,6 @@ export const ReservationDetails: React.FC = () => {
           )}
         </Grid>
       </Grid>
-
       {/* Cancellation Policy Dialog */}
       <Dialog
         open={showCancellationInfo}

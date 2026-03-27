@@ -322,7 +322,12 @@ const UpcomingClasses: React.FC = () => {
               );
 
               return (
-                <Grid item xs={12} md={6} key={trainingClass.id}>
+                <Grid
+                  key={trainingClass.id}
+                  size={{
+                    xs: 12,
+                    md: 6
+                  }}>
                   <Box
                     sx={{
                       borderLeft: 3,
@@ -428,7 +433,6 @@ const UpcomingClasses: React.FC = () => {
           </Grid>
         )}
       </CardContent>
-
       {/* Enrollment Dialog */}
       <Dialog
         open={enrollDialogOpen}
@@ -640,7 +644,6 @@ const UpcomingClasses: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Credit Card Payment Dialog */}
       <Dialog
         open={creditCardDialogOpen}

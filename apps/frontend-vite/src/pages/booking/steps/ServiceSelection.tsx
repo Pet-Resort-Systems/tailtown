@@ -195,7 +195,6 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
       >
         What service would you like to book?
       </Typography>
-
       {groupedServices.map(([category, categoryServices]) => (
         <Box key={category} sx={{ mb: 4 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -216,7 +215,13 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
 
           <Grid container spacing={2}>
             {categoryServices.map((service) => (
-              <Grid item xs={12} sm={6} md={4} key={service.id}>
+              <Grid
+                key={service.id}
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  md: 4
+                }}>
                 <Card
                   elevation={selectedService?.id === service.id ? 8 : 2}
                   sx={{

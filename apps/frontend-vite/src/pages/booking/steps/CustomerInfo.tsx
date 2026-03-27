@@ -55,13 +55,11 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
       >
         Your Information
       </Typography>
-
       {error && (
         <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>
           {error}
         </Alert>
       )}
-
       {/* Customer Information Display */}
       {customer && (
         <Card
@@ -81,7 +79,7 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
             </Box>
 
             <Grid container spacing={2}>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Typography variant="subtitle2" color="text.secondary">
                   Personal Information
                 </Typography>
@@ -100,7 +98,7 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
                 customer.city ||
                 customer.state ||
                 customer.zipCode) && (
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Typography
                     variant="subtitle2"
                     color="text.secondary"
@@ -116,7 +114,7 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
               )}
 
               {(customer.emergencyContact || customer.emergencyPhone) && (
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Typography
                     variant="subtitle2"
                     color="text.secondary"
@@ -141,7 +139,6 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
           </CardContent>
         </Card>
       )}
-
       {/* Navigation Buttons - Fixed on mobile */}
       <Box
         sx={{
@@ -177,7 +174,6 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
           Continue to Review
         </Button>
       </Box>
-
       {/* Spacer for fixed button on mobile */}
       <Box sx={{ display: { xs: 'block', sm: 'none' }, height: 80 }} />
     </Box>

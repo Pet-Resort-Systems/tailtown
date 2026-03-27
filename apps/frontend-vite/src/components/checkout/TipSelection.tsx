@@ -169,7 +169,6 @@ const TipSelection: React.FC<TipSelectionProps> = ({
       <Typography variant="body2" color="text.secondary" gutterBottom>
         Tips are optional and greatly appreciated by our team
       </Typography>
-
       {/* Groomer Tip Section */}
       {showGroomerSection && (
         <Paper
@@ -198,7 +197,7 @@ const TipSelection: React.FC<TipSelectionProps> = ({
 
           <Grid container spacing={1} sx={{ mb: 2 }}>
             {TIP_PERCENTAGES.map((pct) => (
-              <Grid item xs={4} key={pct}>
+              <Grid key={pct} size={4}>
                 <Button
                   fullWidth
                   variant={
@@ -251,7 +250,6 @@ const TipSelection: React.FC<TipSelectionProps> = ({
           )}
         </Paper>
       )}
-
       {/* General Tip Section */}
       <Paper
         elevation={0}
@@ -279,7 +277,7 @@ const TipSelection: React.FC<TipSelectionProps> = ({
 
         <Grid container spacing={1} sx={{ mb: 2 }}>
           {TIP_PERCENTAGES.map((pct) => (
-            <Grid item xs={4} key={pct}>
+            <Grid key={pct} size={4}>
               <Button
                 fullWidth
                 variant={
@@ -330,7 +328,6 @@ const TipSelection: React.FC<TipSelectionProps> = ({
           </Box>
         )}
       </Paper>
-
       {/* Summary */}
       {totalTips > 0 && (
         <Paper
@@ -357,7 +354,6 @@ const TipSelection: React.FC<TipSelectionProps> = ({
           </Box>
         </Paper>
       )}
-
       {/* Actions */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
         {onBack && <Button onClick={onBack}>Back</Button>}

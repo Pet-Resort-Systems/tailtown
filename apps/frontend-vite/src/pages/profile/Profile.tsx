@@ -435,10 +435,13 @@ const Profile = () => {
           )}
         </Box>
       </Box>
-
       <Grid container spacing={3}>
         {/* Profile Information */}
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <Card>
             <CardContent>
               <Box
@@ -563,7 +566,11 @@ const Profile = () => {
         </Grid>
 
         {/* Change Password */}
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <Card>
             <CardContent>
               <Box
@@ -766,7 +773,7 @@ const Profile = () => {
         </Grid>
 
         {/* Account Information */}
-        <Grid item xs={12}>
+        <Grid size={12}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -774,7 +781,11 @@ const Profile = () => {
               </Typography>
               <Divider sx={{ my: 2 }} />
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={4}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 4
+                  }}>
                   <Typography variant="body2" color="text.secondary">
                     Account Type
                   </Typography>
@@ -782,7 +793,11 @@ const Profile = () => {
                     {user?.role || 'Staff'}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 4
+                  }}>
                   <Typography variant="body2" color="text.secondary">
                     Status
                   </Typography>
@@ -796,7 +811,11 @@ const Profile = () => {
                     {user?.isActive ? 'Active' : 'Inactive'}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 4
+                  }}>
                   <Typography variant="body2" color="text.secondary">
                     Last Login
                   </Typography>

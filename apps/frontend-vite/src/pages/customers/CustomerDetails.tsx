@@ -247,7 +247,11 @@ const CustomerDetails: React.FC = () => {
   const CustomerForm = () => (
     <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
       <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <TextField
             fullWidth
             id="customer-firstName"
@@ -259,7 +263,11 @@ const CustomerDetails: React.FC = () => {
             required
           />
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <TextField
             fullWidth
             id="customer-lastName"
@@ -271,7 +279,11 @@ const CustomerDetails: React.FC = () => {
             required
           />
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <TextField
             fullWidth
             id="customer-email"
@@ -284,7 +296,11 @@ const CustomerDetails: React.FC = () => {
             required
           />
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <TextField
             fullWidth
             id="customer-phone"
@@ -296,7 +312,7 @@ const CustomerDetails: React.FC = () => {
             required
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid size={12}>
           <TextField
             fullWidth
             id="customer-address"
@@ -307,7 +323,11 @@ const CustomerDetails: React.FC = () => {
             disabled={!editing}
           />
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <TextField
             fullWidth
             id="customer-city"
@@ -318,7 +338,11 @@ const CustomerDetails: React.FC = () => {
             disabled={!editing}
           />
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <TextField
             fullWidth
             id="customer-state"
@@ -329,7 +353,11 @@ const CustomerDetails: React.FC = () => {
             disabled={!editing}
           />
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <TextField
             fullWidth
             id="customer-zipCode"

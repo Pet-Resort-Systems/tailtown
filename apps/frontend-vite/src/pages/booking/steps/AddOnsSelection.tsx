@@ -121,17 +121,14 @@ const AddOnsSelection: React.FC<AddOnsSelectionProps> = ({
       >
         Add-Ons & Extras
       </Typography>
-
       <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
         Enhance your pet's stay with these optional services
       </Typography>
-
       {error && (
         <Alert severity="warning" sx={{ mb: 3 }}>
           {error}
         </Alert>
       )}
-
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
           <CircularProgress />
@@ -144,7 +141,13 @@ const AddOnsSelection: React.FC<AddOnsSelectionProps> = ({
         <>
           <Grid container spacing={2}>
             {addOns.map((addon) => (
-              <Grid item xs={12} sm={6} md={4} key={addon.id}>
+              <Grid
+                key={addon.id}
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  md: 4
+                }}>
                 <Card
                   elevation={selectedAddOns.includes(addon.id) ? 8 : 2}
                   sx={{
@@ -263,7 +266,6 @@ const AddOnsSelection: React.FC<AddOnsSelectionProps> = ({
           )}
         </>
       )}
-
       {/* Navigation Buttons - Fixed on mobile */}
       <Box
         sx={{
@@ -313,7 +315,6 @@ const AddOnsSelection: React.FC<AddOnsSelectionProps> = ({
           </Button>
         </Box>
       </Box>
-
       {/* Spacer for fixed button on mobile */}
       <Box sx={{ display: { xs: 'block', sm: 'none' }, height: 80 }} />
     </Box>

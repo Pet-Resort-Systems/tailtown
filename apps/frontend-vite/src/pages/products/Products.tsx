@@ -437,7 +437,11 @@ const Products: React.FC = () => {
         {/* Filters */}
         <Paper sx={{ p: 2, mb: 3 }}>
           <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <TextField
                 fullWidth
                 placeholder="Search products..."
@@ -452,7 +456,11 @@ const Products: React.FC = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <FormControl fullWidth>
                 <InputLabel>Category</InputLabel>
                 <Select
@@ -634,7 +642,11 @@ const Products: React.FC = () => {
           </DialogTitle>
           <DialogContent>
             <Grid container spacing={2} sx={{ mt: 1 }}>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <TextField
                   fullWidth
                   label="Product Name"
@@ -645,7 +657,11 @@ const Products: React.FC = () => {
                   required
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <TextField
                   fullWidth
                   label="SKU"
@@ -655,7 +671,7 @@ const Products: React.FC = () => {
                   }
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   fullWidth
                   label="Description"
@@ -667,7 +683,11 @@ const Products: React.FC = () => {
                   rows={2}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <FormControl fullWidth>
                   <InputLabel>Category</InputLabel>
                   <Select
@@ -686,7 +706,11 @@ const Products: React.FC = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <TextField
                   fullWidth
                   label="Price"
@@ -703,7 +727,11 @@ const Products: React.FC = () => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <TextField
                   fullWidth
                   label="Cost"
@@ -719,7 +747,11 @@ const Products: React.FC = () => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <TextField
                   fullWidth
                   label="Current Stock"
@@ -731,7 +763,11 @@ const Products: React.FC = () => {
                   disabled={formData.isService || !formData.trackInventory}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <TextField
                   fullWidth
                   label="Low Stock Alert"
@@ -743,7 +779,7 @@ const Products: React.FC = () => {
                   disabled={formData.isService || !formData.trackInventory}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -826,7 +862,7 @@ const Products: React.FC = () => {
               </Alert>
 
               <Grid container spacing={2}>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <FormControl fullWidth>
                     <InputLabel>Change Type</InputLabel>
                     <Select
@@ -849,7 +885,7 @@ const Products: React.FC = () => {
                   </FormControl>
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <TextField
                     fullWidth
                     label="Quantity"
@@ -866,7 +902,7 @@ const Products: React.FC = () => {
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <TextField
                     fullWidth
                     label="Reason (Optional)"
@@ -884,7 +920,7 @@ const Products: React.FC = () => {
                 </Grid>
 
                 {inventoryAdjustment.quantity && (
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <Alert
                       severity={
                         parseInt(inventoryAdjustment.quantity) >= 0

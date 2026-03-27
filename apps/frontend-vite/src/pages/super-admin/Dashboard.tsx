@@ -61,10 +61,13 @@ const SuperAdminDashboard: React.FC = () => {
           Logout
         </Button>
       </Box>
-
       {/* Quick Stats */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -89,7 +92,11 @@ const SuperAdminDashboard: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -117,7 +124,11 @@ const SuperAdminDashboard: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -162,7 +173,6 @@ const SuperAdminDashboard: React.FC = () => {
           </Card>
         </Grid>
       </Grid>
-
       {/* Account Info */}
       <Card>
         <CardContent>
@@ -182,12 +192,10 @@ const SuperAdminDashboard: React.FC = () => {
           </Box>
         </CardContent>
       </Card>
-
       {/* System Health Dashboard */}
       <Box sx={{ mt: 4 }}>
         <SystemHealthDashboard />
       </Box>
-
       {/* System Status Notice */}
       <Box sx={{ mt: 4, p: 3, bgcolor: 'success.light', borderRadius: 1 }}>
         <Typography variant="h6" gutterBottom>

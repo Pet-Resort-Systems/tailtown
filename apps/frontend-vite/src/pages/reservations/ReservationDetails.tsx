@@ -321,7 +321,11 @@ const ReservationDetailsRedesigned = () => {
         >
           <CardContent>
             <Grid container spacing={3}>
-              <Grid item xs={12} md={3}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 3
+                }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <CalendarIcon />
                   <Box>
@@ -334,7 +338,11 @@ const ReservationDetailsRedesigned = () => {
                   </Box>
                 </Box>
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 3
+                }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <CalendarIcon />
                   <Box>
@@ -347,7 +355,11 @@ const ReservationDetailsRedesigned = () => {
                   </Box>
                 </Box>
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 3
+                }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <HomeIcon />
                   <Box>
@@ -360,7 +372,11 @@ const ReservationDetailsRedesigned = () => {
                   </Box>
                 </Box>
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 3
+                }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <HomeIcon />
                   <Box>
@@ -388,7 +404,11 @@ const ReservationDetailsRedesigned = () => {
         {/* Main Content Grid */}
         <Grid container spacing={3}>
           {/* Left Column - Pet & Customer */}
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <Paper sx={{ p: 3, height: '100%' }}>
               <Box
                 sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}
@@ -435,7 +455,11 @@ const ReservationDetailsRedesigned = () => {
           </Grid>
 
           {/* Right Column - Service Details */}
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <Paper sx={{ p: 3, height: '100%' }}>
               <Box
                 sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}
@@ -485,7 +509,7 @@ const ReservationDetailsRedesigned = () => {
           </Grid>
 
           {/* Financial Summary - Full Width */}
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Paper sx={{ p: 3 }}>
               <Box
                 sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}
@@ -495,7 +519,11 @@ const ReservationDetailsRedesigned = () => {
               </Box>
 
               <Grid container spacing={2}>
-                <Grid item xs={12} md={8}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 8
+                  }}>
                   <Box
                     sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}
                   >
@@ -585,7 +613,11 @@ const ReservationDetailsRedesigned = () => {
                   </Box>
                 </Grid>
 
-                <Grid item xs={12} md={4}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 4
+                  }}>
                   <Box
                     sx={{
                       bgcolor: 'grey.50',
@@ -630,7 +662,7 @@ const ReservationDetailsRedesigned = () => {
           </Grid>
 
           {/* Notes Section - Collapsible */}
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Paper sx={{ overflow: 'hidden' }}>
               <Box
                 sx={{
@@ -666,7 +698,11 @@ const ReservationDetailsRedesigned = () => {
                 <Divider />
                 <Box sx={{ p: 3 }}>
                   <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        md: 6
+                      }}>
                       <Typography variant="overline" color="text.secondary">
                         Customer Notes
                       </Typography>
@@ -674,7 +710,11 @@ const ReservationDetailsRedesigned = () => {
                         {notes || 'No notes provided'}
                       </Typography>
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        md: 6
+                      }}>
                       <Typography variant="overline" color="text.secondary">
                         Staff Notes
                       </Typography>
@@ -745,7 +785,6 @@ const ReservationDetailsRedesigned = () => {
           </Typography>
         </Box>
       </Box>
-
       {/* Status Change Menu */}
       <Menu
         anchorEl={statusMenuAnchorEl}

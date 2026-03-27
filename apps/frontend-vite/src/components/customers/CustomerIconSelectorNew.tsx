@@ -131,7 +131,7 @@ const CustomerIconSelectorNew: React.FC<CustomerIconSelectorNewProps> = ({
             const hasNote = iconNotes[icon.id];
 
             return (
-              <Grid item key={icon.id}>
+              <Grid key={icon.id}>
                 <Tooltip title={icon.description} arrow>
                   <Box sx={{ position: 'relative' }}>
                     <Chip
@@ -202,7 +202,6 @@ const CustomerIconSelectorNew: React.FC<CustomerIconSelectorNewProps> = ({
           </Box>
         )}
       </Paper>
-
       {/* Note Dialog */}
       <Dialog
         open={noteDialogOpen}

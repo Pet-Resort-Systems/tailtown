@@ -46,7 +46,6 @@ export default function PoliciesStep() {
       <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
         Set your facility policies. These can be adjusted later.
       </Typography>
-
       {/* Cancellation Policy */}
       <Card variant="outlined" sx={{ mb: 3 }}>
         <CardContent>
@@ -54,7 +53,11 @@ export default function PoliciesStep() {
             Cancellation Policy
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 4
+              }}>
               <TextField
                 fullWidth
                 label="Notice Required"
@@ -75,7 +78,11 @@ export default function PoliciesStep() {
                 }}
               />
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 4
+              }}>
               <TextField
                 fullWidth
                 label="Late Cancel Fee"
@@ -96,7 +103,11 @@ export default function PoliciesStep() {
                 }}
               />
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 4
+              }}>
               <TextField
                 fullWidth
                 label="No-Show Fee"
@@ -120,7 +131,6 @@ export default function PoliciesStep() {
           </Grid>
         </CardContent>
       </Card>
-
       {/* Vaccination Requirements */}
       <Card variant="outlined" sx={{ mb: 3 }}>
         <CardContent>
@@ -147,7 +157,11 @@ export default function PoliciesStep() {
             ))}
           </Box>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <FormControlLabel
                 control={
                   <Switch
@@ -165,7 +179,11 @@ export default function PoliciesStep() {
                 label="Require proof of vaccination"
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <Typography variant="body2" gutterBottom>
                 Warn when expiring within{' '}
                 {policies.vaccinations.expirationWarningDays} days
@@ -193,7 +211,6 @@ export default function PoliciesStep() {
           </Grid>
         </CardContent>
       </Card>
-
       {/* Age & Other Requirements */}
       <Card variant="outlined" sx={{ mb: 3 }}>
         <CardContent>
@@ -201,7 +218,11 @@ export default function PoliciesStep() {
             Other Requirements
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <TextField
                 fullWidth
                 label="Minimum Age"
@@ -222,7 +243,11 @@ export default function PoliciesStep() {
                 }}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <FormControlLabel
                 control={
                   <Switch
@@ -235,7 +260,7 @@ export default function PoliciesStep() {
                 label="Require spay/neuter"
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <FormControlLabel
                 control={
                   <Switch
@@ -251,7 +276,6 @@ export default function PoliciesStep() {
           </Grid>
         </CardContent>
       </Card>
-
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button startIcon={<ArrowBack />} onClick={prevStep}>
           Back

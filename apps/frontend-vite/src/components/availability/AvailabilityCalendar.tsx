@@ -211,11 +211,10 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
           <NextIcon />
         </IconButton>
       </Box>
-
       {/* Week day headers */}
       <Grid container spacing={1} mb={1}>
         {weekDays.map((day) => (
-          <Grid item xs={12 / 7} key={day}>
+          <Grid key={day} size={12 / 7}>
             <Typography
               variant="caption"
               align="center"
@@ -227,11 +226,10 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
           </Grid>
         ))}
       </Grid>
-
       {/* Calendar grid */}
       <Grid container spacing={1}>
         {calendarDays.map((date, index) => (
-          <Grid item xs={12 / 7} key={index}>
+          <Grid key={index} size={12 / 7}>
             {date ? (
               <Tooltip
                 title={
@@ -287,7 +285,6 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
           </Grid>
         ))}
       </Grid>
-
       {/* Legend */}
       <Box
         mt={2}
@@ -315,7 +312,6 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
           variant="outlined"
         />
       </Box>
-
       {/* Summary */}
       {calendar && (
         <Box mt={2} textAlign="center">

@@ -9,7 +9,7 @@ import React from 'react';
 import { Grid, GridProps } from '@mui/material';
 import { getResponsiveColumns } from '../../utils/responsive';
 
-interface ResponsiveGridProps extends Omit<GridProps, 'container' | 'item'> {
+interface ResponsiveGridProps extends Omit<GridProps, 'container' | 'size'> {
   /**
    * Children to render in the grid
    */
@@ -67,12 +67,12 @@ const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
     <Grid container spacing={spacing} sx={sx} {...props}>
       {React.Children.map(children, (child) => (
         <Grid
-          item
-          xs={12 / columns.xs}
-          sm={12 / columns.sm}
-          md={12 / columns.md}
-          lg={12 / columns.lg}
-        >
+          size={{
+            xs: 12 / columns.xs,
+            sm: 12 / columns.sm,
+            md: 12 / columns.md,
+            lg: 12 / columns.lg
+          }}>
           {child}
         </Grid>
       ))}

@@ -208,7 +208,11 @@ const Resources: React.FC = () => {
         </Box>
 
         <Grid container spacing={2} sx={{ mb: 3 }}>
-          <Grid item xs={12} sm={6}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6
+            }}>
             <TextField
               fullWidth
               label="Search resources"
@@ -217,7 +221,11 @@ const Resources: React.FC = () => {
               size="small"
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6
+            }}>
             <TextField
               fullWidth
               select
@@ -304,7 +312,6 @@ const Resources: React.FC = () => {
           </Table>
         </TableContainer>
       </Box>
-
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}

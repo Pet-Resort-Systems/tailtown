@@ -158,7 +158,11 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
         </Typography>
 
         <Grid container spacing={2} sx={{ mt: 2 }}>
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <TextField
               fullWidth
               label="Template Name"
@@ -167,7 +171,11 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
               required
             />
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <Box
               sx={{
                 display: 'flex',
@@ -200,7 +208,7 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
               />
             </Box>
           </Grid>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <TextField
               fullWidth
               multiline
@@ -214,7 +222,6 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
           </Grid>
         </Grid>
       </Box>
-
       <Box sx={{ mb: 3 }}>
         <Box
           sx={{
@@ -322,7 +329,7 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
                         </Box>
 
                         <Grid container spacing={2}>
-                          <Grid item xs={12}>
+                          <Grid size={12}>
                             <TextField
                               fullWidth
                               label="Question Text"
@@ -337,7 +344,11 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
                               }
                             />
                           </Grid>
-                          <Grid item xs={12} md={6}>
+                          <Grid
+                            size={{
+                              xs: 12,
+                              md: 6
+                            }}>
                             <FormControl fullWidth>
                               <InputLabel>Question Type</InputLabel>
                               <Select
@@ -360,7 +371,11 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
                               </Select>
                             </FormControl>
                           </Grid>
-                          <Grid item xs={12} md={6}>
+                          <Grid
+                            size={{
+                              xs: 12,
+                              md: 6
+                            }}>
                             <FormControlLabel
                               control={
                                 <Switch
@@ -378,7 +393,11 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
                               label="Required"
                             />
                           </Grid>
-                          <Grid item xs={12} md={6}>
+                          <Grid
+                            size={{
+                              xs: 12,
+                              md: 6
+                            }}>
                             <TextField
                               fullWidth
                               label="Placeholder"
@@ -393,7 +412,11 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
                               }
                             />
                           </Grid>
-                          <Grid item xs={12} md={6}>
+                          <Grid
+                            size={{
+                              xs: 12,
+                              md: 6
+                            }}>
                             <TextField
                               fullWidth
                               label="Help Text"
@@ -410,7 +433,7 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
                           </Grid>
 
                           {question.questionType === 'MULTIPLE_CHOICE' && (
-                            <Grid item xs={12}>
+                            <Grid size={12}>
                               <Box
                                 sx={{
                                   display: 'flex',
@@ -477,7 +500,6 @@ const TemplateEditor: React.FC<TemplateEditorProps> = ({
           </Accordion>
         ))}
       </Box>
-
       <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 4 }}>
         <Button variant="outlined" onClick={onCancel}>
           Cancel

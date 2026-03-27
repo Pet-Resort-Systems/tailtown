@@ -255,7 +255,11 @@ const ResourceDetails: React.FC = () => {
         <Paper sx={{ p: 3 }}>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <TextField
                   fullWidth
                   required
@@ -265,7 +269,11 @@ const ResourceDetails: React.FC = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <TextField
                   fullWidth
                   required
@@ -290,7 +298,11 @@ const ResourceDetails: React.FC = () => {
                 </TextField>
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <TextField
                   fullWidth
                   select
@@ -309,7 +321,11 @@ const ResourceDetails: React.FC = () => {
                 </TextField>
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <TextField
                   fullWidth
                   type="number"
@@ -322,7 +338,7 @@ const ResourceDetails: React.FC = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   fullWidth
                   multiline
@@ -334,7 +350,7 @@ const ResourceDetails: React.FC = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   fullWidth
                   label="Location"
@@ -344,7 +360,7 @@ const ResourceDetails: React.FC = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   fullWidth
                   multiline
@@ -356,7 +372,7 @@ const ResourceDetails: React.FC = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <FormControlLabel
                   control={
                     <Switch
@@ -369,7 +385,7 @@ const ResourceDetails: React.FC = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Box
                   sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}
                 >
@@ -394,7 +410,6 @@ const ResourceDetails: React.FC = () => {
           </form>
         </Paper>
       </Box>
-
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}

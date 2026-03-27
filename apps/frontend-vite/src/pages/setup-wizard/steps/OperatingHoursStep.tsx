@@ -104,14 +104,19 @@ export default function OperatingHoursStep() {
       <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
         Set your business hours and holiday schedule.
       </Typography>
-
       {/* Daily Hours */}
       <Typography variant="h6" gutterBottom>
         Business Hours
       </Typography>
       <Grid container spacing={2} sx={{ mb: 4 }}>
         {DAYS.map((day) => (
-          <Grid item xs={12} sm={6} md={4} key={day}>
+          <Grid
+            key={day}
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 4
+            }}>
             <Card variant="outlined">
               <CardContent sx={{ py: 1.5 }}>
                 <Box
@@ -168,13 +173,16 @@ export default function OperatingHoursStep() {
           </Grid>
         ))}
       </Grid>
-
       {/* Check-in/Check-out Windows */}
       <Typography variant="h6" gutterBottom>
         Check-in & Check-out Windows
       </Typography>
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <Card variant="outlined">
             <CardContent>
               <Typography variant="subtitle2" gutterBottom>
@@ -217,7 +225,11 @@ export default function OperatingHoursStep() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <Card variant="outlined">
             <CardContent>
               <Typography variant="subtitle2" gutterBottom>
@@ -261,7 +273,6 @@ export default function OperatingHoursStep() {
           </Card>
         </Grid>
       </Grid>
-
       {/* Holidays */}
       <Box
         sx={{
@@ -298,7 +309,6 @@ export default function OperatingHoursStep() {
           </Typography>
         )}
       </Box>
-
       {/* Holiday Dialog */}
       <Dialog
         open={holidayDialogOpen}
@@ -307,7 +317,7 @@ export default function OperatingHoursStep() {
         <DialogTitle>Add Holiday</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 label="Holiday Name"
@@ -317,7 +327,7 @@ export default function OperatingHoursStep() {
                 }
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 label="Date (MM-DD for recurring)"
@@ -329,7 +339,7 @@ export default function OperatingHoursStep() {
                 helperText="Use MM-DD format for annual holidays"
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <FormControlLabel
                 control={
                   <Switch
@@ -343,7 +353,7 @@ export default function OperatingHoursStep() {
               />
             </Grid>
             {!newHoliday.closed && (
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <FormControlLabel
                   control={
                     <Switch
@@ -373,7 +383,6 @@ export default function OperatingHoursStep() {
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Navigation */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button startIcon={<ArrowBack />} onClick={prevStep}>

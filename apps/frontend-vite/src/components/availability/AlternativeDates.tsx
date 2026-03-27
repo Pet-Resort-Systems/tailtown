@@ -75,7 +75,6 @@ export const AlternativeDates: React.FC<AlternativeDatesProps> = ({
           some alternatives:
         </Typography>
       </Box>
-
       <Grid container spacing={2}>
         {sortedAlternatives.map((alternative, index) => {
           const dateRange = availabilityService.formatDateRange(
@@ -88,7 +87,12 @@ export const AlternativeDates: React.FC<AlternativeDatesProps> = ({
           );
 
           return (
-            <Grid item xs={12} md={6} key={index}>
+            <Grid
+              key={index}
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <Card
                 variant="outlined"
                 sx={{
@@ -189,7 +193,6 @@ export const AlternativeDates: React.FC<AlternativeDatesProps> = ({
           );
         })}
       </Grid>
-
       {sortedAlternatives.length > 4 && (
         <Box mt={2} textAlign="center">
           <Typography variant="caption" color="text.secondary">

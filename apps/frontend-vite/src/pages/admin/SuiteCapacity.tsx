@@ -240,13 +240,11 @@ export const SuiteCapacityPage: React.FC = () => {
           Add Suite Capacity
         </Button>
       </Box>
-
       {error && (
         <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 3 }}>
           {error}
         </Alert>
       )}
-
       {success && (
         <Alert
           severity="success"
@@ -256,7 +254,6 @@ export const SuiteCapacityPage: React.FC = () => {
           {success}
         </Alert>
       )}
-
       {/* General Settings */}
       <Card sx={{ mb: 3 }}>
         <CardContent>
@@ -265,7 +262,11 @@ export const SuiteCapacityPage: React.FC = () => {
           </Typography>
 
           <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <FormControlLabel
                 control={
                   <Switch
@@ -282,7 +283,11 @@ export const SuiteCapacityPage: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <FormControlLabel
                 control={
                   <Switch
@@ -299,7 +304,11 @@ export const SuiteCapacityPage: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <FormControlLabel
                 control={
                   <Switch
@@ -316,7 +325,11 @@ export const SuiteCapacityPage: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <FormControlLabel
                 control={
                   <Switch
@@ -333,7 +346,7 @@ export const SuiteCapacityPage: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Button
                 variant="contained"
                 startIcon={<SaveIcon />}
@@ -345,7 +358,6 @@ export const SuiteCapacityPage: React.FC = () => {
           </Grid>
         </CardContent>
       </Card>
-
       {/* Suite Capacities */}
       <Card>
         <CardContent>
@@ -428,7 +440,6 @@ export const SuiteCapacityPage: React.FC = () => {
           )}
         </CardContent>
       </Card>
-
       {/* Capacity Dialog */}
       <Dialog
         open={showCapacityDialog}
@@ -441,7 +452,7 @@ export const SuiteCapacityPage: React.FC = () => {
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 label="Suite Type"
@@ -456,7 +467,11 @@ export const SuiteCapacityPage: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 fullWidth
                 select
@@ -477,7 +492,11 @@ export const SuiteCapacityPage: React.FC = () => {
               </TextField>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 fullWidth
                 type="number"
@@ -492,14 +511,18 @@ export const SuiteCapacityPage: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Divider />
               <Typography variant="subtitle2" sx={{ mt: 2, mb: 1 }}>
                 Pricing Configuration
               </Typography>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 fullWidth
                 select
@@ -519,7 +542,11 @@ export const SuiteCapacityPage: React.FC = () => {
               </TextField>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 fullWidth
                 type="number"
@@ -535,7 +562,11 @@ export const SuiteCapacityPage: React.FC = () => {
             </Grid>
 
             {capacityFormData.pricingType === 'PER_PET' && (
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <TextField
                   fullWidth
                   type="number"
@@ -554,7 +585,11 @@ export const SuiteCapacityPage: React.FC = () => {
 
             {capacityFormData.pricingType === 'PERCENTAGE_OFF' && (
               <>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <TextField
                     fullWidth
                     type="number"
@@ -568,7 +603,11 @@ export const SuiteCapacityPage: React.FC = () => {
                     }
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <TextField
                     fullWidth
                     type="number"
@@ -586,7 +625,7 @@ export const SuiteCapacityPage: React.FC = () => {
               </>
             )}
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <FormControlLabel
                 control={
                   <Switch

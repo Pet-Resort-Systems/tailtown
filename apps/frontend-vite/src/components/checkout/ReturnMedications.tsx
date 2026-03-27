@@ -5,6 +5,7 @@ import {
   Paper,
   List,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   Checkbox,
@@ -57,7 +58,6 @@ const ReturnMedications: React.FC<ReturnMedicationsProps> = ({
       <Typography variant="body2" color="text.secondary" gutterBottom>
         Check off each medication as you return it to the customer
       </Typography>
-
       {medications.length === 0 ? (
         <Alert severity="info" sx={{ mt: 3 }}>
           No medications were recorded during check-in. You can proceed to the
@@ -67,101 +67,100 @@ const ReturnMedications: React.FC<ReturnMedicationsProps> = ({
         <Paper elevation={0} sx={{ mt: 3, bgcolor: 'grey.50' }}>
           <List>
             {medications.map((item, index) => (
-              <ListItem
-                key={item.id || index}
-                dense
-                button
-                onClick={() => handleToggle(item.id || index.toString())}
-                sx={{
-                  borderBottom:
-                    index < medications.length - 1 ? '1px solid' : 'none',
-                  borderColor: 'divider',
-                  '&:hover': {
-                    bgcolor: 'action.hover',
-                  },
-                  py: 2,
-                }}
-              >
-                <ListItemIcon>
-                  <Checkbox
-                    edge="start"
-                    checked={checkedItems[item.id || index.toString()] || false}
-                    tabIndex={-1}
-                    disableRipple
+              <ListItem key={item.id || index} disablePadding>
+                <ListItemButton
+                  dense
+                  onClick={() => handleToggle(item.id || index.toString())}
+                  sx={{
+                    borderBottom:
+                      index < medications.length - 1 ? '1px solid' : 'none',
+                    borderColor: 'divider',
+                    '&:hover': {
+                      bgcolor: 'action.hover',
+                    },
+                    py: 2,
+                  }}
+                >
+                  <ListItemIcon>
+                    <Checkbox
+                      edge="start"
+                      checked={
+                        checkedItems[item.id || index.toString()] || false
+                      }
+                      tabIndex={-1}
+                      disableRipple
+                    />
+                  </ListItemIcon>
+                  <ListItemIcon>
+                    <MedicationIcon color="primary" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                          flexWrap: 'wrap',
+                        }}
+                      >
+                        <Typography variant="body1" fontWeight="medium">
+                          {item.name ||
+                            item.medicationName ||
+                            'Unknown Medication'}
+                        </Typography>
+                        {item.dosage && (
+                          <Chip
+                            label={item.dosage}
+                            size="small"
+                            color="primary"
+                            variant="outlined"
+                          />
+                        )}
+                      </Box>
+                    }
+                    secondary={
+                      <Grid container spacing={1} sx={{ mt: 0.5 }}>
+                        {item.frequency && (
+                          <Grid>
+                            <Typography variant="caption" color="text.secondary">
+                              Frequency: {item.frequency}
+                            </Typography>
+                          </Grid>
+                        )}
+                        {item.administrationMethod && (
+                          <Grid>
+                            <Typography variant="caption" color="text.secondary">
+                              Method: {item.administrationMethod}
+                            </Typography>
+                          </Grid>
+                        )}
+                        {item.instructions && (
+                          <Grid size={12}>
+                            <Typography variant="caption" color="text.secondary">
+                              Instructions: {item.instructions}
+                            </Typography>
+                          </Grid>
+                        )}
+                      </Grid>
+                    }
                   />
-                </ListItemIcon>
-                <ListItemIcon>
-                  <MedicationIcon color="primary" />
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1,
-                        flexWrap: 'wrap',
-                      }}
-                    >
-                      <Typography variant="body1" fontWeight="medium">
-                        {item.name ||
-                          item.medicationName ||
-                          'Unknown Medication'}
-                      </Typography>
-                      {item.dosage && (
-                        <Chip
-                          label={item.dosage}
-                          size="small"
-                          color="primary"
-                          variant="outlined"
-                        />
-                      )}
-                    </Box>
-                  }
-                  secondary={
-                    <Grid container spacing={1} sx={{ mt: 0.5 }}>
-                      {item.frequency && (
-                        <Grid item>
-                          <Typography variant="caption" color="text.secondary">
-                            Frequency: {item.frequency}
-                          </Typography>
-                        </Grid>
-                      )}
-                      {item.administrationMethod && (
-                        <Grid item>
-                          <Typography variant="caption" color="text.secondary">
-                            Method: {item.administrationMethod}
-                          </Typography>
-                        </Grid>
-                      )}
-                      {item.instructions && (
-                        <Grid item xs={12}>
-                          <Typography variant="caption" color="text.secondary">
-                            Instructions: {item.instructions}
-                          </Typography>
-                        </Grid>
-                      )}
-                    </Grid>
-                  }
-                />
+                </ListItemButton>
               </ListItem>
             ))}
           </List>
         </Paper>
       )}
-
       {medications.length > 0 && !allItemsReturned && (
         <Alert severity="warning" sx={{ mt: 2 }}>
           Please check off all medications before proceeding
         </Alert>
       )}
-
       {medications.length > 0 && allItemsReturned && (
         <Alert severity="success" sx={{ mt: 2 }}>
           All medications have been marked as returned
         </Alert>
       )}
-
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
         <Button onClick={onBack}>Back</Button>
         <Button

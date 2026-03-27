@@ -128,12 +128,10 @@ const DaycarePasses: React.FC = () => {
           {error}
         </Alert>
       )}
-
       {/* Active Passes */}
       <Typography variant="h6" gutterBottom fontWeight={600}>
         My Daycare Passes
       </Typography>
-
       {activePasses.length === 0 ? (
         <Card variant="outlined" sx={{ mb: 4, textAlign: 'center', py: 4 }}>
           <PassIcon sx={{ fontSize: 48, color: 'text.disabled', mb: 2 }} />
@@ -152,7 +150,12 @@ const DaycarePasses: React.FC = () => {
               ((pass.totalDays - pass.remainingDays) / pass.totalDays) * 100;
 
             return (
-              <Grid item xs={12} sm={6} key={pass.id}>
+              <Grid
+                key={pass.id}
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <Card variant="outlined">
                   <CardContent>
                     <Box
@@ -234,7 +237,6 @@ const DaycarePasses: React.FC = () => {
           })}
         </Grid>
       )}
-
       {/* Available Passes for Purchase */}
       <Typography variant="h6" gutterBottom fontWeight={600} sx={{ mt: 4 }}>
         Purchase a Pass
@@ -242,7 +244,6 @@ const DaycarePasses: React.FC = () => {
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
         Save money with our daycare pass packages!
       </Typography>
-
       {passTypes.length === 0 ? (
         <Alert severity="info">
           No daycare passes are currently available for purchase. Please check
@@ -251,7 +252,13 @@ const DaycarePasses: React.FC = () => {
       ) : (
         <Grid container spacing={2}>
           {passTypes.map((passType) => (
-            <Grid item xs={12} sm={6} md={4} key={passType.id}>
+            <Grid
+              key={passType.id}
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 4
+              }}>
               <Card
                 variant="outlined"
                 sx={{
@@ -321,7 +328,6 @@ const DaycarePasses: React.FC = () => {
           ))}
         </Grid>
       )}
-
       {/* Expired/Used Passes */}
       {expiredPasses.length > 0 && (
         <>
@@ -330,7 +336,12 @@ const DaycarePasses: React.FC = () => {
           </Typography>
           <Grid container spacing={2}>
             {expiredPasses.slice(0, 4).map((pass) => (
-              <Grid item xs={12} sm={6} key={pass.id}>
+              <Grid
+                key={pass.id}
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <Card variant="outlined" sx={{ opacity: 0.7 }}>
                   <CardContent>
                     <Box
@@ -357,7 +368,6 @@ const DaycarePasses: React.FC = () => {
           </Grid>
         </>
       )}
-
       {/* Purchase Confirmation Dialog */}
       <Dialog
         open={purchaseDialogOpen}

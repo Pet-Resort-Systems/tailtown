@@ -411,7 +411,6 @@ const Users: React.FC = () => {
           )}
         </Paper>
       </Box>
-
       {/* Add/Edit User Dialog */}
       <Dialog
         open={openDialog}
@@ -474,7 +473,7 @@ const Users: React.FC = () => {
             {dialogTabValue === 0 && (
               <Box>
                 <Grid container spacing={1}>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <TextField
                       name="firstName"
                       label="First Name"
@@ -486,7 +485,7 @@ const Users: React.FC = () => {
                       required
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <TextField
                       name="lastName"
                       label="Last Name"
@@ -513,7 +512,7 @@ const Users: React.FC = () => {
                 />
 
                 <Grid container spacing={1}>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <TextField
                       name="phone"
                       label="Phone Number"
@@ -524,7 +523,7 @@ const Users: React.FC = () => {
                       margin="dense"
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <TextField
                       name="address"
                       label="Address"
@@ -538,7 +537,7 @@ const Users: React.FC = () => {
                 </Grid>
 
                 <Grid container spacing={1}>
-                  <Grid item xs={4}>
+                  <Grid size={4}>
                     <TextField
                       name="city"
                       label="City"
@@ -549,7 +548,7 @@ const Users: React.FC = () => {
                       margin="dense"
                     />
                   </Grid>
-                  <Grid item xs={4}>
+                  <Grid size={4}>
                     <TextField
                       name="state"
                       label="State"
@@ -560,7 +559,7 @@ const Users: React.FC = () => {
                       margin="dense"
                     />
                   </Grid>
-                  <Grid item xs={4}>
+                  <Grid size={4}>
                     <TextField
                       name="zipCode"
                       label="Zip Code"
@@ -579,7 +578,7 @@ const Users: React.FC = () => {
                 </Typography>
 
                 <Grid container spacing={1}>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <TextField
                       name="password"
                       label={editingUser ? 'New Password' : 'Password'}
@@ -648,7 +647,7 @@ const Users: React.FC = () => {
                       </Box>
                     )}
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <TextField
                       name="confirmPassword"
                       label="Confirm Password"
@@ -679,7 +678,7 @@ const Users: React.FC = () => {
                 </Typography>
 
                 <Grid container spacing={1}>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <FormControl fullWidth size="small" margin="dense">
                       <InputLabel>Role</InputLabel>
                       <Select
@@ -697,7 +696,7 @@ const Users: React.FC = () => {
                       </Select>
                     </FormControl>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <FormControl fullWidth size="small" margin="dense">
                       <InputLabel>Department</InputLabel>
                       <Select
@@ -715,7 +714,7 @@ const Users: React.FC = () => {
                       </Select>
                     </FormControl>
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <FormControl fullWidth size="small" margin="dense">
                       <InputLabel>Position</InputLabel>
                       <Select
@@ -733,7 +732,7 @@ const Users: React.FC = () => {
                       </Select>
                     </FormControl>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <FormControl fullWidth size="small" margin="dense">
                       <InputLabel>Status</InputLabel>
                       <Select
@@ -748,7 +747,7 @@ const Users: React.FC = () => {
                       </Select>
                     </FormControl>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <TextField
                       name="hireDate"
                       label="Hire Date"

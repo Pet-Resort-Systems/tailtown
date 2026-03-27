@@ -72,20 +72,17 @@ const Login = () => {
       >
         Sign In
       </Typography>
-
       {tenantName && (
         <Alert severity="success" sx={{ mb: 3 }}>
           Welcome to <strong>{tenantName.replace(/-/g, ' ')}</strong>! Please
           sign in with your staff credentials.
         </Alert>
       )}
-
       {errorMessage && (
         <Alert severity="error" sx={{ mb: 3 }}>
           {errorMessage}
         </Alert>
       )}
-
       <Formik
         initialValues={{
           email: '',

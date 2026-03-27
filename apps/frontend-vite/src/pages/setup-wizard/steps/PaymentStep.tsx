@@ -76,14 +76,12 @@ export default function PaymentStep() {
       <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
         Configure your CardConnect merchant account for payment processing.
       </Typography>
-
       <Alert severity="info" sx={{ mb: 3 }}>
         <Typography variant="body2">
           Don't have a CardConnect account? Contact our team to get set up with
           competitive rates.
         </Typography>
       </Alert>
-
       <Card variant="outlined" sx={{ mb: 4 }}>
         <CardContent>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
@@ -92,7 +90,7 @@ export default function PaymentStep() {
           </Box>
 
           <Grid container spacing={2}>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 label="Merchant ID"
@@ -105,7 +103,11 @@ export default function PaymentStep() {
                 required
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <TextField
                 fullWidth
                 label="API Username"
@@ -118,7 +120,11 @@ export default function PaymentStep() {
                 required
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <TextField
                 fullWidth
                 label="API Password"
@@ -144,7 +150,7 @@ export default function PaymentStep() {
                 }}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <FormControlLabel
                 control={
                   <Switch
@@ -160,7 +166,6 @@ export default function PaymentStep() {
           </Grid>
         </CardContent>
       </Card>
-
       <Card variant="outlined" sx={{ mb: 4 }}>
         <CardContent>
           <Typography variant="h6" gutterBottom>
@@ -184,7 +189,6 @@ export default function PaymentStep() {
           </FormGroup>
         </CardContent>
       </Card>
-
       <Card variant="outlined" sx={{ mb: 4 }}>
         <CardContent>
           <Typography variant="h6" gutterBottom>
@@ -212,7 +216,6 @@ export default function PaymentStep() {
           </FormGroup>
         </CardContent>
       </Card>
-
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button startIcon={<ArrowBack />} onClick={prevStep}>
           Back

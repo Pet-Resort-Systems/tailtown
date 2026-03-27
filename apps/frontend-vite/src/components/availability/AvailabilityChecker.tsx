@@ -127,7 +127,12 @@ export const AvailabilityChecker: React.FC<AvailabilityCheckerProps> = ({
         </Typography>
 
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 3
+            }}>
             <TextField
               fullWidth
               type="date"
@@ -139,7 +144,12 @@ export const AvailabilityChecker: React.FC<AvailabilityCheckerProps> = ({
             />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 3
+            }}>
             <TextField
               fullWidth
               type="date"
@@ -151,7 +161,12 @@ export const AvailabilityChecker: React.FC<AvailabilityCheckerProps> = ({
             />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 3
+            }}>
             <TextField
               fullWidth
               type="number"
@@ -162,7 +177,12 @@ export const AvailabilityChecker: React.FC<AvailabilityCheckerProps> = ({
             />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 3
+            }}>
             <Button
               fullWidth
               variant="contained"
@@ -189,14 +209,12 @@ export const AvailabilityChecker: React.FC<AvailabilityCheckerProps> = ({
           </Typography>
         )}
       </Paper>
-
       {/* Error */}
       {error && (
         <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 3 }}>
           {error}
         </Alert>
       )}
-
       {/* Results */}
       {result && (
         <Box>
@@ -268,7 +286,6 @@ export const AvailabilityChecker: React.FC<AvailabilityCheckerProps> = ({
           )}
         </Box>
       )}
-
       {/* Waitlist Dialog */}
       {customerId && (
         <WaitlistDialog

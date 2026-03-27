@@ -152,10 +152,9 @@ const UpcomingReservations: React.FC = () => {
       <Typography variant="h6" gutterBottom fontWeight={600}>
         Upcoming Reservations ({reservations.length})
       </Typography>
-
       <Grid container spacing={2}>
         {reservations.map((reservation) => (
-          <Grid item xs={12} key={reservation.id}>
+          <Grid key={reservation.id} size={12}>
             <Card variant="outlined">
               <CardContent>
                 <Box
@@ -186,7 +185,11 @@ const UpcomingReservations: React.FC = () => {
                 <Divider sx={{ my: 2 }} />
 
                 <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <CalendarIcon
                         sx={{ mr: 1, color: 'text.secondary', fontSize: 20 }}
@@ -226,7 +229,11 @@ const UpcomingReservations: React.FC = () => {
                     )}
                   </Grid>
 
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     {reservation.resource && (
                       <Box
                         sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
@@ -287,7 +294,6 @@ const UpcomingReservations: React.FC = () => {
           </Grid>
         ))}
       </Grid>
-
       {/* Cancel Dialog */}
       <Dialog
         open={cancelDialogOpen}

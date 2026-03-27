@@ -289,13 +289,18 @@ export default function ChecklistTemplates() {
           Create Template
         </Button>
       </Box>
-
       {loading ? (
         <Typography>Loading...</Typography>
       ) : (
         <Grid container spacing={3}>
           {templates.map((template) => (
-            <Grid item xs={12} md={6} lg={4} key={template.id}>
+            <Grid
+              key={template.id}
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 4
+              }}>
               <Card>
                 <CardContent>
                   <Box
@@ -366,7 +371,6 @@ export default function ChecklistTemplates() {
           ))}
         </Grid>
       )}
-
       {/* Edit Template Dialog */}
       <Dialog
         open={editDialogOpen}
@@ -524,7 +528,6 @@ export default function ChecklistTemplates() {
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Edit Item Dialog */}
       <Dialog
         open={itemDialogOpen}

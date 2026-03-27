@@ -390,18 +390,19 @@ const VaccineRequirements: React.FC = () => {
                 <InputLabel shrink>Service Type</InputLabel>
                 <Select
                   value={formData.serviceType ?? ''}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const serviceType = e.target.value as
+                      | ''
+                      | 'BOARDING'
+                      | 'DAYCARE'
+                      | 'GROOMING';
+
                     setFormData({
                       ...formData,
                       serviceType:
-                        e.target.value === ''
-                          ? undefined
-                          : (e.target.value as
-                              | 'BOARDING'
-                              | 'DAYCARE'
-                              | 'GROOMING'),
-                    })
-                  }
+                        serviceType === '' ? undefined : serviceType,
+                    });
+                  }}
                   label="Service Type"
                   displayEmpty
                   notched

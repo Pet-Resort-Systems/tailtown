@@ -259,10 +259,14 @@ const ServiceDetails: React.FC = () => {
         </Typography>
 
         <Grid container spacing={3}>
-          <Grid item xs={12} md={8}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 8
+            }}>
             <Paper sx={{ p: 3 }}>
               <Grid container spacing={2}>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <TextField
                     fullWidth
                     label="Service Name"
@@ -273,7 +277,7 @@ const ServiceDetails: React.FC = () => {
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <TextField
                     fullWidth
                     label="Description"
@@ -285,7 +289,11 @@ const ServiceDetails: React.FC = () => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <FormControl fullWidth>
                     <InputLabel>Category</InputLabel>
                     <Select
@@ -307,7 +315,11 @@ const ServiceDetails: React.FC = () => {
                   </FormControl>
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <TextField
                     fullWidth
                     label="Price"
@@ -322,7 +334,7 @@ const ServiceDetails: React.FC = () => {
                 </Grid>
 
                 {/* Deposit Configuration */}
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Divider sx={{ my: 2 }}>
                     <Typography variant="overline" color="text.secondary">
                       Deposit Configuration
@@ -330,7 +342,7 @@ const ServiceDetails: React.FC = () => {
                   </Divider>
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <FormControlLabel
                     control={
                       <Switch
@@ -353,7 +365,11 @@ const ServiceDetails: React.FC = () => {
 
                 {service.depositRequired && (
                   <>
-                    <Grid item xs={12} sm={6}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6
+                      }}>
                       <FormControl fullWidth>
                         <InputLabel>Deposit Type</InputLabel>
                         <Select
@@ -382,7 +398,11 @@ const ServiceDetails: React.FC = () => {
                       </FormControl>
                     </Grid>
 
-                    <Grid item xs={12} sm={6}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6
+                      }}>
                       <TextField
                         fullWidth
                         label={
@@ -429,11 +449,15 @@ const ServiceDetails: React.FC = () => {
                   </>
                 )}
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Divider sx={{ my: 1 }} />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                     <Typography variant="body2" sx={{ minWidth: '60px' }}>
                       Duration:
@@ -523,7 +547,7 @@ const ServiceDetails: React.FC = () => {
                   </Box>
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <TextField
                     fullWidth
                     label="Notes"
@@ -535,7 +559,7 @@ const ServiceDetails: React.FC = () => {
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <FormControlLabel
                     control={
                       <Switch
@@ -571,7 +595,11 @@ const ServiceDetails: React.FC = () => {
             </Paper>
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 4
+            }}>
             <Paper sx={{ p: 3 }}>
               <Box
                 sx={{
@@ -604,7 +632,7 @@ const ServiceDetails: React.FC = () => {
                   }}
                 >
                   <Grid container spacing={2}>
-                    <Grid item xs={12}>
+                    <Grid size={12}>
                       <TextField
                         fullWidth
                         label="Name"
@@ -614,7 +642,7 @@ const ServiceDetails: React.FC = () => {
                         size="small"
                       />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid size={12}>
                       <TextField
                         fullWidth
                         label="Description"
@@ -624,7 +652,7 @@ const ServiceDetails: React.FC = () => {
                         size="small"
                       />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid size={6}>
                       <TextField
                         fullWidth
                         label="Price"
@@ -638,7 +666,7 @@ const ServiceDetails: React.FC = () => {
                         }}
                       />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid size={6}>
                       <TextField
                         fullWidth
                         label="Duration"
@@ -649,7 +677,7 @@ const ServiceDetails: React.FC = () => {
                         size="small"
                       />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid size={12}>
                       <Box
                         sx={{
                           display: 'flex',
@@ -728,7 +756,6 @@ const ServiceDetails: React.FC = () => {
           </Button>
         </Box>
       </Box>
-
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}

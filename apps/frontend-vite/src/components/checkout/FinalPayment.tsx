@@ -185,7 +185,6 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
       <Typography variant="body2" color="text.secondary" gutterBottom>
         Collect the remaining balance from the customer
       </Typography>
-
       {!isOnline && (
         <Alert severity="warning" icon={<OfflineIcon />} sx={{ mt: 2 }}>
           <strong>You're offline.</strong> Cash payments can still be processed
@@ -193,22 +192,19 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
           available offline.
         </Alert>
       )}
-
       {offlineQueued && (
         <Alert severity="info" sx={{ mt: 2 }}>
           Payment queued for sync when connection is restored.
         </Alert>
       )}
-
       {error && (
         <Alert severity="error" sx={{ mt: 2 }}>
           {error}
         </Alert>
       )}
-
       <Paper elevation={0} sx={{ p: 3, mt: 3, bgcolor: 'grey.50' }}>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Box
               sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}
             >
@@ -244,18 +240,22 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
           </Grid>
 
           {canSkipPayment ? (
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Alert severity="success">
                 No payment required. The invoice has been fully paid.
               </Alert>
             </Grid>
           ) : (
             <>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Divider sx={{ my: 2 }} />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <FormControl fullWidth>
                   <InputLabel>Payment Method</InputLabel>
                   <Select
@@ -288,7 +288,7 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
 
               {/* Saved Card Selection */}
               {paymentMethod === 'SAVED_CARD' && savedCards.length > 0 && (
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Typography variant="subtitle2" gutterBottom>
                     Select a saved card:
                   </Typography>
@@ -347,7 +347,11 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
                 </Grid>
               )}
 
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <TextField
                   fullWidth
                   label="Payment Amount"
@@ -374,7 +378,7 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
               </Grid>
 
               {paymentMethod === 'CREDIT_CARD' && (
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Alert severity="info">
                     Process credit card payment through your payment terminal
                   </Alert>
@@ -384,7 +388,6 @@ const FinalPayment: React.FC<FinalPaymentProps> = ({
           )}
         </Grid>
       </Paper>
-
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
         <Button onClick={onBack} disabled={processing}>
           Back

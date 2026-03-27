@@ -54,7 +54,7 @@ const EmojiPetIconSelector: React.FC<EmojiPetIconSelectorProps> = ({
           {icons.map((icon) => {
             const isSelected = selectedIcons.includes(icon.id);
             return (
-              <Grid item key={icon.id}>
+              <Grid key={icon.id}>
                 <Tooltip title={`${icon.label}: ${icon.description}`} arrow>
                   <Chip
                     label={icon.icon}
