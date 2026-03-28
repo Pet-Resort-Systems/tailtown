@@ -167,7 +167,11 @@ Tests run automatically on:
 
 ### GitHub Actions Workflow
 
-Primary locations: `.github/workflows/test-coverage.yml` and `.github/workflows/test-gate.yml`
+Primary active locations: `.github/workflows/test.yml` and `.github/workflows/pr-checks.yml`
+
+Archived migration-only workflow references: `.github/workflows-disabled/test-coverage.yml` and `.github/workflows-disabled/test-gate.yml`
+
+See [DOKPLOY-MIGRATION.md](/docs/DOKPLOY-MIGRATION.md) for the current migration status.
 
 The CI pipeline:
 

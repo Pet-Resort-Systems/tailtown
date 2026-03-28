@@ -11,6 +11,7 @@ The Tailtown repository has automated PR merging configured to streamline the de
 **ALL pull requests automatically merge** when checks pass. No labels needed!
 
 This includes:
+
 - `docs/*` - Documentation changes
 - `chore/*` - Maintenance tasks
 - `feat/*` - New features
@@ -20,6 +21,7 @@ This includes:
 - Any other branch name
 
 **Requirements:**
+
 - ✅ All checks must pass
 - ✅ No merge conflicts
 - ✅ Not marked as draft
@@ -121,10 +123,11 @@ To take advantage of auto-merge, use these prefixes:
 ### PR Not Auto-Merging
 
 Check:
+
 1. ✅ All checks are passing
 2. ✅ PR is not a draft
 3. ✅ No `do-not-merge` label
-4. ✅ Branch name matches pattern (docs/* or chore/*) OR has `automerge` label
+4. ✅ Branch name matches pattern (docs/_ or chore/_) OR has `automerge` label
 5. ✅ No merge conflicts
 
 ### Force Manual Merge
@@ -148,10 +151,12 @@ gh pr merge <PR_NUMBER> --squash --delete-branch
 
 ## Configuration
 
-The auto-merge workflow is defined in:
-- `.github/workflows/auto-merge.yml`
+The auto-merge workflow is currently archived during the Dokploy migration at:
 
-To modify the behavior, edit that file and adjust:
+- `.github/workflows-disabled/auto-merge.yml`
+
+To reactivate it later, move it back into `.github/workflows/auto-merge.yml` and then adjust:
+
 - Branch patterns in the `if` condition
 - Merge method (`MERGE_METHOD`)
 - Required approvals (`MERGE_REQUIRED_APPROVALS`)
@@ -161,7 +166,6 @@ To modify the behavior, edit that file and adjust:
 
 - Auto-merge only works for branches in the same repository
 - External contributors' PRs will NOT auto-merge
-- Protected branch rules still apply
 - Required status checks must pass
 
 ---
