@@ -4,9 +4,11 @@
   "description": "Payment processing service with CardConnect integration",
   "main": "dist/index.js",
   "scripts": {
-    "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
-    "build": "tsc",
+    "start": "node dist/index.js",
+    "build": "tsgo",
+    "typecheck": "tsc --noEmit",
+    "typecheck:tsgo": "tsgo --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -18,7 +20,7 @@
     "cors": "2.8.5",
     "dotenv": "16.3.1",
     "express": "4.18.2",
-    "express-rate-limit": "7.5.1",
+    "express-rate-limit": "8.2.1",
     "helmet": "7.1.0",
     "joi": "17.11.0",
     "uuid": "9.0.1",
@@ -37,6 +39,7 @@
     "prisma": "catalog:",
     "ts-jest": "29.1.0",
     "tsx": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@typescript/native-preview": "catalog:"
   }
 }
