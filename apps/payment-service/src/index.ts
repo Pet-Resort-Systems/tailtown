@@ -3,13 +3,14 @@
  * Handles payment processing with CardConnect integration
  */
 
-import express, { Express } from 'express';
+import express from 'express';
+import type { Express, RequestHandler } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
-import { logger } from './utils/logger';
-import paymentRoutes from './routes/payment.routes';
+import { logger } from './utils/logger.js';
+import paymentRoutes from './routes/payment.routes.js';
 
 // Load environment variables
 dotenv.config();
@@ -32,12 +33,14 @@ app.use(
 );
 
 // Rate limiting
-const limiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'),
-  message: 'Too many requests from this IP, please try again later.',
-});
-app.use('/api/', limiter);
+app.use(
+  '/api/',
+  rateLimit({
+    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
+    max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'),
+    message: 'Too many requests from this IP, please try again later.',
+  })
+);
 
 // Body parsing middleware
 app.use(express.json());
