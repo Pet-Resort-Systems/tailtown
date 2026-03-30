@@ -2,6 +2,7 @@
   "name": "@tailtown/payment-service",
   "version": "0.1.0",
   "description": "Payment processing service with CardConnect integration",
+  "private": true,
   "main": "dist/index.js",
   "type": "module",
   "scripts": {

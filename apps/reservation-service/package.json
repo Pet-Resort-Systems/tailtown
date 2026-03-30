@@ -2,6 +2,7 @@
   "name": "@tailtown/reservation-service",
   "version": "0.1.0",
   "description": "Reservation management service for Tailtown",
+  "private": true,
   "main": "dist/index.js",
   "engines": {
     "node": ">=24.14.0"
