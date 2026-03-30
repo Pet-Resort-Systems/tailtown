@@ -160,7 +160,7 @@ const SuperAdminDashboard: React.FC = () => {
                   sx={{ flex: 1 }}
                   onClick={() => {
                     const grafanaUrl =
-                      process.env.NODE_ENV === 'production'
+                      import.meta.env.PROD
                         ? 'http://129.212.178.244:3030'
                         : 'http://localhost:3030';
                     window.open(grafanaUrl, '_blank');

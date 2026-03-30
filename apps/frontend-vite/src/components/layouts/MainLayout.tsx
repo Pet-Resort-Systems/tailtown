@@ -79,7 +79,7 @@ const getProfilePhotoUrl = (
   if (!profilePhoto) return undefined;
 
   try {
-    const envUrl = process.env.REACT_APP_API_URL;
+    const envUrl = import.meta.env.VITE_API_URL;
     const baseUrl =
       envUrl && envUrl.length > 0 ? envUrl : window.location.origin;
 
@@ -134,7 +134,7 @@ const MainLayout = ({ children }: { children?: React.ReactNode }) => {
   const loadBusinessSettings = async () => {
     try {
       // Use dynamic API URL based on environment
-      const envUrl = process.env.REACT_APP_API_URL;
+      const envUrl = import.meta.env.VITE_API_URL;
       const API_URL =
         envUrl && envUrl.length > 0 ? envUrl : window.location.origin;
       const tenantId =

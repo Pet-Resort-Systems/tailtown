@@ -68,7 +68,7 @@ export const createApiClient = (
             ...(config.headers || {}),
             'x-tenant-id': tenantId,
           } as any;
-        } else if (process.env.NODE_ENV === 'development') {
+        } else if (import.meta.env.DEV) {
           console.warn('No tenant ID found; using default "dev" tenant');
           config.headers = {
             ...(config.headers || {}),
