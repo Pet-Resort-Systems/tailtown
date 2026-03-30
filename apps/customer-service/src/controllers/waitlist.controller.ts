@@ -8,10 +8,10 @@
  * - Managing waitlist positions
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 
-import AppError from '../utils/appError';
-import { prisma } from '../config/prisma';
+import AppError from '../utils/appError.js';
+import { prisma } from '../config/prisma.js';
 
 export interface AuthRequest extends Request {
   user?: {

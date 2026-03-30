@@ -7,7 +7,7 @@ import {
   deleteTemplate,
   duplicateTemplate,
   seedDefaultTemplates,
-} from '../controllers/messageTemplates.controller';
+} from '../controllers/messageTemplates.controller.js';
 
 const router = express.Router();
 

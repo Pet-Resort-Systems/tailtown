@@ -5,13 +5,13 @@
  */
 
 import express from 'express';
-import { authenticate } from '../middleware/auth.middleware';
+import { authenticate } from '../middleware/auth.middleware.js';
 import {
   getBusinessSettings,
   uploadLogo,
   deleteLogo,
   uploadMiddleware,
-} from '../controllers/business-settings.controller';
+} from '../controllers/business-settings.controller.js';
 
 const router = express.Router();
 

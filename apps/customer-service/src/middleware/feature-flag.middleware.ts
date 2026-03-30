@@ -5,10 +5,10 @@
  * Use this to conditionally enable/disable API endpoints per tenant.
  */
 
-import { Request, Response, NextFunction } from 'express';
-import { isFeatureEnabled } from '../services/feature-flag.service';
-import { AppError } from './error.middleware';
-import { logger } from '../utils/logger';
+import { type Request, type Response, type NextFunction } from 'express';
+import { isFeatureEnabled } from '../services/feature-flag.service.js';
+import { AppError } from './error.middleware.js';
+import { logger } from '../utils/logger.js';
 
 /**
  * Middleware factory to require a feature flag to be enabled
@@ -71,7 +71,7 @@ export const attachFeatureFlags = async (
 
     // Import here to avoid circular dependency
     const { getTenantFeatureFlags } =
-      await import('../services/feature-flag.service');
+      await import('../services/feature-flag.service.js');
     const flags = await getTenantFeatureFlags(tenantId);
 
     (req as any).featureFlags = flags;

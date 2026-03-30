@@ -2,8 +2,8 @@
  * Utility functions that mirror the @tailtown/api package until it's properly integrated
  */
 
-import { Request } from 'express';
-import { ZodSchema } from 'zod';
+import { type Request } from 'express';
+import { type ZodSchema } from 'zod';
 
 /**
  * Creates a standardized error response for validation errors

@@ -8,4 +8,4 @@
  */
 
 // Re-export all controller methods from the index file
-export * from './index';
+export * from './index.js';

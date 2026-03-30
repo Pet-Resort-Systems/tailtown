@@ -7,10 +7,6 @@
     "noImplicitAny": false,
     "skipDefaultLibCheck": true,
     "forceConsistentCasingInFileNames": false,
-    "baseUrl": "./src",
-    "paths": {
-      "*": ["*"]
-    },
     "declaration": true,
     "noEmitOnError": false
   },

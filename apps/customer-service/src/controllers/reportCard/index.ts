@@ -9,7 +9,7 @@
  */
 
 // Re-export AuthRequest type
-export type { AuthRequest } from './reportCard-crud.controller';
+export type { AuthRequest } from './reportCard-crud.controller.js';
 
 // CRUD Operations
 export {
@@ -18,14 +18,14 @@ export {
   getReportCard,
   updateReportCard,
   deleteReportCard,
-} from './reportCard-crud.controller';
+} from './reportCard-crud.controller.js';
 
 // Photo Operations
 export {
   uploadPhoto,
   deletePhoto,
   updatePhoto,
-} from './reportCard-photos.controller';
+} from './reportCard-photos.controller.js';
 
 // Bulk Operations and Queries
 export {
@@ -35,4 +35,4 @@ export {
   getCustomerReportCards,
   getPetReportCards,
   getReservationReportCards,
-} from './reportCard-bulk.controller';
+} from './reportCard-bulk.controller.js';

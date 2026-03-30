@@ -5,10 +5,10 @@
  * Used by super admin dashboard for real-time system status.
  */
 
-import { Request, Response } from 'express';
+import { type Request, type Response } from 'express';
 
 import os from 'os';
-import { prisma } from '../../config/prisma';
+import { prisma } from '../../config/prisma.js';
 
 // Track service start time for uptime calculation
 const SERVICE_START_TIME = Date.now();
@@ -101,7 +101,7 @@ async function checkDatabaseHealth(): Promise<DatabaseHealth> {
 async function checkCacheHealth(): Promise<CacheHealth> {
   try {
     // Try to import Redis client
-    const { redisClient, isRedisConnected } = await import('../../utils/redis');
+    const { redisClient, isRedisConnected } = await import('../../utils/redis.js');
 
     if (!redisClient || !isRedisConnected()) {
       return { status: 'not_configured' };

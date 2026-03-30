@@ -9,7 +9,7 @@
  * the reservation service schema. Run against customer service database if needed.
  */
 
-import { prisma } from '../config/prisma';
+import { prisma } from '../config/prisma.js';
 
 async function seedOctoberReservations() {
   console.log('Starting October reservations seeding...');

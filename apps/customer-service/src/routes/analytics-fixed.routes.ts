@@ -5,7 +5,7 @@ import {
   getSalesByAddOn,
   getCustomerValue,
   getCustomerReport,
-} from '../controllers/analytics.controller';
+} from '../controllers/analytics.controller.js';
 
 const router = express.Router();
 

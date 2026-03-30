@@ -3,14 +3,19 @@
  * This provides the core functionality needed for the service to operate independently
  */
 
-import express, { Express, Request, Response, NextFunction } from 'express';
+import express, {
+  type Express,
+  type Request,
+  type Response,
+  type NextFunction,
+} from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
-import { logger } from './logger';
-import { requestIdMiddleware } from '../middleware/requestId.middleware';
+import { logger } from './logger.js';
+import { requestIdMiddleware } from '../middleware/requestId.middleware.js';
 
 /**
  * Create and configure an Express service with standard middleware

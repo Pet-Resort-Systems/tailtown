@@ -13,7 +13,7 @@ import {
   getActiveCoupons,
   updateCouponStatus,
   getCustomerPermanentCouponForCheckout,
-} from '../controllers/coupon.controller';
+} from '../controllers/coupon.controller.js';
 
 const router = express.Router();
 

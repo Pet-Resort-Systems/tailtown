@@ -1,9 +1,9 @@
-import express from 'express';
-import * as checkInTemplateController from '../controllers/check-in-template.controller';
-import * as checkInController from '../controllers/check-in.controller';
-import * as serviceAgreementController from '../controllers/service-agreement.controller';
+import { Router } from 'express';
+import * as checkInTemplateController from '../controllers/check-in-template.controller.js';
+import * as checkInController from '../controllers/check-in.controller.js';
+import * as serviceAgreementController from '../controllers/service-agreement.controller.js';
 
-const router = express.Router();
+const router: Router = Router();
 
 /**
  * Check-In Template Routes

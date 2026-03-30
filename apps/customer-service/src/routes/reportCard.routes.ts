@@ -5,8 +5,8 @@
  */
 
 import express from 'express';
-import { authenticate } from '../middleware/auth.middleware';
-import * as reportCardController from '../controllers/reportCard';
+import { authenticate } from '../middleware/auth.middleware.js';
+import * as reportCardController from '../controllers/reportCard/index.js';
 
 const router = express.Router();
 

@@ -19,85 +19,85 @@ import morgan from 'morgan';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
-import { customerRoutes } from './routes/customer.routes';
-import { petRoutes } from './routes/pet.routes';
-import { reservationRoutes } from './routes/reservation.routes';
-import { serviceRoutes } from './routes/service.routes';
-import { resourceRoutes } from './routes/resource.routes';
-import { suiteRoutes } from './routes/suite.routes';
-import { staffRoutes } from './routes/staff.routes';
-import { scheduleRoutes } from './routes/schedule.routes';
-import priceRuleRoutes from './routes/priceRule.routes';
-import couponRoutes from './routes/coupon.routes';
-import availabilityRoutes from './routes/availability.routes';
-import loyaltyRoutes from './routes/loyalty.routes';
-import depositRoutes from './routes/deposit.routes';
-import multiPetRoutes from './routes/multiPet.routes';
-import checklistRoutes from './routes/checklist.routes';
-import invoiceRoutes from './routes/invoice.routes';
-import paymentRoutes from './routes/payment.routes';
-import addonRoutes from './routes/addon.routes';
+import { customerRoutes } from './routes/customer.routes.js';
+import { petRoutes } from './routes/pet.routes.js';
+import { reservationRoutes } from './routes/reservation.routes.js';
+import { serviceRoutes } from './routes/service.routes.js';
+import { resourceRoutes } from './routes/resource.routes.js';
+import { suiteRoutes } from './routes/suite.routes.js';
+import { staffRoutes } from './routes/staff.routes.js';
+import { scheduleRoutes } from './routes/schedule.routes.js';
+import priceRuleRoutes from './routes/priceRule.routes.js';
+import couponRoutes from './routes/coupon.routes.js';
+import availabilityRoutes from './routes/availability.routes.js';
+import loyaltyRoutes from './routes/loyalty.routes.js';
+import depositRoutes from './routes/deposit.routes.js';
+import multiPetRoutes from './routes/multiPet.routes.js';
+import checklistRoutes from './routes/checklist.routes.js';
+import invoiceRoutes from './routes/invoice.routes.js';
+import paymentRoutes from './routes/payment.routes.js';
+import addonRoutes from './routes/addon.routes.js';
 // Using fixed analytics routes to avoid schema issues
-import analyticsRoutes from './routes/analytics-fixed.routes';
-import tenantRoutes from './routes/tenant.routes';
-import emailRoutes from './routes/email.routes';
-import smsRoutes from './routes/sms.routes';
-import notificationRoutes from './routes/notification.routes';
-import vaccineUploadRoutes from './routes/vaccine-upload.routes';
-import groomerAppointmentRoutes from './routes/groomerAppointment.routes';
-import trainingClassRoutes from './routes/trainingClass.routes';
-import enrollmentRoutes from './routes/enrollment.routes';
-import vaccineRequirementRoutes from './routes/vaccineRequirement.routes';
-import customIconRoutes from './routes/custom-icons.routes';
-import productsRoutes from './routes/products.routes';
-import reportRoutes from './routes/reports.routes';
-import gingrRoutes from './routes/gingr.routes';
-import referenceDataRoutes from './routes/referenceData.routes';
-import messageTemplatesRoutes from './routes/messageTemplates.routes';
-import announcementRoutes from './routes/announcement.routes';
-import superAdminRoutes from './routes/super-admin.routes';
-import businessSettingsRoutes from './routes/business-settings.routes';
-import messagingRoutes from './routes/messaging.routes';
-import waitlistRoutes from './routes/waitlist.routes';
-import reportCardRoutes from './routes/reportCard.routes';
-import daycarePassRoutes from './routes/daycare-pass.routes';
-import auditLogRoutes from './routes/audit-log.routes';
-import tipRoutes from './routes/tip.routes';
-import commissionRoutes from './routes/commission.routes';
-import standingReservationRoutes from './routes/standing-reservation.routes';
-import careTrackingRoutes from './routes/care-tracking.routes';
-import scheduleTemplateRoutes from './routes/schedule-template.routes';
-import featureFlagsRoutes from './routes/feature-flags.routes';
-import { systemRoutes } from './routes/system.routes';
-import onboardingRoutes from './routes/onboarding.routes';
-import printRoutes from './routes/print.routes';
-import { errorHandler } from './middleware/error.middleware';
+import analyticsRoutes from './routes/analytics-fixed.routes.js';
+import tenantRoutes from './routes/tenant.routes.js';
+import emailRoutes from './routes/email.routes.js';
+import smsRoutes from './routes/sms.routes.js';
+import notificationRoutes from './routes/notification.routes.js';
+import vaccineUploadRoutes from './routes/vaccine-upload.routes.js';
+import groomerAppointmentRoutes from './routes/groomerAppointment.routes.js';
+import trainingClassRoutes from './routes/trainingClass.routes.js';
+import enrollmentRoutes from './routes/enrollment.routes.js';
+import vaccineRequirementRoutes from './routes/vaccineRequirement.routes.js';
+import customIconRoutes from './routes/custom-icons.routes.js';
+import productsRoutes from './routes/products.routes.js';
+import reportRoutes from './routes/reports.routes.js';
+import gingrRoutes from './routes/gingr.routes.js';
+import referenceDataRoutes from './routes/referenceData.routes.js';
+import messageTemplatesRoutes from './routes/messageTemplates.routes.js';
+import announcementRoutes from './routes/announcement.routes.js';
+import superAdminRoutes from './routes/super-admin.routes.js';
+import businessSettingsRoutes from './routes/business-settings.routes.js';
+import messagingRoutes from './routes/messaging.routes.js';
+import waitlistRoutes from './routes/waitlist.routes.js';
+import reportCardRoutes from './routes/reportCard.routes.js';
+import daycarePassRoutes from './routes/daycare-pass.routes.js';
+import auditLogRoutes from './routes/audit-log.routes.js';
+import tipRoutes from './routes/tip.routes.js';
+import commissionRoutes from './routes/commission.routes.js';
+import standingReservationRoutes from './routes/standing-reservation.routes.js';
+import careTrackingRoutes from './routes/care-tracking.routes.js';
+import scheduleTemplateRoutes from './routes/schedule-template.routes.js';
+import featureFlagsRoutes from './routes/feature-flags.routes.js';
+import { systemRoutes } from './routes/system.routes.js';
+import onboardingRoutes from './routes/onboarding.routes.js';
+import printRoutes from './routes/print.routes.js';
+import { errorHandler } from './middleware/error.middleware.js';
 import {
   extractTenantContext,
   requireTenant,
-} from './middleware/tenant.middleware';
+} from './middleware/tenant.middleware.js';
 import {
   enforceHTTPS,
   securityHeaders,
   sanitizeInput,
-} from './middleware/security.middleware';
+} from './middleware/security.middleware.js';
 import {
   authenticate,
   requireTenantAdmin,
   optionalAuth,
-} from './middleware/auth.middleware';
-import { requireJsonContentType } from './middleware/content-type.middleware';
-import { monitoring } from './utils/monitoring';
-import { prometheusMetrics } from './utils/prometheus';
-import { auditMiddleware } from './utils/auditLog';
-import monitoringRoutes from './routes/monitoring.routes';
-import apiMetricsRoutes from './routes/api-metrics.routes';
+} from './middleware/auth.middleware.js';
+import { requireJsonContentType } from './middleware/content-type.middleware.js';
+import { monitoring } from './utils/monitoring.js';
+import { prometheusMetrics } from './utils/prometheus.js';
+import { auditMiddleware } from './utils/auditLog.js';
+import monitoringRoutes from './routes/monitoring.routes.js';
+import apiMetricsRoutes from './routes/api-metrics.routes.js';
 import {
   apiAnalytics,
   apiVersionHeaders,
   correlationId,
   enhancedRequestLogging,
-} from './middleware/apiGateway.middleware';
+} from './middleware/apiGateway.middleware.js';
 
 // Load environment variables
 dotenv.config();
@@ -114,7 +114,7 @@ app.set('etag', false); // Disable ETag generation to reduce header size
 app.set('x-powered-by', false); // Remove unnecessary headers
 
 // Request ID middleware - MUST be first to ensure all requests have an ID
-import { requestIdMiddleware } from './middleware/requestId.middleware';
+import { requestIdMiddleware } from './middleware/requestId.middleware.js';
 app.use(requestIdMiddleware);
 
 // API Gateway middleware - correlation ID and version headers
@@ -452,11 +452,11 @@ app.use('/api/metrics', apiMetricsRoutes);
 // PUBLIC API ROUTES (MUST BE FIRST - no authentication required)
 // ============================================
 // Customer lookup for booking portal login (public, rate-limited)
-import { lookupCustomerByEmail } from './controllers/customer';
-import { loginStaff } from './controllers/staff';
-import { validateBody } from './middleware/validation.middleware';
-import { staffLoginSchema } from './validators/staff.validators';
-import { loginRateLimiter } from './middleware/rateLimiter.middleware';
+import { lookupCustomerByEmail } from './controllers/customer/index.js';
+import { loginStaff } from './controllers/staff/index.js';
+import { validateBody } from './middleware/validation.middleware.js';
+import { staffLoginSchema } from './validators/staff.validators.js';
+import { loginRateLimiter } from './middleware/rateLimiter.middleware.js';
 
 const customerLookupLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -700,7 +700,7 @@ app.get('/health', async (req, res) => {
 
   try {
     // Test database connection
-    const { prisma } = await import('./config/prisma');
+    const { prisma } = await import('./config/prisma.js');
     await prisma.$queryRaw`SELECT 1`;
     health.database.connected = true;
 
@@ -726,12 +726,12 @@ app.use(errorHandler);
 // Start the server only if not in test mode
 if (process.env.NODE_ENV !== 'test') {
   // Initialize Sentry error tracking
-  import('./utils/sentry').then(({ initSentry }) => {
+  import('./utils/sentry.js').then(({ initSentry }) => {
     initSentry();
   });
 
   // Initialize Redis cache
-  import('./utils/redis').then(({ initRedis }) => {
+  import('./utils/redis.js').then(({ initRedis }) => {
     initRedis().catch((error) => {
       console.error(
         'Failed to initialize Redis, continuing without cache:',

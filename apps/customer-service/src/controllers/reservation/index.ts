@@ -19,17 +19,17 @@ export {
   getReservationsByPet,
   getReservationsByDateRange,
   getReservationsByStatus,
-} from './reservation-queries.controller';
+} from './reservation-queries.controller.js';
 
 // CRUD Operations
 export {
   createReservation,
   updateReservation,
   deleteReservation,
-} from './reservation-crud.controller';
+} from './reservation-crud.controller.js';
 
 // Extras (Revenue, Add-ons)
 export {
   getTodayRevenue,
   addAddOnsToReservation,
-} from './reservation-extras.controller';
+} from './reservation-extras.controller.js';

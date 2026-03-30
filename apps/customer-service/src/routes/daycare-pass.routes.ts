@@ -12,7 +12,7 @@ import {
   autoRedeemPass,
   reverseRedemption,
   checkAvailablePasses,
-} from '../controllers/daycare-pass.controller';
+} from '../controllers/daycare-pass.controller.js';
 
 const router = Router();
 

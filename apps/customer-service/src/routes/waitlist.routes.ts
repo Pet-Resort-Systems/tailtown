@@ -5,8 +5,8 @@
  */
 
 import express from 'express';
-import { authenticate } from '../middleware/auth.middleware';
-import * as waitlistController from '../controllers/waitlist.controller';
+import { authenticate } from '../middleware/auth.middleware.js';
+import * as waitlistController from '../controllers/waitlist.controller.js';
 
 const router = express.Router();
 

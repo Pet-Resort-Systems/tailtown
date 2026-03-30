@@ -8,17 +8,17 @@
  * - getRefunds
  */
 
-import { Response, NextFunction } from 'express';
-import { AppError } from '../../middleware/error.middleware';
-import { TenantRequest } from '../../middleware/tenant.middleware';
+import { type Response, type NextFunction } from 'express';
+import { AppError } from '../../middleware/error.middleware.js';
+import { type TenantRequest } from '../../middleware/tenant.middleware.js';
 import {
   getRevenueReport,
   getProfitLossReport,
   getOutstandingBalances,
   getRefundsReport,
   getReconciliationReport,
-} from '../../services/financialReportService';
-import { logger } from '../../utils/logger';
+} from '../../services/financialReportService.js';
+import { logger } from '../../utils/logger.js';
 
 /**
  * GET /api/reports/financial/revenue

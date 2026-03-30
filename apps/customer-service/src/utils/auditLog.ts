@@ -4,7 +4,7 @@
  * Tracks all tenant actions for compliance and debugging
  */
 
-import { Request } from 'express';
+import { type Request } from 'express';
 
 export enum AuditAction {
   // Customer actions

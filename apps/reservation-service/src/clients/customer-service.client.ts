@@ -7,8 +7,8 @@
  * This implements proper microservice communication patterns.
  */
 
-import axios, { AxiosInstance, AxiosError } from 'axios';
-import { AppError } from '../utils/service';
+import axios, { type AxiosInstance, AxiosError } from 'axios';
+import { AppError } from '../utils/service.js';
 
 // Environment configuration
 const CUSTOMER_SERVICE_URL =

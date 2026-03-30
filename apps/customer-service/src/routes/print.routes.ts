@@ -3,7 +3,7 @@ import {
   printKennelLabel,
   getAvailablePrinters,
   getPrinterStatus,
-} from '../controllers/print.controller';
+} from '../controllers/print.controller.js';
 
 const router = Router();
 

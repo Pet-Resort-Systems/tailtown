@@ -12,7 +12,7 @@ import {
   getAllCommissions,
   calculateCommission,
   getCommissionReport,
-} from '../controllers/commission.controller';
+} from '../controllers/commission.controller.js';
 
 const router = Router();
 

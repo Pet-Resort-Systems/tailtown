@@ -19,7 +19,7 @@ import {
   getCustomerReservations,
   getTodayRevenue,
   addAddOnsToReservation,
-} from '../controllers/reservation';
+} from '../controllers/reservation/index.js';
 
 const router = Router();
 

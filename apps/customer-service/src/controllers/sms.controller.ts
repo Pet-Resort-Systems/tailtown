@@ -1,7 +1,7 @@
-import { TenantRequest } from '../middleware/tenant.middleware';
-import { Request, Response } from 'express';
-import { smsService } from '../services/sms.service';
-import { prisma } from '../config/prisma';
+import { type TenantRequest } from '../middleware/tenant.middleware.js';
+import { type Request, type Response } from 'express';
+import { smsService } from '../services/sms.service.js';
+import { prisma } from '../config/prisma.js';
 
 /**
  * SMS Controller

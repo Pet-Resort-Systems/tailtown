@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { type Request, type Response } from 'express';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import fs from 'fs';

@@ -11,7 +11,7 @@ import {
   phoneSchema,
   nameSchema,
   uuidSchema,
-} from './common.validators';
+} from './common.validators.js';
 
 /**
  * Staff login schema

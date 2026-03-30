@@ -20,7 +20,7 @@ import {
   createHoliday,
   updateHoliday,
   deleteHoliday,
-} from '../controllers/staff/schedule-template.controller';
+} from '../controllers/staff/schedule-template.controller.js';
 
 const router = Router();
 

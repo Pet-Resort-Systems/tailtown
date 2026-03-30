@@ -8,7 +8,7 @@ import {
   getAllErrors,
   getErrorAnalytics,
   getErrorById,
-} from './get-errors.controller';
-import { resolveError } from './resolve-error.controller';
+} from './get-errors.controller.js';
+import { resolveError } from './resolve-error.controller.js';
 
 export { getAllErrors, getErrorAnalytics, getErrorById, resolveError };

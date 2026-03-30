@@ -9,7 +9,7 @@ import { Router } from 'express';
 import {
   completeTenantOnboarding,
   validateOnboardingData,
-} from '../controllers/onboarding.controller';
+} from '../controllers/onboarding.controller.js';
 
 const router = Router();
 

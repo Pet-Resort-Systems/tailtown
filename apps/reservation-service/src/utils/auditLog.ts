@@ -4,9 +4,9 @@
  * Tracks all tenant actions for compliance and debugging
  */
 
-import { Request } from 'express';
-import { prisma } from '../config/prisma';
-import { logger } from './logger';
+import { type Request } from 'express';
+import { prisma } from '../config/prisma.js';
+import { logger } from './logger.js';
 
 export enum AuditAction {
   // Customer actions

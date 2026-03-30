@@ -1,8 +1,8 @@
-import { Response, NextFunction } from 'express';
-import { TenantRequest } from '../middleware/tenant.middleware';
-import { prisma } from '../config/prisma';
-import { AppError } from '../middleware/error.middleware';
-import { deleteFile, getFileUrl } from '../services/upload.service';
+import { type Response, type NextFunction } from 'express';
+import { type TenantRequest } from '../middleware/tenant.middleware.js';
+import { prisma } from '../config/prisma.js';
+import { AppError } from '../middleware/error.middleware.js';
+import { deleteFile, getFileUrl } from '../services/upload.service.js';
 
 export class VaccineUploadController {
   /**

@@ -5,11 +5,11 @@
  * and generation of actual reservations from templates
  */
 
-import { Response, NextFunction } from 'express';
+import { type Response, type NextFunction } from 'express';
 import { RecurrenceFrequency } from '@prisma/client';
-import { AppError } from '../middleware/error.middleware';
-import { TenantRequest } from '../middleware/tenant.middleware';
-import { prisma } from '../config/prisma';
+import { AppError } from '../middleware/error.middleware.js';
+import { type TenantRequest } from '../middleware/tenant.middleware.js';
+import { prisma } from '../config/prisma.js';
 
 /**
  * Get all standing reservations for a tenant

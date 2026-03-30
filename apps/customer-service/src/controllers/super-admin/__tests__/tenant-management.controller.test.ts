@@ -9,9 +9,9 @@ import {
   deleteTenant,
   restoreTenant,
   getTenantStats,
-} from '../tenant-management.controller';
+} from '../tenant-management.controller.js';
 import { PrismaClient } from '@prisma/client';
-import * as auditLog from '../../../services/audit-log.service';
+import * as auditLog from '../../../services/audit-log.service.js';
 
 // Mock dependencies
 jest.mock('@prisma/client');

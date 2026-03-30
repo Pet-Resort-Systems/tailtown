@@ -10,7 +10,7 @@ import {
   getPetsByCustomer,
   deactivatePet,
   reactivatePet,
-} from '../controllers/pet.controller';
+} from '../controllers/pet.controller.js';
 
 const router = Router();
 

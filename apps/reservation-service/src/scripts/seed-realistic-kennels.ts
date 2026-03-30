@@ -5,7 +5,7 @@
  * Matches typical pet resort layout with multiple rooms
  */
 
-import { prisma } from '../config/prisma';
+import { prisma } from '../config/prisma.js';
 
 async function seedRealisticKennels() {
   console.log('Starting realistic kennel seeding...');

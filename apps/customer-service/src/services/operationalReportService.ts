@@ -3,13 +3,13 @@
  * Generates operational metrics and efficiency reports
  */
 
-import { prisma } from '../config/prisma';
+import { prisma } from '../config/prisma.js';
 import {
-  StaffPerformance,
-  ResourceUtilization,
-  BookingPattern,
-  CapacityAnalysis,
-} from '../types/reports.types';
+  type StaffPerformance,
+  type ResourceUtilization,
+  type BookingPattern,
+  type CapacityAnalysis,
+} from '../types/reports.types.js';
 
 /**
  * Get staff performance report

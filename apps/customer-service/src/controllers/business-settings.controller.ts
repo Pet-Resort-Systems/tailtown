@@ -4,13 +4,13 @@
  * Handles business customization settings like logo upload
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs/promises';
-import AppError from '../utils/appError';
-import { prisma } from '../config/prisma';
+import AppError from '../utils/appError.js';
+import { prisma } from '../config/prisma.js';
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({

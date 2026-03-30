@@ -1,4 +1,4 @@
-import { prisma } from '../config/prisma';
+import { prisma } from '../config/prisma.js';
 
 async function main() {
   console.log('Starting add-on services seeding...');

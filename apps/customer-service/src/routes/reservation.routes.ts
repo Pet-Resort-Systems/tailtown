@@ -1,4 +1,4 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router, type Request, type Response, type NextFunction } from 'express';
 import {
   // Query operations
   getAllReservations,
@@ -16,7 +16,7 @@ import {
   // Extras
   getTodayRevenue,
   addAddOnsToReservation,
-} from '../controllers/reservation';
+} from '../controllers/reservation/index.js';
 
 const router = Router();
 

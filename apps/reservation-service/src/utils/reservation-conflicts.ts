@@ -1,9 +1,9 @@
 import {
-  ExtendedReservationWhereInput,
+  type ExtendedReservationWhereInput,
   ExtendedReservationStatus,
-} from '../types/prisma-extensions';
-import { prisma } from '../config/prisma';
-import { logger } from './logger';
+} from '../types/prisma-extensions.js';
+import { prisma } from '../config/prisma.js';
+import { logger } from './logger.js';
 
 /**
  * Interface for conflict detection parameters

@@ -11,7 +11,7 @@ import {
   getTemperamentTypes,
   getPetTemperaments,
   updatePetTemperaments,
-} from '../controllers/referenceData.controller';
+} from '../controllers/referenceData.controller.js';
 
 const router = express.Router();
 

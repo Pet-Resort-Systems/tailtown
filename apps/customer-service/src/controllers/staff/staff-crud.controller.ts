@@ -9,20 +9,20 @@
  * - deleteStaff
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 
-import { AppError } from '../../middleware/error.middleware';
+import { AppError } from '../../middleware/error.middleware.js';
 import bcrypt from 'bcrypt';
-import { validatePasswordOrThrow } from '../../utils/passwordValidator';
-import { logger } from '../../utils/logger';
-import { TenantRequest } from '../../middleware/tenant.middleware';
-import { prisma } from '../../config/prisma';
+import { validatePasswordOrThrow } from '../../utils/passwordValidator.js';
+import { logger } from '../../utils/logger.js';
+import { type TenantRequest } from '../../middleware/tenant.middleware.js';
+import { prisma } from '../../config/prisma.js';
 import {
   tenantAuditLog,
   AuditAction,
   AuditCategory,
   AuditSeverity,
-} from '../../services/tenant-audit-log.service';
+} from '../../services/tenant-audit-log.service.js';
 
 // Standard staff select fields (excludes sensitive data)
 const staffSelectFields = {

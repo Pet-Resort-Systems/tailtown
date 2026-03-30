@@ -5,17 +5,17 @@
  * Requires super admin or tenant admin authentication.
  */
 
-import { Router, Request, Response } from 'express';
+import { Router, type Request, type Response } from 'express';
 import {
   getApiMetrics,
   getGlobalApiMetrics,
-} from '../middleware/apiGateway.middleware';
+} from '../middleware/apiGateway.middleware.js';
 import {
   authenticate,
   requireTenantAdmin,
   requireSuperAdmin,
-} from '../middleware/auth.middleware';
-import { requireTenant } from '../middleware/tenant.middleware';
+} from '../middleware/auth.middleware.js';
+import { requireTenant } from '../middleware/tenant.middleware.js';
 
 const router = Router();
 

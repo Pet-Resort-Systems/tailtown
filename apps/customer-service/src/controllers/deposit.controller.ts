@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 
-import { AppError } from '../middleware/error.middleware';
-import { prisma } from '../config/prisma';
+import { AppError } from '../middleware/error.middleware.js';
+import { prisma } from '../config/prisma.js';
 
 // Note: Deposit configuration is stored as JSON in a simple config table
 // This is a lightweight implementation focused on CRUD operations

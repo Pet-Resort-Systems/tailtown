@@ -11,9 +11,9 @@
  */
 
 import { FeatureFlagCategory } from '@prisma/client';
-import { prisma } from '../config/prisma';
-import { getCache, setCache, deleteCache } from '../utils/redis';
-import { logger } from '../utils/logger';
+import { prisma } from '../config/prisma.js';
+import { getCache, setCache, deleteCache } from '../utils/redis.js';
+import { logger } from '../utils/logger.js';
 
 // Cache TTL in seconds
 const CACHE_TTL = 300; // 5 minutes

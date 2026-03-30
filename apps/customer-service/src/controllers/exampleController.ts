@@ -11,9 +11,9 @@ import {
   AppError,
   ErrorType,
   catchAsync,
-} from '../middleware/error.middleware';
-import { logger } from '../utils/logger';
-import { prisma } from '../config/prisma';
+} from '../middleware/error.middleware.js';
+import { logger } from '../utils/logger.js';
+import { prisma } from '../config/prisma.js';
 
 /**
  * Get a customer by ID

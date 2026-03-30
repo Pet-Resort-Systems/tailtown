@@ -5,8 +5,8 @@
  * Returns 400 Bad Request with detailed error messages on validation failure
  */
 
-import { Request, Response, NextFunction } from 'express';
-import { z, ZodError, ZodSchema } from 'zod';
+import { type Request, type Response, type NextFunction } from 'express';
+import { z, ZodError, type ZodSchema } from 'zod';
 
 /**
  * Validation target type

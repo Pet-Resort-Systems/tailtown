@@ -5,7 +5,7 @@
  * to reduce server load and improve client-side performance.
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 
 export interface CacheOptions {
   /**

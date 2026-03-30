@@ -1,6 +1,6 @@
 import express from 'express';
-import * as resourceController from '../controllers/resource';
-import { CacheStrategies } from '../middleware/cache.middleware';
+import * as resourceController from '../controllers/resource/index.js';
+import { CacheStrategies } from '../middleware/cache.middleware.js';
 
 export const resourceRoutes = express.Router();
 

@@ -3,15 +3,15 @@
  * Generates financial reports for business analysis
  */
 
-import { prisma } from '../config/prisma';
+import { prisma } from '../config/prisma.js';
 import {
-  RevenueData,
-  ProfitLossData,
-  OutstandingBalance,
-  RefundData,
-  ReconciliationData,
-  ReconciliationTransaction,
-} from '../types/reports.types';
+  type RevenueData,
+  type ProfitLossData,
+  type OutstandingBalance,
+  type RefundData,
+  type ReconciliationData,
+  type ReconciliationTransaction,
+} from '../types/reports.types.js';
 
 /**
  * Get revenue report for date range

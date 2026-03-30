@@ -11,8 +11,8 @@ import {
   ReservationStatus,
   PaymentStatus,
 } from '@prisma/client';
-import { prisma } from '../config/prisma';
-import { DateRange } from '../types/common';
+import { prisma } from '../config/prisma.js';
+import { type DateRange } from '../types/common.js';
 
 // Standardized filter constants
 const VALID_INVOICE_STATUSES = ['SENT', 'PAID', 'OVERDUE'] as InvoiceStatus[];

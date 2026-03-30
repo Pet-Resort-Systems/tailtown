@@ -5,7 +5,7 @@
  */
 
 import { Router } from 'express';
-import { monitoring } from '../utils/monitoring';
+import { monitoring } from '../utils/monitoring.js';
 
 const router = Router();
 

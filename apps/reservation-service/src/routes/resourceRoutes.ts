@@ -7,8 +7,8 @@
  */
 
 import express from 'express';
-import { checkResourceAvailability } from '../controllers/resource/availability.controller';
-import { batchCheckResourceAvailability } from '../controllers/resource/batch-availability.controller';
+import { checkResourceAvailability } from '../controllers/resource/availability.controller.js';
+import { batchCheckResourceAvailability } from '../controllers/resource/batch-availability.controller.js';
 import {
   getAllResources,
   getResourceById,
@@ -16,7 +16,7 @@ import {
   updateResource,
   deleteResource,
   getResourceAvailability,
-} from '../controllers/resource/resource.controller';
+} from '../controllers/resource/resource.controller.js';
 
 const router = express.Router();
 

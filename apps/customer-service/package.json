@@ -4,6 +4,7 @@
   "description": "Customer and pet management service for Tailtown Pet Resort",
   "private": true,
   "main": "dist/index.js",
+  "type": "module",
   "engines": {
     "node": ">=24.14.0"
   },
@@ -60,6 +61,7 @@
     "@types/bcrypt": "6.0.0",
     "@types/cors": "2.8.13",
     "@types/express": "5.0.6",
+    "@types/express-serve-static-core": "catalog:",
     "@types/helmet": "4.0.0",
     "@types/jest": "30.0.0",
     "@types/jsonwebtoken": "9.0.10",
@@ -71,13 +73,13 @@
     "@types/uuid": "11.0.0",
     "@typescript-eslint/eslint-plugin": "8.56.0",
     "@typescript-eslint/parser": "8.56.1",
+    "@typescript/native-preview": "catalog:",
     "eslint": "10.0.3",
     "jest": "30.2.0",
     "prisma": "catalog:",
     "supertest": "7.2.2",
     "ts-jest": "29.1.0",
     "tsx": "catalog:",
-    "typescript": "catalog:",
-    "@typescript/native-preview": "catalog:"
+    "typescript": "catalog:"
   }
 }

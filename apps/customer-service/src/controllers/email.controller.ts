@@ -1,8 +1,8 @@
-import { Response, NextFunction } from 'express';
-import { TenantRequest } from '../middleware/tenant.middleware';
-import { emailService } from '../services/email.service';
-import { prisma } from '../config/prisma';
-import { AppError } from '../middleware/error.middleware';
+import { type Response, type NextFunction } from 'express';
+import { type TenantRequest } from '../middleware/tenant.middleware.js';
+import { emailService } from '../services/email.service.js';
+import { prisma } from '../config/prisma.js';
+import { AppError } from '../middleware/error.middleware.js';
 
 export class EmailController {
   /**

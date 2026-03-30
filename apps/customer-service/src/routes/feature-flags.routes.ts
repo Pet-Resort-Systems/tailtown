@@ -14,7 +14,7 @@
  */
 
 import express from 'express';
-import { authenticate } from '../middleware/auth.middleware';
+import { authenticate } from '../middleware/auth.middleware.js';
 import {
   getTenantFeatureFlags,
   getTenantServiceModules,
@@ -27,9 +27,9 @@ import {
   seedDefaultFeatureFlags,
   SERVICE_MODULE_FLAGS,
   FEATURE_FLAGS,
-} from '../services/feature-flag.service';
-import { AppError } from '../middleware/error.middleware';
-import { logger } from '../utils/logger';
+} from '../services/feature-flag.service.js';
+import { AppError } from '../middleware/error.middleware.js';
+import { logger } from '../utils/logger.js';
 
 const router = express.Router();
 

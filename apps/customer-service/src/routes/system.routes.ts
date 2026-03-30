@@ -9,13 +9,13 @@ import { Router } from 'express';
 import {
   getSystemHealth,
   getSimpleHealth,
-} from '../controllers/system/health.controller';
+} from '../controllers/system/health.controller.js';
 import {
   printKennelLabel,
   getAvailablePrinters,
   getPrinterStatus,
-} from '../controllers/print.controller';
-import { authenticate } from '../middleware/auth.middleware';
+} from '../controllers/print.controller.js';
+import { authenticate } from '../middleware/auth.middleware.js';
 
 const router = Router();
 

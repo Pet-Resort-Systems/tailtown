@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { tenantController } from '../controllers/tenant.controller';
-import { authenticate, requireSuperAdmin } from '../middleware/auth.middleware';
+import { tenantController } from '../controllers/tenant.controller.js';
+import { authenticate, requireSuperAdmin } from '../middleware/auth.middleware.js';
 
 const router = Router();
 

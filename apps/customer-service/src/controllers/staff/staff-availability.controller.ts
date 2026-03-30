@@ -9,11 +9,11 @@
  * - getAvailableStaff
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 
-import { AppError } from '../../middleware/error.middleware';
-import { logger } from '../../utils/logger';
-import { prisma } from '../../config/prisma';
+import { AppError } from '../../middleware/error.middleware.js';
+import { logger } from '../../utils/logger.js';
+import { prisma } from '../../config/prisma.js';
 
 /**
  * Get availability for a staff member

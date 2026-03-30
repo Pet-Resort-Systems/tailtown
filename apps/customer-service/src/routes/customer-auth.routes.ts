@@ -12,7 +12,7 @@ import {
   resetPassword,
   verifyResetToken,
   checkPasswordStatus,
-} from '../controllers/customer-auth.controller';
+} from '../controllers/customer-auth.controller.js';
 
 const router = Router();
 

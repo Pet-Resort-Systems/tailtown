@@ -3,21 +3,21 @@
  * Handles data migration from Gingr to Tailtown
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 
 // Use native fetch (Node 18+) instead of node-fetch
-import GingrApiClient from '../services/gingr-api.service';
-import { prisma } from '../config/prisma';
+import GingrApiClient from '../services/gingr-api.service.js';
+import { prisma } from '../config/prisma.js';
 import {
   transformOwnerToCustomer,
   transformAnimalToPet,
   transformReservationToReservation,
   generateOrderNumber,
-} from '../services/gingr-transform.service';
+} from '../services/gingr-transform.service.js';
 import {
   findOrCreateResource,
   extractGingrLodging,
-} from '../services/gingr-resource-mapper.service';
+} from '../services/gingr-resource-mapper.service.js';
 
 interface MigrationProgress {
   phase: string;

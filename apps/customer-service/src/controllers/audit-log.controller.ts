@@ -5,13 +5,13 @@
  * All endpoints require admin authentication.
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 import {
   tenantAuditLog,
   AuditAction,
   AuditCategory,
   AuditSeverity,
-} from '../services/tenant-audit-log.service';
+} from '../services/tenant-audit-log.service.js';
 
 /**
  * GET /api/audit-logs

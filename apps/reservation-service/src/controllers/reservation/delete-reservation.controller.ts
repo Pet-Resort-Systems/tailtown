@@ -5,12 +5,12 @@
  * It implements schema alignment strategy with defensive programming.
  */
 
-import { Request, Response } from 'express';
-import { AppError } from '../../utils/service';
-import { catchAsync } from '../../middleware/catchAsync';
-import { logger } from '../../utils/logger';
-import { ExtendedReservationWhereInput } from '../../types/prisma-extensions';
-import { safeExecutePrismaQuery, prisma } from './utils/prisma-helpers';
+import { type Request, type Response } from 'express';
+import { AppError } from '../../utils/service.js';
+import { catchAsync } from '../../middleware/catchAsync.js';
+import { logger } from '../../utils/logger.js';
+import { type ExtendedReservationWhereInput } from '../../types/prisma-extensions.js';
+import { safeExecutePrismaQuery, prisma } from './utils/prisma-helpers.js';
 
 /**
  * Delete a reservation

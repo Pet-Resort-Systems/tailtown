@@ -5,10 +5,10 @@
  * Called by the reservation service to send customer notifications.
  */
 
-import { Response } from 'express';
-import { TenantRequest } from '../middleware/tenant.middleware';
-import { emailService } from '../services/email.service';
-import { prisma } from '../config/prisma';
+import { type Response } from 'express';
+import { type TenantRequest } from '../middleware/tenant.middleware.js';
+import { emailService } from '../services/email.service.js';
+import { prisma } from '../config/prisma.js';
 
 class NotificationController {
   /**

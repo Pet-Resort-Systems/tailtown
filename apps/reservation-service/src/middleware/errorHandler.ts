@@ -6,13 +6,13 @@
  * and provides detailed logging with proper context.
  */
 
-import { Request, Response, NextFunction } from 'express';
-import { AppError, ErrorType } from '../utils/appError';
-import { logger } from '../utils/logger';
+import { type Request, type Response, type NextFunction } from 'express';
+import { AppError, ErrorType } from '../utils/appError.js';
+import { logger } from '../utils/logger.js';
 import {
   reservationErrorTracker,
   ReservationErrorCategory,
-} from '../utils/reservation-error-tracker';
+} from '../utils/reservation-error-tracker.js';
 
 /**
  * Async handler to catch errors in async controller functions

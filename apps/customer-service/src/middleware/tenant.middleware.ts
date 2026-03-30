@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
-import { prisma } from '../config/prisma';
-import { logger } from '../utils/logger';
-import { getCache, setCache, getCacheKey } from '../utils/redis';
+import { type Request, type Response, type NextFunction } from 'express';
+import { prisma } from '../config/prisma.js';
+import { logger } from '../utils/logger.js';
+import { getCache, setCache, getCacheKey } from '../utils/redis.js';
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

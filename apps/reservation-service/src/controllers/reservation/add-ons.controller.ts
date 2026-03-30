@@ -4,12 +4,12 @@
  * Handles adding add-on services to existing reservations
  */
 
-import { Response } from 'express';
-import { TenantRequest } from '../../types/request';
-import { catchAsync } from '../../middleware/catchAsync';
-import { AppError } from '../../utils/service';
-import { prisma } from './utils/prisma-helpers';
-import { logger } from '../../utils/logger';
+import { type Response } from 'express';
+import { type TenantRequest } from '../../types/request.js';
+import { catchAsync } from '../../middleware/catchAsync.js';
+import { AppError } from '../../utils/service.js';
+import { prisma } from './utils/prisma-helpers.js';
+import { logger } from '../../utils/logger.js';
 
 /**
  * Add add-on services to a reservation

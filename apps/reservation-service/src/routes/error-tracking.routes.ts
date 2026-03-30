@@ -10,7 +10,7 @@ import {
   getErrorAnalytics,
   getErrorById,
   resolveError,
-} from '../controllers/error-tracking';
+} from '../controllers/error-tracking/index.js';
 
 // Initialize router
 const router = express.Router();

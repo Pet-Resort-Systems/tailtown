@@ -1,8 +1,8 @@
-import { Response, NextFunction } from 'express';
+import { type Response, type NextFunction } from 'express';
 
-import { AuthRequest } from '../middleware/auth.middleware';
-import { AppError, ErrorType } from '../middleware/error.middleware';
-import { prisma } from '../config/prisma';
+import { type AuthRequest } from '../middleware/auth.middleware.js';
+import { AppError, ErrorType } from '../middleware/error.middleware.js';
+import { prisma } from '../config/prisma.js';
 
 /**
  * Get all channels for the current staff member

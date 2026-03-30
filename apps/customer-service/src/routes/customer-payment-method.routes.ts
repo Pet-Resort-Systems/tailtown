@@ -11,7 +11,7 @@ import {
   deleteCustomerPaymentMethod,
   chargeCustomerPaymentMethod,
   getDefaultPaymentMethod,
-} from '../controllers/customer-payment-method.controller';
+} from '../controllers/customer-payment-method.controller.js';
 
 const router = Router({ mergeParams: true });
 

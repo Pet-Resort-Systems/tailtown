@@ -8,23 +8,23 @@
  * - refreshAccessToken
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 
-import { AppError } from '../../middleware/error.middleware';
+import { AppError } from '../../middleware/error.middleware.js';
 import bcrypt from 'bcrypt';
-import { validatePasswordOrThrow } from '../../utils/passwordValidator';
+import { validatePasswordOrThrow } from '../../utils/passwordValidator.js';
 import {
   generateToken,
   generateRefreshToken,
   verifyRefreshToken,
-} from '../../utils/jwt';
-import { logger } from '../../utils/logger';
-import { TenantRequest } from '../../middleware/tenant.middleware';
-import { prisma } from '../../config/prisma';
+} from '../../utils/jwt.js';
+import { logger } from '../../utils/logger.js';
+import { type TenantRequest } from '../../middleware/tenant.middleware.js';
+import { prisma } from '../../config/prisma.js';
 import {
   tenantAuditLog,
   AuditAction,
-} from '../../services/tenant-audit-log.service';
+} from '../../services/tenant-audit-log.service.js';
 
 /**
  * Authenticate staff member (login)

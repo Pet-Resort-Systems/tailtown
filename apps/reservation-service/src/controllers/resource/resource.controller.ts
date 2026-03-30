@@ -9,16 +9,16 @@
  * and catchAsync wrapper for consistent error handling across services.
  */
 
-import { Response } from 'express';
+import { type Response } from 'express';
 import { ResourceType } from '@prisma/client';
-import { AppError } from '../../utils/appError';
-import { catchAsync } from '../../middleware/errorHandler';
-import { logger } from '../../utils/logger';
-import { TenantRequest } from '../../types/request';
+import { AppError } from '../../utils/appError.js';
+import { catchAsync } from '../../middleware/errorHandler.js';
+import { logger } from '../../utils/logger.js';
+import { type TenantRequest } from '../../types/request.js';
 import {
   prisma,
   safeExecutePrismaQuery,
-} from '../reservation/utils/prisma-helpers';
+} from '../reservation/utils/prisma-helpers.js';
 
 /**
  * Get all resources with pagination and filtering

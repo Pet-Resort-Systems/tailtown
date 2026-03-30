@@ -12,8 +12,8 @@
  * - Supports 7-year retention for compliance
  */
 
-import { Request } from 'express';
-import { prisma } from '../config/prisma';
+import { type Request } from 'express';
+import { prisma } from '../config/prisma.js';
 
 // ============================================
 // TYPES AND INTERFACES

@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import { prisma } from '../config/prisma';
-import { logger } from '../utils/logger';
+import { type Request, type Response } from 'express';
+import { prisma } from '../config/prisma.js';
+import { logger } from '../utils/logger.js';
 
 /**
  * Check-In Controller

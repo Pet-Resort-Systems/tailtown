@@ -5,12 +5,12 @@
  * Includes audit logging for all authentication events.
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 
 import bcrypt from 'bcrypt';
-import { generateTokenPair, verifyToken } from '../../utils/super-admin-jwt';
-import { createAuditLog, AuditAction } from '../../services/audit-log.service';
-import { prisma } from '../../config/prisma';
+import { generateTokenPair, verifyToken } from '../../utils/super-admin-jwt.js';
+import { createAuditLog, AuditAction } from '../../services/audit-log.service.js';
+import { prisma } from '../../config/prisma.js';
 
 /**
  * POST /api/super-admin/login
