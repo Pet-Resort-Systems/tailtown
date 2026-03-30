@@ -5,14 +5,14 @@
  */
 
 import { Router } from 'express';
-import { TenantRequest } from '../types/request';
-import { Response, NextFunction } from 'express';
-import { catchAsync } from '../middleware/catchAsync';
-import { AppError } from '../utils/service';
+import { type TenantRequest } from '../types/request.js';
+import { type Response, type NextFunction } from 'express';
+import { catchAsync } from '../middleware/catchAsync.js';
+import { AppError } from '../utils/service.js';
 import {
   getReservationActivityLogs,
   getTenantActivityLogs,
-} from '../services/reservation-activity.service';
+} from '../services/reservation-activity.service.js';
 
 const router = Router();
 

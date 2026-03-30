@@ -1,10 +1,10 @@
 import {
-  Tenant,
+  type Tenant,
   TenantStatus,
-  TenantUser,
+  type TenantUser,
   UserRole,
 } from '@prisma/client';
-import { prisma } from '../config/prisma';
+import { prisma } from '../config/prisma.js';
 import bcrypt from 'bcrypt';
 
 export interface CreateTenantDto {

@@ -5,7 +5,7 @@
  * for development and testing purposes.
  */
 
-import { prisma } from '../config/prisma';
+import { prisma } from '../config/prisma.js';
 
 async function seedResources() {
   console.log('Starting resource seeding...');

@@ -8,11 +8,11 @@ import {
   logout,
   getCurrentUser,
   refreshToken,
-} from '../auth.controller';
+} from '../auth.controller.js';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import * as jwt from '../../../utils/super-admin-jwt';
-import * as auditLog from '../../../services/audit-log.service';
+import * as jwt from '../../../utils/super-admin-jwt.js';
+import * as auditLog from '../../../services/audit-log.service.js';
 
 // Mock dependencies
 jest.mock('@prisma/client');

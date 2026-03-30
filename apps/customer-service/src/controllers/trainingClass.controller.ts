@@ -1,9 +1,9 @@
-import { TenantRequest } from '../middleware/tenant.middleware';
-import { Request, Response, NextFunction } from 'express';
+import { type TenantRequest } from '../middleware/tenant.middleware.js';
+import { type Request, type Response, type NextFunction } from 'express';
 
-import { AppError } from '../middleware/error.middleware';
+import { AppError } from '../middleware/error.middleware.js';
 import { addDays, addWeeks, format, parse } from 'date-fns';
-import { prisma } from '../config/prisma';
+import { prisma } from '../config/prisma.js';
 
 /**
  * Training Class Controller

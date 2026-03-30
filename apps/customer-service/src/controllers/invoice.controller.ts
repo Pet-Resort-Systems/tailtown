@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 
-import { AppError } from '../middleware/error.middleware';
-import { TenantRequest } from '../middleware/tenant.middleware';
-import { prisma } from '../config/prisma';
+import { AppError } from '../middleware/error.middleware.js';
+import { type TenantRequest } from '../middleware/tenant.middleware.js';
+import { prisma } from '../config/prisma.js';
 
 // Get all invoices for a specific customer
 export const getCustomerInvoices = async (

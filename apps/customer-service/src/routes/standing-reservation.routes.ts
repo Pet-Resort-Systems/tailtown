@@ -13,7 +13,7 @@ import {
   generateReservations,
   skipInstance,
   getUpcomingInstances,
-} from '../controllers/standing-reservation.controller';
+} from '../controllers/standing-reservation.controller.js';
 
 const router = Router();
 

@@ -5,10 +5,10 @@
  * Designed for mobile-friendly staff access
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 import { MealTime } from '@prisma/client';
-import { AppError } from '../middleware/error.middleware';
-import { prisma } from '../config/prisma';
+import { AppError } from '../middleware/error.middleware.js';
+import { prisma } from '../config/prisma.js';
 
 // Extended request with tenantId and user
 interface TenantRequest extends Request {

@@ -3,10 +3,10 @@
  * Handles saved cards on file for customers
  */
 
-import { Response, NextFunction } from 'express';
-import { TenantRequest } from '../middleware/tenant.middleware';
-import { prisma } from '../config/prisma';
-import { AppError } from '../middleware/error.middleware';
+import { type Response, type NextFunction } from 'express';
+import { type TenantRequest } from '../middleware/tenant.middleware.js';
+import { prisma } from '../config/prisma.js';
+import { AppError } from '../middleware/error.middleware.js';
 
 /**
  * GET /api/customers/:customerId/payment-methods

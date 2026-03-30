@@ -3,13 +3,13 @@
  * Routes for testing Gingr API connection and data migration
  */
 
-import express, { Request, Response } from 'express';
-import { testGingrConnection } from '../controllers/gingr-test.controller';
+import express, { type Request, type Response } from 'express';
+import { testGingrConnection } from '../controllers/gingr-test.controller.js';
 import {
   startMigration,
   testConnection,
-} from '../controllers/gingr-migration.controller';
-import { gingrSyncService } from '../services/gingr-sync.service';
+} from '../controllers/gingr-migration.controller.js';
+import { gingrSyncService } from '../services/gingr-sync.service.js';
 
 const router = express.Router();
 

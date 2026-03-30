@@ -6,7 +6,7 @@ import {
   updatePriceRule,
   deletePriceRule,
   calculatePrice,
-} from '../controllers/priceRule.controller';
+} from '../controllers/priceRule.controller.js';
 
 const router = Router();
 

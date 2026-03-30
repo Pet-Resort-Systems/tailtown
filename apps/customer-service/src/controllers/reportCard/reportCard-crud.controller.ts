@@ -9,10 +9,10 @@
  * - deleteReportCard
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 
-import { AppError } from '../../middleware/error.middleware';
-import { prisma } from '../../config/prisma';
+import { AppError } from '../../middleware/error.middleware.js';
+import { prisma } from '../../config/prisma.js';
 
 export interface AuthRequest extends Request {
   user?: {

@@ -4,8 +4,8 @@
  * Tracks key performance indicators and system health metrics
  */
 
-import { Request, Response, NextFunction } from 'express';
-import { logger } from './logger';
+import { type Request, type Response, type NextFunction } from 'express';
+import { logger } from './logger.js';
 
 // Metrics storage
 interface Metrics {

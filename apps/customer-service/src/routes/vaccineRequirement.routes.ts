@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import * as vaccineRequirementController from '../controllers/vaccineRequirement.controller';
+import * as vaccineRequirementController from '../controllers/vaccineRequirement.controller.js';
 
 const router = Router();
 

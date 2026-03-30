@@ -19,7 +19,7 @@ import {
   getMedicationLogs,
   getMedicationReport,
   togglePickyEater,
-} from '../controllers/care-tracking.controller';
+} from '../controllers/care-tracking.controller.js';
 
 const router = Router();
 

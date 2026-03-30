@@ -3,7 +3,7 @@
  * Projects future revenue from confirmed reservations
  */
 
-import { prisma } from '../config/prisma';
+import { prisma } from '../config/prisma.js';
 
 interface DailyForecast {
   date: string;

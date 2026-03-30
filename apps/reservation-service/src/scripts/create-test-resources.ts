@@ -6,7 +6,7 @@
  * Uses raw SQL to bypass any Prisma schema validation issues.
  */
 
-import { prisma } from '../config/prisma';
+import { prisma } from '../config/prisma.js';
 import { v4 as uuidv4 } from 'uuid';
 
 async function createTestResources() {

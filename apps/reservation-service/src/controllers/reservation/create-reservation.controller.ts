@@ -5,21 +5,21 @@
  * It implements schema alignment strategy with defensive programming.
  */
 
-import { Response } from 'express';
-import { TenantRequest } from '../../types/request';
-import { AppError } from '../../utils/service';
-import { catchAsync } from '../../middleware/catchAsync';
-import { logger } from '../../utils/logger';
-import { detectReservationConflicts } from '../../utils/reservation-conflicts';
+import { type Response } from 'express';
+import { type TenantRequest } from '../../types/request.js';
+import { AppError } from '../../utils/service.js';
+import { catchAsync } from '../../middleware/catchAsync.js';
+import { logger } from '../../utils/logger.js';
+import { detectReservationConflicts } from '../../utils/reservation-conflicts.js';
 import {
-  ExtendedResourceWhereInput,
-  ExtendedReservationInclude,
-  ExtendedServiceWhereInput,
-} from '../../types/prisma-extensions';
-import { safeExecutePrismaQuery, prisma } from './utils/prisma-helpers';
-import { customerServiceClient } from '../../clients/customer-service.client';
-import { notificationClient } from '../../clients/notification.client';
-import { logReservationCreated } from '../../services/reservation-activity.service';
+  type ExtendedResourceWhereInput,
+  type ExtendedReservationInclude,
+  type ExtendedServiceWhereInput,
+} from '../../types/prisma-extensions.js';
+import { safeExecutePrismaQuery, prisma } from './utils/prisma-helpers.js';
+import { customerServiceClient } from '../../clients/customer-service.client.js';
+import { notificationClient } from '../../clients/notification.client.js';
+import { logReservationCreated } from '../../services/reservation-activity.service.js';
 
 /**
  * Helper function to determine suite type based on service type

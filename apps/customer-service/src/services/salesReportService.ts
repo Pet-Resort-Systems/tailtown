@@ -3,17 +3,17 @@
  * Generates sales analytics and reports
  */
 
-import { prisma } from '../config/prisma';
+import { prisma } from '../config/prisma.js';
 import {
-  DailySalesData,
-  WeeklySalesData,
-  MonthlySalesData,
-  YTDSalesData,
-  ServiceSales,
-  PaymentMethodSales,
-  TopCustomer,
-  ReportFilters,
-} from '../types/reports.types';
+  type DailySalesData,
+  type WeeklySalesData,
+  type MonthlySalesData,
+  type YTDSalesData,
+  type ServiceSales,
+  type PaymentMethodSales,
+  type TopCustomer,
+  type ReportFilters,
+} from '../types/reports.types.js';
 
 /**
  * Get daily sales report

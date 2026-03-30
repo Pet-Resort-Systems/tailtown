@@ -1,12 +1,12 @@
 import express from 'express';
-import { authenticate } from '../middleware/auth.middleware';
+import { authenticate } from '../middleware/auth.middleware.js';
 import {
   getChannels,
   getChannelMessages,
   sendChannelMessage,
   markChannelAsRead,
   getUnreadCount,
-} from '../controllers/messaging.controller';
+} from '../controllers/messaging.controller.js';
 
 const router = express.Router();
 

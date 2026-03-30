@@ -1,5 +1,5 @@
 import express from 'express';
-import * as suiteController from '../controllers/suite.controller';
+import * as suiteController from '../controllers/suite.controller.js';
 
 export const suiteRoutes = express.Router();
 

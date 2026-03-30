@@ -1,13 +1,13 @@
-import { Request, Response } from 'express';
+import { type Request, type Response } from 'express';
 
-import { TenantRequest } from '../middleware/tenant.middleware';
-import { prisma } from '../config/prisma';
+import { type TenantRequest } from '../middleware/tenant.middleware.js';
+import { prisma } from '../config/prisma.js';
 import {
   getCache,
   setCache,
   getCacheKey,
   deleteCachePattern,
-} from '../utils/redis';
+} from '../utils/redis.js';
 
 // ============================================
 // PRODUCT CRUD

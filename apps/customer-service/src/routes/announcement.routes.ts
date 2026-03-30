@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import * as announcementController from '../controllers/announcement.controller';
+import * as announcementController from '../controllers/announcement.controller.js';
 import {
   authenticate,
   requireTenantAdmin,
-} from '../middleware/auth.middleware';
+} from '../middleware/auth.middleware.js';
 
 const router = Router();
 

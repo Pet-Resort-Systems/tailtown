@@ -11,7 +11,7 @@ import {
   completeChecklist,
   getAllInstances,
   getChecklistStats,
-} from '../controllers/checklist.controller';
+} from '../controllers/checklist.controller.js';
 
 const router = express.Router();
 

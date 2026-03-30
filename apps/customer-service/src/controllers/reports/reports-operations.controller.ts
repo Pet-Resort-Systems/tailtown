@@ -8,16 +8,16 @@
  * - getCapacityAnalysis
  */
 
-import { Response, NextFunction } from 'express';
-import { AppError } from '../../middleware/error.middleware';
-import { TenantRequest } from '../../middleware/tenant.middleware';
+import { type Response, type NextFunction } from 'express';
+import { AppError } from '../../middleware/error.middleware.js';
+import { type TenantRequest } from '../../middleware/tenant.middleware.js';
 import {
   getStaffPerformanceReport,
   getResourceUtilizationReport,
   getBookingPatternsReport,
   getCapacityAnalysisReport,
-} from '../../services/operationalReportService';
-import { logger } from '../../utils/logger';
+} from '../../services/operationalReportService.js';
+import { logger } from '../../utils/logger.js';
 
 /**
  * GET /api/reports/operations/staff

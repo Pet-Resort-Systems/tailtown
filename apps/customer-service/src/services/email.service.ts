@@ -1,5 +1,5 @@
 import sgMail from '@sendgrid/mail';
-import { Reservation, Customer, Pet } from '@prisma/client';
+import { type Reservation, type Customer, type Pet } from '@prisma/client';
 
 // Initialize SendGrid with API key from environment
 if (process.env.SENDGRID_API_KEY) {

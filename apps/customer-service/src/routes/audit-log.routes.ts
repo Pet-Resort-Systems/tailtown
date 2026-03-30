@@ -13,11 +13,11 @@ import {
   getActivitySummary,
   getCriticalEvents,
   getFailedLogins,
-} from '../controllers/audit-log.controller';
+} from '../controllers/audit-log.controller.js';
 import {
   authenticate,
   requireTenantAdmin,
-} from '../middleware/auth.middleware';
+} from '../middleware/auth.middleware.js';
 
 const router = Router();
 

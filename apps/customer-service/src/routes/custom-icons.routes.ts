@@ -8,7 +8,7 @@ import {
   createCustomIcon,
   updateCustomIcon,
   deleteCustomIcon,
-} from '../controllers/custom-icons.controller';
+} from '../controllers/custom-icons.controller.js';
 
 const router = Router();
 

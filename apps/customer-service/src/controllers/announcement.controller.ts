@@ -1,7 +1,7 @@
-import { Response } from 'express';
+import { type Response } from 'express';
 
-import { AuthRequest } from '../middleware/auth.middleware';
-import { prisma } from '../config/prisma';
+import { type AuthRequest } from '../middleware/auth.middleware.js';
+import { prisma } from '../config/prisma.js';
 
 interface TenantRequest extends AuthRequest {
   tenantId?: string;

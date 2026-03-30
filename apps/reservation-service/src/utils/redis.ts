@@ -9,8 +9,8 @@
  * - Invalidate cache when data changes
  */
 
-import { createClient, RedisClientType } from 'redis';
-import { logger } from './logger';
+import { createClient, type RedisClientType } from 'redis';
+import { logger } from './logger.js';
 
 // Redis configuration
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';

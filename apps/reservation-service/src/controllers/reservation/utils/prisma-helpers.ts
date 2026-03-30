@@ -5,11 +5,11 @@
  * implementing the schema alignment strategy with defensive programming.
  */
 
-import { AppError } from '../../../utils/service';
-import { logger } from '../../../utils/logger';
+import { AppError } from '../../../utils/service.js';
+import { logger } from '../../../utils/logger.js';
 
 // Re-export centralized prisma client
-export { prisma } from '../../../config/prisma';
+export { prisma } from '../../../config/prisma.js';
 
 /**
  * Safely executes a Prisma query with error handling

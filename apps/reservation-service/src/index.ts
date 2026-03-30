@@ -1,16 +1,16 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { createService, tenantMiddleware } from './utils/service';
-import reservationRoutes from './routes/reservation.routes';
-import resourceRoutes from './routes/resourceRoutes';
-import errorTrackingRoutes from './routes/error-tracking.routes';
-import checkInRoutes from './routes/check-in.routes';
-import { prisma } from './config/prisma';
-import { monitoring } from './utils/monitoring';
-import { auditMiddleware } from './utils/auditLog';
-import { initRedis, isRedisConnected } from './utils/redis';
-import monitoringRoutes from './routes/monitoring.routes';
+import { createService, tenantMiddleware } from './utils/service.js';
+import reservationRoutes from './routes/reservation.routes.js';
+import resourceRoutes from './routes/resourceRoutes.js';
+import errorTrackingRoutes from './routes/error-tracking.routes.js';
+import checkInRoutes from './routes/check-in.routes.js';
+import { prisma } from './config/prisma.js';
+import { monitoring } from './utils/monitoring.js';
+import { auditMiddleware } from './utils/auditLog.js';
+import { initRedis, isRedisConnected } from './utils/redis.js';
+import monitoringRoutes from './routes/monitoring.routes.js';
 
 // Create and configure the reservation service
 const app = createService({

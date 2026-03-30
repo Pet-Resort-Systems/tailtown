@@ -6,8 +6,8 @@
  */
 
 import { Router } from 'express';
-import { monitoring } from '../utils/monitoring';
-import { prometheusMetrics } from '../utils/prometheus';
+import { monitoring } from '../utils/monitoring.js';
+import { prometheusMetrics } from '../utils/prometheus.js';
 
 const router = Router();
 

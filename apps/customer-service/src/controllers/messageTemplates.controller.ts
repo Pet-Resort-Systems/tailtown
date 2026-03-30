@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { prisma } from '../config/prisma';
+import { type Request, type Response, type NextFunction } from 'express';
+import { prisma } from '../config/prisma.js';
 
 /**
  * Get all message templates

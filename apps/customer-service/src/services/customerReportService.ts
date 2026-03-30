@@ -3,14 +3,14 @@
  * Generates customer analytics and insights
  */
 
-import { prisma } from '../config/prisma';
+import { prisma } from '../config/prisma.js';
 import {
-  CustomerAcquisitionData,
-  CustomerRetentionData,
-  CustomerLifetimeValue,
-  CustomerDemographics,
-  InactiveCustomer,
-} from '../types/reports.types';
+  type CustomerAcquisitionData,
+  type CustomerRetentionData,
+  type CustomerLifetimeValue,
+  type CustomerDemographics,
+  type InactiveCustomer,
+} from '../types/reports.types.js';
 
 /**
  * Get customer acquisition report

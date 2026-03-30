@@ -4,7 +4,7 @@
  * Manage global feature flags and tenant-specific overrides.
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 import {
   getAllFeatureFlags,
   getTenantFeatureFlags,
@@ -15,8 +15,8 @@ import {
   seedDefaultFeatureFlags,
   SERVICE_MODULE_FLAGS,
   FEATURE_FLAGS,
-} from '../../services/feature-flag.service';
-import { logger } from '../../utils/logger';
+} from '../../services/feature-flag.service.js';
+import { logger } from '../../utils/logger.js';
 
 /**
  * GET /super-admin/feature-flags

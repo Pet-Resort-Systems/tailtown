@@ -1,4 +1,4 @@
-import { prisma } from '../config/prisma';
+import { prisma } from '../config/prisma.js';
 
 /**
  * This script generates sample data for testing the analytics dashboard

@@ -3,12 +3,12 @@
  * Handles payment processing endpoints
  */
 
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import {
   CardConnectService,
   cardConnectService,
-} from '../services/cardconnect.service';
-import { logger } from '../utils/logger';
+} from '../services/cardconnect.service.js';
+import { logger } from '../utils/logger.js';
 import Joi from 'joi';
 
 // Validation schemas

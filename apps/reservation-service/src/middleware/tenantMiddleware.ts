@@ -6,10 +6,10 @@
  * enforcing tenant isolation at the API level.
  */
 
-import { Request, Response, NextFunction } from 'express';
-import { AppError } from '../utils/appError';
-import { logger } from '../utils/logger';
-import { prisma } from '../config/prisma';
+import { type Request, type Response, type NextFunction } from 'express';
+import { AppError } from '../utils/appError.js';
+import { logger } from '../utils/logger.js';
+import { prisma } from '../config/prisma.js';
 
 export const tenantMiddleware = async (
   req: Request,

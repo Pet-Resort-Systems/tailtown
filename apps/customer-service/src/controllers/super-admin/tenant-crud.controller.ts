@@ -5,12 +5,12 @@
  * Complements tenant-management.controller.ts (suspend/delete operations).
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 
-import { createAuditLog, AuditAction } from '../../services/audit-log.service';
-import { SuperAdminRequest } from '../../middleware/require-super-admin.middleware';
+import { createAuditLog, AuditAction } from '../../services/audit-log.service.js';
+import { type SuperAdminRequest } from '../../middleware/require-super-admin.middleware.js';
 import bcrypt from 'bcrypt';
-import { prisma } from '../../config/prisma';
+import { prisma } from '../../config/prisma.js';
 
 /**
  * GET /api/super-admin/tenants

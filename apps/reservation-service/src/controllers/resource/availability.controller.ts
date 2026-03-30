@@ -1,14 +1,14 @@
-import { Response, NextFunction } from 'express';
-import { AppError } from '../../utils/appError';
-import { TenantRequest } from '../../types/request';
+import { type Response, type NextFunction } from 'express';
+import { AppError } from '../../utils/appError.js';
+import { type TenantRequest } from '../../types/request.js';
 import {
-  ExtendedReservationWhereInput,
+  type ExtendedReservationWhereInput,
   ExtendedReservationStatus,
-} from '../../types/prisma-extensions';
-import { prisma } from '../../config/prisma';
-import { safeExecutePrismaQuery } from '../../utils/schemaUtils';
-import { logger } from '../../utils/logger';
-import { getCache, setCache, getCacheKey } from '../../utils/redis';
+} from '../../types/prisma-extensions.js';
+import { prisma } from '../../config/prisma.js';
+import { safeExecutePrismaQuery } from '../../utils/schemaUtils.js';
+import { logger } from '../../utils/logger.js';
+import { getCache, setCache, getCacheKey } from '../../utils/redis.js';
 
 // Cache TTL for availability checks (60 seconds - short to ensure accuracy)
 const AVAILABILITY_CACHE_TTL = 60;

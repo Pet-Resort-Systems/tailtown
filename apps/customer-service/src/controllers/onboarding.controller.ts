@@ -5,11 +5,11 @@
  * Creates tenant, resources (rooms/kennels), services, staff, and settings.
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 import { ResourceType, ServiceCategory } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import AppError from '../utils/appError';
-import { prisma } from '../config/prisma';
+import AppError from '../utils/appError.js';
+import { prisma } from '../config/prisma.js';
 // uuid not needed - Prisma generates IDs
 
 // ============================================================================

@@ -6,10 +6,10 @@
  * to ensure consistent results across all parts of the application.
  */
 
-import { Request, Response, NextFunction } from 'express';
-import { AppError } from '../middleware/error.middleware';
-import financialService from '../services/financialService';
-import { prisma } from '../config/prisma';
+import { type Request, type Response, type NextFunction } from 'express';
+import { AppError } from '../middleware/error.middleware.js';
+import financialService from '../services/financialService.js';
+import { prisma } from '../config/prisma.js';
 
 /**
  * Get sales data by service type

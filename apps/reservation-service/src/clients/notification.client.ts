@@ -5,8 +5,8 @@
  * emails and SMS messages for reservation events.
  */
 
-import axios, { AxiosInstance } from 'axios';
-import { logger } from '../utils/logger';
+import axios, { type AxiosInstance } from 'axios';
+import { logger } from '../utils/logger.js';
 
 const CUSTOMER_SERVICE_URL =
   process.env.CUSTOMER_SERVICE_URL || 'http://localhost:4004';

@@ -11,27 +11,27 @@ import {
   logout,
   getCurrentUser,
   refreshToken,
-} from '../controllers/super-admin/auth.controller';
+} from '../controllers/super-admin/auth.controller.js';
 import {
   suspendTenant,
   activateTenant,
   deleteTenant,
   restoreTenant,
   getTenantStats,
-} from '../controllers/super-admin/tenant-management.controller';
+} from '../controllers/super-admin/tenant-management.controller.js';
 import {
   listTenants,
   getTenant,
   createTenant,
   updateTenant,
   cloneTenant,
-} from '../controllers/super-admin/tenant-crud.controller';
+} from '../controllers/super-admin/tenant-crud.controller.js';
 import {
   startImpersonation,
   endImpersonation,
   getActiveSessions,
   getImpersonationHistory,
-} from '../controllers/super-admin/impersonation.controller';
+} from '../controllers/super-admin/impersonation.controller.js';
 import {
   listFeatureFlags,
   createOrUpdateFlag,
@@ -40,8 +40,8 @@ import {
   disableForTenant,
   seedFlags,
   bulkUpdateTenantFlags,
-} from '../controllers/super-admin/feature-flags.controller';
-import { requireSuperAdmin } from '../middleware/require-super-admin.middleware';
+} from '../controllers/super-admin/feature-flags.controller.js';
+import { requireSuperAdmin } from '../middleware/require-super-admin.middleware.js';
 
 const router = express.Router();
 

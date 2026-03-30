@@ -8,8 +8,8 @@ import {
   deactivateService,
   getServiceAddOns,
   getServiceReservations,
-} from '../controllers/service.controller';
-import { CacheStrategies } from '../middleware/cache.middleware';
+} from '../controllers/service.controller.js';
+import { CacheStrategies } from '../middleware/cache.middleware.js';
 
 const router = Router();
 

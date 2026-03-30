@@ -10,12 +10,12 @@
  * - getCustomerPayments
  */
 
-import { Response, NextFunction } from 'express';
+import { type Response, type NextFunction } from 'express';
 
-import { AppError } from '../../middleware/error.middleware';
-import { TenantRequest } from '../../middleware/tenant.middleware';
-import { logger } from '../../utils/logger';
-import { prisma } from '../../config/prisma';
+import { AppError } from '../../middleware/error.middleware.js';
+import { type TenantRequest } from '../../middleware/tenant.middleware.js';
+import { logger } from '../../utils/logger.js';
+import { prisma } from '../../config/prisma.js';
 
 /**
  * Get customer documents

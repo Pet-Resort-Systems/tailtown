@@ -10,8 +10,8 @@ import {
   getCustomerPermanentCoupon,
   setCustomerPermanentCoupon,
   removeCustomerPermanentCoupon,
-} from '../controllers/customer';
-import customerPaymentMethodRoutes from './customer-payment-method.routes';
+} from '../controllers/customer/index.js';
+import customerPaymentMethodRoutes from './customer-payment-method.routes.js';
 
 const router = Router();
 

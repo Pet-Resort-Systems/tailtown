@@ -6,7 +6,7 @@
  * try/catch blocks in each controller.
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 
 /**
  * Controller function type

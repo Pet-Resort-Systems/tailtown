@@ -28,7 +28,7 @@ import {
   getResourceUtilization,
   getBookingPatterns,
   getCapacityAnalysis,
-} from '../controllers/reports';
+} from '../controllers/reports/index.js';
 
 const router = express.Router();
 

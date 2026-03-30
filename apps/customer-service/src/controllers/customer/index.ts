@@ -16,7 +16,7 @@ export {
   updateCustomer,
   deleteCustomer,
   lookupCustomerByEmail,
-} from './customer-crud.controller';
+} from './customer-crud.controller.js';
 
 // Extras (Documents, Notifications, Billing, Permanent Coupons)
 export {
@@ -29,4 +29,4 @@ export {
   getCustomerPermanentCoupon,
   setCustomerPermanentCoupon,
   removeCustomerPermanentCoupon,
-} from './customer-extras.controller';
+} from './customer-extras.controller.js';

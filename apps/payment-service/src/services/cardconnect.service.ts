@@ -3,8 +3,9 @@
  * Handles payment processing through CardConnect API
  */
 
-import axios, { AxiosInstance } from 'axios';
-import { logger } from '../utils/logger';
+import axios from 'axios';
+import type { AxiosInstance } from 'axios';
+import { logger } from '../utils/logger.js';
 
 export interface AuthorizationRequest {
   amount: string;

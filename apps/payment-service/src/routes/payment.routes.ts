@@ -11,7 +11,7 @@ import {
   inquireTransaction,
   getTestCards,
   chargeToken,
-} from '../controllers/payment.controller';
+} from '../controllers/payment.controller.js';
 
 const router: ExpressRouter = Router();
 

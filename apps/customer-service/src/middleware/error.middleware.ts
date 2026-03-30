@@ -6,9 +6,9 @@
  * and provides detailed logging with proper context.
  */
 
-import { Request, Response, NextFunction } from 'express';
-import { logger as appLogger } from '../utils/logger';
-import { captureException, setUser, addBreadcrumb } from '../utils/sentry';
+import { type Request, type Response, type NextFunction } from 'express';
+import { logger as appLogger } from '../utils/logger.js';
+import { captureException, setUser, addBreadcrumb } from '../utils/sentry.js';
 
 /**
  * Standardized error types

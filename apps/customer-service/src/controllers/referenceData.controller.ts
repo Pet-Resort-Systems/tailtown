@@ -1,12 +1,12 @@
-import { TenantRequest } from '../middleware/tenant.middleware';
+import { type TenantRequest } from '../middleware/tenant.middleware.js';
 /**
  * Reference Data Controller
  *
  * Handles API endpoints for breeds, veterinarians, and temperaments
  */
 
-import { Request, Response, NextFunction } from 'express';
-import { prisma } from '../config/prisma';
+import { type Request, type Response, type NextFunction } from 'express';
+import { prisma } from '../config/prisma.js';
 
 /**
  * Get all breeds, optionally filtered by species

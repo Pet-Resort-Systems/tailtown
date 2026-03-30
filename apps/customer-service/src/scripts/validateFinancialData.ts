@@ -8,9 +8,9 @@
  * ts-node validateFinancialData.ts
  */
 
-import financialService from '../services/financialService';
-import financialTests from '../tests/financialService.test';
-import { prisma } from '../config/prisma';
+import financialService from '../services/financialService.js';
+import financialTests from '../tests/financialService.test.js';
+import { prisma } from '../config/prisma.js';
 import fs from 'fs';
 import path from 'path';
 

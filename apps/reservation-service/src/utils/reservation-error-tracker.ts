@@ -5,10 +5,10 @@
  * Provides enhanced error categorization, analytics, and reporting.
  */
 
-import { AppError, ErrorType, ErrorContext } from './appError';
-import { logger } from './logger';
-import { Request } from 'express';
-import { prisma } from '../config/prisma';
+import { AppError, ErrorType, type ErrorContext } from './appError.js';
+import { logger } from './logger.js';
+import { type Request } from 'express';
+import { prisma } from '../config/prisma.js';
 
 /**
  * Reservation error categories

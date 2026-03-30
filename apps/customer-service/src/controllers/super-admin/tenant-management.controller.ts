@@ -7,11 +7,11 @@
  * - View tenant statistics
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 
-import { createAuditLog, AuditAction } from '../../services/audit-log.service';
-import { SuperAdminRequest } from '../../middleware/require-super-admin.middleware';
-import { prisma } from '../../config/prisma';
+import { createAuditLog, AuditAction } from '../../services/audit-log.service.js';
+import { type SuperAdminRequest } from '../../middleware/require-super-admin.middleware.js';
+import { prisma } from '../../config/prisma.js';
 
 /**
  * POST /api/super-admin/tenants/:id/suspend

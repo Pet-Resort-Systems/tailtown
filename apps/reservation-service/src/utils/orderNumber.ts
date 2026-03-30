@@ -1,5 +1,5 @@
-import { ExtendedReservationWhereInput } from '../types/prisma-extensions';
-import { prisma } from '../config/prisma';
+import { type ExtendedReservationWhereInput } from '../types/prisma-extensions.js';
+import { prisma } from '../config/prisma.js';
 
 /**
  * Generates a unique order number for a reservation in the format:

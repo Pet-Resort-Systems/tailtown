@@ -33,19 +33,19 @@ import {
   // Profile photo endpoints
   uploadProfilePhoto,
   deleteProfilePhoto,
-} from '../controllers/staff';
+} from '../controllers/staff/index.js';
 import {
   loginRateLimiter,
   passwordResetRateLimiter,
-} from '../middleware/rateLimiter.middleware';
-import { uploadProfilePhoto as uploadMiddleware } from '../middleware/upload.middleware';
-import { validateBody } from '../middleware/validation.middleware';
+} from '../middleware/rateLimiter.middleware.js';
+import { uploadProfilePhoto as uploadMiddleware } from '../middleware/upload.middleware.js';
+import { validateBody } from '../middleware/validation.middleware.js';
 import {
   staffLoginSchema,
   requestPasswordResetSchema,
   resetPasswordSchema,
   refreshTokenSchema,
-} from '../validators/staff.validators';
+} from '../validators/staff.validators.js';
 
 const router = Router();
 

@@ -8,13 +8,13 @@
  * - Password change for logged-in customers
  */
 
-import { Response } from 'express';
+import { type Response } from 'express';
 
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
-import { emailService } from '../services/email.service';
-import { TenantRequest } from '../middleware/tenant.middleware';
-import { prisma } from '../config/prisma';
+import { emailService } from '../services/email.service.js';
+import { type TenantRequest } from '../middleware/tenant.middleware.js';
+import { prisma } from '../config/prisma.js';
 
 // Password reset token expiry (24 hours)
 const RESET_TOKEN_EXPIRY_HOURS = 24;

@@ -6,12 +6,12 @@
  * - deleteProfilePhoto
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 
-import { AppError } from '../../middleware/error.middleware';
+import { AppError } from '../../middleware/error.middleware.js';
 import fs from 'fs';
 import path from 'path';
-import { prisma } from '../../config/prisma';
+import { prisma } from '../../config/prisma.js';
 
 /**
  * Upload profile photo

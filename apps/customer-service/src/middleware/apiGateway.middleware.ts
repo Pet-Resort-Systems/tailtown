@@ -8,8 +8,8 @@
  * - Request transformation
  */
 
-import { Request, Response, NextFunction } from 'express';
-import { redisClient } from '../utils/redis';
+import { type Request, type Response, type NextFunction } from 'express';
+import { redisClient } from '../utils/redis.js';
 
 // API version configuration
 export const API_VERSIONS = {

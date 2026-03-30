@@ -1,9 +1,8 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "lib": ["ES2022"],
+    "module": "nodenext",
+    "lib": ["ES2023"],
     "types": ["node"]
   }
 }

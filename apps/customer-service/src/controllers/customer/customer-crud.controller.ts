@@ -11,28 +11,28 @@
  * - lookupCustomerByEmail
  */
 
-import { Response, NextFunction } from 'express';
+import { type Response, type NextFunction } from 'express';
 
-import { AppError } from '../../middleware/error.middleware';
-import { TenantRequest } from '../../middleware/tenant.middleware';
-import { logger } from '../../utils/logger';
-import { prisma } from '../../config/prisma';
+import { AppError } from '../../middleware/error.middleware.js';
+import { type TenantRequest } from '../../middleware/tenant.middleware.js';
+import { logger } from '../../utils/logger.js';
+import { prisma } from '../../config/prisma.js';
 import {
   getCache,
   setCache,
   deleteCache,
   getCacheKey,
-} from '../../utils/redis';
+} from '../../utils/redis.js';
 import {
   tenantAuditLog,
   AuditAction,
   AuditCategory,
-} from '../../services/tenant-audit-log.service';
+} from '../../services/tenant-audit-log.service.js';
 import {
   customerSelectFull,
   petSelectMinimal,
   petSelectFull,
-} from '../../utils/prisma-optimized';
+} from '../../utils/prisma-optimized.js';
 
 /**
  * Get all customers with pagination and filtering

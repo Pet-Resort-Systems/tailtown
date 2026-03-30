@@ -1,9 +1,9 @@
-import { TenantRequest } from '../middleware/tenant.middleware';
-import { Request, Response } from 'express';
+import { type TenantRequest } from '../middleware/tenant.middleware.js';
+import { type Request, type Response } from 'express';
 
 import path from 'path';
 import fs from 'fs/promises';
-import { prisma } from '../config/prisma';
+import { prisma } from '../config/prisma.js';
 
 // Get all custom icons for tenant
 export const getAllCustomIcons = async (req: TenantRequest, res: Response) => {

@@ -1,13 +1,13 @@
-import { Request, Response } from 'express';
+import { type Request, type Response } from 'express';
 import {
   tenantService,
-  CreateTenantDto,
-  UpdateTenantDto,
-} from '../services/tenant.service';
+  type CreateTenantDto,
+  type UpdateTenantDto,
+} from '../services/tenant.service.js';
 import { TenantStatus } from '@prisma/client';
-import { AuthRequest } from '../middleware/auth.middleware';
-import { logger } from '../utils/logger';
-import { deleteCache, getCacheKey } from '../utils/redis';
+import { type AuthRequest } from '../middleware/auth.middleware.js';
+import { logger } from '../utils/logger.js';
+import { deleteCache, getCacheKey } from '../utils/redis.js';
 
 export class TenantController {
   /**

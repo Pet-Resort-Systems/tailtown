@@ -12,16 +12,16 @@
  * - getReservationsByStatus
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 import { ReservationStatus } from '@prisma/client';
-import { AppError } from '../../middleware/error.middleware';
-import { logger } from '../../utils/logger';
-import { prisma } from '../../config/prisma';
+import { AppError } from '../../middleware/error.middleware.js';
+import { logger } from '../../utils/logger.js';
+import { prisma } from '../../config/prisma.js';
 import {
   reservationSelectForList,
   reservationSelectFull,
   petSelectMinimal,
-} from '../../utils/prisma-optimized';
+} from '../../utils/prisma-optimized.js';
 
 /**
  * Get all reservations with pagination and filtering

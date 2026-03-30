@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 import { ResourceType } from '@prisma/client';
-import AppError from '../utils/appError';
-import { prisma } from '../config/prisma';
+import AppError from '../utils/appError.js';
+import { prisma } from '../config/prisma.js';
 
 // Suite types stored in attributes
 enum SuiteType {

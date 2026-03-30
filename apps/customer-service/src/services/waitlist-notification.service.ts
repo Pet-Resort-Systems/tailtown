@@ -5,7 +5,7 @@
  * Supports: Email, SMS, In-App, Push notifications
  */
 
-import { prisma } from '../config/prisma';
+import { prisma } from '../config/prisma.js';
 
 export interface NotificationPayload {
   waitlistEntryId: string;

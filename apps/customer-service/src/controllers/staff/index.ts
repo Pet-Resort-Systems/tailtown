@@ -18,7 +18,7 @@ export {
   createStaff,
   updateStaff,
   deleteStaff,
-} from './staff-crud.controller';
+} from './staff-crud.controller.js';
 
 // Authentication
 export {
@@ -26,7 +26,7 @@ export {
   requestPasswordReset,
   resetPassword,
   refreshAccessToken,
-} from './staff-auth.controller';
+} from './staff-auth.controller.js';
 
 // Availability
 export {
@@ -35,7 +35,7 @@ export {
   updateStaffAvailability,
   deleteStaffAvailability,
   getAvailableStaff,
-} from './staff-availability.controller';
+} from './staff-availability.controller.js';
 
 // Time Off
 export {
@@ -43,7 +43,7 @@ export {
   createStaffTimeOff,
   updateStaffTimeOff,
   deleteStaffTimeOff,
-} from './staff-time-off.controller';
+} from './staff-time-off.controller.js';
 
 // Schedules
 export {
@@ -54,10 +54,10 @@ export {
   deleteStaffSchedule,
   bulkCreateSchedules,
   testSchedulesEndpoint,
-} from './staff-schedule.controller';
+} from './staff-schedule.controller.js';
 
 // Profile Photos
 export {
   uploadProfilePhoto,
   deleteProfilePhoto,
-} from './staff-profile.controller';
+} from './staff-profile.controller.js';

@@ -10,7 +10,7 @@ import {
   getLowStockProducts,
   getAllCategories,
   createCategory,
-} from '../controllers/products.controller';
+} from '../controllers/products.controller.js';
 
 const router = Router();
 

@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { vaccineUploadController } from '../controllers/vaccine-upload.controller';
-import { uploadVaccineRecord } from '../services/upload.service';
+import { vaccineUploadController } from '../controllers/vaccine-upload.controller.js';
+import { uploadVaccineRecord } from '../services/upload.service.js';
 
 const router = Router();
 

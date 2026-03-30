@@ -5,16 +5,16 @@
  * It implements schema alignment strategy with defensive programming.
  */
 
-import { Request, Response } from 'express';
-import { AppError } from '../../utils/service';
-import { catchAsync } from '../../middleware/catchAsync';
-import { logger } from '../../utils/logger';
+import { type Request, type Response } from 'express';
+import { AppError } from '../../utils/service.js';
+import { catchAsync } from '../../middleware/catchAsync.js';
+import { logger } from '../../utils/logger.js';
 import {
-  ExtendedReservationWhereInput,
-  ExtendedReservationInclude,
-} from '../../types/prisma-extensions';
-import { safeExecutePrismaQuery, prisma } from './utils/prisma-helpers';
-import { customerServiceClient } from '../../clients/customer-service.client';
+  type ExtendedReservationWhereInput,
+  type ExtendedReservationInclude,
+} from '../../types/prisma-extensions.js';
+import { safeExecutePrismaQuery, prisma } from './utils/prisma-helpers.js';
+import { customerServiceClient } from '../../clients/customer-service.client.js';
 
 /**
  * Get all reservations for a specific customer

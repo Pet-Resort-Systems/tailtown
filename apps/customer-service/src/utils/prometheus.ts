@@ -5,7 +5,7 @@
  * Compatible with Prometheus + Grafana monitoring stack.
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 import os from 'os';
 
 // Service start time for uptime calculation

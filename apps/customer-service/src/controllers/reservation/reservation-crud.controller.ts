@@ -7,18 +7,18 @@
  * - deleteReservation
  */
 
-import { Response, NextFunction } from 'express';
+import { type Response, type NextFunction } from 'express';
 import { ReservationStatus } from '@prisma/client';
-import { TenantRequest } from '../../middleware/tenant.middleware';
-import { AppError } from '../../middleware/error.middleware';
-import { logger } from '../../utils/logger';
+import { type TenantRequest } from '../../middleware/tenant.middleware.js';
+import { AppError } from '../../middleware/error.middleware.js';
+import { logger } from '../../utils/logger.js';
 import {
   tenantAuditLog,
   AuditAction,
   AuditSeverity,
-} from '../../services/tenant-audit-log.service';
-import { generateOrderNumber } from './utils/order-number';
-import { prisma } from '../../config/prisma';
+} from '../../services/tenant-audit-log.service.js';
+import { generateOrderNumber } from './utils/order-number.js';
+import { prisma } from '../../config/prisma.js';
 
 // Valid resource types
 const VALID_RESOURCE_TYPES = [

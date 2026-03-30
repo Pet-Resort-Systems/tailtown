@@ -1,9 +1,8 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "module": "preserve",
+    "lib": ["DOM", "DOM.Iterable", "ES2023"],
     "allowJs": true,
     "isolatedModules": true,
     "noEmit": true,

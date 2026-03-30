@@ -1,16 +1,16 @@
-import { Response, NextFunction } from 'express';
+import { type Response, type NextFunction } from 'express';
 import { ServiceCategory } from '@prisma/client';
-import { AppError } from '../middleware/error.middleware';
-import { TenantRequest } from '../middleware/tenant.middleware';
-import { logger } from '../utils/logger';
-import { prisma } from '../config/prisma';
+import { AppError } from '../middleware/error.middleware.js';
+import { type TenantRequest } from '../middleware/tenant.middleware.js';
+import { logger } from '../utils/logger.js';
+import { prisma } from '../config/prisma.js';
 import {
   getCache,
   setCache,
   deleteCache,
   getCacheKey,
   deleteCachePattern,
-} from '../utils/redis';
+} from '../utils/redis.js';
 
 // Get all services with filtering options
 export const getAllServices = async (

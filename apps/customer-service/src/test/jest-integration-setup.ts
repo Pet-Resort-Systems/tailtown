@@ -9,7 +9,7 @@ import {
   getTestPrismaClient,
   resetTestDatabase,
   disconnectTestDatabase,
-} from './setup-test-db';
+} from './setup-test-db.js';
 
 /**
  * Setup function to call in beforeAll

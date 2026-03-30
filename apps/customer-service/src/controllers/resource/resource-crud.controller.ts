@@ -9,19 +9,19 @@
  * - deleteResource
  */
 
-import { Response, NextFunction } from 'express';
+import { type Response, type NextFunction } from 'express';
 
-import AppError from '../../utils/appError';
-import { TenantRequest } from '../../middleware/tenant.middleware';
-import { logger } from '../../utils/logger';
-import { prisma } from '../../config/prisma';
+import AppError from '../../utils/appError.js';
+import { type TenantRequest } from '../../middleware/tenant.middleware.js';
+import { logger } from '../../utils/logger.js';
+import { prisma } from '../../config/prisma.js';
 import {
   getCache,
   setCache,
   deleteCache,
   getCacheKey,
   deleteCachePattern,
-} from '../../utils/redis';
+} from '../../utils/redis.js';
 
 // Valid resource types and aliases
 const validTypeMap: Record<string, string> = {

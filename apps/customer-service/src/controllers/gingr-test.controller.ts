@@ -3,8 +3,8 @@
  * Tests connection and fetches sample data from Gingr
  */
 
-import { Request, Response, NextFunction } from 'express';
-import GingrApiClient from '../services/gingr-api.service';
+import { type Request, type Response, type NextFunction } from 'express';
+import GingrApiClient from '../services/gingr-api.service.js';
 
 /**
  * Test Gingr API connection and fetch sample data

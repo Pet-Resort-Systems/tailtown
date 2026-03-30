@@ -5,7 +5,7 @@ import {
   redeemPoints,
   getMemberStats,
   getAllMembers,
-} from '../controllers/loyalty.controller';
+} from '../controllers/loyalty.controller.js';
 
 const router = express.Router();
 

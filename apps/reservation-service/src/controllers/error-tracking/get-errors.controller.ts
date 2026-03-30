@@ -4,11 +4,11 @@
  * Provides endpoints to retrieve tracked errors and analytics
  */
 
-import { Request, Response } from 'express';
-import { reservationErrorTracker } from '../../utils/reservation-error-tracker';
-import { AppError, ErrorType } from '../../utils/appError';
-import { logger } from '../../utils/logger';
-import { asyncHandler } from '../../middleware/errorHandler';
+import { type Request, type Response } from 'express';
+import { reservationErrorTracker } from '../../utils/reservation-error-tracker.js';
+import { AppError, ErrorType } from '../../utils/appError.js';
+import { logger } from '../../utils/logger.js';
+import { asyncHandler } from '../../middleware/errorHandler.js';
 
 /**
  * Get all tracked errors with optional filtering

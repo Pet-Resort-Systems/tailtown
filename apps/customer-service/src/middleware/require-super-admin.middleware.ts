@@ -5,9 +5,9 @@
  * Verifies JWT token and attaches super admin info to request.
  */
 
-import { Request, Response, NextFunction } from 'express';
-import { verifyToken } from '../utils/super-admin-jwt';
-import { logger } from '../utils/logger';
+import { type Request, type Response, type NextFunction } from 'express';
+import { verifyToken } from '../utils/super-admin-jwt.js';
+import { logger } from '../utils/logger.js';
 
 export interface SuperAdminRequest extends Request {
   superAdmin?: {

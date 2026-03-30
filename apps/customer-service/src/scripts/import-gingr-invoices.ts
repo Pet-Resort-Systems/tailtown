@@ -5,8 +5,8 @@
  * Run with: npx ts-node src/scripts/import-gingr-invoices.ts
  */
 
-import { prisma } from '../config/prisma';
-import GingrApiClient from '../services/gingr-api.service';
+import { prisma } from '../config/prisma.js';
+import GingrApiClient from '../services/gingr-api.service.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
