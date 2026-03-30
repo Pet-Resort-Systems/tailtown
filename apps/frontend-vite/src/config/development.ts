@@ -5,8 +5,8 @@ import { AppConfig } from './types';
  */
 const developmentConfig: AppConfig = {
   api: {
-    customerServiceUrl: process.env.REACT_APP_API_URL || '',
-    reservationServiceUrl: process.env.REACT_APP_RESERVATION_API_URL || '',
+    customerServiceUrl: import.meta.env.VITE_API_URL || '',
+    reservationServiceUrl: import.meta.env.VITE_RESERVATION_API_URL || '',
     timeout: 30000,
     defaultTenantId: 'dev',
     includeTenantId: true,

@@ -168,7 +168,7 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
           'Payment declined. Please check your card details and try again.';
 
         // Add helpful test card info in development
-        if (process.env.NODE_ENV === 'development') {
+        if (import.meta.env.DEV) {
           errorMessage +=
             '\n\nTest Cards:\n• 4111111111111111 (Visa - Approved)\n• 4000000000000002 (Declined)\n• Expiry: Any future date (MM/YY)\n• CVV: Any 3 digits';
         }

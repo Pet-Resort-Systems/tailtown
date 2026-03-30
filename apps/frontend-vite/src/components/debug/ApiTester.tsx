@@ -18,7 +18,7 @@ const ApiTester: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<any>(null);
   const [apiUrl] = useState<string>(
-    process.env.REACT_APP_RESERVATION_API_URL || window.location.origin
+    import.meta.env.VITE_RESERVATION_API_URL || window.location.origin
   );
 
   const testApi = useCallback(async () => {

@@ -82,7 +82,7 @@ export default function ChecklistTemplates() {
 
   const loadTemplates = async () => {
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || '';
+      const apiUrl = import.meta.env.VITE_API_URL || '';
       const response = await fetch(`${apiUrl}/api/checklists/templates`, {
         headers: {
           'x-tenant-id':
@@ -122,7 +122,7 @@ export default function ChecklistTemplates() {
       return;
 
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || '';
+      const apiUrl = import.meta.env.VITE_API_URL || '';
       await fetch(`${apiUrl}/api/checklists/templates/${id}`, {
         method: 'DELETE',
         headers: {
@@ -152,7 +152,7 @@ export default function ChecklistTemplates() {
     if (!currentTemplate) return;
 
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || '';
+      const apiUrl = import.meta.env.VITE_API_URL || '';
       const url = currentTemplate.id
         ? `${apiUrl}/api/checklists/templates/${currentTemplate.id}`
         : `${apiUrl}/api/checklists/templates`;

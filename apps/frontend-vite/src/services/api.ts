@@ -15,7 +15,7 @@ const defaultValidateStatus = (status: number) => status < 500;
 
 // Default timeout (ms) for all API instances to prevent indefinite hangs
 const API_TIMEOUT: number = (() => {
-  const raw = process.env.REACT_APP_API_TIMEOUT;
+  const raw = import.meta.env.VITE_API_TIMEOUT;
   const parsed = raw ? parseInt(raw, 10) : NaN;
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 30000; // 30s default
 })();
@@ -30,7 +30,7 @@ const getTenantId = (): string | undefined => {
   } catch (_) {
     // Access to localStorage might fail in non-browser environments
   }
-  const fromEnv = process.env.REACT_APP_TENANT_ID;
+  const fromEnv = import.meta.env.VITE_TENANT_ID;
   return fromEnv && fromEnv.trim() ? fromEnv.trim() : undefined;
 };
 
@@ -91,9 +91,9 @@ const addResponseInterceptor = (instance: AxiosInstance) => {
  * Get API base URL - uses current origin in production for multi-tenant support
  */
 const getApiBaseUrl = (): string => {
-  // If REACT_APP_API_URL is explicitly set (dev), use it
+  // If VITE_API_URL is explicitly set (dev), use it
   // Otherwise use window.location.origin (production)
-  const envUrl = process.env.REACT_APP_API_URL;
+  const envUrl = import.meta.env.VITE_API_URL;
   if (envUrl && envUrl.length > 0) {
     return envUrl;
   }
@@ -161,10 +161,10 @@ addResponseInterceptor(customerApi);
 
 /**
  * Get the base URL for the Reservation API
- * Uses REACT_APP_RESERVATION_API_URL in development, falls back to same origin in production
+ * Uses VITE_RESERVATION_API_URL in development, falls back to same origin in production
  */
 const getReservationApiBaseUrl = (): string => {
-  const envUrl = process.env.REACT_APP_RESERVATION_API_URL;
+  const envUrl = import.meta.env.VITE_RESERVATION_API_URL;
   if (envUrl && envUrl.length > 0) {
     return envUrl;
   }

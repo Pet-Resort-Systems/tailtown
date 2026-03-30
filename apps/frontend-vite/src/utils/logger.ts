@@ -39,11 +39,11 @@ const colors = {
 // Default configuration based on environment
 const defaultConfig: LoggerConfig = {
   level:
-    process.env.NODE_ENV === 'production'
+    import.meta.env.PROD
       ? LogLevel.WARN // Only warnings and errors in production
       : LogLevel.DEBUG, // All logs in development
   enableColors: true,
-  includeTimestamps: process.env.NODE_ENV !== 'production',
+  includeTimestamps: !import.meta.env.PROD,
 };
 
 /**
