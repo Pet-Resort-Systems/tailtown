@@ -1,17 +1,28 @@
-import { type Request, type Response } from 'express';
+import { type Prisma } from '@prisma/client';
+import { Router } from 'express';
 import { prisma } from '../config/prisma.js';
 import { logger } from '../utils/logger.js';
 
-/**
- * Check-In Template Controller
- * Manages customizable check-in questionnaire templates
- */
+const router: Router = Router();
 
-/**
- * Get all check-in templates for a tenant
- * GET /api/check-in-templates
- */
-export const getAllTemplates = async (req: Request, res: Response) => {
+type CheckInSectionWithQuestions = Prisma.CheckInSectionGetPayload<{
+  include: {
+    questions: true;
+  };
+}>;
+
+type CheckInTemplateWithSections = Prisma.CheckInTemplateGetPayload<{
+  include: {
+    sections: {
+      include: {
+        questions: true;
+      };
+    };
+  };
+}>;
+
+// Get all templates
+router.get('/check-in-templates', async (req, res) => {
   try {
     const tenantId = (req as any).tenantId;
     const { active } = req.query;
@@ -51,59 +62,10 @@ export const getAllTemplates = async (req: Request, res: Response) => {
       message: 'Failed to fetch check-in templates',
     });
   }
-};
+});
 
-/**
- * Get a single check-in template by ID
- * GET /api/check-in-templates/:id
- */
-export const getTemplateById = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const tenantId = (req as any).tenantId;
-
-    const template = await prisma.checkInTemplate.findFirst({
-      where: { id, tenantId },
-      include: {
-        sections: {
-          include: {
-            questions: {
-              orderBy: { order: 'asc' },
-            },
-          },
-          orderBy: { order: 'asc' },
-        },
-      },
-    });
-
-    if (!template) {
-      return res.status(404).json({
-        status: 'error',
-        message: 'Template not found',
-      });
-    }
-
-    res.json({
-      status: 'success',
-      data: template,
-    });
-  } catch (error: any) {
-    logger.error('Error fetching check-in template', {
-      templateId: req.params.id,
-      error: error.message,
-    });
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to fetch check-in template',
-    });
-  }
-};
-
-/**
- * Get the default template for a tenant
- * GET /api/check-in-templates/default
- */
-export const getDefaultTemplate = async (req: Request, res: Response) => {
+// Get default template
+router.get('/check-in-templates/default', async (req, res) => {
   try {
     const tenantId = (req as any).tenantId;
 
@@ -146,18 +108,57 @@ export const getDefaultTemplate = async (req: Request, res: Response) => {
       message: 'Failed to fetch default template',
     });
   }
-};
+});
 
-/**
- * Create a new check-in template
- * POST /api/check-in-templates
- */
-export const createTemplate = async (req: Request, res: Response) => {
+// Get template by ID
+router.get('/check-in-templates/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const tenantId = (req as any).tenantId;
+
+    const template = await prisma.checkInTemplate.findFirst({
+      where: { id, tenantId },
+      include: {
+        sections: {
+          include: {
+            questions: {
+              orderBy: { order: 'asc' },
+            },
+          },
+          orderBy: { order: 'asc' },
+        },
+      },
+    });
+
+    if (!template) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Template not found',
+      });
+    }
+
+    res.json({
+      status: 'success',
+      data: template,
+    });
+  } catch (error: any) {
+    logger.error('Error fetching check-in template', {
+      templateId: req.params.id,
+      error: error.message,
+    });
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to fetch check-in template',
+    });
+  }
+});
+
+// Create template
+router.post('/check-in-templates', async (req, res) => {
   try {
     const tenantId = (req as any).tenantId;
     const { name, description, isDefault, sections } = req.body;
 
-    // If this is set as default, unset other defaults
     if (isDefault) {
       await prisma.checkInTemplate.updateMany({
         where: { tenantId, isDefault: true },
@@ -219,13 +220,10 @@ export const createTemplate = async (req: Request, res: Response) => {
       message: 'Failed to create check-in template',
     });
   }
-};
+});
 
-/**
- * Update a check-in template
- * PUT /api/check-in-templates/:id
- */
-export const updateTemplate = async (req: Request, res: Response) => {
+// Update template
+router.put('/check-in-templates/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const tenantId = (req as any).tenantId;
@@ -239,7 +237,6 @@ export const updateTemplate = async (req: Request, res: Response) => {
       hasFirstSection: sections && sections.length > 0,
     });
 
-    // Verify template exists and belongs to tenant
     const existing = await prisma.checkInTemplate.findFirst({
       where: { id, tenantId },
     });
@@ -251,7 +248,6 @@ export const updateTemplate = async (req: Request, res: Response) => {
       });
     }
 
-    // If setting as default, unset other defaults
     if (isDefault && !existing.isDefault) {
       await prisma.checkInTemplate.updateMany({
         where: { tenantId, isDefault: true },
@@ -259,7 +255,6 @@ export const updateTemplate = async (req: Request, res: Response) => {
       });
     }
 
-    // Update basic fields first
     logger.debug('Updating template basic fields', { templateId: id });
     await prisma.checkInTemplate.update({
       where: { id },
@@ -273,17 +268,14 @@ export const updateTemplate = async (req: Request, res: Response) => {
     });
     logger.debug('Template basic fields updated', { templateId: id });
 
-    // If sections are provided, delete existing sections and recreate
     if (sections && Array.isArray(sections)) {
       logger.debug('Deleting existing template sections', { templateId: id });
 
-      // First, get all sections for this template
-      const existingSections = await prisma.checkInSection.findMany({
+      const existingSections = (await prisma.checkInSection.findMany({
         where: { templateId: id },
         include: { questions: true },
-      });
+      })) as CheckInSectionWithQuestions[];
 
-      // Delete responses for all questions in these sections
       for (const section of existingSections) {
         for (const question of section.questions) {
           await prisma.checkInResponse.deleteMany({
@@ -292,7 +284,6 @@ export const updateTemplate = async (req: Request, res: Response) => {
         }
       }
 
-      // Now delete the sections (cascade will delete questions)
       await prisma.checkInSection.deleteMany({
         where: { templateId: id },
       });
@@ -302,7 +293,6 @@ export const updateTemplate = async (req: Request, res: Response) => {
         templateId: id,
         count: sections.length,
       });
-      // Create new sections with questions
       for (
         let sectionIndex = 0;
         sectionIndex < sections.length;
@@ -344,7 +334,6 @@ export const updateTemplate = async (req: Request, res: Response) => {
       });
     }
 
-    // Fetch and return the updated template
     const template = await prisma.checkInTemplate.findUnique({
       where: { id },
       include: {
@@ -381,18 +370,14 @@ export const updateTemplate = async (req: Request, res: Response) => {
       details: error.meta,
     });
   }
-};
+});
 
-/**
- * Delete a check-in template
- * DELETE /api/check-in-templates/:id
- */
-export const deleteTemplate = async (req: Request, res: Response) => {
+// Delete template
+router.delete('/check-in-templates/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const tenantId = (req as any).tenantId;
 
-    // Verify template exists and belongs to tenant
     const existing = await prisma.checkInTemplate.findFirst({
       where: { id, tenantId },
     });
@@ -404,7 +389,6 @@ export const deleteTemplate = async (req: Request, res: Response) => {
       });
     }
 
-    // Check if template is in use
     const checkInsUsingTemplate = await prisma.checkIn.count({
       where: { templateId: id },
     });
@@ -434,20 +418,16 @@ export const deleteTemplate = async (req: Request, res: Response) => {
       message: 'Failed to delete check-in template',
     });
   }
-};
+});
 
-/**
- * Clone a check-in template
- * POST /api/check-in-templates/:id/clone
- */
-export const cloneTemplate = async (req: Request, res: Response) => {
+// Clone template
+router.post('/check-in-templates/:id/clone', async (req, res) => {
   try {
     const { id } = req.params;
     const tenantId = (req as any).tenantId;
     const { name } = req.body;
 
-    // Get the template to clone
-    const sourceTemplate = await prisma.checkInTemplate.findFirst({
+    const sourceTemplate = (await prisma.checkInTemplate.findFirst({
       where: { id, tenantId },
       include: {
         sections: {
@@ -456,7 +436,7 @@ export const cloneTemplate = async (req: Request, res: Response) => {
           },
         },
       },
-    });
+    })) as CheckInTemplateWithSections | null;
 
     if (!sourceTemplate) {
       return res.status(404).json({
@@ -465,7 +445,6 @@ export const cloneTemplate = async (req: Request, res: Response) => {
       });
     }
 
-    // Create the clone
     const clonedTemplate = await prisma.checkInTemplate.create({
       data: {
         tenantId,
@@ -518,4 +497,6 @@ export const cloneTemplate = async (req: Request, res: Response) => {
       message: 'Failed to clone check-in template',
     });
   }
-};
+});
+
+export default router;

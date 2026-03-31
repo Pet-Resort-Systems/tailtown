@@ -44,7 +44,7 @@ jest.mock('../../controllers/resource/resource.controller', () => ({
   ),
 }));
 
-import resourceRoutes from '../../routes/resourceRoutes';
+import resourceRoutes from '../../routes/resource/router';
 import { checkResourceAvailability } from '../../controllers/resource/availability.controller';
 import { batchCheckResourceAvailability } from '../../controllers/resource/batch-availability.controller';
 import {

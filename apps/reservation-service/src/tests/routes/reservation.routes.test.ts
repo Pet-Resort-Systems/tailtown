@@ -8,6 +8,10 @@
 import express from 'express';
 import request from 'supertest';
 
+const mockCreateReservationRouteHandler = jest.fn((req, res) =>
+  res.status(201).json({ status: 'success', data: {} })
+);
+
 // Mock all controller functions
 jest.mock('../../controllers/reservation', () => ({
   getAllReservations: jest.fn((req, res) =>
@@ -34,7 +38,16 @@ jest.mock('../../controllers/reservation', () => ({
   ),
 }));
 
-import reservationRoutes from '../../routes/reservation.routes';
+jest.mock('../../routes/reservation/create-reservation.route', () => {
+  const express = require('express');
+  const route = express.Router();
+
+  route.use('/', mockCreateReservationRouteHandler);
+
+  return { route };
+});
+
+import reservationRoutes from '../../routes/reservation/router';
 import {
   getAllReservations,
   getReservationById,
@@ -102,12 +115,12 @@ describe('Reservation Routes', () => {
   });
 
   describe('POST /api/reservations', () => {
-    it('should call createReservation controller', async () => {
+    it('should call createReservation route module', async () => {
       await request(app)
         .post('/api/reservations')
         .send({ customerId: 'cust-1', petId: 'pet-1' });
 
-      expect(createReservation).toHaveBeenCalled();
+      expect(mockCreateReservationRouteHandler).toHaveBeenCalled();
     });
 
     it('should return 201 on success', async () => {

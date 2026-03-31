@@ -1,25 +1,14 @@
-import { type Request, type Response } from 'express';
+import { Router } from 'express';
 import { prisma } from '../config/prisma.js';
 import { logger } from '../utils/logger.js';
 
-// Use type intersection instead of interface extension to avoid TS2430
-type AuthenticatedRequest = Request & {
-  tenantId?: string;
-  user?: { id: string; name: string };
-};
+const router: Router = Router();
 
-/**
- * Service Agreement Controller
- * Manages service agreement templates and signed agreements
- */
-
-/**
- * Get all service agreement templates for a tenant
- * GET /api/service-agreement-templates
- */
-export const getAllTemplates = async (req: Request, res: Response) => {
+// Get all agreement templates
+router.get('/service-agreement-templates', async (req, res) => {
   try {
-    const tenantId = (req as any).tenantId;
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
     const { active } = req.query;
 
     const where: any = { tenantId };
@@ -47,55 +36,14 @@ export const getAllTemplates = async (req: Request, res: Response) => {
       message: 'Failed to fetch service agreement templates',
     });
   }
-};
+});
 
-/**
- * Get a single service agreement template by ID
- * GET /api/service-agreement-templates/:id
- */
-export const getTemplateById = async (req: Request, res: Response) => {
+// Get default agreement template
+router.get('/service-agreement-templates/default', async (req, res) => {
   try {
-    const { id } = req.params;
-    const tenantId = (req as any).tenantId;
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
 
-    const template = await prisma.serviceAgreementTemplate.findFirst({
-      where: { id, tenantId },
-    });
-
-    if (!template) {
-      return res.status(404).json({
-        status: 'error',
-        message: 'Template not found',
-      });
-    }
-
-    res.json({
-      status: 'success',
-      data: template,
-    });
-  } catch (error: any) {
-    logger.error('Error fetching service agreement template', {
-      templateId: req.params.id,
-      tenantId: req.headers['x-tenant-id'],
-      error: error.message,
-    });
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to fetch service agreement template',
-    });
-  }
-};
-
-/**
- * Get the default service agreement template for a tenant
- * GET /api/service-agreement-templates/default
- * If no default is set but only one template exists, automatically set it as default
- */
-export const getDefaultTemplate = async (req: Request, res: Response) => {
-  try {
-    const tenantId = (req as any).tenantId;
-
-    // First try to find the default template
     let template = await prisma.serviceAgreementTemplate.findFirst({
       where: {
         tenantId,
@@ -104,7 +52,6 @@ export const getDefaultTemplate = async (req: Request, res: Response) => {
       },
     });
 
-    // If no default, check if there's only one active template
     if (!template) {
       const allTemplates = await prisma.serviceAgreementTemplate.findMany({
         where: {
@@ -113,7 +60,6 @@ export const getDefaultTemplate = async (req: Request, res: Response) => {
         },
       });
 
-      // If exactly one template exists, make it the default automatically
       if (allTemplates.length === 1) {
         template = await prisma.serviceAgreementTemplate.update({
           where: { id: allTemplates[0].id },
@@ -147,15 +93,48 @@ export const getDefaultTemplate = async (req: Request, res: Response) => {
       message: 'Failed to fetch default service agreement template',
     });
   }
-};
+});
 
-/**
- * Create a new service agreement template
- * POST /api/service-agreement-templates
- */
-export const createTemplate = async (req: Request, res: Response) => {
+// Get agreement template by ID
+router.get('/service-agreement-templates/:id', async (req, res) => {
   try {
-    const tenantId = (req as any).tenantId;
+    const { id } = req.params;
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
+
+    const template = await prisma.serviceAgreementTemplate.findFirst({
+      where: { id, tenantId },
+    });
+
+    if (!template) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Template not found',
+      });
+    }
+
+    res.json({
+      status: 'success',
+      data: template,
+    });
+  } catch (error: any) {
+    logger.error('Error fetching service agreement template', {
+      templateId: req.params.id,
+      tenantId: req.headers['x-tenant-id'],
+      error: error.message,
+    });
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to fetch service agreement template',
+    });
+  }
+});
+
+// Create agreement template
+router.post('/service-agreement-templates', async (req, res) => {
+  try {
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
     const staffId = (req as any).user?.id;
     const {
       name,
@@ -168,7 +147,6 @@ export const createTemplate = async (req: Request, res: Response) => {
       expiresAt,
     } = req.body;
 
-    // If this is set as default, unset other defaults
     if (isDefault) {
       await prisma.serviceAgreementTemplate.updateMany({
         where: { tenantId, isDefault: true },
@@ -193,7 +171,6 @@ export const createTemplate = async (req: Request, res: Response) => {
       },
     });
 
-    // Create initial version record
     await prisma.serviceAgreementVersion.create({
       data: {
         tenantId,
@@ -219,16 +196,14 @@ export const createTemplate = async (req: Request, res: Response) => {
       message: 'Failed to create service agreement template',
     });
   }
-};
+});
 
-/**
- * Update a service agreement template
- * PUT /api/service-agreement-templates/:id
- */
-export const updateTemplate = async (req: Request, res: Response) => {
+// Update agreement template
+router.put('/service-agreement-templates/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const tenantId = (req as any).tenantId;
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
     const staffId = (req as any).user?.id;
     const {
       name,
@@ -243,7 +218,6 @@ export const updateTemplate = async (req: Request, res: Response) => {
       changeNotes,
     } = req.body;
 
-    // Verify template exists and belongs to tenant
     const existing = await prisma.serviceAgreementTemplate.findFirst({
       where: { id, tenantId },
     });
@@ -255,7 +229,6 @@ export const updateTemplate = async (req: Request, res: Response) => {
       });
     }
 
-    // If setting as default, unset other defaults
     if (isDefault && !existing.isDefault) {
       await prisma.serviceAgreementTemplate.updateMany({
         where: { tenantId, isDefault: true },
@@ -263,7 +236,6 @@ export const updateTemplate = async (req: Request, res: Response) => {
       });
     }
 
-    // Check if content changed - if so, create new version
     const contentChanged = content && content !== existing.content;
     const newVersion = contentChanged ? existing.version + 1 : existing.version;
 
@@ -284,7 +256,6 @@ export const updateTemplate = async (req: Request, res: Response) => {
       },
     });
 
-    // Create version record if content changed
     if (contentChanged) {
       await prisma.serviceAgreementVersion.create({
         data: {
@@ -313,18 +284,15 @@ export const updateTemplate = async (req: Request, res: Response) => {
       message: 'Failed to update service agreement template',
     });
   }
-};
+});
 
-/**
- * Delete a service agreement template
- * DELETE /api/service-agreement-templates/:id
- */
-export const deleteTemplate = async (req: Request, res: Response) => {
+// Delete agreement template
+router.delete('/service-agreement-templates/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const tenantId = (req as any).tenantId;
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
 
-    // Verify template exists and belongs to tenant
     const existing = await prisma.serviceAgreementTemplate.findFirst({
       where: { id, tenantId },
     });
@@ -355,15 +323,13 @@ export const deleteTemplate = async (req: Request, res: Response) => {
       message: 'Failed to delete service agreement template',
     });
   }
-};
+});
 
-/**
- * Create a signed service agreement
- * POST /api/service-agreements
- */
-export const createAgreement = async (req: Request, res: Response) => {
+// Create signed agreement
+router.post('/service-agreements', async (req, res) => {
   try {
-    const tenantId = (req as any).tenantId;
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
     const {
       checkInId,
       customerId,
@@ -380,7 +346,6 @@ export const createAgreement = async (req: Request, res: Response) => {
       expiresAt,
     } = req.body;
 
-    // Validate required fields
     if (!customerId || !agreementText || !signature || !signedBy) {
       logger.warn('Service agreement validation failed', {
         hasCustomerId: !!customerId,
@@ -397,7 +362,6 @@ export const createAgreement = async (req: Request, res: Response) => {
       });
     }
 
-    // If checkInId provided, verify it exists and doesn't have an agreement
     if (checkInId) {
       const checkIn = await prisma.checkIn.findFirst({
         where: { id: checkInId, tenantId },
@@ -422,7 +386,6 @@ export const createAgreement = async (req: Request, res: Response) => {
       }
     }
 
-    // Get template version if templateId provided
     let templateVersion: number | null = null;
     if (templateId) {
       const template = await prisma.serviceAgreementTemplate.findFirst({
@@ -478,63 +441,13 @@ export const createAgreement = async (req: Request, res: Response) => {
       message: 'Failed to create service agreement',
     });
   }
-};
+});
 
-/**
- * Get a service agreement by check-in ID
- * GET /api/service-agreements/check-in/:checkInId
- */
-export const getAgreementByCheckIn = async (req: Request, res: Response) => {
+// Get all signed agreements for tenant
+router.get('/service-agreements', async (req, res) => {
   try {
-    const { checkInId } = req.params;
-    const tenantId = (req as any).tenantId;
-
-    const agreement = await prisma.serviceAgreement.findFirst({
-      where: {
-        checkInId,
-        tenantId,
-      },
-      include: {
-        checkIn: {
-          include: {
-            // pet relation removed - use customerServiceClient.getPet(petId, tenantId) if needed
-            reservation: true,
-          },
-        },
-      },
-    });
-
-    if (!agreement) {
-      return res.status(404).json({
-        status: 'error',
-        message: 'Service agreement not found',
-      });
-    }
-
-    res.json({
-      status: 'success',
-      data: agreement,
-    });
-  } catch (error: any) {
-    logger.error('Error fetching service agreement', {
-      checkInId: req.params.checkInId,
-      tenantId: req.headers['x-tenant-id'],
-      error: error.message,
-    });
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to fetch service agreement',
-    });
-  }
-};
-
-/**
- * Get all signed agreements for a tenant
- * GET /api/service-agreements
- */
-export const getAllAgreements = async (req: Request, res: Response) => {
-  try {
-    const tenantId = (req as any).tenantId;
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
     const { valid, limit = 50, offset = 0, search } = req.query;
 
     const where: any = { tenantId };
@@ -585,16 +498,59 @@ export const getAllAgreements = async (req: Request, res: Response) => {
       message: 'Failed to fetch agreements',
     });
   }
-};
+});
 
-/**
- * Get all agreements for a customer
- * GET /api/service-agreements/customer/:customerId
- */
-export const getAgreementsByCustomer = async (req: Request, res: Response) => {
+// Get agreement by check-in ID
+router.get('/service-agreements/check-in/:checkInId', async (req, res) => {
+  try {
+    const { checkInId } = req.params;
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
+
+    const agreement = await prisma.serviceAgreement.findFirst({
+      where: {
+        checkInId,
+        tenantId,
+      },
+      include: {
+        checkIn: {
+          include: {
+            reservation: true,
+          },
+        },
+      },
+    });
+
+    if (!agreement) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Service agreement not found',
+      });
+    }
+
+    res.json({
+      status: 'success',
+      data: agreement,
+    });
+  } catch (error: any) {
+    logger.error('Error fetching service agreement', {
+      checkInId: req.params.checkInId,
+      tenantId: req.headers['x-tenant-id'],
+      error: error.message,
+    });
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to fetch service agreement',
+    });
+  }
+});
+
+// Get all agreements for a customer
+router.get('/service-agreements/customer/:customerId', async (req, res) => {
   try {
     const { customerId } = req.params;
-    const tenantId = (req as any).tenantId;
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
     const { valid, limit = 50, offset = 0 } = req.query;
 
     const where: any = {
@@ -643,16 +599,63 @@ export const getAgreementsByCustomer = async (req: Request, res: Response) => {
       message: 'Failed to fetch customer agreements',
     });
   }
-};
+});
 
-/**
- * Get a single agreement by ID
- * GET /api/service-agreements/:id
- */
-export const getAgreementById = async (req: Request, res: Response) => {
+// Check if customer has valid agreement
+router.get(
+  '/service-agreements/customer/:customerId/valid',
+  async (req, res) => {
+    try {
+      const { customerId } = req.params;
+      const tenantId =
+        (req as any).tenantId || (req.headers['x-tenant-id'] as string);
+
+      const validAgreement = await prisma.serviceAgreement.findFirst({
+        where: {
+          customerId,
+          tenantId,
+          isValid: true,
+          OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+        },
+        orderBy: { signedAt: 'desc' },
+        include: {
+          template: {
+            select: {
+              id: true,
+              name: true,
+              version: true,
+            },
+          },
+        },
+      });
+
+      res.json({
+        status: 'success',
+        data: {
+          hasValidAgreement: !!validAgreement,
+          agreement: validAgreement,
+        },
+      });
+    } catch (error: any) {
+      logger.error('Error checking customer agreement', {
+        customerId: req.params.customerId,
+        tenantId: req.headers['x-tenant-id'],
+        error: error.message,
+      });
+      res.status(500).json({
+        status: 'error',
+        message: 'Failed to check customer agreement',
+      });
+    }
+  }
+);
+
+// Get agreement by ID
+router.get('/service-agreements/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const tenantId = (req as any).tenantId;
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
 
     const agreement = await prisma.serviceAgreement.findFirst({
       where: { id, tenantId },
@@ -696,16 +699,14 @@ export const getAgreementById = async (req: Request, res: Response) => {
       message: 'Failed to fetch agreement',
     });
   }
-};
+});
 
-/**
- * Invalidate an agreement
- * PUT /api/service-agreements/:id/invalidate
- */
-export const invalidateAgreement = async (req: Request, res: Response) => {
+// Invalidate an agreement
+router.put('/service-agreements/:id/invalidate', async (req, res) => {
   try {
     const { id } = req.params;
-    const tenantId = (req as any).tenantId;
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
     const staffId = (req as any).user?.id;
     const { reason } = req.body;
 
@@ -759,18 +760,15 @@ export const invalidateAgreement = async (req: Request, res: Response) => {
       message: 'Failed to invalidate agreement',
     });
   }
-};
+});
 
-/**
- * Get version history for a template
- * GET /api/service-agreement-templates/:id/versions
- */
-export const getTemplateVersions = async (req: Request, res: Response) => {
+// Get version history for a template
+router.get('/service-agreement-templates/:id/versions', async (req, res) => {
   try {
     const { id } = req.params;
-    const tenantId = (req as any).tenantId;
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
 
-    // Verify template exists
     const template = await prisma.serviceAgreementTemplate.findFirst({
       where: { id, tenantId },
     });
@@ -803,94 +801,49 @@ export const getTemplateVersions = async (req: Request, res: Response) => {
       message: 'Failed to fetch template versions',
     });
   }
-};
+});
 
-/**
- * Get a specific version of a template
- * GET /api/service-agreement-templates/:id/versions/:version
- */
-export const getTemplateVersion = async (req: Request, res: Response) => {
-  try {
-    const { id, version } = req.params;
-    const tenantId = (req as any).tenantId;
+// Get specific version of a template
+router.get(
+  '/service-agreement-templates/:id/versions/:version',
+  async (req, res) => {
+    try {
+      const { id, version } = req.params;
+      const tenantId =
+        (req as any).tenantId || (req.headers['x-tenant-id'] as string);
 
-    const versionRecord = await prisma.serviceAgreementVersion.findFirst({
-      where: {
-        templateId: id,
-        version: Number(version),
-        tenantId,
-      },
-    });
+      const versionRecord = await prisma.serviceAgreementVersion.findFirst({
+        where: {
+          templateId: id,
+          version: Number(version),
+          tenantId,
+        },
+      });
 
-    if (!versionRecord) {
-      return res.status(404).json({
+      if (!versionRecord) {
+        return res.status(404).json({
+          status: 'error',
+          message: 'Version not found',
+        });
+      }
+
+      res.json({
+        status: 'success',
+        data: versionRecord,
+      });
+    } catch (error: any) {
+      logger.error('Error fetching template version', {
+        templateId: req.params.id,
+        version: req.params.version,
+        tenantId: req.headers['x-tenant-id'],
+        error: error.message,
+      });
+      res.status(500).json({
         status: 'error',
-        message: 'Version not found',
+        message: 'Failed to fetch template version',
       });
     }
-
-    res.json({
-      status: 'success',
-      data: versionRecord,
-    });
-  } catch (error: any) {
-    logger.error('Error fetching template version', {
-      templateId: req.params.id,
-      version: req.params.version,
-      tenantId: req.headers['x-tenant-id'],
-      error: error.message,
-    });
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to fetch template version',
-    });
   }
-};
+);
 
-/**
- * Check if customer has valid agreement
- * GET /api/service-agreements/customer/:customerId/valid
- */
-export const checkCustomerAgreement = async (req: Request, res: Response) => {
-  try {
-    const { customerId } = req.params;
-    const tenantId = (req as any).tenantId;
-
-    const validAgreement = await prisma.serviceAgreement.findFirst({
-      where: {
-        customerId,
-        tenantId,
-        isValid: true,
-        OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
-      },
-      orderBy: { signedAt: 'desc' },
-      include: {
-        template: {
-          select: {
-            id: true,
-            name: true,
-            version: true,
-          },
-        },
-      },
-    });
-
-    res.json({
-      status: 'success',
-      data: {
-        hasValidAgreement: !!validAgreement,
-        agreement: validAgreement,
-      },
-    });
-  } catch (error: any) {
-    logger.error('Error checking customer agreement', {
-      customerId: req.params.customerId,
-      tenantId: req.headers['x-tenant-id'],
-      error: error.message,
-    });
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to check customer agreement',
-    });
-  }
-};
+export default router;

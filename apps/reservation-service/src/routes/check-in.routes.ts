@@ -1,181 +1,994 @@
 import { Router } from 'express';
-import * as checkInTemplateController from '../controllers/check-in-template.controller.js';
-import * as checkInController from '../controllers/check-in.controller.js';
-import * as serviceAgreementController from '../controllers/service-agreement.controller.js';
-
-const router: Router = Router();
+import { prisma } from '../config/prisma.js';
+import { logger } from '../utils/logger.js';
 
 /**
- * Check-In Template Routes
+ * Check-In Controller
+ * Manages pet check-ins with questionnaire responses, medications, and belongings
  */
 
-// Get all templates
-router.get('/check-in-templates', checkInTemplateController.getAllTemplates);
+export const router: Router = Router();
 
-// Get default template
-router.get(
-  '/check-in-templates/default',
-  checkInTemplateController.getDefaultTemplate
-);
+const mapMedicationMethod = (method: string): string => {
+  const methodMap: Record<string, string> = {
+    ORAL: 'ORAL_PILL',
+    oral: 'ORAL_PILL',
+    Oral: 'ORAL_PILL',
+    PILL: 'ORAL_PILL',
+    LIQUID: 'ORAL_LIQUID',
+    DROPS: 'EYE_DROPS',
+  };
 
-// Get template by ID
-router.get(
-  '/check-in-templates/:id',
-  checkInTemplateController.getTemplateById
-);
-
-// Create template
-router.post('/check-in-templates', checkInTemplateController.createTemplate);
-
-// Update template
-router.put('/check-in-templates/:id', checkInTemplateController.updateTemplate);
-
-// Delete template
-router.delete(
-  '/check-in-templates/:id',
-  checkInTemplateController.deleteTemplate
-);
-
-// Clone template
-router.post(
-  '/check-in-templates/:id/clone',
-  checkInTemplateController.cloneTemplate
-);
+  return methodMap[method] || method;
+};
 
 /**
  * Check-In Routes
  */
 
 // Get all check-ins
-router.get('/check-ins', checkInController.getAllCheckIns);
+router.get('/check-ins', async (req, res) => {
+  try {
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
+    const { petId, reservationId, startDate, endDate } = req.query;
+
+    const where: any = { tenantId };
+
+    if (petId) {
+      where.petId = petId as string;
+    }
+
+    if (reservationId) {
+      where.reservationId = reservationId as string;
+    }
+
+    if (startDate || endDate) {
+      where.checkInTime = {};
+      if (startDate) {
+        where.checkInTime.gte = new Date(startDate as string);
+      }
+      if (endDate) {
+        where.checkInTime.lte = new Date(endDate as string);
+      }
+    }
+
+    const checkIns = await prisma.checkIn.findMany({
+      where,
+      include: {
+        reservation: {
+          select: {
+            id: true,
+            startDate: true,
+            endDate: true,
+            status: true,
+          },
+        },
+        template: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        responses: {
+          include: {
+            question: {
+              select: {
+                questionText: true,
+                questionType: true,
+              },
+            },
+          },
+        },
+        medications: true,
+        belongings: true,
+        agreement: true,
+      },
+      orderBy: { checkInTime: 'desc' },
+    });
+
+    res.json({
+      status: 'success',
+      results: checkIns.length,
+      data: checkIns,
+    });
+  } catch (error: any) {
+    logger.error('Error fetching check-ins', {
+      tenantId: req.headers['x-tenant-id'],
+      error: error.message,
+    });
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to fetch check-ins',
+    });
+  }
+});
 
 // Get check-in by ID
-router.get('/check-ins/:id', checkInController.getCheckInById);
+router.get('/check-ins/:id', async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
+
+    const checkIn = await prisma.checkIn.findFirst({
+      where: { id, tenantId },
+      include: {
+        reservation: true,
+        template: {
+          include: {
+            sections: {
+              include: {
+                questions: {
+                  orderBy: { order: 'asc' },
+                },
+              },
+              orderBy: { order: 'asc' },
+            },
+          },
+        },
+        responses: {
+          include: {
+            question: true,
+          },
+        },
+        medications: {
+          orderBy: { medicationName: 'asc' },
+        },
+        belongings: {
+          orderBy: { itemType: 'asc' },
+        },
+        agreement: true,
+        activities: {
+          orderBy: { timestamp: 'desc' },
+        },
+      },
+    });
+
+    if (!checkIn) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Check-in not found',
+      });
+    }
+
+    res.json({
+      status: 'success',
+      data: checkIn,
+    });
+  } catch (error: any) {
+    logger.error('Error fetching check-in', {
+      checkInId: id,
+      tenantId: req.headers['x-tenant-id'],
+      error: error.message,
+    });
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to fetch check-in',
+    });
+  }
+});
 
 // Create check-in
-router.post('/check-ins', checkInController.createCheckIn);
+router.post('/check-ins', async (req, res) => {
+  try {
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
+    const {
+      petId,
+      customerId,
+      reservationId,
+      templateId,
+      checkInBy,
+      checkInNotes,
+      responses,
+      medications,
+      belongings,
+    } = req.body;
+
+    if (!petId) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Pet ID is required',
+      });
+    }
+
+    const checkIn = await prisma.checkIn.create({
+      data: {
+        tenantId,
+        petId,
+        customerId,
+        reservationId,
+        templateId,
+        checkInBy,
+        checkInNotes,
+        checkInTime: new Date(),
+        status: 'COMPLETED',
+        currentStep: 5,
+        responses: responses
+          ? {
+              create: responses.map((response: any) => ({
+                questionId: response.questionId,
+                response: response.response,
+              })),
+            }
+          : undefined,
+        medications: medications
+          ? {
+              create: medications.map((med: any) => ({
+                medicationName: med.medicationName,
+                dosage: med.dosage,
+                frequency: med.frequency,
+                administrationMethod: mapMedicationMethod(
+                  med.administrationMethod
+                ),
+                timeOfDay: med.timeOfDay,
+                withFood: med.withFood || false,
+                specialInstructions: med.specialInstructions,
+                startDate: med.startDate ? new Date(med.startDate) : undefined,
+                endDate: med.endDate ? new Date(med.endDate) : undefined,
+                prescribingVet: med.prescribingVet,
+                notes: med.notes,
+              })),
+            }
+          : undefined,
+        belongings: belongings
+          ? {
+              create: belongings.map((item: any) => ({
+                itemType: item.itemType,
+                description: item.description,
+                quantity: item.quantity || 1,
+                color: item.color,
+                brand: item.brand,
+                notes: item.notes,
+              })),
+            }
+          : undefined,
+      },
+      include: {
+        responses: {
+          include: {
+            question: true,
+          },
+        },
+        medications: true,
+        belongings: true,
+      },
+    });
+
+    res.status(201).json({
+      status: 'success',
+      data: checkIn,
+    });
+  } catch (error: any) {
+    logger.error('Error creating check-in', {
+      petId: req.body.petId,
+      tenantId: req.headers['x-tenant-id'],
+      error: error.message,
+    });
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to create check-in',
+    });
+  }
+});
 
 // Update check-in
-router.put('/check-ins/:id', checkInController.updateCheckIn);
+router.put('/check-ins/:id', async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
+    const {
+      checkInNotes,
+      checkOutNotes,
+      checkOutBy,
+      checkOutTime,
+      foodProvided,
+      medicationGiven,
+      medicationNotes,
+      behaviorDuringStay,
+      photosTaken,
+      photosShared,
+    } = req.body;
+
+    const existing = await prisma.checkIn.findFirst({
+      where: { id, tenantId },
+    });
+
+    if (!existing) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Check-in not found',
+      });
+    }
+
+    const checkIn = await prisma.checkIn.update({
+      where: { id },
+      data: {
+        checkInNotes,
+        checkOutNotes,
+        checkOutBy,
+        checkOutTime: checkOutTime ? new Date(checkOutTime) : undefined,
+        foodProvided,
+        medicationGiven,
+        medicationNotes,
+        behaviorDuringStay,
+        photosTaken,
+        photosShared,
+      },
+      include: {
+        responses: {
+          include: {
+            question: true,
+          },
+        },
+        medications: true,
+        belongings: true,
+        agreement: true,
+      },
+    });
+
+    res.json({
+      status: 'success',
+      data: checkIn,
+    });
+  } catch (error: any) {
+    logger.error('Error updating check-in', {
+      checkInId: id,
+      tenantId: req.headers['x-tenant-id'],
+      error: error.message,
+    });
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to update check-in',
+    });
+  }
+});
 
 // Medication management
-router.post('/check-ins/:id/medications', checkInController.addMedication);
+router.post('/check-ins/:id/medications', async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
+    const medicationData = req.body;
+
+    const checkIn = await prisma.checkIn.findFirst({
+      where: { id, tenantId },
+    });
+
+    if (!checkIn) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Check-in not found',
+      });
+    }
+
+    const medication = await prisma.checkInMedication.create({
+      data: {
+        checkInId: id,
+        medicationName: medicationData.medicationName,
+        dosage: medicationData.dosage,
+        frequency: medicationData.frequency,
+        administrationMethod: medicationData.administrationMethod,
+        timeOfDay: medicationData.timeOfDay,
+        withFood: medicationData.withFood || false,
+        specialInstructions: medicationData.specialInstructions,
+        startDate: medicationData.startDate
+          ? new Date(medicationData.startDate)
+          : undefined,
+        endDate: medicationData.endDate
+          ? new Date(medicationData.endDate)
+          : undefined,
+        prescribingVet: medicationData.prescribingVet,
+        notes: medicationData.notes,
+      },
+    });
+
+    res.status(201).json({
+      status: 'success',
+      data: medication,
+    });
+  } catch (error: any) {
+    logger.error('Error adding medication', {
+      checkInId: id,
+      tenantId: req.headers['x-tenant-id'],
+      error: error.message,
+    });
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to add medication',
+    });
+  }
+});
+
 router.put(
   '/check-ins/:checkInId/medications/:medicationId',
-  checkInController.updateMedication
+  async (req, res) => {
+    const checkInId = req.params.checkInId;
+    const medicationId = req.params.medicationId;
+
+    try {
+      const tenantId =
+        (req as any).tenantId || (req.headers['x-tenant-id'] as string);
+      const medicationData = req.body;
+
+      const checkIn = await prisma.checkIn.findFirst({
+        where: { id: checkInId, tenantId },
+      });
+
+      if (!checkIn) {
+        return res.status(404).json({
+          status: 'error',
+          message: 'Check-in not found',
+        });
+      }
+
+      const medication = await prisma.checkInMedication.update({
+        where: { id: medicationId },
+        data: {
+          medicationName: medicationData.medicationName,
+          dosage: medicationData.dosage,
+          frequency: medicationData.frequency,
+          administrationMethod: medicationData.administrationMethod,
+          timeOfDay: medicationData.timeOfDay,
+          withFood: medicationData.withFood,
+          specialInstructions: medicationData.specialInstructions,
+          startDate: medicationData.startDate
+            ? new Date(medicationData.startDate)
+            : undefined,
+          endDate: medicationData.endDate
+            ? new Date(medicationData.endDate)
+            : undefined,
+          prescribingVet: medicationData.prescribingVet,
+          notes: medicationData.notes,
+        },
+      });
+
+      res.json({
+        status: 'success',
+        data: medication,
+      });
+    } catch (error: any) {
+      logger.error('Error updating medication', {
+        checkInId,
+        medicationId,
+        tenantId: req.headers['x-tenant-id'],
+        error: error.message,
+      });
+      res.status(500).json({
+        status: 'error',
+        message: 'Failed to update medication',
+      });
+    }
+  }
 );
+
 router.delete(
   '/check-ins/:checkInId/medications/:medicationId',
-  checkInController.deleteMedication
+  async (req, res) => {
+    const medicationId = req.params.medicationId;
+
+    try {
+      await prisma.checkInMedication.delete({
+        where: { id: medicationId },
+      });
+
+      res.json({
+        status: 'success',
+        message: 'Medication deleted successfully',
+      });
+    } catch (error: any) {
+      logger.error('Error deleting medication', {
+        medicationId,
+        error: error.message,
+      });
+      res.status(500).json({
+        status: 'error',
+        message: 'Failed to delete medication',
+      });
+    }
+  }
 );
 
 // Belonging management
 router.put(
   '/check-ins/:checkInId/belongings/:belongingId/return',
-  checkInController.returnBelonging
+  async (req, res) => {
+    const belongingId = req.params.belongingId;
+
+    try {
+      const { returnedBy } = req.body;
+
+      const belonging = await prisma.checkInBelonging.update({
+        where: { id: belongingId },
+        data: {
+          returnedAt: new Date(),
+          returnedBy,
+        },
+      });
+
+      res.json({
+        status: 'success',
+        data: belonging,
+      });
+    } catch (error: any) {
+      logger.error('Error marking belonging as returned', {
+        belongingId,
+        error: error.message,
+      });
+      res.status(500).json({
+        status: 'error',
+        message: 'Failed to mark belonging as returned',
+      });
+    }
+  }
 );
 
 // Multi-pet check-in routes
-router.get(
-  '/check-ins/room-pets/:reservationId',
-  checkInController.getRoomPets
-);
-router.post('/check-ins/batch', checkInController.batchCheckIn);
+router.get('/check-ins/room-pets/:reservationId', async (req, res) => {
+  const reservationId = req.params.reservationId;
+
+  try {
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
+
+    const reservation = await prisma.reservation.findFirst({
+      where: { id: reservationId, tenantId },
+      select: {
+        id: true,
+        resourceId: true,
+        startDate: true,
+        endDate: true,
+        petId: true,
+        customerId: true,
+        status: true,
+      },
+    });
+
+    if (!reservation) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Reservation not found',
+      });
+    }
+
+    if (!reservation.resourceId) {
+      return res.json({
+        status: 'success',
+        data: {
+          reservations: [reservation],
+          totalPets: 1,
+          resourceId: null,
+        },
+      });
+    }
+
+    const roomReservations = await prisma.reservation.findMany({
+      where: {
+        tenantId,
+        resourceId: reservation.resourceId,
+        status: { in: ['CONFIRMED', 'PENDING', 'CHECKED_IN'] },
+        AND: [
+          { startDate: { lte: reservation.endDate } },
+          { endDate: { gte: reservation.startDate } },
+        ],
+      },
+      select: {
+        id: true,
+        petId: true,
+        customerId: true,
+        startDate: true,
+        endDate: true,
+        status: true,
+      },
+      orderBy: { startDate: 'asc' },
+    });
+
+    const checkInStatuses = await prisma.checkIn.findMany({
+      where: {
+        tenantId,
+        reservationId: { in: roomReservations.map((r) => r.id) },
+      },
+      select: {
+        reservationId: true,
+        id: true,
+        checkInTime: true,
+      },
+    });
+
+    const checkInMap = new Map(
+      checkInStatuses.map((checkIn) => [checkIn.reservationId, checkIn])
+    );
+
+    const enrichedReservations = roomReservations.map((roomReservation) => ({
+      ...roomReservation,
+      checkIn: checkInMap.get(roomReservation.id) || null,
+      isCheckedIn: !!checkInMap.get(roomReservation.id),
+    }));
+
+    res.json({
+      status: 'success',
+      data: {
+        reservations: enrichedReservations,
+        totalPets: roomReservations.length,
+        resourceId: reservation.resourceId,
+        dateRange: {
+          startDate: reservation.startDate,
+          endDate: reservation.endDate,
+        },
+      },
+    });
+  } catch (error: any) {
+    logger.error('Error fetching room pets', {
+      reservationId,
+      tenantId: req.headers['x-tenant-id'],
+      error: error.message,
+    });
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to fetch room pets',
+    });
+  }
+});
+
+router.post('/check-ins/batch', async (req, res) => {
+  try {
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
+    const { checkIns, sharedData } = req.body;
+
+    if (!checkIns || !Array.isArray(checkIns) || checkIns.length === 0) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'At least one check-in is required',
+      });
+    }
+
+    const results = [];
+    const errors = [];
+
+    for (const checkInData of checkIns) {
+      try {
+        const {
+          petId,
+          customerId,
+          reservationId,
+          templateId,
+          checkInBy,
+          checkInNotes,
+          responses,
+          medications,
+          belongings,
+        } = checkInData;
+
+        const mergedMedications = medications || sharedData?.medications || [];
+        const mergedBelongings = belongings || sharedData?.belongings || [];
+
+        const checkIn = await prisma.checkIn.create({
+          data: {
+            tenantId,
+            petId,
+            customerId,
+            reservationId,
+            templateId: templateId || sharedData?.templateId,
+            checkInBy: checkInBy || sharedData?.checkInBy,
+            checkInNotes,
+            checkInTime: new Date(),
+            responses: responses
+              ? {
+                  create: responses.map((response: any) => ({
+                    questionId: response.questionId,
+                    response: response.response,
+                  })),
+                }
+              : undefined,
+            medications:
+              mergedMedications.length > 0
+                ? {
+                    create: mergedMedications.map((med: any) => ({
+                      medicationName: med.medicationName,
+                      dosage: med.dosage,
+                      frequency: med.frequency,
+                      administrationMethod: med.administrationMethod,
+                      timeOfDay: med.timeOfDay,
+                      withFood: med.withFood || false,
+                      specialInstructions: med.specialInstructions,
+                      startDate: med.startDate
+                        ? new Date(med.startDate)
+                        : undefined,
+                      endDate: med.endDate ? new Date(med.endDate) : undefined,
+                      prescribingVet: med.prescribingVet,
+                      notes: med.notes,
+                    })),
+                  }
+                : undefined,
+            belongings:
+              mergedBelongings.length > 0
+                ? {
+                    create: mergedBelongings.map((item: any) => ({
+                      itemType: item.itemType,
+                      description: item.description,
+                      quantity: item.quantity || 1,
+                      color: item.color,
+                      brand: item.brand,
+                      notes: item.notes,
+                    })),
+                  }
+                : undefined,
+          },
+          include: {
+            responses: true,
+            medications: true,
+            belongings: true,
+          },
+        });
+
+        if (reservationId) {
+          await prisma.reservation.update({
+            where: { id: reservationId },
+            data: { status: 'CHECKED_IN' },
+          });
+        }
+
+        results.push({ petId, checkIn, success: true });
+      } catch (petError: any) {
+        errors.push({
+          petId: checkInData.petId,
+          error: petError.message,
+          success: false,
+        });
+      }
+    }
+
+    res.status(201).json({
+      status: errors.length === 0 ? 'success' : 'partial',
+      data: {
+        successful: results,
+        failed: errors,
+        totalProcessed: checkIns.length,
+        successCount: results.length,
+        errorCount: errors.length,
+      },
+    });
+  } catch (error: any) {
+    logger.error('Error in batch check-in', {
+      tenantId: req.headers['x-tenant-id'],
+      error: error.message,
+    });
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to process batch check-in',
+    });
+  }
+});
 
 // Draft management routes
-router.get('/check-ins/draft/:reservationId', checkInController.getDraft);
-router.post('/check-ins/draft', checkInController.saveDraft);
+router.get('/check-ins/draft/:reservationId', async (req, res) => {
+  const reservationId = req.params.reservationId;
 
-/**
- * Service Agreement Template Routes
- */
+  try {
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
 
-// Get all agreement templates
-router.get(
-  '/service-agreement-templates',
-  serviceAgreementController.getAllTemplates
-);
+    const checkIn = await prisma.checkIn.findFirst({
+      where: {
+        tenantId,
+        reservationId,
+        status: { in: ['DRAFT', 'IN_PROGRESS'] },
+      },
+      include: {
+        responses: {
+          include: { question: true },
+        },
+        medications: true,
+        belongings: true,
+      },
+      orderBy: { updatedAt: 'desc' },
+    });
 
-// Get default agreement template
-router.get(
-  '/service-agreement-templates/default',
-  serviceAgreementController.getDefaultTemplate
-);
+    if (!checkIn) {
+      return res.json({
+        status: 'success',
+        data: null,
+      });
+    }
 
-// Get agreement template by ID
-router.get(
-  '/service-agreement-templates/:id',
-  serviceAgreementController.getTemplateById
-);
+    res.json({
+      status: 'success',
+      data: checkIn,
+    });
+  } catch (error: any) {
+    logger.error('Error fetching draft', {
+      reservationId,
+      tenantId: req.headers['x-tenant-id'],
+      error: error.message,
+    });
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to fetch draft',
+    });
+  }
+});
 
-// Create agreement template
-router.post(
-  '/service-agreement-templates',
-  serviceAgreementController.createTemplate
-);
+router.post('/check-ins/draft', async (req, res) => {
+  try {
+    const tenantId =
+      (req as any).tenantId || (req.headers['x-tenant-id'] as string);
+    const {
+      checkInId,
+      petId,
+      customerId,
+      reservationId,
+      templateId,
+      currentStep,
+      responses,
+      medications,
+      belongings,
+      checkInNotes,
+    } = req.body;
 
-// Update agreement template
-router.put(
-  '/service-agreement-templates/:id',
-  serviceAgreementController.updateTemplate
-);
+    if (!petId || !reservationId) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Pet ID and Reservation ID are required',
+      });
+    }
 
-// Delete agreement template
-router.delete(
-  '/service-agreement-templates/:id',
-  serviceAgreementController.deleteTemplate
-);
+    let checkIn;
 
-/**
- * Service Agreement Routes
- */
+    if (checkInId) {
+      checkIn = await prisma.checkIn.update({
+        where: { id: checkInId },
+        data: {
+          currentStep: currentStep || 0,
+          checkInNotes,
+          status: 'IN_PROGRESS',
+          updatedAt: new Date(),
+        },
+        include: {
+          responses: true,
+          medications: true,
+          belongings: true,
+        },
+      });
 
-// Create signed agreement
-router.post('/service-agreements', serviceAgreementController.createAgreement);
+      if (responses && responses.length > 0) {
+        await prisma.checkInResponse.deleteMany({
+          where: { checkInId: checkIn.id },
+        });
+        await prisma.checkInResponse.createMany({
+          data: responses.map((response: any) => ({
+            checkInId: checkIn.id,
+            questionId: response.questionId,
+            response: response.response,
+          })),
+        });
+      }
 
-// Get all signed agreements for tenant
-router.get('/service-agreements', serviceAgreementController.getAllAgreements);
+      if (medications && medications.length > 0) {
+        await prisma.checkInMedication.deleteMany({
+          where: { checkInId: checkIn.id },
+        });
+        await prisma.checkInMedication.createMany({
+          data: medications.map((med: any) => ({
+            checkInId: checkIn.id,
+            medicationName: med.medicationName,
+            dosage: med.dosage,
+            frequency: med.frequency,
+            administrationMethod: mapMedicationMethod(med.administrationMethod),
+            timeOfDay: med.timeOfDay,
+            withFood: med.withFood || false,
+            specialInstructions: med.specialInstructions,
+            prescribingVet: med.prescribingVet,
+            notes: med.notes,
+          })),
+        });
+      }
 
-// Get agreement by check-in ID
-router.get(
-  '/service-agreements/check-in/:checkInId',
-  serviceAgreementController.getAgreementByCheckIn
-);
+      if (belongings && belongings.length > 0) {
+        await prisma.checkInBelonging.deleteMany({
+          where: { checkInId: checkIn.id },
+        });
+        await prisma.checkInBelonging.createMany({
+          data: belongings.map((item: any) => ({
+            checkInId: checkIn.id,
+            itemType: item.itemType,
+            description: item.description,
+            quantity: item.quantity || 1,
+            color: item.color,
+            brand: item.brand,
+            notes: item.notes,
+          })),
+        });
+      }
+    } else {
+      checkIn = await prisma.checkIn.create({
+        data: {
+          tenantId,
+          petId,
+          customerId,
+          reservationId,
+          templateId,
+          currentStep: currentStep || 0,
+          checkInNotes,
+          status: 'DRAFT',
+          checkInTime: new Date(),
+          responses: responses
+            ? {
+                create: responses.map((response: any) => ({
+                  questionId: response.questionId,
+                  response: response.response,
+                })),
+              }
+            : undefined,
+          medications: medications
+            ? {
+                create: medications.map((med: any) => ({
+                  medicationName: med.medicationName,
+                  dosage: med.dosage,
+                  frequency: med.frequency,
+                  administrationMethod: mapMedicationMethod(
+                    med.administrationMethod
+                  ),
+                  timeOfDay: med.timeOfDay,
+                  withFood: med.withFood || false,
+                  specialInstructions: med.specialInstructions,
+                  prescribingVet: med.prescribingVet,
+                  notes: med.notes,
+                })),
+              }
+            : undefined,
+          belongings: belongings
+            ? {
+                create: belongings.map((item: any) => ({
+                  itemType: item.itemType,
+                  description: item.description,
+                  quantity: item.quantity || 1,
+                  color: item.color,
+                  brand: item.brand,
+                  notes: item.notes,
+                })),
+              }
+            : undefined,
+        },
+        include: {
+          responses: true,
+          medications: true,
+          belongings: true,
+        },
+      });
+    }
 
-// Get all agreements for a customer
-router.get(
-  '/service-agreements/customer/:customerId',
-  serviceAgreementController.getAgreementsByCustomer
-);
+    const updatedCheckIn = await prisma.checkIn.findUnique({
+      where: { id: checkIn.id },
+      include: {
+        responses: {
+          include: { question: true },
+        },
+        medications: true,
+        belongings: true,
+      },
+    });
 
-// Check if customer has valid agreement
-router.get(
-  '/service-agreements/customer/:customerId/valid',
-  serviceAgreementController.checkCustomerAgreement
-);
-
-// Get agreement by ID
-router.get(
-  '/service-agreements/:id',
-  serviceAgreementController.getAgreementById
-);
-
-// Invalidate an agreement
-router.put(
-  '/service-agreements/:id/invalidate',
-  serviceAgreementController.invalidateAgreement
-);
-
-// Get version history for a template
-router.get(
-  '/service-agreement-templates/:id/versions',
-  serviceAgreementController.getTemplateVersions
-);
-
-// Get specific version of a template
-router.get(
-  '/service-agreement-templates/:id/versions/:version',
-  serviceAgreementController.getTemplateVersion
-);
+    res.json({
+      status: 'success',
+      data: updatedCheckIn,
+    });
+  } catch (error: any) {
+    logger.error('Error saving draft', {
+      tenantId: req.headers['x-tenant-id'],
+      error: error.message,
+    });
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to save draft',
+    });
+  }
+});
 
 export default router;
