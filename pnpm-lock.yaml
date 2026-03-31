@@ -12,6 +12,9 @@ catalogs:
     '@prisma/client':
       specifier: 7.4.2
       version: 7.4.2
+    '@types/express':
+      specifier: 5.0.6
+      version: 5.0.6
     '@types/express-serve-static-core':
       specifier: 5.1.1
       version: 5.1.1
@@ -239,7 +242,7 @@ importers:
         specifier: 2.8.13
         version: 2.8.13
       '@types/express':
-        specifier: 5.0.6
+        specifier: 'catalog:'
         version: 5.0.6
       '@types/express-serve-static-core':
         specifier: 'catalog:'
@@ -599,8 +602,8 @@ importers:
         specifier: 2.8.13
         version: 2.8.13
       '@types/express':
-        specifier: 4.17.17
-        version: 4.17.17
+        specifier: 'catalog:'
+        version: 5.0.6
       '@types/express-serve-static-core':
         specifier: 'catalog:'
         version: 5.1.1
@@ -699,7 +702,7 @@ importers:
         specifier: 2.8.13
         version: 2.8.13
       '@types/express':
-        specifier: 5.0.6
+        specifier: 'catalog:'
         version: 5.0.6
       '@types/express-serve-static-core':
         specifier: 'catalog:'
@@ -777,8 +780,8 @@ importers:
         version: 4.18.2
     devDependencies:
       '@types/express':
-        specifier: 4.17.17
-        version: 4.17.17
+        specifier: 'catalog:'
+        version: 5.0.6
       '@types/node':
         specifier: 25.3.5
         version: 25.3.5
