@@ -2,10 +2,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { createService, tenantMiddleware } from './utils/service.js';
-import reservationRoutes from './routes/reservation.routes.js';
-import resourceRoutes from './routes/resourceRoutes.js';
-import errorTrackingRoutes from './routes/error-tracking.routes.js';
-import checkInRoutes from './routes/check-in.routes.js';
+import reservationRoutes from './routes/reservation/router.js';
+import resourceRoutes from './routes/resource/router.js';
+import errorTrackingRoutes from './routes/error-tracking/router.js';
+import checkInTemplateRoutes from './routes/check-in-template/router.js';
+import checkInRoutes from './routes/check-in/router.js';
+import serviceAgreementRoutes from './routes/service-agreement/router.js';
 import { prisma } from './config/prisma.js';
 import { monitoring } from './utils/monitoring.js';
 import { auditMiddleware } from './utils/auditLog.js';
@@ -38,7 +40,9 @@ app.use('/monitoring', monitoringRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/resources', resourceRoutes);
 app.use('/api/error-tracking', errorTrackingRoutes);
-app.use('/api', checkInRoutes); // Check-in routes include multiple prefixes
+app.use('/api', checkInTemplateRoutes);
+app.use('/api', checkInRoutes);
+app.use('/api', serviceAgreementRoutes);
 
 // Register error handlers (must be last)
 app.registerErrorHandlers();

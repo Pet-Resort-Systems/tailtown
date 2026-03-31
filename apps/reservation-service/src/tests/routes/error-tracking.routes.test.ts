@@ -8,45 +8,56 @@
 import express from 'express';
 import request from 'supertest';
 
-// Mock all controller functions
-jest.mock('../../controllers/error-tracking', () => ({
-  getAllErrors: jest.fn((req, res) =>
-    res.json({ status: 'success', data: [] })
-  ),
-  getErrorAnalytics: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
-  getErrorById: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
-  resolveError: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
+jest.mock('../../utils/reservation-error-tracker', () => ({
+  reservationErrorTracker: {
+    getErrors: jest.fn(),
+    getErrorAnalyticsObject: jest.fn(),
+    getError: jest.fn(),
+    resolveError: jest.fn(),
+  },
+  ReservationErrorCategory: {
+    VALIDATION_ERROR: 'VALIDATION_ERROR',
+  },
 }));
 
-import errorTrackingRoutes from '../../routes/error-tracking.routes';
-import {
-  getAllErrors,
-  getErrorAnalytics,
-  getErrorById,
-  resolveError,
-} from '../../controllers/error-tracking';
+jest.mock('../../utils/logger', () => ({
+  logger: {
+    error: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+    success: jest.fn(),
+  },
+}));
+
+import errorTrackingRoutes from '../../routes/error-tracking/router';
+import { reservationErrorTracker } from '../../utils/reservation-error-tracker';
 
 describe('Error Tracking Routes', () => {
   let app: express.Application;
 
   beforeEach(() => {
     jest.clearAllMocks();
+    reservationErrorTracker.getErrors.mockResolvedValue([]);
+    reservationErrorTracker.getErrorAnalyticsObject.mockReturnValue({
+      VALIDATION_ERROR: 2,
+    });
+    reservationErrorTracker.getError.mockImplementation((id) => ({
+      id,
+      isResolved: false,
+    }));
+    reservationErrorTracker.resolveError.mockReturnValue(true);
+
     app = express();
     app.use(express.json());
     app.use('/api/errors', errorTrackingRoutes);
   });
 
   describe('GET /api/errors', () => {
-    it('should call getAllErrors controller', async () => {
+    it('should call getErrors on the tracker', async () => {
       await request(app).get('/api/errors');
 
-      expect(getAllErrors).toHaveBeenCalled();
+      expect(reservationErrorTracker.getErrors).toHaveBeenCalledWith({}, 100);
     });
 
     it('should return success response', async () => {
@@ -58,27 +69,26 @@ describe('Error Tracking Routes', () => {
 
     it('should pass query parameters', async () => {
       await request(app).get(
-        '/api/errors?category=VALIDATION_ERROR&resolved=false'
+        '/api/errors?category=VALIDATION_ERROR&isResolved=false&limit=25'
       );
 
-      expect(getAllErrors).toHaveBeenCalledWith(
+      expect(reservationErrorTracker.getErrors).toHaveBeenCalledWith(
         expect.objectContaining({
-          query: expect.objectContaining({
-            category: 'VALIDATION_ERROR',
-            resolved: 'false',
-          }),
+          category: 'VALIDATION_ERROR',
+          isResolved: false,
         }),
-        expect.any(Object),
-        expect.any(Function)
+        25
       );
     });
   });
 
   describe('GET /api/errors/analytics', () => {
-    it('should call getErrorAnalytics controller', async () => {
+    it('should call getErrorAnalyticsObject on the tracker', async () => {
       await request(app).get('/api/errors/analytics');
 
-      expect(getErrorAnalytics).toHaveBeenCalled();
+      expect(
+        reservationErrorTracker.getErrorAnalyticsObject
+      ).toHaveBeenCalled();
     });
 
     it('should return success response', async () => {
@@ -90,32 +100,30 @@ describe('Error Tracking Routes', () => {
   });
 
   describe('GET /api/errors/:id', () => {
-    it('should call getErrorById controller', async () => {
+    it('should call getError on the tracker', async () => {
       await request(app).get('/api/errors/err-123');
 
-      expect(getErrorById).toHaveBeenCalled();
+      expect(reservationErrorTracker.getError).toHaveBeenCalledWith('err-123');
     });
 
     it('should pass error ID in params', async () => {
       await request(app).get('/api/errors/err-456');
 
-      expect(getErrorById).toHaveBeenCalledWith(
-        expect.objectContaining({
-          params: expect.objectContaining({ id: 'err-456' }),
-        }),
-        expect.any(Object),
-        expect.any(Function)
-      );
+      expect(reservationErrorTracker.getError).toHaveBeenCalledWith('err-456');
     });
   });
 
   describe('PATCH /api/errors/:id/resolve', () => {
-    it('should call resolveError controller', async () => {
+    it('should call resolveError on the tracker', async () => {
       await request(app)
         .patch('/api/errors/err-123/resolve')
         .send({ resolution: 'Fixed the issue' });
 
-      expect(resolveError).toHaveBeenCalled();
+      expect(reservationErrorTracker.resolveError).toHaveBeenCalledWith(
+        'err-123',
+        undefined,
+        'Fixed the issue'
+      );
     });
 
     it('should pass error ID in params', async () => {
@@ -123,12 +131,10 @@ describe('Error Tracking Routes', () => {
         .patch('/api/errors/err-789/resolve')
         .send({ resolution: 'Resolved' });
 
-      expect(resolveError).toHaveBeenCalledWith(
-        expect.objectContaining({
-          params: expect.objectContaining({ id: 'err-789' }),
-        }),
-        expect.any(Object),
-        expect.any(Function)
+      expect(reservationErrorTracker.resolveError).toHaveBeenCalledWith(
+        'err-789',
+        undefined,
+        'Resolved'
       );
     });
 
@@ -137,14 +143,10 @@ describe('Error Tracking Routes', () => {
         .patch('/api/errors/err-123/resolve')
         .send({ resolution: 'Bug fixed in commit abc123' });
 
-      expect(resolveError).toHaveBeenCalledWith(
-        expect.objectContaining({
-          body: expect.objectContaining({
-            resolution: 'Bug fixed in commit abc123',
-          }),
-        }),
-        expect.any(Object),
-        expect.any(Function)
+      expect(reservationErrorTracker.resolveError).toHaveBeenCalledWith(
+        'err-123',
+        undefined,
+        'Bug fixed in commit abc123'
       );
     });
   });
@@ -153,8 +155,10 @@ describe('Error Tracking Routes', () => {
     it('should route /analytics before /:id', async () => {
       await request(app).get('/api/errors/analytics');
 
-      expect(getErrorAnalytics).toHaveBeenCalled();
-      expect(getErrorById).not.toHaveBeenCalled();
+      expect(
+        reservationErrorTracker.getErrorAnalyticsObject
+      ).toHaveBeenCalled();
+      expect(reservationErrorTracker.getError).not.toHaveBeenCalled();
     });
   });
 });

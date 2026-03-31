@@ -8,53 +8,96 @@
 import express from 'express';
 import request from 'supertest';
 
-// Mock all controller functions
-jest.mock('../../controllers/resource/availability.controller', () => ({
-  checkResourceAvailability: jest.fn((req, res) =>
-    res.json({ status: 'success', data: { isAvailable: true } })
-  ),
-}));
+const mockCheckResourceAvailabilityRouteHandler = jest.fn((req, res) =>
+  res.json({ status: 'success', data: { isAvailable: true } })
+);
+const mockBatchCheckResourceAvailabilityRouteHandler = jest.fn((req, res) =>
+  res.json({ status: 'success', data: { resources: [] } })
+);
+const mockGetAllResourcesRouteHandler = jest.fn((req, res) =>
+  res.json({ status: 'success', data: [] })
+);
+const mockGetResourceByIdRouteHandler = jest.fn((req, res) =>
+  res.json({ status: 'success', data: {} })
+);
+const mockCreateResourceRouteHandler = jest.fn((req, res) =>
+  res.status(201).json({ status: 'success', data: {} })
+);
+const mockUpdateResourceRouteHandler = jest.fn((req, res) =>
+  res.json({ status: 'success', data: {} })
+);
+const mockDeleteResourceRouteHandler = jest.fn((req, res) =>
+  res
+    .status(200)
+    .json({ status: 'success', message: 'Resource deleted successfully' })
+);
+const mockGetResourceAvailabilityRouteHandler = jest.fn((req, res) =>
+  res.json({ status: 'success', data: { isAvailable: true } })
+);
 
-jest.mock('../../controllers/resource/batch-availability.controller', () => ({
-  batchCheckResourceAvailability: jest.fn((req, res) =>
-    res.json({ status: 'success', data: { resources: [] } })
-  ),
-}));
+jest.mock('../../routes/resource/check-resource-availability.route', () => {
+  const express = require('express');
+  const route = express.Router();
+  route.use('/availability', mockCheckResourceAvailabilityRouteHandler);
+  return { route };
+});
 
-jest.mock('../../controllers/resource/resource.controller', () => ({
-  getAllResources: jest.fn((req, res) =>
-    res.json({ status: 'success', data: [] })
-  ),
-  getResourceById: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
-  createResource: jest.fn((req, res) =>
-    res.status(201).json({ status: 'success', data: {} })
-  ),
-  updateResource: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
-  deleteResource: jest.fn((req, res) =>
-    res
-      .status(200)
-      .json({ status: 'success', message: 'Resource deleted successfully' })
-  ),
-  getResourceAvailability: jest.fn((req, res) =>
-    res.json({ status: 'success', data: { isAvailable: true } })
-  ),
-}));
+jest.mock(
+  '../../routes/resource/batch-check-resource-availability.route',
+  () => {
+    const express = require('express');
+    const route = express.Router();
+    route.use(
+      '/availability/batch',
+      mockBatchCheckResourceAvailabilityRouteHandler
+    );
+    return { route };
+  }
+);
 
-import resourceRoutes from '../../routes/resourceRoutes';
-import { checkResourceAvailability } from '../../controllers/resource/availability.controller';
-import { batchCheckResourceAvailability } from '../../controllers/resource/batch-availability.controller';
-import {
-  getAllResources,
-  getResourceById,
-  createResource,
-  updateResource,
-  deleteResource,
-  getResourceAvailability,
-} from '../../controllers/resource/resource.controller';
+jest.mock('../../routes/resource/get-all-resources.route', () => {
+  const express = require('express');
+  const route = express.Router();
+  route.use('/', mockGetAllResourcesRouteHandler);
+  return { route };
+});
+
+jest.mock('../../routes/resource/get-resource-by-id.route', () => {
+  const express = require('express');
+  const route = express.Router();
+  route.use('/:id', mockGetResourceByIdRouteHandler);
+  return { route };
+});
+
+jest.mock('../../routes/resource/create-resource.route', () => {
+  const express = require('express');
+  const route = express.Router();
+  route.use('/', mockCreateResourceRouteHandler);
+  return { route };
+});
+
+jest.mock('../../routes/resource/update-resource.route', () => {
+  const express = require('express');
+  const route = express.Router();
+  route.use('/:id', mockUpdateResourceRouteHandler);
+  return { route };
+});
+
+jest.mock('../../routes/resource/delete-resource.route', () => {
+  const express = require('express');
+  const route = express.Router();
+  route.use('/:id', mockDeleteResourceRouteHandler);
+  return { route };
+});
+
+jest.mock('../../routes/resource/get-resource-availability.route', () => {
+  const express = require('express');
+  const route = express.Router();
+  route.use('/:id/availability', mockGetResourceAvailabilityRouteHandler);
+  return { route };
+});
+
+import resourceRoutes from '../../routes/resource/router';
 
 describe('Resource Routes', () => {
   let app: express.Application;
@@ -77,10 +120,10 @@ describe('Resource Routes', () => {
   });
 
   describe('GET /api/resources', () => {
-    it('should call getAllResources controller', async () => {
+    it('should call getAllResources route module', async () => {
       await request(app).get('/api/resources');
 
-      expect(getAllResources).toHaveBeenCalled();
+      expect(mockGetAllResourcesRouteHandler).toHaveBeenCalled();
     });
 
     it('should return success response', async () => {
@@ -92,16 +135,16 @@ describe('Resource Routes', () => {
   });
 
   describe('GET /api/resources/:id', () => {
-    it('should call getResourceById controller', async () => {
+    it('should call getResourceById route module', async () => {
       await request(app).get('/api/resources/res-123');
 
-      expect(getResourceById).toHaveBeenCalled();
+      expect(mockGetResourceByIdRouteHandler).toHaveBeenCalled();
     });
 
     it('should pass resource ID in params', async () => {
       await request(app).get('/api/resources/res-456');
 
-      expect(getResourceById).toHaveBeenCalledWith(
+      expect(mockGetResourceByIdRouteHandler).toHaveBeenCalledWith(
         expect.objectContaining({
           params: expect.objectContaining({ id: 'res-456' }),
         }),
@@ -112,12 +155,12 @@ describe('Resource Routes', () => {
   });
 
   describe('POST /api/resources', () => {
-    it('should call createResource controller', async () => {
+    it('should call createResource route module', async () => {
       await request(app)
         .post('/api/resources')
         .send({ name: 'Kennel 1', type: 'JUNIOR_KENNEL' });
 
-      expect(createResource).toHaveBeenCalled();
+      expect(mockCreateResourceRouteHandler).toHaveBeenCalled();
     });
 
     it('should return 201 on success', async () => {
@@ -130,20 +173,20 @@ describe('Resource Routes', () => {
   });
 
   describe('PATCH /api/resources/:id', () => {
-    it('should call updateResource controller', async () => {
+    it('should call updateResource route module', async () => {
       await request(app)
         .patch('/api/resources/res-123')
         .send({ name: 'Updated Kennel' });
 
-      expect(updateResource).toHaveBeenCalled();
+      expect(mockUpdateResourceRouteHandler).toHaveBeenCalled();
     });
   });
 
   describe('DELETE /api/resources/:id', () => {
-    it('should call deleteResource controller', async () => {
+    it('should call deleteResource route module', async () => {
       await request(app).delete('/api/resources/res-123');
 
-      expect(deleteResource).toHaveBeenCalled();
+      expect(mockDeleteResourceRouteHandler).toHaveBeenCalled();
     });
 
     it('should return 200 on success', async () => {
@@ -154,30 +197,30 @@ describe('Resource Routes', () => {
   });
 
   describe('GET /api/resources/availability', () => {
-    it('should call checkResourceAvailability controller', async () => {
+    it('should call checkResourceAvailability route module', async () => {
       await request(app).get(
         '/api/resources/availability?resourceId=res-123&date=2024-06-15'
       );
 
-      expect(checkResourceAvailability).toHaveBeenCalled();
+      expect(mockCheckResourceAvailabilityRouteHandler).toHaveBeenCalled();
     });
   });
 
   describe('POST /api/resources/availability/batch', () => {
-    it('should call batchCheckResourceAvailability controller', async () => {
+    it('should call batchCheckResourceAvailability route module', async () => {
       await request(app)
         .post('/api/resources/availability/batch')
         .send({ resources: ['res-1', 'res-2'], date: '2024-06-15' });
 
-      expect(batchCheckResourceAvailability).toHaveBeenCalled();
+      expect(mockBatchCheckResourceAvailabilityRouteHandler).toHaveBeenCalled();
     });
   });
 
   describe('GET /api/resources/:id/availability', () => {
-    it('should call getResourceAvailability controller', async () => {
+    it('should call getResourceAvailability route module', async () => {
       await request(app).get('/api/resources/res-123/availability');
 
-      expect(getResourceAvailability).toHaveBeenCalled();
+      expect(mockGetResourceAvailabilityRouteHandler).toHaveBeenCalled();
     });
   });
 
@@ -187,15 +230,15 @@ describe('Resource Routes', () => {
         '/api/resources/availability?resourceId=res-123&date=2024-06-15'
       );
 
-      expect(checkResourceAvailability).toHaveBeenCalled();
-      expect(getResourceById).not.toHaveBeenCalled();
+      expect(mockCheckResourceAvailabilityRouteHandler).toHaveBeenCalled();
+      expect(mockGetResourceByIdRouteHandler).not.toHaveBeenCalled();
     });
 
     it('should route /health before /:id', async () => {
       const response = await request(app).get('/api/resources/health');
 
       expect(response.body.status).toBe('OK');
-      expect(getResourceById).not.toHaveBeenCalled();
+      expect(mockGetResourceByIdRouteHandler).not.toHaveBeenCalled();
     });
   });
 });

@@ -13,9 +13,12 @@ import { PrismaPg } from '@prisma/adapter-pg';
  */
 
 // Global singleton to prevent multiple Prisma instances in development
-const globalForPrisma = globalThis as typeof globalThis & { prisma?: PrismaClient };
+const globalForPrisma = globalThis as typeof globalThis & {
+  prisma?: PrismaClient;
+};
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+// Singleton intance to share across the application. See https://www.prisma.io/docs/orm/prisma-client/setup-and-configuration/databases-connections#prismaclient-in-long-running-applications
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
