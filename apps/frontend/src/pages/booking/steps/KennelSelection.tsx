@@ -10,12 +10,12 @@ import {
   Typography,
   Card,
   CardContent,
+  Grid,
   CircularProgress,
   Alert,
   Chip,
   Avatar,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   ArrowBack as ArrowBackIcon,
   ArrowForward as ArrowForwardIcon,
@@ -161,20 +161,22 @@ const KennelSelection: React.FC<KennelSelectionProps> = ({
       >
         Select Room Size
       </Typography>
-
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
         Choose the best accommodation for your pet's size and comfort
       </Typography>
-
       {error && (
         <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>
           {error}
         </Alert>
       )}
-
       <Grid container spacing={2}>
         {kennelOptions.map((kennel) => (
-          <Grid item xs={12} sm={6} key={kennel.type}>
+          <Grid
+            key={kennel.type}
+            size={{
+              xs: 12,
+              sm: 6
+            }}>
             <Card
               elevation={selectedKennel === kennel.type ? 8 : 2}
               sx={{
@@ -281,7 +283,6 @@ const KennelSelection: React.FC<KennelSelectionProps> = ({
           </Grid>
         ))}
       </Grid>
-
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button
           variant="outlined"

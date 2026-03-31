@@ -11,9 +11,9 @@ const productionConfig: AppConfig = {
     ...developmentConfig.api,
     // Use the actual production URLs
     customerServiceUrl:
-      process.env.REACT_APP_API_URL || 'https://api.tailtown.com',
+      import.meta.env.VITE_API_URL || 'https://api.tailtown.com',
     reservationServiceUrl:
-      process.env.REACT_APP_RESERVATION_API_URL || 'https://api.tailtown.com',
+      import.meta.env.VITE_RESERVATION_API_URL || 'https://api.tailtown.com',
     // No default tenant ID in production
     defaultTenantId: '',
   },

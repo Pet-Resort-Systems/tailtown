@@ -23,7 +23,7 @@ Before running the script, complete the setup already covered in [QUICK-START.md
 - Prisma migrations applied.
 - Local development stack running when you want to inspect the seeded tenant in the UI.
 
-The user-facing application in this repo is `apps/frontend-vite`, which runs on `http://localhost:3000` by default unless you override `PORT`.
+The user-facing application in this repo is `apps/frontend`, which runs on `http://localhost:3000` by default unless you override `PORT`.
 
 ## Create or refresh the demo template tenant
 
@@ -52,7 +52,7 @@ After seeding, you have three main paths depending on what you need to do.
 Use this path when you want to provision a fresh tenant from the template through the application.
 
 1. Make sure you have a super admin account available. If not, create one with the development-only flow in [QUICK-START.md](QUICK-START.md#create-a-super-admin-development-only).
-2. Open the `apps/frontend-vite` admin portal at `http://localhost:3000/admin-portal/login`.
+2. Open the `apps/frontend` admin portal at `http://localhost:3000/admin-portal/login`.
 3. Sign in with your super admin credentials.
 4. Open **Tenant Management**.
 5. Choose the clone action for `demo-template`.
@@ -97,7 +97,7 @@ Use this path when you want to validate the demo content itself before cloning i
 3. Use the shared password:
     - `Demo123!`
 
-The login page stores the tenant context from the `tenant=demo-template` query parameter, so use that URL when testing locally on `apps/frontend-vite`.
+The login page stores the tenant context from the `tenant=demo-template` query parameter, so use that URL when testing locally on `apps/frontend`.
 
 ## Which path should you use?
 

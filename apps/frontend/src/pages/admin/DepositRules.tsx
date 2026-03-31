@@ -11,6 +11,7 @@ import {
   Button,
   Card,
   CardContent,
+  Grid,
   Switch,
   FormControlLabel,
   TextField,
@@ -32,7 +33,6 @@ import {
   TableRow,
   Divider,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -254,13 +254,11 @@ export const DepositRules: React.FC = () => {
           label={config.isEnabled ? 'Enabled' : 'Disabled'}
         />
       </Box>
-
       {error && (
         <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 3 }}>
           {error}
         </Alert>
       )}
-
       {success && (
         <Alert
           severity="success"
@@ -270,7 +268,6 @@ export const DepositRules: React.FC = () => {
           {success}
         </Alert>
       )}
-
       {/* Tabs */}
       <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
         <Tabs value={activeTab} onChange={(e, v) => setActiveTab(v)}>
@@ -278,7 +275,6 @@ export const DepositRules: React.FC = () => {
           <Tab icon={<MoneyIcon />} label="General Settings" />
         </Tabs>
       </Box>
-
       {/* Deposit Rules Tab */}
       {activeTab === 0 && (
         <Box>
@@ -391,11 +387,14 @@ export const DepositRules: React.FC = () => {
           )}
         </Box>
       )}
-
       {/* General Settings Tab */}
       {activeTab === 1 && (
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
@@ -471,7 +470,11 @@ export const DepositRules: React.FC = () => {
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
@@ -536,7 +539,6 @@ export const DepositRules: React.FC = () => {
           </Grid>
         </Grid>
       )}
-
       {/* Rule Dialog */}
       <Dialog
         open={showRuleDialog}
@@ -549,7 +551,7 @@ export const DepositRules: React.FC = () => {
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 label="Rule Name"
@@ -560,7 +562,7 @@ export const DepositRules: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 multiline
@@ -576,7 +578,11 @@ export const DepositRules: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 fullWidth
                 select
@@ -601,7 +607,11 @@ export const DepositRules: React.FC = () => {
               </TextField>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 fullWidth
                 type="number"
@@ -617,14 +627,18 @@ export const DepositRules: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Divider />
               <Typography variant="subtitle2" sx={{ mt: 2, mb: 1 }}>
                 Deposit Amount
               </Typography>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 fullWidth
                 select
@@ -644,7 +658,11 @@ export const DepositRules: React.FC = () => {
             </Grid>
 
             {ruleFormData.depositAmountType === 'PERCENTAGE' && (
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <TextField
                   fullWidth
                   type="number"
@@ -661,7 +679,11 @@ export const DepositRules: React.FC = () => {
             )}
 
             {ruleFormData.depositAmountType === 'FIXED' && (
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <TextField
                   fullWidth
                   type="number"
@@ -677,7 +699,11 @@ export const DepositRules: React.FC = () => {
               </Grid>
             )}
 
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 fullWidth
                 type="number"
@@ -692,14 +718,14 @@ export const DepositRules: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Divider />
               <Typography variant="subtitle2" sx={{ mt: 2, mb: 1 }}>
                 Refund Policy
               </Typography>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 select
@@ -719,7 +745,7 @@ export const DepositRules: React.FC = () => {
               </TextField>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <FormControlLabel
                 control={
                   <Switch

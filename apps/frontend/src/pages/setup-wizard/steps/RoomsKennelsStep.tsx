@@ -10,6 +10,7 @@ import {
   TextField,
   Typography,
   Button,
+  Grid,
   FormControl,
   InputLabel,
   Select,
@@ -26,7 +27,6 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   Add,
   Delete,
@@ -172,7 +172,6 @@ export default function RoomsKennelsStep() {
         Configure your facility layout. Add rooms and specify how many kennels
         each room has.
       </Typography>
-
       {/* Naming Convention */}
       <Box sx={{ mb: 4 }}>
         <Typography variant="subtitle2" gutterBottom>
@@ -189,11 +188,16 @@ export default function RoomsKennelsStep() {
           <ToggleButton value="custom">Custom</ToggleButton>
         </ToggleButtonGroup>
       </Box>
-
       {/* Rooms List */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {roomsKennels.rooms.map((room) => (
-          <Grid item xs={12} md={6} lg={4} key={room.id}>
+          <Grid
+            key={room.id}
+            size={{
+              xs: 12,
+              md: 6,
+              lg: 4
+            }}>
             <Card variant="outlined">
               <CardContent>
                 <Box
@@ -268,7 +272,12 @@ export default function RoomsKennelsStep() {
         ))}
 
         {/* Add Room Card */}
-        <Grid item xs={12} md={6} lg={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6,
+            lg: 4
+          }}>
           <Card
             variant="outlined"
             sx={{
@@ -290,7 +299,6 @@ export default function RoomsKennelsStep() {
           </Card>
         </Grid>
       </Grid>
-
       {/* Summary */}
       {roomsKennels.rooms.length > 0 && (
         <Box sx={{ p: 2, bgcolor: 'grey.100', borderRadius: 1, mb: 3 }}>
@@ -300,7 +308,6 @@ export default function RoomsKennelsStep() {
           </Typography>
         </Box>
       )}
-
       {/* Room Dialog */}
       <Dialog
         open={roomDialogOpen}
@@ -311,7 +318,7 @@ export default function RoomsKennelsStep() {
         <DialogTitle>{editingRoom ? 'Edit Room' : 'Add Room'}</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 label="Room Name"
@@ -320,7 +327,7 @@ export default function RoomsKennelsStep() {
                 placeholder="e.g., Suite A, Kennel Building 1"
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Typography gutterBottom>
                 Number of Kennels: {kennelCount}
               </Typography>
@@ -337,7 +344,7 @@ export default function RoomsKennelsStep() {
                 ]}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <FormControl fullWidth>
                 <InputLabel>Default Kennel Size</InputLabel>
                 <Select
@@ -353,7 +360,7 @@ export default function RoomsKennelsStep() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 label="Naming Prefix"
@@ -382,7 +389,6 @@ export default function RoomsKennelsStep() {
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Navigation */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button startIcon={<ArrowBack />} onClick={prevStep}>

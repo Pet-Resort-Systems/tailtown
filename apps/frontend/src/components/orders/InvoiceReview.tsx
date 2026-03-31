@@ -3,6 +3,7 @@ import {
   Box,
   Typography,
   Paper,
+  Grid,
   Table,
   TableBody,
   TableCell,
@@ -13,7 +14,6 @@ import {
   Button,
   Divider,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 
 interface InvoiceReviewProps {
   onContinue: (invoiceData: any) => void;
@@ -78,10 +78,13 @@ const InvoiceReview: React.FC<InvoiceReviewProps> = ({
       <Typography variant="h6" gutterBottom>
         Review Invoice
       </Typography>
-
       <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <Typography variant="subtitle2">Customer Information:</Typography>
             <Typography variant="body2">
               {orderData.customer?.firstName} {orderData.customer?.lastName}
@@ -92,7 +95,11 @@ const InvoiceReview: React.FC<InvoiceReviewProps> = ({
             </Typography>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <Typography variant="subtitle2">Pet Information:</Typography>
             <Typography variant="body2">
               {orderData.pet?.name} ({orderData.pet?.type})
@@ -104,11 +111,15 @@ const InvoiceReview: React.FC<InvoiceReviewProps> = ({
             )}
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Divider sx={{ my: 2 }} />
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <Typography variant="subtitle2">Reservation Details:</Typography>
             <Typography variant="body2">
               Start: {formatDate(orderData.reservation.startDate)}
@@ -118,7 +129,11 @@ const InvoiceReview: React.FC<InvoiceReviewProps> = ({
             </Typography>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <Typography variant="subtitle2">Invoice Information:</Typography>
             <Typography variant="body2">
               Invoice #: {orderData.invoice.invoiceNumber}
@@ -128,11 +143,11 @@ const InvoiceReview: React.FC<InvoiceReviewProps> = ({
             </Typography>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Divider sx={{ my: 2 }} />
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Typography variant="subtitle2" gutterBottom>
               Service Details:
             </Typography>
@@ -192,11 +207,11 @@ const InvoiceReview: React.FC<InvoiceReviewProps> = ({
             </TableContainer>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Divider sx={{ my: 2 }} />
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Box
               sx={{
                 display: 'flex',
@@ -358,7 +373,7 @@ const InvoiceReview: React.FC<InvoiceReviewProps> = ({
             </Box>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <TextField
               fullWidth
               multiline
@@ -372,7 +387,6 @@ const InvoiceReview: React.FC<InvoiceReviewProps> = ({
           </Grid>
         </Grid>
       </Paper>
-
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
         <Button variant="contained" color="primary" onClick={handleContinue}>
           Continue to Payment

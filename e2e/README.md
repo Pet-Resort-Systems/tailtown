@@ -77,7 +77,7 @@ Run the isolated suite from the repo root:
 pnpm run test:e2e
 ```
 
-This suite targets `apps/frontend-vite` as the app under test through `e2e/playwright.config.ts`.
+This suite targets `apps/frontend` as the app under test through `e2e/playwright.config.ts`.
 
 Run package-local Playwright directly:
 
@@ -142,7 +142,7 @@ Key settings in the isolated workspace config:
 
 The isolated config starts the required apps and services through Playwright `webServer` entries:
 
-- `apps/frontend-vite` on `http://localhost:3000`
+- `apps/frontend` on `http://localhost:3000`
 - `apps/customer-service` on `http://localhost:4004/health`
 - `apps/reservation-service` on `http://localhost:4003/health`
 

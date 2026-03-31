@@ -12,9 +12,9 @@ import {
   Alert,
   Card,
   CardContent,
+  Grid,
   Chip,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   CreditCard as CreditCardIcon,
   Money as CashIcon,
@@ -89,9 +89,6 @@ const PaymentMethods: React.FC = () => {
 
   const handleSaveSettings = () => {
     // In production, this would save to the backend
-    console.log('Saving payment methods:', paymentMethods);
-    console.log('CardConnect config:', cardConnectConfig);
-
     setSaveSuccess(true);
     setTimeout(() => setSaveSuccess(false), 3000);
   };
@@ -145,13 +142,22 @@ const PaymentMethods: React.FC = () => {
         <Card sx={{ mb: 3 }}>
           <CardContent>
             <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <Typography variant="h6">Active Payment Methods</Typography>
                 <Typography variant="body2" color="text.secondary">
                   {getEnabledCount()} of {paymentMethods.length} methods enabled
                 </Typography>
               </Grid>
-              <Grid item xs={12} md={6} sx={{ textAlign: { md: 'right' } }}>
+              <Grid
+                sx={{ textAlign: { md: 'right' } }}
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <Button
                   variant="contained"
                   startIcon={<SaveIcon />}
@@ -282,7 +288,11 @@ const PaymentMethods: React.FC = () => {
                   </Typography>
 
                   <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        md: 6
+                      }}>
                       <TextField
                         label="Merchant ID"
                         value={cardConnectConfig.merchantId}
@@ -297,7 +307,11 @@ const PaymentMethods: React.FC = () => {
                         size="small"
                       />
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        md: 6
+                      }}>
                       <TextField
                         label="API Username"
                         value={cardConnectConfig.apiUsername}
@@ -312,7 +326,11 @@ const PaymentMethods: React.FC = () => {
                         size="small"
                       />
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        md: 6
+                      }}>
                       <TextField
                         label="API Password"
                         type="password"
@@ -328,7 +346,11 @@ const PaymentMethods: React.FC = () => {
                         size="small"
                       />
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        md: 6
+                      }}>
                       <TextField
                         label="Site URL"
                         value={cardConnectConfig.siteUrl}
@@ -343,7 +365,7 @@ const PaymentMethods: React.FC = () => {
                         helperText="CardConnect API endpoint"
                       />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid size={12}>
                       <FormControlLabel
                         control={
                           <Switch
@@ -359,7 +381,7 @@ const PaymentMethods: React.FC = () => {
                         label="Test Mode (Use UAT environment)"
                       />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid size={12}>
                       <Box
                         sx={{
                           display: 'flex',

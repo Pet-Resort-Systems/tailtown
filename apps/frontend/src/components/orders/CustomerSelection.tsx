@@ -6,6 +6,7 @@ import {
   TextField,
   Button,
   Autocomplete,
+  Grid,
   CircularProgress,
   Alert,
   FormControl,
@@ -14,7 +15,6 @@ import {
   MenuItem,
   InputAdornment,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import SearchIcon from '@mui/icons-material/Search';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PetsIcon from '@mui/icons-material/Pets';
@@ -153,26 +153,27 @@ const CustomerSelection: React.FC<CustomerSelectionProps> = ({
       <Typography variant="h6" gutterBottom>
         Customer & Pet Information
       </Typography>
-
       {customerError && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {customerError}
         </Alert>
       )}
-
       {petError && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {petError}
         </Alert>
       )}
-
       <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
         <Typography variant="subtitle1" gutterBottom>
           Customer
         </Typography>
 
         <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} md={9}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 9
+            }}>
             <Autocomplete
               id="customer-select"
               options={customers}
@@ -214,7 +215,11 @@ const CustomerSelection: React.FC<CustomerSelectionProps> = ({
               noOptionsText="No customers found"
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3
+            }}>
             <Button
               variant="outlined"
               startIcon={<PersonAddIcon />}
@@ -255,7 +260,6 @@ const CustomerSelection: React.FC<CustomerSelectionProps> = ({
           </Box>
         )}
       </Paper>
-
       <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
         <Typography variant="subtitle1" gutterBottom>
           Pets (Select one or more)
@@ -336,7 +340,6 @@ const CustomerSelection: React.FC<CustomerSelectionProps> = ({
           </Box>
         )}
       </Paper>
-
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
         <Button
           variant="contained"

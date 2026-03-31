@@ -30,11 +30,11 @@ import {
   CircularProgress,
   Switch,
   FormControlLabel,
+  Grid,
   ToggleButton,
   ToggleButtonGroup,
   Tooltip,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -505,7 +505,7 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
               />
 
               <Grid container spacing={2}>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <FormControl fullWidth required>
                     <InputLabel>Pet</InputLabel>
                     <Select
@@ -523,7 +523,7 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <FormControl fullWidth required>
                     <InputLabel>Service</InputLabel>
                     <Select
@@ -609,7 +609,7 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
               )}
 
               <Grid container spacing={2}>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <TextField
                     label="Start Time"
                     type="time"
@@ -621,7 +621,7 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
                     InputLabelProps={{ shrink: true }}
                   />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <TextField
                     label="End Time"
                     type="time"
@@ -636,7 +636,7 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
               </Grid>
 
               <Grid container spacing={2}>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <DatePicker
                     label="Effective From"
                     value={formData.effectiveFrom}
@@ -646,7 +646,7 @@ const StandingReservations: React.FC<StandingReservationsProps> = ({
                     slotProps={{ textField: { fullWidth: true } }}
                   />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <DatePicker
                     label="Effective Until (optional)"
                     value={formData.effectiveUntil}

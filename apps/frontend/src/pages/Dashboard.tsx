@@ -87,7 +87,6 @@ const Dashboard = () => {
       await announcementService.dismissAnnouncement(id);
       // Only remove if dismiss was successful
       setAnnouncements((prev) => prev.filter((a) => a.id !== id));
-      console.log('Announcement dismissed successfully');
     } catch (error) {
       console.error('Failed to dismiss announcement:', error);
       // Don't remove from state if dismiss failed

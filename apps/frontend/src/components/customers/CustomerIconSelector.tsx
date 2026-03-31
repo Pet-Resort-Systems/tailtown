@@ -7,10 +7,10 @@ import {
   Button,
   Box,
   Typography,
+  Grid,
   Avatar,
   Paper,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   Person,
   Face,
@@ -117,7 +117,7 @@ const CustomerIconSelector: React.FC<CustomerIconSelectorProps> = ({
               {ICON_OPTIONS.map((option) => {
                 const IconComponent = option.icon;
                 return (
-                  <Grid item xs={3} key={option.name}>
+                  <Grid key={option.name} size={3}>
                     <Paper
                       sx={{
                         p: 2,
@@ -153,7 +153,7 @@ const CustomerIconSelector: React.FC<CustomerIconSelectorProps> = ({
             </Typography>
             <Grid container spacing={1}>
               {COLOR_OPTIONS.map((option) => (
-                <Grid item xs={2} key={option.name}>
+                <Grid key={option.name} size={2}>
                   <Paper
                     sx={{
                       p: 1,

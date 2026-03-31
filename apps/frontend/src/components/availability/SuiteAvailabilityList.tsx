@@ -16,6 +16,7 @@ import {
   CardContent,
   Chip,
   List,
+  ListItem,
   ListItemButton,
   ListItemText,
   Divider,
@@ -63,44 +64,45 @@ export const SuiteAvailabilityList: React.FC<SuiteAvailabilityListProps> = ({
           <List>
             {availableSuites.map((suite, index) => (
               <React.Fragment key={suite.suiteId}>
-                <ListItemButton
-                  component={onSuiteSelect ? 'button' : 'div'}
-                  onClick={() => onSuiteSelect && onSuiteSelect(suite.suiteId)}
-                  selected={selectedSuiteId === suite.suiteId}
-                  sx={{
-                    border: selectedSuiteId === suite.suiteId ? 2 : 1,
-                    borderColor:
-                      selectedSuiteId === suite.suiteId
-                        ? 'primary.main'
-                        : 'divider',
-                    borderRadius: 1,
-                    mb: 1,
-                  }}
-                >
-                  <AvailableIcon color="success" sx={{ mr: 2 }} />
-                  <ListItemText
-                    primary={
-                      <Box display="flex" alignItems="center" gap={1}>
-                        <Typography variant="subtitle1" fontWeight="bold">
-                          {suite.suiteName}
+                <ListItem disablePadding sx={{ mb: 1 }}>
+                  <ListItemButton
+                    component={onSuiteSelect ? 'button' : 'div'}
+                    onClick={() => onSuiteSelect && onSuiteSelect(suite.suiteId)}
+                    selected={selectedSuiteId === suite.suiteId}
+                    sx={{
+                      border: selectedSuiteId === suite.suiteId ? 2 : 1,
+                      borderColor:
+                        selectedSuiteId === suite.suiteId
+                          ? 'primary.main'
+                          : 'divider',
+                      borderRadius: 1,
+                    }}
+                  >
+                    <AvailableIcon color="success" sx={{ mr: 2 }} />
+                    <ListItemText
+                      primary={
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <Typography variant="subtitle1" fontWeight="bold">
+                            {suite.suiteName}
+                          </Typography>
+                          <Chip
+                            label={suite.suiteType}
+                            size="small"
+                            color="primary"
+                            variant="outlined"
+                          />
+                        </Box>
+                      }
+                      secondary={
+                        <Typography variant="body2" color="text.secondary">
+                          Capacity: {suite.capacity} pet
+                          {suite.capacity !== 1 ? 's' : ''}
                         </Typography>
-                        <Chip
-                          label={suite.suiteType}
-                          size="small"
-                          color="primary"
-                          variant="outlined"
-                        />
-                      </Box>
-                    }
-                    secondary={
-                      <Typography variant="body2" color="text.secondary">
-                        Capacity: {suite.capacity} pet
-                        {suite.capacity !== 1 ? 's' : ''}
-                      </Typography>
-                    }
-                  />
-                  <Chip label="Available" color="success" size="small" />
-                </ListItemButton>
+                      }
+                    />
+                    <Chip label="Available" color="success" size="small" />
+                  </ListItemButton>
+                </ListItem>
                 {index < availableSuites.length - 1 && <Divider />}
               </React.Fragment>
             ))}

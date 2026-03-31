@@ -17,7 +17,7 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 # Test configuration
-FRONTEND_DIR="$PROJECT_ROOT/apps/frontend"
+FRONTEND_DIR="$PROJECT_ROOT/apps/legacy-frontend"
 CUSTOMER_SERVICE_DIR="$PROJECT_ROOT/apps/customer-service"
 RESERVATION_SERVICE_DIR="$PROJECT_ROOT/apps/reservation-service"
 
@@ -67,8 +67,8 @@ run_frontend_tests() {
         return 0
     fi
     
-    echo "Running apps/frontend tests..."
-    pnpm test -- --watchAll=false --passWithNoTests 2>&1 | tee "$TEST_RESULTS_DIR/apps/frontend.log"
+    echo "Running apps/legacy-frontend tests..."
+    pnpm test -- --watchAll=false --passWithNoTests 2>&1 | tee "$TEST_RESULTS_DIR/apps/legacy-frontend.log"
     local exit_code=${PIPESTATUS[0]}
     
     if [ $exit_code -eq 0 ]; then
@@ -207,7 +207,7 @@ run_quick_tests() {
     # Run unit tests only (faster)
     print_section "Frontend Unit Tests"
     cd "$FRONTEND_DIR"
-    pnpm test -- --watchAll=false --passWithNoTests --testPathIgnorePatterns=integration 2>&1 | tee "$TEST_RESULTS_DIR/apps/frontend-quick.log" || failed=$((failed + 1))
+    pnpm test -- --watchAll=false --passWithNoTests --testPathIgnorePatterns=integration 2>&1 | tee "$TEST_RESULTS_DIR/apps/legacy-frontend-quick.log" || failed=$((failed + 1))
     
     print_section "Customer Service Unit Tests"
     cd "$CUSTOMER_SERVICE_DIR"
@@ -255,7 +255,7 @@ run_changed_tests() {
     local run_reservation=false
     
     while IFS= read -r file; do
-        if [[ "$file" == apps/frontend/* ]]; then
+        if [[ "$file" == apps/legacy-frontend/* ]]; then
             run_frontend=true
         elif [[ "$file" == apps/customer-service/* ]]; then
             run_customer=true
@@ -309,7 +309,7 @@ run_watch_mode() {
     case $choice in
         1)
             echo ""
-            echo "Starting apps/frontend tests in watch mode..."
+            echo "Starting apps/legacy-frontend tests in watch mode..."
             cd "$FRONTEND_DIR"
             pnpm test
             ;;
@@ -440,7 +440,7 @@ case "${1:-}" in
         echo "  changed      - Run tests for changed files"
         echo "  watch        - Run tests in watch mode"
         echo "  coverage     - Generate coverage reports"
-        echo "  apps/frontend     - Run apps/frontend tests only"
+        echo "  apps/legacy-frontend - Run legacy frontend tests only"
         echo "  customer     - Run customer service tests only"
         echo "  reservation  - Run reservation service tests only"
         echo "  integration  - Run integration tests only"

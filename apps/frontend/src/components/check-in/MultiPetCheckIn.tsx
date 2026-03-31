@@ -11,11 +11,11 @@ import {
   Alert,
   CircularProgress,
   Divider,
+  Grid,
   Card,
   CardContent,
   CardActions,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   CheckCircle as CheckCircleIcon,
   Pets as PetsIcon,
@@ -174,20 +174,16 @@ const MultiPetCheckIn: React.FC<MultiPetCheckInProps> = ({
           sx={{ ml: 2 }}
         />
       </Box>
-
       <Typography variant="body2" color="text.secondary" paragraph>
         These pets are sharing the same room. You can check them in together or
         individually.
       </Typography>
-
       {checkedInCount > 0 && (
         <Alert severity="info" sx={{ mb: 2 }}>
           {checkedInCount} pet(s) already checked in
         </Alert>
       )}
-
       <Divider sx={{ my: 2 }} />
-
       <Grid container spacing={2}>
         {roomPets.map((reservation) => {
           const pet = petDetails.get(reservation.petId);
@@ -195,7 +191,13 @@ const MultiPetCheckIn: React.FC<MultiPetCheckInProps> = ({
           const isSelected = selectedPets.has(reservation.petId);
 
           return (
-            <Grid item xs={12} sm={6} md={4} key={reservation.id}>
+            <Grid
+              key={reservation.id}
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 4
+              }}>
               <Card
                 variant="outlined"
                 sx={{
@@ -253,9 +255,7 @@ const MultiPetCheckIn: React.FC<MultiPetCheckInProps> = ({
           );
         })}
       </Grid>
-
       <Divider sx={{ my: 2 }} />
-
       <Box
         sx={{
           display: 'flex',

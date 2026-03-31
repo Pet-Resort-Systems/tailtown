@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Box,
   TextField,
+  Grid,
   FormControl,
   InputLabel,
   Select,
@@ -9,7 +10,6 @@ import {
   InputAdornment,
   FormHelperText,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 
 interface PaymentStepProps {
   paymentMethod: string;
@@ -51,7 +51,11 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
   return (
     <Box>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <FormControl fullWidth required>
             <InputLabel id="payment-method-label">Payment Method</InputLabel>
             <Select
@@ -70,7 +74,11 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
           </FormControl>
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <TextField
             label="Payment Amount"
             type="number"
@@ -102,7 +110,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
 
         {paymentMethod === 'credit_card' && (
           <>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 label="Card Number"
                 placeholder="**** **** **** ****"
@@ -117,7 +125,11 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <TextField
                 label="Expiration Date"
                 placeholder="MM/YY"
@@ -131,7 +143,11 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <TextField
                 label="CVV"
                 placeholder="***"
@@ -149,7 +165,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
         )}
 
         {paymentMethod === 'check' && (
-          <Grid item xs={12}>
+          <Grid size={12}>
             <TextField
               label="Check Number"
               value={checkNumber}
@@ -161,7 +177,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
         )}
 
         {paymentMethod === 'account' && (
-          <Grid item xs={12}>
+          <Grid size={12}>
             <FormHelperText>
               The full amount will be charged to the customer's account.
             </FormHelperText>

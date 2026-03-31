@@ -18,7 +18,7 @@ const ApiTester: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<any>(null);
   const [apiUrl] = useState<string>(
-    process.env.REACT_APP_RESERVATION_API_URL || window.location.origin
+    import.meta.env.VITE_RESERVATION_API_URL || window.location.origin
   );
 
   const testApi = useCallback(async () => {
@@ -27,9 +27,6 @@ const ApiTester: React.FC = () => {
     setResult(null);
 
     try {
-      console.log('Testing API connectivity...');
-      console.log('API URL:', apiUrl);
-
       // Test the API connection
       const response = await reservationApi.get('/api/resources/availability', {
         params: {
@@ -38,7 +35,6 @@ const ApiTester: React.FC = () => {
         },
       });
 
-      console.log('API response:', response);
       setResult({
         status: response.status,
         data: response.data,

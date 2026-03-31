@@ -28,7 +28,7 @@ sleep 3
 
 # Start Admin Portal (Terminal 4)
 echo "Starting Admin Portal on port 3001..."
-osascript -e 'tell app "Terminal" to do script "cd /Users/robweinstein/CascadeProjects/tailtown/admin-portal && source ~/.nvm/nvm.sh && echo \"Starting Admin Portal...\" && pnpm start"'
+osascript -e 'tell app "Terminal" to do script "cd /Users/robweinstein/CascadeProjects/tailtown/apps/legacy-admin-portal && source ~/.nvm/nvm.sh && echo \"Starting Admin Portal...\" && pnpm start"'
 
 echo ""
 echo "✅ All services starting in separate terminal windows!"

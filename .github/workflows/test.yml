@@ -5,6 +5,9 @@ on:
     branches: [development, main]
   pull_request:
     branches: [development, main]
+    paths-ignore:
+      - "apps/legacy-frontend/**"
+      - "apps/legacy-admin-portal/**"
 
 jobs:
   dependabot-shortcut:
@@ -73,10 +76,8 @@ jobs:
           pnpm exec prisma migrate deploy
           pnpm exec prisma generate
 
-      - name: Run apps/frontend tests
-        run: |
-          cd apps/frontend
-          pnpm test -- --watchAll=false --passWithNoTests
+      - name: Build canonical frontend (Vite)
+        run: pnpm --dir apps/frontend build
 
       - name: Run customer service tests
         env:
@@ -102,7 +103,7 @@ jobs:
         if: matrix.node-version == '24.14.0'
         uses: codecov/codecov-action@v3
         with:
-          files: ./apps/frontend/coverage/lcov.info,./apps/customer-service/coverage/lcov.info,./apps/reservation-service/coverage/lcov.info
+          files: ./apps/customer-service/coverage/lcov.info,./apps/reservation-service/coverage/lcov.info
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: false

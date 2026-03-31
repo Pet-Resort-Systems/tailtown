@@ -71,9 +71,8 @@ const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
             xs: 12 / columns.xs,
             sm: 12 / columns.sm,
             md: 12 / columns.md,
-            lg: 12 / columns.lg,
-          }}
-        >
+            lg: 12 / columns.lg
+          }}>
           {child}
         </Grid>
       ))}
