@@ -40,9 +40,6 @@ function initTenantId() {
       pathname.startsWith('/admin/tenants');
 
     if (isSuperAdminRoute) {
-      console.log(
-        'Super admin route detected. Skipping tenant ID initialization.'
-      );
       return;
     }
 
@@ -50,7 +47,6 @@ function initTenantId() {
     const subdomainTenant = getTenantFromSubdomain();
 
     if (subdomainTenant) {
-      console.log('Detected tenant from subdomain:', subdomainTenant);
       localStorage.setItem('tailtown_tenant_id', subdomainTenant);
       return;
     }
@@ -61,13 +57,7 @@ function initTenantId() {
       localStorage.getItem('tenantId');
 
     if (!existingTenantId) {
-      console.log(
-        'No tenant ID found in localStorage. Setting default tenant ID:',
-        DEFAULT_TENANT_ID
-      );
       localStorage.setItem('tailtown_tenant_id', DEFAULT_TENANT_ID);
-    } else {
-      console.log('Found existing tenant ID:', existingTenantId);
     }
   } catch (error) {
     console.error('Error initializing tenant ID:', error);

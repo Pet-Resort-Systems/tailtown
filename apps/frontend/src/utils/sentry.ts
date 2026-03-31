@@ -7,20 +7,20 @@
 import * as Sentry from '@sentry/react';
 
 // Sentry configuration
-const SENTRY_DSN = process.env.REACT_APP_SENTRY_DSN;
+const SENTRY_DSN = import.meta.env.VITE_SENTRY_DSN;
 const SENTRY_ENABLED =
-  process.env.REACT_APP_SENTRY_ENABLED !== 'false' &&
-  process.env.NODE_ENV === 'production';
-const SENTRY_ENVIRONMENT = process.env.NODE_ENV || 'development';
+  import.meta.env.VITE_SENTRY_ENABLED !== 'false' &&
+  import.meta.env.PROD;
+const SENTRY_ENVIRONMENT = import.meta.env.MODE || 'development';
 const SENTRY_RELEASE =
-  process.env.REACT_APP_SENTRY_RELEASE || 'tailtown-frontend@1.0.0';
+  import.meta.env.VITE_SENTRY_RELEASE || 'tailtown-frontend@1.0.0';
 
 /**
  * Initialize Sentry error tracking
  */
 export function initSentry(): void {
   if (!SENTRY_ENABLED) {
-    console.log('📊 Sentry error tracking is disabled');
+    console.info('📊 Sentry error tracking is disabled');
     return;
   }
 
@@ -86,7 +86,7 @@ export function initSentry(): void {
       },
     });
 
-    console.log('✅ Sentry error tracking initialized');
+    console.info('✅ Sentry error tracking initialized');
   } catch (error) {
     console.error('❌ Failed to initialize Sentry:', error);
   }

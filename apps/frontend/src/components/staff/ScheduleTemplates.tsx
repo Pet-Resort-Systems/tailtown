@@ -32,8 +32,8 @@ import {
   CircularProgress,
   Tooltip,
   Collapse,
+  Grid,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -330,13 +330,11 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
           Add Template
         </Button>
       </Box>
-
       {error && (
         <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
           {error}
         </Alert>
       )}
-
       {success && (
         <Alert
           severity="success"
@@ -346,7 +344,6 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
           {success}
         </Alert>
       )}
-
       {/* Templates List */}
       {templates.length === 0 ? (
         <Paper sx={{ p: 4, textAlign: 'center' }}>
@@ -539,7 +536,6 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
           })}
         </Box>
       )}
-
       {/* Template Dialog */}
       <Dialog
         open={templateDialogOpen}
@@ -552,7 +548,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 label="Template Name"
                 value={templateForm.name}
@@ -564,7 +560,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
                 placeholder="e.g., Regular Week, Week A"
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <FormControl fullWidth>
                 <InputLabel>Rotation Type</InputLabel>
                 <Select
@@ -585,7 +581,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <TextField
                 label="Rotation Weeks"
                 type="number"
@@ -601,7 +597,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
                 disabled={templateForm.rotationType === 'WEEKLY'}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <TextField
                 label="Effective From"
                 type="date"
@@ -617,7 +613,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <TextField
                 label="Effective Until (optional)"
                 type="date"
@@ -632,7 +628,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <TextField
                 label="Generate Ahead (days)"
                 type="number"
@@ -647,7 +643,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
                 inputProps={{ min: 1, max: 90 }}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <FormControlLabel
                 control={
                   <Switch
@@ -663,7 +659,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
                 label="Skip Holidays"
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 label="Notes"
                 value={templateForm.notes}
@@ -696,7 +692,6 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Entry Dialog */}
       <Dialog
         open={entryDialogOpen}
@@ -707,7 +702,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
         <DialogTitle>{editingEntry ? 'Edit Entry' : 'Add Entry'}</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <FormControl fullWidth>
                 <InputLabel>Day of Week</InputLabel>
                 <Select
@@ -728,7 +723,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <TextField
                 label="Rotation Week"
                 type="number"
@@ -744,7 +739,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
                 helperText="0 for Week 1, 1 for Week 2, etc."
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <TextField
                 label="Start Time"
                 type="time"
@@ -757,7 +752,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <TextField
                 label="End Time"
                 type="time"
@@ -770,7 +765,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <TextField
                 label="Location"
                 value={entryForm.location}
@@ -780,7 +775,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
                 fullWidth
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <TextField
                 label="Role"
                 value={entryForm.role}
@@ -790,7 +785,7 @@ const ScheduleTemplates: React.FC<ScheduleTemplatesProps> = ({
                 fullWidth
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 label="Notes"
                 value={entryForm.notes}

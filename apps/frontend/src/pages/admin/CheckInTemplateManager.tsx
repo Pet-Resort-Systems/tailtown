@@ -90,7 +90,6 @@ const CheckInTemplateManager: React.FC = () => {
           isDefault: template.isDefault,
           sections: template.sections,
         };
-        console.log('Saving template:', template.id, updateData);
         await checkInService.updateTemplate(template.id, updateData);
       } else {
         // Create new template

@@ -10,6 +10,7 @@ import {
   Typography,
   Card,
   CardContent,
+  Grid,
   Divider,
   Alert,
   CircularProgress,
@@ -20,7 +21,6 @@ import {
   Avatar,
   InputAdornment,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   ArrowBack as ArrowBackIcon,
   CheckCircle as CheckCircleIcon,
@@ -168,7 +168,7 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
           'Payment declined. Please check your card details and try again.';
 
         // Add helpful test card info in development
-        if (process.env.NODE_ENV === 'development') {
+        if (import.meta.env.DEV) {
           errorMessage +=
             '\n\nTest Cards:\n• 4111111111111111 (Visa - Approved)\n• 4000000000000002 (Declined)\n• Expiry: Any future date (MM/YY)\n• CVV: Any 3 digits';
         }
@@ -256,16 +256,14 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
       >
         Review Your Booking
       </Typography>
-
       {error && (
         <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>
           {error}
         </Alert>
       )}
-
       <Grid container spacing={3}>
         {/* Customer Information */}
-        <Grid item xs={12}>
+        <Grid size={12}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -286,7 +284,11 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
         </Grid>
 
         {/* Service Details */}
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -307,7 +309,11 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
         </Grid>
 
         {/* Pets */}
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -323,7 +329,7 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
 
         {/* Add-Ons */}
         {bookingData.addOnIds && bookingData.addOnIds.length > 0 && (
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
@@ -345,7 +351,7 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
         )}
 
         {/* Price Summary */}
-        <Grid item xs={12}>
+        <Grid size={12}>
           <Card sx={{ bgcolor: 'primary.50' }}>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -446,7 +452,7 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
         </Grid>
 
         {/* Add a Tip */}
-        <Grid item xs={12}>
+        <Grid size={12}>
           <Card
             sx={{
               bgcolor: 'success.50',
@@ -475,7 +481,7 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
 
               <Grid container spacing={1} sx={{ mb: 2 }}>
                 {TIP_PERCENTAGES.map((pct) => (
-                  <Grid item xs={4} key={pct}>
+                  <Grid key={pct} size={4}>
                     <Button
                       fullWidth
                       variant={
@@ -536,7 +542,7 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
         </Grid>
 
         {/* Payment Information */}
-        <Grid item xs={12}>
+        <Grid size={12}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -545,7 +551,7 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
               </Box>
 
               <Grid container spacing={2}>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <TextField
                     label="Card Number"
                     fullWidth
@@ -566,7 +572,11 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <TextField
                     label="Expiration Date"
                     fullWidth
@@ -587,7 +597,11 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <TextField
                     label="CVV"
                     fullWidth
@@ -605,7 +619,7 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <TextField
                     label="Cardholder Name"
                     fullWidth
@@ -630,7 +644,7 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
         </Grid>
 
         {/* Terms and Conditions */}
-        <Grid item xs={12}>
+        <Grid size={12}>
           <Card>
             <CardContent>
               <FormControlLabel
@@ -666,7 +680,6 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
           </Card>
         </Grid>
       </Grid>
-
       {/* Navigation Buttons - Fixed on mobile */}
       <Box
         sx={{
@@ -706,7 +719,6 @@ const ReviewBooking: React.FC<ReviewBookingProps> = ({
           {loading ? 'Processing...' : 'Complete Booking'}
         </Button>
       </Box>
-
       {/* Spacer for fixed button on mobile */}
       <Box sx={{ display: { xs: 'block', sm: 'none' }, height: 80 }} />
     </Box>

@@ -4,12 +4,12 @@ import {
   Typography,
   Tabs,
   Tab,
+  Grid,
   Tooltip,
   Chip,
   Paper,
   Divider,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   GROUP_ICONS,
   SIZE_ICONS,
@@ -68,7 +68,6 @@ const PetIconSelector: React.FC<PetIconSelectorProps> = ({
         Select icons that apply to this pet. These will be visible to staff as
         quick reference notes.
       </Typography>
-
       <Tabs
         value={activeTab}
         onChange={handleTabChange}
@@ -80,12 +79,10 @@ const PetIconSelector: React.FC<PetIconSelectorProps> = ({
           <Tab key={index} label={category.name} />
         ))}
       </Tabs>
-
       <Divider sx={{ mb: 2 }} />
-
       <Grid container spacing={1}>
         {currentIcons.map((icon) => (
-          <Grid item key={icon.id}>
+          <Grid key={icon.id}>
             <Tooltip title={icon.description} arrow>
               <Chip
                 label={
@@ -116,7 +113,6 @@ const PetIconSelector: React.FC<PetIconSelectorProps> = ({
           </Grid>
         ))}
       </Grid>
-
       {selectedIcons.length > 0 && (
         <Box sx={{ mt: 2, pt: 2, borderTop: '1px dashed #ccc' }}>
           <Typography variant="subtitle2" gutterBottom>

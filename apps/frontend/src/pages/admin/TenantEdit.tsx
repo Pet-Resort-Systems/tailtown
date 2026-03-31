@@ -5,13 +5,13 @@ import {
   Card,
   CardContent,
   Container,
+  Grid,
   TextField,
   Typography,
   Alert,
   MenuItem,
   IconButton,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import { ArrowBack as BackIcon } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { tenantService, UpdateTenantDto } from '../../services/tenantService';
@@ -129,19 +129,16 @@ const TenantEdit: React.FC = () => {
           </Typography>
         </Box>
       </Box>
-
       {error && (
         <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>
           {error}
         </Alert>
       )}
-
       {success && (
         <Alert severity="success" sx={{ mb: 3 }}>
           {success}
         </Alert>
       )}
-
       <form onSubmit={handleSubmit}>
         <Card sx={{ mb: 3 }}>
           <CardContent>
@@ -149,7 +146,7 @@ const TenantEdit: React.FC = () => {
               Business Information
             </Typography>
             <Grid container spacing={2}>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   required
                   fullWidth
@@ -158,7 +155,11 @@ const TenantEdit: React.FC = () => {
                   onChange={handleChange('businessName')}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   required
                   fullWidth
@@ -167,7 +168,11 @@ const TenantEdit: React.FC = () => {
                   onChange={handleChange('contactName')}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   required
                   fullWidth
@@ -177,7 +182,11 @@ const TenantEdit: React.FC = () => {
                   onChange={handleChange('contactEmail')}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   fullWidth
                   label="Contact Phone"
@@ -185,7 +194,11 @@ const TenantEdit: React.FC = () => {
                   onChange={handleChange('contactPhone')}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   fullWidth
                   label="Country"
@@ -193,7 +206,7 @@ const TenantEdit: React.FC = () => {
                   onChange={handleChange('country')}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   fullWidth
                   label="Address"
@@ -201,7 +214,11 @@ const TenantEdit: React.FC = () => {
                   onChange={handleChange('address')}
                 />
               </Grid>
-              <Grid item xs={12} md={4}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 4
+                }}>
                 <TextField
                   fullWidth
                   label="City"
@@ -209,7 +226,11 @@ const TenantEdit: React.FC = () => {
                   onChange={handleChange('city')}
                 />
               </Grid>
-              <Grid item xs={12} md={4}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 4
+                }}>
                 <TextField
                   fullWidth
                   label="State"
@@ -217,7 +238,11 @@ const TenantEdit: React.FC = () => {
                   onChange={handleChange('state')}
                 />
               </Grid>
-              <Grid item xs={12} md={4}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 4
+                }}>
                 <TextField
                   fullWidth
                   label="Zip Code"
@@ -235,7 +260,11 @@ const TenantEdit: React.FC = () => {
               Subscription Settings
             </Typography>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   select
                   fullWidth
@@ -248,7 +277,11 @@ const TenantEdit: React.FC = () => {
                   <MenuItem value="ENTERPRISE">Enterprise</MenuItem>
                 </TextField>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   fullWidth
                   type="number"
@@ -258,7 +291,11 @@ const TenantEdit: React.FC = () => {
                   inputProps={{ min: 1 }}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   fullWidth
                   type="number"
@@ -278,7 +315,11 @@ const TenantEdit: React.FC = () => {
               Regional Settings
             </Typography>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   select
                   fullWidth
@@ -295,7 +336,11 @@ const TenantEdit: React.FC = () => {
                   <MenuItem value="Pacific/Honolulu">Hawaii Time</MenuItem>
                 </TextField>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   select
                   fullWidth
@@ -309,7 +354,11 @@ const TenantEdit: React.FC = () => {
                   <MenuItem value="GBP">GBP - British Pound</MenuItem>
                 </TextField>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   select
                   fullWidth
@@ -322,7 +371,11 @@ const TenantEdit: React.FC = () => {
                   <MenuItem value="YYYY-MM-DD">YYYY-MM-DD</MenuItem>
                 </TextField>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   select
                   fullWidth

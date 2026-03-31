@@ -8,6 +8,7 @@ import {
   Box,
   Typography,
   Paper,
+  Grid,
   Card,
   CardContent,
   Button,
@@ -23,7 +24,6 @@ import {
   Divider,
   Chip,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   PointOfSale as POSIcon,
   Print as PrintIcon,
@@ -126,11 +126,14 @@ const ReconciliationReport: React.FC = () => {
           </Button>
         </Box>
       </Box>
-
       {/* Date Selector */}
       <Paper sx={{ p: 2, mb: 3 }}>
         <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 4
+            }}>
             <TextField
               fullWidth
               size="small"
@@ -141,7 +144,11 @@ const ReconciliationReport: React.FC = () => {
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
-          <Grid item xs={12} sm={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 3
+            }}>
             <Button
               fullWidth
               variant="contained"
@@ -153,27 +160,29 @@ const ReconciliationReport: React.FC = () => {
           </Grid>
         </Grid>
       </Paper>
-
       {/* Error */}
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
           {error}
         </Alert>
       )}
-
       {/* Loading */}
       {loading && (
         <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
           <CircularProgress />
         </Box>
       )}
-
       {/* Report Data */}
       {!loading && reportData && (
         <>
           {/* Summary Cards */}
           <Grid container spacing={2} sx={{ mb: 3 }}>
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 3
+              }}>
               <Card sx={{ bgcolor: 'success.light' }}>
                 <CardContent>
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -186,7 +195,12 @@ const ReconciliationReport: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 3
+              }}>
               <Card sx={{ bgcolor: 'primary.light' }}>
                 <CardContent>
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -199,7 +213,12 @@ const ReconciliationReport: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 3
+              }}>
               <Card>
                 <CardContent>
                   <Typography variant="subtitle2" color="textSecondary">
@@ -211,7 +230,12 @@ const ReconciliationReport: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 3
+              }}>
               <Card sx={{ bgcolor: 'error.light' }}>
                 <CardContent>
                   <Typography variant="subtitle2">Refunds Issued</Typography>
@@ -231,7 +255,11 @@ const ReconciliationReport: React.FC = () => {
             </Typography>
             <Divider sx={{ mb: 2 }} />
             <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <Table size="small">
                   <TableBody>
                     <TableRow>
@@ -271,7 +299,11 @@ const ReconciliationReport: React.FC = () => {
                   </TableBody>
                 </Table>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <Typography variant="subtitle2" gutterBottom>
                   Cash Drawer Reconciliation
                 </Typography>
@@ -409,7 +441,6 @@ const ReconciliationReport: React.FC = () => {
           </Paper>
         </>
       )}
-
       {/* Instructions */}
       {!loading && !reportData && !error && (
         <Paper sx={{ p: 4, textAlign: 'center' }}>
@@ -423,7 +454,6 @@ const ReconciliationReport: React.FC = () => {
           </Typography>
         </Paper>
       )}
-
       {/* Print Styles */}
       <style>{`
         @media print {

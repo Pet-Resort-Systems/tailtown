@@ -5,6 +5,7 @@ import {
   Paper,
   Typography,
   IconButton,
+  Grid,
   Chip,
   Button,
   ImageList,
@@ -15,7 +16,6 @@ import {
   Tooltip,
   Collapse,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import CloseIcon from '@mui/icons-material/Close';
@@ -257,7 +257,6 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
           )}
         </Box>
       </Box>
-
       {/* Error message for loading previous */}
       {previousError && (
         <Alert
@@ -268,7 +267,6 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
           {previousError}
         </Alert>
       )}
-
       {/* Bulk Photo Preview */}
       <Collapse in={showBulkPhoto && !!bulkPhoto}>
         <Paper sx={{ p: 2, mb: 3, bgcolor: 'grey.100' }}>
@@ -322,7 +320,6 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
           )}
         </Paper>
       </Collapse>
-
       <Paper sx={{ p: 2, mb: 3, bgcolor: 'grey.50' }}>
         <Typography variant="subtitle2" gutterBottom>
           Quick Add Common Items:
@@ -347,7 +344,6 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
           />
         </Box>
       </Paper>
-
       {belongings.length === 0 && (
         <Paper sx={{ p: 3, textAlign: 'center', bgcolor: 'grey.50' }}>
           <Typography color="text.secondary">
@@ -356,7 +352,6 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
           </Typography>
         </Paper>
       )}
-
       {belongings.map((belonging, index) => (
         <Paper key={index} sx={{ p: 2, mb: 2 }}>
           <Box
@@ -381,7 +376,11 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
           </Box>
 
           <Grid container spacing={2}>
-            <Grid item xs={12} md={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 4
+              }}>
               <TextField
                 fullWidth
                 label="Item Type *"
@@ -394,7 +393,11 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} md={8}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 8
+              }}>
               <TextField
                 fullWidth
                 label="Description *"
@@ -407,7 +410,11 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
               />
             </Grid>
 
-            <Grid item xs={6} md={2}>
+            <Grid
+              size={{
+                xs: 6,
+                md: 2
+              }}>
               <TextField
                 fullWidth
                 type="number"
@@ -425,7 +432,11 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
             </Grid>
 
             {/* Color Quick Select */}
-            <Grid item xs={6} md={4}>
+            <Grid
+              size={{
+                xs: 6,
+                md: 4
+              }}>
               <Typography
                 variant="caption"
                 color="text.secondary"
@@ -464,7 +475,11 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
               )}
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <TextField
                 fullWidth
                 label="Notes"
@@ -477,7 +492,7 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
             </Grid>
 
             {/* Photo Documentation */}
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Box sx={{ mt: 1 }}>
                 <input
                   type="file"
@@ -536,7 +551,6 @@ const BelongingsForm: React.FC<BelongingsFormProps> = ({
           </Grid>
         </Paper>
       ))}
-
       {belongings.length > 0 && (
         <Box sx={{ mt: 2, p: 2, bgcolor: 'info.light', borderRadius: 1 }}>
           <Typography variant="body2" color="info.dark">

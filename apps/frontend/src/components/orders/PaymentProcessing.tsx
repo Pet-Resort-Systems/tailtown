@@ -5,6 +5,7 @@ import {
   Paper,
   TextField,
   Button,
+  Grid,
   MenuItem,
   FormControl,
   InputLabel,
@@ -14,7 +15,6 @@ import {
   Divider,
   InputAdornment,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import { customerService } from '../../services/customerService';
 import { invoiceService } from '../../services/invoiceService';
 
@@ -233,22 +233,19 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
       <Typography variant="h6" gutterBottom>
         Payment Processing
       </Typography>
-
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
-
       {success && (
         <Alert severity="success" sx={{ mb: 2 }}>
           Payment processed successfully!
         </Alert>
       )}
-
       <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
         <Grid container spacing={3}>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Typography variant="h6" gutterBottom>
               Invoice Total: {formatCurrency(totalAmount || amount)}
             </Typography>
@@ -273,7 +270,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
           </Grid>
 
           {/* Payment Option Selection */}
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Divider sx={{ my: 1 }} />
             <Typography variant="subtitle2" gutterBottom sx={{ mt: 2 }}>
               Payment Option:
@@ -315,7 +312,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
           </Grid>
 
           {paymentOption !== 'skip' && (
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Typography variant="h6" color="primary">
                 Amount to Pay Now:{' '}
                 {formatCurrency(
@@ -328,7 +325,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
           )}
 
           {paymentOption === 'skip' && (
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Alert severity="info">
                 No payment will be processed. The reservation will be created
                 with a pending invoice.
@@ -338,7 +335,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
 
           {storeCredit > 0 && (
             <>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Divider />
                 <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
                   <Typography variant="subtitle2">
@@ -367,7 +364,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
                 </Box>
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Divider />
                 <Typography variant="h6" sx={{ mt: 2 }}>
                   Remaining to Pay: {formatCurrency(remainingAmount)}
@@ -376,7 +373,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
             </>
           )}
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <FormControl fullWidth size="small">
               <InputLabel id="payment-method-label">Payment Method</InputLabel>
               <Select
@@ -395,7 +392,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
 
           {paymentMethod === 'CREDIT_CARD' && (
             <>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   fullWidth
                   label="Card Number"
@@ -407,7 +404,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
                 />
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <TextField
                   fullWidth
                   label="Expiry Date"
@@ -419,7 +416,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
                 />
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <TextField
                   fullWidth
                   label="CVV"
@@ -431,7 +428,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   fullWidth
                   label="Name on Card"
@@ -444,7 +441,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
           )}
 
           {(paymentMethod === 'CASH' || paymentMethod === 'CHECK') && (
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 label="Payment Amount"
@@ -465,7 +462,7 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
             </Grid>
           )}
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <TextField
               fullWidth
               multiline
@@ -478,7 +475,6 @@ const PaymentProcessing: React.FC<PaymentProcessingProps> = ({
           </Grid>
         </Grid>
       </Paper>
-
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
         {paymentOption === 'skip' ? (
           <Button

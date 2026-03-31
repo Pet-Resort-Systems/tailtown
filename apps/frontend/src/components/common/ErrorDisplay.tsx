@@ -139,7 +139,7 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
                 </Typography>
               )}
 
-              {process.env.NODE_ENV === 'development' &&
+              {import.meta.env.DEV &&
                 errorDetails.details && (
                   <Box sx={{ mt: 1 }}>
                     <Typography variant="caption" component="div">

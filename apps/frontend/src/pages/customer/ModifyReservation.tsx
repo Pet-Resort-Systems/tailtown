@@ -19,6 +19,7 @@ import {
   Alert,
   CircularProgress,
   TextField,
+  Grid,
   Divider,
   Stack,
   Dialog,
@@ -30,7 +31,6 @@ import {
   Checkbox,
   Paper,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   ArrowBack as BackIcon,
   CalendarToday as CalendarIcon,
@@ -339,13 +339,11 @@ export const ModifyReservation: React.FC = () => {
           </Typography>
         )}
       </Box>
-
       {error && (
         <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 3 }}>
           {error}
         </Alert>
       )}
-
       {/* Info Alert */}
       <Alert severity="info" icon={<InfoIcon />} sx={{ mb: 3 }}>
         <Typography variant="body2">
@@ -353,10 +351,13 @@ export const ModifyReservation: React.FC = () => {
           adjustments will be calculated and shown before confirmation.
         </Typography>
       </Alert>
-
       <Grid container spacing={3}>
         {/* Modification Form */}
-        <Grid item xs={12} md={8}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 8
+          }}>
           {/* Date Modification */}
           <Card sx={{ mb: 3 }}>
             <CardContent>
@@ -367,7 +368,11 @@ export const ModifyReservation: React.FC = () => {
               <Divider sx={{ mb: 2 }} />
 
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <TextField
                     fullWidth
                     type="date"
@@ -383,7 +388,11 @@ export const ModifyReservation: React.FC = () => {
                     Current: {formatDate(reservation.startDate)}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <TextField
                     fullWidth
                     type="date"
@@ -463,7 +472,11 @@ export const ModifyReservation: React.FC = () => {
         </Grid>
 
         {/* Summary Sidebar */}
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <Card sx={{ mb: 3 }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -549,7 +562,6 @@ export const ModifyReservation: React.FC = () => {
           </Card>
         </Grid>
       </Grid>
-
       {/* Preview Dialog */}
       <Dialog
         open={showPreview}

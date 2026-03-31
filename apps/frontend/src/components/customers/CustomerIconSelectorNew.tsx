@@ -4,6 +4,7 @@ import {
   Typography,
   Tabs,
   Tab,
+  Grid,
   Tooltip,
   Chip,
   Paper,
@@ -15,7 +16,6 @@ import {
   DialogActions,
   Button,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   STATUS_ICONS,
   PAYMENT_ICONS,
@@ -131,7 +131,7 @@ const CustomerIconSelectorNew: React.FC<CustomerIconSelectorNewProps> = ({
             const hasNote = iconNotes[icon.id];
 
             return (
-              <Grid item key={icon.id}>
+              <Grid key={icon.id}>
                 <Tooltip title={icon.description} arrow>
                   <Box sx={{ position: 'relative' }}>
                     <Chip
@@ -202,7 +202,6 @@ const CustomerIconSelectorNew: React.FC<CustomerIconSelectorNewProps> = ({
           </Box>
         )}
       </Paper>
-
       {/* Note Dialog */}
       <Dialog
         open={noteDialogOpen}

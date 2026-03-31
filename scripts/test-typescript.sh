@@ -50,7 +50,7 @@ echo ""
 
 # Check Frontend (optional)
 if [ "$1" == "--with-frontend" ]; then
-    echo -e "${BLUE}Checking Frontend...${NC}"
+    echo -e "${BLUE}Checking Canonical Frontend...${NC}"
     cd apps/frontend
     ERROR_COUNT=$(pnpm exec tsc --noEmit 2>&1 | grep "error TS" | wc -l | xargs)
     if [ "$ERROR_COUNT" -eq "0" ]; then

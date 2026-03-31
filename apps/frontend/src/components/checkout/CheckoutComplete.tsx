@@ -1,6 +1,13 @@
 import React from 'react';
-import { Box, Typography, Paper, Button, Divider, Alert } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
+import {
+  Box,
+  Typography,
+  Paper,
+  Button,
+  Grid,
+  Divider,
+  Alert,
+} from '@mui/material';
 import {
   CheckCircle as CheckCircleIcon,
   Print as PrintIcon,
@@ -53,62 +60,61 @@ const CheckoutComplete: React.FC<CheckoutCompleteProps> = ({
           The reservation has been successfully checked out
         </Typography>
       </Box>
-
       <Paper elevation={0} sx={{ p: 3, bgcolor: 'grey.50' }}>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Typography variant="h6" gutterBottom>
               Checkout Summary
             </Typography>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Divider />
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid size={6}>
             <Typography variant="body2" color="text.secondary">
               Reservation ID:
             </Typography>
           </Grid>
-          <Grid item xs={6}>
+          <Grid size={6}>
             <Typography variant="body2" align="right">
               {checkoutData.reservationId}
             </Typography>
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid size={6}>
             <Typography variant="body2" color="text.secondary">
               Invoice Number:
             </Typography>
           </Grid>
-          <Grid item xs={6}>
+          <Grid size={6}>
             <Typography variant="body2" align="right">
               {checkoutData.invoice?.invoiceNumber || 'N/A'}
             </Typography>
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid size={6}>
             <Typography variant="body2" color="text.secondary">
               Checkout Time:
             </Typography>
           </Grid>
-          <Grid item xs={6}>
+          <Grid size={6}>
             <Typography variant="body2" align="right">
               {formatDateTime(new Date().toISOString())}
             </Typography>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Divider sx={{ my: 1 }} />
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid size={6}>
             <Typography variant="body2" color="text.secondary">
               Total Charges:
             </Typography>
           </Grid>
-          <Grid item xs={6}>
+          <Grid size={6}>
             <Typography variant="body2" align="right">
               {formatCurrency(checkoutData.invoice?.total || 0)}
             </Typography>
@@ -116,12 +122,12 @@ const CheckoutComplete: React.FC<CheckoutCompleteProps> = ({
 
           {checkoutData.invoice?.depositPaid > 0 && (
             <>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <Typography variant="body2" color="text.secondary">
                   Deposit Paid:
                 </Typography>
               </Grid>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <Typography variant="body2" align="right" color="success.main">
                   {formatCurrency(checkoutData.invoice.depositPaid)}
                 </Typography>
@@ -132,12 +138,12 @@ const CheckoutComplete: React.FC<CheckoutCompleteProps> = ({
           {checkoutData.finalPayment &&
             checkoutData.finalPayment.amount > 0 && (
               <>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Typography variant="body2" color="text.secondary">
                     Final Payment:
                   </Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Typography
                     variant="body2"
                     align="right"
@@ -147,12 +153,12 @@ const CheckoutComplete: React.FC<CheckoutCompleteProps> = ({
                   </Typography>
                 </Grid>
 
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Typography variant="body2" color="text.secondary">
                     Payment Method:
                   </Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Typography variant="body2" align="right">
                     {checkoutData.finalPayment.method}
                   </Typography>
@@ -160,11 +166,11 @@ const CheckoutComplete: React.FC<CheckoutCompleteProps> = ({
               </>
             )}
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Divider sx={{ my: 1 }} />
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Alert severity="success" icon={<CheckCircleIcon />}>
               <Typography variant="body2">
                 <strong>Items Returned:</strong>
@@ -181,7 +187,6 @@ const CheckoutComplete: React.FC<CheckoutCompleteProps> = ({
           </Grid>
         </Grid>
       </Paper>
-
       <Box
         sx={{
           display: 'flex',

@@ -31,10 +31,10 @@ import {
   MenuItem,
   FormControlLabel,
   Checkbox,
+  Grid,
   Alert,
   Tooltip,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -199,13 +199,11 @@ export const CouponManagement: React.FC = () => {
           Create Coupon
         </Button>
       </Box>
-
       {error && (
         <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
-
       {success && (
         <Alert
           severity="success"
@@ -215,7 +213,6 @@ export const CouponManagement: React.FC = () => {
           {success}
         </Alert>
       )}
-
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -309,7 +306,6 @@ export const CouponManagement: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
-
       {/* Create/Edit Dialog */}
       <Dialog
         open={dialogOpen}
@@ -322,7 +318,11 @@ export const CouponManagement: React.FC = () => {
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 fullWidth
                 label="Coupon Code *"
@@ -337,7 +337,11 @@ export const CouponManagement: React.FC = () => {
                 helperText="Unique code customers will enter"
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 fullWidth
                 select
@@ -354,7 +358,7 @@ export const CouponManagement: React.FC = () => {
                 <MenuItem value="FIXED_AMOUNT">Fixed Amount</MenuItem>
               </TextField>
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 label="Description *"
@@ -367,7 +371,11 @@ export const CouponManagement: React.FC = () => {
                 rows={2}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 fullWidth
                 type="number"
@@ -388,7 +396,11 @@ export const CouponManagement: React.FC = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 fullWidth
                 type="number"
@@ -404,7 +416,11 @@ export const CouponManagement: React.FC = () => {
                 InputProps={{ startAdornment: '$' }}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 fullWidth
                 type="date"
@@ -416,7 +432,11 @@ export const CouponManagement: React.FC = () => {
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 fullWidth
                 type="date"
@@ -428,7 +448,11 @@ export const CouponManagement: React.FC = () => {
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 fullWidth
                 type="number"
@@ -444,7 +468,11 @@ export const CouponManagement: React.FC = () => {
                 helperText="Leave empty for unlimited"
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 fullWidth
                 type="number"
@@ -458,7 +486,7 @@ export const CouponManagement: React.FC = () => {
                 }
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -474,7 +502,7 @@ export const CouponManagement: React.FC = () => {
                 label="First-time customers only"
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 label="Notes"

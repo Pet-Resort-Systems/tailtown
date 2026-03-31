@@ -48,23 +48,18 @@ const Customers = () => {
   const debouncedSearch = useMemo(
     () =>
       debounce(async (query: string, iconFilters: string[]) => {
-        console.log('Debounced search triggered:', { query, iconFilters });
-
         try {
           // Don't show loading spinner for searches - keeps UI stable
           let result;
 
           // Use server-side search if there's a text query
           if (query) {
-            console.log('Using server-side search for:', query);
             result = await customerService.searchCustomers(query, 1, 100); // Search results
           } else {
-            console.log('Loading initial customers (use search to find more)');
             result = await customerService.getAllCustomers(1, 100); // Fast initial load, use search for more
           }
 
           let filtered = result.data || [];
-          console.log('Server returned:', filtered.length, 'customers');
 
           // Apply icon filters client-side (customer must have ALL selected icons)
           if (iconFilters.length > 0) {
@@ -74,7 +69,6 @@ const Customers = () => {
                 customerIcons.includes(iconId)
               );
             });
-            console.log('After icon filter:', filtered.length, 'customers');
           }
 
           setCustomers(filtered);

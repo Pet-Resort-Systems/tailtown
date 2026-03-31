@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
+  Grid,
   Button,
   FormControl,
   InputLabel,
@@ -20,7 +21,6 @@ import {
   SelectChangeEvent,
   CircularProgress,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import staffService, { StaffAvailability } from '../../services/staffService';
 
@@ -198,14 +198,17 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({
           <Typography color="error">{error}</Typography>
         </Box>
       )}
-
       <Paper sx={{ p: 2, mb: 3 }}>
         <Typography variant="subtitle1" gutterBottom>
           {editingAvailability ? 'Edit Availability' : 'Add New Availability'}
         </Typography>
 
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6
+            }}>
             <FormControl fullWidth size="small">
               <InputLabel>Day of Week</InputLabel>
               <Select
@@ -223,7 +226,11 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6
+            }}>
             <FormControl fullWidth size="small">
               <InputLabel>Available</InputLabel>
               <Select
@@ -238,7 +245,11 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6
+            }}>
             <TextField
               name="startTime"
               label="Start Time"
@@ -252,7 +263,11 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6
+            }}>
             <TextField
               name="endTime"
               label="End Time"
@@ -266,7 +281,11 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6
+            }}>
             <TextField
               name="effectiveFrom"
               label="Effective From (Optional)"
@@ -279,7 +298,11 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6
+            }}>
             <TextField
               name="effectiveUntil"
               label="Effective Until (Optional)"
@@ -294,11 +317,7 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({
 
           {/* Removed notes field as it's not supported in the backend schema */}
 
-          <Grid
-            item
-            xs={12}
-            sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}
-          >
+          <Grid sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }} size={12}>
             {editingAvailability ? (
               <>
                 <Button
@@ -330,11 +349,9 @@ const StaffAvailabilityForm: React.FC<StaffAvailabilityFormProps> = ({
           </Grid>
         </Grid>
       </Paper>
-
       <Typography variant="subtitle1" gutterBottom>
         Current Availability Schedule
       </Typography>
-
       {loading && !editingAvailability ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
           <CircularProgress />

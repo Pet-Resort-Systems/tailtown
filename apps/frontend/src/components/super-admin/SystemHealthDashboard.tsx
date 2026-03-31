@@ -10,6 +10,7 @@ import {
   Box,
   Card,
   CardContent,
+  Grid,
   Typography,
   Chip,
   CircularProgress,
@@ -18,7 +19,6 @@ import {
   IconButton,
   Tooltip,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   CheckCircle as HealthyIcon,
   Warning as WarningIcon,
@@ -211,11 +211,15 @@ const SystemHealthDashboard: React.FC = () => {
           </Tooltip>
         </Box>
       </Box>
-
       {/* Services Status */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
         {/* Customer Service */}
-        <Grid item xs={12} md={6} lg={3}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6,
+            lg: 3
+          }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -240,7 +244,12 @@ const SystemHealthDashboard: React.FC = () => {
         </Grid>
 
         {/* Reservation Service */}
-        <Grid item xs={12} md={6} lg={3}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6,
+            lg: 3
+          }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -265,7 +274,12 @@ const SystemHealthDashboard: React.FC = () => {
         </Grid>
 
         {/* Database */}
-        <Grid item xs={12} md={6} lg={3}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6,
+            lg: 3
+          }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -294,7 +308,12 @@ const SystemHealthDashboard: React.FC = () => {
         </Grid>
 
         {/* Cache */}
-        <Grid item xs={12} md={6} lg={3}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6,
+            lg: 3
+          }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -322,11 +341,14 @@ const SystemHealthDashboard: React.FC = () => {
           </Card>
         </Grid>
       </Grid>
-
       {/* System Resources */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
         {/* Memory Usage */}
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -368,7 +390,11 @@ const SystemHealthDashboard: React.FC = () => {
         </Grid>
 
         {/* CPU Usage */}
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -412,7 +438,6 @@ const SystemHealthDashboard: React.FC = () => {
           </Card>
         </Grid>
       </Grid>
-
       {/* Performance Metrics */}
       <Card>
         <CardContent>
@@ -420,7 +445,11 @@ const SystemHealthDashboard: React.FC = () => {
             Performance Metrics
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={4}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4
+              }}>
               <Box
                 sx={{
                   textAlign: 'center',
@@ -438,7 +467,11 @@ const SystemHealthDashboard: React.FC = () => {
               </Box>
             </Grid>
             {health.metrics.totalRequests !== undefined && (
-              <Grid item xs={12} sm={4}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 4
+                }}>
                 <Box
                   sx={{
                     textAlign: 'center',
@@ -457,7 +490,11 @@ const SystemHealthDashboard: React.FC = () => {
               </Grid>
             )}
             {health.metrics.averageResponseTime !== undefined && (
-              <Grid item xs={12} sm={4}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 4
+                }}>
                 <Box
                   sx={{
                     textAlign: 'center',

@@ -247,8 +247,8 @@ start_all() {
     start_service "Frontend" "apps/frontend" "$FRONTEND_PID" "$FRONTEND_LOG" 3000 "pnpm start"
     
     # Optionally start admin portal
-    if [ -d "$PROJECT_ROOT/admin-portal" ]; then
-        start_service "Admin Portal" "admin-portal" "$ADMIN_PID" "$ADMIN_LOG" 3001 "pnpm start"
+    if [ -d "$PROJECT_ROOT/apps/legacy-admin-portal" ]; then
+        start_service "Legacy Admin Portal" "apps/legacy-admin-portal" "$ADMIN_PID" "$ADMIN_LOG" 3001 "pnpm start"
     fi
     
     echo ""

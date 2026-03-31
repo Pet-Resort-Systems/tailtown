@@ -13,6 +13,7 @@ import {
   Card,
   CardContent,
   Container,
+  Grid,
   TextField,
   Typography,
   FormControl,
@@ -28,7 +29,6 @@ import {
   Breadcrumbs,
   Link as MuiLink,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import priceRuleService from '../../services/priceRuleService';
@@ -246,7 +246,7 @@ const PriceRuleDetailsPage: React.FC = () => {
           <Card>
             <CardContent>
               <Grid container spacing={3}>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <TextField
                     label="Rule Name"
                     fullWidth
@@ -257,7 +257,7 @@ const PriceRuleDetailsPage: React.FC = () => {
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <TextField
                     label="Description"
                     fullWidth
@@ -269,7 +269,11 @@ const PriceRuleDetailsPage: React.FC = () => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <FormControl fullWidth required size="small">
                     <InputLabel>Rule Type</InputLabel>
                     <Select
@@ -287,7 +291,11 @@ const PriceRuleDetailsPage: React.FC = () => {
                   </FormControl>
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <FormControl fullWidth required size="small">
                     <InputLabel>Adjustment Type</InputLabel>
                     <Select
@@ -310,7 +318,11 @@ const PriceRuleDetailsPage: React.FC = () => {
                   </FormControl>
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <FormControl fullWidth required size="small">
                     <InputLabel>Value Type</InputLabel>
                     <Select
@@ -324,7 +336,11 @@ const PriceRuleDetailsPage: React.FC = () => {
                   </FormControl>
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <TextField
                     label={`${
                       adjustmentType === 'DISCOUNT' ? 'Discount' : 'Surcharge'
@@ -355,7 +371,11 @@ const PriceRuleDetailsPage: React.FC = () => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <TextField
                     label="Priority"
                     fullWidth
@@ -375,7 +395,11 @@ const PriceRuleDetailsPage: React.FC = () => {
 
                 {(ruleType === 'MULTI_DAY' || ruleType === 'MULTI_PET') && (
                   <>
-                    <Grid item xs={12} sm={6}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6
+                      }}>
                       <TextField
                         label={`Minimum ${
                           ruleType === 'MULTI_DAY' ? 'Days' : 'Pets'
@@ -398,7 +422,11 @@ const PriceRuleDetailsPage: React.FC = () => {
                       />
                     </Grid>
 
-                    <Grid item xs={12} sm={6}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6
+                      }}>
                       <TextField
                         label={`Maximum ${
                           ruleType === 'MULTI_DAY' ? 'Days' : 'Pets'
@@ -424,7 +452,7 @@ const PriceRuleDetailsPage: React.FC = () => {
                 )}
 
                 {ruleType === 'DAY_OF_WEEK' && (
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <Typography variant="subtitle2" gutterBottom>
                       Days of Week
                     </Typography>
@@ -454,7 +482,11 @@ const PriceRuleDetailsPage: React.FC = () => {
 
                 {(ruleType === 'SEASONAL' || ruleType === 'PROMOTIONAL') && (
                   <>
-                    <Grid item xs={12} sm={6}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6
+                      }}>
                       <TextField
                         label="Start Date"
                         fullWidth
@@ -466,7 +498,11 @@ const PriceRuleDetailsPage: React.FC = () => {
                       />
                     </Grid>
 
-                    <Grid item xs={12} sm={6}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6
+                      }}>
                       <TextField
                         label="End Date"
                         fullWidth
@@ -480,7 +516,7 @@ const PriceRuleDetailsPage: React.FC = () => {
                   </>
                 )}
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <FormControlLabel
                     control={
                       <Checkbox

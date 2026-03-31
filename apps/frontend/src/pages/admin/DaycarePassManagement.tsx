@@ -27,6 +27,7 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  Grid,
   Alert,
   Tooltip,
   Card,
@@ -35,7 +36,6 @@ import {
   Switch,
   FormControlLabel,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -279,7 +279,6 @@ export const DaycarePassManagement: React.FC = () => {
           </Button>
         </Box>
       </Box>
-
       {/* Alerts */}
       {error && (
         <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
@@ -295,7 +294,6 @@ export const DaycarePassManagement: React.FC = () => {
           {success}
         </Alert>
       )}
-
       {/* Packages Table */}
       <TableContainer component={Paper}>
         <Table>
@@ -410,7 +408,6 @@ export const DaycarePassManagement: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
-
       {/* Create/Edit Dialog */}
       <Dialog
         open={dialogOpen}
@@ -423,7 +420,7 @@ export const DaycarePassManagement: React.FC = () => {
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 label="Package Name"
                 fullWidth
@@ -433,7 +430,7 @@ export const DaycarePassManagement: React.FC = () => {
                 placeholder="e.g., 5-Day Pass, 10-Day Pass"
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 label="Description"
                 fullWidth
@@ -446,7 +443,7 @@ export const DaycarePassManagement: React.FC = () => {
                 placeholder="e.g., Save 10% with our 5-day daycare pass"
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <TextField
                 label="Number of Passes"
                 type="number"
@@ -459,7 +456,7 @@ export const DaycarePassManagement: React.FC = () => {
                 inputProps={{ min: 1 }}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <TextField
                 label="Regular Day Rate"
                 type="number"
@@ -480,7 +477,7 @@ export const DaycarePassManagement: React.FC = () => {
                 inputProps={{ min: 0, step: 0.01 }}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <TextField
                 label="Discount Percent"
                 type="number"
@@ -500,7 +497,7 @@ export const DaycarePassManagement: React.FC = () => {
                 inputProps={{ min: 0, max: 100, step: 1 }}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <TextField
                 label="Package Price"
                 type="number"
@@ -519,7 +516,7 @@ export const DaycarePassManagement: React.FC = () => {
                 helperText="Auto-calculated from discount"
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <TextField
                 label="Valid For (Days)"
                 type="number"
@@ -536,7 +533,7 @@ export const DaycarePassManagement: React.FC = () => {
                 helperText="Days until pass expires after purchase"
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <TextField
                 label="Sort Order"
                 type="number"
@@ -554,7 +551,7 @@ export const DaycarePassManagement: React.FC = () => {
             {formData.passCount &&
               formData.price &&
               formData.regularPricePerDay && (
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Card
                     variant="outlined"
                     sx={{

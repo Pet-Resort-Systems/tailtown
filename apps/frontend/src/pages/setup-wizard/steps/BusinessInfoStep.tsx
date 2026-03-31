@@ -10,13 +10,13 @@ import {
   TextField,
   Typography,
   Button,
+  Grid,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
   Avatar,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import { PhotoCamera, ArrowForward } from '@mui/icons-material';
 import { useSetupWizard } from '../SetupWizardContext';
 
@@ -143,14 +143,9 @@ export default function BusinessInfoStep() {
       <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
         Tell us about your pet care facility.
       </Typography>
-
       <Grid container spacing={3}>
         {/* Logo Upload */}
-        <Grid
-          item
-          xs={12}
-          sx={{ display: 'flex', alignItems: 'center', gap: 3 }}
-        >
+        <Grid sx={{ display: 'flex', alignItems: 'center', gap: 3 }} size={12}>
           <Avatar
             src={logoPreview || undefined}
             sx={{ width: 100, height: 100, bgcolor: 'grey.200' }}
@@ -186,7 +181,11 @@ export default function BusinessInfoStep() {
         </Grid>
 
         {/* Business Name */}
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <TextField
             fullWidth
             label="Business Name"
@@ -199,7 +198,11 @@ export default function BusinessInfoStep() {
         </Grid>
 
         {/* Legal Name (optional) */}
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <TextField
             fullWidth
             label="Legal Business Name"
@@ -210,7 +213,7 @@ export default function BusinessInfoStep() {
         </Grid>
 
         {/* Address */}
-        <Grid item xs={12}>
+        <Grid size={12}>
           <TextField
             fullWidth
             label="Street Address"
@@ -223,7 +226,11 @@ export default function BusinessInfoStep() {
         </Grid>
 
         {/* City, State, ZIP */}
-        <Grid item xs={12} md={5}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 5
+          }}>
           <TextField
             fullWidth
             label="City"
@@ -234,7 +241,11 @@ export default function BusinessInfoStep() {
             required
           />
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <FormControl fullWidth error={!!errors.state} required>
             <InputLabel>State</InputLabel>
             <Select
@@ -250,7 +261,11 @@ export default function BusinessInfoStep() {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 3
+          }}>
           <TextField
             fullWidth
             label="ZIP Code"
@@ -263,7 +278,11 @@ export default function BusinessInfoStep() {
         </Grid>
 
         {/* Phone & Email */}
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <TextField
             fullWidth
             label="Phone Number"
@@ -275,7 +294,11 @@ export default function BusinessInfoStep() {
             required
           />
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <TextField
             fullWidth
             label="Email Address"
@@ -289,7 +312,11 @@ export default function BusinessInfoStep() {
         </Grid>
 
         {/* Website (optional) */}
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <TextField
             fullWidth
             label="Website"
@@ -300,7 +327,11 @@ export default function BusinessInfoStep() {
         </Grid>
 
         {/* Timezone */}
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <FormControl fullWidth required>
             <InputLabel>Timezone</InputLabel>
             <Select
@@ -317,7 +348,6 @@ export default function BusinessInfoStep() {
           </FormControl>
         </Grid>
       </Grid>
-
       {/* Navigation */}
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
         <Button
