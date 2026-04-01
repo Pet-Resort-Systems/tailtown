@@ -118,19 +118,19 @@ function main() {
 
   const badges = [];
 
-  // Frontend badges
+  // Legacy Frontend badges
   const frontendSummary = path.join(
     __dirname,
-    '../apps/frontend/coverage/coverage-summary.json'
+    '../apps/legacy-frontend/coverage/coverage-summary.json'
   );
   if (fs.existsSync(frontendSummary)) {
-    const frontendBadges = generateBadges('Frontend', frontendSummary);
+    const frontendBadges = generateBadges('Legacy Frontend', frontendSummary);
     if (frontendBadges) {
       badges.push(...frontendBadges);
-      console.log('✅ Frontend badges generated');
+      console.log('✅ Legacy Frontend badges generated');
     }
   } else {
-    console.log('⚠️  Frontend coverage not found');
+    console.log('⚠️  Legacy frontend coverage not found');
   }
 
   // Backend badges

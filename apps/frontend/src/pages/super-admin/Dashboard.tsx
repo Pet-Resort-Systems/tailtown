@@ -14,8 +14,8 @@ import {
   Button,
   Card,
   CardContent,
+  Grid,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   Logout as LogoutIcon,
   Business as TenantIcon,
@@ -61,10 +61,13 @@ const SuperAdminDashboard: React.FC = () => {
           Logout
         </Button>
       </Box>
-
       {/* Quick Stats */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -89,7 +92,11 @@ const SuperAdminDashboard: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -107,10 +114,7 @@ const SuperAdminDashboard: React.FC = () => {
                 variant="contained"
                 fullWidth
                 onClick={() => {
-                  const analyticsUrl =
-                    process.env.NODE_ENV === 'production'
-                      ? `${window.location.origin}/analytics`
-                      : 'http://localhost:3001/analytics';
+                  const analyticsUrl = `${window.location.origin}/admin-portal/analytics`;
                   window.open(analyticsUrl, '_blank');
                 }}
               >
@@ -120,7 +124,11 @@ const SuperAdminDashboard: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -152,7 +160,7 @@ const SuperAdminDashboard: React.FC = () => {
                   sx={{ flex: 1 }}
                   onClick={() => {
                     const grafanaUrl =
-                      process.env.NODE_ENV === 'production'
+                      import.meta.env.PROD
                         ? 'http://129.212.178.244:3030'
                         : 'http://localhost:3030';
                     window.open(grafanaUrl, '_blank');
@@ -165,7 +173,6 @@ const SuperAdminDashboard: React.FC = () => {
           </Card>
         </Grid>
       </Grid>
-
       {/* Account Info */}
       <Card>
         <CardContent>
@@ -185,12 +192,10 @@ const SuperAdminDashboard: React.FC = () => {
           </Box>
         </CardContent>
       </Card>
-
       {/* System Health Dashboard */}
       <Box sx={{ mt: 4 }}>
         <SystemHealthDashboard />
       </Box>
-
       {/* System Status Notice */}
       <Box sx={{ mt: 4, p: 3, bgcolor: 'success.light', borderRadius: 1 }}>
         <Typography variant="h6" gutterBottom>

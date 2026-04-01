@@ -24,8 +24,8 @@ import {
   Alert,
   CircularProgress,
   Tooltip,
+  Grid,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -241,17 +241,19 @@ const GroomerAppointments: React.FC = () => {
           New Appointment
         </Button>
       </Box>
-
       {error && (
         <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
-
       {/* Filters */}
       <Paper sx={{ p: 2, mb: 2 }}>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3
+            }}>
             <TextField
               label="Start Date"
               type="date"
@@ -263,7 +265,11 @@ const GroomerAppointments: React.FC = () => {
               fullWidth
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3
+            }}>
             <TextField
               label="End Date"
               type="date"
@@ -275,7 +281,11 @@ const GroomerAppointments: React.FC = () => {
               fullWidth
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3
+            }}>
             <FormControl fullWidth>
               <InputLabel>Status</InputLabel>
               <Select
@@ -293,7 +303,11 @@ const GroomerAppointments: React.FC = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3
+            }}>
             <Button
               variant="outlined"
               onClick={() =>
@@ -312,7 +326,6 @@ const GroomerAppointments: React.FC = () => {
           </Grid>
         </Grid>
       </Paper>
-
       <Paper>
         <TableContainer>
           <Table>
@@ -437,7 +450,6 @@ const GroomerAppointments: React.FC = () => {
           </Table>
         </TableContainer>
       </Paper>
-
       {/* Add/Edit Dialog */}
       <Dialog
         open={openDialog}

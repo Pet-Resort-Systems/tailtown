@@ -10,6 +10,7 @@ import {
   Typography,
   Card,
   CardContent,
+  Grid,
   LinearProgress,
   Chip,
   Button,
@@ -25,7 +26,6 @@ import {
   CircularProgress,
   Divider,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   Star as StarIcon,
   TrendingUp as TrendingUpIcon,
@@ -166,10 +166,13 @@ export const CustomerLoyaltyDashboard: React.FC<
           {error}
         </Alert>
       )}
-
       {/* Points Overview */}
       <Grid container spacing={3} mb={3}>
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <Card
             sx={{
               background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -191,7 +194,11 @@ export const CustomerLoyaltyDashboard: React.FC<
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center" mb={2}>
@@ -232,7 +239,11 @@ export const CustomerLoyaltyDashboard: React.FC<
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center" mb={2}>
@@ -254,7 +265,6 @@ export const CustomerLoyaltyDashboard: React.FC<
           </Card>
         </Grid>
       </Grid>
-
       {/* Tier Benefits */}
       {currentTier && (
         <Card sx={{ mb: 3 }}>
@@ -264,7 +274,13 @@ export const CustomerLoyaltyDashboard: React.FC<
             </Typography>
             <Grid container spacing={2}>
               {currentTier.benefits.map((benefit, idx) => (
-                <Grid item xs={12} sm={6} md={4} key={idx}>
+                <Grid
+                  key={idx}
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                    md: 4
+                  }}>
                   <Box display="flex" alignItems="center">
                     <StarIcon
                       sx={{ color: currentTier.color, mr: 1, fontSize: 20 }}
@@ -277,7 +293,6 @@ export const CustomerLoyaltyDashboard: React.FC<
           </CardContent>
         </Card>
       )}
-
       {/* Redemption Options */}
       <Card sx={{ mb: 3 }}>
         <CardContent>
@@ -302,7 +317,13 @@ export const CustomerLoyaltyDashboard: React.FC<
               );
 
               return (
-                <Grid item xs={12} sm={6} md={4} key={option.id}>
+                <Grid
+                  key={option.id}
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                    md: 4
+                  }}>
                   <Card variant="outlined" sx={{ height: '100%' }}>
                     <CardContent>
                       <Typography variant="h6" gutterBottom>
@@ -339,7 +360,6 @@ export const CustomerLoyaltyDashboard: React.FC<
           </Grid>
         </CardContent>
       </Card>
-
       {/* Recent Activity */}
       <Card>
         <CardContent>
@@ -379,7 +399,6 @@ export const CustomerLoyaltyDashboard: React.FC<
           </List>
         </CardContent>
       </Card>
-
       {/* Redeem Confirmation Dialog */}
       <Dialog
         open={showRedeemDialog}
@@ -414,7 +433,6 @@ export const CustomerLoyaltyDashboard: React.FC<
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* History Dialog */}
       <Dialog
         open={showHistoryDialog}

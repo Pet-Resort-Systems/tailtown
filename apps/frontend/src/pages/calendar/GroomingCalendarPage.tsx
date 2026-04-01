@@ -38,10 +38,6 @@ const GroomingCalendarPage: React.FC = () => {
           staff.specialties?.includes('GROOMING')
         );
 
-        console.log(
-          'Groomers found:',
-          groomerList.map((g) => `${g.firstName} ${g.lastName}`)
-        );
         setGroomers(groomerList);
       } catch (error) {
         console.error('Error loading groomers:', error);

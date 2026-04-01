@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Automated Test Runner for Tailtown
-# Runs all tests across apps/frontend and backend services
+# Runs all tests across apps/legacy-frontend and backend services
 
 set -e  # Exit on error
 
@@ -94,8 +94,8 @@ echo "🧪 Running Tests..."
 echo "================================"
 echo ""
 
-# Run apps/frontend tests
-run_test "Frontend Tests" "pnpm test -- --watchAll=false --passWithNoTests" "apps/frontend"
+# Run legacy frontend tests
+run_test "Legacy Frontend Tests" "pnpm test -- --watchAll=false --passWithNoTests" "apps/legacy-frontend"
 
 # Run customer service tests (skip if no database)
 if [ "$SKIP_DB_TESTS" = true ]; then

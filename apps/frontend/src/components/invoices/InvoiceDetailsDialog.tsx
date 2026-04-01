@@ -5,6 +5,7 @@ import {
   DialogActions,
   Button,
   Typography,
+  Grid,
   Divider,
   Chip,
   Box,
@@ -17,7 +18,6 @@ import {
   Paper,
   CircularProgress,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import { format } from 'date-fns';
 import { Invoice } from '../../services/invoiceService';
 import {
@@ -365,7 +365,11 @@ const InvoiceDetailsDialog: React.FC<InvoiceDetailsDialogProps> = ({
       </Box>
       <DialogContent>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <Typography variant="subtitle2" color="textSecondary">
               Invoice Date
             </Typography>
@@ -373,7 +377,11 @@ const InvoiceDetailsDialog: React.FC<InvoiceDetailsDialogProps> = ({
               {format(new Date(invoice.issueDate || new Date()), 'MM/dd/yyyy')}
             </Typography>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <Typography variant="subtitle2" color="textSecondary">
               Due Date
             </Typography>
@@ -384,13 +392,17 @@ const InvoiceDetailsDialog: React.FC<InvoiceDetailsDialogProps> = ({
 
           {invoice.reservation && (
             <>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Divider sx={{ my: 1 }} />
                 <Typography variant="subtitle1" gutterBottom>
                   Reservation Details
                 </Typography>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <Typography variant="subtitle2" color="textSecondary">
                   Service
                 </Typography>
@@ -398,7 +410,11 @@ const InvoiceDetailsDialog: React.FC<InvoiceDetailsDialogProps> = ({
                   {invoice.reservation.service?.name || 'N/A'}
                 </Typography>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <Typography variant="subtitle2" color="textSecondary">
                   Pet
                 </Typography>
@@ -406,7 +422,11 @@ const InvoiceDetailsDialog: React.FC<InvoiceDetailsDialogProps> = ({
                   {invoice.reservation.pet?.name || 'N/A'}
                 </Typography>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <Typography variant="subtitle2" color="textSecondary">
                   Start Date
                 </Typography>
@@ -419,7 +439,11 @@ const InvoiceDetailsDialog: React.FC<InvoiceDetailsDialogProps> = ({
                     : 'N/A'}
                 </Typography>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <Typography variant="subtitle2" color="textSecondary">
                   End Date
                 </Typography>
@@ -435,14 +459,14 @@ const InvoiceDetailsDialog: React.FC<InvoiceDetailsDialogProps> = ({
             </>
           )}
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Divider sx={{ my: 1 }} />
             <Typography variant="subtitle1" gutterBottom>
               Line Items
             </Typography>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <TableContainer component={Paper} variant="outlined">
               <Table size="small">
                 <TableHead>
@@ -459,7 +483,7 @@ const InvoiceDetailsDialog: React.FC<InvoiceDetailsDialogProps> = ({
           </Grid>
 
           {invoice.notes && (
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Typography variant="subtitle2" color="textSecondary">
                 Notes
               </Typography>
@@ -469,13 +493,13 @@ const InvoiceDetailsDialog: React.FC<InvoiceDetailsDialogProps> = ({
 
           {invoice.payments && invoice.payments.length > 0 && (
             <>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Divider sx={{ my: 1 }} />
                 <Typography variant="subtitle1" gutterBottom>
                   Payment History
                 </Typography>
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TableContainer component={Paper} variant="outlined">
                   <Table size="small">
                     <TableHead>

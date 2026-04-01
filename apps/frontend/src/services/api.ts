@@ -15,7 +15,7 @@ const defaultValidateStatus = (status: number) => status < 500;
 
 // Default timeout (ms) for all API instances to prevent indefinite hangs
 const API_TIMEOUT: number = (() => {
-  const raw = process.env.REACT_APP_API_TIMEOUT;
+  const raw = import.meta.env.VITE_API_TIMEOUT;
   const parsed = raw ? parseInt(raw, 10) : NaN;
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 30000; // 30s default
 })();
@@ -30,30 +30,14 @@ const getTenantId = (): string | undefined => {
   } catch (_) {
     // Access to localStorage might fail in non-browser environments
   }
-  const fromEnv = process.env.REACT_APP_TENANT_ID;
+  const fromEnv = import.meta.env.VITE_TENANT_ID;
   return fromEnv && fromEnv.trim() ? fromEnv.trim() : undefined;
 };
-
-// Only log API requests/responses in development
-const isDev = process.env.NODE_ENV === 'development';
 
 // Add request interceptor for logging and auth token
 const addRequestInterceptor = (instance: AxiosInstance) => {
   instance.interceptors.request.use(
     (config) => {
-      // Only log in development to reduce console noise in production
-      if (isDev) {
-        console.log(
-          `API Request: ${config.method?.toUpperCase()} ${config.baseURL}${
-            config.url
-          }`,
-          {
-            params: config.params,
-            data: config.data,
-          }
-        );
-      }
-
       // Add JWT token to requests if available
       try {
         const token = localStorage.getItem('token');
@@ -77,17 +61,7 @@ const addRequestInterceptor = (instance: AxiosInstance) => {
 // Add response interceptor for logging
 const addResponseInterceptor = (instance: AxiosInstance) => {
   instance.interceptors.response.use(
-    (response) => {
-      // Only log in development to reduce console noise in production
-      if (isDev) {
-        console.log(
-          `API Response: ${
-            response.status
-          } ${response.config.method?.toUpperCase()} ${response.config.url}`
-        );
-      }
-      return response;
-    },
+    (response) => response,
     (error: AxiosError) => {
       // If auth fails, clear session so UI can prompt for login again
       if (error.response?.status === 401) {
@@ -117,9 +91,9 @@ const addResponseInterceptor = (instance: AxiosInstance) => {
  * Get API base URL - uses current origin in production for multi-tenant support
  */
 const getApiBaseUrl = (): string => {
-  // If REACT_APP_API_URL is explicitly set (dev), use it
+  // If VITE_API_URL is explicitly set (dev), use it
   // Otherwise use window.location.origin (production)
-  const envUrl = process.env.REACT_APP_API_URL;
+  const envUrl = import.meta.env.VITE_API_URL;
   if (envUrl && envUrl.length > 0) {
     return envUrl;
   }
@@ -187,10 +161,10 @@ addResponseInterceptor(customerApi);
 
 /**
  * Get the base URL for the Reservation API
- * Uses REACT_APP_RESERVATION_API_URL in development, falls back to same origin in production
+ * Uses VITE_RESERVATION_API_URL in development, falls back to same origin in production
  */
 const getReservationApiBaseUrl = (): string => {
-  const envUrl = process.env.REACT_APP_RESERVATION_API_URL;
+  const envUrl = import.meta.env.VITE_RESERVATION_API_URL;
   if (envUrl && envUrl.length > 0) {
     return envUrl;
   }

@@ -19,8 +19,8 @@ import {
   Alert,
   TextField,
   MenuItem,
+  Grid,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -102,19 +102,6 @@ const Resources: React.FC = () => {
 
       // Direct response from the service should already be the data array
       if (Array.isArray(response)) {
-        // Debug: Log first resource to see what fields are available
-        if (response.length > 0) {
-          console.log(
-            '[Resources] First resource data:',
-            JSON.stringify(response[0], null, 2)
-          );
-          console.log(
-            '[Resources] maxPets:',
-            response[0].maxPets,
-            'location:',
-            response[0].location
-          );
-        }
         // Sort resources by room letter then number (A1, A2, B1, B2, etc.)
         setResources(sortByRoomAndNumber(response));
       } else {
@@ -208,7 +195,11 @@ const Resources: React.FC = () => {
         </Box>
 
         <Grid container spacing={2} sx={{ mb: 3 }}>
-          <Grid item xs={12} sm={6}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6
+            }}>
             <TextField
               fullWidth
               label="Search resources"
@@ -217,7 +208,11 @@ const Resources: React.FC = () => {
               size="small"
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6
+            }}>
             <TextField
               fullWidth
               select
@@ -304,7 +299,6 @@ const Resources: React.FC = () => {
           </Table>
         </TableContainer>
       </Box>
-
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}

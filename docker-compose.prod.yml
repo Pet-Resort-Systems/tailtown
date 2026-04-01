@@ -97,11 +97,11 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: apps/frontend/Dockerfile.prod
+      dockerfile: apps/frontend/Dockerfile
     container_name: tailtown-frontend-prod
     restart: always
     ports:
-      - '80:80'
+      - '80:3000'
       - '443:443'
     depends_on:
       - customer-service

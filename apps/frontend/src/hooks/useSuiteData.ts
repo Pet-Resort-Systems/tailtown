@@ -123,8 +123,6 @@ export const useSuiteData = (
         setError(null);
 
         const formattedDate = formatDateToYYYYMMDD(date);
-        console.log('Fetching suite data for date:', formattedDate);
-
         const response = await resourceService.getSuites(
           undefined,
           undefined,
@@ -140,10 +138,6 @@ export const useSuiteData = (
           const calculatedStats = calculateStats(suitesData);
           setStats(calculatedStats);
 
-          console.log('Suite data loaded successfully:', {
-            suitesCount: suitesData.length,
-            stats: calculatedStats,
-          });
         } else {
           throw new Error('Failed to fetch suite data');
         }

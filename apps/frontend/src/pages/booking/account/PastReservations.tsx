@@ -11,10 +11,10 @@ import {
   Chip,
   CircularProgress,
   Alert,
+  Grid,
   Divider,
   Button,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   History as HistoryIcon,
   CalendarMonth as CalendarIcon,
@@ -116,10 +116,9 @@ const PastReservations: React.FC = () => {
       <Typography variant="h6" gutterBottom fontWeight={600}>
         Reservation History
       </Typography>
-
       <Grid container spacing={2}>
         {reservations.map((reservation) => (
-          <Grid item xs={12} key={reservation.id}>
+          <Grid key={reservation.id} size={12}>
             <Card
               variant="outlined"
               sx={{ opacity: reservation.status === 'CANCELLED' ? 0.7 : 1 }}
@@ -153,7 +152,11 @@ const PastReservations: React.FC = () => {
                 <Divider sx={{ my: 2 }} />
 
                 <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <CalendarIcon
                         sx={{ mr: 1, color: 'text.secondary', fontSize: 20 }}
@@ -193,7 +196,11 @@ const PastReservations: React.FC = () => {
                     )}
                   </Grid>
 
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     {reservation.resource && (
                       <Box
                         sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
@@ -219,7 +226,6 @@ const PastReservations: React.FC = () => {
           </Grid>
         ))}
       </Grid>
-
       {reservations.length >= limit && (
         <Box sx={{ mt: 3, textAlign: 'center' }}>
           <Button

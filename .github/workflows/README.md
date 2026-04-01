@@ -16,7 +16,7 @@ This directory now contains only the workflows that remain active during the Dok
 - Sets up PostgreSQL database
 - Installs dependencies
 - Runs linting
-- Executes tests for `apps/frontend`, `apps/customer-service`, and `apps/reservation-service`
+- Executes build/tests for canonical `apps/frontend` (Vite) plus `apps/customer-service` and `apps/reservation-service`; legacy frontend apps are excluded from required CI
 - Generates coverage reports
 - Uploads coverage to Codecov
 

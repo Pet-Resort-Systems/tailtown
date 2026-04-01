@@ -225,7 +225,7 @@ pnpm run test:e2e:headed e2e/booking-portal.spec.ts
 
 - Playwright tests are maintained in the dedicated `e2e/` pnpm workspace package
 - Root scripts delegate to `@tailtown/e2e` via `pnpm run test:e2e*`
-- The Playwright app under test is now **[`apps/frontend-vite`](../apps/frontend-vite/)**, not `apps/frontend`
+- The Playwright app under test is now **[`apps/frontend`](../apps/frontend/)**, not `apps/frontend`
     - Booking portal scenarios should be added there instead of under `apps/frontend`. Check [`booking-portal.spec.ts`](/e2e/booking-portal.spec.ts)
 
 ## Integration with CI/CD
@@ -254,7 +254,7 @@ jobs:
               run: pnpm install --frozen-lockfile
             - name: Run isolated e2e suite
               run: pnpm run test:e2e
-              # targets apps/frontend-vite via e2e/playwright.config.ts
+              # targets apps/frontend via e2e/playwright.config.ts
             - name: Upload coverage
               uses: codecov/codecov-action@v2
 ```

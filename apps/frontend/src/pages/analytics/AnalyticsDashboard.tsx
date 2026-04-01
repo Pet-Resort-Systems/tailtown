@@ -4,6 +4,7 @@ import {
   Container,
   Typography,
   Paper,
+  Grid,
   FormControl,
   InputLabel,
   Select,
@@ -16,7 +17,6 @@ import {
   CardHeader,
   useTheme,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import { SelectChangeEvent } from '@mui/material/Select';
 import {
   BarChart,
@@ -194,11 +194,14 @@ const AnalyticsDashboard = () => {
           </FormControl>
         </Box>
       </Box>
-
       {dashboardData && (
         <Box sx={{ mb: 4 }}>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 3
+              }}>
               <Paper
                 elevation={2}
                 sx={{ p: 2, borderRadius: 2, height: '100%' }}
@@ -218,7 +221,11 @@ const AnalyticsDashboard = () => {
                 </Typography>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 3
+              }}>
               <Paper
                 elevation={2}
                 sx={{ p: 2, borderRadius: 2, height: '100%' }}
@@ -241,7 +248,11 @@ const AnalyticsDashboard = () => {
                 </Typography>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 3
+              }}>
               <Paper
                 elevation={2}
                 sx={{ p: 2, borderRadius: 2, height: '100%' }}
@@ -266,7 +277,11 @@ const AnalyticsDashboard = () => {
                 </Typography>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 3
+              }}>
               <Paper
                 elevation={2}
                 sx={{ p: 2, borderRadius: 2, height: '100%' }}
@@ -289,7 +304,6 @@ const AnalyticsDashboard = () => {
           </Grid>
         </Box>
       )}
-
       <Paper elevation={3} sx={{ borderRadius: 2 }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs
@@ -314,13 +328,19 @@ const AnalyticsDashboard = () => {
           {serviceData && (
             <Grid container spacing={3}>
               {/* Top Services Summary Cards */}
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Grid container spacing={2}>
                   {serviceData.services
                     .sort((a, b) => b.revenue - a.revenue)
                     .slice(0, 4)
                     .map((service, index) => (
-                      <Grid item xs={12} sm={6} md={3} key={service.id}>
+                      <Grid
+                        key={service.id}
+                        size={{
+                          xs: 12,
+                          sm: 6,
+                          md: 3
+                        }}>
                         <Paper
                           elevation={1}
                           sx={{
@@ -362,7 +382,11 @@ const AnalyticsDashboard = () => {
               </Grid>
 
               {/* Revenue Chart - Top 10 Services */}
-              <Grid item xs={12} lg={8}>
+              <Grid
+                size={{
+                  xs: 12,
+                  lg: 8
+                }}>
                 <Card>
                   <CardHeader
                     title="Top 10 Services by Revenue"
@@ -421,7 +445,11 @@ const AnalyticsDashboard = () => {
               </Grid>
 
               {/* Quick Stats */}
-              <Grid item xs={12} lg={4}>
+              <Grid
+                size={{
+                  xs: 12,
+                  lg: 4
+                }}>
                 <Card sx={{ height: '100%' }}>
                   <CardHeader
                     title="Service Overview"
@@ -484,7 +512,7 @@ const AnalyticsDashboard = () => {
                   </CardContent>
                 </Card>
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Card>
                   <CardHeader title="Service Performance" />
                   <CardContent>
@@ -660,7 +688,11 @@ const AnalyticsDashboard = () => {
         <TabPanel value={tabValue} index={1}>
           {addonData && (
             <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <Card>
                   <CardHeader
                     title="Add-On Revenue Breakdown"
@@ -712,7 +744,11 @@ const AnalyticsDashboard = () => {
                   </CardContent>
                 </Card>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <Card>
                   <CardHeader
                     title="Add-On Usage"
@@ -772,7 +808,7 @@ const AnalyticsDashboard = () => {
                   </CardContent>
                 </Card>
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Card>
                   <CardHeader title="Add-On Performance" />
                   <CardContent>

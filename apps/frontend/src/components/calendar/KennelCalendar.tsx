@@ -287,11 +287,6 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
   // Handle drag-and-drop reservation move
   const handleReservationDrop = useCallback(
     async (reservationId: string, targetKennelId: string, targetDate: Date) => {
-      console.log('[DragDrop] handleReservationDrop called', {
-        reservationId,
-        targetKennelId,
-        targetDate,
-      });
       try {
         // Find the original reservation to calculate date shift
         const originalReservation = reservations.find(
@@ -328,35 +323,19 @@ const KennelCalendar: React.FC<KennelCalendarProps> = ({ onEventUpdate }) => {
             updatePayload.startDate = newStartDate.toISOString();
             updatePayload.endDate = newEndDate.toISOString();
 
-            console.log('[DragDrop] Date shift:', daysDiff, 'days', {
-              originalStart: originalReservation.startDate,
-              newStart: updatePayload.startDate,
-              originalEnd: originalReservation.endDate,
-              newEnd: updatePayload.endDate,
-            });
           }
         }
 
-        console.log(
-          '[DragDrop] Calling reservationService.updateReservation...'
-        );
-        const result = await reservationService.updateReservation(
+        await reservationService.updateReservation(
           reservationId,
           updatePayload
         );
-        console.log('[DragDrop] Update result:', result);
 
         // Small delay to ensure database write is complete, then refresh
         await new Promise((resolve) => setTimeout(resolve, 300));
 
         // Force a complete re-render by updating the refresh key
-        console.log('[DragDrop] Forcing calendar refresh...');
         setRefreshKey((prev) => prev + 1);
-
-        // Show success feedback
-        console.log(
-          `Moved reservation ${reservationId} to kennel ${targetKennelId}`
-        );
       } catch (error: any) {
         console.error('[DragDrop] Error moving reservation:', error);
         console.error('[DragDrop] Error details:', error.response?.data);

@@ -1111,13 +1111,14 @@ const PetDetails = () => {
                   const lowercaseKey = key.toLowerCase();
                   setPet(
                     (prev) =>
-                      ({
+                      (({
                         ...prev,
+
                         vaccinationStatus: {
                           ...(prev.vaccinationStatus || {}),
                           [lowercaseKey]: value,
-                        },
-                      }) as any
+                        }
+                      }) as any)
                   );
                 }}
                 onVaccineExpirationChange={(key, value) => {

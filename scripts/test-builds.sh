@@ -50,12 +50,12 @@ echo ""
 
 # Test Frontend Build (optional - takes longer)
 if [ "$1" == "--with-frontend" ]; then
-    echo -e "${BLUE}Testing Frontend Build...${NC}"
-    cd apps/frontend
+    echo -e "${BLUE}Testing Legacy Frontend Build...${NC}"
+    cd apps/legacy-frontend
     if pnpm run build > /tmp/frontend-build.log 2>&1; then
-        echo -e "${GREEN}✅ Frontend: Build successful${NC}"
+        echo -e "${GREEN}✅ Legacy Frontend: Build successful${NC}"
     else
-        echo -e "${RED}❌ Frontend: Build failed${NC}"
+        echo -e "${RED}❌ Legacy Frontend: Build failed${NC}"
         echo "Error log:"
         tail -20 /tmp/frontend-build.log
         FAILED=1

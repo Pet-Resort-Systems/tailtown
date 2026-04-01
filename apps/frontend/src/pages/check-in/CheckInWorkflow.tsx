@@ -16,11 +16,11 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Grid,
   Divider,
   Link,
   Tooltip,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -610,7 +610,7 @@ const CheckInWorkflow: React.FC = () => {
 
             <Grid container spacing={2}>
               {section.questions.map((question) => (
-                <Grid item xs={12} key={question.id}>
+                <Grid key={question.id} size={12}>
                   {renderQuestion(question)}
                 </Grid>
               ))}
@@ -788,7 +788,6 @@ const CheckInWorkflow: React.FC = () => {
               .replace(/{{SIGNATURE}}/g, '')}
           </Typography>
         </Paper>
-
         <Paper sx={{ p: 3, mb: 3 }}>
           <TextField
             fullWidth
@@ -860,19 +859,19 @@ const CheckInWorkflow: React.FC = () => {
           <Divider sx={{ my: 2 }} />
 
           <Grid container spacing={2}>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <Typography variant="subtitle2" color="text.secondary">
                 Pet
               </Typography>
               <Typography>{reservation?.pet?.name}</Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <Typography variant="subtitle2" color="text.secondary">
                 Customer
               </Typography>
               <Typography>{customerName}</Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <Typography variant="subtitle2" color="text.secondary">
                 Check-In Date
               </Typography>
@@ -880,7 +879,7 @@ const CheckInWorkflow: React.FC = () => {
                 {new Date(reservation?.startDate).toLocaleDateString()}
               </Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <Typography variant="subtitle2" color="text.secondary">
                 Check-Out Date
               </Typography>
@@ -890,7 +889,6 @@ const CheckInWorkflow: React.FC = () => {
             </Grid>
           </Grid>
         </Paper>
-
         <Paper sx={{ p: 3, mb: 2 }}>
           <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
             Medications: {medications.length}
@@ -901,7 +899,6 @@ const CheckInWorkflow: React.FC = () => {
             </Typography>
           ))}
         </Paper>
-
         <Paper sx={{ p: 3, mb: 2 }}>
           <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
             Belongings: {belongings.length}
@@ -912,7 +909,6 @@ const CheckInWorkflow: React.FC = () => {
             </Typography>
           ))}
         </Paper>
-
         <Paper sx={{ p: 3 }}>
           <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
             Service Agreement
@@ -1044,7 +1040,12 @@ const CheckInWorkflow: React.FC = () => {
             {/* Integration Points - Quick Links */}
             <Paper sx={{ p: 2, mb: 3, bgcolor: 'grey.50' }}>
               <Grid container spacing={2} alignItems="center">
-                <Grid item xs={12} sm={6} md={3}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                    md: 3
+                  }}>
                   <Typography variant="subtitle2" color="text.secondary">
                     Reservation
                   </Typography>
@@ -1057,7 +1058,12 @@ const CheckInWorkflow: React.FC = () => {
                     <OpenInNewIcon fontSize="small" />
                   </Link>
                 </Grid>
-                <Grid item xs={12} sm={6} md={3}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                    md: 3
+                  }}>
                   <Typography variant="subtitle2" color="text.secondary">
                     Customer
                   </Typography>
@@ -1070,7 +1076,12 @@ const CheckInWorkflow: React.FC = () => {
                     <OpenInNewIcon fontSize="small" />
                   </Link>
                 </Grid>
-                <Grid item xs={12} sm={6} md={3}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                    md: 3
+                  }}>
                   <Typography variant="subtitle2" color="text.secondary">
                     Stay Dates
                   </Typography>
@@ -1079,7 +1090,12 @@ const CheckInWorkflow: React.FC = () => {
                     {new Date(reservation?.endDate).toLocaleDateString()}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} sm={6} md={3}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                    md: 3
+                  }}>
                   <Typography variant="subtitle2" color="text.secondary">
                     Assigned Room
                   </Typography>
@@ -1102,7 +1118,12 @@ const CheckInWorkflow: React.FC = () => {
                 <Grid container spacing={2}>
                   {/* Playgroup */}
                   {(pet.playgroupCompatibility || pet.idealPlayGroup) && (
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6,
+                        md: 4
+                      }}>
                       <Box
                         sx={{ p: 1.5, bgcolor: 'primary.50', borderRadius: 1 }}
                       >
@@ -1130,7 +1151,12 @@ const CheckInWorkflow: React.FC = () => {
 
                   {/* Feeding - prioritize questionnaire responses over stale pet data */}
                   {(getFeedingScheduleSummary() || pet.foodNotes) && (
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6,
+                        md: 4
+                      }}>
                       <Box sx={{ p: 1.5, bgcolor: 'info.50', borderRadius: 1 }}>
                         <Typography
                           variant="caption"
@@ -1157,7 +1183,12 @@ const CheckInWorkflow: React.FC = () => {
 
                   {/* Allergies */}
                   {pet.allergies && (
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6,
+                        md: 4
+                      }}>
                       <Box
                         sx={{ p: 1.5, bgcolor: 'error.50', borderRadius: 1 }}
                       >
@@ -1188,7 +1219,12 @@ const CheckInWorkflow: React.FC = () => {
 
                   {/* Medications */}
                   {pet.medicationNotes && (
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6,
+                        md: 4
+                      }}>
                       <Box
                         sx={{ p: 1.5, bgcolor: 'warning.50', borderRadius: 1 }}
                       >
@@ -1208,7 +1244,12 @@ const CheckInWorkflow: React.FC = () => {
 
                   {/* Behavior Notes */}
                   {pet.behaviorNotes && (
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6,
+                        md: 4
+                      }}>
                       <Box
                         sx={{ p: 1.5, bgcolor: 'warning.50', borderRadius: 1 }}
                       >
@@ -1228,7 +1269,12 @@ const CheckInWorkflow: React.FC = () => {
 
                   {/* Special Needs */}
                   {pet.specialNeeds && (
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6,
+                        md: 4
+                      }}>
                       <Box
                         sx={{ p: 1.5, bgcolor: 'warning.50', borderRadius: 1 }}
                       >

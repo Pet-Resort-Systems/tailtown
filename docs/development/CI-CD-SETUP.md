@@ -103,7 +103,7 @@ The README displays real-time status badges:
 pnpm --dir apps/frontend test                     # Legacy frontend unit/component tests
 pnpm --dir apps/frontend test -- --coverage       # Legacy frontend coverage
 pnpm --dir apps/frontend test -- --watch          # Legacy frontend watch mode
-pnpm run test:e2e                                 # Isolated Playwright suite targeting apps/frontend-vite
+pnpm run test:e2e                                 # Isolated Playwright suite targeting apps/frontend
 ```
 
 ## Handling Test Failures
@@ -122,7 +122,7 @@ pnpm run test:e2e                                 # Isolated Playwright suite ta
 3. **Fix locally:**
     ```bash
     pnpm --dir apps/frontend test  # Reproduce frontend-unit failures
-    pnpm run test:e2e              # Reproduce E2E failures against apps/frontend-vite
+    pnpm run test:e2e              # Reproduce E2E failures against apps/frontend
     # Fix the issue
     pnpm --dir apps/frontend test
     git commit -m "Fix: ..."
@@ -279,7 +279,7 @@ For CI/CD issues:
 
 1. Check workflow logs in GitHub Actions
 2. Review this documentation
-3. Check `e2e/README.md` for isolated Playwright details and `apps/frontend-vite` as the app under test
+3. Check `e2e/README.md` for isolated Playwright details and `apps/frontend` as the app under test
 4. Review `docs/development/TIMEZONE-FIX-SUMMARY.md` for timezone issues
 
 ## Related Documentation

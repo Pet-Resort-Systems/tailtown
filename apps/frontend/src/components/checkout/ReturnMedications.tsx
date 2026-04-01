@@ -12,8 +12,8 @@ import {
   Button,
   Alert,
   Chip,
+  Grid,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import { Medication as MedicationIcon } from '@mui/icons-material';
 
 interface ReturnMedicationsProps {
@@ -58,7 +58,6 @@ const ReturnMedications: React.FC<ReturnMedicationsProps> = ({
       <Typography variant="body2" color="text.secondary" gutterBottom>
         Check off each medication as you return it to the customer
       </Typography>
-
       {medications.length === 0 ? (
         <Alert severity="info" sx={{ mt: 3 }}>
           No medications were recorded during check-in. You can proceed to the
@@ -123,31 +122,22 @@ const ReturnMedications: React.FC<ReturnMedicationsProps> = ({
                     secondary={
                       <Grid container spacing={1} sx={{ mt: 0.5 }}>
                         {item.frequency && (
-                          <Grid item>
-                            <Typography
-                              variant="caption"
-                              color="text.secondary"
-                            >
+                          <Grid>
+                            <Typography variant="caption" color="text.secondary">
                               Frequency: {item.frequency}
                             </Typography>
                           </Grid>
                         )}
                         {item.administrationMethod && (
-                          <Grid item>
-                            <Typography
-                              variant="caption"
-                              color="text.secondary"
-                            >
+                          <Grid>
+                            <Typography variant="caption" color="text.secondary">
                               Method: {item.administrationMethod}
                             </Typography>
                           </Grid>
                         )}
                         {item.instructions && (
-                          <Grid item xs={12}>
-                            <Typography
-                              variant="caption"
-                              color="text.secondary"
-                            >
+                          <Grid size={12}>
+                            <Typography variant="caption" color="text.secondary">
                               Instructions: {item.instructions}
                             </Typography>
                           </Grid>
@@ -161,19 +151,16 @@ const ReturnMedications: React.FC<ReturnMedicationsProps> = ({
           </List>
         </Paper>
       )}
-
       {medications.length > 0 && !allItemsReturned && (
         <Alert severity="warning" sx={{ mt: 2 }}>
           Please check off all medications before proceeding
         </Alert>
       )}
-
       {medications.length > 0 && allItemsReturned && (
         <Alert severity="success" sx={{ mt: 2 }}>
           All medications have been marked as returned
         </Alert>
       )}
-
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
         <Button onClick={onBack}>Back</Button>
         <Button

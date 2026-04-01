@@ -35,7 +35,7 @@ const SuperAdminContext = createContext<SuperAdminContextType | undefined>(
 );
 
 const getApiUrl = () => {
-  const envUrl = process.env.REACT_APP_API_URL;
+  const envUrl = import.meta.env.VITE_API_URL;
   return envUrl && envUrl.length > 0 ? envUrl : window.location.origin;
 };
 

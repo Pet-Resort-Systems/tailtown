@@ -9,12 +9,12 @@ import {
   Typography,
   Box,
   Paper,
+  Grid,
   Card,
   CardContent,
   CardActionArea,
   Chip,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import { usePageHelp } from '../../hooks/usePageHelp';
 import { gettingStartedHelp } from '../../content/help/gettingStartedHelp';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -27,7 +27,6 @@ const GettingStarted: React.FC = () => {
   const handleArticleClick = (articleId: string) => {
     // Open help modal with specific article
     // This would integrate with your HelpContext
-    console.log('Open article:', articleId);
   };
 
   return (
@@ -46,11 +45,16 @@ const GettingStarted: React.FC = () => {
           {gettingStartedHelp.overview}
         </Typography>
       </Box>
-
       {/* Quick Start Cards */}
       <Grid container spacing={3}>
         {gettingStartedHelp.articles.map((article) => (
-          <Grid item xs={12} sm={6} md={4} key={article.id}>
+          <Grid
+            key={article.id}
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 4
+            }}>
             <Card
               sx={{
                 height: '100%',
@@ -112,7 +116,6 @@ const GettingStarted: React.FC = () => {
           </Grid>
         ))}
       </Grid>
-
       {/* Additional Resources */}
       <Paper sx={{ mt: 4, p: 3, bgcolor: 'primary.50' }}>
         <Typography variant="h6" gutterBottom>

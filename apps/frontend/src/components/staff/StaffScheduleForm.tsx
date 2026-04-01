@@ -10,10 +10,10 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Grid,
   FormHelperText,
   SelectChangeEvent,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import {
   LocalizationProvider,
@@ -243,7 +243,7 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <Grid container spacing={2} sx={{ mt: 1 }}>
             {allStaff && (
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <FormControl fullWidth error={!!errors.staffId}>
                   <InputLabel>Staff Member</InputLabel>
                   <Select
@@ -265,7 +265,11 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
               </Grid>
             )}
 
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <DatePicker
                 label="Date"
                 value={formData.date ? new Date(formData.date) : null}
@@ -280,7 +284,11 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 3
+              }}>
               <TimePicker
                 label="Start Time"
                 value={
@@ -299,7 +307,11 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 3
+              }}>
               <TimePicker
                 label="End Time"
                 value={
@@ -316,7 +328,11 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <FormControl fullWidth>
                 <InputLabel>Status</InputLabel>
                 <Select
@@ -334,7 +350,11 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
               </FormControl>
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <TextField
                 fullWidth
                 label="Location"
@@ -345,7 +365,11 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <TextField
                 fullWidth
                 label="Starting Location"
@@ -357,7 +381,11 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <TextField
                 fullWidth
                 label="Role"
@@ -368,7 +396,7 @@ const StaffScheduleForm: React.FC<StaffScheduleFormProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 label="Notes"

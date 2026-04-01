@@ -1019,8 +1019,7 @@ const ServiceAgreements: React.FC = () => {
               customerId="test-customer-id"
               customerName="Test Customer"
               templateId={selectedTemplate.id}
-              onComplete={(agreement) => {
-                console.log('Agreement signed:', agreement);
+              onComplete={() => {
                 setTestSignDialogOpen(false);
                 setSuccess('Test agreement signed successfully!');
               }}

@@ -27,6 +27,7 @@ import {
   Tooltip,
   CircularProgress,
   Alert,
+  Grid,
   Card,
   CardContent,
   Dialog,
@@ -36,7 +37,6 @@ import {
   Button,
   Collapse,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   Search as SearchIcon,
   Refresh as RefreshIcon,
@@ -252,7 +252,12 @@ const AuditLogs: React.FC = () => {
         {/* Filters */}
         <Paper sx={{ p: 2, mb: 3 }}>
           <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={6} md={2}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 2
+              }}>
               <FormControl fullWidth size="small">
                 <InputLabel>Category</InputLabel>
                 <Select
@@ -271,7 +276,12 @@ const AuditLogs: React.FC = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6} md={2}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 2
+              }}>
               <FormControl fullWidth size="small">
                 <InputLabel>Action</InputLabel>
                 <Select
@@ -290,7 +300,12 @@ const AuditLogs: React.FC = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6} md={2}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 2
+              }}>
               <FormControl fullWidth size="small">
                 <InputLabel>Severity</InputLabel>
                 <Select
@@ -309,7 +324,12 @@ const AuditLogs: React.FC = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6} md={2}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 2
+              }}>
               <DatePicker
                 label="Start Date"
                 value={startDate}
@@ -320,7 +340,12 @@ const AuditLogs: React.FC = () => {
                 slotProps={{ textField: { size: 'small', fullWidth: true } }}
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={2}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 2
+              }}>
               <DatePicker
                 label="End Date"
                 value={endDate}
@@ -331,7 +356,12 @@ const AuditLogs: React.FC = () => {
                 slotProps={{ textField: { size: 'small', fullWidth: true } }}
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={2}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 2
+              }}>
               <TextField
                 fullWidth
                 size="small"
@@ -563,7 +593,11 @@ const AuditLogs: React.FC = () => {
           <DialogContent dividers>
             {selectedLog && (
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <Card variant="outlined">
                     <CardContent>
                       <Typography variant="subtitle2" color="text.secondary">
@@ -577,7 +611,11 @@ const AuditLogs: React.FC = () => {
                     </CardContent>
                   </Card>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <Card variant="outlined">
                     <CardContent>
                       <Typography variant="subtitle2" color="text.secondary">
@@ -591,7 +629,11 @@ const AuditLogs: React.FC = () => {
                     </CardContent>
                   </Card>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <Card variant="outlined">
                     <CardContent>
                       <Typography variant="subtitle2" color="text.secondary">
@@ -610,7 +652,11 @@ const AuditLogs: React.FC = () => {
                     </CardContent>
                   </Card>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <Card variant="outlined">
                     <CardContent>
                       <Typography variant="subtitle2" color="text.secondary">
@@ -622,7 +668,11 @@ const AuditLogs: React.FC = () => {
                     </CardContent>
                   </Card>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <Card variant="outlined">
                     <CardContent>
                       <Typography variant="subtitle2" color="text.secondary">
@@ -643,7 +693,11 @@ const AuditLogs: React.FC = () => {
                     </CardContent>
                   </Card>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <Card variant="outlined">
                     <CardContent>
                       <Typography variant="subtitle2" color="text.secondary">
@@ -656,7 +710,7 @@ const AuditLogs: React.FC = () => {
                   </Card>
                 </Grid>
                 {selectedLog.requestPath && (
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <Card variant="outlined">
                       <CardContent>
                         <Typography variant="subtitle2" color="text.secondary">
@@ -671,7 +725,7 @@ const AuditLogs: React.FC = () => {
                 )}
                 {selectedLog.changedFields &&
                   selectedLog.changedFields.length > 0 && (
-                    <Grid item xs={12}>
+                    <Grid size={12}>
                       <Card variant="outlined">
                         <CardContent>
                           <Typography
@@ -693,7 +747,11 @@ const AuditLogs: React.FC = () => {
                     </Grid>
                   )}
                 {selectedLog.previousValue && (
-                  <Grid item xs={12} md={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      md: 6
+                    }}>
                     <Card variant="outlined">
                       <CardContent>
                         <Typography
@@ -718,7 +776,11 @@ const AuditLogs: React.FC = () => {
                   </Grid>
                 )}
                 {selectedLog.newValue && (
-                  <Grid item xs={12} md={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      md: 6
+                    }}>
                     <Card variant="outlined">
                       <CardContent>
                         <Typography

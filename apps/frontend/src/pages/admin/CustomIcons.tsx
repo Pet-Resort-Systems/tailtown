@@ -6,6 +6,7 @@ import {
   Box,
   Paper,
   Button,
+  Grid,
   Card,
   CardContent,
   CardActions,
@@ -23,7 +24,6 @@ import {
   InputLabel,
   Chip,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   CloudUpload as UploadIcon,
   Delete as DeleteIcon,
@@ -313,7 +313,14 @@ const CustomIcons: React.FC = () => {
         ) : (
           <Grid container spacing={2}>
             {customIcons.map((icon) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={icon.id}>
+              <Grid
+                key={icon.id}
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  md: 4,
+                  lg: 3
+                }}>
                 <Card>
                   <CardContent>
                     <Box

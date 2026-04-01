@@ -6,7 +6,7 @@ import productionConfig from './production';
  * Get the current environment
  */
 const getEnvironment = (): string => {
-  return process.env.NODE_ENV || 'development';
+  return import.meta.env.MODE || 'development';
 };
 
 /**
