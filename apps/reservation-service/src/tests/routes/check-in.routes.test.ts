@@ -2,110 +2,55 @@
 /**
  * Tests for check-in.routes.ts
  *
- * Tests the check-in, template, and service agreement API routes.
+ * Tests the check-in API routes.
  */
 
 import express from 'express';
 import request from 'supertest';
 
-// Mock all controller functions
-jest.mock('../../controllers/check-in-template.controller', () => ({
-  getAllTemplates: jest.fn((req, res) =>
-    res.json({ status: 'success', data: [] })
-  ),
-  getTemplateById: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
-  getDefaultTemplate: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
-  createTemplate: jest.fn((req, res) =>
-    res.status(201).json({ status: 'success', data: {} })
-  ),
-  updateTemplate: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
-  deleteTemplate: jest.fn((req, res) => res.status(204).send()),
-  cloneTemplate: jest.fn((req, res) =>
-    res.status(201).json({ status: 'success', data: {} })
-  ),
+jest.mock('../../config/prisma', () => ({
+  prisma: {
+    checkIn: {
+      findMany: jest.fn(),
+      findFirst: jest.fn(),
+      findUnique: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+    },
+    reservation: {
+      findFirst: jest.fn(),
+      findMany: jest.fn(),
+      update: jest.fn(),
+    },
+    checkInResponse: {
+      createMany: jest.fn(),
+      deleteMany: jest.fn(),
+    },
+    checkInMedication: {
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+      createMany: jest.fn(),
+      deleteMany: jest.fn(),
+    },
+    checkInBelonging: {
+      update: jest.fn(),
+      createMany: jest.fn(),
+      deleteMany: jest.fn(),
+    },
+  },
 }));
 
-jest.mock('../../controllers/check-in.controller', () => ({
-  getAllCheckIns: jest.fn((req, res) =>
-    res.json({ status: 'success', data: [] })
-  ),
-  getCheckInById: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
-  createCheckIn: jest.fn((req, res) =>
-    res.status(201).json({ status: 'success', data: {} })
-  ),
-  updateCheckIn: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
-  addMedication: jest.fn((req, res) =>
-    res.status(201).json({ status: 'success', data: {} })
-  ),
-  updateMedication: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
-  deleteMedication: jest.fn((req, res) => res.status(204).send()),
-  returnBelonging: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
+jest.mock('../../utils/logger', () => ({
+  logger: {
+    info: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+  },
 }));
 
-jest.mock('../../controllers/service-agreement.controller', () => ({
-  getAllTemplates: jest.fn((req, res) =>
-    res.json({ status: 'success', data: [] })
-  ),
-  getTemplateById: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
-  getDefaultTemplate: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
-  createTemplate: jest.fn((req, res) =>
-    res.status(201).json({ status: 'success', data: {} })
-  ),
-  updateTemplate: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
-  deleteTemplate: jest.fn((req, res) => res.status(204).send()),
-  createAgreement: jest.fn((req, res) =>
-    res.status(201).json({ status: 'success', data: {} })
-  ),
-  getAllAgreements: jest.fn((req, res) =>
-    res.json({ status: 'success', data: [] })
-  ),
-  getAgreementByCheckIn: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
-  getAgreementsByCustomer: jest.fn((req, res) =>
-    res.json({ status: 'success', data: [] })
-  ),
-  checkCustomerAgreement: jest.fn((req, res) =>
-    res.json({ status: 'success', data: { hasValidAgreement: false } })
-  ),
-  getAgreementById: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
-  invalidateAgreement: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
-  getTemplateVersions: jest.fn((req, res) =>
-    res.json({ status: 'success', data: [] })
-  ),
-  getTemplateVersion: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
-}));
-
-import checkInRoutes from '../../routes/check-in.routes';
-import * as checkInTemplateController from '../../controllers/check-in-template.controller';
-import * as checkInController from '../../controllers/check-in.controller';
-import * as serviceAgreementController from '../../controllers/service-agreement.controller';
+import { prisma } from '../../config/prisma';
+import checkInRoutes from '../../routes/check-in/router';
 
 describe('Check-In Routes', () => {
   let app: express.Application;
@@ -114,160 +59,287 @@ describe('Check-In Routes', () => {
     jest.clearAllMocks();
     app = express();
     app.use(express.json());
+    app.use((req, res, next) => {
+      req.tenantId = 'test-tenant';
+      next();
+    });
     app.use('/api', checkInRoutes);
   });
 
-  describe('Check-In Template Routes', () => {
-    it('GET /api/check-in-templates should call getAllTemplates', async () => {
-      await request(app).get('/api/check-in-templates');
-      expect(checkInTemplateController.getAllTemplates).toHaveBeenCalled();
-    });
-
-    it('GET /api/check-in-templates/default should call getDefaultTemplate', async () => {
-      await request(app).get('/api/check-in-templates/default');
-      expect(checkInTemplateController.getDefaultTemplate).toHaveBeenCalled();
-    });
-
-    it('GET /api/check-in-templates/:id should call getTemplateById', async () => {
-      await request(app).get('/api/check-in-templates/template-123');
-      expect(checkInTemplateController.getTemplateById).toHaveBeenCalled();
-    });
-
-    it('POST /api/check-in-templates should call createTemplate', async () => {
-      await request(app)
-        .post('/api/check-in-templates')
-        .send({ name: 'New Template' });
-      expect(checkInTemplateController.createTemplate).toHaveBeenCalled();
-    });
-
-    it('PUT /api/check-in-templates/:id should call updateTemplate', async () => {
-      await request(app)
-        .put('/api/check-in-templates/template-123')
-        .send({ name: 'Updated Template' });
-      expect(checkInTemplateController.updateTemplate).toHaveBeenCalled();
-    });
-
-    it('DELETE /api/check-in-templates/:id should call deleteTemplate', async () => {
-      await request(app).delete('/api/check-in-templates/template-123');
-      expect(checkInTemplateController.deleteTemplate).toHaveBeenCalled();
-    });
-
-    it('POST /api/check-in-templates/:id/clone should call cloneTemplate', async () => {
-      await request(app).post('/api/check-in-templates/template-123/clone');
-      expect(checkInTemplateController.cloneTemplate).toHaveBeenCalled();
-    });
-  });
-
   describe('Check-In Routes', () => {
-    it('GET /api/check-ins should call getAllCheckIns', async () => {
-      await request(app).get('/api/check-ins');
-      expect(checkInController.getAllCheckIns).toHaveBeenCalled();
+    it('GET /api/check-ins should return check-ins from prisma', async () => {
+      prisma.checkIn.findMany.mockResolvedValue([]);
+
+      const response = await request(app).get('/api/check-ins');
+
+      expect(prisma.checkIn.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { tenantId: 'test-tenant' },
+        })
+      );
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        status: 'success',
+        results: 0,
+        data: [],
+      });
     });
 
-    it('GET /api/check-ins/:id should call getCheckInById', async () => {
-      await request(app).get('/api/check-ins/checkin-123');
-      expect(checkInController.getCheckInById).toHaveBeenCalled();
+    it('GET /api/check-ins/:id should return a check-in by ID', async () => {
+      prisma.checkIn.findFirst.mockResolvedValue({ id: 'checkin-123' });
+
+      const response = await request(app).get('/api/check-ins/checkin-123');
+
+      expect(prisma.checkIn.findFirst).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 'checkin-123', tenantId: 'test-tenant' },
+        })
+      );
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        status: 'success',
+        data: { id: 'checkin-123' },
+      });
     });
 
-    it('POST /api/check-ins should call createCheckIn', async () => {
-      await request(app)
+    it('POST /api/check-ins should create a check-in', async () => {
+      prisma.checkIn.create.mockResolvedValue({ id: 'checkin-123' });
+
+      const response = await request(app)
         .post('/api/check-ins')
-        .send({ reservationId: 'res-123' });
-      expect(checkInController.createCheckIn).toHaveBeenCalled();
+        .send({ petId: 'pet-123', reservationId: 'res-123' });
+
+      expect(prisma.checkIn.create).toHaveBeenCalled();
+      expect(response.status).toBe(201);
+      expect(response.body).toEqual({
+        status: 'success',
+        data: { id: 'checkin-123' },
+      });
     });
 
-    it('PUT /api/check-ins/:id should call updateCheckIn', async () => {
-      await request(app)
+    it('PUT /api/check-ins/:id should update a check-in', async () => {
+      prisma.checkIn.findFirst.mockResolvedValue({ id: 'checkin-123' });
+      prisma.checkIn.update.mockResolvedValue({ id: 'checkin-123' });
+
+      const response = await request(app)
         .put('/api/check-ins/checkin-123')
-        .send({ status: 'COMPLETED' });
-      expect(checkInController.updateCheckIn).toHaveBeenCalled();
+        .send({ checkInNotes: 'Updated notes' });
+
+      expect(prisma.checkIn.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 'checkin-123' },
+        })
+      );
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        status: 'success',
+        data: { id: 'checkin-123' },
+      });
     });
   });
 
   describe('Medication Routes', () => {
-    it('POST /api/check-ins/:id/medications should call addMedication', async () => {
-      await request(app)
+    it('POST /api/check-ins/:id/medications should create a medication', async () => {
+      prisma.checkIn.findFirst.mockResolvedValue({ id: 'checkin-123' });
+      prisma.checkInMedication.create.mockResolvedValue({ id: 'med-456' });
+
+      const response = await request(app)
         .post('/api/check-ins/checkin-123/medications')
-        .send({ name: 'Medication', dosage: '10mg' });
-      expect(checkInController.addMedication).toHaveBeenCalled();
+        .send({ medicationName: 'Medication', dosage: '10mg' });
+
+      expect(prisma.checkInMedication.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            checkInId: 'checkin-123',
+          }),
+        })
+      );
+      expect(response.status).toBe(201);
+      expect(response.body).toEqual({
+        status: 'success',
+        data: { id: 'med-456' },
+      });
     });
 
-    it('PUT /api/check-ins/:checkInId/medications/:medicationId should call updateMedication', async () => {
-      await request(app)
+    it('PUT /api/check-ins/:checkInId/medications/:medicationId should update a medication', async () => {
+      prisma.checkIn.findFirst.mockResolvedValue({ id: 'checkin-123' });
+      prisma.checkInMedication.update.mockResolvedValue({ id: 'med-456' });
+
+      const response = await request(app)
         .put('/api/check-ins/checkin-123/medications/med-456')
         .send({ dosage: '20mg' });
-      expect(checkInController.updateMedication).toHaveBeenCalled();
+
+      expect(prisma.checkInMedication.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 'med-456' },
+        })
+      );
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        status: 'success',
+        data: { id: 'med-456' },
+      });
     });
 
-    it('DELETE /api/check-ins/:checkInId/medications/:medicationId should call deleteMedication', async () => {
-      await request(app).delete(
+    it('DELETE /api/check-ins/:checkInId/medications/:medicationId should delete a medication', async () => {
+      prisma.checkInMedication.delete.mockResolvedValue({ id: 'med-456' });
+
+      const response = await request(app).delete(
         '/api/check-ins/checkin-123/medications/med-456'
       );
-      expect(checkInController.deleteMedication).toHaveBeenCalled();
+
+      expect(prisma.checkInMedication.delete).toHaveBeenCalledWith({
+        where: { id: 'med-456' },
+      });
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        status: 'success',
+        message: 'Medication deleted successfully',
+      });
     });
   });
 
   describe('Belonging Routes', () => {
-    it('PUT /api/check-ins/:checkInId/belongings/:belongingId/return should call returnBelonging', async () => {
-      await request(app).put(
-        '/api/check-ins/checkin-123/belongings/belong-456/return'
+    it('PUT /api/check-ins/:checkInId/belongings/:belongingId/return should return a belonging', async () => {
+      prisma.checkInBelonging.update.mockResolvedValue({ id: 'belong-456' });
+
+      const response = await request(app)
+        .put('/api/check-ins/checkin-123/belongings/belong-456/return')
+        .send({ returnedBy: 'staff-123' });
+
+      expect(prisma.checkInBelonging.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 'belong-456' },
+        })
       );
-      expect(checkInController.returnBelonging).toHaveBeenCalled();
-    });
-  });
-
-  describe('Service Agreement Template Routes', () => {
-    it('GET /api/service-agreement-templates should call getAllTemplates', async () => {
-      await request(app).get('/api/service-agreement-templates');
-      expect(serviceAgreementController.getAllTemplates).toHaveBeenCalled();
-    });
-
-    it('GET /api/service-agreement-templates/default should call getDefaultTemplate', async () => {
-      await request(app).get('/api/service-agreement-templates/default');
-      expect(serviceAgreementController.getDefaultTemplate).toHaveBeenCalled();
-    });
-
-    it('GET /api/service-agreement-templates/:id should call getTemplateById', async () => {
-      await request(app).get('/api/service-agreement-templates/template-123');
-      expect(serviceAgreementController.getTemplateById).toHaveBeenCalled();
-    });
-
-    it('POST /api/service-agreement-templates should call createTemplate', async () => {
-      await request(app)
-        .post('/api/service-agreement-templates')
-        .send({ name: 'Agreement Template' });
-      expect(serviceAgreementController.createTemplate).toHaveBeenCalled();
-    });
-
-    it('PUT /api/service-agreement-templates/:id should call updateTemplate', async () => {
-      await request(app)
-        .put('/api/service-agreement-templates/template-123')
-        .send({ name: 'Updated Agreement' });
-      expect(serviceAgreementController.updateTemplate).toHaveBeenCalled();
-    });
-
-    it('DELETE /api/service-agreement-templates/:id should call deleteTemplate', async () => {
-      await request(app).delete(
-        '/api/service-agreement-templates/template-123'
-      );
-      expect(serviceAgreementController.deleteTemplate).toHaveBeenCalled();
-    });
-  });
-
-  describe('Service Agreement Routes', () => {
-    it('POST /api/service-agreements should call createAgreement', async () => {
-      await request(app).post('/api/service-agreements').send({
-        checkInId: 'checkin-123',
-        signature: 'data:image/png;base64,...',
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        status: 'success',
+        data: { id: 'belong-456' },
       });
-      expect(serviceAgreementController.createAgreement).toHaveBeenCalled();
+    });
+  });
+
+  describe('Multi-Pet Check-In Routes', () => {
+    it('GET /api/check-ins/room-pets/:reservationId should return reservation data when no room is assigned', async () => {
+      prisma.reservation.findFirst.mockResolvedValue({
+        id: 'reservation-123',
+        resourceId: null,
+        startDate: '2026-03-31',
+        endDate: '2026-04-02',
+        petId: 'pet-123',
+        customerId: 'customer-123',
+        status: 'CONFIRMED',
+      });
+
+      const response = await request(app).get(
+        '/api/check-ins/room-pets/reservation-123'
+      );
+
+      expect(prisma.reservation.findFirst).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 'reservation-123', tenantId: 'test-tenant' },
+        })
+      );
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        status: 'success',
+        data: {
+          reservations: [
+            {
+              id: 'reservation-123',
+              resourceId: null,
+              startDate: '2026-03-31',
+              endDate: '2026-04-02',
+              petId: 'pet-123',
+              customerId: 'customer-123',
+              status: 'CONFIRMED',
+            },
+          ],
+          totalPets: 1,
+          resourceId: null,
+        },
+      });
     });
 
-    it('GET /api/service-agreements/check-in/:checkInId should call getAgreementByCheckIn', async () => {
-      await request(app).get('/api/service-agreements/check-in/checkin-123');
-      expect(
-        serviceAgreementController.getAgreementByCheckIn
-      ).toHaveBeenCalled();
+    it('POST /api/check-ins/batch should create batch check-ins', async () => {
+      prisma.checkIn.create.mockResolvedValue({ id: 'checkin-123' });
+
+      const response = await request(app)
+        .post('/api/check-ins/batch')
+        .send({
+          checkIns: [
+            {
+              petId: 'pet-123',
+              customerId: 'customer-123',
+            },
+          ],
+        });
+
+      expect(prisma.checkIn.create).toHaveBeenCalled();
+      expect(response.status).toBe(201);
+      expect(response.body).toEqual({
+        status: 'success',
+        data: {
+          successful: [
+            {
+              petId: 'pet-123',
+              checkIn: { id: 'checkin-123' },
+              success: true,
+            },
+          ],
+          failed: [],
+          totalProcessed: 1,
+          successCount: 1,
+          errorCount: 0,
+        },
+      });
+    });
+  });
+
+  describe('Draft Routes', () => {
+    it('GET /api/check-ins/draft/:reservationId should return a draft', async () => {
+      prisma.checkIn.findFirst.mockResolvedValue({ id: 'draft-123' });
+
+      const response = await request(app).get(
+        '/api/check-ins/draft/reservation-123'
+      );
+
+      expect(prisma.checkIn.findFirst).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            tenantId: 'test-tenant',
+            reservationId: 'reservation-123',
+          }),
+        })
+      );
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        status: 'success',
+        data: { id: 'draft-123' },
+      });
+    });
+
+    it('POST /api/check-ins/draft should create a draft', async () => {
+      prisma.checkIn.create.mockResolvedValue({ id: 'draft-123' });
+      prisma.checkIn.findUnique.mockResolvedValue({ id: 'draft-123' });
+
+      const response = await request(app).post('/api/check-ins/draft').send({
+        petId: 'pet-123',
+        reservationId: 'reservation-123',
+      });
+
+      expect(prisma.checkIn.create).toHaveBeenCalled();
+      expect(prisma.checkIn.findUnique).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 'draft-123' },
+        })
+      );
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        status: 'success',
+        data: { id: 'draft-123' },
+      });
     });
   });
 });

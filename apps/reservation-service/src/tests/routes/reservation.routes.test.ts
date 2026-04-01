@@ -8,43 +8,90 @@
 import express from 'express';
 import request from 'supertest';
 
-// Mock all controller functions
-jest.mock('../../controllers/reservation', () => ({
-  getAllReservations: jest.fn((req, res) =>
-    res.json({ status: 'success', data: [] })
-  ),
-  getReservationById: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
-  createReservation: jest.fn((req, res) =>
-    res.status(201).json({ status: 'success', data: {} })
-  ),
-  updateReservation: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
-  deleteReservation: jest.fn((req, res) => res.status(204).send()),
-  getCustomerReservations: jest.fn((req, res) =>
-    res.json({ status: 'success', data: [] })
-  ),
-  getTodayRevenue: jest.fn((req, res) =>
-    res.json({ status: 'success', data: { revenue: 0 } })
-  ),
-  addAddOnsToReservation: jest.fn((req, res) =>
-    res.json({ status: 'success', data: {} })
-  ),
-}));
+const mockGetAllReservationsRouteHandler = jest.fn((req, res) =>
+  res.json({ status: 'success', data: [] })
+);
+const mockGetReservationByIdRouteHandler = jest.fn((req, res) =>
+  res.json({ status: 'success', data: {} })
+);
+const mockCreateReservationRouteHandler = jest.fn((req, res) =>
+  res.status(201).json({ status: 'success', data: {} })
+);
+const mockUpdateReservationRouteHandler = jest.fn((req, res) =>
+  res.json({ status: 'success', data: {} })
+);
+const mockDeleteReservationRouteHandler = jest.fn((req, res) =>
+  res.status(200).json({ status: 'success', data: null })
+);
+const mockGetCustomerReservationsRouteHandler = jest.fn((req, res) =>
+  res.json({ status: 'success', data: [] })
+);
+const mockGetTodayRevenueRouteHandler = jest.fn((req, res) =>
+  res.json({ status: 'success', data: { revenue: 0 } })
+);
+const mockAddAddOnsToReservationRouteHandler = jest.fn((req, res) =>
+  res.json({ status: 'success', data: {} })
+);
 
-import reservationRoutes from '../../routes/reservation.routes';
-import {
-  getAllReservations,
-  getReservationById,
-  createReservation,
-  updateReservation,
-  deleteReservation,
-  getCustomerReservations,
-  getTodayRevenue,
-  addAddOnsToReservation,
-} from '../../controllers/reservation';
+jest.mock('../../routes/reservation/get-all-reservations.route', () => {
+  const express = require('express');
+  const route = express.Router();
+  route.use('/', mockGetAllReservationsRouteHandler);
+  return { route };
+});
+
+jest.mock('../../routes/reservation/get-reservation-by-id.route', () => {
+  const express = require('express');
+  const route = express.Router();
+  route.use('/:id', mockGetReservationByIdRouteHandler);
+  return { route };
+});
+
+jest.mock('../../routes/reservation/create-reservation.route', () => {
+  const express = require('express');
+  const route = express.Router();
+
+  route.use('/', mockCreateReservationRouteHandler);
+
+  return { route };
+});
+
+jest.mock('../../routes/reservation/update-reservation.route', () => {
+  const express = require('express');
+  const route = express.Router();
+  route.use('/:id', mockUpdateReservationRouteHandler);
+  return { route };
+});
+
+jest.mock('../../routes/reservation/delete-reservation.route', () => {
+  const express = require('express');
+  const route = express.Router();
+  route.use('/:id', mockDeleteReservationRouteHandler);
+  return { route };
+});
+
+jest.mock('../../routes/reservation/get-customer-reservations.route', () => {
+  const express = require('express');
+  const route = express.Router();
+  route.use('/customer/:customerId', mockGetCustomerReservationsRouteHandler);
+  return { route };
+});
+
+jest.mock('../../routes/reservation/get-today-revenue.route', () => {
+  const express = require('express');
+  const route = express.Router();
+  route.use('/revenue/today', mockGetTodayRevenueRouteHandler);
+  return { route };
+});
+
+jest.mock('../../routes/reservation/add-add-ons-to-reservation.route', () => {
+  const express = require('express');
+  const route = express.Router();
+  route.use('/:id/add-ons', mockAddAddOnsToReservationRouteHandler);
+  return { route };
+});
+
+import reservationRoutes from '../../routes/reservation/router';
 
 describe('Reservation Routes', () => {
   let app: express.Application;
@@ -67,10 +114,10 @@ describe('Reservation Routes', () => {
   });
 
   describe('GET /api/reservations', () => {
-    it('should call getAllReservations controller', async () => {
+    it('should call getAllReservations route module', async () => {
       await request(app).get('/api/reservations');
 
-      expect(getAllReservations).toHaveBeenCalled();
+      expect(mockGetAllReservationsRouteHandler).toHaveBeenCalled();
     });
 
     it('should return success response', async () => {
@@ -82,16 +129,16 @@ describe('Reservation Routes', () => {
   });
 
   describe('GET /api/reservations/:id', () => {
-    it('should call getReservationById controller', async () => {
+    it('should call getReservationById route module', async () => {
       await request(app).get('/api/reservations/res-123');
 
-      expect(getReservationById).toHaveBeenCalled();
+      expect(mockGetReservationByIdRouteHandler).toHaveBeenCalled();
     });
 
     it('should pass reservation ID in params', async () => {
       await request(app).get('/api/reservations/res-456');
 
-      expect(getReservationById).toHaveBeenCalledWith(
+      expect(mockGetReservationByIdRouteHandler).toHaveBeenCalledWith(
         expect.objectContaining({
           params: expect.objectContaining({ id: 'res-456' }),
         }),
@@ -102,12 +149,12 @@ describe('Reservation Routes', () => {
   });
 
   describe('POST /api/reservations', () => {
-    it('should call createReservation controller', async () => {
+    it('should call createReservation route module', async () => {
       await request(app)
         .post('/api/reservations')
         .send({ customerId: 'cust-1', petId: 'pet-1' });
 
-      expect(createReservation).toHaveBeenCalled();
+      expect(mockCreateReservationRouteHandler).toHaveBeenCalled();
     });
 
     it('should return 201 on success', async () => {
@@ -120,40 +167,40 @@ describe('Reservation Routes', () => {
   });
 
   describe('PATCH /api/reservations/:id', () => {
-    it('should call updateReservation controller', async () => {
+    it('should call updateReservation route module', async () => {
       await request(app)
         .patch('/api/reservations/res-123')
         .send({ status: 'CONFIRMED' });
 
-      expect(updateReservation).toHaveBeenCalled();
+      expect(mockUpdateReservationRouteHandler).toHaveBeenCalled();
     });
   });
 
   describe('DELETE /api/reservations/:id', () => {
-    it('should call deleteReservation controller', async () => {
+    it('should call deleteReservation route module', async () => {
       await request(app).delete('/api/reservations/res-123');
 
-      expect(deleteReservation).toHaveBeenCalled();
+      expect(mockDeleteReservationRouteHandler).toHaveBeenCalled();
     });
 
-    it('should return 204 on success', async () => {
+    it('should return 200 on success', async () => {
       const response = await request(app).delete('/api/reservations/res-123');
 
-      expect(response.status).toBe(204);
+      expect(response.status).toBe(200);
     });
   });
 
   describe('GET /api/reservations/customer/:customerId', () => {
-    it('should call getCustomerReservations controller', async () => {
+    it('should call getCustomerReservations route module', async () => {
       await request(app).get('/api/reservations/customer/cust-123');
 
-      expect(getCustomerReservations).toHaveBeenCalled();
+      expect(mockGetCustomerReservationsRouteHandler).toHaveBeenCalled();
     });
 
     it('should pass customer ID in params', async () => {
       await request(app).get('/api/reservations/customer/cust-456');
 
-      expect(getCustomerReservations).toHaveBeenCalledWith(
+      expect(mockGetCustomerReservationsRouteHandler).toHaveBeenCalledWith(
         expect.objectContaining({
           params: expect.objectContaining({ customerId: 'cust-456' }),
         }),
@@ -164,20 +211,20 @@ describe('Reservation Routes', () => {
   });
 
   describe('GET /api/reservations/revenue/today', () => {
-    it('should call getTodayRevenue controller', async () => {
+    it('should call getTodayRevenue route module', async () => {
       await request(app).get('/api/reservations/revenue/today');
 
-      expect(getTodayRevenue).toHaveBeenCalled();
+      expect(mockGetTodayRevenueRouteHandler).toHaveBeenCalled();
     });
   });
 
   describe('POST /api/reservations/:id/add-ons', () => {
-    it('should call addAddOnsToReservation controller', async () => {
+    it('should call addAddOnsToReservation route module', async () => {
       await request(app)
         .post('/api/reservations/res-123/add-ons')
         .send({ addOns: [{ serviceId: 'addon-1' }] });
 
-      expect(addAddOnsToReservation).toHaveBeenCalled();
+      expect(mockAddAddOnsToReservationRouteHandler).toHaveBeenCalled();
     });
   });
 
@@ -185,22 +232,22 @@ describe('Reservation Routes', () => {
     it('should route /customer/:customerId before /:id', async () => {
       await request(app).get('/api/reservations/customer/cust-123');
 
-      expect(getCustomerReservations).toHaveBeenCalled();
-      expect(getReservationById).not.toHaveBeenCalled();
+      expect(mockGetCustomerReservationsRouteHandler).toHaveBeenCalled();
+      expect(mockGetReservationByIdRouteHandler).not.toHaveBeenCalled();
     });
 
     it('should route /revenue/today before /:id', async () => {
       await request(app).get('/api/reservations/revenue/today');
 
-      expect(getTodayRevenue).toHaveBeenCalled();
-      expect(getReservationById).not.toHaveBeenCalled();
+      expect(mockGetTodayRevenueRouteHandler).toHaveBeenCalled();
+      expect(mockGetReservationByIdRouteHandler).not.toHaveBeenCalled();
     });
 
     it('should route /health before /:id', async () => {
       const response = await request(app).get('/api/reservations/health');
 
       expect(response.body.status).toBe('OK');
-      expect(getReservationById).not.toHaveBeenCalled();
+      expect(mockGetReservationByIdRouteHandler).not.toHaveBeenCalled();
     });
   });
 });
