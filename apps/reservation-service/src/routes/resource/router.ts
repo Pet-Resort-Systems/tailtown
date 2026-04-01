@@ -17,10 +17,6 @@ router.get('/health', (req, res) => {
 
 router.get('/availability', checkResourceAvailabilityRoute);
 router.post('/availability/batch', batchCheckResourceAvailabilityRoute);
-router.post(
-  '/v1/resources/availability/batch',
-  batchCheckResourceAvailabilityRoute
-);
 router.get('/', getAllResourcesRoute);
 router.post('/', createResourceRoute);
 router.get('/:id/availability', getResourceAvailabilityRoute);
