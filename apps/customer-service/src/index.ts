@@ -65,7 +65,7 @@ import auditLogRoutes from './routes/audit-log.routes.js';
 import tipRoutes from './routes/tip.routes.js';
 import commissionRoutes from './routes/commission.routes.js';
 import standingReservationRoutes from './routes/standing-reservation.routes.js';
-import careTrackingRoutes from './routes/care-tracking.routes.js';
+import careTrackingRoutes from './routes/care-tracking/router.js';
 import scheduleTemplateRoutes from './routes/schedule-template.routes.js';
 import featureFlagsRoutes from './routes/feature-flags.routes.js';
 import { systemRoutes } from './routes/system.routes.js';
