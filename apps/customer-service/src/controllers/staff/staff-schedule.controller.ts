@@ -12,6 +12,7 @@
  */
 
 import { type Request, type Response, type NextFunction } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 
 import { AppError } from '../../middleware/error.middleware.js';
 import { logger } from '../../utils/logger.js';
@@ -79,7 +80,12 @@ export const getStaffSchedules = async (
   next: NextFunction
 ) => {
   try {
-    const { staffId } = req.params;
+    const staffId = assertStringRouteParam(
+      req.params.staffId,
+      req.originalUrl,
+      AppError.validationError,
+      'Staff ID is required'
+    );
     const { startDate, endDate } = req.query;
 
     let whereClause: any = { staffId };
@@ -197,7 +203,12 @@ export const createStaffSchedule = async (
   next: NextFunction
 ) => {
   try {
-    const { staffId } = req.params;
+    const staffId = assertStringRouteParam(
+      req.params.staffId,
+      req.originalUrl,
+      AppError.validationError,
+      'Staff ID is required'
+    );
     const { date, startTime, endTime, status, notes, location, role } =
       req.body;
 
@@ -271,7 +282,12 @@ export const updateStaffSchedule = async (
   next: NextFunction
 ) => {
   try {
-    const { scheduleId } = req.params;
+    const scheduleId = assertStringRouteParam(
+      req.params.scheduleId,
+      req.originalUrl,
+      AppError.validationError,
+      'Schedule ID is required'
+    );
     const { date, startTime, endTime, status, notes, location, role } =
       req.body;
 
@@ -343,7 +359,12 @@ export const deleteStaffSchedule = async (
   next: NextFunction
 ) => {
   try {
-    const { scheduleId } = req.params;
+    const scheduleId = assertStringRouteParam(
+      req.params.scheduleId,
+      req.originalUrl,
+      AppError.validationError,
+      'Schedule ID is required'
+    );
 
     // Check if schedule exists
     const schedule = await prisma.staffSchedule.findUnique({

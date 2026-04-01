@@ -1,4 +1,5 @@
 import { type Response, type NextFunction } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { emailService } from '../services/email.service.js';
 import { prisma } from '../config/prisma.js';
@@ -69,7 +70,12 @@ export class EmailController {
     next: NextFunction
   ) {
     try {
-      const { reservationId } = req.params;
+      const reservationId = assertStringRouteParam(
+        req.params.reservationId,
+        req.originalUrl,
+        AppError.validationError,
+        'Reservation ID is required'
+      );
       const tenantId = req.tenantId!;
 
       // Fetch reservation with related data
@@ -141,7 +147,12 @@ export class EmailController {
     next: NextFunction
   ) {
     try {
-      const { reservationId } = req.params;
+      const reservationId = assertStringRouteParam(
+        req.params.reservationId,
+        req.originalUrl,
+        AppError.validationError,
+        'Reservation ID is required'
+      );
       const tenantId = req.tenantId!;
 
       // Fetch reservation with related data
@@ -213,7 +224,12 @@ export class EmailController {
     next: NextFunction
   ) {
     try {
-      const { customerId } = req.params;
+      const customerId = assertStringRouteParam(
+        req.params.customerId,
+        req.originalUrl,
+        AppError.validationError,
+        'Customer ID is required'
+      );
       const tenantId = req.tenantId!;
 
       const customer = await prisma.customer.findFirst({

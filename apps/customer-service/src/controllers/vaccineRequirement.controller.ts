@@ -1,6 +1,7 @@
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { type Request, type Response, type NextFunction } from 'express';
 
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { prisma } from '../config/prisma.js';
 
@@ -43,7 +44,12 @@ export const getVaccineRequirementById = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Vaccine requirement ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -136,7 +142,12 @@ export const updateVaccineRequirement = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Vaccine requirement ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -187,7 +198,12 @@ export const deleteVaccineRequirement = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Vaccine requirement ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -214,7 +230,12 @@ export const getApplicableRequirements = async (
   next: NextFunction
 ) => {
   try {
-    const { petId } = req.params;
+    const petId = assertStringRouteParam(
+      req.params.petId,
+      req.originalUrl,
+      AppError.validationError,
+      'Pet ID is required'
+    );
     const { serviceType } = req.query;
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
@@ -262,7 +283,12 @@ export const checkPetCompliance = async (
   next: NextFunction
 ) => {
   try {
-    const { petId } = req.params;
+    const petId = assertStringRouteParam(
+      req.params.petId,
+      req.originalUrl,
+      AppError.validationError,
+      'Pet ID is required'
+    );
     const { serviceType } = req.query;
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');

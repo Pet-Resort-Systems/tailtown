@@ -7,6 +7,7 @@
 
 import { type Request, type Response, type NextFunction } from 'express';
 import { MealTime } from '@prisma/client';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { prisma } from '../config/prisma.js';
 
@@ -241,7 +242,12 @@ export const getFeedingLogs = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { petId } = req.params;
+    const petId = assertStringRouteParam(
+      req.params.petId,
+      req.originalUrl,
+      AppError.validationError,
+      'Pet ID is required'
+    );
     const { startDate, endDate, limit = 50 } = req.query;
 
     const where: any = { tenantId, petId };
@@ -350,7 +356,12 @@ export const getPetMedications = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { petId } = req.params;
+    const petId = assertStringRouteParam(
+      req.params.petId,
+      req.originalUrl,
+      AppError.validationError,
+      'Pet ID is required'
+    );
     const { activeOnly = 'true' } = req.query;
 
     const where: any = { tenantId, petId };
@@ -381,7 +392,12 @@ export const createPetMedication = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { petId } = req.params;
+    const petId = assertStringRouteParam(
+      req.params.petId,
+      req.originalUrl,
+      AppError.validationError,
+      'Pet ID is required'
+    );
     const {
       medicationName,
       dosage,
@@ -440,7 +456,12 @@ export const updatePetMedication = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { medicationId } = req.params;
+    const medicationId = assertStringRouteParam(
+      req.params.medicationId,
+      req.originalUrl,
+      AppError.validationError,
+      'Medication ID is required'
+    );
 
     const existing = await prisma.petMedication.findFirst({
       where: { id: medicationId, tenantId },
@@ -474,7 +495,12 @@ export const deletePetMedication = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { medicationId } = req.params;
+    const medicationId = assertStringRouteParam(
+      req.params.medicationId,
+      req.originalUrl,
+      AppError.validationError,
+      'Medication ID is required'
+    );
 
     const existing = await prisma.petMedication.findFirst({
       where: { id: medicationId, tenantId },
@@ -654,7 +680,12 @@ export const getMedicationLogs = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { petId } = req.params;
+    const petId = assertStringRouteParam(
+      req.params.petId,
+      req.originalUrl,
+      AppError.validationError,
+      'Pet ID is required'
+    );
     const { startDate, endDate, limit = 50 } = req.query;
 
     const where: any = { tenantId, petId };
@@ -759,7 +790,12 @@ export const togglePickyEater = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { petId } = req.params;
+    const petId = assertStringRouteParam(
+      req.params.petId,
+      req.originalUrl,
+      AppError.validationError,
+      'Pet ID is required'
+    );
     const { isPickyEater } = req.body;
 
     const pet = await prisma.pet.findFirst({

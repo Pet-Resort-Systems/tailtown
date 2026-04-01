@@ -1,5 +1,6 @@
 import { type Request, type Response, type NextFunction } from 'express';
 import { TipType, TipCollectionMethod } from '@prisma/client';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { prisma } from '../config/prisma.js';
 
@@ -209,7 +210,12 @@ export const getTipById = async (
 ) => {
   try {
     const tenantId = (req as any).tenantId;
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Tip ID is required'
+    );
 
     const tip = await prisma.tip.findFirst({
       where: { id, tenantId },
@@ -241,6 +247,9 @@ export const getTipById = async (
       data: tip,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return next(error);
+    }
     console.error('Error fetching tip:', error);
     return next(new AppError('Error fetching tip', 500));
   }
@@ -256,7 +265,12 @@ export const updateTip = async (
 ) => {
   try {
     const tenantId = (req as any).tenantId;
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Tip ID is required'
+    );
     const { amount, percentage, notes } = req.body;
 
     // Check tip exists
@@ -298,6 +312,9 @@ export const updateTip = async (
       data: tip,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return next(error);
+    }
     console.error('Error updating tip:', error);
     return next(new AppError('Error updating tip', 500));
   }
@@ -313,7 +330,12 @@ export const deleteTip = async (
 ) => {
   try {
     const tenantId = (req as any).tenantId;
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Tip ID is required'
+    );
 
     // Check tip exists
     const existingTip = await prisma.tip.findFirst({
@@ -330,6 +352,9 @@ export const deleteTip = async (
 
     res.status(204).send();
   } catch (error) {
+    if (error instanceof AppError) {
+      return next(error);
+    }
     console.error('Error deleting tip:', error);
     return next(new AppError('Error deleting tip', 500));
   }
@@ -345,7 +370,12 @@ export const getGroomerTipsSummary = async (
 ) => {
   try {
     const tenantId = (req as any).tenantId;
-    const { groomerId } = req.params;
+    const groomerId = assertStringRouteParam(
+      req.params.groomerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Groomer ID is required'
+    );
     const { startDate, endDate } = req.query;
 
     // Build date filter
@@ -416,6 +446,9 @@ export const getGroomerTipsSummary = async (
       },
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return next(error);
+    }
     console.error('Error fetching groomer tips summary:', error);
     return next(new AppError('Error fetching groomer tips summary', 500));
   }

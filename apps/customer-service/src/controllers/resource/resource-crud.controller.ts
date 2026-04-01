@@ -10,6 +10,7 @@
  */
 
 import { type Response, type NextFunction } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 
 import AppError from '../../utils/appError.js';
 import { type TenantRequest } from '../../middleware/tenant.middleware.js';
@@ -22,6 +23,8 @@ import {
   getCacheKey,
   deleteCachePattern,
 } from '../../utils/redis.js';
+
+const createValidationError = (message: string) => new AppError(message, 400);
 
 // Valid resource types and aliases
 const validTypeMap: Record<string, string> = {
@@ -171,7 +174,12 @@ export const getResource = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      createValidationError,
+      'Resource ID is required'
+    );
     const tenantId = req.tenantId!;
 
     const cacheKey = getCacheKey(tenantId, 'resource', id);
@@ -268,7 +276,12 @@ export const updateResource = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      createValidationError,
+      'Resource ID is required'
+    );
     const resourceData = req.body;
 
     const existingResource = await prisma.resource.findUnique({
@@ -319,7 +332,12 @@ export const deleteResource = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      createValidationError,
+      'Resource ID is required'
+    );
 
     await prisma.resource.delete({ where: { id } });
 

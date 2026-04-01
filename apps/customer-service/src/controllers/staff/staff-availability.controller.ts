@@ -11,6 +11,7 @@
 
 import { type Request, type Response, type NextFunction } from 'express';
 
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../../middleware/error.middleware.js';
 import { logger } from '../../utils/logger.js';
 import { prisma } from '../../config/prisma.js';
@@ -24,7 +25,12 @@ export const getStaffAvailability = async (
   next: NextFunction
 ) => {
   try {
-    const { staffId } = req.params;
+    const staffId = assertStringRouteParam(
+      req.params.staffId,
+      req.originalUrl,
+      AppError.validationError,
+      'Staff ID is required'
+    );
 
     const availability = await prisma.staffAvailability.findMany({
       where: { staffId },
@@ -50,7 +56,12 @@ export const createStaffAvailability = async (
   next: NextFunction
 ) => {
   try {
-    const { staffId } = req.params;
+    const staffId = assertStringRouteParam(
+      req.params.staffId,
+      req.originalUrl,
+      AppError.validationError,
+      'Staff ID is required'
+    );
     const availabilityData = req.body;
 
     // Validate required fields
@@ -118,13 +129,19 @@ export const updateStaffAvailability = async (
   res: Response,
   next: NextFunction
 ) => {
+  let availabilityId: string | undefined;
   try {
-    const { id } = req.params;
+    availabilityId = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Availability record ID is required'
+    );
     const availabilityData = req.body;
 
     // Check if availability exists
     const existingAvailability = await prisma.staffAvailability.findUnique({
-      where: { id },
+      where: { id: availabilityId },
     });
 
     if (!existingAvailability) {
@@ -167,13 +184,13 @@ export const updateStaffAvailability = async (
     }
 
     logger.debug('Updating staff availability', {
-      availabilityId: id,
+      availabilityId,
       tenantId: (req as any).tenantId,
     });
 
     // Update availability
     const updatedAvailability = await prisma.staffAvailability.update({
-      where: { id },
+      where: { id: availabilityId },
       data: updateData,
     });
 
@@ -183,7 +200,7 @@ export const updateStaffAvailability = async (
     });
   } catch (error: any) {
     logger.error('Error updating staff availability', {
-      availabilityId: req.params.id,
+      availabilityId,
       error: error.message,
     });
     next(error);
@@ -199,7 +216,12 @@ export const deleteStaffAvailability = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Availability record ID is required'
+    );
 
     // Check if availability exists
     const existingAvailability = await prisma.staffAvailability.findUnique({

@@ -9,6 +9,7 @@
 
 import { type Request, type Response, type NextFunction } from 'express';
 
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../../middleware/error.middleware.js';
 import { prisma } from '../../config/prisma.js';
 
@@ -32,7 +33,12 @@ export const uploadPhoto = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Report card ID is required'
+    );
     const tenantId = req.tenantId;
     const staffId = req.user?.id;
 
@@ -81,6 +87,9 @@ export const uploadPhoto = async (
 
     res.status(201).json({ success: true, data: photo });
   } catch (error: any) {
+    if (error instanceof AppError) {
+      return next(error);
+    }
     next(new AppError(error.message || 'Failed to upload photo', 500));
   }
 };
@@ -95,7 +104,18 @@ export const deletePhoto = async (
   next: NextFunction
 ) => {
   try {
-    const { id, photoId } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Report card ID is required'
+    );
+    const photoId = assertStringRouteParam(
+      req.params.photoId,
+      req.originalUrl,
+      AppError.validationError,
+      'Photo ID is required'
+    );
     const tenantId = req.tenantId;
 
     const reportCard = await prisma.reportCard.findFirst({
@@ -118,6 +138,9 @@ export const deletePhoto = async (
 
     res.json({ success: true, message: 'Photo deleted successfully' });
   } catch (error: any) {
+    if (error instanceof AppError) {
+      return next(error);
+    }
     next(new AppError(error.message || 'Failed to delete photo', 500));
   }
 };
@@ -132,7 +155,18 @@ export const updatePhoto = async (
   next: NextFunction
 ) => {
   try {
-    const { id, photoId } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Report card ID is required'
+    );
+    const photoId = assertStringRouteParam(
+      req.params.photoId,
+      req.originalUrl,
+      AppError.validationError,
+      'Photo ID is required'
+    );
     const tenantId = req.tenantId;
     const { caption, order } = req.body;
 
@@ -154,6 +188,9 @@ export const updatePhoto = async (
 
     res.json({ success: true, data: photo });
   } catch (error: any) {
+    if (error instanceof AppError) {
+      return next(error);
+    }
     next(new AppError(error.message || 'Failed to update photo', 500));
   }
 };

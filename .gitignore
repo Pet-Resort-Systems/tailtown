@@ -119,3 +119,6 @@ test-results/
 
 # Turborepo
 .turbo/
+
+# Prisma (prisma-client generator)
+**/generated/

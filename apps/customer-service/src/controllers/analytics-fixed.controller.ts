@@ -1,5 +1,6 @@
 import { type Request, type Response, type NextFunction } from 'express';
 
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { prisma } from '../config/prisma.js';
 
@@ -521,12 +522,13 @@ export const getCustomerReport = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId } = req.params;
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
     const { period = 'month', startDate, endDate } = req.query;
-
-    if (!customerId) {
-      return next(new AppError('Customer ID is required', 400));
-    }
 
     // Get customer with reservations
     const customer = await prisma.customer.findUnique({

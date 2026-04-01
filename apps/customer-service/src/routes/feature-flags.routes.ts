@@ -14,6 +14,7 @@
  */
 
 import express from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { authenticate } from '../middleware/auth.middleware.js';
 import {
   getTenantFeatureFlags,
@@ -100,7 +101,12 @@ router.get('/service-modules', async (req, res, next) => {
 router.get('/:key', async (req, res, next) => {
   try {
     const tenantId = (req as any).tenantId;
-    const { key } = req.params;
+    const key = assertStringRouteParam(
+      req.params.key,
+      req.originalUrl,
+      AppError.validationError,
+      'Feature flag key is required'
+    );
     const userId = (req as any).user?.id;
 
     if (!tenantId) {
@@ -148,7 +154,12 @@ router.get('/admin/all', authenticate, async (req, res, next) => {
  */
 router.get('/admin/tenant/:tenantId', authenticate, async (req, res, next) => {
   try {
-    const { tenantId } = req.params;
+    const tenantId = assertStringRouteParam(
+      req.params.tenantId,
+      req.originalUrl,
+      AppError.validationError,
+      'Tenant ID is required'
+    );
 
     const [flags, overrides] = await Promise.all([
       getTenantFeatureFlags(tenantId),
@@ -206,7 +217,18 @@ router.put(
   authenticate,
   async (req, res, next) => {
     try {
-      const { tenantId, key } = req.params;
+      const tenantId = assertStringRouteParam(
+        req.params.tenantId,
+        req.originalUrl,
+        AppError.validationError,
+        'Tenant ID is required'
+      );
+      const key = assertStringRouteParam(
+        req.params.key,
+        req.originalUrl,
+        AppError.validationError,
+        'Feature flag key is required'
+      );
       const { notes } = req.body;
       const staffId = (req as any).user?.id;
 
@@ -233,7 +255,18 @@ router.put(
   authenticate,
   async (req, res, next) => {
     try {
-      const { tenantId, key } = req.params;
+      const tenantId = assertStringRouteParam(
+        req.params.tenantId,
+        req.originalUrl,
+        AppError.validationError,
+        'Tenant ID is required'
+      );
+      const key = assertStringRouteParam(
+        req.params.key,
+        req.originalUrl,
+        AppError.validationError,
+        'Feature flag key is required'
+      );
       const { notes } = req.body;
       const staffId = (req as any).user?.id;
 

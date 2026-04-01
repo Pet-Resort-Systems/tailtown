@@ -9,8 +9,13 @@
 
 import { type Request, type Response, type NextFunction } from 'express';
 
-import { createAuditLog, AuditAction } from '../../services/audit-log.service.js';
+import { assertStringRouteParam } from '@tailtown/shared';
+import {
+  createAuditLog,
+  AuditAction,
+} from '../../services/audit-log.service.js';
 import { type SuperAdminRequest } from '../../middleware/require-super-admin.middleware.js';
+import { AppError } from '../../middleware/error.middleware.js';
 import { prisma } from '../../config/prisma.js';
 
 /**
@@ -23,7 +28,12 @@ export const suspendTenant = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Tenant ID is required'
+    );
     const { reason } = req.body;
     const superAdminId = (req as SuperAdminRequest).superAdmin?.id;
 
@@ -85,6 +95,12 @@ export const suspendTenant = async (
       data: updatedTenant,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        success: false,
+        message: error.message,
+      });
+    }
     console.error('[SuperAdmin] Suspend tenant error:', error);
     next(error);
   }
@@ -100,7 +116,12 @@ export const activateTenant = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Tenant ID is required'
+    );
     const superAdminId = (req as SuperAdminRequest).superAdmin?.id;
 
     if (!superAdminId) {
@@ -154,6 +175,12 @@ export const activateTenant = async (
       data: updatedTenant,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        success: false,
+        message: error.message,
+      });
+    }
     console.error('[SuperAdmin] Activate tenant error:', error);
     next(error);
   }
@@ -169,7 +196,12 @@ export const deleteTenant = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Tenant ID is required'
+    );
     const { reason } = req.body;
     const superAdminId = (req as SuperAdminRequest).superAdmin?.id;
 
@@ -227,6 +259,12 @@ export const deleteTenant = async (
       data: updatedTenant,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        success: false,
+        message: error.message,
+      });
+    }
     console.error('[SuperAdmin] Delete tenant error:', error);
     next(error);
   }
@@ -242,7 +280,12 @@ export const restoreTenant = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Tenant ID is required'
+    );
     const superAdminId = (req as SuperAdminRequest).superAdmin?.id;
 
     if (!superAdminId) {
@@ -312,6 +355,12 @@ export const restoreTenant = async (
       data: updatedTenant,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        success: false,
+        message: error.message,
+      });
+    }
     console.error('[SuperAdmin] Restore tenant error:', error);
     next(error);
   }
@@ -327,7 +376,12 @@ export const getTenantStats = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Tenant ID is required'
+    );
 
     const tenant = await prisma.tenant.findUnique({
       where: { id },
@@ -358,6 +412,12 @@ export const getTenantStats = async (
       data: stats,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        success: false,
+        message: error.message,
+      });
+    }
     console.error('[SuperAdmin] Get tenant stats error:', error);
     next(error);
   }

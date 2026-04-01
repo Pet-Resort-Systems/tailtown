@@ -1,4 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '../generated/prisma/client.js';
 
 /**
  * Service Health Check Tests
@@ -161,13 +162,10 @@ describe('Service Health Checks', () => {
 
     it('should handle connection errors gracefully', async () => {
       // This tests that Prisma client handles errors without crashing
-      const tempPrisma = new PrismaClient({
-        datasources: {
-          db: {
-            url: 'postgresql://invalid:invalid@localhost:5432/invalid',
-          },
-        },
+      const adapter = new PrismaPg({
+        connectionString: 'postgresql://invalid:invalid@localhost:5432/invalid',
       });
+      const tempPrisma = new PrismaClient({ adapter });
 
       await expect(tempPrisma.$connect()).rejects.toThrow();
 

@@ -6,9 +6,11 @@
  */
 
 import { type Response } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { emailService } from '../services/email.service.js';
 import { prisma } from '../config/prisma.js';
+import { AppError } from '../middleware/error.middleware.js';
 
 class NotificationController {
   /**
@@ -17,7 +19,12 @@ class NotificationController {
    */
   async sendReservationConfirmation(req: TenantRequest, res: Response) {
     try {
-      const { reservationId } = req.params;
+      const reservationId = assertStringRouteParam(
+        req.params.reservationId,
+        req.originalUrl,
+        AppError.validationError,
+        'Reservation ID is required'
+      );
       const tenantId =
         req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -62,6 +69,12 @@ class NotificationController {
         message: 'Confirmation email sent',
       });
     } catch (error: any) {
+      if (error instanceof AppError) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+      }
       console.error('Error sending confirmation email:', error);
       res.status(500).json({
         success: false,
@@ -76,7 +89,12 @@ class NotificationController {
    */
   async sendCheckInNotification(req: TenantRequest, res: Response) {
     try {
-      const { reservationId } = req.params;
+      const reservationId = assertStringRouteParam(
+        req.params.reservationId,
+        req.originalUrl,
+        AppError.validationError,
+        'Reservation ID is required'
+      );
       const tenantId =
         req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -125,6 +143,12 @@ class NotificationController {
         message: 'Check-in email sent',
       });
     } catch (error: any) {
+      if (error instanceof AppError) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+      }
       console.error('Error sending check-in email:', error);
       res.status(500).json({
         success: false,
@@ -139,7 +163,12 @@ class NotificationController {
    */
   async sendCheckOutNotification(req: TenantRequest, res: Response) {
     try {
-      const { reservationId } = req.params;
+      const reservationId = assertStringRouteParam(
+        req.params.reservationId,
+        req.originalUrl,
+        AppError.validationError,
+        'Reservation ID is required'
+      );
       const tenantId =
         req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -188,6 +217,12 @@ class NotificationController {
         message: 'Check-out email sent',
       });
     } catch (error: any) {
+      if (error instanceof AppError) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+      }
       console.error('Error sending check-out email:', error);
       res.status(500).json({
         success: false,
@@ -202,7 +237,12 @@ class NotificationController {
    */
   async sendStatusChangeNotification(req: TenantRequest, res: Response) {
     try {
-      const { reservationId } = req.params;
+      const reservationId = assertStringRouteParam(
+        req.params.reservationId,
+        req.originalUrl,
+        AppError.validationError,
+        'Reservation ID is required'
+      );
       const { oldStatus, newStatus } = req.body;
       const tenantId =
         req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
@@ -259,6 +299,12 @@ class NotificationController {
         message: 'Status change email sent',
       });
     } catch (error: any) {
+      if (error instanceof AppError) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+      }
       console.error('Error sending status change email:', error);
       res.status(500).json({
         success: false,
@@ -273,7 +319,12 @@ class NotificationController {
    */
   async sendReservationReminder(req: TenantRequest, res: Response) {
     try {
-      const { reservationId } = req.params;
+      const reservationId = assertStringRouteParam(
+        req.params.reservationId,
+        req.originalUrl,
+        AppError.validationError,
+        'Reservation ID is required'
+      );
       const tenantId =
         req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -320,6 +371,12 @@ class NotificationController {
         message: 'Reminder email sent',
       });
     } catch (error: any) {
+      if (error instanceof AppError) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+      }
       console.error('Error sending reminder email:', error);
       res.status(500).json({
         success: false,

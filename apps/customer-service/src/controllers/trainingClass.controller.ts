@@ -1,6 +1,7 @@
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { type Request, type Response, type NextFunction } from 'express';
 
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { addDays, addWeeks, format, parse } from 'date-fns';
 import { prisma } from '../config/prisma.js';
@@ -62,7 +63,12 @@ export const getTrainingClassById = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Training class ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -273,7 +279,12 @@ export const updateTrainingClass = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Training class ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -339,7 +350,12 @@ export const deleteTrainingClass = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Training class ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -380,7 +396,12 @@ export const duplicateTrainingClass = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Training class ID is required'
+    );
     const { startDate } = req.body;
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
@@ -453,7 +474,12 @@ export const getClassSessions = async (
   next: NextFunction
 ) => {
   try {
-    const { classId } = req.params;
+    const classId = assertStringRouteParam(
+      req.params.classId,
+      req.originalUrl,
+      AppError.validationError,
+      'Training class ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -483,7 +509,12 @@ export const updateClassSession = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Class session ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -521,7 +552,12 @@ export const startClassSession = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Class session ID is required'
+    );
 
     const session = await prisma.classSession.update({
       where: { id },
@@ -544,7 +580,12 @@ export const completeClassSession = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Class session ID is required'
+    );
     const { notes } = req.body;
 
     const session = await prisma.classSession.update({

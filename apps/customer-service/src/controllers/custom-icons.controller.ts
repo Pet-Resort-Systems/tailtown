@@ -3,7 +3,9 @@ import { type Request, type Response } from 'express';
 
 import path from 'path';
 import fs from 'fs/promises';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { prisma } from '../config/prisma.js';
+import { AppError } from '../middleware/error.middleware.js';
 
 // Get all custom icons for tenant
 export const getAllCustomIcons = async (req: TenantRequest, res: Response) => {
@@ -35,7 +37,12 @@ export const getAllCustomIcons = async (req: TenantRequest, res: Response) => {
 // Get single custom icon
 export const getCustomIconById = async (req: TenantRequest, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Custom icon ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -58,6 +65,12 @@ export const getCustomIconById = async (req: TenantRequest, res: Response) => {
       data: icon,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        status: 'error',
+        message: error.message,
+      });
+    }
     console.error('Error fetching custom icon:', error);
     res.status(500).json({
       status: 'error',
@@ -135,7 +148,12 @@ export const createCustomIcon = async (req: TenantRequest, res: Response) => {
 // Update custom icon
 export const updateCustomIcon = async (req: TenantRequest, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Custom icon ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { name, label, description, category, displayOrder } = req.body;
@@ -191,6 +209,12 @@ export const updateCustomIcon = async (req: TenantRequest, res: Response) => {
       data: icon,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        status: 'error',
+        message: error.message,
+      });
+    }
     console.error('Error updating custom icon:', error);
     res.status(500).json({
       status: 'error',
@@ -202,7 +226,12 @@ export const updateCustomIcon = async (req: TenantRequest, res: Response) => {
 // Delete custom icon
 export const deleteCustomIcon = async (req: TenantRequest, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Custom icon ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -239,6 +268,12 @@ export const deleteCustomIcon = async (req: TenantRequest, res: Response) => {
       message: 'Custom icon deleted successfully',
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        status: 'error',
+        message: error.message,
+      });
+    }
     console.error('Error deleting custom icon:', error);
     res.status(500).json({
       status: 'error',

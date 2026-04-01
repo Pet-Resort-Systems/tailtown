@@ -8,6 +8,7 @@
 
 import { type Request, type Response, type NextFunction } from 'express';
 
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../../middleware/error.middleware.js';
 import { logger } from '../../utils/logger.js';
 import { prisma } from '../../config/prisma.js';
@@ -74,7 +75,12 @@ export const addAddOnsToReservation = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Reservation ID is required'
+    );
     const { addOns } = req.body;
 
     // Validate input

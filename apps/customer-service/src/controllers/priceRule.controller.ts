@@ -1,5 +1,11 @@
 import { type Request, type Response, type NextFunction } from 'express';
-import { PriceRuleType, DiscountType, PriceAdjustmentType, ServiceCategory } from '@prisma/client';
+import {
+  PriceRuleType,
+  DiscountType,
+  PriceAdjustmentType,
+  ServiceCategory,
+} from '@prisma/client';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { prisma } from '../config/prisma.js';
 
@@ -66,7 +72,12 @@ export const getPriceRuleById = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Price rule ID is required'
+    );
 
     const priceRule = await prisma.priceRule.findUnique({
       where: { id },
@@ -222,7 +233,12 @@ export const updatePriceRule = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Price rule ID is required'
+    );
     const {
       name,
       description,
@@ -358,7 +374,12 @@ export const deletePriceRule = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Price rule ID is required'
+    );
 
     // Check if price rule exists
     const priceRuleExists = await prisma.priceRule.findUnique({

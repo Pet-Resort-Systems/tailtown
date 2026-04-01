@@ -1,7 +1,9 @@
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { type Request, type Response } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { smsService } from '../services/sms.service.js';
 import { prisma } from '../config/prisma.js';
+import { AppError } from '../middleware/error.middleware.js';
 
 /**
  * SMS Controller
@@ -76,7 +78,12 @@ export class SMSController {
    */
   async sendReservationReminder(req: TenantRequest, res: Response) {
     try {
-      const { reservationId } = req.params;
+      const reservationId = assertStringRouteParam(
+        req.params.reservationId,
+        req.originalUrl,
+        AppError.validationError,
+        'Reservation ID is required'
+      );
       const tenantId =
         req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -126,6 +133,12 @@ export class SMSController {
         data: result,
       });
     } catch (error: any) {
+      if (error instanceof AppError) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+      }
       console.error('Error sending reservation reminder:', error);
       res.status(500).json({
         success: false,
@@ -140,7 +153,12 @@ export class SMSController {
    */
   async sendReservationConfirmation(req: TenantRequest, res: Response) {
     try {
-      const { reservationId } = req.params;
+      const reservationId = assertStringRouteParam(
+        req.params.reservationId,
+        req.originalUrl,
+        AppError.validationError,
+        'Reservation ID is required'
+      );
       const tenantId =
         req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -190,6 +208,12 @@ export class SMSController {
         data: result,
       });
     } catch (error: any) {
+      if (error instanceof AppError) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+      }
       console.error('Error sending reservation confirmation:', error);
       res.status(500).json({
         success: false,
@@ -204,7 +228,12 @@ export class SMSController {
    */
   async sendWelcomeMessage(req: TenantRequest, res: Response) {
     try {
-      const { customerId } = req.params;
+      const customerId = assertStringRouteParam(
+        req.params.customerId,
+        req.originalUrl,
+        AppError.validationError,
+        'Customer ID is required'
+      );
       const tenantId =
         req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -244,6 +273,12 @@ export class SMSController {
         data: result,
       });
     } catch (error: any) {
+      if (error instanceof AppError) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+      }
       console.error('Error sending welcome message:', error);
       res.status(500).json({
         success: false,
@@ -340,7 +375,12 @@ export class SMSController {
    */
   async sendCheckInNotification(req: TenantRequest, res: Response) {
     try {
-      const { reservationId } = req.params;
+      const reservationId = assertStringRouteParam(
+        req.params.reservationId,
+        req.originalUrl,
+        AppError.validationError,
+        'Reservation ID is required'
+      );
       const tenantId =
         req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -383,6 +423,12 @@ export class SMSController {
         data: result,
       });
     } catch (error: any) {
+      if (error instanceof AppError) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+      }
       console.error('Error sending check-in notification:', error);
       res.status(500).json({
         success: false,
@@ -397,7 +443,12 @@ export class SMSController {
    */
   async sendCheckOutNotification(req: TenantRequest, res: Response) {
     try {
-      const { reservationId } = req.params;
+      const reservationId = assertStringRouteParam(
+        req.params.reservationId,
+        req.originalUrl,
+        AppError.validationError,
+        'Reservation ID is required'
+      );
       const tenantId =
         req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -440,6 +491,12 @@ export class SMSController {
         data: result,
       });
     } catch (error: any) {
+      if (error instanceof AppError) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+      }
       console.error('Error sending check-out notification:', error);
       res.status(500).json({
         success: false,

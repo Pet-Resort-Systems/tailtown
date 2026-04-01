@@ -1,7 +1,9 @@
 import { type Response } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 
 import { type AuthRequest } from '../middleware/auth.middleware.js';
 import { prisma } from '../config/prisma.js';
+import { AppError } from '../middleware/error.middleware.js';
 
 interface TenantRequest extends AuthRequest {
   tenantId?: string;
@@ -146,7 +148,12 @@ export const createAnnouncement = async (req: TenantRequest, res: Response) => {
  */
 export const updateAnnouncement = async (req: TenantRequest, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Announcement ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const { title, message, priority, type, startDate, endDate, isActive } =
@@ -174,6 +181,12 @@ export const updateAnnouncement = async (req: TenantRequest, res: Response) => {
       data: announcement,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        success: false,
+        error: error.message,
+      });
+    }
     console.error('Error updating announcement:', error);
     res.status(500).json({
       success: false,
@@ -187,7 +200,12 @@ export const updateAnnouncement = async (req: TenantRequest, res: Response) => {
  */
 export const deleteAnnouncement = async (req: TenantRequest, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Announcement ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -202,6 +220,12 @@ export const deleteAnnouncement = async (req: TenantRequest, res: Response) => {
       message: 'Announcement deleted successfully',
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        success: false,
+        error: error.message,
+      });
+    }
     console.error('Error deleting announcement:', error);
     res.status(500).json({
       success: false,
@@ -219,7 +243,12 @@ export const dismissAnnouncement = async (
   res: Response
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Announcement ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const userId = req.user?.id;
@@ -262,6 +291,12 @@ export const dismissAnnouncement = async (
       message: 'Announcement dismissed',
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        success: false,
+        error: error.message,
+      });
+    }
     console.error('Error dismissing announcement:', error);
     res.status(500).json({
       success: false,

@@ -7,6 +7,7 @@
 
 import { type Response, type NextFunction } from 'express';
 import { RecurrenceFrequency } from '@prisma/client';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { prisma } from '../config/prisma.js';
@@ -72,7 +73,12 @@ export const getCustomerStandingReservations = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { customerId } = req.params;
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
 
     const standingReservations = await prisma.standingReservation.findMany({
       where: { tenantId, customerId },
@@ -120,7 +126,12 @@ export const getStandingReservationById = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Standing reservation ID is required'
+    );
 
     const standingReservation = await prisma.standingReservation.findFirst({
       where: { id, tenantId },
@@ -314,7 +325,12 @@ export const updateStandingReservation = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Standing reservation ID is required'
+    );
     const updateData = req.body;
 
     // Verify exists
@@ -389,7 +405,12 @@ export const deleteStandingReservation = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Standing reservation ID is required'
+    );
 
     const existing = await prisma.standingReservation.findFirst({
       where: { id, tenantId },
@@ -418,7 +439,12 @@ export const generateReservations = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Standing reservation ID is required'
+    );
     const { untilDate } = req.body;
 
     const standingReservation = await prisma.standingReservation.findFirst({
@@ -517,7 +543,18 @@ export const skipInstance = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { id, instanceId } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Standing reservation ID is required'
+    );
+    const instanceId = assertStringRouteParam(
+      req.params.instanceId,
+      req.originalUrl,
+      AppError.validationError,
+      'Standing reservation instance ID is required'
+    );
     const { reason } = req.body;
 
     const instance = await prisma.standingReservationInstance.findFirst({
@@ -555,7 +592,12 @@ export const getUpcomingInstances = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Standing reservation ID is required'
+    );
     const { limit = 20 } = req.query;
 
     const instances = await prisma.standingReservationInstance.findMany({

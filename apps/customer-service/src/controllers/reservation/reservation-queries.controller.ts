@@ -14,6 +14,7 @@
 
 import { type Request, type Response, type NextFunction } from 'express';
 import { ReservationStatus } from '@prisma/client';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../../middleware/error.middleware.js';
 import { logger } from '../../utils/logger.js';
 import { prisma } from '../../config/prisma.js';
@@ -155,7 +156,12 @@ export const getReservationById = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Reservation ID is required'
+    );
 
     // Use full select for detail view
     const reservation = await prisma.reservation.findUnique({
@@ -185,7 +191,12 @@ export const getReservationsByCustomer = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId } = req.params;
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;
@@ -227,7 +238,12 @@ export const getUpcomingReservationsByCustomer = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId } = req.params;
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
     const now = new Date();
 
     // Use optimized select for list view
@@ -259,7 +275,12 @@ export const getPastReservationsByCustomer = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId } = req.params;
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
     const limit = Number(req.query.limit) || 20;
     const now = new Date();
 
@@ -301,7 +322,12 @@ export const getReservationsByPet = async (
   next: NextFunction
 ) => {
   try {
-    const { petId } = req.params;
+    const petId = assertStringRouteParam(
+      req.params.petId,
+      req.originalUrl,
+      AppError.validationError,
+      'Pet ID is required'
+    );
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;
@@ -390,7 +416,12 @@ export const getReservationsByStatus = async (
   next: NextFunction
 ) => {
   try {
-    const { status } = req.params;
+    const status = assertStringRouteParam(
+      req.params.status,
+      req.originalUrl,
+      AppError.validationError,
+      'Reservation status is required'
+    );
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;

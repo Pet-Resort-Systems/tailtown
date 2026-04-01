@@ -1,10 +1,12 @@
 import { type Request, type Response } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import {
   tenantService,
   type CreateTenantDto,
   type UpdateTenantDto,
 } from '../services/tenant.service.js';
 import { TenantStatus } from '@prisma/client';
+import { AppError } from '../middleware/error.middleware.js';
 import { type AuthRequest } from '../middleware/auth.middleware.js';
 import { logger } from '../utils/logger.js';
 import { deleteCache, getCacheKey } from '../utils/redis.js';
@@ -45,9 +47,15 @@ export class TenantController {
    * Get tenant by ID
    */
   async getTenantById(req: Request, res: Response) {
+    let tenantId: string | undefined;
     try {
-      const { id } = req.params;
-      const tenant = await tenantService.getTenantById(id);
+      tenantId = assertStringRouteParam(
+        req.params.id,
+        req.originalUrl,
+        AppError.validationError,
+        'Tenant ID is required'
+      );
+      const tenant = await tenantService.getTenantById(tenantId);
 
       if (!tenant) {
         return res.status(404).json({
@@ -61,8 +69,14 @@ export class TenantController {
         data: tenant,
       });
     } catch (error: any) {
+      if (error instanceof AppError) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+      }
       logger.error('Error fetching tenant', {
-        tenantId: req.params.id,
+        tenantId,
         error: error.message,
       });
       res.status(500).json({
@@ -78,8 +92,14 @@ export class TenantController {
    * Get tenant by subdomain
    */
   async getTenantBySubdomain(req: Request, res: Response) {
+    let subdomain: string | undefined;
     try {
-      const { subdomain } = req.params;
+      subdomain = assertStringRouteParam(
+        req.params.subdomain,
+        req.originalUrl,
+        AppError.validationError,
+        'Tenant subdomain is required'
+      );
       const tenant = await tenantService.getTenantBySubdomain(subdomain);
 
       if (!tenant) {
@@ -94,8 +114,14 @@ export class TenantController {
         data: tenant,
       });
     } catch (error: any) {
+      if (error instanceof AppError) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+      }
       logger.error('Error fetching tenant by subdomain', {
-        subdomain: req.params.subdomain,
+        subdomain,
         error: error.message,
       });
       res.status(500).json({
@@ -184,11 +210,17 @@ export class TenantController {
    * Update tenant information
    */
   async updateTenant(req: Request, res: Response) {
+    let tenantId: string | undefined;
     try {
-      const { id } = req.params;
+      tenantId = assertStringRouteParam(
+        req.params.id,
+        req.originalUrl,
+        AppError.validationError,
+        'Tenant ID is required'
+      );
       const data: UpdateTenantDto = req.body;
 
-      const tenant = await tenantService.updateTenant(id, data);
+      const tenant = await tenantService.updateTenant(tenantId, data);
 
       // Invalidate tenant cache when updated
       if (tenant.subdomain) {
@@ -196,7 +228,7 @@ export class TenantController {
         await deleteCache(cacheKey);
         logger.debug('Tenant cache invalidated', {
           subdomain: tenant.subdomain,
-          tenantId: id,
+          tenantId,
         });
       }
 
@@ -206,8 +238,14 @@ export class TenantController {
         message: 'Tenant updated successfully',
       });
     } catch (error: any) {
+      if (error instanceof AppError) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+      }
       logger.error('Error updating tenant', {
-        tenantId: req.params.id,
+        tenantId,
         error: error.message,
       });
       res.status(500).json({
@@ -298,7 +336,12 @@ export class TenantController {
    */
   async pauseTenant(req: Request, res: Response) {
     try {
-      const { id } = req.params;
+      const id = assertStringRouteParam(
+        req.params.id,
+        req.originalUrl,
+        AppError.validationError,
+        'Tenant ID is required'
+      );
       const tenant = await tenantService.pauseTenant(id);
 
       res.json({
@@ -307,6 +350,12 @@ export class TenantController {
         message: 'Tenant paused successfully',
       });
     } catch (error: any) {
+      if (error instanceof AppError) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+      }
       console.error('Error pausing tenant:', error);
       res.status(500).json({
         success: false,
@@ -322,7 +371,12 @@ export class TenantController {
    */
   async reactivateTenant(req: Request, res: Response) {
     try {
-      const { id } = req.params;
+      const id = assertStringRouteParam(
+        req.params.id,
+        req.originalUrl,
+        AppError.validationError,
+        'Tenant ID is required'
+      );
       const tenant = await tenantService.reactivateTenant(id);
 
       res.json({
@@ -331,6 +385,12 @@ export class TenantController {
         message: 'Tenant reactivated successfully',
       });
     } catch (error: any) {
+      if (error instanceof AppError) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+      }
       console.error('Error reactivating tenant:', error);
       res.status(500).json({
         success: false,
@@ -346,7 +406,12 @@ export class TenantController {
    */
   async deleteTenant(req: Request, res: Response) {
     try {
-      const { id } = req.params;
+      const id = assertStringRouteParam(
+        req.params.id,
+        req.originalUrl,
+        AppError.validationError,
+        'Tenant ID is required'
+      );
       const tenant = await tenantService.deleteTenant(id);
 
       res.json({
@@ -355,6 +420,12 @@ export class TenantController {
         message: 'Tenant deleted successfully',
       });
     } catch (error: any) {
+      if (error instanceof AppError) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+      }
       console.error('Error deleting tenant:', error);
       res.status(500).json({
         success: false,
@@ -370,7 +441,12 @@ export class TenantController {
    */
   async getTenantUsage(req: Request, res: Response) {
     try {
-      const { id } = req.params;
+      const id = assertStringRouteParam(
+        req.params.id,
+        req.originalUrl,
+        AppError.validationError,
+        'Tenant ID is required'
+      );
       const usage = await tenantService.getTenantUsage(id);
 
       res.json({
@@ -378,6 +454,12 @@ export class TenantController {
         data: usage,
       });
     } catch (error: any) {
+      if (error instanceof AppError) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+      }
       console.error('Error fetching tenant usage:', error);
       res.status(500).json({
         success: false,

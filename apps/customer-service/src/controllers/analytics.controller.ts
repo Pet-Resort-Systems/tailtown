@@ -7,6 +7,7 @@
  */
 
 import { type Request, type Response, type NextFunction } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import financialService from '../services/financialService.js';
 import { prisma } from '../config/prisma.js';
@@ -240,7 +241,12 @@ export const getCustomerReport = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId } = req.params;
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
     const { period = 'all', startDate, endDate } = req.query;
     const tenantId = (req as any).tenantId;
 
@@ -368,4 +374,3 @@ const getDateFilter = (
 };
 
 // Missing import for prisma client in this controller
-

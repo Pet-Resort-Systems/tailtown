@@ -1,7 +1,10 @@
 import { type Request, type Response, type NextFunction } from 'express';
 import { ResourceType } from '@prisma/client';
+import { assertStringRouteParam } from '@tailtown/shared';
 import AppError from '../utils/appError.js';
 import { prisma } from '../config/prisma.js';
+
+const createValidationError = (message: string) => new AppError(message, 400);
 
 // Suite types stored in attributes
 enum SuiteType {
@@ -370,7 +373,12 @@ export const updateSuiteCleaning = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      createValidationError,
+      'Suite ID is required'
+    );
     const { maintenanceStatus, notes } = req.body;
 
     // First get the current resource and its attributes

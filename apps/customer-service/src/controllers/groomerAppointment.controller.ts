@@ -1,5 +1,6 @@
 import { type Request, type Response, type NextFunction } from 'express';
 
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { prisma } from '../config/prisma.js';
@@ -82,7 +83,12 @@ export const getGroomerAppointmentById = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Appointment ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -194,7 +200,12 @@ export const updateGroomerAppointment = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Appointment ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -250,7 +261,12 @@ export const reassignGroomerAppointment = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Appointment ID is required'
+    );
     const { newGroomerId, reason } = req.body;
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
@@ -312,7 +328,12 @@ export const startGroomerAppointment = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Appointment ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -343,7 +364,12 @@ export const completeGroomerAppointment = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Appointment ID is required'
+    );
     const { notes } = req.body;
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
@@ -376,7 +402,12 @@ export const cancelGroomerAppointment = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Appointment ID is required'
+    );
     const { reason } = req.body;
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
@@ -412,7 +443,12 @@ export const deleteGroomerAppointment = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Appointment ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -439,7 +475,12 @@ export const getGroomerSchedule = async (
   next: NextFunction
 ) => {
   try {
-    const { groomerId } = req.params;
+    const groomerId = assertStringRouteParam(
+      req.params.groomerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Groomer ID is required'
+    );
     const { startDate, endDate } = req.query;
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');

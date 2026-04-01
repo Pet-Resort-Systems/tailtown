@@ -7,8 +7,13 @@
 
 import { type Request, type Response, type NextFunction } from 'express';
 
-import { createAuditLog, AuditAction } from '../../services/audit-log.service.js';
+import { assertStringRouteParam } from '@tailtown/shared';
+import {
+  createAuditLog,
+  AuditAction,
+} from '../../services/audit-log.service.js';
 import { type SuperAdminRequest } from '../../middleware/require-super-admin.middleware.js';
+import { AppError } from '../../middleware/error.middleware.js';
 import bcrypt from 'bcrypt';
 import { prisma } from '../../config/prisma.js';
 
@@ -217,7 +222,12 @@ export const cloneTenant = async (
 ) => {
   try {
     const superAdminId = (req as SuperAdminRequest).superAdmin?.id;
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Tenant ID is required'
+    );
     const { businessName, subdomain, contactName, contactEmail, contactPhone } =
       req.body;
 
@@ -306,6 +316,12 @@ export const cloneTenant = async (
       data: newTenant,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        success: false,
+        message: error.message,
+      });
+    }
     console.error('[SuperAdmin] Clone tenant error:', error);
     next(error);
   }
@@ -322,7 +338,12 @@ export const updateTenant = async (
 ) => {
   try {
     const superAdminId = (req as SuperAdminRequest).superAdmin?.id;
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Tenant ID is required'
+    );
     const {
       isProduction,
       isTemplate,
@@ -384,6 +405,12 @@ export const updateTenant = async (
       data: updatedTenant,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        success: false,
+        message: error.message,
+      });
+    }
     console.error('[SuperAdmin] Update tenant error:', error);
     next(error);
   }
@@ -399,7 +426,12 @@ export const getTenant = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Tenant ID is required'
+    );
 
     const tenant = await prisma.tenant.findUnique({
       where: { id },
@@ -430,6 +462,12 @@ export const getTenant = async (
       data: tenant,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        success: false,
+        message: error.message,
+      });
+    }
     console.error('[SuperAdmin] Get tenant error:', error);
     next(error);
   }

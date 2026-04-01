@@ -1,5 +1,6 @@
 import { type Response, type NextFunction } from 'express';
 
+import { assertStringRouteParam } from '@tailtown/shared';
 import { type AuthRequest } from '../middleware/auth.middleware.js';
 import { AppError, ErrorType } from '../middleware/error.middleware.js';
 import { prisma } from '../config/prisma.js';
@@ -136,7 +137,12 @@ export const getChannelMessages = async (
     const tenantId =
       req.user?.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const staffId = req.user?.id;
-    const { channelId } = req.params;
+    const channelId = assertStringRouteParam(
+      req.params.channelId,
+      req.originalUrl,
+      AppError.validationError,
+      'Channel ID is required'
+    );
     const { limit = 50, before } = req.query;
 
     if (!staffId) {
@@ -219,7 +225,12 @@ export const sendChannelMessage = async (
     const tenantId =
       req.user?.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     const staffId = req.user?.id;
-    const { channelId } = req.params;
+    const channelId = assertStringRouteParam(
+      req.params.channelId,
+      req.originalUrl,
+      AppError.validationError,
+      'Channel ID is required'
+    );
     const { content, mentions } = req.body;
 
     if (!staffId) {
@@ -305,7 +316,12 @@ export const markChannelAsRead = async (
 ) => {
   try {
     const staffId = req.user?.id;
-    const { channelId } = req.params;
+    const channelId = assertStringRouteParam(
+      req.params.channelId,
+      req.originalUrl,
+      AppError.validationError,
+      'Channel ID is required'
+    );
 
     if (!staffId) {
       return next(

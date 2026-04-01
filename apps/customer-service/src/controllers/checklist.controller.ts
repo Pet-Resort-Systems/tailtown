@@ -1,6 +1,7 @@
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { type Request, type Response, type NextFunction } from 'express';
 
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { prisma } from '../config/prisma.js';
 
@@ -46,7 +47,12 @@ export const getTemplateById = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Checklist template ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -134,7 +140,12 @@ export const updateTemplate = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Checklist template ID is required'
+    );
     const {
       name,
       description,
@@ -190,7 +201,12 @@ export const deleteTemplate = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Checklist template ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -287,7 +303,12 @@ export const getChecklistInstance = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Checklist instance ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -323,7 +344,12 @@ export const updateChecklistItem = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Checklist instance ID is required'
+    );
     const { templateItemId, ...values } = req.body;
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
@@ -377,7 +403,12 @@ export const completeChecklist = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Checklist instance ID is required'
+    );
     const { notes } = req.body;
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');

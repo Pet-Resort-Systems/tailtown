@@ -1,5 +1,6 @@
 import { type Request, type Response, type NextFunction } from 'express';
 
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { prisma } from '../config/prisma.js';
 
@@ -10,11 +11,12 @@ export const getCustomerPayments = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId } = req.params;
-
-    if (!customerId) {
-      return next(new AppError('Customer ID is required', 400));
-    }
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
 
     const payments = await prisma.payment.findMany({
       where: { customerId },
@@ -51,11 +53,12 @@ export const getPaymentById = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
-
-    if (!id) {
-      return next(new AppError('Payment ID is required', 400));
-    }
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Payment ID is required'
+    );
 
     const payment = await prisma.payment.findUnique({
       where: { id },

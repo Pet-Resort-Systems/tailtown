@@ -11,6 +11,7 @@
 
 import { type Request, type Response, type NextFunction } from 'express';
 
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../../middleware/error.middleware.js';
 import { prisma } from '../../config/prisma.js';
 
@@ -227,7 +228,12 @@ export const getReportCard = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Report card ID is required'
+    );
     const tenantId = req.tenantId;
 
     const reportCard = await prisma.reportCard.findFirst({
@@ -261,6 +267,9 @@ export const getReportCard = async (
 
     res.json({ success: true, data: reportCard });
   } catch (error: any) {
+    if (error instanceof AppError) {
+      return next(error);
+    }
     next(new AppError(error.message || 'Failed to fetch report card', 500));
   }
 };
@@ -275,7 +284,12 @@ export const updateReportCard = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Report card ID is required'
+    );
     const tenantId = req.tenantId;
 
     const reportCard = await prisma.reportCard.findFirst({
@@ -328,6 +342,9 @@ export const updateReportCard = async (
 
     res.json({ success: true, data: updated });
   } catch (error: any) {
+    if (error instanceof AppError) {
+      return next(error);
+    }
     next(new AppError(error.message || 'Failed to update report card', 500));
   }
 };
@@ -342,7 +359,12 @@ export const deleteReportCard = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Report card ID is required'
+    );
     const tenantId = req.tenantId;
 
     const reportCard = await prisma.reportCard.findFirst({
@@ -357,6 +379,9 @@ export const deleteReportCard = async (
 
     res.json({ success: true, message: 'Report card deleted successfully' });
   } catch (error: any) {
+    if (error instanceof AppError) {
+      return next(error);
+    }
     next(new AppError(error.message || 'Failed to delete report card', 500));
   }
 };

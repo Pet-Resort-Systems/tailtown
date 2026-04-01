@@ -11,11 +11,14 @@
  */
 
 import { type Response, type NextFunction } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 
 import AppError from '../../utils/appError.js';
 import { type TenantRequest } from '../../middleware/tenant.middleware.js';
 import { logger } from '../../utils/logger.js';
 import { prisma } from '../../config/prisma.js';
+
+const createValidationError = (message: string) => new AppError(message, 400);
 
 /**
  * Create availability slot
@@ -26,7 +29,12 @@ export const createAvailabilitySlot = async (
   next: NextFunction
 ) => {
   try {
-    const { resourceId } = req.params;
+    const resourceId = assertStringRouteParam(
+      req.params.resourceId,
+      req.originalUrl,
+      createValidationError,
+      'Resource ID is required'
+    );
     const slotData = req.body;
 
     const slot = await prisma.resourceAvailability.create({
@@ -54,7 +62,12 @@ export const updateAvailabilitySlot = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      createValidationError,
+      'Availability slot ID is required'
+    );
     const slotData = req.body;
 
     const slot = await prisma.resourceAvailability.update({
@@ -82,7 +95,12 @@ export const deleteAvailabilitySlot = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      createValidationError,
+      'Availability slot ID is required'
+    );
 
     await prisma.resourceAvailability.delete({ where: { id } });
 

@@ -4,6 +4,7 @@
  */
 
 import { type Response, type NextFunction } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { prisma } from '../config/prisma.js';
 import { AppError } from '../middleware/error.middleware.js';
@@ -18,7 +19,12 @@ export const getCustomerPaymentMethods = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId } = req.params;
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
     const tenantId = req.tenantId!;
 
     const paymentMethods = await prisma.customerPaymentMethod.findMany({
@@ -62,7 +68,12 @@ export const createCustomerPaymentMethod = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId } = req.params;
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
     const tenantId = req.tenantId!;
     const {
       token,
@@ -172,7 +183,18 @@ export const updateCustomerPaymentMethod = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId, methodId } = req.params;
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
+    const methodId = assertStringRouteParam(
+      req.params.methodId,
+      req.originalUrl,
+      AppError.validationError,
+      'Payment method ID is required'
+    );
     const tenantId = req.tenantId!;
     const { nickname, setAsDefault } = req.body;
 
@@ -237,7 +259,18 @@ export const deleteCustomerPaymentMethod = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId, methodId } = req.params;
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
+    const methodId = assertStringRouteParam(
+      req.params.methodId,
+      req.originalUrl,
+      AppError.validationError,
+      'Payment method ID is required'
+    );
     const tenantId = req.tenantId!;
 
     // Verify payment method exists
@@ -293,7 +326,18 @@ export const chargeCustomerPaymentMethod = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId, methodId } = req.params;
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
+    const methodId = assertStringRouteParam(
+      req.params.methodId,
+      req.originalUrl,
+      AppError.validationError,
+      'Payment method ID is required'
+    );
     const tenantId = req.tenantId!;
     const { amount, invoiceId, orderId, description } = req.body;
 
@@ -408,7 +452,12 @@ export const getDefaultPaymentMethod = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId } = req.params;
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
     const tenantId = req.tenantId!;
 
     const paymentMethod = await prisma.customerPaymentMethod.findFirst({

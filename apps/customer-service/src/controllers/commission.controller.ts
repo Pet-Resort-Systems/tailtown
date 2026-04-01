@@ -7,6 +7,7 @@
 
 import { type Response, type NextFunction } from 'express';
 import { CommissionType } from '@prisma/client';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { prisma } from '../config/prisma.js';
@@ -20,7 +21,12 @@ export const getStaffCommissions = async (
   next: NextFunction
 ) => {
   try {
-    const { staffId } = req.params;
+    const staffId = assertStringRouteParam(
+      req.params.staffId,
+      req.originalUrl,
+      AppError.validationError,
+      'Staff ID is required'
+    );
     const tenantId = req.tenantId!;
 
     const commissions = await prisma.staffCommission.findMany({
@@ -58,7 +64,12 @@ export const getCommissionById = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Commission ID is required'
+    );
     const tenantId = req.tenantId!;
 
     const commission = await prisma.staffCommission.findFirst({
@@ -203,7 +214,12 @@ export const updateCommission = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Commission ID is required'
+    );
     const tenantId = req.tenantId!;
     const {
       name,
@@ -298,7 +314,12 @@ export const deleteCommission = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Commission ID is required'
+    );
     const tenantId = req.tenantId!;
 
     const existing = await prisma.staffCommission.findFirst({
@@ -448,7 +469,12 @@ export const getCommissionReport = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { staffId } = req.params;
+    const staffId = assertStringRouteParam(
+      req.params.staffId,
+      req.originalUrl,
+      AppError.validationError,
+      'Staff ID is required'
+    );
     const { startDate, endDate } = req.query;
 
     // Get staff member's commissions

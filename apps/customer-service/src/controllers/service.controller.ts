@@ -1,5 +1,6 @@
 import { type Response, type NextFunction } from 'express';
 import { ServiceCategory } from '@prisma/client';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { logger } from '../utils/logger.js';
@@ -150,7 +151,12 @@ export const getServiceById = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Service ID is required'
+    );
     const tenantId = req.tenantId!;
     const includeDeleted = req.query.includeDeleted === 'true';
 
@@ -291,7 +297,12 @@ export const updateService = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Service ID is required'
+    );
     const serviceData = req.body;
     const { availableAddOns, ...mainServiceData } = serviceData;
     logger.debug('Updating service', {
@@ -356,7 +367,12 @@ export const deleteService = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Service ID is required'
+    );
     const forceDelete = req.query.force === 'true';
 
     // Check if service exists
@@ -466,7 +482,12 @@ export const deactivateService = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Service ID is required'
+    );
 
     // Check if service exists
     const serviceExists = await prisma.service.findUnique({
@@ -500,7 +521,12 @@ export const getServiceAddOns = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Service ID is required'
+    );
 
     // Check if service exists
     const serviceExists = await prisma.service.findUnique({
@@ -534,7 +560,12 @@ export const getServiceReservations = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Service ID is required'
+    );
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;

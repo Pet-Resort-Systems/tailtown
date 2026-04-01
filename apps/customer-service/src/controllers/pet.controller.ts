@@ -1,5 +1,6 @@
 import { type Response, type NextFunction } from 'express';
 
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import multer from 'multer';
@@ -139,7 +140,12 @@ export const getPetById = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Pet ID is required'
+    );
     const tenantId = req.tenantId!;
 
     const pet = await prisma.pet.findFirst({
@@ -239,7 +245,12 @@ export const getPetReservations = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Pet ID is required'
+    );
 
     const pet = await prisma.pet.findUnique({
       where: { id },
@@ -354,7 +365,12 @@ export const updatePet = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Pet ID is required'
+    );
     let petData = { ...req.body };
 
     // Handle empty date strings
@@ -435,7 +451,12 @@ export const uploadPetPhoto = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Pet ID is required'
+    );
 
     // Check if pet exists
     const pet = await prisma.pet.findUnique({
@@ -493,7 +514,12 @@ export const getPetsByCustomer = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId } = req.params;
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
 
     // Check if customer exists
     const customer = await prisma.customer.findUnique({
@@ -527,7 +553,12 @@ export const deletePet = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Pet ID is required'
+    );
 
     await prisma.pet.delete({
       where: { id },
@@ -554,7 +585,12 @@ export const deactivatePet = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Pet ID is required'
+    );
     const tenantId = req.tenantId!;
     const { reason, deactivatedAt } = req.body;
 
@@ -597,7 +633,12 @@ export const reactivatePet = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Pet ID is required'
+    );
     const tenantId = req.tenantId!;
 
     // Check if pet exists and belongs to this tenant

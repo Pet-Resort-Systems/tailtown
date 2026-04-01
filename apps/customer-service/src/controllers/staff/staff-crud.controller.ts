@@ -10,6 +10,7 @@
  */
 
 import { type Request, type Response, type NextFunction } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 
 import { AppError } from '../../middleware/error.middleware.js';
 import bcrypt from 'bcrypt';
@@ -120,7 +121,12 @@ export const getStaffById = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Staff ID is required'
+    );
 
     const staff = await prisma.staff.findFirst({
       where: {
@@ -218,7 +224,12 @@ export const updateStaff = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Staff ID is required'
+    );
     const staffData = req.body;
 
     // Check if staff exists and get current state for audit
@@ -294,7 +305,12 @@ export const deleteStaff = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Staff ID is required'
+    );
 
     // Check if staff exists and get full record for audit
     const existingStaff = await prisma.staff.findUnique({

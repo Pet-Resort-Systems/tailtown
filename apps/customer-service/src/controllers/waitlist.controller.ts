@@ -9,6 +9,7 @@
  */
 
 import { type Request, type Response, type NextFunction } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 
 import AppError from '../utils/appError.js';
 import { prisma } from '../config/prisma.js';
@@ -22,6 +23,8 @@ export interface AuthRequest extends Request {
   };
   tenantId?: string;
 }
+
+const createValidationError = (message: string) => new AppError(message, 400);
 
 /**
  * Add customer to waitlist
@@ -218,7 +221,12 @@ export const removeFromWaitlist = async (
 ) => {
   try {
     const tenantId = req.tenantId;
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      createValidationError,
+      'Waitlist entry ID is required'
+    );
 
     if (!tenantId) {
       return next(new AppError('Tenant ID is required', 400));
@@ -265,7 +273,12 @@ export const getWaitlistPosition = async (
 ) => {
   try {
     const tenantId = req.tenantId;
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      createValidationError,
+      'Waitlist entry ID is required'
+    );
 
     if (!tenantId) {
       return next(new AppError('Tenant ID is required', 400));
@@ -415,7 +428,12 @@ export const updateWaitlistEntry = async (
 ) => {
   try {
     const tenantId = req.tenantId;
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      createValidationError,
+      'Waitlist entry ID is required'
+    );
     const { notes, status, position } = req.body;
 
     if (!tenantId) {
@@ -467,7 +485,12 @@ export const convertToReservation = async (
 ) => {
   try {
     const tenantId = req.tenantId;
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      createValidationError,
+      'Waitlist entry ID is required'
+    );
     const { reservationId } = req.body;
 
     if (!tenantId) {

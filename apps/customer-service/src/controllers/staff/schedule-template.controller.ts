@@ -8,6 +8,7 @@
  */
 
 import { type Request, type Response, type NextFunction } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 
 import { AppError } from '../../middleware/error.middleware.js';
 import { logger } from '../../utils/logger.js';
@@ -32,7 +33,12 @@ export const getStaffTemplates = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { staffId } = req.params;
+    const staffId = assertStringRouteParam(
+      req.params.staffId,
+      req.originalUrl,
+      AppError.validationError,
+      'Staff ID is required'
+    );
     const { activeOnly } = req.query;
 
     const where: any = { tenantId, staffId };
@@ -111,7 +117,12 @@ export const createTemplate = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { staffId } = req.params;
+    const staffId = assertStringRouteParam(
+      req.params.staffId,
+      req.originalUrl,
+      AppError.validationError,
+      'Staff ID is required'
+    );
     const {
       name,
       rotationType,
@@ -190,7 +201,12 @@ export const updateTemplate = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { templateId } = req.params;
+    const templateId = assertStringRouteParam(
+      req.params.templateId,
+      req.originalUrl,
+      AppError.validationError,
+      'Template ID is required'
+    );
     const {
       name,
       rotationType,
@@ -251,7 +267,12 @@ export const deleteTemplate = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { templateId } = req.params;
+    const templateId = assertStringRouteParam(
+      req.params.templateId,
+      req.originalUrl,
+      AppError.validationError,
+      'Template ID is required'
+    );
 
     const existing = await prisma.scheduleTemplate.findFirst({
       where: { id: templateId, tenantId },
@@ -288,7 +309,12 @@ export const addTemplateEntry = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { templateId } = req.params;
+    const templateId = assertStringRouteParam(
+      req.params.templateId,
+      req.originalUrl,
+      AppError.validationError,
+      'Template ID is required'
+    );
     const {
       dayOfWeek,
       rotationWeek,
@@ -344,7 +370,12 @@ export const updateTemplateEntry = async (
   next: NextFunction
 ) => {
   try {
-    const { entryId } = req.params;
+    const entryId = assertStringRouteParam(
+      req.params.entryId,
+      req.originalUrl,
+      AppError.validationError,
+      'Entry ID is required'
+    );
     const {
       dayOfWeek,
       rotationWeek,
@@ -394,7 +425,12 @@ export const deleteTemplateEntry = async (
   next: NextFunction
 ) => {
   try {
-    const { entryId } = req.params;
+    const entryId = assertStringRouteParam(
+      req.params.entryId,
+      req.originalUrl,
+      AppError.validationError,
+      'Entry ID is required'
+    );
 
     const existing = await prisma.scheduleTemplateEntry.findUnique({
       where: { id: entryId },
@@ -431,7 +467,12 @@ export const generateSchedules = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { templateId } = req.params;
+    const templateId = assertStringRouteParam(
+      req.params.templateId,
+      req.originalUrl,
+      AppError.validationError,
+      'Template ID is required'
+    );
     const { startDate, endDate } = req.body;
 
     const template = await prisma.scheduleTemplate.findFirst({
@@ -828,7 +869,12 @@ export const updateHoliday = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { holidayId } = req.params;
+    const holidayId = assertStringRouteParam(
+      req.params.holidayId,
+      req.originalUrl,
+      AppError.validationError,
+      'Holiday ID is required'
+    );
     const { name, date, isRecurring, isClosed, notes } = req.body;
 
     const existing = await prisma.businessHoliday.findFirst({
@@ -869,7 +915,12 @@ export const deleteHoliday = async (
 ) => {
   try {
     const tenantId = req.tenantId!;
-    const { holidayId } = req.params;
+    const holidayId = assertStringRouteParam(
+      req.params.holidayId,
+      req.originalUrl,
+      AppError.validationError,
+      'Holiday ID is required'
+    );
 
     const existing = await prisma.businessHoliday.findFirst({
       where: { id: holidayId, tenantId },

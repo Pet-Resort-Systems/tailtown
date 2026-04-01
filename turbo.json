@@ -6,6 +6,12 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**", "build/**"]
     },
+    "typecheck": {
+      "dependsOn": ["^typecheck"]
+    },
+    "typecheck:tsgo": {
+      "dependsOn": ["^typecheck:tsgo"]
+    },
     "dev": {
       "persistent": true,
       "cache": false

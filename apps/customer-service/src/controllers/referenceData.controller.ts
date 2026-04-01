@@ -6,7 +6,9 @@ import { type TenantRequest } from '../middleware/tenant.middleware.js';
  */
 
 import { type Request, type Response, type NextFunction } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { prisma } from '../config/prisma.js';
+import { AppError } from '../middleware/error.middleware.js';
 
 /**
  * Get all breeds, optionally filtered by species
@@ -161,7 +163,12 @@ export const getPetTemperaments = async (
   next: NextFunction
 ) => {
   try {
-    const { petId } = req.params;
+    const petId = assertStringRouteParam(
+      req.params.petId,
+      req.originalUrl,
+      AppError.validationError,
+      'Pet ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -194,7 +201,12 @@ export const updatePetTemperaments = async (
   next: NextFunction
 ) => {
   try {
-    const { petId } = req.params;
+    const petId = assertStringRouteParam(
+      req.params.petId,
+      req.originalUrl,
+      AppError.validationError,
+      'Pet ID is required'
+    );
     const { temperaments } = req.body;
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');

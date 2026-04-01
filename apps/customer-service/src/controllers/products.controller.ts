@@ -1,7 +1,9 @@
 import { type Request, type Response } from 'express';
 
+import { assertStringRouteParam } from '@tailtown/shared';
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { prisma } from '../config/prisma.js';
+import { AppError } from '../middleware/error.middleware.js';
 import {
   getCache,
   setCache,
@@ -92,7 +94,12 @@ export const getAllProducts = async (req: TenantRequest, res: Response) => {
 // Get single product
 export const getProductById = async (req: TenantRequest, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Product ID is required'
+    );
     if (!req.tenantId) {
       return res.status(400).json({
         success: false,
@@ -131,6 +138,12 @@ export const getProductById = async (req: TenantRequest, res: Response) => {
       data: product,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        status: 'error',
+        message: error.message,
+      });
+    }
     console.error('Error fetching product:', error);
     res.status(500).json({
       status: 'error',
@@ -271,7 +284,12 @@ export const createProduct = async (req: TenantRequest, res: Response) => {
 // Update product
 export const updateProduct = async (req: TenantRequest, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Product ID is required'
+    );
     if (!req.tenantId) {
       return res.status(400).json({
         success: false,
@@ -375,6 +393,12 @@ export const updateProduct = async (req: TenantRequest, res: Response) => {
       data: product,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        status: 'error',
+        message: error.message,
+      });
+    }
     console.error('Error updating product:', error);
     res.status(500).json({
       status: 'error',
@@ -386,7 +410,12 @@ export const updateProduct = async (req: TenantRequest, res: Response) => {
 // Delete product
 export const deleteProduct = async (req: TenantRequest, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Product ID is required'
+    );
     if (!req.tenantId) {
       return res.status(400).json({
         success: false,
@@ -417,6 +446,12 @@ export const deleteProduct = async (req: TenantRequest, res: Response) => {
       message: 'Product deleted successfully',
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        status: 'error',
+        message: error.message,
+      });
+    }
     console.error('Error deleting product:', error);
     res.status(500).json({
       status: 'error',
@@ -432,7 +467,12 @@ export const deleteProduct = async (req: TenantRequest, res: Response) => {
 // Adjust inventory
 export const adjustInventory = async (req: TenantRequest, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Product ID is required'
+    );
     if (!req.tenantId) {
       return res.status(400).json({
         success: false,
@@ -505,6 +545,12 @@ export const adjustInventory = async (req: TenantRequest, res: Response) => {
       data: updatedProduct,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        status: 'error',
+        message: error.message,
+      });
+    }
     console.error('Error adjusting inventory:', error);
     res.status(500).json({
       status: 'error',
@@ -516,7 +562,12 @@ export const adjustInventory = async (req: TenantRequest, res: Response) => {
 // Get inventory logs
 export const getInventoryLogs = async (req: TenantRequest, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Product ID is required'
+    );
     if (!req.tenantId) {
       return res.status(400).json({
         success: false,
@@ -541,6 +592,12 @@ export const getInventoryLogs = async (req: TenantRequest, res: Response) => {
       data: logs,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        status: 'error',
+        message: error.message,
+      });
+    }
     console.error('Error fetching inventory logs:', error);
     res.status(500).json({
       status: 'error',

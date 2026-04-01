@@ -9,6 +9,7 @@
  */
 
 import { type Request, type Response, type NextFunction } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 
 import { AppError } from '../../middleware/error.middleware.js';
 import { logger } from '../../utils/logger.js';
@@ -23,7 +24,12 @@ export const getStaffTimeOff = async (
   next: NextFunction
 ) => {
   try {
-    const { staffId } = req.params;
+    const staffId = assertStringRouteParam(
+      req.params.staffId,
+      req.originalUrl,
+      AppError.validationError,
+      'Staff ID is required'
+    );
     const status = req.query.status as string;
 
     // Build where condition
@@ -56,7 +62,12 @@ export const createStaffTimeOff = async (
   next: NextFunction
 ) => {
   try {
-    const { staffId } = req.params;
+    const staffId = assertStringRouteParam(
+      req.params.staffId,
+      req.originalUrl,
+      AppError.validationError,
+      'Staff ID is required'
+    );
     const timeOffData = req.body;
 
     // Validate required fields
@@ -122,7 +133,12 @@ export const updateStaffTimeOff = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Time off ID is required'
+    );
     const timeOffData = req.body;
 
     // Check if time off exists
@@ -204,7 +220,12 @@ export const deleteStaffTimeOff = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Time off ID is required'
+    );
 
     // Check if time off exists
     const existingTimeOff = await prisma.staffTimeOff.findUnique({

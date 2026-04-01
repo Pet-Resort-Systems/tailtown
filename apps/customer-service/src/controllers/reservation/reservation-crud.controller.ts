@@ -9,6 +9,7 @@
 
 import { type Response, type NextFunction } from 'express';
 import { ReservationStatus } from '@prisma/client';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { type TenantRequest } from '../../middleware/tenant.middleware.js';
 import { AppError } from '../../middleware/error.middleware.js';
 import { logger } from '../../utils/logger.js';
@@ -278,7 +279,12 @@ export const updateReservation = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Reservation ID is required'
+    );
     const { suiteType, ...reservationData } = req.body;
 
     // Validate status if being updated
@@ -463,7 +469,12 @@ export const deleteReservation = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Reservation ID is required'
+    );
     const tenantId = req.tenantId;
 
     // Get reservation before deletion for audit

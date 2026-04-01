@@ -12,6 +12,7 @@
 
 import { type Request, type Response, type NextFunction } from 'express';
 
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../../middleware/error.middleware.js';
 import { logger } from '../../utils/logger.js';
 import { prisma } from '../../config/prisma.js';
@@ -36,7 +37,12 @@ export const sendReportCard = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Report card ID is required'
+    );
     const tenantId = req.tenantId;
     const { sendEmail = true, sendSMS = true } = req.body;
 
@@ -79,6 +85,9 @@ export const sendReportCard = async (
       message: 'Report card sent successfully',
     });
   } catch (error: any) {
+    if (error instanceof AppError) {
+      return next(error);
+    }
     next(new AppError(error.message || 'Failed to send report card', 500));
   }
 };
@@ -147,6 +156,9 @@ export const bulkCreateReportCards = async (
       data: { created: created.length, reportCards: created },
     });
   } catch (error: any) {
+    if (error instanceof AppError) {
+      return next(error);
+    }
     next(
       new AppError(error.message || 'Failed to create bulk report cards', 500)
     );
@@ -193,6 +205,9 @@ export const bulkSendReportCards = async (
       message: `${result.count} report cards sent successfully`,
     });
   } catch (error: any) {
+    if (error instanceof AppError) {
+      return next(error);
+    }
     next(
       new AppError(error.message || 'Failed to send bulk report cards', 500)
     );
@@ -209,7 +224,12 @@ export const getCustomerReportCards = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId } = req.params;
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
     const tenantId = req.tenantId;
 
     const reportCards = await prisma.reportCard.findMany({
@@ -228,6 +248,9 @@ export const getCustomerReportCards = async (
 
     res.json({ success: true, data: reportCards });
   } catch (error: any) {
+    if (error instanceof AppError) {
+      return next(error);
+    }
     next(
       new AppError(
         error.message || 'Failed to fetch customer report cards',
@@ -247,7 +270,12 @@ export const getPetReportCards = async (
   next: NextFunction
 ) => {
   try {
-    const { petId } = req.params;
+    const petId = assertStringRouteParam(
+      req.params.petId,
+      req.originalUrl,
+      AppError.validationError,
+      'Pet ID is required'
+    );
     const tenantId = req.tenantId;
 
     const reportCards = await prisma.reportCard.findMany({
@@ -261,6 +289,9 @@ export const getPetReportCards = async (
 
     res.json({ success: true, data: reportCards });
   } catch (error: any) {
+    if (error instanceof AppError) {
+      return next(error);
+    }
     next(
       new AppError(error.message || 'Failed to fetch pet report cards', 500)
     );
@@ -277,7 +308,12 @@ export const getReservationReportCards = async (
   next: NextFunction
 ) => {
   try {
-    const { reservationId } = req.params;
+    const reservationId = assertStringRouteParam(
+      req.params.reservationId,
+      req.originalUrl,
+      AppError.validationError,
+      'Reservation ID is required'
+    );
     const tenantId = req.tenantId;
 
     const reportCards = await prisma.reportCard.findMany({
@@ -292,6 +328,9 @@ export const getReservationReportCards = async (
 
     res.json({ success: true, data: reportCards });
   } catch (error: any) {
+    if (error instanceof AppError) {
+      return next(error);
+    }
     next(
       new AppError(
         error.message || 'Failed to fetch reservation report cards',

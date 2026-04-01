@@ -1,7 +1,6 @@
 import 'dotenv/config';
-import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
-
+import { PrismaClient } from '../generated/prisma/client.js';
 /**
  * Prisma Client with Connection Pooling
  *
@@ -13,7 +12,9 @@ import { PrismaPg } from '@prisma/adapter-pg';
  */
 
 // Global singleton to prevent multiple Prisma instances in development
-const globalForPrisma = globalThis as typeof globalThis & { prisma?: PrismaClient };
+const globalForPrisma = globalThis as typeof globalThis & {
+  prisma?: PrismaClient;
+};
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 export const prisma =

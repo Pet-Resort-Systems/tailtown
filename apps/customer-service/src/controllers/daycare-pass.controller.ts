@@ -1,5 +1,6 @@
 import { type Request, type Response, type NextFunction } from 'express';
 import { DaycarePassStatus } from '@prisma/client';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { logger } from '../utils/logger.js';
 import { prisma } from '../config/prisma.js';
@@ -146,9 +147,15 @@ export const updatePassPackage = async (
   res: Response,
   next: NextFunction
 ) => {
+  let packageId: string | undefined;
   try {
     const tenantId = req.tenantId;
-    const { id } = req.params;
+    packageId = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Pass package ID is required'
+    );
 
     if (!tenantId) {
       return next(new AppError('Tenant ID is required', 400));
@@ -156,7 +163,7 @@ export const updatePassPackage = async (
 
     // Verify package exists and belongs to tenant
     const existing = await prisma.daycarePassPackage.findFirst({
-      where: { id, tenantId },
+      where: { id: packageId, tenantId },
     });
 
     if (!existing) {
@@ -176,7 +183,7 @@ export const updatePassPackage = async (
     } = req.body;
 
     const passPackage = await prisma.daycarePassPackage.update({
-      where: { id },
+      where: { id: packageId },
       data: {
         ...(name !== undefined && { name }),
         ...(description !== undefined && { description }),
@@ -190,7 +197,7 @@ export const updatePassPackage = async (
       },
     });
 
-    logger.info('Pass package updated', { tenantId, packageId: id });
+    logger.info('Pass package updated', { tenantId, packageId });
 
     res.status(200).json({
       status: 'success',
@@ -202,7 +209,7 @@ export const updatePassPackage = async (
     }
     logger.error('Error updating pass package', {
       tenantId: req.tenantId,
-      packageId: req.params.id,
+      packageId,
       error,
     });
     next(error);
@@ -218,9 +225,15 @@ export const deletePassPackage = async (
   res: Response,
   next: NextFunction
 ) => {
+  let packageId: string | undefined;
   try {
     const tenantId = req.tenantId;
-    const { id } = req.params;
+    packageId = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Pass package ID is required'
+    );
 
     if (!tenantId) {
       return next(new AppError('Tenant ID is required', 400));
@@ -228,7 +241,7 @@ export const deletePassPackage = async (
 
     // Verify package exists and belongs to tenant
     const existing = await prisma.daycarePassPackage.findFirst({
-      where: { id, tenantId },
+      where: { id: packageId, tenantId },
     });
 
     if (!existing) {
@@ -237,11 +250,11 @@ export const deletePassPackage = async (
 
     // Soft delete by deactivating
     await prisma.daycarePassPackage.update({
-      where: { id },
+      where: { id: packageId },
       data: { isActive: false },
     });
 
-    logger.info('Pass package deactivated', { tenantId, packageId: id });
+    logger.info('Pass package deactivated', { tenantId, packageId });
 
     res.status(200).json({
       status: 'success',
@@ -250,7 +263,7 @@ export const deletePassPackage = async (
   } catch (error) {
     logger.error('Error deleting pass package', {
       tenantId: req.tenantId,
-      packageId: req.params.id,
+      packageId,
       error,
     });
     next(error);
@@ -270,9 +283,15 @@ export const getCustomerPasses = async (
   res: Response,
   next: NextFunction
 ) => {
+  let customerId: string | undefined;
   try {
     const tenantId = req.tenantId;
-    const { customerId } = req.params;
+    customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
     const activeOnly = req.query.activeOnly !== 'false';
 
     if (!tenantId) {
@@ -318,7 +337,7 @@ export const getCustomerPasses = async (
   } catch (error) {
     logger.error('Error fetching customer passes', {
       tenantId: req.tenantId,
-      customerId: req.params.customerId,
+      customerId,
       error,
     });
     next(error);
@@ -409,9 +428,15 @@ export const redeemPass = async (
   res: Response,
   next: NextFunction
 ) => {
+  let passId: string | undefined;
   try {
     const tenantId = req.tenantId;
-    const { passId } = req.params;
+    passId = assertStringRouteParam(
+      req.params.passId,
+      req.originalUrl,
+      AppError.validationError,
+      'Pass ID is required'
+    );
     const { petId, reservationId, checkInId, notes } = req.body;
     const redeemedBy = req.user?.id;
 
@@ -505,7 +530,7 @@ export const redeemPass = async (
     }
     logger.error('Error redeeming pass', {
       tenantId: req.tenantId,
-      passId: req.params.passId,
+      passId,
       error,
     });
     next(error);
@@ -521,9 +546,15 @@ export const reverseRedemption = async (
   res: Response,
   next: NextFunction
 ) => {
+  let redemptionId: string | undefined;
   try {
     const tenantId = req.tenantId;
-    const { redemptionId } = req.params;
+    redemptionId = assertStringRouteParam(
+      req.params.redemptionId,
+      req.originalUrl,
+      AppError.validationError,
+      'Redemption ID is required'
+    );
     const { reason } = req.body;
     const reversedBy = req.user?.id;
 
@@ -592,7 +623,7 @@ export const reverseRedemption = async (
     }
     logger.error('Error reversing redemption', {
       tenantId: req.tenantId,
-      redemptionId: req.params.redemptionId,
+      redemptionId,
       error,
     });
     next(error);
@@ -715,9 +746,15 @@ export const checkAvailablePasses = async (
   res: Response,
   next: NextFunction
 ) => {
+  let customerId: string | undefined;
   try {
     const tenantId = req.tenantId;
-    const { customerId } = req.params;
+    customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
 
     if (!tenantId) {
       return next(new AppError('Tenant ID is required', 400));
@@ -758,7 +795,7 @@ export const checkAvailablePasses = async (
   } catch (error) {
     logger.error('Error checking available passes', {
       tenantId: req.tenantId,
-      customerId: req.params.customerId,
+      customerId,
       error,
     });
     next(error);

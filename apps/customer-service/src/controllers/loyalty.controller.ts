@@ -1,5 +1,6 @@
 import { type Request, type Response, type NextFunction } from 'express';
 import { PointEarningType, RedemptionType, TierLevel } from '@prisma/client';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { prisma } from '../config/prisma.js';
 
@@ -10,7 +11,12 @@ export const getMember = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId } = req.params;
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
 
     let member = await prisma.loyaltyMember.findUnique({
       where: { customerId },
@@ -40,7 +46,12 @@ export const addPoints = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId } = req.params;
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
     const { points, type, description, referenceId } = req.body;
 
     if (!points || !type || !description) {
@@ -78,12 +89,10 @@ export const addPoints = async (
       });
     }
 
-    res
-      .status(201)
-      .json({
-        status: 'success',
-        data: { transaction, member: updatedMember },
-      });
+    res.status(201).json({
+      status: 'success',
+      data: { transaction, member: updatedMember },
+    });
   } catch (error) {
     next(error);
   }
@@ -96,7 +105,12 @@ export const redeemPoints = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId } = req.params;
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
     const {
       pointsToRedeem,
       redemptionType,
@@ -161,7 +175,12 @@ export const getMemberStats = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId } = req.params;
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
 
     const member = await prisma.loyaltyMember.findUnique({
       where: { customerId },

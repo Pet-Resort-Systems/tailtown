@@ -6,12 +6,14 @@
  */
 
 import { type Request, type Response, type NextFunction } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import {
   tenantAuditLog,
   AuditAction,
   AuditCategory,
   AuditSeverity,
 } from '../services/tenant-audit-log.service.js';
+import { AppError } from '../middleware/error.middleware.js';
 
 /**
  * GET /api/audit-logs
@@ -90,7 +92,18 @@ export const getEntityAuditTrail = async (
 ) => {
   try {
     const tenantId = (req as any).tenantId;
-    const { entityType, entityId } = req.params;
+    const entityType = assertStringRouteParam(
+      req.params.entityType,
+      req.originalUrl,
+      AppError.validationError,
+      'Entity type is required'
+    );
+    const entityId = assertStringRouteParam(
+      req.params.entityId,
+      req.originalUrl,
+      AppError.validationError,
+      'Entity ID is required'
+    );
 
     if (!tenantId) {
       return res.status(400).json({
@@ -126,7 +139,12 @@ export const getUserActivity = async (
 ) => {
   try {
     const tenantId = (req as any).tenantId;
-    const { userId } = req.params;
+    const userId = assertStringRouteParam(
+      req.params.userId,
+      req.originalUrl,
+      AppError.validationError,
+      'User ID is required'
+    );
     const { startDate, endDate } = req.query;
 
     if (!tenantId) {

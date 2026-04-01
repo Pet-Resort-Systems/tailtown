@@ -1,4 +1,5 @@
 import { type Request, type Response, type NextFunction } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 
 import { AppError } from '../middleware/error.middleware.js';
 import { prisma } from '../config/prisma.js';
@@ -181,7 +182,12 @@ export const getSuiteAvailability = async (
   next: NextFunction
 ) => {
   try {
-    const { suiteId } = req.params;
+    const suiteId = assertStringRouteParam(
+      req.params.suiteId,
+      req.originalUrl,
+      AppError.validationError,
+      'Suite ID is required'
+    );
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {

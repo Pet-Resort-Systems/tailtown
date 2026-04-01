@@ -12,6 +12,7 @@
  */
 
 import { type Response, type NextFunction } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 
 import { AppError } from '../../middleware/error.middleware.js';
 import { type TenantRequest } from '../../middleware/tenant.middleware.js';
@@ -210,7 +211,12 @@ export const getCustomerById = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
     const tenantId = req.tenantId!;
 
     // Try cache first
@@ -257,7 +263,12 @@ export const getCustomerPets = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
 
     const customerExists = await prisma.customer.findUnique({
       where: { id },
@@ -388,7 +399,12 @@ export const updateCustomer = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
     const customerData = req.body;
 
     const customerExists = await prisma.customer.findFirst({
@@ -464,7 +480,12 @@ export const deleteCustomer = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
     const { permanent } = req.query;
 
     const customerExists = await prisma.customer.findFirst({

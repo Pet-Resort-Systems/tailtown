@@ -8,8 +8,13 @@
 
 import { type Request, type Response, type NextFunction } from 'express';
 
-import { createAuditLog, AuditAction } from '../../services/audit-log.service.js';
+import { assertStringRouteParam } from '@tailtown/shared';
+import {
+  createAuditLog,
+  AuditAction,
+} from '../../services/audit-log.service.js';
 import { type SuperAdminRequest } from '../../middleware/require-super-admin.middleware.js';
+import { AppError } from '../../middleware/error.middleware.js';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../../config/prisma.js';
 
@@ -26,7 +31,12 @@ export const startImpersonation = async (
   next: NextFunction
 ) => {
   try {
-    const { tenantId } = req.params;
+    const tenantId = assertStringRouteParam(
+      req.params.tenantId,
+      req.originalUrl,
+      AppError.validationError,
+      'Tenant ID is required'
+    );
     const { reason } = req.body;
     const superAdminId = (req as SuperAdminRequest).superAdmin?.id;
 
@@ -128,6 +138,12 @@ export const startImpersonation = async (
       },
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        success: false,
+        message: error.message,
+      });
+    }
     console.error('[SuperAdmin] Start impersonation error:', error);
     next(error);
   }
@@ -143,7 +159,12 @@ export const endImpersonation = async (
   next: NextFunction
 ) => {
   try {
-    const { sessionId } = req.params;
+    const sessionId = assertStringRouteParam(
+      req.params.sessionId,
+      req.originalUrl,
+      AppError.validationError,
+      'Session ID is required'
+    );
     const superAdminId = (req as SuperAdminRequest).superAdmin?.id;
 
     if (!superAdminId) {
@@ -207,6 +228,12 @@ export const endImpersonation = async (
       data: updatedSession,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        success: false,
+        message: error.message,
+      });
+    }
     console.error('[SuperAdmin] End impersonation error:', error);
     next(error);
   }

@@ -1,6 +1,7 @@
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { type Request, type Response, type NextFunction } from 'express';
 
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { prisma } from '../config/prisma.js';
 
@@ -16,7 +17,12 @@ export const enrollInClass = async (
   next: NextFunction
 ) => {
   try {
-    const { classId } = req.params;
+    const classId = assertStringRouteParam(
+      req.params.classId,
+      req.originalUrl,
+      AppError.validationError,
+      'Training class ID is required'
+    );
     const { petId, customerId, amountPaid } = req.body;
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
@@ -109,7 +115,12 @@ export const getEnrollmentById = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Enrollment ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -153,7 +164,12 @@ export const updateEnrollment = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Enrollment ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -195,7 +211,12 @@ export const dropFromClass = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Enrollment ID is required'
+    );
     const { reason } = req.body;
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
@@ -264,7 +285,12 @@ export const getCustomerEnrollments = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId } = req.params;
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
     const { status } = req.query;
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
@@ -308,7 +334,12 @@ export const getPetEnrollments = async (
   next: NextFunction
 ) => {
   try {
-    const { petId } = req.params;
+    const petId = assertStringRouteParam(
+      req.params.petId,
+      req.originalUrl,
+      AppError.validationError,
+      'Pet ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -349,7 +380,12 @@ export const issueCertificate = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Enrollment ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -396,7 +432,12 @@ export const addToWaitlist = async (
   next: NextFunction
 ) => {
   try {
-    const { classId } = req.params;
+    const classId = assertStringRouteParam(
+      req.params.classId,
+      req.originalUrl,
+      AppError.validationError,
+      'Training class ID is required'
+    );
     const { petId, customerId } = req.body;
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
@@ -457,7 +498,12 @@ export const removeFromWaitlist = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Waitlist entry ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 
@@ -493,7 +539,12 @@ export const getClassWaitlist = async (
   next: NextFunction
 ) => {
   try {
-    const { classId } = req.params;
+    const classId = assertStringRouteParam(
+      req.params.classId,
+      req.originalUrl,
+      AppError.validationError,
+      'Training class ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
 

@@ -1,5 +1,6 @@
 import { type Request, type Response, type NextFunction } from 'express';
 import { CouponType, CouponStatus } from '@prisma/client';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { prisma } from '../config/prisma.js';
 
@@ -64,7 +65,12 @@ export const getCouponById = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Coupon ID is required'
+    );
 
     const coupon = await prisma.coupon.findUnique({
       where: { id },
@@ -102,7 +108,12 @@ export const getCouponByCode = async (
   next: NextFunction
 ) => {
   try {
-    const { code } = req.params;
+    const code = assertStringRouteParam(
+      req.params.code,
+      req.originalUrl,
+      AppError.validationError,
+      'Coupon code is required'
+    );
 
     const coupon = await prisma.coupon.findFirst({
       where: {
@@ -222,7 +233,12 @@ export const updateCoupon = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Coupon ID is required'
+    );
     const {
       description,
       discountValue,
@@ -293,7 +309,12 @@ export const deleteCoupon = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Coupon ID is required'
+    );
 
     const coupon = await prisma.coupon.findUnique({ where: { id } });
 
@@ -527,7 +548,12 @@ export const getCouponStats = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Coupon ID is required'
+    );
 
     const coupon = await prisma.coupon.findUnique({
       where: { id },
@@ -674,7 +700,12 @@ export const updateCouponStatus = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Coupon ID is required'
+    );
     const { status } = req.body;
 
     if (!status) {
@@ -702,7 +733,12 @@ export const getCustomerPermanentCouponForCheckout = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId } = req.params;
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
 
     const customer = await prisma.customer.findUnique({
       where: { id: customerId },

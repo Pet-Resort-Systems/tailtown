@@ -8,6 +8,7 @@
 
 import { type Request, type Response, type NextFunction } from 'express';
 
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../../middleware/error.middleware.js';
 import fs from 'fs';
 import path from 'path';
@@ -22,7 +23,12 @@ export const uploadProfilePhoto = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Staff ID is required'
+    );
 
     if (!req.file) {
       return next(new AppError('No file uploaded', 400));
@@ -94,7 +100,12 @@ export const deleteProfilePhoto = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Staff ID is required'
+    );
 
     // Get the staff member
     const staff = await prisma.staff.findUnique({

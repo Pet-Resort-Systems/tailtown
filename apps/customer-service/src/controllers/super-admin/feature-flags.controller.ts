@@ -5,6 +5,7 @@
  */
 
 import { type Request, type Response, type NextFunction } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import {
   getAllFeatureFlags,
   getTenantFeatureFlags,
@@ -16,6 +17,7 @@ import {
   SERVICE_MODULE_FLAGS,
   FEATURE_FLAGS,
 } from '../../services/feature-flag.service.js';
+import { AppError } from '../../middleware/error.middleware.js';
 import { logger } from '../../utils/logger.js';
 
 /**
@@ -98,7 +100,12 @@ export const getTenantFlags = async (
   next: NextFunction
 ) => {
   try {
-    const { tenantId } = req.params;
+    const tenantId = assertStringRouteParam(
+      req.params.tenantId,
+      req.originalUrl,
+      AppError.validationError,
+      'Tenant ID is required'
+    );
 
     const [effectiveFlags, overrides] = await Promise.all([
       getTenantFeatureFlags(tenantId),
@@ -128,7 +135,18 @@ export const enableForTenant = async (
   next: NextFunction
 ) => {
   try {
-    const { tenantId, key } = req.params;
+    const tenantId = assertStringRouteParam(
+      req.params.tenantId,
+      req.originalUrl,
+      AppError.validationError,
+      'Tenant ID is required'
+    );
+    const key = assertStringRouteParam(
+      req.params.key,
+      req.originalUrl,
+      AppError.validationError,
+      'Feature flag key is required'
+    );
     const { notes } = req.body;
     const superAdmin = (req as any).superAdmin;
 
@@ -159,7 +177,18 @@ export const disableForTenant = async (
   next: NextFunction
 ) => {
   try {
-    const { tenantId, key } = req.params;
+    const tenantId = assertStringRouteParam(
+      req.params.tenantId,
+      req.originalUrl,
+      AppError.validationError,
+      'Tenant ID is required'
+    );
+    const key = assertStringRouteParam(
+      req.params.key,
+      req.originalUrl,
+      AppError.validationError,
+      'Feature flag key is required'
+    );
     const { notes } = req.body;
     const superAdmin = (req as any).superAdmin;
 
@@ -216,7 +245,12 @@ export const bulkUpdateTenantFlags = async (
   next: NextFunction
 ) => {
   try {
-    const { tenantId } = req.params;
+    const tenantId = assertStringRouteParam(
+      req.params.tenantId,
+      req.originalUrl,
+      AppError.validationError,
+      'Tenant ID is required'
+    );
     const { flags } = req.body; // { [key]: boolean }
     const { notes } = req.body;
     const superAdmin = (req as any).superAdmin;

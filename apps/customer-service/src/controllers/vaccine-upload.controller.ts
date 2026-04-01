@@ -1,4 +1,5 @@
 import { type Response, type NextFunction } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { prisma } from '../config/prisma.js';
 import { AppError } from '../middleware/error.middleware.js';
@@ -15,7 +16,12 @@ export class VaccineUploadController {
     next: NextFunction
   ) {
     try {
-      const { petId } = req.params;
+      const petId = assertStringRouteParam(
+        req.params.petId,
+        req.originalUrl,
+        AppError.validationError,
+        'Pet ID is required'
+      );
       const tenantId = req.tenantId!;
       const file = req.file;
 
@@ -100,7 +106,12 @@ export class VaccineUploadController {
     next: NextFunction
   ) {
     try {
-      const { petId } = req.params;
+      const petId = assertStringRouteParam(
+        req.params.petId,
+        req.originalUrl,
+        AppError.validationError,
+        'Pet ID is required'
+      );
       const tenantId = req.tenantId!;
 
       const pet = await prisma.pet.findFirst({
@@ -151,7 +162,18 @@ export class VaccineUploadController {
     next: NextFunction
   ) {
     try {
-      const { petId, filename } = req.params;
+      const petId = assertStringRouteParam(
+        req.params.petId,
+        req.originalUrl,
+        AppError.validationError,
+        'Pet ID is required'
+      );
+      const filename = assertStringRouteParam(
+        req.params.filename,
+        req.originalUrl,
+        AppError.validationError,
+        'Filename is required'
+      );
       const tenantId = req.tenantId!;
 
       const pet = await prisma.pet.findFirst({
@@ -214,7 +236,18 @@ export class VaccineUploadController {
     next: NextFunction
   ) {
     try {
-      const { petId, filename } = req.params;
+      const petId = assertStringRouteParam(
+        req.params.petId,
+        req.originalUrl,
+        AppError.validationError,
+        'Pet ID is required'
+      );
+      const filename = assertStringRouteParam(
+        req.params.filename,
+        req.originalUrl,
+        AppError.validationError,
+        'Filename is required'
+      );
       const tenantId = req.tenantId!;
 
       const pet = await prisma.pet.findFirst({

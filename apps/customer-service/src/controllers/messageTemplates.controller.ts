@@ -1,5 +1,7 @@
 import { type Request, type Response, type NextFunction } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { prisma } from '../config/prisma.js';
+import { AppError } from '../middleware/error.middleware.js';
 
 /**
  * Get all message templates
@@ -45,7 +47,12 @@ export const getTemplateById = async (
 ) => {
   try {
     const tenantId = (req as any).tenantId;
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Template ID is required'
+    );
 
     const template = await prisma.messageTemplate.findFirst({
       where: { id, tenantId },
@@ -63,6 +70,12 @@ export const getTemplateById = async (
       data: template,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        status: 'error',
+        message: error.message,
+      });
+    }
     console.error('Error fetching template:', error);
     next(error);
   }
@@ -161,7 +174,12 @@ export const updateTemplate = async (
 ) => {
   try {
     const tenantId = (req as any).tenantId;
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Template ID is required'
+    );
     const { name, type, category, subject, body, variables, isActive } =
       req.body;
 
@@ -215,6 +233,12 @@ export const updateTemplate = async (
       data: template,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        status: 'error',
+        message: error.message,
+      });
+    }
     console.error('Error updating template:', error);
     next(error);
   }
@@ -230,7 +254,12 @@ export const deleteTemplate = async (
 ) => {
   try {
     const tenantId = (req as any).tenantId;
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Template ID is required'
+    );
 
     // Check if template exists
     const existing = await prisma.messageTemplate.findFirst({
@@ -253,6 +282,12 @@ export const deleteTemplate = async (
       message: 'Template deleted successfully',
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        status: 'error',
+        message: error.message,
+      });
+    }
     console.error('Error deleting template:', error);
     next(error);
   }
@@ -268,7 +303,12 @@ export const duplicateTemplate = async (
 ) => {
   try {
     const tenantId = (req as any).tenantId;
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Template ID is required'
+    );
 
     // Get original template
     const original = await prisma.messageTemplate.findFirst({
@@ -301,6 +341,12 @@ export const duplicateTemplate = async (
       data: duplicate,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        status: 'error',
+        message: error.message,
+      });
+    }
     console.error('Error duplicating template:', error);
     next(error);
   }

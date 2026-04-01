@@ -5,7 +5,8 @@
  * a test database for integration tests.
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../generated/prisma/client.js';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { execSync } from 'child_process';
 
 // Use test database URL
@@ -20,12 +21,9 @@ let prisma: PrismaClient | null = null;
  */
 export function getTestPrismaClient(): PrismaClient {
   if (!prisma) {
+    const adapter = new PrismaPg({ connectionString: TEST_DATABASE_URL });
     prisma = new PrismaClient({
-      datasources: {
-        db: {
-          url: TEST_DATABASE_URL,
-        },
-      },
+      adapter,
       log: process.env.DEBUG_PRISMA ? ['query', 'error', 'warn'] : ['error'],
     });
   }

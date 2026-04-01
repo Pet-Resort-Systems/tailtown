@@ -1,4 +1,5 @@
 import { type Request, type Response, type NextFunction } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 
 import { AppError } from '../middleware/error.middleware.js';
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
@@ -11,11 +12,12 @@ export const getCustomerInvoices = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId } = req.params;
-
-    if (!customerId) {
-      return next(new AppError('Customer ID is required', 400));
-    }
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
 
     const invoices = await prisma.invoice.findMany({
       where: { customerId },
@@ -46,11 +48,12 @@ export const getInvoiceById = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
-
-    if (!id) {
-      return next(new AppError('Invoice ID is required', 400));
-    }
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Invoice ID is required'
+    );
 
     const invoice = await prisma.invoice.findUnique({
       where: { id },
@@ -199,12 +202,13 @@ export const updateInvoice = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Invoice ID is required'
+    );
     const { status, dueDate, notes } = req.body;
-
-    if (!id) {
-      return next(new AppError('Invoice ID is required', 400));
-    }
 
     // Check if invoice exists
     const existingInvoice = await prisma.invoice.findUnique({
@@ -246,11 +250,12 @@ export const getCustomerAccountBalance = async (
   next: NextFunction
 ) => {
   try {
-    const { customerId } = req.params;
-
-    if (!customerId) {
-      return next(new AppError('Customer ID is required', 400));
-    }
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
 
     // Get all invoices for the customer
     const invoices = await prisma.invoice.findMany({

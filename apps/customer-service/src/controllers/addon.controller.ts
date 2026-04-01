@@ -1,5 +1,6 @@
 import { type Request, type Response, type NextFunction } from 'express';
 
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { prisma } from '../config/prisma.js';
 
@@ -60,7 +61,12 @@ export const getAddOnServiceById = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Add-on service ID is required'
+    );
     console.log(`Backend: Getting add-on service with ID: ${id}`);
 
     const addOnService = await prisma.addOnService.findUnique({
@@ -144,7 +150,12 @@ export const updateAddOnService = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Add-on service ID is required'
+    );
     const { name, description, price, duration, serviceId, isActive } =
       req.body;
 
@@ -205,7 +216,12 @@ export const deleteAddOnService = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Add-on service ID is required'
+    );
 
     console.log(`Backend: Deleting add-on service with ID: ${id}`);
 
