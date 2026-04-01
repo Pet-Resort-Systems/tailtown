@@ -57,7 +57,7 @@ else
     # Stop existing services
     pkill -f "node.*apps/customer-service/dist/index.js" || true
     pkill -f "node.*apps/reservation-service/dist/index.js" || true
-    pkill -f "serve.*frontend/build" || true
+    pkill -f "vite preview.*3000" || true
     
     # Start customer service
     cd /opt/tailtown/apps/customer-service
@@ -71,7 +71,7 @@ else
     
     # Start apps/frontend
     cd /opt/tailtown/apps/frontend
-    serve -s build -l 3000 > /tmp/frontend.log 2>&1 &
+    pnpm run preview -- --host 0.0.0.0 --port 3000 > /tmp/frontend.log 2>&1 &
 fi
 
 echo -e "${GREEN}✅ Deployment complete!${NC}"

@@ -69,8 +69,8 @@ module.exports = {
     {
       name: 'staging-frontend',
       cwd: './apps/frontend',
-      script: 'npx',
-      args: 'serve -s build -l 5000',
+      script: 'pnpm',
+      args: 'preview --host 0.0.0.0 --port 5000',
       instances: 1,
       exec_mode: 'fork',
       env: {

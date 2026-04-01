@@ -351,7 +351,7 @@ describe('NewComponent', () => {
 ## Future Test Additions
 
 - [ ] Integration tests for complete check-in workflow
-- [ ] Expand check-in coverage in the isolated `e2e/` Playwright workspace targeting `apps/frontend-vite`
+- [ ] Expand check-in coverage in the isolated `e2e/` Playwright workspace targeting `apps/frontend`
 - [ ] Performance tests for large datasets
 - [ ] Accessibility tests
 - [ ] Visual regression tests

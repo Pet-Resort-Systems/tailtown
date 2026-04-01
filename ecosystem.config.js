@@ -67,8 +67,8 @@ module.exports = {
     {
       name: 'frontend',
       cwd: './apps/frontend',
-      script: 'npx',
-      args: 'serve -s build -l 3000',
+      script: 'pnpm',
+      args: 'preview --host 0.0.0.0 --port 3000',
       instances: 1,
       exec_mode: 'fork',
       env: {

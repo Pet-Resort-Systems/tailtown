@@ -48,12 +48,11 @@ class MobileService {
       const response = await api.get<DashboardData>(
         '/api/staff/mobile/dashboard'
       );
-      console.log('Mobile dashboard endpoint returned data:', response.data);
       return response.data;
     } catch (mobileError: any) {
       // Expected 404 - fallback to aggregating from individual endpoints
       if (mobileError?.response?.status === 404) {
-        console.log(
+        console.warn(
           'Mobile dashboard endpoint not found (404), aggregating from individual endpoints...'
         );
       } else {
@@ -68,13 +67,6 @@ class MobileService {
           this.getUnreadMessageCount(),
         ]);
 
-        console.log('Aggregated dashboard data:', {
-          stats,
-          schedule: schedule.length,
-          tasks: tasks.length,
-          unreadCount,
-        });
-
         return {
           stats,
           todaySchedule: schedule,
@@ -84,7 +76,7 @@ class MobileService {
       } catch (aggregateError) {
         console.error('Error aggregating dashboard data:', aggregateError);
         // Final fallback: return mock data
-        console.log('Using mock data as final fallback');
+        console.warn('Using mock data as final fallback');
         return this.getMockDashboardData();
       }
     }
@@ -122,7 +114,7 @@ class MobileService {
           }));
         }
       } catch (err) {
-        console.log('My-schedule endpoint not available, trying fallback');
+        console.warn('My-schedule endpoint not available, trying fallback');
       }
 
       return this.getMockSchedule();

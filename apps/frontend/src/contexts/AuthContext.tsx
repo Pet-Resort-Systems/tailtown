@@ -122,7 +122,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       // Real API call to login endpoint - uses dynamic URL for multi-tenant support
-      const envUrl = process.env.REACT_APP_API_URL;
+      const envUrl = import.meta.env.VITE_API_URL;
       const apiUrl =
         envUrl && envUrl.length > 0 ? envUrl : window.location.origin;
 

@@ -8,6 +8,7 @@ import {
   Box,
   Typography,
   Paper,
+  Grid,
   Card,
   CardContent,
   Button,
@@ -25,7 +26,6 @@ import {
   Tabs,
   Tab,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   Favorite as TipIcon,
   GetApp as ExportIcon,
@@ -164,11 +164,14 @@ const TipReports: React.FC = () => {
           Export CSV
         </Button>
       </Box>
-
       {/* Date Range Filter */}
       <Paper sx={{ p: 2, mb: 3 }}>
         <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 4
+            }}>
             <TextField
               label="Start Date"
               type="date"
@@ -178,7 +181,11 @@ const TipReports: React.FC = () => {
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 4
+            }}>
             <TextField
               label="End Date"
               type="date"
@@ -188,7 +195,11 @@ const TipReports: React.FC = () => {
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 4
+            }}>
             <Button
               variant="contained"
               onClick={loadReports}
@@ -201,16 +212,18 @@ const TipReports: React.FC = () => {
           </Grid>
         </Grid>
       </Paper>
-
       {error && (
         <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
           {error}
         </Alert>
       )}
-
       {/* Summary Cards */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <Card
             sx={{
               bgcolor: 'primary.50',
@@ -237,7 +250,11 @@ const TipReports: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <Card
             sx={{
               bgcolor: 'secondary.50',
@@ -264,7 +281,11 @@ const TipReports: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4
+          }}>
           <Card
             sx={{
               bgcolor: 'success.50',
@@ -291,7 +312,6 @@ const TipReports: React.FC = () => {
           </Card>
         </Grid>
       </Grid>
-
       {/* Tabs */}
       <Paper sx={{ mb: 3 }}>
         <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)}>
@@ -395,7 +415,11 @@ const TipReports: React.FC = () => {
           ) : generalPoolSummary ? (
             <Box>
               <Grid container spacing={3} sx={{ mb: 3 }}>
-                <Grid item xs={12} md={4}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 4
+                  }}>
                   <Card variant="outlined">
                     <CardContent>
                       <Typography variant="subtitle2" color="text.secondary">
@@ -407,7 +431,11 @@ const TipReports: React.FC = () => {
                     </CardContent>
                   </Card>
                 </Grid>
-                <Grid item xs={12} md={4}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 4
+                  }}>
                   <Card variant="outlined">
                     <CardContent>
                       <Typography variant="subtitle2" color="text.secondary">
@@ -419,7 +447,11 @@ const TipReports: React.FC = () => {
                     </CardContent>
                   </Card>
                 </Grid>
-                <Grid item xs={12} md={4}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 4
+                  }}>
                   <Card variant="outlined">
                     <CardContent>
                       <Typography variant="subtitle2" color="text.secondary">
@@ -441,7 +473,12 @@ const TipReports: React.FC = () => {
                 {Object.entries(
                   generalPoolSummary.summary.byCollectionMethod
                 ).map(([method, data]) => (
-                  <Grid item xs={12} sm={4} key={method}>
+                  <Grid
+                    key={method}
+                    size={{
+                      xs: 12,
+                      sm: 4
+                    }}>
                     <Card variant="outlined">
                       <CardContent>
                         <Chip

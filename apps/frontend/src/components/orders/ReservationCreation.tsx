@@ -5,6 +5,7 @@ import {
   Paper,
   TextField,
   Button,
+  Grid,
   FormControl,
   InputLabel,
   Select,
@@ -12,7 +13,6 @@ import {
   CircularProgress,
   Alert,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -250,7 +250,7 @@ const ReservationCreation: React.FC<ReservationCreationProps> = ({
           </Typography>
 
           <Grid container spacing={2} sx={{ mt: 2 }}>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <FormControl
                 fullWidth
                 size="small"
@@ -278,7 +278,11 @@ const ReservationCreation: React.FC<ReservationCreationProps> = ({
               </FormControl>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <DatePicker
                 label="Start Date"
                 value={startDate}
@@ -294,7 +298,11 @@ const ReservationCreation: React.FC<ReservationCreationProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TimePicker
                 label="Start Time"
                 value={startDate}
@@ -330,7 +338,11 @@ const ReservationCreation: React.FC<ReservationCreationProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <DatePicker
                 label="End Date"
                 value={endDate}
@@ -346,7 +358,11 @@ const ReservationCreation: React.FC<ReservationCreationProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TimePicker
                 label="End Time"
                 value={endDate}
@@ -370,7 +386,7 @@ const ReservationCreation: React.FC<ReservationCreationProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <FormControl
                 fullWidth
                 size="small"
@@ -407,7 +423,7 @@ const ReservationCreation: React.FC<ReservationCreationProps> = ({
               </FormControl>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 multiline

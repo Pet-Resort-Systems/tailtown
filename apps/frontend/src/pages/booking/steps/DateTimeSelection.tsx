@@ -4,8 +4,7 @@
  */
 
 import React, { useState, useRef } from 'react';
-import { Box, Button, Typography, Paper } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
+import { Box, Button, Typography, Grid, Paper } from '@mui/material';
 import {
   ArrowBack as ArrowBackIcon,
   ArrowForward as ArrowForwardIcon,
@@ -76,10 +75,13 @@ const DateTimeSelection: React.FC<DateTimeSelectionProps> = ({
       >
         When would you like to book?
       </Typography>
-
       <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <Box>
               <Typography
                 variant="subtitle2"
@@ -110,7 +112,11 @@ const DateTimeSelection: React.FC<DateTimeSelectionProps> = ({
               </Box>
             </Box>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <Box>
               <Typography
                 variant="subtitle2"
@@ -155,7 +161,6 @@ const DateTimeSelection: React.FC<DateTimeSelectionProps> = ({
           </Grid>
         </Grid>
       </Paper>
-
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button
           variant="outlined"

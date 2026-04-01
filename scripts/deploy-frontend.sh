@@ -8,7 +8,7 @@ set -e
 REMOTE_HOST="129.212.178.244"
 REMOTE_USER="root"
 SSH_KEY="~/ttkey"
-REMOTE_BUILD_DIR="/opt/tailtown/apps/frontend/build"
+REMOTE_BUILD_DIR="/opt/tailtown/apps/frontend/dist"
 FRONTEND_DIR="$(dirname "$0")/../apps/frontend"
 
 echo "🚀 Tailtown Frontend Deployment"
@@ -31,12 +31,12 @@ fi
 pnpm run build
 
 # Verify build was created
-if ls build/static/js/*.js 1> /dev/null 2>&1; then
+if ls dist/assets/*.js 1> /dev/null 2>&1; then
     # Check for either hashed main.*.js or bundle.js (both are valid production builds)
-    if ls build/static/js/main.*.js 1> /dev/null 2>&1; then
-        MAIN_FILE=$(ls build/static/js/main.*.js | head -1)
+    if ls dist/assets/main.*.js 1> /dev/null 2>&1; then
+        MAIN_FILE=$(ls dist/assets/main.*.js | head -1)
         echo "✅ Production build created: $(basename $MAIN_FILE)"
-    elif [ -f build/static/js/bundle.js ]; then
+    elif [ -f dist/assets/bundle.js ]; then
         echo "✅ Production build created: bundle.js"
     else
         echo "❌ Error: No main entry point found"
@@ -51,16 +51,16 @@ fi
 echo ""
 echo "📤 Deploying to $REMOTE_HOST..."
 
-scp -i $SSH_KEY -r build/* ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_BUILD_DIR}/
+scp -i $SSH_KEY -r dist/* ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_BUILD_DIR}/
 
 # Step 3: Restart serve process
 echo ""
 echo "🔄 Restarting apps/frontend server..."
 
 ssh -i $SSH_KEY ${REMOTE_USER}@${REMOTE_HOST} << 'ENDSSH'
-pkill -f "serve -s build" || true
+pkill -f "vite preview" || true
 cd /opt/tailtown/apps/frontend
-nohup serve -s build -l 3000 > /var/log/frontend.log 2>&1 &
+nohup pnpm run preview -- --host 0.0.0.0 --port 3000 > /var/log/frontend.log 2>&1 &
 sleep 2
 
 # Verify server is running

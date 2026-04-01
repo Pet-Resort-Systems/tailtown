@@ -68,7 +68,7 @@ export const createApiClient = (
             ...(config.headers || {}),
             'x-tenant-id': tenantId,
           } as any;
-        } else if (process.env.NODE_ENV === 'development') {
+        } else if (import.meta.env.DEV) {
           console.warn('No tenant ID found; using default "dev" tenant');
           config.headers = {
             ...(config.headers || {}),
@@ -92,18 +92,7 @@ export const createApiClient = (
   if (enableLogging) {
     // Request logging
     instance.interceptors.request.use(
-      (config) => {
-        if (process.env.NODE_ENV === 'development') {
-          console.log(
-            `API Request: ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`,
-            {
-              params: config.params,
-              data: config.data,
-            }
-          );
-        }
-        return config;
-      },
+      (config) => config,
       (error) => {
         console.error('API Request Error:', error);
         return Promise.reject(error);
@@ -112,14 +101,7 @@ export const createApiClient = (
 
     // Response logging
     instance.interceptors.response.use(
-      (response) => {
-        if (process.env.NODE_ENV === 'development') {
-          console.log(
-            `API Response: ${response.status} ${response.config.method?.toUpperCase()} ${response.config.url}`
-          );
-        }
-        return response;
-      },
+      (response) => response,
       (error: AxiosError) => {
         console.error('API Response Error:', {
           message: error.message,

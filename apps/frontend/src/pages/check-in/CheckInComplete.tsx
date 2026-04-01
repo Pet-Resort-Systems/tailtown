@@ -9,13 +9,13 @@ import {
   CircularProgress,
   Alert,
   Divider,
+  Grid,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   IconButton,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PrintIcon from '@mui/icons-material/Print';
 import LabelIcon from '@mui/icons-material/Label';
@@ -149,19 +149,19 @@ const CheckInComplete: React.FC = () => {
           <Divider sx={{ my: 2 }} />
 
           <Grid container spacing={2}>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <Typography variant="subtitle2" color="text.secondary">
                 Pet Name
               </Typography>
               <Typography variant="body1">{checkIn?.pet?.name}</Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <Typography variant="subtitle2" color="text.secondary">
                 Pet Type
               </Typography>
               <Typography variant="body1">{checkIn?.pet?.type}</Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <Typography variant="subtitle2" color="text.secondary">
                 Check-In Time
               </Typography>
@@ -169,7 +169,7 @@ const CheckInComplete: React.FC = () => {
                 {new Date(checkIn?.checkInTime).toLocaleString()}
               </Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <Typography variant="subtitle2" color="text.secondary">
                 Checked In By
               </Typography>
@@ -182,7 +182,7 @@ const CheckInComplete: React.FC = () => {
           <Divider sx={{ my: 2 }} />
 
           <Grid container spacing={2}>
-            <Grid item xs={4}>
+            <Grid size={4}>
               <Typography variant="subtitle2" color="text.secondary">
                 Medications
               </Typography>
@@ -190,7 +190,7 @@ const CheckInComplete: React.FC = () => {
                 {checkIn?.medications?.length || 0}
               </Typography>
             </Grid>
-            <Grid item xs={4}>
+            <Grid size={4}>
               <Typography variant="subtitle2" color="text.secondary">
                 Belongings
               </Typography>
@@ -198,7 +198,7 @@ const CheckInComplete: React.FC = () => {
                 {checkIn?.belongings?.length || 0}
               </Typography>
             </Grid>
-            <Grid item xs={4}>
+            <Grid size={4}>
               <Typography variant="subtitle2" color="text.secondary">
                 Agreement
               </Typography>

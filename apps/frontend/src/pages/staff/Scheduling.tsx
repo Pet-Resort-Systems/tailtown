@@ -7,13 +7,13 @@ import {
   Tabs,
   Tab,
   Button,
+  Grid,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
   Alert,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -220,7 +220,6 @@ const Scheduling: React.FC = () => {
           </Button>
         }
       />
-
       <Paper sx={{ p: 0, mb: 3 }}>
         <Tabs
           value={tabValue}
@@ -282,7 +281,11 @@ const Scheduling: React.FC = () => {
                 )}
 
                 <Grid container spacing={3}>
-                  <Grid item xs={12} md={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      md: 6
+                    }}>
                     <FormControl fullWidth>
                       <InputLabel>Select Staff Members</InputLabel>
                       <Select
@@ -313,7 +316,11 @@ const Scheduling: React.FC = () => {
                     </FormControl>
                   </Grid>
 
-                  <Grid item xs={12} md={3}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      md: 3
+                    }}>
                     <DatePicker
                       label="Start Date"
                       value={bulkScheduleData.startDate}
@@ -324,7 +331,11 @@ const Scheduling: React.FC = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={12} md={3}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      md: 3
+                    }}>
                     <DatePicker
                       label="End Date"
                       value={bulkScheduleData.endDate}
@@ -335,7 +346,11 @@ const Scheduling: React.FC = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={12} md={3}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      md: 3
+                    }}>
                     <TimePicker
                       label="Start Time"
                       value={parseTimeString(bulkScheduleData.startTime)}
@@ -349,7 +364,11 @@ const Scheduling: React.FC = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={12} md={3}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      md: 3
+                    }}>
                     <TimePicker
                       label="End Time"
                       value={parseTimeString(bulkScheduleData.endTime)}
@@ -363,7 +382,7 @@ const Scheduling: React.FC = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <Button
                       variant="contained"
                       color="primary"

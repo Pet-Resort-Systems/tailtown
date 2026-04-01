@@ -49,7 +49,6 @@ const KennelRow: React.FC<KennelRowProps> = memo(
       e: DragEvent<HTMLTableCellElement>,
       reservation: Reservation
     ) => {
-      console.log('[DragDrop] Drag started for reservation:', reservation.id);
       e.dataTransfer.setData('text/plain', reservation.id);
       e.dataTransfer.effectAllowed = 'move';
       if (onDragStart) {
@@ -68,20 +67,8 @@ const KennelRow: React.FC<KennelRowProps> = memo(
       e.preventDefault();
       e.stopPropagation();
       const reservationId = e.dataTransfer.getData('text/plain');
-      console.log(
-        '[DragDrop] Drop detected - reservationId:',
-        reservationId,
-        'targetKennel:',
-        kennel.id
-      );
       if (reservationId && onReservationDrop) {
-        console.log('[DragDrop] Calling onReservationDrop');
         onReservationDrop(reservationId, kennel.id, day);
-      } else {
-        console.log('[DragDrop] Missing reservationId or onReservationDrop', {
-          reservationId,
-          hasCallback: !!onReservationDrop,
-        });
       }
       if (onDragEnd) {
         onDragEnd();

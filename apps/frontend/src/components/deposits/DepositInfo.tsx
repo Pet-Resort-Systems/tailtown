@@ -18,8 +18,8 @@ import {
   ListItemIcon,
   ListItemText,
   CircularProgress,
+  Grid,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   AttachMoney as MoneyIcon,
   Event as EventIcon,
@@ -114,7 +114,7 @@ export const DepositInfo: React.FC<DepositInfoProps> = ({
         </Alert>
 
         <Grid container spacing={2}>
-          <Grid item xs={6}>
+          <Grid size={6}>
             <Box>
               <Typography variant="caption" color="text.secondary">
                 Total Cost
@@ -125,7 +125,7 @@ export const DepositInfo: React.FC<DepositInfoProps> = ({
             </Box>
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid size={6}>
             <Box>
               <Typography variant="caption" color="text.secondary">
                 Deposit Amount
@@ -142,7 +142,7 @@ export const DepositInfo: React.FC<DepositInfoProps> = ({
           </Grid>
 
           {calculation.depositDueDate && (
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Box display="flex" alignItems="center" mt={1}>
                 <EventIcon
                   sx={{ mr: 1, fontSize: 20, color: 'text.secondary' }}

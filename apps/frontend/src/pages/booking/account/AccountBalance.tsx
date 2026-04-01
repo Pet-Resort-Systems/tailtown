@@ -11,6 +11,7 @@ import {
   Button,
   CircularProgress,
   Alert,
+  Grid,
   Chip,
   Table,
   TableBody,
@@ -20,7 +21,6 @@ import {
   TableRow,
   Paper,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   AccountBalance as BalanceIcon,
   Receipt as ReceiptIcon,
@@ -121,7 +121,12 @@ const AccountBalanceComponent: React.FC = () => {
     <Box>
       {/* Balance Summary Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 4
+          }}>
           <Card sx={{ bgcolor: 'primary.main', color: 'white' }}>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -140,7 +145,12 @@ const AccountBalanceComponent: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 4
+          }}>
           <Card variant="outlined">
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -168,7 +178,12 @@ const AccountBalanceComponent: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 4
+          }}>
           <Card variant="outlined">
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -195,7 +210,6 @@ const AccountBalanceComponent: React.FC = () => {
           </Card>
         </Grid>
       </Grid>
-
       {/* Pending Invoices */}
       {pendingInvoices.length > 0 && (
         <Box sx={{ mb: 4 }}>
@@ -254,12 +268,10 @@ const AccountBalanceComponent: React.FC = () => {
           </TableContainer>
         </Box>
       )}
-
       {/* Payment History */}
       <Typography variant="h6" gutterBottom fontWeight={600}>
         Payment History
       </Typography>
-
       {paidInvoices.length === 0 ? (
         <Card variant="outlined" sx={{ textAlign: 'center', py: 4 }}>
           <ReceiptIcon sx={{ fontSize: 48, color: 'text.disabled', mb: 2 }} />
@@ -302,7 +314,6 @@ const AccountBalanceComponent: React.FC = () => {
           </Table>
         </TableContainer>
       )}
-
       {/* Contact for Questions */}
       <Box
         sx={{

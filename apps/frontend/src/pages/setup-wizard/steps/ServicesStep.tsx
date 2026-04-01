@@ -9,6 +9,7 @@ import {
   Box,
   Typography,
   Button,
+  Grid,
   Card,
   CardContent,
   Switch,
@@ -16,7 +17,6 @@ import {
   TextField,
   Chip,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   ArrowForward,
   ArrowBack,
@@ -97,7 +97,6 @@ export default function ServicesStep() {
         Select the services you offer. You can customize names and add more
         later.
       </Typography>
-
       {/* Quick Toggles */}
       <Box sx={{ mb: 4, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
         <FormControlLabel
@@ -132,11 +131,10 @@ export default function ServicesStep() {
           label="Training Classes"
         />
       </Box>
-
       {/* Services by Category */}
       <Grid container spacing={3}>
         {Object.entries(groupedServices).map(([category, categoryServices]) => (
-          <Grid item xs={12} key={category}>
+          <Grid key={category} size={12}>
             <Box sx={{ mb: 2 }}>
               <Box
                 sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}
@@ -152,7 +150,13 @@ export default function ServicesStep() {
               </Box>
               <Grid container spacing={2}>
                 {categoryServices.map((service) => (
-                  <Grid item xs={12} sm={6} md={4} key={service.id}>
+                  <Grid
+                    key={service.id}
+                    size={{
+                      xs: 12,
+                      sm: 6,
+                      md: 4
+                    }}>
                     <Card
                       variant="outlined"
                       sx={{
@@ -201,14 +205,12 @@ export default function ServicesStep() {
           </Grid>
         ))}
       </Grid>
-
       {/* Summary */}
       <Box sx={{ p: 2, bgcolor: 'grey.100', borderRadius: 1, mt: 3 }}>
         <Typography variant="subtitle2">
           {services.services.filter((s) => s.enabled).length} services enabled
         </Typography>
       </Box>
-
       {/* Navigation */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button startIcon={<ArrowBack />} onClick={prevStep}>

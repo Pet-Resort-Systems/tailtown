@@ -7,6 +7,7 @@ import {
   Box,
   Typography,
   Button,
+  Grid,
   TextField,
   Card,
   CardContent,
@@ -17,7 +18,6 @@ import {
   IconButton,
   Slider,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   ArrowForward,
   ArrowBack,
@@ -49,7 +49,6 @@ export default function NotificationsStep() {
         Configure email and SMS notifications. This step is optional but
         recommended.
       </Typography>
-
       {/* SendGrid */}
       <Card variant="outlined" sx={{ mb: 3 }}>
         <CardContent>
@@ -73,7 +72,7 @@ export default function NotificationsStep() {
           />
           {notifications.enableEmailConfirmations && (
             <Grid container spacing={2}>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   fullWidth
                   label="SendGrid API Key"
@@ -103,7 +102,11 @@ export default function NotificationsStep() {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   fullWidth
                   label="From Email"
@@ -121,7 +124,11 @@ export default function NotificationsStep() {
                   placeholder="noreply@yourbusiness.com"
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   fullWidth
                   label="From Name"
@@ -143,7 +150,6 @@ export default function NotificationsStep() {
           )}
         </CardContent>
       </Card>
-
       {/* Twilio */}
       <Card variant="outlined" sx={{ mb: 3 }}>
         <CardContent>
@@ -165,7 +171,11 @@ export default function NotificationsStep() {
           />
           {notifications.enableSmsReminders && (
             <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   fullWidth
                   label="Twilio Account SID"
@@ -182,7 +192,11 @@ export default function NotificationsStep() {
                   }
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   fullWidth
                   label="Auth Token"
@@ -212,7 +226,7 @@ export default function NotificationsStep() {
                   }}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   fullWidth
                   label="Twilio Phone Number"
@@ -234,7 +248,6 @@ export default function NotificationsStep() {
           )}
         </CardContent>
       </Card>
-
       {/* Reminder Settings */}
       <Card variant="outlined" sx={{ mb: 3 }}>
         <CardContent>
@@ -261,12 +274,10 @@ export default function NotificationsStep() {
           />
         </CardContent>
       </Card>
-
       <Alert severity="info" sx={{ mb: 3 }}>
         You can configure these settings later in the admin panel if you don't
         have your API keys ready.
       </Alert>
-
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button startIcon={<ArrowBack />} onClick={prevStep}>
           Back

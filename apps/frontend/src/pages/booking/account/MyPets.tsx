@@ -11,6 +11,7 @@ import {
   Button,
   CircularProgress,
   Alert,
+  Grid,
   Avatar,
   Chip,
   Dialog,
@@ -21,7 +22,6 @@ import {
   MenuItem,
   IconButton,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   Pets as PetsIcon,
   Edit as EditIcon,
@@ -157,13 +157,11 @@ const MyPets: React.FC = () => {
           Add Pet
         </Button>
       </Box>
-
       {error && (
         <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>
           {error}
         </Alert>
       )}
-
       {pets.length === 0 ? (
         <Box sx={{ textAlign: 'center', py: 6 }}>
           <PetsIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
@@ -184,7 +182,13 @@ const MyPets: React.FC = () => {
       ) : (
         <Grid container spacing={2}>
           {pets.map((pet) => (
-            <Grid item xs={12} sm={6} md={4} key={pet.id}>
+            <Grid
+              key={pet.id}
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 4
+              }}>
               <Card variant="outlined">
                 <CardContent>
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -264,7 +268,6 @@ const MyPets: React.FC = () => {
           ))}
         </Grid>
       )}
-
       {/* Edit/Add Dialog */}
       <Dialog
         open={editDialogOpen}
@@ -277,7 +280,11 @@ const MyPets: React.FC = () => {
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 label="Pet Name"
                 fullWidth
@@ -286,7 +293,11 @@ const MyPets: React.FC = () => {
                 onChange={handleFormChange('name')}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 label="Species"
                 fullWidth
@@ -301,7 +312,11 @@ const MyPets: React.FC = () => {
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 label="Breed"
                 fullWidth
@@ -309,7 +324,11 @@ const MyPets: React.FC = () => {
                 onChange={handleFormChange('breed')}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 label="Color"
                 fullWidth
@@ -317,7 +336,11 @@ const MyPets: React.FC = () => {
                 onChange={handleFormChange('color')}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 label="Gender"
                 fullWidth
@@ -332,7 +355,11 @@ const MyPets: React.FC = () => {
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 label="Weight (lbs)"
                 fullWidth
@@ -341,7 +368,7 @@ const MyPets: React.FC = () => {
                 onChange={handleFormChange('weight')}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 label="Birth Date"
                 fullWidth
@@ -353,7 +380,7 @@ const MyPets: React.FC = () => {
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 label="Notes"
                 fullWidth
@@ -364,7 +391,7 @@ const MyPets: React.FC = () => {
                 placeholder="Any special notes about your pet"
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 label="Feeding Instructions"
                 fullWidth
@@ -375,7 +402,7 @@ const MyPets: React.FC = () => {
                 placeholder="Special feeding requirements"
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 label="Medication Instructions"
                 fullWidth

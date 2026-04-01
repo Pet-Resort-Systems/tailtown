@@ -17,6 +17,7 @@ import {
   Card,
   CardContent,
   CardActions,
+  Grid,
   Chip,
   IconButton,
   Switch,
@@ -35,7 +36,6 @@ import {
   ListItemText,
   ListItemSecondaryAction,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -256,17 +256,15 @@ export const PricingRules: React.FC = () => {
           </Button>
         </Box>
       </Box>
-
       {error && (
         <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 3 }}>
           {error}
         </Alert>
       )}
-
       {/* Pricing Rules List */}
       <Grid container spacing={3}>
         {sortedRules.length === 0 ? (
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Card>
               <CardContent>
                 <Box textAlign="center" py={4}>
@@ -292,7 +290,13 @@ export const PricingRules: React.FC = () => {
           </Grid>
         ) : (
           sortedRules.map((rule) => (
-            <Grid item xs={12} md={6} lg={4} key={rule.id}>
+            <Grid
+              key={rule.id}
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 4
+              }}>
               <Card>
                 <CardContent>
                   <Box
@@ -383,7 +387,6 @@ export const PricingRules: React.FC = () => {
           ))
         )}
       </Grid>
-
       {/* Pricing Rule Dialog */}
       <Dialog
         open={showRuleDialog}
@@ -396,7 +399,7 @@ export const PricingRules: React.FC = () => {
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 label="Rule Name *"
@@ -407,7 +410,7 @@ export const PricingRules: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 multiline
@@ -420,7 +423,11 @@ export const PricingRules: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 fullWidth
                 select
@@ -440,7 +447,11 @@ export const PricingRules: React.FC = () => {
               </TextField>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 fullWidth
                 type="number"
@@ -456,7 +467,11 @@ export const PricingRules: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 fullWidth
                 select
@@ -474,7 +489,11 @@ export const PricingRules: React.FC = () => {
               </TextField>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <TextField
                 fullWidth
                 type="number"
@@ -494,7 +513,7 @@ export const PricingRules: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <FormControlLabel
                 control={
                   <Switch
@@ -516,7 +535,6 @@ export const PricingRules: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Holiday Dialog */}
       <Dialog
         open={showHolidayDialog}
@@ -548,7 +566,7 @@ export const PricingRules: React.FC = () => {
             Add Holiday
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 label="Holiday Name"
@@ -561,7 +579,7 @@ export const PricingRules: React.FC = () => {
                 }
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 type="date"
@@ -576,7 +594,7 @@ export const PricingRules: React.FC = () => {
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <FormControlLabel
                 control={
                   <Switch

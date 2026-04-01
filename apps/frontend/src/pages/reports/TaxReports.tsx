@@ -8,6 +8,7 @@ import {
   Box,
   Typography,
   Paper,
+  Grid,
   Card,
   CardContent,
   Button,
@@ -26,7 +27,6 @@ import {
   Alert,
   Chip,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import { Receipt as TaxIcon, GetApp as ExportIcon } from '@mui/icons-material';
 import {
   getTaxMonthlyReport,
@@ -118,11 +118,14 @@ const TaxReports: React.FC = () => {
           Export CSV
         </Button>
       </Box>
-
       {/* Filters */}
       <Paper sx={{ p: 2, mb: 3 }}>
         <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 3
+            }}>
             <FormControl fullWidth size="small">
               <InputLabel>Report Period</InputLabel>
               <Select
@@ -137,7 +140,11 @@ const TaxReports: React.FC = () => {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={2}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 2
+            }}>
             <TextField
               fullWidth
               size="small"
@@ -150,7 +157,11 @@ const TaxReports: React.FC = () => {
           </Grid>
 
           {period === 'monthly' && (
-            <Grid item xs={12} sm={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 3
+              }}>
               <FormControl fullWidth size="small">
                 <InputLabel>Month</InputLabel>
                 <Select
@@ -171,7 +182,11 @@ const TaxReports: React.FC = () => {
           )}
 
           {period === 'quarterly' && (
-            <Grid item xs={12} sm={2}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 2
+              }}>
               <FormControl fullWidth size="small">
                 <InputLabel>Quarter</InputLabel>
                 <Select
@@ -188,7 +203,11 @@ const TaxReports: React.FC = () => {
             </Grid>
           )}
 
-          <Grid item xs={12} sm={2}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 2
+            }}>
             <Button
               fullWidth
               variant="contained"
@@ -200,27 +219,28 @@ const TaxReports: React.FC = () => {
           </Grid>
         </Grid>
       </Paper>
-
       {/* Error */}
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
           {error}
         </Alert>
       )}
-
       {/* Loading */}
       {loading && (
         <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
           <CircularProgress />
         </Box>
       )}
-
       {/* Report Data */}
       {!loading && reportData && (
         <>
           {/* Summary Cards */}
           <Grid container spacing={2} sx={{ mb: 3 }}>
-            <Grid item xs={12} sm={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 3
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -235,7 +255,11 @@ const TaxReports: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 3
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -247,7 +271,11 @@ const TaxReports: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 3
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -259,7 +287,11 @@ const TaxReports: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 3
+              }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>

@@ -4,6 +4,7 @@ import {
   Typography,
   Box,
   Paper,
+  Grid,
   Button,
   TextField,
   FormControl,
@@ -19,7 +20,6 @@ import {
   ListItemSecondaryAction,
   IconButton,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   Sms as SmsIcon,
   Send as SendIcon,
@@ -129,14 +129,22 @@ const SmsMarketing: React.FC = () => {
 
         <Grid container spacing={3}>
           {/* Campaign Composer */}
-          <Grid item xs={12} lg={8}>
+          <Grid
+            size={{
+              xs: 12,
+              lg: 8
+            }}>
             <Paper sx={{ p: 3 }}>
               <Typography variant="h6" gutterBottom>
                 Create SMS Campaign
               </Typography>
 
               <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 6
+                  }}>
                   <FormControl fullWidth sx={{ mb: 2 }}>
                     <InputLabel>Message Template</InputLabel>
                     <Select
@@ -156,7 +164,11 @@ const SmsMarketing: React.FC = () => {
                   </FormControl>
                 </Grid>
 
-                <Grid item xs={12} md={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 6
+                  }}>
                   <FormControl fullWidth sx={{ mb: 2 }}>
                     <InputLabel>Contact List</InputLabel>
                     <Select
@@ -173,7 +185,7 @@ const SmsMarketing: React.FC = () => {
                   </FormControl>
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <TextField
                     fullWidth
                     multiline
@@ -187,7 +199,7 @@ const SmsMarketing: React.FC = () => {
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Box sx={{ display: 'flex', gap: 2 }}>
                     <Button
                       variant="contained"
@@ -206,7 +218,11 @@ const SmsMarketing: React.FC = () => {
           </Grid>
 
           {/* Quick Stats */}
-          <Grid item xs={12} lg={4}>
+          <Grid
+            size={{
+              xs: 12,
+              lg: 4
+            }}>
             <Paper sx={{ p: 3, mb: 3 }}>
               <Typography variant="h6" gutterBottom>
                 SMS Statistics
@@ -272,7 +288,7 @@ const SmsMarketing: React.FC = () => {
           </Grid>
 
           {/* Recent Campaigns */}
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Paper sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Typography variant="h6" sx={{ flexGrow: 1 }}>

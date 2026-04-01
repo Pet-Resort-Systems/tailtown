@@ -5,7 +5,7 @@ import axios from 'axios';
 
 // Payment service base URL (port 4005)
 const PAYMENT_SERVICE_URL =
-  process.env.REACT_APP_PAYMENT_SERVICE_URL || 'http://localhost:4005';
+  import.meta.env.VITE_PAYMENT_SERVICE_URL || 'http://localhost:4005';
 
 // Additional types
 export interface StoreCredit {

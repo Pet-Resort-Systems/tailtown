@@ -3,6 +3,9 @@ name: Pull Request Checks
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    paths-ignore:
+      - "apps/legacy-frontend/**"
+      - "apps/legacy-admin-portal/**"
 
 jobs:
   dependabot-shortcut:
@@ -171,10 +174,9 @@ jobs:
       - name: Build apps/frontend
         working-directory: ./apps/frontend
         env:
-          REACT_APP_TENANT_ID: dev
-          REACT_APP_API_URL: http://localhost:4004
-          REACT_APP_RESERVATION_API_URL: http://localhost:4003
-          CI: false
+          VITE_API_URL: http://localhost:4004
+          VITE_RESERVATION_API_URL: http://localhost:4003
+          CI: true
         run: |
           pnpm run build
 
@@ -205,7 +207,7 @@ jobs:
       - name: Check build sizes
         run: |
           echo "Frontend build size:"
-          du -sh apps/frontend/build
+          du -sh apps/frontend/dist
           echo "Customer service build size:"
           du -sh apps/customer-service/dist
           echo "Reservation service build size:"

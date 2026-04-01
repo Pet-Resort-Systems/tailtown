@@ -8,7 +8,7 @@ Tailtown uses a comprehensive testing strategy covering:
 
 - **Unit Tests**: Individual function and component testing
 - **Integration Tests**: API endpoint and database testing
-- **End-to-End Tests**: Full user flow testing through the isolated `e2e` workspace package, targeting `apps/frontend-vite` as the app under test
+- **End-to-End Tests**: Full user flow testing through the isolated `e2e` workspace package, targeting `apps/frontend` as the app under test
 - **Automated CI/CD**: Tests run on every push and PR
 
 ## Test Structure
@@ -20,7 +20,7 @@ tailtown/
 │   ├── frontend-vite/           # App under test for Playwright E2E flows
 │   ├── customer-service/        # Backend API tests
 │   └── reservation-service/     # Backend and integration tests
-├── e2e/                         # Isolated Playwright workspace package for apps/frontend-vite
+├── e2e/                         # Isolated Playwright workspace package for apps/frontend
 │   ├── package.json
 │   ├── playwright.config.ts
 │   ├── *.spec.ts
@@ -45,7 +45,7 @@ Run the isolated E2E suite:
 pnpm run test:e2e
 ```
 
-This Playwright suite runs against `apps/frontend-vite` as the app under test through the isolated `e2e/` workspace package.
+This Playwright suite runs against `apps/frontend` as the app under test through the isolated `e2e/` workspace package.
 
 ### Individual Test Suites
 

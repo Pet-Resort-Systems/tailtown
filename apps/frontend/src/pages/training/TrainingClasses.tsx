@@ -205,9 +205,6 @@ const TrainingClasses: React.FC = () => {
           : undefined,
       };
 
-      console.log('Creating training class with data:', apiData);
-      console.log('Start date formatted as:', apiData.startDate);
-
       if (editingClass) {
         await schedulingService.trainingClasses.update(
           editingClass.id,
@@ -393,17 +390,19 @@ const TrainingClasses: React.FC = () => {
           New Class
         </Button>
       </Box>
-
       {error && (
         <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
-
       {/* Filters */}
       <Paper sx={{ p: 2, mb: 2 }}>
         <Grid container spacing={2}>
-          <Grid size={{ xs: 12, md: 3 }}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3
+            }}>
             <FormControl fullWidth>
               <InputLabel>Status</InputLabel>
               <Select
@@ -421,7 +420,11 @@ const TrainingClasses: React.FC = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid size={{ xs: 12, md: 3 }}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3
+            }}>
             <FormControl fullWidth>
               <InputLabel>Category</InputLabel>
               <Select
@@ -439,7 +442,11 @@ const TrainingClasses: React.FC = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid size={{ xs: 12, md: 3 }}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3
+            }}>
             <FormControl fullWidth>
               <InputLabel>Level</InputLabel>
               <Select
@@ -456,7 +463,11 @@ const TrainingClasses: React.FC = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid size={{ xs: 12, md: 3 }}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3
+            }}>
             <Button
               variant="outlined"
               onClick={() =>
@@ -475,7 +486,6 @@ const TrainingClasses: React.FC = () => {
           </Grid>
         </Grid>
       </Paper>
-
       <Paper>
         <TableContainer>
           <Table>
@@ -617,7 +627,6 @@ const TrainingClasses: React.FC = () => {
           </Table>
         </TableContainer>
       </Paper>
-
       {/* Add/Edit Dialog */}
       <Dialog
         open={openDialog}
@@ -661,7 +670,7 @@ const TrainingClasses: React.FC = () => {
             />
 
             <Grid container spacing={2}>
-              <Grid size={{ xs: 6 }}>
+              <Grid size={6}>
                 <FormControl fullWidth>
                   <InputLabel>Category</InputLabel>
                   <Select
@@ -681,7 +690,7 @@ const TrainingClasses: React.FC = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid size={{ xs: 6 }}>
+              <Grid size={6}>
                 <FormControl fullWidth>
                   <InputLabel>Level</InputLabel>
                   <Select
@@ -721,7 +730,7 @@ const TrainingClasses: React.FC = () => {
             </FormControl>
 
             <Grid container spacing={2}>
-              <Grid size={{ xs: 6 }}>
+              <Grid size={6}>
                 <TextField
                   label="Max Capacity"
                   type="number"
@@ -735,7 +744,7 @@ const TrainingClasses: React.FC = () => {
                   fullWidth
                 />
               </Grid>
-              <Grid size={{ xs: 6 }}>
+              <Grid size={6}>
                 <TextField
                   label="Total Weeks"
                   type="number"
@@ -766,12 +775,6 @@ const TrainingClasses: React.FC = () => {
                   // Automatically set daysOfWeek based on the selected start date
                   const dayOfWeek =
                     newDate instanceof Date ? newDate.getDay() : 0; // 0 = Sunday, 1 = Monday, etc.
-                  console.log(
-                    'Start date changed to:',
-                    newDate,
-                    'Day of week:',
-                    dayOfWeek
-                  );
                   setFormData({
                     ...formData,
                     startDate: newDate,
@@ -783,7 +786,7 @@ const TrainingClasses: React.FC = () => {
             </LocalizationProvider>
 
             <Grid container spacing={2}>
-              <Grid size={{ xs: 6 }}>
+              <Grid size={6}>
                 <TextField
                   label="Start Time"
                   type="time"
@@ -795,7 +798,7 @@ const TrainingClasses: React.FC = () => {
                   fullWidth
                 />
               </Grid>
-              <Grid size={{ xs: 6 }}>
+              <Grid size={6}>
                 <TextField
                   label="End Time"
                   type="time"
@@ -841,7 +844,6 @@ const TrainingClasses: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Enrollment Dialog */}
       <Dialog
         open={enrollDialogOpen}

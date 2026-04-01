@@ -93,17 +93,11 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
 
       setLoadingCustomers(true);
       try {
-        console.log(
-          'QuickReportCard: Searching for customers with:',
-          customerSearchInput
-        );
         const response = await customerService.searchCustomers(
           customerSearchInput,
           1,
           20
         );
-        console.log('QuickReportCard: Search response:', response);
-        console.log('QuickReportCard: Setting customers to:', response.data);
         setCustomers(response.data || []);
       } catch (err) {
         console.error('Failed to load customers:', err);
@@ -266,14 +260,8 @@ const QuickReportCard: React.FC<QuickReportCardProps> = ({
           sendEmail: true,
           sendSMS: true,
         });
-        console.log(
-          'QuickReportCard: Report card sent successfully, setting success message'
-        );
         setSuccess('Report card created and sent successfully!');
       } else {
-        console.log(
-          'QuickReportCard: Report card created (not sent), setting success message'
-        );
         setSuccess('Report card created successfully!');
       }
 

@@ -122,17 +122,17 @@ cd "$PROJECT_ROOT"
 # Zero-downtime deployment for apps/frontend
 log "Deploying apps/frontend (zero-downtime)..."
 cd "$PROJECT_ROOT/apps/frontend"
-if [ -d "build-new" ]; then
-    rm -rf build-new
+if [ -d "dist-new" ]; then
+    rm -rf dist-new
 fi
-mv build build-new 2>/dev/null || true
+mv dist dist-new 2>/dev/null || true
 # Build is already done, just need to swap
-if [ -d "build-old" ]; then
-    mv build-old build
+if [ -d "dist-old" ]; then
+    mv dist-old dist
 fi
-mv build build-old 2>/dev/null || true
-mv build-new build
-rm -rf build-old
+mv dist dist-old 2>/dev/null || true
+mv dist-new dist
+rm -rf dist-old
 log "  ✓ Frontend deployed (no downtime)"
 
 cd "$PROJECT_ROOT"

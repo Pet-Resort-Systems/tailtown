@@ -5,12 +5,12 @@ import {
   Card,
   CardContent,
   Container,
+  Grid,
   TextField,
   Typography,
   Alert,
   MenuItem,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import { useNavigate } from 'react-router-dom';
 import { tenantService, CreateTenantDto } from '../../services/tenantService';
 
@@ -69,13 +69,11 @@ const CreateTenant: React.FC = () => {
           Set up a new pet resort business account
         </Typography>
       </Box>
-
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
           {error}
         </Alert>
       )}
-
       <form onSubmit={handleSubmit}>
         <Card sx={{ mb: 3 }}>
           <CardContent>
@@ -83,7 +81,7 @@ const CreateTenant: React.FC = () => {
               Business Information
             </Typography>
             <Grid container spacing={2}>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   required
                   fullWidth
@@ -92,7 +90,11 @@ const CreateTenant: React.FC = () => {
                   onChange={handleChange('businessName')}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   required
                   fullWidth
@@ -102,7 +104,11 @@ const CreateTenant: React.FC = () => {
                   helperText="e.g., 'pawsinn' for pawsinn.tailtown.com"
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   select
                   fullWidth
@@ -115,7 +121,11 @@ const CreateTenant: React.FC = () => {
                   <MenuItem value="ENTERPRISE">Enterprise</MenuItem>
                 </TextField>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   required
                   fullWidth
@@ -124,7 +134,11 @@ const CreateTenant: React.FC = () => {
                   onChange={handleChange('contactName')}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   required
                   fullWidth
@@ -134,7 +148,11 @@ const CreateTenant: React.FC = () => {
                   onChange={handleChange('contactEmail')}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   fullWidth
                   label="Contact Phone"
@@ -142,7 +160,11 @@ const CreateTenant: React.FC = () => {
                   onChange={handleChange('contactPhone')}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   select
                   fullWidth
@@ -156,7 +178,7 @@ const CreateTenant: React.FC = () => {
                   <MenuItem value="America/Los_Angeles">Pacific Time</MenuItem>
                 </TextField>
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   fullWidth
                   label="Address"
@@ -164,7 +186,11 @@ const CreateTenant: React.FC = () => {
                   onChange={handleChange('address')}
                 />
               </Grid>
-              <Grid item xs={12} md={4}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 4
+                }}>
                 <TextField
                   fullWidth
                   label="City"
@@ -172,7 +198,11 @@ const CreateTenant: React.FC = () => {
                   onChange={handleChange('city')}
                 />
               </Grid>
-              <Grid item xs={12} md={4}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 4
+                }}>
                 <TextField
                   fullWidth
                   label="State"
@@ -180,7 +210,11 @@ const CreateTenant: React.FC = () => {
                   onChange={handleChange('state')}
                 />
               </Grid>
-              <Grid item xs={12} md={4}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 4
+                }}>
                 <TextField
                   fullWidth
                   label="Zip Code"
@@ -198,7 +232,11 @@ const CreateTenant: React.FC = () => {
               Admin User
             </Typography>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   required
                   fullWidth
@@ -207,7 +245,11 @@ const CreateTenant: React.FC = () => {
                   onChange={handleChange('adminFirstName')}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 6
+                }}>
                 <TextField
                   required
                   fullWidth
@@ -216,7 +258,7 @@ const CreateTenant: React.FC = () => {
                   onChange={handleChange('adminLastName')}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   required
                   fullWidth
@@ -226,7 +268,7 @@ const CreateTenant: React.FC = () => {
                   onChange={handleChange('adminEmail')}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextField
                   required
                   fullWidth

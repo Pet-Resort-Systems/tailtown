@@ -10,7 +10,7 @@ echo "========================"
 echo ""
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$PROJECT_ROOT/apps/frontend"
+cd "$PROJECT_ROOT/apps/legacy-frontend"
 
 # Colors
 GREEN='\033[0;32m'

@@ -11,6 +11,7 @@ import {
   IconButton,
   TextField,
   Typography,
+  Grid,
   Chip,
   Select,
   MenuItem,
@@ -25,7 +26,6 @@ import {
   Divider,
   Alert,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -82,7 +82,7 @@ export default function ChecklistTemplates() {
 
   const loadTemplates = async () => {
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || '';
+      const apiUrl = import.meta.env.VITE_API_URL || '';
       const response = await fetch(`${apiUrl}/api/checklists/templates`, {
         headers: {
           'x-tenant-id':
@@ -122,7 +122,7 @@ export default function ChecklistTemplates() {
       return;
 
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || '';
+      const apiUrl = import.meta.env.VITE_API_URL || '';
       await fetch(`${apiUrl}/api/checklists/templates/${id}`, {
         method: 'DELETE',
         headers: {
@@ -152,7 +152,7 @@ export default function ChecklistTemplates() {
     if (!currentTemplate) return;
 
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || '';
+      const apiUrl = import.meta.env.VITE_API_URL || '';
       const url = currentTemplate.id
         ? `${apiUrl}/api/checklists/templates/${currentTemplate.id}`
         : `${apiUrl}/api/checklists/templates`;
@@ -289,13 +289,18 @@ export default function ChecklistTemplates() {
           Create Template
         </Button>
       </Box>
-
       {loading ? (
         <Typography>Loading...</Typography>
       ) : (
         <Grid container spacing={3}>
           {templates.map((template) => (
-            <Grid item xs={12} md={6} lg={4} key={template.id}>
+            <Grid
+              key={template.id}
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 4
+              }}>
               <Card>
                 <CardContent>
                   <Box
@@ -366,7 +371,6 @@ export default function ChecklistTemplates() {
           ))}
         </Grid>
       )}
-
       {/* Edit Template Dialog */}
       <Dialog
         open={editDialogOpen}
@@ -524,7 +528,6 @@ export default function ChecklistTemplates() {
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Edit Item Dialog */}
       <Dialog
         open={itemDialogOpen}

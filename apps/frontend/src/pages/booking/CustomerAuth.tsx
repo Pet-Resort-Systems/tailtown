@@ -15,9 +15,9 @@ import {
   Tabs,
   Alert,
   CircularProgress,
+  Grid,
   Link,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   Login as LoginIcon,
   PersonAdd as SignupIcon,
@@ -154,7 +154,6 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
       >
         Welcome to Tailtown
       </Typography>
-
       <Typography
         variant="body1"
         color="text.secondary"
@@ -162,7 +161,6 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
       >
         Please sign in or create an account to continue booking
       </Typography>
-
       <Card elevation={3}>
         <Tabs
           value={activeTab}
@@ -252,7 +250,7 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
           {activeTab === 1 && (
             <Box component="form" onSubmit={handleSignup}>
               <Grid container spacing={2}>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Typography
                     variant="h6"
                     gutterBottom
@@ -262,7 +260,11 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
                   </Typography>
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <TextField
                     label="First Name"
                     fullWidth
@@ -273,7 +275,11 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <TextField
                     label="Last Name"
                     fullWidth
@@ -284,7 +290,7 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <TextField
                     label="Email"
                     type="email"
@@ -296,7 +302,7 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <TextField
                     label="Phone Number"
                     type="tel"
@@ -309,7 +315,7 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Typography
                     variant="h6"
                     gutterBottom
@@ -319,7 +325,11 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
                   </Typography>
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <TextField
                     label="Password"
                     type="password"
@@ -332,7 +342,11 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <TextField
                     label="Confirm Password"
                     type="password"
@@ -344,7 +358,7 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Typography
                     variant="h6"
                     gutterBottom
@@ -354,7 +368,7 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
                   </Typography>
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <TextField
                     label="Street Address"
                     fullWidth
@@ -364,7 +378,11 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <TextField
                     label="City"
                     fullWidth
@@ -374,7 +392,11 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={3}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 3
+                  }}>
                   <TextField
                     label="State"
                     fullWidth
@@ -385,7 +407,11 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={3}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 3
+                  }}>
                   <TextField
                     label="ZIP Code"
                     fullWidth
@@ -396,7 +422,7 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Typography
                     variant="h6"
                     gutterBottom
@@ -406,7 +432,11 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
                   </Typography>
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <TextField
                     label="Emergency Contact Name"
                     fullWidth
@@ -415,7 +445,11 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <TextField
                     label="Emergency Contact Phone"
                     type="tel"
@@ -443,7 +477,6 @@ const CustomerAuth: React.FC<CustomerAuthProps> = ({ onSuccess }) => {
           )}
         </CardContent>
       </Card>
-
       <Typography
         variant="body2"
         color="text.secondary"

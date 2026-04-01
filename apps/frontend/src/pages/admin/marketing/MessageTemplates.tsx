@@ -10,6 +10,7 @@ import {
   Card,
   CardContent,
   CardActions,
+  Grid,
   Chip,
   IconButton,
   Dialog,
@@ -25,7 +26,6 @@ import {
   CircularProgress,
   Snackbar,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -319,7 +319,13 @@ const MessageTemplates: React.FC = () => {
         ) : (
           <Grid container spacing={3}>
             {filteredTemplates.map((template) => (
-              <Grid item xs={12} md={6} lg={4} key={template.id}>
+              <Grid
+                key={template.id}
+                size={{
+                  xs: 12,
+                  md: 6,
+                  lg: 4
+                }}>
                 <Card
                   sx={{
                     height: '100%',
@@ -451,7 +457,6 @@ const MessageTemplates: React.FC = () => {
           </Paper>
         )}
       </Box>
-
       {/* Create/Edit Dialog */}
       <Dialog
         open={openDialog}
@@ -559,7 +564,6 @@ const MessageTemplates: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Use Template Dialog */}
       <Dialog
         open={openUseDialog}
@@ -650,7 +654,6 @@ const MessageTemplates: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}

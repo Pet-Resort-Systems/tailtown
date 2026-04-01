@@ -10,6 +10,7 @@ import {
   Button,
   Box,
   LinearProgress,
+  Grid,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -25,7 +26,6 @@ import {
   ListItem,
   ListItemText,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import {
   School as TrainingIcon,
   ArrowForward as ViewAllIcon,
@@ -233,9 +233,6 @@ const UpcomingClasses: React.FC = () => {
       handleCloseEnrollDialog();
       setCreditCardDialogOpen(false);
       setError(null);
-
-      // Optional: Show success message
-      console.log('Enrollment successful!');
     } catch (err: any) {
       setError(
         err.response?.data?.message || err.message || 'Failed to enroll pet'
@@ -322,7 +319,12 @@ const UpcomingClasses: React.FC = () => {
               );
 
               return (
-                <Grid item xs={12} md={6} key={trainingClass.id}>
+                <Grid
+                  key={trainingClass.id}
+                  size={{
+                    xs: 12,
+                    md: 6
+                  }}>
                   <Box
                     sx={{
                       borderLeft: 3,
@@ -428,7 +430,6 @@ const UpcomingClasses: React.FC = () => {
           </Grid>
         )}
       </CardContent>
-
       {/* Enrollment Dialog */}
       <Dialog
         open={enrollDialogOpen}
@@ -640,7 +641,6 @@ const UpcomingClasses: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Credit Card Payment Dialog */}
       <Dialog
         open={creditCardDialogOpen}

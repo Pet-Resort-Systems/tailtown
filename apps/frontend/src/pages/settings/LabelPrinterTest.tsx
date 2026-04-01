@@ -12,8 +12,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Grid,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 import PrintIcon from '@mui/icons-material/Print';
 import DownloadIcon from '@mui/icons-material/Download';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -107,7 +107,11 @@ const LabelPrinterTest: React.FC = () => {
           )}
 
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <Typography variant="h6" gutterBottom>
                 Label Content
               </Typography>
@@ -154,7 +158,11 @@ const LabelPrinterTest: React.FC = () => {
               </Box>
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <Typography variant="h6" gutterBottom>
                 Label Preview
               </Typography>
