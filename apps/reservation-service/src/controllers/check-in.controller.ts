@@ -1,11 +1,39 @@
 import { type Request, type Response } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { prisma } from '../config/prisma.js';
+import { AppError } from '../utils/appError.js';
 import { logger } from '../utils/logger.js';
 
 /**
  * Check-In Controller
  * Manages pet check-ins with questionnaire responses, medications, and belongings
  */
+
+function getRequiredRouteParam(
+  req: Request,
+  res: Response,
+  param: string | string[] | undefined,
+  missingMessage: string
+): string | undefined {
+  try {
+    return assertStringRouteParam(
+      param,
+      req.originalUrl,
+      AppError.validationError,
+      missingMessage
+    );
+  } catch (error) {
+    if (error instanceof AppError) {
+      res.status(error.statusCode).json({
+        status: 'error',
+        message: error.message,
+      });
+      return;
+    }
+
+    throw error;
+  }
+}
 
 /**
  * Get all check-ins for a tenant
@@ -95,7 +123,13 @@ export const getAllCheckIns = async (req: Request, res: Response) => {
  */
 export const getCheckInById = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = getRequiredRouteParam(
+      req,
+      res,
+      req.params.id,
+      'Check-in ID is required'
+    );
+    if (!id) return;
     const tenantId =
       (req as any).tenantId || (req.headers['x-tenant-id'] as string);
 
@@ -290,7 +324,13 @@ export const createCheckIn = async (req: Request, res: Response) => {
  */
 export const updateCheckIn = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = getRequiredRouteParam(
+      req,
+      res,
+      req.params.id,
+      'Check-in ID is required'
+    );
+    if (!id) return;
     const tenantId =
       (req as any).tenantId || (req.headers['x-tenant-id'] as string);
     const {
@@ -368,7 +408,13 @@ export const updateCheckIn = async (req: Request, res: Response) => {
  */
 export const addMedication = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = getRequiredRouteParam(
+      req,
+      res,
+      req.params.id,
+      'Check-in ID is required'
+    );
+    if (!id) return;
     const tenantId =
       (req as any).tenantId || (req.headers['x-tenant-id'] as string);
     const medicationData = req.body;
@@ -429,7 +475,20 @@ export const addMedication = async (req: Request, res: Response) => {
  */
 export const updateMedication = async (req: Request, res: Response) => {
   try {
-    const { checkInId, medicationId } = req.params;
+    const checkInId = getRequiredRouteParam(
+      req,
+      res,
+      req.params.checkInId,
+      'Check-in ID is required'
+    );
+    if (!checkInId) return;
+    const medicationId = getRequiredRouteParam(
+      req,
+      res,
+      req.params.medicationId,
+      'Medication ID is required'
+    );
+    if (!medicationId) return;
     const tenantId =
       (req as any).tenantId || (req.headers['x-tenant-id'] as string);
     const medicationData = req.body;
@@ -491,7 +550,13 @@ export const updateMedication = async (req: Request, res: Response) => {
  */
 export const deleteMedication = async (req: Request, res: Response) => {
   try {
-    const { medicationId } = req.params;
+    const medicationId = getRequiredRouteParam(
+      req,
+      res,
+      req.params.medicationId,
+      'Medication ID is required'
+    );
+    if (!medicationId) return;
 
     await prisma.checkInMedication.delete({
       where: { id: medicationId },
@@ -519,7 +584,13 @@ export const deleteMedication = async (req: Request, res: Response) => {
  */
 export const returnBelonging = async (req: Request, res: Response) => {
   try {
-    const { belongingId } = req.params;
+    const belongingId = getRequiredRouteParam(
+      req,
+      res,
+      req.params.belongingId,
+      'Belonging ID is required'
+    );
+    if (!belongingId) return;
     const { returnedBy } = req.body;
 
     const belonging = await prisma.checkInBelonging.update({
@@ -552,7 +623,13 @@ export const returnBelonging = async (req: Request, res: Response) => {
  */
 export const getRoomPets = async (req: Request, res: Response) => {
   try {
-    const { reservationId } = req.params;
+    const reservationId = getRequiredRouteParam(
+      req,
+      res,
+      req.params.reservationId,
+      'Reservation ID is required'
+    );
+    if (!reservationId) return;
     const tenantId =
       (req as any).tenantId || (req.headers['x-tenant-id'] as string);
 
@@ -990,7 +1067,13 @@ export const saveDraft = async (req: Request, res: Response) => {
  */
 export const getDraft = async (req: Request, res: Response) => {
   try {
-    const { reservationId } = req.params;
+    const reservationId = getRequiredRouteParam(
+      req,
+      res,
+      req.params.reservationId,
+      'Reservation ID is required'
+    );
+    if (!reservationId) return;
     const tenantId =
       (req as any).tenantId || (req.headers['x-tenant-id'] as string);
 

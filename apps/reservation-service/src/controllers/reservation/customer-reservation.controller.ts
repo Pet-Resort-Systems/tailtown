@@ -6,6 +6,7 @@
  */
 
 import { type Request, type Response } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../../utils/service.js';
 import { catchAsync } from '../../middleware/catchAsync.js';
 import { logger } from '../../utils/logger.js';
@@ -49,11 +50,12 @@ export const getCustomerReservations = catchAsync(
       throw AppError.authorizationError('Tenant ID is required');
     }
 
-    const { customerId } = req.params;
-    if (!customerId) {
-      logger.warn(`Missing customer ID in request`, { requestId });
-      throw AppError.validationError('Customer ID is required');
-    }
+    const customerId = assertStringRouteParam(
+      req.params.customerId,
+      req.originalUrl,
+      AppError.validationError,
+      'Customer ID is required'
+    );
 
     // Verify customer exists and belongs to tenant via Customer Service API
     try {

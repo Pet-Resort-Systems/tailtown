@@ -6,8 +6,8 @@
  * and provides detailed logging with proper context.
  */
 
-import { Request, Response, NextFunction } from 'express';
-import { AppError, ErrorType } from './AppError';
+import { type Request, type Response, type NextFunction } from 'express';
+import { AppError, ErrorType } from './AppError.js';
 
 // Simple console logger for the error handler
 // Services should replace this with their own logger implementation

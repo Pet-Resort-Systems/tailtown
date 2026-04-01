@@ -6,6 +6,7 @@
  */
 
 import { type Request, type Response } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../../utils/service.js';
 import { catchAsync } from '../../middleware/catchAsync.js';
 import { logger } from '../../utils/logger.js';
@@ -68,11 +69,12 @@ export const updateReservation = catchAsync(
       throw AppError.authorizationError('Tenant ID is required');
     }
 
-    const { id } = req.params;
-    if (!id) {
-      logger.warn(`Missing reservation ID in request`, { requestId });
-      throw AppError.validationError('Reservation ID is required');
-    }
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Reservation ID is required'
+    );
 
     // First, check if the reservation exists and belongs to this tenant
     const existingReservation = await safeExecutePrismaQuery(

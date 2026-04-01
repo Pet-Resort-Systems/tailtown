@@ -1,5 +1,7 @@
 import { type Request, type Response } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { prisma } from '../config/prisma.js';
+import { AppError } from '../utils/appError.js';
 import { logger } from '../utils/logger.js';
 
 // Use type intersection instead of interface extension to avoid TS2430
@@ -7,6 +9,32 @@ type AuthenticatedRequest = Request & {
   tenantId?: string;
   user?: { id: string; name: string };
 };
+
+function getRequiredRouteParam(
+  req: Request,
+  res: Response,
+  param: string | string[] | undefined,
+  missingMessage: string
+): string | undefined {
+  try {
+    return assertStringRouteParam(
+      param,
+      req.originalUrl,
+      AppError.validationError,
+      missingMessage
+    );
+  } catch (error) {
+    if (error instanceof AppError) {
+      res.status(error.statusCode).json({
+        status: 'error',
+        message: error.message,
+      });
+      return;
+    }
+
+    throw error;
+  }
+}
 
 /**
  * Service Agreement Controller
@@ -55,7 +83,13 @@ export const getAllTemplates = async (req: Request, res: Response) => {
  */
 export const getTemplateById = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = getRequiredRouteParam(
+      req,
+      res,
+      req.params.id,
+      'Template ID is required'
+    );
+    if (!id) return;
     const tenantId = (req as any).tenantId;
 
     const template = await prisma.serviceAgreementTemplate.findFirst({
@@ -227,7 +261,13 @@ export const createTemplate = async (req: Request, res: Response) => {
  */
 export const updateTemplate = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = getRequiredRouteParam(
+      req,
+      res,
+      req.params.id,
+      'Template ID is required'
+    );
+    if (!id) return;
     const tenantId = (req as any).tenantId;
     const staffId = (req as any).user?.id;
     const {
@@ -321,7 +361,13 @@ export const updateTemplate = async (req: Request, res: Response) => {
  */
 export const deleteTemplate = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = getRequiredRouteParam(
+      req,
+      res,
+      req.params.id,
+      'Template ID is required'
+    );
+    if (!id) return;
     const tenantId = (req as any).tenantId;
 
     // Verify template exists and belongs to tenant
@@ -486,7 +532,13 @@ export const createAgreement = async (req: Request, res: Response) => {
  */
 export const getAgreementByCheckIn = async (req: Request, res: Response) => {
   try {
-    const { checkInId } = req.params;
+    const checkInId = getRequiredRouteParam(
+      req,
+      res,
+      req.params.checkInId,
+      'Check-in ID is required'
+    );
+    if (!checkInId) return;
     const tenantId = (req as any).tenantId;
 
     const agreement = await prisma.serviceAgreement.findFirst({
@@ -593,7 +645,13 @@ export const getAllAgreements = async (req: Request, res: Response) => {
  */
 export const getAgreementsByCustomer = async (req: Request, res: Response) => {
   try {
-    const { customerId } = req.params;
+    const customerId = getRequiredRouteParam(
+      req,
+      res,
+      req.params.customerId,
+      'Customer ID is required'
+    );
+    if (!customerId) return;
     const tenantId = (req as any).tenantId;
     const { valid, limit = 50, offset = 0 } = req.query;
 
@@ -651,7 +709,13 @@ export const getAgreementsByCustomer = async (req: Request, res: Response) => {
  */
 export const getAgreementById = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = getRequiredRouteParam(
+      req,
+      res,
+      req.params.id,
+      'Agreement ID is required'
+    );
+    if (!id) return;
     const tenantId = (req as any).tenantId;
 
     const agreement = await prisma.serviceAgreement.findFirst({
@@ -704,7 +768,13 @@ export const getAgreementById = async (req: Request, res: Response) => {
  */
 export const invalidateAgreement = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = getRequiredRouteParam(
+      req,
+      res,
+      req.params.id,
+      'Agreement ID is required'
+    );
+    if (!id) return;
     const tenantId = (req as any).tenantId;
     const staffId = (req as any).user?.id;
     const { reason } = req.body;
@@ -767,7 +837,13 @@ export const invalidateAgreement = async (req: Request, res: Response) => {
  */
 export const getTemplateVersions = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = getRequiredRouteParam(
+      req,
+      res,
+      req.params.id,
+      'Template ID is required'
+    );
+    if (!id) return;
     const tenantId = (req as any).tenantId;
 
     // Verify template exists
@@ -811,7 +887,14 @@ export const getTemplateVersions = async (req: Request, res: Response) => {
  */
 export const getTemplateVersion = async (req: Request, res: Response) => {
   try {
-    const { id, version } = req.params;
+    const id = getRequiredRouteParam(
+      req,
+      res,
+      req.params.id,
+      'Template ID is required'
+    );
+    if (!id) return;
+    const { version } = req.params;
     const tenantId = (req as any).tenantId;
 
     const versionRecord = await prisma.serviceAgreementVersion.findFirst({
@@ -853,7 +936,13 @@ export const getTemplateVersion = async (req: Request, res: Response) => {
  */
 export const checkCustomerAgreement = async (req: Request, res: Response) => {
   try {
-    const { customerId } = req.params;
+    const customerId = getRequiredRouteParam(
+      req,
+      res,
+      req.params.customerId,
+      'Customer ID is required'
+    );
+    if (!customerId) return;
     const tenantId = (req as any).tenantId;
 
     const validAgreement = await prisma.serviceAgreement.findFirst({

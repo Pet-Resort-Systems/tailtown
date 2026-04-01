@@ -7,6 +7,7 @@
 import { Router } from 'express';
 import { type TenantRequest } from '../types/request.js';
 import { type Response, type NextFunction } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { catchAsync } from '../middleware/catchAsync.js';
 import { AppError } from '../utils/service.js';
 import {
@@ -24,12 +25,13 @@ router.get(
   '/:id/activity',
   catchAsync(async (req: TenantRequest, res: Response, next: NextFunction) => {
     const tenantId = req.tenantId || 'dev';
-    const reservationId = req.params.id;
+    const reservationId = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Reservation ID is required'
+    );
     const limit = parseInt(req.query.limit as string) || 50;
-
-    if (!reservationId) {
-      throw AppError.validationError('Reservation ID is required');
-    }
 
     const activities = await getReservationActivityLogs(
       tenantId,

@@ -2,8 +2,15 @@
   "name": "@tailtown/shared",
   "version": "1.0.0",
   "description": "Shared utilities for Tailtown microservices",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "private": true,
   "scripts": {
     "build": "tsc"

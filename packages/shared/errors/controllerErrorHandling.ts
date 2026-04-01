@@ -5,7 +5,7 @@
  * in controllers across all services.
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 
 // Extend Express Request to include user property
 declare global {
@@ -19,8 +19,9 @@ declare global {
     }
   }
 }
-import { AppError, ErrorType } from './AppError';
-import { catchAsync } from './errorHandler';
+import { AppError, ErrorType } from './AppError.js';
+import { catchAsync } from './errorHandler.js';
+import { assertStringRouteParam } from '../route-params.js';
 
 /**
  * Example controller using the catchAsync wrapper and AppError
@@ -31,14 +32,15 @@ export const exampleController = {
    */
   getById: catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const { id } = req.params;
+      const id = assertStringRouteParam(
+        req.params.id,
+        req.originalUrl,
+        AppError.validationError,
+        'ID is required'
+      );
       const organizationId = req.headers['x-organization-id'] as string;
 
       // Validate input
-      if (!id) {
-        throw AppError.validationError('ID is required');
-      }
-
       // Example database operation with error handling
       try {
         // Simulated database query
@@ -139,7 +141,12 @@ export const exampleController = {
    */
   update: catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const { id } = req.params;
+      const id = assertStringRouteParam(
+        req.params.id,
+        req.originalUrl,
+        AppError.validationError,
+        'ID is required'
+      );
       const updates = req.body;
       const organizationId = req.headers['x-organization-id'] as string;
 
@@ -190,7 +197,12 @@ export const exampleController = {
    */
   delete: catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const { id } = req.params;
+      const id = assertStringRouteParam(
+        req.params.id,
+        req.originalUrl,
+        AppError.validationError,
+        'ID is required'
+      );
       const organizationId = req.headers['x-organization-id'] as string;
 
       try {

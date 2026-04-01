@@ -9,8 +9,9 @@
  * and catchAsync wrapper for consistent error handling across services.
  */
 
-import { type Response } from 'express';
+import { type RequestHandler, type Response } from 'express';
 import { ResourceType } from '@prisma/client';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../../utils/appError.js';
 import { catchAsync } from '../../middleware/errorHandler.js';
 import { logger } from '../../utils/logger.js';
@@ -25,7 +26,7 @@ import {
  * Implements schema alignment strategy with fallback to empty array
  * Updated to use standardized error handling pattern
  */
-export const getAllResources = catchAsync(
+export const getAllResources: RequestHandler = catchAsync(
   async (req: TenantRequest, res: Response) => {
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
@@ -190,17 +191,18 @@ export const getAllResources = catchAsync(
  * Implements schema alignment strategy with fallback to null
  * Updated to use standardized error handling pattern
  */
-export const getResourceById = catchAsync(
+export const getResourceById: RequestHandler = catchAsync(
   async (req: TenantRequest, res: Response) => {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Resource ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     if (!tenantId) {
       throw AppError.authorizationError('Tenant ID is required');
-    }
-
-    if (!id) {
-      throw AppError.validationError('Resource ID is required');
     }
 
     logger.info(`Fetching resource with ID: ${id} for tenant: ${tenantId}`);
@@ -238,7 +240,7 @@ export const getResourceById = catchAsync(
  * Implements schema alignment strategy with proper error handling
  * Updated to use standardized error handling pattern
  */
-export const createResource = catchAsync(
+export const createResource: RequestHandler = catchAsync(
   async (req: TenantRequest, res: Response) => {
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
@@ -322,17 +324,18 @@ export const createResource = catchAsync(
  * Implements schema alignment strategy with proper error handling
  * Updated to use standardized error handling pattern
  */
-export const updateResource = catchAsync(
+export const updateResource: RequestHandler = catchAsync(
   async (req: TenantRequest, res: Response) => {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Resource ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     if (!tenantId) {
       throw AppError.authorizationError('Tenant ID is required');
-    }
-
-    if (!id) {
-      throw AppError.validationError('Resource ID is required');
     }
 
     const {
@@ -438,17 +441,18 @@ export const updateResource = catchAsync(
  * Implements schema alignment strategy with proper error handling
  * Updated to use standardized error handling pattern
  */
-export const deleteResource = catchAsync(
+export const deleteResource: RequestHandler = catchAsync(
   async (req: TenantRequest, res: Response) => {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Resource ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     if (!tenantId) {
       throw AppError.authorizationError('Tenant ID is required');
-    }
-
-    if (!id) {
-      throw AppError.validationError('Resource ID is required');
     }
 
     logger.info(
@@ -523,19 +527,20 @@ export const deleteResource = catchAsync(
  * This is a convenience method that wraps the availability controller
  * Updated to use standardized error handling pattern
  */
-export const getResourceAvailability = catchAsync(
+export const getResourceAvailability: RequestHandler = catchAsync(
   async (req: TenantRequest, res: Response) => {
-    const { id } = req.params;
+    const id = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Resource ID is required'
+    );
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
     if (!tenantId) {
       throw AppError.authorizationError('Tenant ID is required');
     }
     const { startDate, endDate } = req.query;
-
-    if (!id) {
-      throw AppError.validationError('Resource ID is required');
-    }
 
     if (!startDate || !endDate) {
       throw AppError.validationError('Start date and end date are required');

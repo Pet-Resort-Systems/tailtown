@@ -5,6 +5,7 @@
  */
 
 import { type Request, type Response } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { reservationErrorTracker } from '../../utils/reservation-error-tracker.js';
 import { AppError, ErrorType } from '../../utils/appError.js';
 import { logger } from '../../utils/logger.js';
@@ -124,7 +125,12 @@ export const getErrorAnalytics = asyncHandler(
 export const getErrorById = asyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
+      const id = assertStringRouteParam(
+        req.params.id,
+        req.originalUrl,
+        AppError.validationError,
+        'Error ID is required'
+      );
 
       // Get error from tracker
       const error = await reservationErrorTracker.getError(id);

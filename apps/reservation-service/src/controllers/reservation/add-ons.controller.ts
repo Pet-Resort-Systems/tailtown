@@ -4,7 +4,8 @@
  * Handles adding add-on services to existing reservations
  */
 
-import { type Response } from 'express';
+import { type RequestHandler, type Response } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { type TenantRequest } from '../../types/request.js';
 import { catchAsync } from '../../middleware/catchAsync.js';
 import { AppError } from '../../utils/service.js';
@@ -15,19 +16,20 @@ import { logger } from '../../utils/logger.js';
  * Add add-on services to a reservation
  * POST /api/reservations/:id/add-ons
  */
-export const addAddOnsToReservation = catchAsync(
+export const addAddOnsToReservation: RequestHandler = catchAsync(
   async (req: TenantRequest, res: Response) => {
     const tenantId =
       req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
-    const reservationId = req.params.id;
+    const reservationId = assertStringRouteParam(
+      req.params.id,
+      req.originalUrl,
+      AppError.validationError,
+      'Reservation ID is required'
+    );
     const { addOns } = req.body;
 
     if (!tenantId) {
       throw AppError.authorizationError('Tenant ID is required');
-    }
-
-    if (!reservationId) {
-      throw new AppError('Reservation ID is required', 400);
     }
 
     if (!addOns || !Array.isArray(addOns) || addOns.length === 0) {

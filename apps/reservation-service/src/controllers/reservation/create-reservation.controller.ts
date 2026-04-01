@@ -5,7 +5,7 @@
  * It implements schema alignment strategy with defensive programming.
  */
 
-import { type Response } from 'express';
+import { type RequestHandler, type Response } from 'express';
 import { type TenantRequest } from '../../types/request.js';
 import { AppError } from '../../utils/service.js';
 import { catchAsync } from '../../middleware/catchAsync.js';
@@ -44,7 +44,7 @@ function determineSuiteType(serviceType: string): string | null {
  * @route POST /api/v1/reservations
  * @param {string} req.tenantId - The tenant ID (provided by middleware)
  */
-export const createReservation = catchAsync(
+export const createReservation: RequestHandler = catchAsync(
   async (req: TenantRequest, res: Response) => {
     // Generate a unique request ID for logging
     const requestId = `create-${Date.now()}-${Math.random()

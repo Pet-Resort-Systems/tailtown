@@ -5,6 +5,7 @@
  */
 
 import { type Request, type Response } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { reservationErrorTracker } from '../../utils/reservation-error-tracker.js';
 import { AppError, ErrorType } from '../../utils/appError.js';
 import { logger } from '../../utils/logger.js';
@@ -16,7 +17,12 @@ import { asyncHandler } from '../../middleware/errorHandler.js';
 export const resolveError = asyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
+      const id = assertStringRouteParam(
+        req.params.id,
+        req.originalUrl,
+        AppError.validationError,
+        'Error ID is required'
+      );
       const { resolution, resolvedBy } = req.body;
 
       // Validate required fields

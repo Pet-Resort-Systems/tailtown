@@ -27,6 +27,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "catalog:",
     "@prisma/client": "catalog:",
+    "@tailtown/shared": "workspace:*",
     "@types/compression": "1.8.1",
     "axios": "1.13.6",
     "compression": "1.8.1",

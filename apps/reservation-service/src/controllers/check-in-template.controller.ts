@@ -1,11 +1,39 @@
 import { type Request, type Response } from 'express';
+import { assertStringRouteParam } from '@tailtown/shared';
 import { prisma } from '../config/prisma.js';
+import { AppError } from '../utils/appError.js';
 import { logger } from '../utils/logger.js';
 
 /**
  * Check-In Template Controller
  * Manages customizable check-in questionnaire templates
  */
+
+function getRequiredRouteParam(
+  req: Request,
+  res: Response,
+  param: string | string[] | undefined,
+  missingMessage: string
+): string | undefined {
+  try {
+    return assertStringRouteParam(
+      param,
+      req.originalUrl,
+      AppError.validationError,
+      missingMessage
+    );
+  } catch (error) {
+    if (error instanceof AppError) {
+      res.status(error.statusCode).json({
+        status: 'error',
+        message: error.message,
+      });
+      return;
+    }
+
+    throw error;
+  }
+}
 
 /**
  * Get all check-in templates for a tenant
@@ -59,7 +87,13 @@ export const getAllTemplates = async (req: Request, res: Response) => {
  */
 export const getTemplateById = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = getRequiredRouteParam(
+      req,
+      res,
+      req.params.id,
+      'Template ID is required'
+    );
+    if (!id) return;
     const tenantId = (req as any).tenantId;
 
     const template = await prisma.checkInTemplate.findFirst({
@@ -227,7 +261,13 @@ export const createTemplate = async (req: Request, res: Response) => {
  */
 export const updateTemplate = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = getRequiredRouteParam(
+      req,
+      res,
+      req.params.id,
+      'Template ID is required'
+    );
+    if (!id) return;
     const tenantId = (req as any).tenantId;
     const { name, description, isActive, isDefault, sections } = req.body;
 
@@ -389,7 +429,13 @@ export const updateTemplate = async (req: Request, res: Response) => {
  */
 export const deleteTemplate = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = getRequiredRouteParam(
+      req,
+      res,
+      req.params.id,
+      'Template ID is required'
+    );
+    if (!id) return;
     const tenantId = (req as any).tenantId;
 
     // Verify template exists and belongs to tenant
@@ -442,7 +488,13 @@ export const deleteTemplate = async (req: Request, res: Response) => {
  */
 export const cloneTemplate = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = getRequiredRouteParam(
+      req,
+      res,
+      req.params.id,
+      'Template ID is required'
+    );
+    if (!id) return;
     const tenantId = (req as any).tenantId;
     const { name } = req.body;
 

@@ -5,8 +5,9 @@
  */
 
 // Export error handling components
-export * from './errors/AppError';
-export * from './errors/errorHandler';
+export * from './errors/AppError.js';
+export * from './errors/errorHandler.js';
 
 // Export logger
-export * from './logger';
+export * from './logger.js';
+export * from './route-params.js';
