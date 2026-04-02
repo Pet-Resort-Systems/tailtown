@@ -10,7 +10,7 @@
  */
 
 import { type RequestHandler, type Response } from 'express';
-import { ResourceType } from '@prisma/client';
+import { ResourceType } from '../../generated/prisma/client.js';
 import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../../utils/appError.js';
 import { catchAsync } from '../../middleware/errorHandler.js';

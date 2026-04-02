@@ -10,7 +10,7 @@
  * - Gradual rollout (percentage-based)
  */
 
-import { FeatureFlagCategory } from '@prisma/client';
+import { FeatureFlagCategory } from '../generated/prisma/client.js';
 import { prisma } from '../config/prisma.js';
 import { getCache, setCache, deleteCache } from '../utils/redis.js';
 import { logger } from '../utils/logger.js';

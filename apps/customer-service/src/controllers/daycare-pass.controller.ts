@@ -1,5 +1,5 @@
 import { type Request, type Response, type NextFunction } from 'express';
-import { DaycarePassStatus } from '@prisma/client';
+import { DaycarePassStatus } from '../generated/prisma/client.js';
 import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { logger } from '../utils/logger.js';

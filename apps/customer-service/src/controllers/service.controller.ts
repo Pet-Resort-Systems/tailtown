@@ -1,5 +1,5 @@
 import { type Response, type NextFunction } from 'express';
-import { ServiceCategory } from '@prisma/client';
+import { ServiceCategory } from '../generated/prisma/client.js';
 import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { type TenantRequest } from '../middleware/tenant.middleware.js';

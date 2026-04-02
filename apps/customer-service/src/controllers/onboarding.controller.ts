@@ -6,7 +6,10 @@
  */
 
 import { type Request, type Response, type NextFunction } from 'express';
-import { ResourceType, ServiceCategory } from '@prisma/client';
+import {
+  ResourceType,
+  ServiceCategory,
+} from '../generated/prisma/client.js';
 import bcrypt from 'bcrypt';
 import AppError from '../utils/appError.js';
 import { prisma } from '../config/prisma.js';

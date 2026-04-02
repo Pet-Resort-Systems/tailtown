@@ -5,7 +5,7 @@ import {
   type CreateTenantDto,
   type UpdateTenantDto,
 } from '../services/tenant.service.js';
-import { TenantStatus } from '@prisma/client';
+import { TenantStatus } from '../generated/prisma/client.js';
 import { AppError } from '../middleware/error.middleware.js';
 import { type AuthRequest } from '../middleware/auth.middleware.js';
 import { logger } from '../utils/logger.js';

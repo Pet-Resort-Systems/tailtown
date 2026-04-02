@@ -4,11 +4,11 @@
  * Tests for preventing kennel overbooking and conflicts
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../generated/prisma/client.js';
 import { detectReservationConflicts } from '../../utils/reservation-conflicts';
 
 // Mock the Prisma client
-jest.mock('@prisma/client', () => {
+jest.mock('../../generated/prisma/client.js', () => {
   const mockPrismaClient = {
     reservation: {
       findMany: jest.fn(),

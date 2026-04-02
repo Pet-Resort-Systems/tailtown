@@ -12,7 +12,7 @@
  * TODO: Needs refactoring for new architecture
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../generated/prisma/client.js';
 import request from 'supertest';
 import app from '../../index'; // Your Express app
 

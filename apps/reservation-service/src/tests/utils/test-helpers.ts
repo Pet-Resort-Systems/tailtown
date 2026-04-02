@@ -4,7 +4,7 @@
  */
 
 // @ts-nocheck - Mock helpers for unit tests
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../generated/prisma/client.js';
 
 /**
  * Creates a mock Prisma client with defensive programming

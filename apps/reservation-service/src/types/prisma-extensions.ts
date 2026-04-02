@@ -4,7 +4,7 @@
  * for multi-tenant isolation, but the Prisma client doesn't recognize them in TypeScript.
  */
 
-import { Prisma } from '@prisma/client';
+import { Prisma } from '../generated/prisma/client.js';
 
 // Define tenant-specific types to use with type assertions
 export interface TenantFields {

@@ -1,5 +1,9 @@
 import { type Request, type Response, type NextFunction } from 'express';
-import { PointEarningType, RedemptionType, TierLevel } from '@prisma/client';
+import {
+  PointEarningType,
+  RedemptionType,
+  TierLevel,
+} from '../generated/prisma/client.js';
 import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { prisma } from '../config/prisma.js';

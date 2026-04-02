@@ -1,5 +1,5 @@
 import { type Request, type Response, type NextFunction } from 'express';
-import { ResourceType } from '@prisma/client';
+import { ResourceType } from '../generated/prisma/client.js';
 import { assertStringRouteParam } from '@tailtown/shared';
 import AppError from '../utils/appError.js';
 import { prisma } from '../config/prisma.js';

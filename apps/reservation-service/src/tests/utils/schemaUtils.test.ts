@@ -6,7 +6,7 @@
  * with proper error handling and fallback values.
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../generated/prisma/client.js';
 
 // Mock the logger
 jest.mock('../../utils/logger', () => ({

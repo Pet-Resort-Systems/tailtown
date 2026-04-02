@@ -11,6 +11,26 @@ import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import financialService from '../services/financialService.js';
 import { prisma } from '../config/prisma.js';
+import { InvoiceStatus } from '../generated/prisma/client.js';
+
+type CustomerReportInvoice = {
+  id: string;
+  invoiceNumber: string;
+  issueDate: Date;
+  total: number;
+  status: InvoiceStatus;
+  reservation: {
+    service: {
+      name: string;
+    } | null;
+    addOnServices: Array<{
+      price: number;
+      addOn: {
+        name: string;
+      };
+    }>;
+  } | null;
+};
 
 /**
  * Get sales data by service type
@@ -278,7 +298,7 @@ export const getCustomerReport = async (
     }
 
     // Get all invoices for this customer to extract transaction data
-    const invoices = await prisma.invoice.findMany({
+    const invoices = (await prisma.invoice.findMany({
       where: {
         customerId,
         issueDate: dateRange,
@@ -302,7 +322,7 @@ export const getCustomerReport = async (
       orderBy: {
         issueDate: 'desc',
       },
-    });
+    })) as CustomerReportInvoice[];
 
     // Format transactions
     const transactions = invoices.map((invoice) => {

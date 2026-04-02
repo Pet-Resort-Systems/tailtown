@@ -10,9 +10,37 @@ import {
   InvoiceStatus,
   ReservationStatus,
   PaymentStatus,
-} from '@prisma/client';
+} from '../generated/prisma/client.js';
 import { prisma } from '../config/prisma.js';
 import { type DateRange } from '../types/common.js';
+
+type InvoiceWithRelations = {
+  id: string;
+  invoiceNumber: string;
+  issueDate: Date;
+  status: InvoiceStatus;
+  total: number;
+  taxAmount: number;
+  customer: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  } | null;
+  reservation: {
+    service: {
+      id: string;
+      name: string;
+    } | null;
+    addOnServices: Array<{
+      price: number;
+      addOn: {
+        id: string;
+        name: string;
+      };
+    }>;
+  } | null;
+};
 
 // Standardized filter constants
 const VALID_INVOICE_STATUSES = ['SENT', 'PAID', 'OVERDUE'] as InvoiceStatus[];
@@ -150,7 +178,7 @@ export function getDateRangeFilter(
 export async function getInvoicesInRange(
   dateRange: DateRange,
   tenantId: string
-) {
+): Promise<InvoiceWithRelations[]> {
   return prisma.invoice.findMany({
     where: {
       tenantId,
@@ -181,7 +209,7 @@ export async function getInvoicesInRange(
         },
       },
     },
-  });
+  }) as Promise<InvoiceWithRelations[]>;
 }
 
 /**

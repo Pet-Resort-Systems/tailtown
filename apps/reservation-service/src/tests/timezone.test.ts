@@ -5,11 +5,11 @@
  * Tests for proper timezone handling in reservation dates.
  * Uses mocked prisma client - no direct database access.
  */
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../generated/prisma/client.js';
 import { detectReservationConflicts } from '../utils/reservation-conflicts';
 
 // Mock the Prisma client - same pattern as reservation-conflicts.test.ts
-jest.mock('@prisma/client', () => {
+jest.mock('../generated/prisma/client.js', () => {
   const mockPrismaClient = {
     reservation: {
       findMany: jest.fn(),

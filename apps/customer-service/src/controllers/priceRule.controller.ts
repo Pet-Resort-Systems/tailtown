@@ -4,7 +4,7 @@ import {
   DiscountType,
   PriceAdjustmentType,
   ServiceCategory,
-} from '@prisma/client';
+} from '../generated/prisma/client.js';
 import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { prisma } from '../config/prisma.js';

@@ -1,5 +1,5 @@
 // Script to create the reservation_errors table directly using Prisma
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from '../src/generated/prisma/client.js';
 
 const prisma = new PrismaClient();
 

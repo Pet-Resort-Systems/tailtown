@@ -8,10 +8,12 @@
  * node scripts/test-db-connection.js
  */
 
-const { PrismaClient } = require('@prisma/client');
-const fs = require('fs');
-const path = require('path');
-const dotenv = require('dotenv');
+import { PrismaClient } from '../src/generated/prisma/client.js';
+import path from 'node:path';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Load environment variables from .env file
 dotenv.config({ path: path.resolve(__dirname, '../.env') });

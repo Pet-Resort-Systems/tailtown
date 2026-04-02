@@ -7,7 +7,7 @@
  * Usage: node add-external-id-to-reservations.js
  */
 
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from './src/generated/prisma/client.js';
 const prisma = new PrismaClient();
 
 async function addExternalIdColumn() {

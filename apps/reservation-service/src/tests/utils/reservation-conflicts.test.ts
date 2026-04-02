@@ -1,12 +1,12 @@
 // @ts-nocheck
 // Note: Test mocks may not match actual Prisma types after schema changes
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../generated/prisma/client.js';
 import { detectReservationConflicts } from '../../utils/reservation-conflicts';
 import { ExtendedReservationStatus } from '../../types/prisma-extensions';
 import { createMockPrismaClient } from './test-helpers';
 
 // Mock the Prisma client
-jest.mock('@prisma/client', () => {
+jest.mock('../../generated/prisma/client.js', () => {
   const mockPrismaClient = {
     reservation: {
       findMany: jest.fn(),

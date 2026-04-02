@@ -6,7 +6,7 @@
  */
 
 import { type Response, type NextFunction } from 'express';
-import { RecurrenceFrequency } from '@prisma/client';
+import { RecurrenceFrequency } from '../generated/prisma/client.js';
 import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { type TenantRequest } from '../middleware/tenant.middleware.js';

@@ -9,7 +9,7 @@
  *   node assign-kennels-by-service.js            # Apply changes
  */
 
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from './src/generated/prisma/client.js';
 const prisma = new PrismaClient();
 
 const isDryRun = process.argv.includes('--dryRun');

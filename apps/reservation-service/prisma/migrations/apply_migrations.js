@@ -9,9 +9,12 @@
  * 2. Run: node prisma/migrations/apply_migrations.js
  */
 
-const { PrismaClient } = require('@prisma/client');
-const fs = require('fs');
-const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { PrismaClient } from '../../src/generated/prisma/client.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const prisma = new PrismaClient();
 
 async function main() {

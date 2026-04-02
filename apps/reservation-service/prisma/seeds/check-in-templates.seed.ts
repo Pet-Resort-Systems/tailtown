@@ -1,4 +1,4 @@
-import { QuestionType } from '@prisma/client';
+import { QuestionType } from '../../src/generated/prisma/client.js';
 import { prisma } from '../../src/config/prisma';
 
 export async function seedCheckInTemplates() {

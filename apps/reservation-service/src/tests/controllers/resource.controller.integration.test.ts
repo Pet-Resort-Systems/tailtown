@@ -6,10 +6,10 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient, ResourceType } from '@prisma/client';
+import { PrismaClient, ResourceType } from '../../generated/prisma/client.js';
 
 // Mock the Prisma client
-jest.mock('@prisma/client', () => {
+jest.mock('../../generated/prisma/client.js', () => {
   const mockPrismaClient = {
     resource: {
       findMany: jest.fn(),

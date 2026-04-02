@@ -6,7 +6,7 @@
  * and fallback values to ensure API stability even when schemas differ between environments.
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../generated/prisma/client.js';
 import { logger } from './logger.js';
 
 /**

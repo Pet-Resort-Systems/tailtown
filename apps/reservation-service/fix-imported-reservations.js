@@ -5,7 +5,7 @@
  * This script assigns a default resource to all imported reservations.
  */
 
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from './src/generated/prisma/client.js';
 const prisma = new PrismaClient();
 
 async function fixReservations() {

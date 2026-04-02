@@ -8,7 +8,7 @@
  */
 
 import { type Response, type NextFunction } from 'express';
-import { ReservationStatus } from '@prisma/client';
+import { ReservationStatus } from '../../generated/prisma/client.js';
 import { assertStringRouteParam } from '@tailtown/shared';
 import { type TenantRequest } from '../../middleware/tenant.middleware.js';
 import { AppError } from '../../middleware/error.middleware.js';

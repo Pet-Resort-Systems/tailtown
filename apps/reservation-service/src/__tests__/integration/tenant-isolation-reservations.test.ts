@@ -1,6 +1,6 @@
 // @ts-nocheck
 import request from 'supertest';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../generated/prisma/client.js';
 import app from '../../index';
 import { v4 as uuidv4 } from 'uuid';
 

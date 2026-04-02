@@ -13,8 +13,11 @@
  *   --migration-path   Path to save migration scripts (default: ./prisma/migrations)
  */
 
-const { PrismaClient } = require('@prisma/client');
-const path = require('path');
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { PrismaClient } from './src/generated/prisma/client.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Dynamically import ESM modules
 async function main() {
