@@ -9,6 +9,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
+import { createAllowedOriginChecker } from '@tailtown/shared';
 import { logger } from './utils/logger.js';
 import paymentRoutes from './routes/payment.routes.js';
 
@@ -22,12 +23,24 @@ const PORT = process.env.PORT || 4005;
 app.use(helmet());
 
 // CORS configuration
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
+const isAllowedOrigin = createAllowedOriginChecker(process.env.ALLOWED_ORIGINS, [
   'http://localhost:3000',
-];
+]);
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+
+      if (process.env.NODE_ENV !== 'production') {
+        return callback(null, true);
+      }
+
+      if (isAllowedOrigin(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   })
 );

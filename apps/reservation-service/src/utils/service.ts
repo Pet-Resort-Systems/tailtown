@@ -14,6 +14,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
+import { createAllowedOriginChecker } from '@tailtown/shared';
 import { logger } from './logger.js';
 import { requestIdMiddleware } from '../middleware/requestId.middleware.js';
 
@@ -64,10 +65,10 @@ export function createService(options: { name: string; version: string }) {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  // CORS configuration - allow all subdomains in production
-  const allowedOrigins = process.env.ALLOWED_ORIGINS
-    ? process.env.ALLOWED_ORIGINS.split(',').map((origin) => origin.trim())
-    : ['http://localhost:3000', 'http://localhost:3001'];
+  const isAllowedOrigin = createAllowedOriginChecker(
+    process.env.ALLOWED_ORIGINS,
+    ['http://localhost:3000', 'http://localhost:3001']
+  );
 
   app.use(
     cors({
@@ -80,19 +81,7 @@ export function createService(options: { name: string; version: string }) {
           return callback(null, true);
         }
 
-        // In production, allow canicloud.com and all its subdomains
-        const allowedDomains = [
-          'https://canicloud.com',
-          'https://www.canicloud.com',
-        ];
-
-        // Check if origin matches canicloud.com or any subdomain
-        if (
-          allowedDomains.includes(origin) ||
-          origin.match(/^https:\/\/[a-z0-9-]+\.canicloud\.com$/)
-        ) {
-          callback(null, true);
-        } else if (allowedOrigins.includes(origin)) {
+        if (isAllowedOrigin(origin)) {
           callback(null, true);
         } else {
           callback(new Error('Not allowed by CORS'));

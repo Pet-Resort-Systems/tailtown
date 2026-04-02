@@ -11,3 +11,4 @@ export * from './errors/errorHandler.js';
 // Export logger
 export * from './logger.js';
 export * from './route-params.js';
+export * from './cors.js';
