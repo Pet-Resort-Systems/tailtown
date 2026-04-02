@@ -16,6 +16,11 @@ import bcrypt from 'bcrypt';
 import app from '../../index';
 
 const prisma = new PrismaClient();
+const allowedCorsOrigin =
+  process.env.ALLOWED_ORIGINS?.split(',')
+    .map((origin) => origin.trim())
+    .find(Boolean) ||
+  'http://localhost:3000';
 
 describe('API Security Tests', () => {
   let authToken: string;
@@ -56,7 +61,7 @@ describe('API Security Tests', () => {
     it('should include CORS headers for allowed origins', async () => {
       const response = await request(app)
         .get('/api/health')
-        .set('Origin', process.env.CORS_ORIGIN || 'http://localhost:3000');
+        .set('Origin', allowedCorsOrigin);
 
       expect(response.headers['access-control-allow-origin']).toBeDefined();
     });
@@ -78,7 +83,7 @@ describe('API Security Tests', () => {
     it('should handle preflight OPTIONS requests', async () => {
       const response = await request(app)
         .options('/api/customers')
-        .set('Origin', process.env.CORS_ORIGIN || 'http://localhost:3000')
+        .set('Origin', allowedCorsOrigin)
         .set('Access-Control-Request-Method', 'POST')
         .set('Access-Control-Request-Headers', 'Content-Type,Authorization');
 
@@ -103,7 +108,7 @@ describe('API Security Tests', () => {
     it('should restrict allowed HTTP methods', async () => {
       const response = await request(app)
         .options('/api/customers')
-        .set('Origin', process.env.CORS_ORIGIN || 'http://localhost:3000');
+        .set('Origin', allowedCorsOrigin);
 
       const allowedMethods = response.headers['access-control-allow-methods'];
       if (allowedMethods) {
