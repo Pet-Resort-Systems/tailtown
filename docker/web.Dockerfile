@@ -48,7 +48,7 @@ FROM installer AS builder
 # Copy the rest of the source code
 COPY --from=pruner /app/out/full/ ./
 # Restore shared root TypeScript configs omitted by `turbo prune --docker`.
-COPY --from=pruner /app/tsconfig.base.json /app/tsconfig.node.json ./
+COPY --from=pruner /app/tsconfig.base.json /app/tsconfig.node.json /app/tsconfig.bundler.json ./
 # Build the app
 RUN pnpm turbo build --filter=@tailtown/frontend
 
