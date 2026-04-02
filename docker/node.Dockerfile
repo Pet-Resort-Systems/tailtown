@@ -1,3 +1,6 @@
+# Example to run this file for a service (e.g., apps/customer-service)
+# docker build -f docker/node.Dockerfile --build-arg WORKSPACE_NAME=@tailtown/customer-service --build-arg APP_DIR=apps/customer-service -t tailtown/customer-service .
+
 # -*********************************************************-
 # Stage 1 - Base setup
 # -*********************************************************-
