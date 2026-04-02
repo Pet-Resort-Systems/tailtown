@@ -1,0 +1,17 @@
+# .dockerignore
+node_modules
+**/node_modules
+.git
+.github
+.turbo
+.mergify
+.prettierignore
+**/.turbo
+**/dist
+**/coverage
+**/.env.local
+**/.env.*.local
+**/generated
+.vscode
+*.md
+!README.md
