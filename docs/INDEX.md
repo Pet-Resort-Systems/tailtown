@@ -1,163 +1,55 @@
-# Tailtown Documentation
+# Tailtown Documentation Index
 
-Project-wide documentation for the Tailtown Pet Resort Management System.
+This index is the main entry point to all project documentation in `docs/`.
 
-## For Developers (Quick Guides)
+## Start Here
 
-- **[Quick Start](./QUICK-START.md)** - Get running in 10 minutes
-- **[Git Setup](./GIT-SETUP.md)** - Git workflow and rules
-- **[GitHub Workflows](/.github/workflows/README.md)** - CI/CD pipelines, PR checks, and deployment workflows
-- **[Best Practices](./development/DEVELOPMENT-BEST-PRACTICES.md)** - Code standards and patterns
-- **[Security](./security/SECURITY.md)** - Security features and how to use them
-- **[Roadmap](./ROADMAP.md)** - What's next for Tailtown
+- **[Quick Start](./QUICK-START.md)** — set up and run the project quickly.
+- **[Git Setup](./GIT-SETUP.md)** — repository workflow and branching basics.
+- **[Current System Architecture](./CURRENT-SYSTEM-ARCHITECTURE.md)** — high-level architecture snapshot.
+- **[System Features Overview](./SYSTEM-FEATURES-OVERVIEW.md)** — product capabilities at a glance.
+- **[Roadmap](./ROADMAP.md)** — planned work and direction.
 
-## For Technical Leadership
+## Top-Level Guides
 
-- **[Senior Dev Review](./archive/SENIOR-DEV-REVIEW.md)** - ⭐ Architecture review & scaling roadmap (4/5 stars)
-- **[System Architecture](./CURRENT-SYSTEM-ARCHITECTURE.md)** - Complete architecture overview
-- **[Disaster Recovery](./operations/DISASTER-RECOVERY-PLAN.md)** - Backup & recovery procedures
+- [AUTO-MERGE-GUIDE.md](./AUTO-MERGE-GUIDE.md)
+- [CRITICAL-DOCS-REGISTRY.md](./CRITICAL-DOCS-REGISTRY.md)
+- [DEMO-TEST-DATA-SETUP.md](./DEMO-TEST-DATA-SETUP.md)
+- [DOKPLOY-MIGRATION.md](./DOKPLOY-MIGRATION.md)
 
-## For AI Assistants (Complete Context)
+## Documentation by Folder
 
-- **[Security Implementation](./ai-context/security/)** - Complete security details
-- **[Testing](./ai-context/testing/)** - Test analysis and maintenance
-- **[Documentation Strategy](./DOCUMENTATION-STRATEGY.md)** - How we organize docs
+> Every folder under `docs/` is linked below so it is directly accessible from this page.
 
-## Reference
+- **[api/](./api/)** — API-level overviews and endpoint-specific docs.
+- **[architecture/](./architecture/)** — architecture design notes, system patterns, and technical decisions.
+- **[archive/](./archive/)** — historical documentation, prior plans, and legacy references.
+- **[changelog/](./changelog/)** — dated release notes and change summaries.
+- **[completed/](./completed/)** — completed initiatives and implementation outcomes.
+- **[development/](./development/)** — engineering guidelines, implementation practices, and workflows.
+- **[diagrams/](./diagrams/)** — diagram source files and architecture visuals.
+- **[features/](./features/)** — feature specifications and functional design docs.
+- **[gingr/](./gingr/)** — Gingr migration/integration docs and sync guides.
+- **[help-center/](./help-center/)** — end-user help content and onboarding docs.
+- **[issues/](./issues/)** — issue-specific investigation and tracking docs.
+- **[operations/](./operations/)** — deployment, environment, monitoring, and runbook docs.
+- **[security/](./security/)** — security implementation, checklists, and audits.
+- **[sessions/](./sessions/)** — session notes and working logs.
+- **[testing/](./testing/)** — test strategy, setup, coverage, and test plans.
+- **[troubleshooting/](./troubleshooting/)** — known issues and remediation guides.
 
-- **[Security Checklist](./security/SECURITY-CHECKLIST.md)** - Security verification
-- **[Development Best Practices](./development/DEVELOPMENT-BEST-PRACTICES.md)** - Code standards
+## Suggested Paths
 
-## Essential Reading
+- **New developer:** [Quick Start](./QUICK-START.md) → [development/](./development/) → [testing/](./testing/)
+- **Tech lead / architect:** [CURRENT-SYSTEM-ARCHITECTURE.md](./CURRENT-SYSTEM-ARCHITECTURE.md) → [architecture/](./architecture/) → [operations/](./operations/)
+- **Product / feature review:** [SYSTEM-FEATURES-OVERVIEW.md](./SYSTEM-FEATURES-OVERVIEW.md) → [features/](./features/) → [changelog/](./changelog/)
+- **Support / incident response:** [help-center/](./help-center/) → [troubleshooting/](./troubleshooting/) → [operations/](./operations/)
 
-- **[Development Best Practices](./development/DEVELOPMENT-BEST-PRACTICES.md)** - ⭐ Common patterns & pitfalls
-- **[Deployment Guide](./deployment/PRODUCTION-DEPLOYMENT.md)** - How to deploy to production
-- **[Product Roadmap](./ROADMAP.md)** - Feature roadmap and priorities
+## Service-Specific Documentation
 
-## For End Users
+- `apps/customer-service/docs/`
+- `apps/reservation-service/docs/`
 
-- **[Help Center](./help-center/)** - User guides, FAQs, and support documentation
-    - Getting started guide
-    - Customer and pet management
-    - Reservations and billing
-    - Troubleshooting and support
+## Maintenance Note
 
-## By Audience
-
-- **For Developers:** [Development Guides](./development/)
-- **For DevOps:** [Operations Guides](./operations/)
-- **For Product:** [Feature Overview](./SYSTEM-FEATURES-OVERVIEW.md)
-- **For End Users:** [Help Center](./help-center/)
-
-## Quick Links
-
-| Document                                                | Description              |
-| ------------------------------------------------------- | ------------------------ |
-| [Quick Start](./QUICK-START.md)                         | Get running in 5 minutes |
-| [System Architecture](./CURRENT-SYSTEM-ARCHITECTURE.md) | Current system design    |
-| [Features Overview](./SYSTEM-FEATURES-OVERVIEW.md)      | Complete feature list    |
-| [Roadmap](./ROADMAP.md)                                 | Future development plans |
-| [Git Setup](./GIT-SETUP.md)                             | Git workflow and rules   |
-
-## Directory Structure
-
-```
-docs/
-├── INDEX.md                       # This file
-├── QUICK-START.md                 # 5-minute setup guide
-├── ROADMAP.md                     # Future plans
-├── CURRENT-SYSTEM-ARCHITECTURE.md # System design
-├── SYSTEM-FEATURES-OVERVIEW.md    # Feature documentation
-├── CRITICAL-DOCS-REGISTRY.md      # Doc update tracking
-├── DOCUMENTATION-STRATEGY.md      # AI vs Human docs strategy
-├── help-center/                   # User guides and support
-│   ├── README.md                  # Main help center index
-│   └── getting-started.md         # New user guide
-│
-├── architecture/                  # System design docs
-│   ├── API-GATEWAY-DESIGN.md
-│   ├── DATABASE-*.md
-│   ├── SERVICE-ARCHITECTURE.md
-│   └── tenant-isolation/          # Multi-tenancy docs
-│
-├── development/                   # Dev guidelines
-│   ├── DEVELOPMENT-BEST-PRACTICES.md
-│   ├── SchemaAlignmentStrategy.md
-│   └── FormGuidelines.md
-│
-├── features/                      # Feature specs
-│   ├── REPORT-CARD-DESIGN.md
-│   ├── WAITLIST-DESIGN.md
-│   ├── COUPON-SYSTEM.md
-│   └── ... (47 feature docs)
-│
-├── testing/                       # Test documentation
-│   ├── TESTING-STRATEGY.md
-│   └── TEST-SETUP.md
-│
-├── deployment/                    # Deploy guides
-│   ├── DEPLOYMENT-GUIDE.md
-│   └── STAGING-ENVIRONMENT.md
-│
-├── security/                      # Security docs
-│   ├── SECURITY-CHECKLIST.md
-│   └── AUDIT-LOGGING-GUIDE.md
-│
-├── operations/                    # Ops guides
-│   ├── MONITORING-GUIDE.md
-│   └── SCALING-PLAN.md
-│
-├── changelog/                     # Release history
-│   └── CHANGELOG.md
-│
-├── human/                         # Human-readable guides
-│   └── SECURITY.md
-│
-├── ai-context/                    # AI assistant context
-│   └── security/
-│
-└── archive/                       # Historical docs
-    ├── sessions/                  # Session summaries
-    ├── deployments/               # One-time deploy docs
-    └── summaries/                 # Implementation summaries
-```
-
-## Service Documentation
-
-Each app/service has its own `/docs/` directory:
-
-- **Customer Service**: `/apps/customer-service/docs/`
-- **Reservation Service**: `/apps/reservation-service/docs/`
-
-## Documentation Guidelines
-
-1. **File Naming Conventions**
-    - Use UPPERCASE for main documentation files (e.g., README.md, SETUP.md)
-    - Use kebab-case for specific topic documentation (e.g., api-authentication.md)
-    - Use descriptive, consistent prefixes for related documents
-
-2. **Documentation Location**
-    - Project-wide documentation belongs in `/docs/` and its subdirectories
-    - Service-specific documentation belongs in `/apps/{service-name}/docs/`
-    - Implementation details should be in service-specific docs
-    - Architecture and design decisions should be in project-wide docs
-
-3. **Cross-referencing**
-    - Use relative links when referencing other documentation files
-    - Always use the format `[Link Text](./relative/path/to/file.md)`
-    - Include section anchors when linking to specific sections: `[Link Text](./file.md#section)`
-
-4. **Keeping Documentation Updated**
-    - Update documentation when making significant code changes
-    - Add new documentation for new features
-    - Review and update existing documentation periodically
-    - Mark outdated documentation with a note at the top and create a task to update it
-
-## Contributing to Documentation
-
-When adding new documentation:
-
-1. Place it in the appropriate directory based on its scope and purpose
-2. Follow the naming conventions
-3. Update this INDEX.md file if adding a new major document
-4. Update the main project README.md if the document should be featured there
+When adding a new top-level folder or major documentation area under `docs/`, update this index in the same pull request.
