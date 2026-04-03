@@ -1,0 +1,9 @@
+# architecture/tenant-isolation Index
+
+Documentation index for `architecture/tenant-isolation/`.
+
+## Files
+
+- [TENANT-ISOLATION-QUICK-REFERENCE.md](./TENANT-ISOLATION-QUICK-REFERENCE.md)
+- [TENANT-ISOLATION-TESTING.md](./TENANT-ISOLATION-TESTING.md)
+- [TENANT-ISOLATION-TROUBLESHOOTING.md](./TENANT-ISOLATION-TROUBLESHOOTING.md)

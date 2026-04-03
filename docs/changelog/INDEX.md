@@ -1,0 +1,37 @@
+# changelog Index
+
+Documentation index for `changelog/`.
+
+## Files
+
+- [2025-04-16-dashboard-updates.md](./2025-04-16-dashboard-updates.md)
+- [2025-04-28-form-improvements.md](./2025-04-28-form-improvements.md)
+- [2025-04-28-kennel-calendar-implementation.md](./2025-04-28-kennel-calendar-implementation.md)
+- [2025-04-28-kennel-calendar-ui-improvements.md](./2025-04-28-kennel-calendar-ui-improvements.md)
+- [2025-04-28-ui-accessibility-improvements.md](./2025-04-28-ui-accessibility-improvements.md)
+- [2025-04-29-port-configuration-fix.md](./2025-04-29-port-configuration-fix.md)
+- [2025-04-29-time-format-standardization.md](./2025-04-29-time-format-standardization.md)
+- [2025-05-06-customer-form-fixes.md](./2025-05-06-customer-form-fixes.md)
+- [2025-05-06-kennel-availability-fix.md](./2025-05-06-kennel-availability-fix.md)
+- [2025-05-06-reservation-pricing-fix.md](./2025-05-06-reservation-pricing-fix.md)
+- [2025-05-11-add-on-system-improvements.md](./2025-05-11-add-on-system-improvements.md)
+- [2025-05-11-kennel-selection-fix.md](./2025-05-11-kennel-selection-fix.md)
+- [2025-05-11-reservation-enhancements.md](./2025-05-11-reservation-enhancements.md)
+- [2025-05-12-analytics-dashboard-implementation.md](./2025-05-12-analytics-dashboard-implementation.md)
+- [2025-05-12-staff-scheduling-improvements.md](./2025-05-12-staff-scheduling-improvements.md)
+- [2025-09-19-kennel-management-fix.md](./2025-09-19-kennel-management-fix.md)
+- [2025-09-19-navigation-reorganization.md](./2025-09-19-navigation-reorganization.md)
+- [2025-09-19-system-fixes.md](./2025-09-19-system-fixes.md)
+- [2025-09-22-calendar-reservation-display-fix.md](./2025-09-22-calendar-reservation-display-fix.md)
+- [2025-09-22-specialized-calendar-service-filtering.md](./2025-09-22-specialized-calendar-service-filtering.md)
+- [2025-10-21-grooming-reservation-service-fix.md](./2025-10-21-grooming-reservation-service-fix.md)
+- [2025-10-23-check-in-template-fixes.md](./2025-10-23-check-in-template-fixes.md)
+- [2025-10-23-drag-and-drop-calendar.md](./2025-10-23-drag-and-drop-calendar.md)
+- [2025-10-30-products-inventory-fixes.md](./2025-10-30-products-inventory-fixes.md)
+- [2025-11-14-mobile-web-app-mvp.md](./2025-11-14-mobile-web-app-mvp.md)
+- [2025-11-14-staff-schedule-overlap-prevention.md](./2025-11-14-staff-schedule-overlap-prevention.md)
+- [2025-11-18-customer-service-deployment-fix.md](./2025-11-18-customer-service-deployment-fix.md)
+- [2025-12-21-dashboard-date-reset.md](./2025-12-21-dashboard-date-reset.md)
+- [2026-01-09-check-in-workflow-improvements.md](./2026-01-09-check-in-workflow-improvements.md)
+- [2026-01-11-pre-beta-complete.md](./2026-01-11-pre-beta-complete.md)
+- [checkout-improvements.md](./checkout-improvements.md)

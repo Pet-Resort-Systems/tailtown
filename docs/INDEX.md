@@ -1,55 +1,81 @@
-# Tailtown Documentation Index
+# Tailtown Documentation
 
-This index is the main entry point to all project documentation in `docs/`.
+Project-wide documentation for the Tailtown Pet Resort Management System.
 
-## Start Here
+## For Developers (Quick Guides)
 
-- **[Quick Start](./QUICK-START.md)** — set up and run the project quickly.
-- **[Git Setup](./GIT-SETUP.md)** — repository workflow and branching basics.
-- **[Current System Architecture](./CURRENT-SYSTEM-ARCHITECTURE.md)** — high-level architecture snapshot.
-- **[System Features Overview](./SYSTEM-FEATURES-OVERVIEW.md)** — product capabilities at a glance.
-- **[Roadmap](./ROADMAP.md)** — planned work and direction.
+- **[Quick Start](./QUICK-START.md)** - Get running quickly
+- **[Git Setup](./GIT-SETUP.md)** - Git workflow and rules
+- **[GitHub Workflows](./github/workflows/README.md)** - CI/CD pipelines, PR checks, and deployment workflows
+- **[Development Best Practices](./development/DEVELOPMENT-BEST-PRACTICES.md)** - Code standards and patterns
+- **[Security](./security/SECURITY.md)** - Security features and how to use them
+- **[Roadmap](./ROADMAP.md)** - What's next for Tailtown
 
-## Top-Level Guides
+## Folder Indexes
 
-- [AUTO-MERGE-GUIDE.md](./AUTO-MERGE-GUIDE.md)
-- [CRITICAL-DOCS-REGISTRY.md](./CRITICAL-DOCS-REGISTRY.md)
-- [DEMO-TEST-DATA-SETUP.md](./DEMO-TEST-DATA-SETUP.md)
-- [DOKPLOY-MIGRATION.md](./DOKPLOY-MIGRATION.md)
+Every docs sub-folder has an `INDEX.md` so you can quickly browse contents.
 
-## Documentation by Folder
+- **[api/](./api/INDEX.md)**
+- **[archive/](./archive/)** *(historical docs; folder indexing intentionally excluded)*
+- **[architecture/](./architecture/INDEX.md)**
+- **[changelog/](./changelog/INDEX.md)**
+- **[completed/](./completed/INDEX.md)**
+- **[development/](./development/INDEX.md)**
+- **[diagrams/](./diagrams/INDEX.md)**
+- **[features/](./features/INDEX.md)**
+- **[gingr/](./gingr/INDEX.md)**
+- **[help-center/](./help-center/INDEX.md)**
+- **[issues/](./issues/INDEX.md)**
+- **[operations/](./operations/INDEX.md)**
+- **[security/](./security/INDEX.md)**
+- **[sessions/](./sessions/INDEX.md)**
+- **[testing/](./testing/INDEX.md)**
+- **[troubleshooting/](./troubleshooting/INDEX.md)**
 
-> Every folder under `docs/` is linked below so it is directly accessible from this page.
+## Essential Reading
 
-- **[api/](./api/)** — API-level overviews and endpoint-specific docs.
-- **[architecture/](./architecture/)** — architecture design notes, system patterns, and technical decisions.
-- **[archive/](./archive/)** — historical documentation, prior plans, and legacy references.
-- **[changelog/](./changelog/)** — dated release notes and change summaries.
-- **[completed/](./completed/)** — completed initiatives and implementation outcomes.
-- **[development/](./development/)** — engineering guidelines, implementation practices, and workflows.
-- **[diagrams/](./diagrams/)** — diagram source files and architecture visuals.
-- **[features/](./features/)** — feature specifications and functional design docs.
-- **[gingr/](./gingr/)** — Gingr migration/integration docs and sync guides.
-- **[help-center/](./help-center/)** — end-user help content and onboarding docs.
-- **[issues/](./issues/)** — issue-specific investigation and tracking docs.
-- **[operations/](./operations/)** — deployment, environment, monitoring, and runbook docs.
-- **[security/](./security/)** — security implementation, checklists, and audits.
-- **[sessions/](./sessions/)** — session notes and working logs.
-- **[testing/](./testing/)** — test strategy, setup, coverage, and test plans.
-- **[troubleshooting/](./troubleshooting/)** — known issues and remediation guides.
+- **[Current System Architecture](./CURRENT-SYSTEM-ARCHITECTURE.md)** - System architecture overview
+- **[System Features Overview](./SYSTEM-FEATURES-OVERVIEW.md)** - Complete feature list
+- **[Roadmap](./ROADMAP.md)** - Product roadmap and priorities
+- **[Critical Docs Registry](./CRITICAL-DOCS-REGISTRY.md)** - Critical doc maintenance tracking
 
-## Suggested Paths
+## Documentation Guidelines
 
-- **New developer:** [Quick Start](./QUICK-START.md) → [development/](./development/) → [testing/](./testing/)
-- **Tech lead / architect:** [CURRENT-SYSTEM-ARCHITECTURE.md](./CURRENT-SYSTEM-ARCHITECTURE.md) → [architecture/](./architecture/) → [operations/](./operations/)
-- **Product / feature review:** [SYSTEM-FEATURES-OVERVIEW.md](./SYSTEM-FEATURES-OVERVIEW.md) → [features/](./features/) → [changelog/](./changelog/)
-- **Support / incident response:** [help-center/](./help-center/) → [troubleshooting/](./troubleshooting/) → [operations/](./operations/)
+1. **File Naming Conventions**
+    - Use UPPERCASE for main documentation files (e.g., README.md, SETUP.md)
+    - Use kebab-case for specific topic documentation (e.g., api-authentication.md)
+    - Use descriptive, consistent prefixes for related documents
 
-## Service-Specific Documentation
+2. **Documentation Location**
+    - Project-wide documentation belongs in `/docs/` and its subdirectories
+    - Service-specific documentation belongs in `/apps/{service-name}/docs/`
+    - Implementation details should be in service-specific docs
+    - Architecture and design decisions should be in project-wide docs
 
-- `apps/customer-service/docs/`
-- `apps/reservation-service/docs/`
+3. **Cross-referencing**
+    - Use relative links when referencing other documentation files
+    - Always use the format `[Link Text](./relative/path/to/file.md)`
+    - Include section anchors when linking to specific sections: `[Link Text](./file.md#section)`
 
-## Maintenance Note
+4. **Keeping Documentation Updated**
+    - Update documentation when making significant code changes
+    - Add new documentation for new features
+    - Review and update existing documentation periodically
+    - Mark outdated documentation with a note at the top and create a task to update it
 
-When adding a new top-level folder or major documentation area under `docs/`, update this index in the same pull request.
+## Contributing to Documentation
+
+When adding new documentation:
+
+1. Place it in the appropriate directory based on its scope and purpose
+2. Follow the naming conventions
+3. Update this `INDEX.md` file if adding a new major document or folder
+4. Add or update the folder-level `INDEX.md` for the folder you changed
+5. Update the main project `README.md` if the document should be featured there
+
+## Service Documentation
+
+Each app/service has its own `/docs/` directory:
+
+- **Customer Service**: `/apps/customer-service/docs/`
+- **Reservation Service**: `/apps/reservation-service/docs/`
