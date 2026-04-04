@@ -11,6 +11,7 @@ import { catchAsync } from '../../middleware/catchAsync.js';
 import { AppError } from '../../utils/service.js';
 import { prisma } from './utils/prisma-helpers.js';
 import { logger } from '../../utils/logger.js';
+import { env } from '../../env.js';
 
 /**
  * Add add-on services to a reservation
@@ -18,8 +19,7 @@ import { logger } from '../../utils/logger.js';
  */
 export const addAddOnsToReservation: RequestHandler = catchAsync(
   async (req: TenantRequest, res: Response) => {
-    const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+    const tenantId = req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const reservationId = assertStringRouteParam(
       req.params.id,
       req.originalUrl,

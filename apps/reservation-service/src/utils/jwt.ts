@@ -3,14 +3,12 @@
  */
 
 import jwt from 'jsonwebtoken';
+import { env } from '../env.js';
 
-const JWT_SECRET =
-  process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-const JWT_REFRESH_SECRET =
-  process.env.JWT_REFRESH_SECRET ||
-  'your-refresh-secret-key-change-in-production';
-const JWT_EXPIRES_IN = '8h'; // 8 hour access tokens
-const JWT_REFRESH_EXPIRES_IN = '7d'; // 7 day refresh tokens
+const JWT_SECRET = env.RESERVATION_JWT_SECRET;
+const JWT_REFRESH_SECRET = env.RESERVATION_JWT_SECRET; // Using same secret for refresh tokens
+const JWT_EXPIRES_IN = env.RESERVATION_JWT_EXPIRES_IN;
+const JWT_REFRESH_EXPIRES_IN = env.RESERVATION_JWT_REFRESH_TOKEN_EXPIRES_IN;
 
 export interface JWTPayload {
   id: string;

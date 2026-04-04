@@ -11,6 +11,7 @@ import { AppError } from '../../utils/service.js';
 import { catchAsync } from '../../middleware/catchAsync.js';
 import { logger } from '../../utils/logger.js';
 import { detectReservationConflicts } from '../../utils/reservation-conflicts.js';
+import { env } from '../../env.js';
 import {
   type ExtendedResourceWhereInput,
   type ExtendedReservationInclude,
@@ -53,8 +54,7 @@ export const createReservation: RequestHandler = catchAsync(
     logger.info(`Processing create reservation request`, { requestId });
 
     // Get tenant ID from request - added by tenant middleware
-    const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+    const tenantId = req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     if (!tenantId) {
       logger.warn(`Missing tenant ID in request`, { requestId });

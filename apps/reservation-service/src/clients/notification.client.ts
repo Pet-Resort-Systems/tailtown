@@ -7,10 +7,11 @@
 
 import axios, { type AxiosInstance } from 'axios';
 import { logger } from '../utils/logger.js';
+import { env } from '../env.js';
 
 const CUSTOMER_SERVICE_URL =
-  process.env.CUSTOMER_SERVICE_URL || 'http://localhost:4004';
-const SERVICE_TIMEOUT = parseInt(process.env.SERVICE_TIMEOUT || '10000', 10);
+  env.CUSTOMER_SERVICE_URL || 'http://localhost:4004';
+const SERVICE_TIMEOUT = env.RESERVATION_SERVICE_TIMEOUT;
 
 interface NotificationResult {
   success: boolean;

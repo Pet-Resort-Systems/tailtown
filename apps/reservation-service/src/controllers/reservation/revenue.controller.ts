@@ -10,6 +10,7 @@ import { AppError } from '../../utils/service.js';
 import { catchAsync } from '../../middleware/catchAsync.js';
 import { logger } from '../../utils/logger.js';
 import { safeExecutePrismaQuery, prisma } from './utils/prisma-helpers.js';
+import { env } from '../../env.js';
 
 /**
  * Get today's revenue
@@ -27,7 +28,7 @@ export const getTodayRevenue = catchAsync(
 
     // Get tenant ID from request - added by tenant middleware
     // In development mode, use a default tenant ID if not provided
-    const isDev = process.env.NODE_ENV === 'development';
+    const isDev = env.NODE_ENV === 'development';
     const tenantId = req.tenantId || (isDev ? 'dev-tenant-001' : undefined);
 
     if (!tenantId) {

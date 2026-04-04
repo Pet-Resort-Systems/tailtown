@@ -9,16 +9,14 @@
 
 import axios, { type AxiosInstance, AxiosError } from 'axios';
 import { AppError } from '../utils/service.js';
+import { env } from '../env.js';
 
 // Environment configuration
 const CUSTOMER_SERVICE_URL =
-  process.env.CUSTOMER_SERVICE_URL || 'http://localhost:4004';
-const SERVICE_TIMEOUT = parseInt(process.env.SERVICE_TIMEOUT || '5000', 10);
-const MAX_RETRIES = parseInt(process.env.SERVICE_MAX_RETRIES || '3', 10);
-const RETRY_DELAY_MS = parseInt(
-  process.env.SERVICE_RETRY_DELAY_MS || '1000',
-  10
-);
+  env.CUSTOMER_SERVICE_URL || 'http://localhost:4004';
+const SERVICE_TIMEOUT = env.RESERVATION_SERVICE_TIMEOUT;
+const MAX_RETRIES = env.RESERVATION_SERVICE_MAX_RETRIES;
+const RETRY_DELAY_MS = env.RESERVATION_SERVICE_RETRY_DELAY_MS;
 
 // Response types
 interface Customer {

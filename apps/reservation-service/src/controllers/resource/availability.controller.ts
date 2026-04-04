@@ -9,6 +9,7 @@ import { prisma } from '../../config/prisma.js';
 import { safeExecutePrismaQuery } from '../../utils/schemaUtils.js';
 import { logger } from '../../utils/logger.js';
 import { getCache, setCache, getCacheKey } from '../../utils/redis.js';
+import { env } from '../../env.js';
 
 // Cache TTL for availability checks (60 seconds - short to ensure accuracy)
 const AVAILABILITY_CACHE_TTL = 60;
@@ -33,8 +34,7 @@ export const checkResourceAvailability = async (
 ) => {
   try {
     // Get tenant ID from request - added by tenant middleware (required)
-    const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+    const tenantId = req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     if (!tenantId) {
       return next(AppError.authorizationError('Tenant ID is required'));
     }

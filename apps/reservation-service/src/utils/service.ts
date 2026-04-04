@@ -17,6 +17,7 @@ import rateLimit from 'express-rate-limit';
 import { createAllowedOriginChecker } from '@tailtown/shared';
 import { logger } from './logger.js';
 import { requestIdMiddleware } from '../middleware/requestId.middleware.js';
+import { env } from '../env.js';
 
 /**
  * Create and configure an Express service with standard middleware
@@ -66,7 +67,7 @@ export function createService(options: { name: string; version: string }) {
   app.use(express.urlencoded({ extended: true }));
 
   const isAllowedOrigin = createAllowedOriginChecker(
-    process.env.ALLOWED_ORIGINS,
+    env.ALLOWED_ORIGINS.join(','),
     ['http://localhost:3000', 'http://localhost:3001']
   );
 
@@ -77,7 +78,7 @@ export function createService(options: { name: string; version: string }) {
         if (!origin) return callback(null, true);
 
         // In development, allow all origins
-        if (process.env.NODE_ENV !== 'production') {
+        if (env.NODE_ENV !== 'production') {
           return callback(null, true);
         }
 
@@ -190,7 +191,7 @@ export function tenantMiddleware(options: {
         if (!isUUID) {
           // In non-production, allow simple tenant IDs like "dev" without requiring
           // a Tenant table lookup (local dev often uses literal tenant IDs).
-          if (process.env.NODE_ENV !== 'production') {
+          if (env.NODE_ENV !== 'production') {
             finalTenantId = tenantIdOrSubdomain;
             (req as any).tenantId = finalTenantId;
 

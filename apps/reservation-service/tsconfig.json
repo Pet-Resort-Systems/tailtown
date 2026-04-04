@@ -2,7 +2,6 @@
   "extends": "../../tsconfig.node.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
     "strict": false,
     "noImplicitAny": false,
     "skipDefaultLibCheck": true,
@@ -10,7 +9,7 @@
     "declaration": true,
     "noEmitOnError": false
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "prisma.config.ts"],
   "exclude": [
     "node_modules",
     "**/*.test.ts",

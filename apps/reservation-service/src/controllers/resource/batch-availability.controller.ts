@@ -8,6 +8,7 @@ import {
 import { prisma } from '../../config/prisma.js';
 import { safeExecutePrismaQuery } from '../../utils/schemaUtils.js';
 import { logger } from '../../utils/logger.js';
+import { env } from '../../env.js';
 
 /**
  * Check availability for multiple resources at once
@@ -21,8 +22,7 @@ export const batchCheckResourceAvailability = async (
 ) => {
   try {
     // Get tenant ID from request - added by tenant middleware (required)
-    const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+    const tenantId = req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     if (!tenantId) {
       return next(AppError.authorizationError('Tenant ID is required'));
     }

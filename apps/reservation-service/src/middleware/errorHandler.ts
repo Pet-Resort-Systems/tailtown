@@ -13,6 +13,7 @@ import {
   reservationErrorTracker,
   ReservationErrorCategory,
 } from '../utils/reservation-error-tracker.js';
+import { env } from '../env.js';
 
 /**
  * Async handler to catch errors in async controller functions
@@ -122,7 +123,7 @@ export const sendErrorProd = (err: any, req: Request, res: Response): void => {
 
   // Log error with request information
   logger.error(
-    `[${process.env.NODE_ENV}] ERROR: ${err.message} | Type: ${err.type} | Status: ${statusCode}`,
+    `[${env.NODE_ENV}] ERROR: ${err.message} | Type: ${err.type} | Status: ${statusCode}`,
     { error: err, req: req }
   );
 
@@ -252,7 +253,7 @@ export const errorHandler = (
   }
 
   // Different error handling based on environment
-  if (process.env.NODE_ENV === 'development') {
+  if (env.NODE_ENV === 'development') {
     sendErrorDev(err, req, res);
   } else {
     sendErrorProd(err, req, res);

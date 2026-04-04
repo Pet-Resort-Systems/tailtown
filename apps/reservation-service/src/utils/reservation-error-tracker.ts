@@ -9,6 +9,7 @@ import { AppError, ErrorType, type ErrorContext } from './appError.js';
 import { logger } from './logger.js';
 import { type Request } from 'express';
 import { prisma } from '../config/prisma.js';
+import { env } from '../env.js';
 
 /**
  * Reservation error categories
@@ -102,7 +103,7 @@ export class ReservationErrorTracker {
     });
 
     this.isInitialized = true;
-    this.isEnabled = process.env.DISABLE_ERROR_TRACKING !== 'true';
+    this.isEnabled = !env.RESERVATION_DISABLE_ERROR_TRACKING;
 
     logger.info('ReservationErrorTracker initialized', {
       isEnabled: this.isEnabled,
@@ -142,7 +143,7 @@ export class ReservationErrorTracker {
     const details = appError ? appError.details : undefined;
 
     // Add default environment context
-    context.environment = process.env.NODE_ENV || 'development';
+    context.environment = env.NODE_ENV;
 
     // Create error record
     const errorRecord: ReservationErrorRecord = {
@@ -374,7 +375,7 @@ export class ReservationErrorTracker {
     }
 
     // If database persistence is enabled, fetch errors from there too
-    if (process.env.DISABLE_ERROR_PERSISTENCE !== 'true') {
+    if (!env.RESERVATION_DISABLE_ERROR_PERSISTENCE) {
       try {
         // Check if reservation_errors table exists
         const tableExists = await prisma.$queryRaw`
@@ -553,7 +554,7 @@ export class ReservationErrorTracker {
   private async persistError(error: ReservationErrorRecord): Promise<void> {
     try {
       // Skip persistence if disabled or error already has database ID
-      if (process.env.DISABLE_ERROR_PERSISTENCE === 'true') {
+      if (env.RESERVATION_DISABLE_ERROR_PERSISTENCE) {
         return;
       }
 
@@ -612,7 +613,7 @@ export class ReservationErrorTracker {
     error: ReservationErrorRecord
   ): Promise<void> {
     try {
-      if (process.env.DISABLE_ERROR_PERSISTENCE === 'true') {
+      if (env.RESERVATION_DISABLE_ERROR_PERSISTENCE) {
         return;
       }
 

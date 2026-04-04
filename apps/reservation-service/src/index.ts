@@ -11,6 +11,7 @@ import { monitoring } from './utils/monitoring.js';
 import { auditMiddleware } from './utils/auditLog.js';
 import { initRedis, isRedisConnected } from './utils/redis.js';
 import monitoringRoutes from './routes/monitoring.routes.js';
+import { env } from './env.js';
 
 // Create and configure the reservation service
 const app = createService({
@@ -44,7 +45,7 @@ app.use('/api', checkInRoutes); // Check-in routes include multiple prefixes
 app.registerErrorHandlers();
 
 // Start the service
-const PORT = process.env.PORT || 4003; // Updated to use port 4003 for reservation service
+const PORT = env.RESERVATION_SERVICE_PORT; // Use type-safe env for port
 app.listen(PORT, async () => {
   console.log(`Reservation service running on port ${PORT}`);
   console.log(`Health check available at http://localhost:${PORT}/health`);

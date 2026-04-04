@@ -11,6 +11,8 @@
  * Keep both files synchronized! Run `npm run check:logger-sync` to verify.
  */
 
+import { env } from '../env.js';
+
 // Log levels in order of verbosity
 export enum LogLevel {
   ERROR = 0,
@@ -29,8 +31,8 @@ interface LoggerConfig {
 
 // Default configuration based on environment
 const defaultConfig: LoggerConfig = {
-  level: process.env.NODE_ENV === 'production' ? LogLevel.INFO : LogLevel.DEBUG,
-  enableColors: process.env.NODE_ENV !== 'production',
+  level: env.NODE_ENV === 'production' ? LogLevel.INFO : LogLevel.DEBUG,
+  enableColors: env.NODE_ENV !== 'production',
   includeTimestamps: true,
 };
 

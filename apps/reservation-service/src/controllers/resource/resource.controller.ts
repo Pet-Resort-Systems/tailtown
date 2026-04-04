@@ -16,6 +16,7 @@ import { AppError } from '../../utils/appError.js';
 import { catchAsync } from '../../middleware/errorHandler.js';
 import { logger } from '../../utils/logger.js';
 import { type TenantRequest } from '../../types/request.js';
+import { env } from '../../env.js';
 import {
   prisma,
   safeExecutePrismaQuery,
@@ -28,8 +29,7 @@ import {
  */
 export const getAllResources: RequestHandler = catchAsync(
   async (req: TenantRequest, res: Response) => {
-    const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+    const tenantId = req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     if (!tenantId) {
       throw AppError.authorizationError('Tenant ID is required');
     }
@@ -199,8 +199,7 @@ export const getResourceById: RequestHandler = catchAsync(
       AppError.validationError,
       'Resource ID is required'
     );
-    const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+    const tenantId = req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     if (!tenantId) {
       throw AppError.authorizationError('Tenant ID is required');
     }
@@ -242,8 +241,7 @@ export const getResourceById: RequestHandler = catchAsync(
  */
 export const createResource: RequestHandler = catchAsync(
   async (req: TenantRequest, res: Response) => {
-    const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+    const tenantId = req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     if (!tenantId) {
       throw AppError.authorizationError('Tenant ID is required');
     }
@@ -332,8 +330,7 @@ export const updateResource: RequestHandler = catchAsync(
       AppError.validationError,
       'Resource ID is required'
     );
-    const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+    const tenantId = req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     if (!tenantId) {
       throw AppError.authorizationError('Tenant ID is required');
     }
@@ -449,8 +446,7 @@ export const deleteResource: RequestHandler = catchAsync(
       AppError.validationError,
       'Resource ID is required'
     );
-    const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+    const tenantId = req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     if (!tenantId) {
       throw AppError.authorizationError('Tenant ID is required');
     }
@@ -535,8 +531,7 @@ export const getResourceAvailability: RequestHandler = catchAsync(
       AppError.validationError,
       'Resource ID is required'
     );
-    const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+    const tenantId = req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     if (!tenantId) {
       throw AppError.authorizationError('Tenant ID is required');
     }
