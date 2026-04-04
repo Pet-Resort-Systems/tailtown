@@ -56,13 +56,13 @@ import { validateSchema } from './utils/schemaUtils';
 const prisma = new PrismaClient();
 
 async function checkSchema() {
-  const result = await validateSchema(prisma);
-  
-  if (!result.isValid) {
-    console.log('Schema validation failed!');
-    console.log(result.report.summary);
-    console.log('Critical issues:', result.report.criticalIssues);
-  }
+    const result = await validateSchema(prisma);
+
+    if (!result.isValid) {
+        console.log('Schema validation failed!');
+        console.log(result.report.summary);
+        console.log('Critical issues:', result.report.criticalIssues);
+    }
 }
 ```
 
@@ -72,8 +72,8 @@ To validate the schema and automatically apply migrations:
 
 ```typescript
 const result = await validateSchema(prisma, {
-  autoMigrate: true,
-  migrationPath: './prisma/migrations'
+    autoMigrate: true,
+    migrationPath: './prisma/migrations',
 });
 
 console.log(result.report.summary);
@@ -100,23 +100,23 @@ The validation function returns a comprehensive result object:
 
 ```typescript
 interface SchemaValidationResult {
-  isValid: boolean;
-  missingTables: string[];
-  missingColumns: Record<string, string[]>;
-  missingIndexes: Record<string, string[]>;
-  missingRelationships: Record<string, string[]>;
-  validationMap: Map<string, boolean>;
-  report: SchemaValidationReport;
+    isValid: boolean;
+    missingTables: string[];
+    missingColumns: Record<string, string[]>;
+    missingIndexes: Record<string, string[]>;
+    missingRelationships: Record<string, string[]>;
+    validationMap: Map<string, boolean>;
+    report: SchemaValidationReport;
 }
 
 interface SchemaValidationReport {
-  summary: string;
-  criticalIssues: string[];
-  warnings: string[];
-  recommendations: string[];
-  migrationRequired: boolean;
-  migrationSafe: boolean;
-  migrationScript?: string;
+    summary: string;
+    criticalIssues: string[];
+    warnings: string[];
+    recommendations: string[];
+    migrationRequired: boolean;
+    migrationSafe: boolean;
+    migrationScript?: string;
 }
 ```
 
@@ -130,36 +130,40 @@ import { PrismaClient } from '@prisma/client';
 import { validateSchema } from './utils/schemaUtils';
 
 async function startService() {
-  const prisma = new PrismaClient();
-  
-  // Validate schema before starting the service
-  const validationResult = await validateSchema(prisma);
-  
-  if (!validationResult.isValid) {
-    console.error('Schema validation failed!');
-    console.error(validationResult.report.summary);
-    
-    // Log critical issues
-    validationResult.report.criticalIssues.forEach(issue => {
-      console.error(`Critical issue: ${issue}`);
-    });
-    
-    // Log recommendations
-    validationResult.report.recommendations.forEach(rec => {
-      console.log(`Recommendation: ${rec}`);
-    });
-    
-    // Decide whether to continue or exit based on your requirements
-    if (process.env.NODE_ENV === 'production') {
-      console.error('Exiting due to schema validation failure in production');
-      process.exit(1);
-    } else {
-      console.warn('Continuing despite schema validation failure in development');
+    const prisma = new PrismaClient();
+
+    // Validate schema before starting the service
+    const validationResult = await validateSchema(prisma);
+
+    if (!validationResult.isValid) {
+        console.error('Schema validation failed!');
+        console.error(validationResult.report.summary);
+
+        // Log critical issues
+        validationResult.report.criticalIssues.forEach((issue) => {
+            console.error(`Critical issue: ${issue}`);
+        });
+
+        // Log recommendations
+        validationResult.report.recommendations.forEach((rec) => {
+            console.log(`Recommendation: ${rec}`);
+        });
+
+        // Decide whether to continue or exit based on your requirements
+        if (process.env.NODE_ENV === 'production') {
+            console.error(
+                'Exiting due to schema validation failure in production'
+            );
+            process.exit(1);
+        } else {
+            console.warn(
+                'Continuing despite schema validation failure in development'
+            );
+        }
     }
-  }
-  
-  // Continue with service startup
-  // ...
+
+    // Continue with service startup
+    // ...
 }
 ```
 
