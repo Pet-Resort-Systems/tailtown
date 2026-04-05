@@ -17,10 +17,9 @@ import { nodeProfilingIntegration } from '@sentry/profiling-node';
 // Sentry configuration
 const SENTRY_DSN = env.SENTRY_DSN;
 const SENTRY_ENABLED =
-  env.SENTRY_ENABLED !== 'false' &&
-  env.NODE_ENV === 'production';
-const SENTRY_ENVIRONMENT = env.NODE_ENV || 'development';
-const SENTRY_RELEASE = env.SENTRY_RELEASE || 'customer-service@1.0.0';
+  env.SENTRY_ENABLED && env.NODE_ENV === 'production';
+const SENTRY_ENVIRONMENT = env.NODE_ENV;
+const SENTRY_RELEASE = env.SENTRY_RELEASE;
 
 /**
  * Initialize Sentry error tracking

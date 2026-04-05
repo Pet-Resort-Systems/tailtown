@@ -6,10 +6,9 @@ import { env } from '../env.js';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET =
-  env.JWT_SECRET || 'your-secret-key-change-in-production';
+  env.JWT_SECRET;
 const JWT_REFRESH_SECRET =
-  env.JWT_REFRESH_SECRET ||
-  'your-refresh-secret-key-change-in-production';
+  env.JWT_REFRESH_SECRET;
 const JWT_EXPIRES_IN = '8h'; // 8 hour access tokens
 const JWT_REFRESH_EXPIRES_IN = '7d'; // 7 day refresh tokens
 

@@ -19,7 +19,7 @@ import { AppError } from '../../middleware/error.middleware.js';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../../config/prisma.js';
 
-const JWT_SECRET = env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = env.JWT_SECRET;
 const IMPERSONATION_TIMEOUT_MINUTES = 30;
 
 /**

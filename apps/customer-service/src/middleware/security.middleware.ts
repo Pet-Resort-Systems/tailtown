@@ -16,7 +16,7 @@ export const enforceHTTPS = (
   }
 
   // Skip if HTTPS enforcement is explicitly disabled (for HTTP-only deployments)
-  if (env.DISABLE_HTTPS_REDIRECT === 'true') {
+  if (env.DISABLE_HTTPS_REDIRECT) {
     return next();
   }
 
