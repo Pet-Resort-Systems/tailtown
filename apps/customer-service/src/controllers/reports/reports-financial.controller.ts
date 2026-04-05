@@ -19,6 +19,7 @@ import {
   getReconciliationReport,
 } from '../../services/financialReportService.js';
 import { logger } from '../../utils/logger.js';
+import { env } from '../../env.js';
 
 /**
  * GET /api/reports/financial/revenue
@@ -30,7 +31,7 @@ export const getRevenue = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
@@ -74,7 +75,7 @@ export const getProfitLoss = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
@@ -119,7 +120,7 @@ export const getOutstanding = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const report = await getOutstandingBalances(tenantId);
 
@@ -160,7 +161,7 @@ export const getRefunds = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
@@ -210,7 +211,7 @@ export const getReconciliation = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const { date } = req.query;
 
     // Default to today if no date provided

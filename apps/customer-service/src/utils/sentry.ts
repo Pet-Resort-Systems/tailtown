@@ -12,14 +12,15 @@
 
 import * as Sentry from '@sentry/node';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
+import { env } from '../env.js';
 
 // Sentry configuration
-const SENTRY_DSN = process.env.SENTRY_DSN;
+const SENTRY_DSN = env.CUSTOMER_SENTRY_DSN;
 const SENTRY_ENABLED =
-  process.env.SENTRY_ENABLED !== 'false' &&
-  process.env.NODE_ENV === 'production';
-const SENTRY_ENVIRONMENT = process.env.NODE_ENV || 'development';
-const SENTRY_RELEASE = process.env.SENTRY_RELEASE || 'customer-service@1.0.0';
+  env.SENTRY_ENABLED !== 'false' &&
+  env.NODE_ENV === 'production';
+const SENTRY_ENVIRONMENT = env.NODE_ENV || 'development';
+const SENTRY_RELEASE = env.SENTRY_RELEASE || 'customer-service@1.0.0';
 
 /**
  * Initialize Sentry error tracking

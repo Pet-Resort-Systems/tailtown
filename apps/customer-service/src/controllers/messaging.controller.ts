@@ -4,6 +4,7 @@ import { assertStringRouteParam } from '@tailtown/shared';
 import { type AuthRequest } from '../middleware/auth.middleware.js';
 import { AppError, ErrorType } from '../middleware/error.middleware.js';
 import { prisma } from '../config/prisma.js';
+import { env } from '../env.js';
 
 /**
  * Get all channels for the current staff member
@@ -15,7 +16,7 @@ export const getChannels = async (
 ) => {
   try {
     const tenantId =
-      req.user?.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.user?.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const staffId = req.user?.id;
 
     if (!staffId) {
@@ -135,7 +136,7 @@ export const getChannelMessages = async (
 ) => {
   try {
     const tenantId =
-      req.user?.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.user?.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const staffId = req.user?.id;
     const channelId = assertStringRouteParam(
       req.params.channelId,
@@ -223,7 +224,7 @@ export const sendChannelMessage = async (
 ) => {
   try {
     const tenantId =
-      req.user?.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.user?.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const staffId = req.user?.id;
     const channelId = assertStringRouteParam(
       req.params.channelId,
@@ -369,7 +370,7 @@ export const getUnreadCount = async (
 ) => {
   try {
     const tenantId =
-      req.user?.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.user?.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const staffId = req.user?.id;
 
     if (!staffId) {

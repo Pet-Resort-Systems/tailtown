@@ -8,6 +8,7 @@
 import { prisma } from '../config/prisma.js';
 import GingrApiClient from '../services/gingr-api.service.js';
 import dotenv from 'dotenv';
+import { env } from '../env.js';
 
 dotenv.config();
 
@@ -46,8 +47,8 @@ async function importInvoices(
   );
 
   // Initialize Gingr API
-  const gingrSubdomain = process.env.GINGR_SUBDOMAIN;
-  const gingrApiKey = process.env.GINGR_API_KEY;
+  const gingrSubdomain = env.GINGR_SUBDOMAIN;
+  const gingrApiKey = env.GINGR_API_KEY;
 
   if (!gingrSubdomain || !gingrApiKey) {
     throw new Error(

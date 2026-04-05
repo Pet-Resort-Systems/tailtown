@@ -1,11 +1,12 @@
 import twilio from 'twilio';
+import { env } from '../env.js';
 
 // Twilio configuration from environment variables
-const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
-const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
-const TWILIO_API_KEY_SID = process.env.TWILIO_API_KEY_SID;
-const TWILIO_API_KEY_SECRET = process.env.TWILIO_API_KEY_SECRET;
-const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
+const TWILIO_ACCOUNT_SID = env.TWILIO_ACCOUNT_SID;
+const TWILIO_AUTH_TOKEN = env.TWILIO_AUTH_TOKEN;
+const TWILIO_API_KEY_SID = env.TWILIO_API_KEY_SID;
+const TWILIO_API_KEY_SECRET = env.TWILIO_API_KEY_SECRET;
+const TWILIO_PHONE_NUMBER = env.TWILIO_PHONE_NUMBER;
 
 // Initialize Twilio client (only if credentials are provided)
 // Supports both Auth Token and API Key authentication

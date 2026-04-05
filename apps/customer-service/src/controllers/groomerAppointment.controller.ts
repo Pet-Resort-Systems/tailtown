@@ -4,6 +4,7 @@ import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { prisma } from '../config/prisma.js';
+import { env } from '../env.js';
 
 /**
  * Groomer Appointment Controller
@@ -19,7 +20,7 @@ export const getAllGroomerAppointments = async (
   try {
     const { groomerId, status, startDate, endDate } = req.query;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const where: any = { tenantId };
     if (groomerId) where.groomerId = groomerId;
@@ -90,7 +91,7 @@ export const getGroomerAppointmentById = async (
       'Appointment ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const appointment = await prisma.groomerAppointment.findFirst({
       where: { id, tenantId },
@@ -131,7 +132,7 @@ export const createGroomerAppointment = async (
       notes,
     } = req.body;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     // Validate required fields
     if (
@@ -207,7 +208,7 @@ export const updateGroomerAppointment = async (
       'Appointment ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     // Verify appointment exists and belongs to tenant
     const existing = await prisma.groomerAppointment.findFirst({
@@ -269,7 +270,7 @@ export const reassignGroomerAppointment = async (
     );
     const { newGroomerId, reason } = req.body;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     if (!newGroomerId) {
       return next(new AppError('New groomer ID is required', 400));
@@ -335,7 +336,7 @@ export const startGroomerAppointment = async (
       'Appointment ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const appointment = await prisma.groomerAppointment.update({
       where: { id },
@@ -372,7 +373,7 @@ export const completeGroomerAppointment = async (
     );
     const { notes } = req.body;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const appointment = await prisma.groomerAppointment.update({
       where: { id },
@@ -410,7 +411,7 @@ export const cancelGroomerAppointment = async (
     );
     const { reason } = req.body;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const existing = await prisma.groomerAppointment.findFirst({
       where: { id, tenantId },
@@ -450,7 +451,7 @@ export const deleteGroomerAppointment = async (
       'Appointment ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const existing = await prisma.groomerAppointment.findFirst({
       where: { id, tenantId },
@@ -483,7 +484,7 @@ export const getGroomerSchedule = async (
     );
     const { startDate, endDate } = req.query;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     if (!startDate || !endDate) {
       return next(new AppError('Start date and end date are required', 400));
@@ -547,7 +548,7 @@ export const getAvailableGroomers = async (
   try {
     const { date, time, duration, serviceId } = req.query;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     if (!date || !time) {
       return next(new AppError('Date and time are required', 400));

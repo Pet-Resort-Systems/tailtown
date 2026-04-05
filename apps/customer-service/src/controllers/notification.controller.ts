@@ -11,6 +11,7 @@ import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { emailService } from '../services/email.service.js';
 import { prisma } from '../config/prisma.js';
 import { AppError } from '../middleware/error.middleware.js';
+import { env } from '../env.js';
 
 class NotificationController {
   /**
@@ -26,7 +27,7 @@ class NotificationController {
         'Reservation ID is required'
       );
       const tenantId =
-        req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+        req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
       const reservation = await prisma.reservation.findFirst({
         where: {
@@ -54,7 +55,7 @@ class NotificationController {
         });
       }
 
-      const businessName = process.env.BUSINESS_NAME || 'Tailtown Pet Resort';
+      const businessName = env.BUSINESS_NAME || 'Tailtown Pet Resort';
 
       await emailService.sendReservationConfirmation({
         reservation: {
@@ -96,7 +97,7 @@ class NotificationController {
         'Reservation ID is required'
       );
       const tenantId =
-        req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+        req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
       const reservation = await prisma.reservation.findFirst({
         where: {
@@ -124,7 +125,7 @@ class NotificationController {
         });
       }
 
-      const businessName = process.env.BUSINESS_NAME || 'Tailtown Pet Resort';
+      const businessName = env.BUSINESS_NAME || 'Tailtown Pet Resort';
 
       await emailService.sendReservationStatusChange(
         {
@@ -170,7 +171,7 @@ class NotificationController {
         'Reservation ID is required'
       );
       const tenantId =
-        req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+        req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
       const reservation = await prisma.reservation.findFirst({
         where: {
@@ -198,7 +199,7 @@ class NotificationController {
         });
       }
 
-      const businessName = process.env.BUSINESS_NAME || 'Tailtown Pet Resort';
+      const businessName = env.BUSINESS_NAME || 'Tailtown Pet Resort';
 
       await emailService.sendReservationStatusChange(
         {
@@ -245,7 +246,7 @@ class NotificationController {
       );
       const { oldStatus, newStatus } = req.body;
       const tenantId =
-        req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+        req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
       if (!oldStatus || !newStatus) {
         return res.status(400).json({
@@ -280,7 +281,7 @@ class NotificationController {
         });
       }
 
-      const businessName = process.env.BUSINESS_NAME || 'Tailtown Pet Resort';
+      const businessName = env.BUSINESS_NAME || 'Tailtown Pet Resort';
 
       await emailService.sendReservationStatusChange(
         {
@@ -326,7 +327,7 @@ class NotificationController {
         'Reservation ID is required'
       );
       const tenantId =
-        req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+        req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
       const reservation = await prisma.reservation.findFirst({
         where: {
@@ -354,8 +355,8 @@ class NotificationController {
         });
       }
 
-      const businessName = process.env.BUSINESS_NAME || 'Tailtown Pet Resort';
-      const businessPhone = process.env.BUSINESS_PHONE;
+      const businessName = env.BUSINESS_NAME || 'Tailtown Pet Resort';
+      const businessPhone = env.BUSINESS_PHONE;
 
       await emailService.sendReservationReminder({
         reservation: {

@@ -1,3 +1,4 @@
+import { env } from '../env.js';
 /**
  * Shared Logger Module
  *
@@ -29,8 +30,8 @@ interface LoggerConfig {
 
 // Default configuration based on environment
 const defaultConfig: LoggerConfig = {
-  level: process.env.NODE_ENV === 'production' ? LogLevel.INFO : LogLevel.DEBUG,
-  enableColors: process.env.NODE_ENV !== 'production',
+  level: env.NODE_ENV === 'production' ? LogLevel.INFO : LogLevel.DEBUG,
+  enableColors: env.NODE_ENV !== 'production',
   includeTimestamps: true,
 };
 

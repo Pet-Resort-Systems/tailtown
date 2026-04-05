@@ -6,6 +6,7 @@
  */
 
 import { prisma } from '../config/prisma.js';
+import { env } from '../env.js';
 
 export interface NotificationPayload {
   waitlistEntryId: string;
@@ -477,7 +478,7 @@ class WaitlistNotificationService {
 
     // Example SendGrid integration:
     // const sgMail = require('@sendgrid/mail');
-    // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    // sgMail.setApiKey(env.CUSTOMER_SENDGRID_API_KEY);
     // await sgMail.send({
     //   to: email,
     //   from: 'noreply@yourdomain.com',
@@ -499,10 +500,10 @@ class WaitlistNotificationService {
 
     // Example Twilio integration:
     // const twilio = require('twilio');
-    // const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+    // const client = twilio(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
     // await client.messages.create({
     //   body: template.smsText,
-    //   from: process.env.TWILIO_PHONE_NUMBER,
+    //   from: env.TWILIO_PHONE_NUMBER,
     //   to: phone
     // });
   }

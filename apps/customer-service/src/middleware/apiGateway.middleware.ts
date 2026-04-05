@@ -10,6 +10,7 @@
 
 import { type Request, type Response, type NextFunction } from 'express';
 import { redisClient } from '../utils/redis.js';
+import { env } from '../env.js';
 
 // API version configuration
 export const API_VERSIONS = {
@@ -226,7 +227,7 @@ export function enhancedRequestLogging() {
         console.error('[API] ERROR:', JSON.stringify(logEntry));
       } else if (res.statusCode >= 400) {
         console.warn('[API] WARN:', JSON.stringify(logEntry));
-      } else if (process.env.NODE_ENV !== 'production' || duration > 1000) {
+      } else if (env.NODE_ENV !== 'production' || duration > 1000) {
         // In production, only log slow requests (>1s)
         console.log('[API] INFO:', JSON.stringify(logEntry));
       }

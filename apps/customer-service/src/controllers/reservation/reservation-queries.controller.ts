@@ -18,6 +18,7 @@ import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../../middleware/error.middleware.js';
 import { logger } from '../../utils/logger.js';
 import { prisma } from '../../config/prisma.js';
+import { env } from '../../env.js';
 import {
   reservationSelectForList,
   reservationSelectFull,
@@ -39,7 +40,7 @@ export const getAllReservations = async (
 
     // Get tenant ID from request
     const tenantId =
-      (req as any).tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      (req as any).tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     // Build where clause - always filter by tenantId
     let where: any = { tenantId };

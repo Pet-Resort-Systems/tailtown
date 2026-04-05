@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../generated/prisma/client.js';
+import { env } from '../env.js';
 /**
  * Prisma Client with Connection Pooling
  *
@@ -16,19 +17,19 @@ const globalForPrisma = globalThis as typeof globalThis & {
   prisma?: PrismaClient;
 };
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg({ connectionString: env.CUSTOMER_DATABASE_URL });
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
     adapter,
     log:
-      process.env.NODE_ENV === 'development'
+      env.NODE_ENV === 'development'
         ? ['query', 'error', 'warn']
         : ['error'],
   });
 
 // Store in global to prevent hot-reload issues in development
-if (process.env.NODE_ENV !== 'production') {
+if (env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
 }
 

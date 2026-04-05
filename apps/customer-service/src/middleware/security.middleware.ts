@@ -1,4 +1,5 @@
 import { type Request, type Response, type NextFunction } from 'express';
+import { env } from '../env.js';
 
 /**
  * Middleware to enforce HTTPS in production
@@ -10,12 +11,12 @@ export const enforceHTTPS = (
   next: NextFunction
 ) => {
   // Skip in development
-  if (process.env.NODE_ENV !== 'production') {
+  if (env.NODE_ENV !== 'production') {
     return next();
   }
 
   // Skip if HTTPS enforcement is explicitly disabled (for HTTP-only deployments)
-  if (process.env.DISABLE_HTTPS_REDIRECT === 'true') {
+  if (env.CUSTOMER_SERVICE_DISABLE_HTTPS_REDIRECT === 'true') {
     return next();
   }
 
@@ -81,7 +82,7 @@ export const validateApiKey = (
   next: NextFunction
 ) => {
   const apiKey = req.headers['x-api-key'] || req.headers['X-API-Key'];
-  const validApiKey = process.env.SERVICE_API_KEY;
+  const validApiKey = env.CUSTOMER_SERVICE_API_KEY;
 
   // Skip if no API key is configured (development)
   if (!validApiKey) {

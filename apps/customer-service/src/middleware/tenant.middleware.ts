@@ -2,6 +2,7 @@ import { type Request, type Response, type NextFunction } from 'express';
 import { prisma } from '../config/prisma.js';
 import { logger } from '../utils/logger.js';
 import { getCache, setCache, getCacheKey } from '../utils/redis.js';
+import { env } from '../env.js';
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -96,8 +97,8 @@ export const extractTenantContext = async (
     if (
       !subdomain &&
       !tenantIdHeader &&
-      process.env.NODE_ENV !== 'production' &&
-      process.env.NODE_ENV !== 'test'
+      env.NODE_ENV !== 'production' &&
+      env.NODE_ENV !== 'test'
     ) {
       subdomain = 'dev';
       logger.debug('No tenant provided; defaulting to dev tenant', {
@@ -214,7 +215,7 @@ export const extractTenantContext = async (
         }
       } catch (error: any) {
         // In development, if tenants table doesn't exist, create a mock tenant
-        if (process.env.NODE_ENV !== 'production' && error.code === 'P2021') {
+        if (env.NODE_ENV !== 'production' && error.code === 'P2021') {
           logger.warn(
             'Tenants table does not exist - using mock tenant for development',
             { subdomain }
@@ -281,7 +282,7 @@ export const extractTenantContext = async (
       message: 'Failed to resolve tenant context',
       errorMessage: error.message,
       errorStack:
-        process.env.NODE_ENV === 'production' ? undefined : error.stack,
+        env.NODE_ENV === 'production' ? undefined : error.stack,
     });
   }
 };
