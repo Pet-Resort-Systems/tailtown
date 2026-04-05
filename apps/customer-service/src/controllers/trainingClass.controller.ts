@@ -5,6 +5,7 @@ import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { addDays, addWeeks, format, parse } from 'date-fns';
 import { prisma } from '../config/prisma.js';
+import { env } from '../env.js';
 
 /**
  * Training Class Controller
@@ -20,7 +21,7 @@ export const getAllTrainingClasses = async (
   try {
     const { status, category, level, instructorId, isActive } = req.query;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const where: any = { tenantId };
     if (status) where.status = status;
@@ -70,7 +71,7 @@ export const getTrainingClassById = async (
       'Training class ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const trainingClass = await prisma.trainingClass.findFirst({
       where: { id, tenantId },
@@ -150,7 +151,7 @@ export const createTrainingClass = async (
       notes,
     } = req.body;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     // Validate required fields
     if (
@@ -286,7 +287,7 @@ export const updateTrainingClass = async (
       'Training class ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     // Verify class exists
     const existing = await prisma.trainingClass.findFirst({
@@ -357,7 +358,7 @@ export const deleteTrainingClass = async (
       'Training class ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const existing = await prisma.trainingClass.findFirst({
       where: { id, tenantId },
@@ -404,7 +405,7 @@ export const duplicateTrainingClass = async (
     );
     const { startDate } = req.body;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     if (!startDate) {
       return next(new AppError('Start date is required', 400));
@@ -481,7 +482,7 @@ export const getClassSessions = async (
       'Training class ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const sessions = await prisma.classSession.findMany({
       where: {
@@ -516,7 +517,7 @@ export const updateClassSession = async (
       'Class session ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const updateData: any = {};
     const allowedFields = [

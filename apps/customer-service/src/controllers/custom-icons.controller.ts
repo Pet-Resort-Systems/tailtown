@@ -6,12 +6,13 @@ import fs from 'fs/promises';
 import { assertStringRouteParam } from '@tailtown/shared';
 import { prisma } from '../config/prisma.js';
 import { AppError } from '../middleware/error.middleware.js';
+import { env } from '../env.js';
 
 // Get all custom icons for tenant
 export const getAllCustomIcons = async (req: TenantRequest, res: Response) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const icons = await prisma.customIcon.findMany({
       where: {
@@ -44,7 +45,7 @@ export const getCustomIconById = async (req: TenantRequest, res: Response) => {
       'Custom icon ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const icon = await prisma.customIcon.findFirst({
       where: {
@@ -83,7 +84,7 @@ export const getCustomIconById = async (req: TenantRequest, res: Response) => {
 export const createCustomIcon = async (req: TenantRequest, res: Response) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const { name, label, description, category } = req.body;
     const file = req.file;
 
@@ -155,7 +156,7 @@ export const updateCustomIcon = async (req: TenantRequest, res: Response) => {
       'Custom icon ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const { name, label, description, category, displayOrder } = req.body;
     const file = req.file;
 
@@ -233,7 +234,7 @@ export const deleteCustomIcon = async (req: TenantRequest, res: Response) => {
       'Custom icon ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     // Check if icon exists
     const existing = await prisma.customIcon.findFirst({

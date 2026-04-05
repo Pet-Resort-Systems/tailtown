@@ -4,6 +4,7 @@ import { type Request, type Response, type NextFunction } from 'express';
 import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
 import { prisma } from '../config/prisma.js';
+import { env } from '../env.js';
 
 /**
  * Enrollment Controller
@@ -25,7 +26,7 @@ export const enrollInClass = async (
     );
     const { petId, customerId, amountPaid } = req.body;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     if (!petId || !customerId) {
       return next(new AppError('Pet ID and Customer ID are required', 400));
@@ -122,7 +123,7 @@ export const getEnrollmentById = async (
       'Enrollment ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const enrollment = await prisma.classEnrollment.findFirst({
       where: { id, tenantId },
@@ -171,7 +172,7 @@ export const updateEnrollment = async (
       'Enrollment ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const updateData: any = {};
     const allowedFields = ['amountPaid', 'paymentStatus', 'status', 'notes'];
@@ -219,7 +220,7 @@ export const dropFromClass = async (
     );
     const { reason } = req.body;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const enrollment = await prisma.classEnrollment.findFirst({
       where: { id, tenantId },
@@ -293,7 +294,7 @@ export const getCustomerEnrollments = async (
     );
     const { status } = req.query;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const where: any = { tenantId, customerId };
     if (status) where.status = status;
@@ -341,7 +342,7 @@ export const getPetEnrollments = async (
       'Pet ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const enrollments = await prisma.classEnrollment.findMany({
       where: { tenantId, petId },
@@ -387,7 +388,7 @@ export const issueCertificate = async (
       'Enrollment ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const enrollment = await prisma.classEnrollment.findFirst({
       where: { id, tenantId },
@@ -440,7 +441,7 @@ export const addToWaitlist = async (
     );
     const { petId, customerId } = req.body;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     if (!petId || !customerId) {
       return next(new AppError('Pet ID and Customer ID are required', 400));
@@ -505,7 +506,7 @@ export const removeFromWaitlist = async (
       'Waitlist entry ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const entry = await prisma.classWaitlist.findFirst({
       where: { id, tenantId },
@@ -546,7 +547,7 @@ export const getClassWaitlist = async (
       'Training class ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const waitlist = await prisma.classWaitlist.findMany({
       where: { classId, tenantId },

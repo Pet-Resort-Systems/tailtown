@@ -20,6 +20,7 @@ import {
   getInactiveCustomersReport,
 } from '../../services/customerReportService.js';
 import { logger } from '../../utils/logger.js';
+import { env } from '../../env.js';
 
 /**
  * GET /api/reports/customers/acquisition
@@ -31,7 +32,7 @@ export const getCustomerAcquisition = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
@@ -80,7 +81,7 @@ export const getCustomerRetention = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
@@ -133,7 +134,7 @@ export const getCustomerLifetimeValue = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const limit = parseInt(req.query.limit as string) || 50;
 
     const report = await getCustomerLifetimeValueReport(tenantId, limit);
@@ -174,7 +175,7 @@ export const getCustomerDemographics = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const report = await getCustomerDemographicsReport(tenantId);
 
@@ -211,7 +212,7 @@ export const getInactiveCustomers = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const days = parseInt(req.query.days as string) || 90;
 
     const report = await getInactiveCustomersReport(tenantId, days);

@@ -4,6 +4,7 @@ import { assertStringRouteParam } from '@tailtown/shared';
 import { smsService } from '../services/sms.service.js';
 import { prisma } from '../config/prisma.js';
 import { AppError } from '../middleware/error.middleware.js';
+import { env } from '../env.js';
 
 /**
  * SMS Controller
@@ -85,7 +86,7 @@ export class SMSController {
         'Reservation ID is required'
       );
       const tenantId =
-        req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+        req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
       // Fetch reservation with customer and pet details
       const reservation = await prisma.reservation.findFirst({
@@ -115,8 +116,8 @@ export class SMSController {
       }
 
       // Get tenant info (you might want to fetch this from a tenant table)
-      const tenantName = process.env.BUSINESS_NAME || 'Tailtown Pet Resort';
-      const tenantPhone = process.env.BUSINESS_PHONE;
+      const tenantName = env.BUSINESS_NAME || 'Tailtown Pet Resort';
+      const tenantPhone = env.BUSINESS_PHONE;
 
       const result = await smsService.sendAppointmentReminder({
         customerName: `${reservation.customer.firstName} ${reservation.customer.lastName}`,
@@ -160,7 +161,7 @@ export class SMSController {
         'Reservation ID is required'
       );
       const tenantId =
-        req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+        req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
       const reservation = await prisma.reservation.findFirst({
         where: {
@@ -188,8 +189,8 @@ export class SMSController {
         });
       }
 
-      const tenantName = process.env.BUSINESS_NAME || 'Tailtown Pet Resort';
-      const tenantPhone = process.env.BUSINESS_PHONE;
+      const tenantName = env.BUSINESS_NAME || 'Tailtown Pet Resort';
+      const tenantPhone = env.BUSINESS_PHONE;
 
       const result = await smsService.sendReservationConfirmation({
         customerName: `${reservation.customer.firstName} ${reservation.customer.lastName}`,
@@ -235,7 +236,7 @@ export class SMSController {
         'Customer ID is required'
       );
       const tenantId =
-        req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+        req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
       const customer = await prisma.customer.findFirst({
         where: {
@@ -258,8 +259,8 @@ export class SMSController {
         });
       }
 
-      const tenantName = process.env.BUSINESS_NAME || 'Tailtown Pet Resort';
-      const tenantPhone = process.env.BUSINESS_PHONE;
+      const tenantName = env.BUSINESS_NAME || 'Tailtown Pet Resort';
+      const tenantPhone = env.BUSINESS_PHONE;
 
       const result = await smsService.sendWelcomeMessage({
         customerName: `${customer.firstName} ${customer.lastName}`,
@@ -295,7 +296,7 @@ export class SMSController {
     try {
       const { customerIds, message } = req.body;
       const tenantId =
-        req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+        req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
       if (
         !customerIds ||
@@ -322,7 +323,7 @@ export class SMSController {
         },
       });
 
-      const tenantName = process.env.BUSINESS_NAME || 'Tailtown Pet Resort';
+      const tenantName = env.BUSINESS_NAME || 'Tailtown Pet Resort';
       const results = [];
 
       for (const customer of customers) {
@@ -382,7 +383,7 @@ export class SMSController {
         'Reservation ID is required'
       );
       const tenantId =
-        req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+        req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
       const reservation = await prisma.reservation.findFirst({
         where: {
@@ -409,7 +410,7 @@ export class SMSController {
         });
       }
 
-      const tenantName = process.env.BUSINESS_NAME || 'Tailtown Pet Resort';
+      const tenantName = env.BUSINESS_NAME || 'Tailtown Pet Resort';
 
       const result = await smsService.sendCheckInNotification({
         customerName: `${reservation.customer.firstName} ${reservation.customer.lastName}`,
@@ -450,7 +451,7 @@ export class SMSController {
         'Reservation ID is required'
       );
       const tenantId =
-        req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+        req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
       const reservation = await prisma.reservation.findFirst({
         where: {
@@ -477,7 +478,7 @@ export class SMSController {
         });
       }
 
-      const tenantName = process.env.BUSINESS_NAME || 'Tailtown Pet Resort';
+      const tenantName = env.BUSINESS_NAME || 'Tailtown Pet Resort';
 
       const result = await smsService.sendCheckOutNotification({
         customerName: `${reservation.customer.firstName} ${reservation.customer.lastName}`,

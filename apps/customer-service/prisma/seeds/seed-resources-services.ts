@@ -11,8 +11,9 @@
  */
 
 import { prisma } from '../../src/config/prisma';
+import { env } from '../../src/env.js';
 
-const TENANT_ID = process.env.TENANT_ID || 'dev';
+const TENANT_ID = env.TENANT_ID || 'dev';
 
 // Pricing configuration (adjust as needed)
 const PRICING = {

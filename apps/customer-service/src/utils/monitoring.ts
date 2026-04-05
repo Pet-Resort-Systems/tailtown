@@ -5,6 +5,7 @@
  */
 
 import { type Request, type Response, type NextFunction } from 'express';
+import { env } from '../env.js';
 
 // Metrics storage
 interface Metrics {
@@ -74,7 +75,7 @@ export class MonitoringService {
       },
     };
 
-    if (process.env.NODE_ENV !== 'test') {
+    if (env.NODE_ENV !== 'test') {
       this.percentileInterval = setInterval(
         () => this.calculatePercentiles(),
         60000

@@ -13,6 +13,7 @@ import {
   getServiceNameForResourceType,
 } from './gingr-resource-mapper.service.js';
 import { lookupBreedName } from './gingr-transform.service.js';
+import { env } from '../env.js';
 
 interface SyncResult {
   tenantId: string;
@@ -100,7 +101,7 @@ export class GingrSyncService {
       // TODO: Get Gingr credentials from tenant settings or environment
       const gingrClient = new GingrApiClient({
         subdomain: 'tailtownpetresort', // TODO: Make this tenant-specific
-        apiKey: process.env.GINGR_API_KEY || 'c84c09ecfacdf23a495505d2ae1df533',
+        apiKey: env.GINGR_API_KEY || 'c84c09ecfacdf23a495505d2ae1df533',
       });
 
       // Sync customers
@@ -665,7 +666,7 @@ export class GingrSyncService {
         // If Gingr provides lodging, map it to an internal resource (and backfill suiteNumber)
         let mappedResourceId: string | undefined;
         const reservationServiceUrl =
-          process.env.RESERVATION_SERVICE_URL || 'http://localhost:4003';
+          env.RESERVATION_SERVICE_URL || 'http://localhost:4003';
 
         if (gingrLodging) {
           try {
@@ -1030,7 +1031,7 @@ export class GingrSyncService {
 
     const gingrClient = new GingrApiClient({
       subdomain: 'tailtownpetresort',
-      apiKey: process.env.GINGR_API_KEY || 'c84c09ecfacdf23a495505d2ae1df533',
+      apiKey: env.GINGR_API_KEY || 'c84c09ecfacdf23a495505d2ae1df533',
     });
 
     let reservationCount = 0;

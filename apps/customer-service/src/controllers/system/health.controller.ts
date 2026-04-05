@@ -9,6 +9,7 @@ import { type Request, type Response } from 'express';
 
 import os from 'os';
 import { prisma } from '../../config/prisma.js';
+import { env } from '../../env.js';
 
 // Track service start time for uptime calculation
 const SERVICE_START_TIME = Date.now();
@@ -146,7 +147,7 @@ function parseCacheHitRate(info: string): number {
 async function checkReservationService(): Promise<ServiceHealth> {
   try {
     const reservationUrl =
-      process.env.RESERVATION_SERVICE_URL || 'http://localhost:4003';
+      env.RESERVATION_SERVICE_URL || 'http://localhost:4003';
     const start = Date.now();
 
     const response = await fetch(`${reservationUrl}/health`, {

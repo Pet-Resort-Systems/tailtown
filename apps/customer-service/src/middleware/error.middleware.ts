@@ -9,6 +9,7 @@
 import { type Request, type Response, type NextFunction } from 'express';
 import { logger as appLogger } from '../utils/logger.js';
 import { captureException, setUser, addBreadcrumb } from '../utils/sentry.js';
+import { env } from '../env.js';
 
 /**
  * Standardized error types
@@ -375,7 +376,7 @@ export const errorHandler = (
     });
   }
 
-  if (process.env.NODE_ENV === 'development') {
+  if (env.NODE_ENV === 'development') {
     sendErrorDev(err, req, res);
   } else {
     sendErrorProd(err, req, res);

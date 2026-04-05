@@ -15,6 +15,7 @@ import crypto from 'crypto';
 import { emailService } from '../services/email.service.js';
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { prisma } from '../config/prisma.js';
+import { env } from '../env.js';
 
 // Password reset token expiry (24 hours)
 const RESET_TOKEN_EXPIRY_HOURS = 24;
@@ -198,7 +199,7 @@ export const requestPasswordReset = async (
       message:
         'If an account exists with this email, a password reset link will be sent',
       // Include token in dev mode for testing (remove in production)
-      ...(process.env.NODE_ENV === 'development' && { resetToken }),
+      ...(env.NODE_ENV === 'development' && { resetToken }),
     });
   } catch (error: any) {
     console.error('Password reset request error:', error);

@@ -8,6 +8,7 @@ import { assertStringRouteParam } from '@tailtown/shared';
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { prisma } from '../config/prisma.js';
 import { AppError } from '../middleware/error.middleware.js';
+import { env } from '../env.js';
 
 /**
  * GET /api/customers/:customerId/payment-methods
@@ -368,7 +369,7 @@ export const chargeCustomerPaymentMethod = async (
     // Call CardConnect to charge the token
     // Note: This requires the payment-service to be accessible
     const paymentServiceUrl =
-      process.env.PAYMENT_SERVICE_URL || 'http://localhost:4005';
+      env.PAYMENT_SERVICE_URL || 'http://localhost:4005';
 
     const response = await fetch(
       `${paymentServiceUrl}/api/payments/charge-token`,

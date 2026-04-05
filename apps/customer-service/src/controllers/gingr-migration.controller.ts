@@ -8,6 +8,7 @@ import { type Request, type Response, type NextFunction } from 'express';
 // Use native fetch (Node 18+) instead of node-fetch
 import GingrApiClient from '../services/gingr-api.service.js';
 import { prisma } from '../config/prisma.js';
+import { env } from '../env.js';
 import {
   transformOwnerToCustomer,
   transformAnimalToPet,
@@ -255,7 +256,7 @@ export const startMigration = async (
     );
 
     const RESERVATION_SERVICE_URL =
-      process.env.RESERVATION_SERVICE_URL || 'http://localhost:4003';
+      env.RESERVATION_SERVICE_URL || 'http://localhost:4003';
 
     // Fetch a default resource to assign (calendar requires resourceId)
     let defaultResourceId: string | null = null;

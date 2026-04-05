@@ -17,8 +17,9 @@ import { type SuperAdminRequest } from '../../middleware/require-super-admin.mid
 import { AppError } from '../../middleware/error.middleware.js';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../../config/prisma.js';
+import { env } from '../../env.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = env.CUSTOMER_JWT_SECRET || 'your-secret-key';
 const IMPERSONATION_TIMEOUT_MINUTES = 30;
 
 /**
