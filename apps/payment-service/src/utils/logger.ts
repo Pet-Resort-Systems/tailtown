@@ -4,7 +4,9 @@
 
 import winston from 'winston';
 
-const logLevel = process.env.LOG_LEVEL || 'info';
+import { env } from '../env.js';
+
+const logLevel = env.LOG_LEVEL;
 
 export const logger = winston.createLogger({
   level: logLevel,
@@ -30,7 +32,7 @@ export const logger = winston.createLogger({
 });
 
 // Add file transport in production
-if (process.env.NODE_ENV === 'production') {
+if (env.NODE_ENV === 'production') {
   logger.add(
     new winston.transports.File({
       filename: 'logs/error.log',

@@ -5,6 +5,7 @@
 
 import axios from 'axios';
 import type { AxiosInstance } from 'axios';
+import { env } from '../env.js';
 import { logger } from '../utils/logger.js';
 
 export interface AuthorizationRequest {
@@ -68,13 +69,12 @@ export class CardConnectService {
 
   constructor() {
     const apiUrl =
-      process.env.CARDCONNECT_API_URL ||
-      'https://fts-uat.cardconnect.com/cardconnect/rest';
-    const username = process.env.CARDCONNECT_USERNAME || 'testing';
-    const password = process.env.CARDCONNECT_PASSWORD || 'testing123';
+      env.CARDCONNECT_API_URL;
+    const username = env.CARDCONNECT_USERNAME;
+    const password = env.CARDCONNECT_PASSWORD;
 
-    this.merchantId = process.env.CARDCONNECT_MERCHANT_ID || '496160873888';
-    this.site = process.env.CARDCONNECT_SITE || 'fts-uat';
+    this.merchantId = env.CARDCONNECT_MERCHANT_ID;
+    this.site = env.CARDCONNECT_SITE;
 
     // Create axios instance with basic auth
     this.client = axios.create({
@@ -86,7 +86,7 @@ export class CardConnectService {
       headers: {
         'Content-Type': 'application/json',
       },
-      timeout: 30000, // 30 seconds
+      timeout: env.CARDCONNECT_REQUEST_TIMEOUT_MS,
     });
 
     // Add request interceptor for logging
@@ -143,7 +143,8 @@ export class CardConnectService {
         ...request,
         merchid: this.merchantId,
         currency: request.currency || 'USD',
-        capture: request.capture || 'Y', // Default to capture immediately
+        capture:
+          request.capture || (env.CARDCONNECT_CAPTURE_DEFAULT ? 'Y' : 'N'),
       };
 
       const response = await this.client.put('/auth', payload);

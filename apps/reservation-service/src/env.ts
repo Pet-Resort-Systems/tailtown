@@ -2,42 +2,18 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { createEnv } from '@t3-oss/env-core';
+import {
+  millisecondSchema,
+  stringToNumberSchema,
+  transformedBooleanSchema,
+} from '@tailtown/shared';
 import { config as dotenvConfig } from 'dotenv';
 import { z } from 'zod';
-import ms, { type StringValue } from 'ms';
 
 const envDir = path.dirname(fileURLToPath(import.meta.url));
 const rootEnvPath = path.resolve(envDir, '../../..', '.env');
 
 dotenvConfig({ path: rootEnvPath });
-
-const stringToNumberSchema = z
-  .string()
-  .transform(Number)
-  // make sure transform worked
-  .pipe(z.number());
-const transformedBooleanSchema = z
-  .string()
-  // only allow "true" or "false"
-  .refine((s) => s === 'true' || s === 'false')
-  // transform to boolean
-  .transform((s) => s === 'true');
-
-const milisecondSchema = z
-  .string()
-  .min(1)
-  .transform((s, ctx) => {
-    try {
-      return ms(s as StringValue);
-    } catch {
-      ctx.addIssue({
-        code: 'invalid_format',
-        format: '{number}{time unit}',
-        message: 'Invalid milliseconds value',
-      });
-    }
-  })
-  .pipe(z.number());
 
 export const env = createEnv({
   server: {
@@ -60,8 +36,8 @@ export const env = createEnv({
     RESERVATION_SERVICE_TRUST_PROXY: transformedBooleanSchema,
     RESERVATION_DATABASE_URL: z.url(),
     RESERVATION_JWT_SECRET: z.string().min(1),
-    RESERVATION_JWT_EXPIRES_IN: milisecondSchema,
-    RESERVATION_JWT_REFRESH_TOKEN_EXPIRES_IN: milisecondSchema,
+    RESERVATION_JWT_EXPIRES_IN: millisecondSchema,
+    RESERVATION_JWT_REFRESH_TOKEN_EXPIRES_IN: millisecondSchema,
     RESERVATION_SESSION_SECRET: z.string().min(1),
     RESERVATION_SERVICE_TIMEOUT: stringToNumberSchema.default(5000),
     RESERVATION_SERVICE_MAX_RETRIES: stringToNumberSchema.default(3),

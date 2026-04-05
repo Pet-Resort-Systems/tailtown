@@ -8,6 +8,7 @@ import {
   CardConnectService,
   cardConnectService,
 } from '../services/cardconnect.service.js';
+import { env } from '../env.js';
 import { logger } from '../utils/logger.js';
 import Joi from 'joi';
 
@@ -409,7 +410,7 @@ export async function chargeToken(req: Request, res: Response) {
  * Get test card numbers (for development only)
  */
 export function getTestCards(req: Request, res: Response) {
-  if (process.env.NODE_ENV === 'production') {
+  if (env.NODE_ENV === 'production') {
     return res.status(403).json({
       status: 'error',
       message: 'Test cards not available in production',

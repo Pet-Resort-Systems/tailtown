@@ -573,6 +573,9 @@ importers:
       '@prisma/client':
         specifier: 'catalog:'
         version: 7.4.2(prisma@7.4.2(@types/react@18.2.64)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3))(typescript@5.9.3)
+      '@t3-oss/env-core':
+        specifier: 0.13.11
+        version: 0.13.11(typescript@5.9.3)(valibot@1.2.0(typescript@5.9.3))(zod@4.3.6)
       '@tailtown/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -603,6 +606,9 @@ importers:
       winston:
         specifier: 3.11.0
         version: 3.11.0
+      zod:
+        specifier: 4.3.6
+        version: 4.3.6
     devDependencies:
       '@types/cors':
         specifier: 2.8.13
@@ -658,6 +664,9 @@ importers:
       '@prisma/client':
         specifier: 'catalog:'
         version: 7.4.2(prisma@7.4.2(@types/react@18.2.64)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3))(typescript@5.9.3)
+      '@t3-oss/env-core':
+        specifier: 0.13.11
+        version: 0.13.11(typescript@5.9.3)(valibot@1.2.0(typescript@5.9.3))(zod@4.3.6)
       '@tailtown/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -691,6 +700,9 @@ importers:
       morgan:
         specifier: 1.10.1
         version: 1.10.1
+      ms:
+        specifier: 2.1.3
+        version: 2.1.3
       pg:
         specifier: 8.16.3
         version: 8.16.3
@@ -725,6 +737,9 @@ importers:
       '@types/morgan':
         specifier: 1.9.10
         version: 1.9.10
+      '@types/ms':
+        specifier: 2.1.0
+        version: 2.1.0
       '@types/multer':
         specifier: 2.1.0
         version: 2.1.0
@@ -782,11 +797,26 @@ importers:
 
   packages/load-tests: {}
 
+  packages/ms-clone:
+    devDependencies:
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260327.2
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
   packages/shared:
     dependencies:
       express:
         specifier: 4.18.2
         version: 4.18.2
+      ms:
+        specifier: 2.1.3
+        version: 2.1.3
+      zod:
+        specifier: 4.3.6
+        version: 4.3.6
     devDependencies:
       '@types/express':
         specifier: 'catalog:'
@@ -3774,6 +3804,23 @@ packages:
   '@svgr/webpack@5.5.0':
     resolution: {integrity: sha512-DOBOK255wfQxguUta2INKkzPj6AIS6iafZYiYmHn6W3pHlycSRRlvWKCfLDG10fXfLWqE3DJHgRUOyJYmARa7g==}
     engines: {node: '>=10'}
+
+  '@t3-oss/env-core@0.13.11':
+    resolution: {integrity: sha512-sM7GYY+KL7H/Hl0BE0inWfk3nRHZOLhmVn7sHGxaZt9FAR6KqREXAE+6TqKfiavfXmpRxO/OZ2QgKRd+oiBYRQ==}
+    peerDependencies:
+      arktype: ^2.1.0
+      typescript: '>=5.0.0'
+      valibot: ^1.0.0-beta.7 || ^1.0.0
+      zod: ^3.24.0 || ^4.0.0
+    peerDependenciesMeta:
+      arktype:
+        optional: true
+      typescript:
+        optional: true
+      valibot:
+        optional: true
+      zod:
+        optional: true
 
   '@testim/chrome-version@1.1.4':
     resolution: {integrity: sha512-kIhULpw9TrGYnHp/8VfdcneIcxKnLixmADtukQRtJUmsVlMg0niMkwV0xZmi8hqa57xqilIHjWFA0GKvEjVU5g==}
@@ -15631,6 +15678,12 @@ snapshots:
       loader-utils: 2.0.4
     transitivePeerDependencies:
       - supports-color
+
+  '@t3-oss/env-core@0.13.11(typescript@5.9.3)(valibot@1.2.0(typescript@5.9.3))(zod@4.3.6)':
+    optionalDependencies:
+      typescript: 5.9.3
+      valibot: 1.2.0(typescript@5.9.3)
+      zod: 4.3.6
 
   '@testim/chrome-version@1.1.4': {}
 
