@@ -37,7 +37,7 @@ export const env = createEnv({
     CUSTOMER_SERVICE_TRUST_PROXY: transformedBooleanSchema,
     CUSTOMER_SERVICE_DISABLE_HTTPS_REDIRECT: transformedBooleanSchema,
     CUSTOMER_SERVICE_DATA_DIR: z.string().min(1),
-    CUSTOMER_DATABASE_URL: z.string().min(1),
+    CUSTOMER_DATABASE_URL: z.url(),
     CUSTOMER_JWT_SECRET: z.string().min(1),
     CUSTOMER_JWT_EXPIRES_IN: millisecondSchema,
     CUSTOMER_JWT_REFRESH_SECRET: z.string().min(1),
@@ -82,11 +82,11 @@ export const env = createEnv({
     CUSTOMER_METRICS_PORT: stringToNumberSchema,
     CUSTOMER_SENTRY_DSN: z.string().optional(),
 
-    CUSTOMER_TEST_DATABASE_URL: z.string().optional(),
+    CUSTOMER_TEST_DATABASE_URL: z.url().optional(),
 
-    RESERVATION_SERVICE_URL: z.string().default('http://localhost:4003'),
-    PAYMENT_SERVICE_URL: z.string().default('http://localhost:4005'),
-    FRONTEND_URL: z.string().default('https://tailtown.canicloud.com'),
+    RESERVATION_SERVICE_URL: z.url().default('http://localhost:4003'),
+    PAYMENT_SERVICE_URL: z.url().default('http://localhost:4005'),
+    FRONTEND_URL: z.url().default('https://tailtown.canicloud.com'),
     BUSINESS_NAME: z.string().default('Tailtown Pet Resort'),
     BUSINESS_PHONE: z.string().optional(),
     GINGR_SUBDOMAIN: z.string().default('tailtownpetresort'),
@@ -100,7 +100,6 @@ export const env = createEnv({
     TEST_TENANT_ID: z.string().default('dev'),
     TENANT_ID: z.string().default('dev'),
     MAX_CONCURRENT_SESSIONS: stringToNumberSchema.default(10),
-    API_URL: z.string().default('http://localhost:3001'),
     SENTRY_ENABLED: transformedBooleanSchema.default(false),
     SENTRY_RELEASE: z.string().default('customer-service@1.0.0'),
     REDIS_ENABLED: transformedBooleanSchema.default(true),
@@ -127,10 +126,12 @@ export const env = createEnv({
     CUSTOMER_JWT_SECRET: process.env.CUSTOMER_JWT_SECRET,
     CUSTOMER_JWT_EXPIRES_IN: process.env.CUSTOMER_JWT_EXPIRES_IN,
     CUSTOMER_JWT_REFRESH_SECRET: process.env.CUSTOMER_JWT_REFRESH_SECRET,
-    CUSTOMER_JWT_REFRESH_EXPIRES_IN: process.env.CUSTOMER_JWT_REFRESH_EXPIRES_IN,
+    CUSTOMER_JWT_REFRESH_EXPIRES_IN:
+      process.env.CUSTOMER_JWT_REFRESH_EXPIRES_IN,
     CUSTOMER_JWT_REFRESH_TOKEN_EXPIRES_IN:
       process.env.CUSTOMER_JWT_REFRESH_TOKEN_EXPIRES_IN,
-    CUSTOMER_SUPER_ADMIN_JWT_SECRET: process.env.CUSTOMER_SUPER_ADMIN_JWT_SECRET,
+    CUSTOMER_SUPER_ADMIN_JWT_SECRET:
+      process.env.CUSTOMER_SUPER_ADMIN_JWT_SECRET,
     CUSTOMER_SUPER_ADMIN_JWT_EXPIRES_IN:
       process.env.CUSTOMER_SUPER_ADMIN_JWT_EXPIRES_IN,
     CUSTOMER_SUPER_ADMIN_REFRESH_EXPIRES_IN:
@@ -147,7 +148,8 @@ export const env = createEnv({
     CUSTOMER_API_VERSION: process.env.CUSTOMER_API_VERSION,
     CUSTOMER_ENABLE_API_DOCS: process.env.CUSTOMER_ENABLE_API_DOCS,
     CUSTOMER_RATE_LIMIT_WINDOW: process.env.CUSTOMER_RATE_LIMIT_WINDOW,
-    CUSTOMER_RATE_LIMIT_SKIP_TRUSTED: process.env.CUSTOMER_RATE_LIMIT_SKIP_TRUSTED,
+    CUSTOMER_RATE_LIMIT_SKIP_TRUSTED:
+      process.env.CUSTOMER_RATE_LIMIT_SKIP_TRUSTED,
     CUSTOMER_UPLOAD_PATH: process.env.CUSTOMER_UPLOAD_PATH,
     CUSTOMER_UPLOAD_DIR: process.env.CUSTOMER_UPLOAD_DIR,
     CUSTOMER_MAX_FILE_SIZE: process.env.CUSTOMER_MAX_FILE_SIZE,
@@ -190,7 +192,6 @@ export const env = createEnv({
     TEST_TENANT_ID: process.env.TEST_TENANT_ID,
     TENANT_ID: process.env.TENANT_ID,
     MAX_CONCURRENT_SESSIONS: process.env.MAX_CONCURRENT_SESSIONS,
-    API_URL: process.env.API_URL,
     SENTRY_ENABLED: process.env.SENTRY_ENABLED,
     SENTRY_RELEASE: process.env.SENTRY_RELEASE,
     REDIS_ENABLED: process.env.REDIS_ENABLED,
