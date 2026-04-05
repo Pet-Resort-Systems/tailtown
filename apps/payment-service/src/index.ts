@@ -8,22 +8,19 @@ import type { Express, RequestHandler } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import dotenv from 'dotenv';
 import { createAllowedOriginChecker } from '@tailtown/shared';
 import { logger } from './utils/logger.js';
 import paymentRoutes from './routes/payment.routes.js';
-
-// Load environment variables
-dotenv.config();
+import { env } from './env.js';
 
 const app: Express = express();
-const PORT = process.env.PORT || 4005;
+const PORT = env.PORT;
 
 // Security middleware
 app.use(helmet());
 
 // CORS configuration
-const isAllowedOrigin = createAllowedOriginChecker(process.env.ALLOWED_ORIGINS, [
+const isAllowedOrigin = createAllowedOriginChecker(env.ALLOWED_ORIGINS.join(','), [
   'http://localhost:3000',
 ]);
 app.use(
@@ -31,7 +28,7 @@ app.use(
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
 
-      if (process.env.NODE_ENV !== 'production') {
+      if (env.NODE_ENV !== 'production') {
         return callback(null, true);
       }
 
@@ -49,8 +46,8 @@ app.use(
 app.use(
   '/api/',
   rateLimit({
-    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
-    max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'),
+    windowMs: env.RATE_LIMIT_WINDOW_MS,
+    max: env.RATE_LIMIT_MAX_REQUESTS,
     message: 'Too many requests from this IP, please try again later.',
   })
 );
@@ -112,8 +109,8 @@ app.use(
 // Start server
 app.listen(PORT, () => {
   logger.info(`Payment service started on port ${PORT}`);
-  logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  logger.info(`CardConnect API: ${process.env.CARDCONNECT_API_URL}`);
+  logger.info(`Environment: ${env.NODE_ENV}`);
+  logger.info(`CardConnect API: ${env.CARDCONNECT_API_URL}`);
 });
 
 export default app;
