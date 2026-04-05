@@ -4,130 +4,40 @@ Project-wide documentation for the Tailtown Pet Resort Management System.
 
 ## For Developers (Quick Guides)
 
-- **[Quick Start](./QUICK-START.md)** - Get running in 10 minutes
+- **[Quick Start](./QUICK-START.md)** - Get running quickly
 - **[Git Setup](./GIT-SETUP.md)** - Git workflow and rules
-- **[GitHub Workflows](/.github/workflows/README.md)** - CI/CD pipelines, PR checks, and deployment workflows
-- **[Best Practices](./development/DEVELOPMENT-BEST-PRACTICES.md)** - Code standards and patterns
+- **[GitHub Workflows](./github/workflows/README.md)** - CI/CD pipelines, PR checks, and deployment workflows
+- **[Development Best Practices](./development/DEVELOPMENT-BEST-PRACTICES.md)** - Code standards and patterns
 - **[Security](./security/SECURITY.md)** - Security features and how to use them
 - **[Roadmap](./ROADMAP.md)** - What's next for Tailtown
 
-## For Technical Leadership
+## Folder Indexes
 
-- **[Senior Dev Review](./archive/SENIOR-DEV-REVIEW.md)** - ⭐ Architecture review & scaling roadmap (4/5 stars)
-- **[System Architecture](./CURRENT-SYSTEM-ARCHITECTURE.md)** - Complete architecture overview
-- **[Disaster Recovery](./operations/DISASTER-RECOVERY-PLAN.md)** - Backup & recovery procedures
+Every docs sub-folder has an `INDEX.md` so you can quickly browse contents.
 
-## For AI Assistants (Complete Context)
-
-- **[Security Implementation](./ai-context/security/)** - Complete security details
-- **[Testing](./ai-context/testing/)** - Test analysis and maintenance
-- **[Documentation Strategy](./DOCUMENTATION-STRATEGY.md)** - How we organize docs
-
-## Reference
-
-- **[Security Checklist](./security/SECURITY-CHECKLIST.md)** - Security verification
-- **[Development Best Practices](./development/DEVELOPMENT-BEST-PRACTICES.md)** - Code standards
+- **[api/](./api/INDEX.md)**
+- **[archive/](./archive/)** *(historical docs; folder indexing intentionally excluded)*
+- **[architecture/](./architecture/INDEX.md)**
+- **[changelog/](./changelog/INDEX.md)**
+- **[completed/](./completed/INDEX.md)**
+- **[development/](./development/INDEX.md)**
+- **[diagrams/](./diagrams/INDEX.md)**
+- **[features/](./features/INDEX.md)**
+- **[gingr/](./gingr/INDEX.md)**
+- **[help-center/](./help-center/INDEX.md)**
+- **[issues/](./issues/INDEX.md)**
+- **[operations/](./operations/INDEX.md)**
+- **[security/](./security/INDEX.md)**
+- **[sessions/](./sessions/INDEX.md)**
+- **[testing/](./testing/INDEX.md)**
+- **[troubleshooting/](./troubleshooting/INDEX.md)**
 
 ## Essential Reading
 
-- **[Development Best Practices](./development/DEVELOPMENT-BEST-PRACTICES.md)** - ⭐ Common patterns & pitfalls
-- **[Deployment Guide](./deployment/PRODUCTION-DEPLOYMENT.md)** - How to deploy to production
-- **[Product Roadmap](./ROADMAP.md)** - Feature roadmap and priorities
-
-## For End Users
-
-- **[Help Center](./help-center/)** - User guides, FAQs, and support documentation
-    - Getting started guide
-    - Customer and pet management
-    - Reservations and billing
-    - Troubleshooting and support
-
-## By Audience
-
-- **For Developers:** [Development Guides](./development/)
-- **For DevOps:** [Operations Guides](./operations/)
-- **For Product:** [Feature Overview](./SYSTEM-FEATURES-OVERVIEW.md)
-- **For End Users:** [Help Center](./help-center/)
-
-## Quick Links
-
-| Document                                                | Description              |
-| ------------------------------------------------------- | ------------------------ |
-| [Quick Start](./QUICK-START.md)                         | Get running in 5 minutes |
-| [System Architecture](./CURRENT-SYSTEM-ARCHITECTURE.md) | Current system design    |
-| [Features Overview](./SYSTEM-FEATURES-OVERVIEW.md)      | Complete feature list    |
-| [Roadmap](./ROADMAP.md)                                 | Future development plans |
-| [Git Setup](./GIT-SETUP.md)                             | Git workflow and rules   |
-
-## Directory Structure
-
-```
-docs/
-├── INDEX.md                       # This file
-├── QUICK-START.md                 # 5-minute setup guide
-├── ROADMAP.md                     # Future plans
-├── CURRENT-SYSTEM-ARCHITECTURE.md # System design
-├── SYSTEM-FEATURES-OVERVIEW.md    # Feature documentation
-├── CRITICAL-DOCS-REGISTRY.md      # Doc update tracking
-├── DOCUMENTATION-STRATEGY.md      # AI vs Human docs strategy
-├── help-center/                   # User guides and support
-│   ├── README.md                  # Main help center index
-│   └── getting-started.md         # New user guide
-│
-├── architecture/                  # System design docs
-│   ├── API-GATEWAY-DESIGN.md
-│   ├── DATABASE-*.md
-│   ├── SERVICE-ARCHITECTURE.md
-│   └── tenant-isolation/          # Multi-tenancy docs
-│
-├── development/                   # Dev guidelines
-│   ├── DEVELOPMENT-BEST-PRACTICES.md
-│   ├── SchemaAlignmentStrategy.md
-│   └── FormGuidelines.md
-│
-├── features/                      # Feature specs
-│   ├── REPORT-CARD-DESIGN.md
-│   ├── WAITLIST-DESIGN.md
-│   ├── COUPON-SYSTEM.md
-│   └── ... (47 feature docs)
-│
-├── testing/                       # Test documentation
-│   ├── TESTING-STRATEGY.md
-│   └── TEST-SETUP.md
-│
-├── deployment/                    # Deploy guides
-│   ├── DEPLOYMENT-GUIDE.md
-│   └── STAGING-ENVIRONMENT.md
-│
-├── security/                      # Security docs
-│   ├── SECURITY-CHECKLIST.md
-│   └── AUDIT-LOGGING-GUIDE.md
-│
-├── operations/                    # Ops guides
-│   ├── MONITORING-GUIDE.md
-│   └── SCALING-PLAN.md
-│
-├── changelog/                     # Release history
-│   └── CHANGELOG.md
-│
-├── human/                         # Human-readable guides
-│   └── SECURITY.md
-│
-├── ai-context/                    # AI assistant context
-│   └── security/
-│
-└── archive/                       # Historical docs
-    ├── sessions/                  # Session summaries
-    ├── deployments/               # One-time deploy docs
-    └── summaries/                 # Implementation summaries
-```
-
-## Service Documentation
-
-Each app/service has its own `/docs/` directory:
-
-- **Customer Service**: `/apps/customer-service/docs/`
-- **Reservation Service**: `/apps/reservation-service/docs/`
+- **[Current System Architecture](./CURRENT-SYSTEM-ARCHITECTURE.md)** - System architecture overview
+- **[System Features Overview](./SYSTEM-FEATURES-OVERVIEW.md)** - Complete feature list
+- **[Roadmap](./ROADMAP.md)** - Product roadmap and priorities
+- **[Critical Docs Registry](./CRITICAL-DOCS-REGISTRY.md)** - Critical doc maintenance tracking
 
 ## Documentation Guidelines
 
@@ -159,5 +69,13 @@ When adding new documentation:
 
 1. Place it in the appropriate directory based on its scope and purpose
 2. Follow the naming conventions
-3. Update this INDEX.md file if adding a new major document
-4. Update the main project README.md if the document should be featured there
+3. Update this `INDEX.md` file if adding a new major document or folder
+4. Add or update the folder-level `INDEX.md` for the folder you changed
+5. Update the main project `README.md` if the document should be featured there
+
+## Service Documentation
+
+Each app/service has its own `/docs/` directory:
+
+- **Customer Service**: `/apps/customer-service/docs/`
+- **Reservation Service**: `/apps/reservation-service/docs/`

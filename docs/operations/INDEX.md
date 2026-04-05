@@ -1,0 +1,22 @@
+# operations Index
+
+Documentation index for `operations/`.
+
+## Files
+
+- [AUTOMATED-BACKUP-STRATEGY.md](./AUTOMATED-BACKUP-STRATEGY.md)
+- [CHECKIN-FIX-2024-11-24.md](./CHECKIN-FIX-2024-11-24.md)
+- [DEPOSIT_MIGRATION_PLAN.md](./DEPOSIT_MIGRATION_PLAN.md)
+- [DISASTER-RECOVERY-PLAN.md](./DISASTER-RECOVERY-PLAN.md)
+- [DevOps.md](./DevOps.md)
+- [Environment-Variables.md](./Environment-Variables.md)
+- [MONITORING-GUIDE.md](./MONITORING-GUIDE.md)
+- [POINT-IN-TIME-RECOVERY.md](./POINT-IN-TIME-RECOVERY.md)
+- [SCALING-ACTION-PLAN.md](./SCALING-ACTION-PLAN.md)
+- [SCALING-PLAN.md](./SCALING-PLAN.md)
+- [SERVICE-PORTS.md](./SERVICE-PORTS.md)
+- [SETUP.md](./SETUP.md)
+- [TWILIO-SENDGRID-QUICKSTART.md](./TWILIO-SENDGRID-QUICKSTART.md)
+- [TWILIO-SENDGRID-SETUP.md](./TWILIO-SENDGRID-SETUP.md)
+- [UPTIME-MONITORING.md](./UPTIME-MONITORING.md)
+- [database-setup.md](./database-setup.md)
