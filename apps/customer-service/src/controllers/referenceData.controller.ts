@@ -1,4 +1,5 @@
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
+import { env } from '../env.js';
 /**
  * Reference Data Controller
  *
@@ -27,7 +28,7 @@ export const getBreeds = async (
     const path = require('path');
     // Use environment variable or default to relative path
     const dataDir =
-      process.env.DATA_DIR || path.join(__dirname, '../../../../data');
+      env.DATA_DIR || path.join(__dirname, '../../../../data');
     const breedsPath = path.join(dataDir, 'gingr-reference/breeds.json');
 
     let breeds: any[] = [];
@@ -74,7 +75,7 @@ export const getVeterinarians = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     // Get unique veterinarians from pets table
     const vets = await prisma.$queryRaw`
@@ -170,7 +171,7 @@ export const getPetTemperaments = async (
       'Pet ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     // Get the pet's idealPlayGroup
     const pet = await prisma.pet.findFirst({
@@ -209,7 +210,7 @@ export const updatePetTemperaments = async (
     );
     const { temperaments } = req.body;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     // Update the pet's idealPlayGroup (take first temperament if multiple)
     const idealPlayGroup =

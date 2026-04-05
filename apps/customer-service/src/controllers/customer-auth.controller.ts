@@ -1,3 +1,4 @@
+import { env } from '../env.js';
 /**
  * Customer Authentication Controller
  *
@@ -198,7 +199,7 @@ export const requestPasswordReset = async (
       message:
         'If an account exists with this email, a password reset link will be sent',
       // Include token in dev mode for testing (remove in production)
-      ...(process.env.NODE_ENV === 'development' && { resetToken }),
+      ...(env.NODE_ENV === 'development' && { resetToken }),
     });
   } catch (error: any) {
     console.error('Password reset request error:', error);

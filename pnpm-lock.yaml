@@ -120,6 +120,9 @@ importers:
       '@sentry/profiling-node':
         specifier: 10.42.0
         version: 10.42.0
+      '@t3-oss/env-core':
+        specifier: 0.13.11
+        version: 0.13.11(typescript@5.9.3)(valibot@1.2.0(typescript@5.9.3))(zod@4.3.6)
       '@tailtown/shared':
         specifier: workspace:*
         version: link:../../packages/shared

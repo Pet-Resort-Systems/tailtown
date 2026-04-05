@@ -1,3 +1,4 @@
+import { env } from '../env.js';
 /**
  * Monitoring Routes
  *
@@ -322,7 +323,7 @@ router.get('/dashboard', (req, res) => {
  * Reset metrics (for testing)
  */
 router.post('/reset', (req, res) => {
-  if (process.env.NODE_ENV === 'production') {
+  if (env.NODE_ENV === 'production') {
     return res
       .status(403)
       .json({ error: 'Cannot reset metrics in production' });

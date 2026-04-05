@@ -1,3 +1,4 @@
+import { env } from '../env.js';
 /**
  * Monitoring and Metrics Utility
  *
@@ -74,7 +75,7 @@ export class MonitoringService {
       },
     };
 
-    if (process.env.NODE_ENV !== 'test') {
+    if (env.NODE_ENV !== 'test') {
       this.percentileInterval = setInterval(
         () => this.calculatePercentiles(),
         60000

@@ -1,3 +1,4 @@
+import { env } from '../env.js';
 /**
  * Tenant Utility Functions
  *
@@ -16,7 +17,7 @@
  */
 export function getTenantId(tenantId: string | undefined): string {
   // In production, require tenant ID
-  if (process.env.NODE_ENV === 'production') {
+  if (env.NODE_ENV === 'production') {
     if (!tenantId) {
       throw new Error('Tenant ID is required in production');
     }

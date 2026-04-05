@@ -1,3 +1,4 @@
+import { env } from '../../env.js';
 /**
  * Sales Reports Controller
  *
@@ -31,7 +32,7 @@ export const getDailySales = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const { date } = req.query;
 
     if (!date) {
@@ -71,7 +72,7 @@ export const getWeeklySales = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
@@ -117,7 +118,7 @@ export const getMonthlySales = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const { year, month } = req.query;
 
     if (!year || !month) {
@@ -161,7 +162,7 @@ export const getYTDSales = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const { year } = req.query;
 
     const targetYear = year
@@ -200,7 +201,7 @@ export const getTopCustomersReport = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const { startDate, endDate, limit } = req.query;
 
     if (!startDate || !endDate) {

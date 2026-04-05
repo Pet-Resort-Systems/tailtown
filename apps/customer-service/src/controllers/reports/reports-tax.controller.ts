@@ -1,3 +1,4 @@
+import { env } from '../../env.js';
 /**
  * Tax Reports Controller
  *
@@ -29,7 +30,7 @@ export const getMonthlyTax = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const { year, month } = req.query;
 
     if (!year || !month) {
@@ -79,7 +80,7 @@ export const getQuarterlyTax = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const { year, quarter } = req.query;
 
     if (!year || !quarter) {
@@ -125,7 +126,7 @@ export const getAnnualTax = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const { year } = req.query;
 
     if (!year) {
@@ -165,7 +166,7 @@ export const getTaxBreakdownReport = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {

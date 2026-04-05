@@ -1,5 +1,6 @@
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { type Request, type Response, type NextFunction } from 'express';
+import { env } from '../env.js';
 
 import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
@@ -19,7 +20,7 @@ export const getAllVaccineRequirements = async (
   try {
     const { petType, serviceType, isActive } = req.query;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const where: any = { tenantId };
     if (petType) where.petType = petType;
@@ -51,7 +52,7 @@ export const getVaccineRequirementById = async (
       'Vaccine requirement ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const requirement = await prisma.vaccineRequirement.findFirst({
       where: { id, tenantId },
@@ -87,7 +88,7 @@ export const createVaccineRequirement = async (
       notes,
     } = req.body;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     // Validate required fields
     if (!name) {
@@ -149,7 +150,7 @@ export const updateVaccineRequirement = async (
       'Vaccine requirement ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     // Verify requirement exists
     const existing = await prisma.vaccineRequirement.findFirst({
@@ -205,7 +206,7 @@ export const deleteVaccineRequirement = async (
       'Vaccine requirement ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const existing = await prisma.vaccineRequirement.findFirst({
       where: { id, tenantId },
@@ -238,7 +239,7 @@ export const getApplicableRequirements = async (
     );
     const { serviceType } = req.query;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     // Get pet details
     const pet = await prisma.pet.findFirst({
@@ -291,7 +292,7 @@ export const checkPetCompliance = async (
     );
     const { serviceType } = req.query;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     // Get pet with vaccination data
     const pet = await prisma.pet.findFirst({
@@ -412,7 +413,7 @@ export const updateDisplayOrder = async (
   try {
     const { requirements } = req.body; // Array of { id, displayOrder }
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     if (!Array.isArray(requirements)) {
       return next(new AppError('Requirements must be an array', 400));

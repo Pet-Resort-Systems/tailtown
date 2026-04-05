@@ -1,3 +1,4 @@
+import { env } from '../env.js';
 /**
  * Enhanced Error Handling Middleware
  *
@@ -375,7 +376,7 @@ export const errorHandler = (
     });
   }
 
-  if (process.env.NODE_ENV === 'development') {
+  if (env.NODE_ENV === 'development') {
     sendErrorDev(err, req, res);
   } else {
     sendErrorProd(err, req, res);

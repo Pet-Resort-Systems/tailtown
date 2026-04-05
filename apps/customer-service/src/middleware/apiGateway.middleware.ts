@@ -1,3 +1,4 @@
+import { env } from '../env.js';
 /**
  * API Gateway Middleware
  *
@@ -226,7 +227,7 @@ export function enhancedRequestLogging() {
         console.error('[API] ERROR:', JSON.stringify(logEntry));
       } else if (res.statusCode >= 400) {
         console.warn('[API] WARN:', JSON.stringify(logEntry));
-      } else if (process.env.NODE_ENV !== 'production' || duration > 1000) {
+      } else if (env.NODE_ENV !== 'production' || duration > 1000) {
         // In production, only log slow requests (>1s)
         console.log('[API] INFO:', JSON.stringify(logEntry));
       }

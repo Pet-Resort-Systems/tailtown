@@ -4,10 +4,11 @@ import {
   type Customer,
   type Pet,
 } from '../generated/prisma/client.js';
+import { env } from '../env.js';
 
 // Initialize SendGrid with API key from environment
-if (process.env.SENDGRID_API_KEY) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+if (env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(env.SENDGRID_API_KEY);
 }
 
 export interface EmailOptions {
@@ -33,15 +34,15 @@ export class EmailService {
   private fromName: string;
 
   constructor() {
-    this.fromEmail = process.env.SENDGRID_FROM_EMAIL || 'noreply@tailtown.com';
-    this.fromName = process.env.SENDGRID_FROM_NAME || 'Tailtown Pet Resort';
+    this.fromEmail = env.SENDGRID_FROM_EMAIL || 'noreply@tailtown.com';
+    this.fromName = env.SENDGRID_FROM_NAME || 'Tailtown Pet Resort';
   }
 
   /**
    * Send a generic email
    */
   async sendEmail(options: EmailOptions): Promise<void> {
-    if (!process.env.SENDGRID_API_KEY) {
+    if (!env.SENDGRID_API_KEY) {
       console.warn(
         '[Email Service] SendGrid API key not configured. Email not sent.'
       );
@@ -536,7 +537,7 @@ export class EmailService {
   ): Promise<void> {
     // Build reset URL - use provided URL or construct from environment
     const baseUrl =
-      portalUrl || process.env.FRONTEND_URL || 'https://tailtown.canicloud.com';
+      portalUrl || env.FRONTEND_URL || 'https://tailtown.canicloud.com';
     const resetUrl = `${baseUrl}/book/reset-password?token=${resetToken}`;
 
     const html = `
@@ -613,7 +614,7 @@ export class EmailService {
   ): Promise<void> {
     // Build password setup URL
     const baseUrl =
-      adminUrl || process.env.FRONTEND_URL || 'https://tailtown.canicloud.com';
+      adminUrl || env.FRONTEND_URL || 'https://tailtown.canicloud.com';
     const setupUrl = `${baseUrl}/set-password?token=${resetToken}&new=true`;
 
     const roleDisplay =

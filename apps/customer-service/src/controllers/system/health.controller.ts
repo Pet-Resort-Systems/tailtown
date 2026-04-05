@@ -1,3 +1,4 @@
+import { env } from '../../env.js';
 /**
  * System Health Controller
  *
@@ -146,7 +147,7 @@ function parseCacheHitRate(info: string): number {
 async function checkReservationService(): Promise<ServiceHealth> {
   try {
     const reservationUrl =
-      process.env.RESERVATION_SERVICE_URL || 'http://localhost:4003';
+      env.RESERVATION_SERVICE_URL || 'http://localhost:4003';
     const start = Date.now();
 
     const response = await fetch(`${reservationUrl}/health`, {

@@ -1,3 +1,4 @@
+import { env } from '../../env.js';
 /**
  * Reservation Queries Controller
  *
@@ -39,7 +40,7 @@ export const getAllReservations = async (
 
     // Get tenant ID from request
     const tenantId =
-      (req as any).tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      (req as any).tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     // Build where clause - always filter by tenantId
     let where: any = { tenantId };

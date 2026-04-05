@@ -4,6 +4,7 @@ import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { emailService } from '../services/email.service.js';
 import { prisma } from '../config/prisma.js';
 import { AppError } from '../middleware/error.middleware.js';
+import { env } from '../env.js';
 
 export class EmailController {
   /**
@@ -271,14 +272,14 @@ export class EmailController {
    */
   async getEmailConfig(req: TenantRequest, res: Response, next: NextFunction) {
     try {
-      const isConfigured = !!process.env.SENDGRID_API_KEY;
+      const isConfigured = !!env.SENDGRID_API_KEY;
 
       res.json({
         success: true,
         data: {
           isConfigured,
-          fromEmail: process.env.SENDGRID_FROM_EMAIL || 'noreply@tailtown.com',
-          fromName: process.env.SENDGRID_FROM_NAME || 'Tailtown Pet Resort',
+          fromEmail: env.SENDGRID_FROM_EMAIL || 'noreply@tailtown.com',
+          fromName: env.SENDGRID_FROM_NAME || 'Tailtown Pet Resort',
           provider: 'SendGrid',
         },
       });

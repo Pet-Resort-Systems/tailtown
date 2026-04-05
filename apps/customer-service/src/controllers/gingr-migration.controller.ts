@@ -1,3 +1,4 @@
+import { env } from '../env.js';
 /**
  * Gingr Migration Controller
  * Handles data migration from Gingr to Tailtown
@@ -255,7 +256,7 @@ export const startMigration = async (
     );
 
     const RESERVATION_SERVICE_URL =
-      process.env.RESERVATION_SERVICE_URL || 'http://localhost:4003';
+      env.RESERVATION_SERVICE_URL || 'http://localhost:4003';
 
     // Fetch a default resource to assign (calendar requires resourceId)
     let defaultResourceId: string | null = null;

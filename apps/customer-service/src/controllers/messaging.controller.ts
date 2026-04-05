@@ -1,4 +1,5 @@
 import { type Response, type NextFunction } from 'express';
+import { env } from '../env.js';
 
 import { assertStringRouteParam } from '@tailtown/shared';
 import { type AuthRequest } from '../middleware/auth.middleware.js';
@@ -15,7 +16,7 @@ export const getChannels = async (
 ) => {
   try {
     const tenantId =
-      req.user?.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.user?.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const staffId = req.user?.id;
 
     if (!staffId) {
@@ -135,7 +136,7 @@ export const getChannelMessages = async (
 ) => {
   try {
     const tenantId =
-      req.user?.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.user?.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const staffId = req.user?.id;
     const channelId = assertStringRouteParam(
       req.params.channelId,
@@ -223,7 +224,7 @@ export const sendChannelMessage = async (
 ) => {
   try {
     const tenantId =
-      req.user?.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.user?.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const staffId = req.user?.id;
     const channelId = assertStringRouteParam(
       req.params.channelId,
@@ -369,7 +370,7 @@ export const getUnreadCount = async (
 ) => {
   try {
     const tenantId =
-      req.user?.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.user?.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const staffId = req.user?.id;
 
     if (!staffId) {

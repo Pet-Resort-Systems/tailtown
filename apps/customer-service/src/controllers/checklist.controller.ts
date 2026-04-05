@@ -1,5 +1,6 @@
 import { type TenantRequest } from '../middleware/tenant.middleware.js';
 import { type Request, type Response, type NextFunction } from 'express';
+import { env } from '../env.js';
 
 import { assertStringRouteParam } from '@tailtown/shared';
 import { AppError } from '../middleware/error.middleware.js';
@@ -14,7 +15,7 @@ export const getAllTemplates = async (
   try {
     const { area, isActive } = req.query;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const where: any = { tenantId };
     if (area) where.area = area;
@@ -54,7 +55,7 @@ export const getTemplateById = async (
       'Checklist template ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const template = await prisma.checklistTemplate.findFirst({
       where: { id, tenantId },
@@ -94,7 +95,7 @@ export const createTemplate = async (
       requiredForCompletion,
     } = req.body;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     if (!name || !description || !area || !items) {
       return next(new AppError('Missing required fields', 400));
@@ -155,7 +156,7 @@ export const updateTemplate = async (
       requiredForCompletion,
     } = req.body;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     // Verify template belongs to tenant
     const existing = await prisma.checklistTemplate.findFirst({
@@ -208,7 +209,7 @@ export const deleteTemplate = async (
       'Checklist template ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     // Verify template belongs to tenant before deleting
     const existing = await prisma.checklistTemplate.findFirst({
@@ -247,7 +248,7 @@ export const startChecklist = async (
     }
 
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const template = await prisma.checklistTemplate.findFirst({
       where: { id: templateId, tenantId },
@@ -310,7 +311,7 @@ export const getChecklistInstance = async (
       'Checklist instance ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const instance = await prisma.checklistInstance.findFirst({
       where: { id, tenantId },
@@ -352,7 +353,7 @@ export const updateChecklistItem = async (
     );
     const { templateItemId, ...values } = req.body;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const instance = await prisma.checklistInstance.findFirst({
       where: { id, tenantId },
@@ -411,7 +412,7 @@ export const completeChecklist = async (
     );
     const { notes } = req.body;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     // Verify instance belongs to tenant
     const existing = await prisma.checklistInstance.findFirst({
@@ -451,7 +452,7 @@ export const getAllInstances = async (
   try {
     const { status, assignedToStaffId, reservationId } = req.query;
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const where: any = { tenantId };
     if (status) where.status = status;
@@ -487,7 +488,7 @@ export const getChecklistStats = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const [total, completed, pending, inProgress] = await Promise.all([
       prisma.checklistInstance.count({ where: { tenantId } }),

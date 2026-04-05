@@ -1,5 +1,6 @@
 import { type Request, type Response, type NextFunction } from 'express';
 import { verifyToken } from '../utils/jwt.js';
+import { env } from '../env.js';
 
 // Extended Request type to include user info
 export interface AuthRequest extends Request {
@@ -54,7 +55,7 @@ export const authenticate = (
 
   // For development: Accept a simple API key
   // In production: Validate JWT token
-  const superAdminApiKey = process.env.SUPER_ADMIN_API_KEY;
+  const superAdminApiKey = env.SUPER_ADMIN_API_KEY;
   if (apiKey && superAdminApiKey && apiKey === superAdminApiKey) {
     req.user = {
       id: 'super-admin',

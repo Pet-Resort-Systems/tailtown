@@ -1,3 +1,4 @@
+import { env } from '../env.js';
 /**
  * Tenant Audit Log Service
  *
@@ -253,7 +254,7 @@ class TenantAuditLogService {
       });
 
       // Also log to console for debugging (can be disabled in production)
-      if (process.env.NODE_ENV !== 'production') {
+      if (env.NODE_ENV !== 'production') {
         console.log(
           `[TenantAudit] ${data.action} ${data.entityType} by ${
             data.userEmail || 'system'

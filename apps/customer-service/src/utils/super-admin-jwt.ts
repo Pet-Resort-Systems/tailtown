@@ -1,3 +1,4 @@
+import { env } from '../env.js';
 /**
  * Super Admin JWT Utilities
  *
@@ -9,7 +10,7 @@ import jwt from 'jsonwebtoken';
 
 // Use separate secret for super admin tokens
 const SUPER_ADMIN_JWT_SECRET =
-  process.env.SUPER_ADMIN_JWT_SECRET ||
+  env.SUPER_ADMIN_JWT_SECRET ||
   'super-admin-secret-change-in-production';
 const JWT_EXPIRES_IN = '8h'; // 8 hour sessions
 const REFRESH_TOKEN_EXPIRES_IN = '7d'; // 7 day refresh tokens

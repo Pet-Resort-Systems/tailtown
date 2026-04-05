@@ -1,3 +1,4 @@
+import { env } from '../env.js';
 /**
  * Redis Cache Client
  *
@@ -13,9 +14,9 @@ import { createClient, type RedisClientType } from 'redis';
 import { logger } from './logger.js';
 
 // Redis configuration
-const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
-const REDIS_ENABLED = process.env.REDIS_ENABLED !== 'false'; // Enabled by default
-const DEFAULT_TTL = parseInt(process.env.REDIS_DEFAULT_TTL || '300', 10); // 5 minutes
+const REDIS_URL = env.REDIS_URL || 'redis://localhost:6379';
+const REDIS_ENABLED = env.REDIS_ENABLED !== 'false'; // Enabled by default
+const DEFAULT_TTL = parseInt(env.REDIS_DEFAULT_TTL || '300', 10); // 5 minutes
 
 // Redis client instance
 let redisClient: RedisClientType | null = null;

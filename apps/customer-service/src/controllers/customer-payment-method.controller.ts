@@ -1,3 +1,4 @@
+import { env } from '../env.js';
 /**
  * Customer Payment Method Controller
  * Handles saved cards on file for customers
@@ -368,7 +369,7 @@ export const chargeCustomerPaymentMethod = async (
     // Call CardConnect to charge the token
     // Note: This requires the payment-service to be accessible
     const paymentServiceUrl =
-      process.env.PAYMENT_SERVICE_URL || 'http://localhost:4005';
+      env.PAYMENT_SERVICE_URL || 'http://localhost:4005';
 
     const response = await fetch(
       `${paymentServiceUrl}/api/payments/charge-token`,

@@ -1,5 +1,6 @@
 import { type Response } from 'express';
 import { assertStringRouteParam } from '@tailtown/shared';
+import { env } from '../env.js';
 
 import { type AuthRequest } from '../middleware/auth.middleware.js';
 import { prisma } from '../config/prisma.js';
@@ -19,7 +20,7 @@ export const getActiveAnnouncements = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     // Get user ID from authenticated session (if available)
     const userId = req.user?.id;
     const now = new Date();
@@ -73,7 +74,7 @@ export const getAllAnnouncements = async (
 ) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     const announcements = await prisma.announcement.findMany({
       where: { tenantId },
@@ -104,7 +105,7 @@ export const getAllAnnouncements = async (
 export const createAnnouncement = async (req: TenantRequest, res: Response) => {
   try {
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const createdBy = req.user?.id;
     const { title, message, priority, type, startDate, endDate, isActive } =
       req.body;
@@ -155,7 +156,7 @@ export const updateAnnouncement = async (req: TenantRequest, res: Response) => {
       'Announcement ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const { title, message, priority, type, startDate, endDate, isActive } =
       req.body;
 
@@ -207,7 +208,7 @@ export const deleteAnnouncement = async (req: TenantRequest, res: Response) => {
       'Announcement ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
 
     await prisma.announcement.delete({
       where: {
@@ -250,7 +251,7 @@ export const dismissAnnouncement = async (
       'Announcement ID is required'
     );
     const tenantId =
-      req.tenantId || (process.env.NODE_ENV !== 'production' && 'dev');
+      req.tenantId || (env.NODE_ENV !== 'production' && 'dev');
     const userId = req.user?.id;
 
     // Require authentication for dismissals

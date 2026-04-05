@@ -18,8 +18,8 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
-import dotenv from 'dotenv';
 import { createAllowedOriginChecker } from '@tailtown/shared';
+import { env } from './env.js';
 import { customerRoutes } from './routes/customer.routes.js';
 import { petRoutes } from './routes/pet.routes.js';
 import { reservationRoutes } from './routes/reservation.routes.js';
@@ -100,8 +100,6 @@ import {
   enhancedRequestLogging,
 } from './middleware/apiGateway.middleware.js';
 
-// Load environment variables
-dotenv.config();
 
 // Initialize the Express application
 const app = express();
@@ -155,7 +153,7 @@ app.use(
 );
 // Enhanced CORS configuration to ensure frontend can connect
 const isAllowedOrigin = createAllowedOriginChecker(
-  process.env.ALLOWED_ORIGINS,
+  env.ALLOWED_ORIGINS,
   ['http://localhost:3000', 'http://localhost:3001']
 ); // Default for development
 
@@ -166,7 +164,7 @@ app.use(
       if (!origin) return callback(null, true);
 
       // In development, allow all origins
-      if (process.env.NODE_ENV !== 'production') {
+      if (env.NODE_ENV !== 'production') {
         return callback(null, true);
       }
 
@@ -449,7 +447,7 @@ import { loginRateLimiter } from './middleware/rateLimiter.middleware.js';
 
 const customerLookupLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === 'production' ? 10 : 100, // Higher limit for dev/test
+  max: env.NODE_ENV === 'production' ? 10 : 100, // Higher limit for dev/test
   message: {
     success: false,
     error: 'Too many lookup attempts, please try again later',
@@ -652,7 +650,7 @@ app.get('/ping', (req, res) => {
     status: 'ok',
     service: 'customer-service',
     timestamp: new Date().toISOString(),
-    env: process.env.NODE_ENV || 'unknown',
+    env: env.NODE_ENV || 'unknown',
   });
 });
 
@@ -713,7 +711,7 @@ app.get('/health', async (req, res) => {
 app.use(errorHandler);
 
 // Start the server only if not in test mode
-if (process.env.NODE_ENV !== 'test') {
+if (env.NODE_ENV !== 'test') {
   // Initialize Sentry error tracking
   import('./utils/sentry.js').then(({ initSentry }) => {
     initSentry();

@@ -1,3 +1,4 @@
+import { env } from '../../env.js';
 /**
  * Staff Authentication Controller
  *
@@ -77,7 +78,7 @@ export const loginStaff = async (
     }
 
     // DEVELOPMENT MODE: Bypass password verification for testing
-    const isDev = process.env.NODE_ENV !== 'production';
+    const isDev = env.NODE_ENV !== 'production';
     const isPasswordCorrect = isDev
       ? true
       : await bcrypt.compare(password, (staff as any).password);
@@ -227,7 +228,7 @@ export const requestPasswordReset = async (
     });
 
     // TODO: Send email with reset link
-    if (process.env.NODE_ENV === 'development') {
+    if (env.NODE_ENV === 'development') {
       logger.debug('Password reset token generated', {
         email: staff.email,
         resetLink: `http://localhost:3000/reset-password?token=${resetToken}`,
