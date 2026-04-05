@@ -2,13 +2,14 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { createEnv } from '@t3-oss/env-core';
+import { config as dotenvConfig } from 'dotenv';
+import { z } from 'zod';
+
 import {
   millisecondSchema,
   stringToNumberSchema,
   transformedBooleanSchema,
 } from '@tailtown/shared';
-import { config as dotenvConfig } from 'dotenv';
-import { z } from 'zod';
 
 const envDir = path.dirname(fileURLToPath(import.meta.url));
 const rootEnvPath = path.resolve(envDir, '../../..', '.env');
@@ -45,7 +46,6 @@ export const env = createEnv({
     RESERVATION_REDIS_ENABLED: transformedBooleanSchema,
     RESERVATION_REDIS_DEFAULT_TTL: stringToNumberSchema,
     RESERVATION_LOG_FILE: z.string().min(1),
-    RESERVATION_SENTRY_DSN: z.string().min(1),
     RESERVATION_DISABLE_ERROR_TRACKING: transformedBooleanSchema,
     RESERVATION_DISABLE_ERROR_PERSISTENCE: transformedBooleanSchema,
 
@@ -84,7 +84,6 @@ export const env = createEnv({
     RESERVATION_REDIS_ENABLED: process.env.RESERVATION_REDIS_ENABLED,
     RESERVATION_REDIS_DEFAULT_TTL: process.env.RESERVATION_REDIS_DEFAULT_TTL,
     RESERVATION_LOG_FILE: process.env.RESERVATION_LOG_FILE,
-    RESERVATION_SENTRY_DSN: process.env.RESERVATION_SENTRY_DSN,
     RESERVATION_DISABLE_ERROR_TRACKING:
       process.env.RESERVATION_DISABLE_ERROR_TRACKING,
     RESERVATION_DISABLE_ERROR_PERSISTENCE:

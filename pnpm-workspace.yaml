@@ -6,6 +6,7 @@ packages:
 catalog:
   '@prisma/adapter-pg': 7.4.2
   '@prisma/client': 7.4.2
+  '@t3-oss/env-core': 0.13.11
   '@types/express': 5.0.6
   '@types/express-serve-static-core': '5.1.1'
   '@types/node': '25.5.0'
@@ -15,3 +16,4 @@ catalog:
   prisma: 7.4.2
   tsx: 4.21.0
   typescript: 5.9.3
+  zod: 4.3.6

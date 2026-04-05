@@ -1,4 +1,4 @@
-import ms, { type StringValue } from 'ms';
+import { ms, type StringValue } from '@tailtown/ms-clone';
 import { z } from 'zod';
 
 export const stringToNumberSchema = z
@@ -9,7 +9,8 @@ export const stringToNumberSchema = z
 export const transformedBooleanSchema = z
   .string()
   .refine((value) => value === 'true' || value === 'false')
-  .transform((value) => value === 'true');
+  .transform((value) => value === 'true')
+  .pipe(z.boolean());
 
 export const millisecondSchema = z
   .string()
